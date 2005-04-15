@@ -408,7 +408,7 @@ public abstract class Component {
     /**
      * Returns the state of the specified property.
      * 
-     * @param name the name of the proeprty
+     * @param propertyName the name of the proeprty
      * @return the state of the specified property
      */
     public Object getProperty(String propertyName) {
@@ -846,7 +846,7 @@ public abstract class Component {
      * Setting the style name wil have no impact on the local stylistic
      * properties of the component.
      * 
-     * @param styleName the new style name
+     * @param newValue the new style name
      */
     public void setStyleName(String newValue) {
         String oldValue = styleName;
@@ -863,7 +863,6 @@ public abstract class Component {
         setProperty(PROPERTY_VISIBLE, new Boolean(newValue));
     }
 
-    //BUGBUG. write tests.
     /**
      * A life-cycle method invoked before the component is rendered to ensure
      * it is in a valid state.

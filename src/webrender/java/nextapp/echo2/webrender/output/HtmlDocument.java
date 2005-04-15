@@ -45,9 +45,6 @@ public class HtmlDocument extends XmlDocument {
     
     /**
      * Creates a new <code>HtmlDocument</code>.
-     * 
-     * @param contentId The desired id which will be used for the element to 
-     *        which content should be added, i.e., the FORM element.
      */
     public HtmlDocument() {
 	    super("html", "-//W3C//DTD XHTML 1.0 Strict//EN", 

@@ -137,7 +137,7 @@ public class Grid extends Component {
     /**
      * Returns the height of the specified row.
      * 
-     * @param row the row index
+     * @param rowIndex the row index
      * @return the width
      */
     public Extent getRowHeight(int rowIndex) {

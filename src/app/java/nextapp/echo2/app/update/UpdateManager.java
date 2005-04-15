@@ -48,7 +48,6 @@ public class UpdateManager {
      * 
      * @param applicationInstance the <code>ApplicationInstance</code> which
      *        this manager will service
-     * @see #dispose() 
      */
     public UpdateManager(ApplicationInstance applicationInstance) {
         super();
@@ -92,7 +91,11 @@ public class UpdateManager {
         return serverUpdateManager;
     }
     
-    //BUGBUG. doc.
+    /**
+     * Determines if a full refresh of the client state is required.
+     * 
+     * @return true if a full refresh is required
+     */
     public boolean isFullRefreshRequired() {
         return serverUpdateManager.isFullRefreshRequired();
     }

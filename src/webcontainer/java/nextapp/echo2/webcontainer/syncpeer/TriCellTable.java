@@ -78,8 +78,8 @@ public class TriCellTable {
     /**
      * Creates a two-celled <code>TriCellTable</code>.
      * 
-     * @param id The id of the outer table element, and the id upon which the 
-     *        inner elements will be based.
+     * @param document the outgoing XML document
+     * @param id the id of the root element
      * @param orientation0_1 The orientation of Element 0 with respect to 
      *        Element 1, one of the following values:
      *        <ul>
@@ -88,8 +88,7 @@ public class TriCellTable {
      *        <li>TOP_BOTTOM (element 0 is above element 1)</li>
      *        <li>BOTTOM_TOP (element 1 is above element 0)</li>
      *        </ul>
-     * @param margin0_1 The margin size (in pixels) between element 0 and
-     *        element 1.
+     * @param margin0_1 The margin size between element 0 and element 1.
      */
     TriCellTable(Document document, String id, int orientation0_1, Extent margin0_1) {
         this(document, id);
@@ -146,8 +145,8 @@ public class TriCellTable {
     /**
      * Creates a three-celled <code>TriCellTable</code>.
      * 
-     * @param conn The connection which is to render the underlying button 
-     *        object.
+     * @param document the outgoing XML document
+     * @param id the id of the root element
      * @param orientation0_1 The orientation of Element 0 with respect to 
      *        Element 1, one of the following values:
      *        <ul>
@@ -156,8 +155,7 @@ public class TriCellTable {
      *        <li>TOP_BOTTOM (element 0 is above element 1)</li>
      *        <li>BOTTOM_TOP (element 1 is above element 0)</li>
      *        </ul>
-     * @param margin0_1 The margin size (in pixels) between element 0 and
-     *        element 1.
+     * @param margin0_1 The margin size between element 0 and element 1.
      * @param orientation01_2 The orientation of Elements 0 and 1 with 
      *        respect to Element 2, one of the following values:
      *        <ul>
@@ -167,9 +165,8 @@ public class TriCellTable {
      *        <li>TOP_BOTTOM (elements 0 and 1 are above element 2)</li>
      *        <li>BOTTOM_TOP (element 2 is above elements 0 and 1)</li>
      *        </ul>
-     * @param margin01_2 The margin size (in pixels) between the combination
+     * @param margin01_2 The margin size between the combination
      *        of elements 0 and 1 and element 2.
-     *        element 1.
      */
     TriCellTable(Document document, String id, int orientation0_1, Extent margin0_1, int orientation01_2, Extent margin01_2) {
         this(document, id);
@@ -392,7 +389,11 @@ public class TriCellTable {
         }
     }
     
-    //BUGBUG. obvious docs issues.
+    /**
+     * Returns the created table element.
+     * 
+     * @return the table element
+     */
     Element getTableElement() {
         return tableElement;
     }

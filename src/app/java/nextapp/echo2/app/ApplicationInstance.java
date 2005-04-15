@@ -203,7 +203,7 @@ implements Serializable {
      * Retrieves the component currently registered with the application 
      * with the specified <code>id</code>.
      * 
-     * @param the id of the component
+     * @param id the id of the component
      * @return the component (or null if no component with the specified
      *         <code>id</code> is registered)
      */

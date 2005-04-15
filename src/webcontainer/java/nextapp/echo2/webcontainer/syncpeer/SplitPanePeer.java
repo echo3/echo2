@@ -192,8 +192,7 @@ System.err.println(component);
 
     /**
      * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
-     *      nextapp.echo2.webcontainer.ContainerInstance,
-     *      nextapp.echo2.app.Component, java.lang.String, java.lang.String)
+     *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         if ("separatorPosition".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {

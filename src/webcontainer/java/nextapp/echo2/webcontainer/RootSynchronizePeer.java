@@ -44,7 +44,8 @@ public interface RootSynchronizePeer extends SynchronizePeer {
      * Renders a complete refresh of the client state.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param the root component
+     * @param update the full refresh <code>ServerComponentUpdate</code>
+     * @param component the root component
      */
     public void renderRefresh(RenderContext rc, ServerComponentUpdate update, Component component);
 }

@@ -274,7 +274,7 @@ public class PngEncoder {
         int channel;
 
         /**
-         * @see nextapp.echoservlet.image.PngEncoder.Translator#translate(byte[], int)
+         * @see nextapp.echo2.webcontainer.image.PngEncoder.Translator#translate(byte[], int)
          */
         public void translate(byte[] outputPixelQueue, int row) {
             raster.getDataElements(0, row, width, 1, inputPixelQueue);
@@ -298,7 +298,7 @@ public class PngEncoder {
         int channel;
 
         /**
-         * @see nextapp.echoservlet.image.PngEncoder.Translator#translate(byte[], int)
+         * @see nextapp.echo2.webcontainer.image.PngEncoder.Translator#translate(byte[], int)
          */
         public void translate(byte[] outputPixelQueue, int row) {
         

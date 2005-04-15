@@ -59,8 +59,8 @@ public interface Style extends Serializable {
     /**
      * Retrieves the names of all set properties.
      * 
-     * @param an <code>Iterator</code> that returns the names of all set 
-     *        properties
+     * @return an <code>Iterator</code> that returns the names of all set 
+     *         properties
      */
     public Iterator getPropertyNames();
     

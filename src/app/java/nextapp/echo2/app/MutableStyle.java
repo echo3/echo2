@@ -248,7 +248,7 @@ implements Style {
      * Removes a value of an indexed property from the <code>Style</code>.
      * 
      * @param propertyName the name of the property
-     * @param index the index of the property to remove
+     * @param propertyIndex the index of the property to remove
      */
     public void removeIndexedProperty(String propertyName, int propertyIndex) {
         Object value = retrieveProperty(propertyName);
