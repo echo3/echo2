@@ -108,7 +108,7 @@ public abstract class Component {
     public Component() {
         super();
         flags = FLAG_VISIBLE;
-        id = "c_" + nextId++;
+        id = Long.toString(nextId++);
         listenerList = new EventListenerList();
         propertyChangeSupport = null;
         localStyle = new MutableStyle();

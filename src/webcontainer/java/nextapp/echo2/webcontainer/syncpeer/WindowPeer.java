@@ -32,6 +32,7 @@ package nextapp.echo2.webcontainer.syncpeer;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RootSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeer;
@@ -57,7 +58,7 @@ implements RootSynchronizePeer {
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return child.getParent().getId();
+        return ContainerInstance.getElementId(child.getParent());
     }
     
     /**
@@ -74,11 +75,12 @@ implements RootSynchronizePeer {
      */
     public void renderRefresh(RenderContext rc, ServerComponentUpdate update, Component component) {
         Window window = (Window) component;
-        DomUpdate.createDomRemoveChildren(rc.getServerMessage(), window.getId());
+        String elementId = ContainerInstance.getElementId(window);
+        DomUpdate.createDomRemoveChildren(rc.getServerMessage(), elementId);
         Component[] addedChildren = window.getComponents();
         for (int i = 0; i < addedChildren.length; ++i) {
             SynchronizePeer childSyncPeer = SynchronizePeerFactory.getPeerForComponent(addedChildren[i].getClass());
-            childSyncPeer.renderAdd(rc, update, window.getId(), addedChildren[i]);
+            childSyncPeer.renderAdd(rc, update, elementId, addedChildren[i]);
         }
     }
 

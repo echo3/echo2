@@ -135,7 +135,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        EventUpdate.createEventRemove(rc.getServerMessage(), "click", component.getId());
+        EventUpdate.createEventRemove(rc.getServerMessage(), "click", 
+                ContainerInstance.getElementId(component));
     }
     
     /**
@@ -149,7 +150,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         
         Document document = parent.getOwnerDocument();
         Element divElement = document.createElement("div");
-        divElement.setAttribute("id", button.getId());
+        
+        String id = ContainerInstance.getElementId(button);
+        
+        divElement.setAttribute("id", id);
         
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("position", "relative");
@@ -170,8 +174,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         divElement.setAttribute("style", cssStyle.renderInline());
         
         parent.appendChild(divElement);
-        EventUpdate.createEventAdd(serverMessage, "click", button.getId(), "EchoButton.processAction");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", button.getId(), "EchoButton.processPressed");
+        EventUpdate.createEventAdd(serverMessage, "click", id, "EchoButton.processAction");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", id, "EchoButton.processPressed");
         
         boolean rolloverEnabled = ((Boolean) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_ENABLED, 
                 Boolean.FALSE)).booleanValue();
@@ -184,7 +188,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             ColorRender.renderToStyle(baseCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
                     (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
             FontRender.renderToStyle(baseCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
-            DomPropertyStore.createDomPropertyStore(serverMessage, button.getId(), "baseStyle", 
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "baseStyle", 
                     baseCssStyle.renderInline());
             
             if (rolloverEnabled) {
@@ -194,9 +198,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
                         (Color) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND));
                 FontRender.renderToStyle(rolloverCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_FONT));
                 if (rolloverCssStyle.hasAttributes()) {
-                    DomPropertyStore.createDomPropertyStore(serverMessage, button.getId(), "rolloverStyle", 
+                    DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverStyle", 
                             rolloverCssStyle.renderInline());
-                    EventUpdate.createEventAdd(serverMessage, "mouseover", button.getId(), "EchoButton.processRolloverEnter");
+                    EventUpdate.createEventAdd(serverMessage, "mouseover", id, "EchoButton.processRolloverEnter");
                 }
             }
             
@@ -207,7 +211,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
                         (Color) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND));
                 FontRender.renderToStyle(pressedCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_FONT));
                 if (pressedCssStyle.hasAttributes()) {
-                    DomPropertyStore.createDomPropertyStore(serverMessage, button.getId(), "pressedStyle", 
+                    DomPropertyStore.createDomPropertyStore(serverMessage, id, "pressedStyle", 
                             pressedCssStyle.renderInline());
                 }
             }
@@ -265,7 +269,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+        String parentId = ContainerInstance.getElementId(update.getParent());
+        DomUpdate.createDomRemove(rc.getServerMessage(), parentId);
         renderAdd(rc, update, targetId, update.getParent());
         return false;
     }

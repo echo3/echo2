@@ -43,6 +43,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.layout.GridCellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
@@ -84,7 +85,8 @@ implements DomUpdateSupport, SynchronizePeer {
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return child.getParent().getId() + "_td_" + child.getId();
+        return ContainerInstance.getElementId(child.getParent()) + "_td_" 
+                + ContainerInstance.getElementId(child);
     }
     
     /**
@@ -135,9 +137,11 @@ implements DomUpdateSupport, SynchronizePeer {
         Border border = (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER);
         Extent borderSize = border == null ? null : border.getSize();
         
+        String elementId = ContainerInstance.getElementId(grid);
+        
         Document document = parentElement.getOwnerDocument();
         Element tableElement = document.createElement("table");
-        tableElement.setAttribute("id", grid.getId());
+        tableElement.setAttribute("id", elementId);
 
         CssStyle tableCssStyle = new CssStyle();
         tableCssStyle.setAttribute("border-collapse", "collapse");
@@ -160,7 +164,7 @@ implements DomUpdateSupport, SynchronizePeer {
         parentElement.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");
-        tbodyElement.setAttribute("id", grid.getId() + "_tbody");
+        tbodyElement.setAttribute("id", elementId + "_tbody");
         tableElement.appendChild(tbodyElement);
         
         
@@ -172,7 +176,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         for (int y = 0; y < gridYSize; ++y) {
             Element trElement = document.createElement("tr");
-            trElement.setAttribute("id", grid.getId() + "_tr_" + y);
+            trElement.setAttribute("id", elementId + "_tr_" + y);
             tbodyElement.appendChild(trElement);
             for (int x = 0; x < gridXSize; ++x) {
                 Component cell = gridProcessor.getContent(x, y);
@@ -188,7 +192,7 @@ implements DomUpdateSupport, SynchronizePeer {
                 renderedCells.add(cell);
                 
                 Element tdElement = document.createElement("td");
-                tdElement.setAttribute("id", grid.getId() + "_td_" + cell.getId());
+                tdElement.setAttribute("id", elementId + "_td_" + ContainerInstance.getElementId(cell));
                 trElement.appendChild(tdElement);
 
                 int componentIndex = gridProcessor.getComponentIndex(x, y);
@@ -225,7 +229,8 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+        String parentId = ContainerInstance.getElementId(update.getParent());
+        DomUpdate.createDomRemove(rc.getServerMessage(), parentId);
         renderAdd(rc, update, targetId, update.getParent());
         return true;
     }

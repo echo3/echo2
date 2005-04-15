@@ -96,9 +96,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
          */
         private RenderStateImpl(Component splitPane) {
             pane0 = (splitPane.getComponentCount() < 1 || splitPane.getComponent(0) == null) 
-                        ? null : splitPane.getComponent(0).getId();
+                        ? null : ContainerInstance.getElementId(splitPane.getComponent(0));
             pane1 = (splitPane.getComponentCount() < 2 || splitPane.getComponent(1) == null) 
-                        ? null : splitPane.getComponent(1).getId();
+                        ? null : ContainerInstance.getElementId(splitPane.getComponent(1));
         }
     }
     
@@ -152,7 +152,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return child.getParent().getId() + "_panecontent_"
+        return ContainerInstance.getElementId(child.getParent()) + "_panecontent_"
                 + child.getParent().indexOf(child);
     }
     
@@ -220,19 +220,19 @@ System.err.println(component);
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         SplitPane splitPane = (SplitPane) update.getParent();
+        String elementId = ContainerInstance.getElementId(splitPane);
         ContainerInstance ci = rc.getContainerInstance();
         RenderStateImpl previousRenderState = (RenderStateImpl) ci.getRenderState(splitPane);
         RenderStateImpl currentRenderState = new RenderStateImpl(splitPane);
         if (!equal(previousRenderState.pane0, currentRenderState.pane0)) {
             if (currentRenderState.pane0 != null) {
-                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(),
-                        splitPane.getId(), splitPane.getId() + "_separator");
+                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId, elementId + "_separator");
                 renderPane(rc, update, contentElement, splitPane, 0);
             }
         }
         if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
             if (currentRenderState.pane1 != null) {
-                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), splitPane.getId());
+                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId);
                 renderPane(rc, update, contentElement, splitPane, 1);
             }
         }
@@ -260,13 +260,14 @@ System.err.println(component);
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", component.getId() + "_separator");
+        String elementId = ContainerInstance.getElementId(component);
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_separator");
         if (rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY)) {
             // Performance Hack for Mozilla/Firefox Browsers:
             // BUGBUG. this hack needs to get moved to client side.
             if (!update.hasRemovedChild(component)) {
-                DomUpdate.createDomRemove(rc.getServerMessage(), component.getId());
+                DomUpdate.createDomRemove(rc.getServerMessage(), elementId);
             }
         }
     }
@@ -287,7 +288,7 @@ System.err.println(component);
 
         Document document = parent.getOwnerDocument();
         Element outerDivElement = document.createElement("div");
-        outerDivElement.setAttribute("id", splitPane.getId());
+        outerDivElement.setAttribute("id", ContainerInstance.getElementId(splitPane));
 
         CssStyle outerDivStyle = new CssStyle();
         outerDivStyle.setAttribute("position", "absolute");
@@ -322,11 +323,12 @@ System.err.println(component);
                 .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
         Document document = parentElement.getOwnerDocument();
         Component paneComponent = splitPane.getComponent(paneNumber);
+        String elementId = ContainerInstance.getElementId(splitPane);
         
         int separatorPosition = calculateSeparatorPosition(splitPane);
         
         Element paneDivElement = document.createElement("div");
-        String paneDivElementId = splitPane.getId() + "_pane_" + paneNumber;
+        String paneDivElementId = elementId + "_pane_" + paneNumber;
         paneDivElement.setAttribute("id", paneDivElementId); 
         CssStyle paneDivCssStyle = new CssStyle();
         paneDivCssStyle.setAttribute("overflow", "auto");
@@ -349,7 +351,7 @@ System.err.println(component);
                 paneDivCssStyle.setAttribute("width", "100%");
                 if (renderSizeExpression) {
                     paneDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
-                            + splitPane.getId() + "').clientHeight-" + (separatorPosition + separatorSize) + ")+'px')");
+                            + elementId + "').clientHeight-" + (separatorPosition + separatorSize) + ")+'px')");
                 }
             }
         } else {
@@ -365,14 +367,14 @@ System.err.println(component);
                 }
                 if (renderSizeExpression) {
                     paneDivCssStyle.setAttribute("width", "expression((document.getElementById('" 
-                            + splitPane.getId() + "').clientWidth-" + (separatorPosition + separatorSize) + ")+'px')");
+                            + elementId + "').clientWidth-" + (separatorPosition + separatorSize) + ")+'px')");
                 }
                 paneDivCssStyle.setAttribute("height", "100%");
             }
         }
         
         Element paneContentDivElement = document.createElement("div");
-        paneContentDivElement.setAttribute("id", splitPane.getId() + "_panecontent_" + paneNumber);
+        paneContentDivElement.setAttribute("id", elementId + "_panecontent_" + paneNumber);
         paneDivElement.appendChild(paneContentDivElement);
 
         LayoutData layoutData = (LayoutData) paneComponent.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
@@ -434,14 +436,14 @@ System.err.println(component);
         Boolean booleanValue = (Boolean) splitPane.getRenderProperty(SplitPane.PROPERTY_RESIZABLE);
         boolean resizable = booleanValue == null ? false : booleanValue.booleanValue();
         int separatorSize = calculateSeparatorSize(splitPane);
+        String separatorElementId = ContainerInstance.getElementId(splitPane) + "_separator";
         
         if (resizable) {
-            EventUpdate.createEventAdd(rc.getServerMessage(), "mousedown", splitPane.getId() + "_separator", 
-                    "EchoDragPane.mouseDown");
+            EventUpdate.createEventAdd(rc.getServerMessage(), "mousedown", separatorElementId, "EchoDragPane.mouseDown");
         }
 
         Element separatorDivElement = document.createElement("div");
-        separatorDivElement.setAttribute("id", splitPane.getId() + "_separator");
+        separatorDivElement.setAttribute("id", separatorElementId);
         int separatorPosition = calculateSeparatorPosition(splitPane);
         
         CssStyle separatorDivCssStyle = new CssStyle();
@@ -496,17 +498,18 @@ System.err.println(component);
     private void renderRemoveChildren(RenderContext rc, ServerComponentUpdate update) {
         ContainerInstance ci = rc.getContainerInstance();
         Component parent = update.getParent();
+        String parentId = ContainerInstance.getElementId(parent);
         RenderStateImpl previousRenderState = (RenderStateImpl) ci.getRenderState(parent);
         
         RenderStateImpl currentRenderState = new RenderStateImpl(parent);
         if (!equal(previousRenderState.pane0, currentRenderState.pane0)) {
             if (previousRenderState.pane0 != null) {
-                DomUpdate.createDomRemove(rc.getServerMessage(), parent.getId() + "_pane_0");
+                DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_pane_0");
             }
         }
         if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
             if (previousRenderState.pane1 != null) {
-                DomUpdate.createDomRemove(rc.getServerMessage(), parent.getId() + "_pane_1");
+                DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_pane_1");
             }
         }
     }
@@ -525,7 +528,7 @@ System.err.println(component);
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+            DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             // Note that these render methods are called regardless of whether updates

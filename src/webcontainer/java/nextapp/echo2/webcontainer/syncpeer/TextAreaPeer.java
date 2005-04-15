@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
@@ -52,12 +53,13 @@ public class TextAreaPeer extends TextComponentPeer {
     public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate,
             Element parent, Component component) {
         TextArea textArea = (TextArea) component;
-
+        String elementId = ContainerInstance.getElementId(component);
+        
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId(), true);
         
         Element textAreaElement = parent.getOwnerDocument().createElement("textarea");
-        textAreaElement.setAttribute("id", textArea.getId());
+        textAreaElement.setAttribute("id", elementId);
         
         String value = textArea.getDocument().getText();
         if (value != null) {
@@ -78,9 +80,7 @@ public class TextAreaPeer extends TextComponentPeer {
         }
         
         parent.appendChild(textAreaElement);
-        EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", textArea.getId(), 
-                "EchoTextComponent.processUpdate");
-        EventUpdate.createEventAdd(rc.getServerMessage(), "blur", textArea.getId(), 
-                "EchoTextComponent.processUpdate");
+        EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
+        EventUpdate.createEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");
     }
 }

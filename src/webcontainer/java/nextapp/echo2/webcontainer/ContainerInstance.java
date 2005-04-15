@@ -44,6 +44,17 @@ import nextapp.echo2.webrender.server.Connection;
 public class ContainerInstance extends RenderInstance {
     
     /**
+     * Returns the base HTML element id that should be used when rendering the
+     * specified <code>Component</code>.
+     * 
+     * @param component the component 
+     * @return the base HTML element id
+     */
+    public static String getElementId(Component component) {
+        return "c_" + component.getId();
+    }
+    
+    /**
      * Creates a new Web Application Container instance using the provided
      * client <code>Connection</code>.  The instance will automatically
      * be stored in the relevant <code>HttpSession</code>
@@ -99,6 +110,20 @@ public class ContainerInstance extends RenderInstance {
      */
     public ApplicationInstance getApplicationInstance() {
         return applicationInstance;
+    }
+    
+    /**
+     * Retrieves the <code>Component</code> with the specfied element id.
+     * 
+     * @param elementId the element id, e.g., "c_42323"
+     * @return the component (e.g., the component whose id is "42323")
+     */
+    public Component getComponentByElementId(String elementId) {
+        try {
+            return applicationInstance.getComponent(elementId.substring(2));
+        } catch (IndexOutOfBoundsException ex) {
+            throw new IllegalArgumentException("Invalid component element id: " + elementId);
+        }
     }
     
     /**

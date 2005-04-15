@@ -41,6 +41,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.layout.CellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.PropertyRenderRegistry;
 import nextapp.echo2.webcontainer.RenderContext;
@@ -92,7 +93,7 @@ implements DomUpdateSupport, SynchronizePeer {
             public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
                 Row row = (Row) update.getParent();
                 Border border = (Border) row.getRenderProperty(Row.PROPERTY_BORDER);
-                BorderRender.renderServerMessageUpdate(rc.getServerMessage(), row.getId(), border);
+                BorderRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(row), border);
             }
         });
         propertyRenderRegistry.add(Row.PROPERTY_INSETS, new PropertyRenderRegistry.PropertyRender() {
@@ -104,7 +105,8 @@ implements DomUpdateSupport, SynchronizePeer {
             public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
                 Row row = (Row) update.getParent();
                 Insets insets = (Insets) row.getRenderProperty(Row.PROPERTY_INSETS);
-                InsetsRender.renderServerMessageUpdate(rc.getServerMessage(), row.getId(), "padding", insets);
+                InsetsRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(row), 
+                        "padding", insets);
             }
         });
     }
@@ -113,7 +115,7 @@ implements DomUpdateSupport, SynchronizePeer {
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return child.getParent().getId() + "_cell_" + child.getId();
+        return ContainerInstance.getElementId(child.getParent()) + "_cell_" + ContainerInstance.getElementId(child);
     }
     
     /**
@@ -151,6 +153,7 @@ implements DomUpdateSupport, SynchronizePeer {
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         Row row = (Row) update.getParent();
+        String elementId = ContainerInstance.getElementId(row);
         
         Component[] components = update.getParent().getComponents();
         Component[] addedChildren = update.getAddedChildren();
@@ -160,10 +163,10 @@ implements DomUpdateSupport, SynchronizePeer {
                 if (addedChildren[addedChildrenIndex] == components[componentIndex]) {
                     Element contentElement;
                     if (componentIndex == components.length - 1) {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), row.getId());
+                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId);
                     } else {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), row.getId(), 
-                                row.getId() + "_cell_" + components[componentIndex + 1].getId());
+                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId, 
+                                elementId + "_cell_" + ContainerInstance.getElementId(components[componentIndex + 1]));
                     }
                     renderChild(rc, update, contentElement, row, components[componentIndex]);
                     //BUGBUG. continue outside for loop...no reason to continue searching added children.
@@ -180,8 +183,8 @@ implements DomUpdateSupport, SynchronizePeer {
             if (previousLastChildIndex != -1 && previousLastChildIndex != row.getComponentCount() - 1) {
                 // Child which was previously last is present, but no longer last.
                 
-                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), row.getId(),
-                        row.getId() + "_cell_" + components[previousLastChildIndex + 1].getId());
+                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId,
+                        elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]));
                 renderCellSpacingRow(contentElement, row, renderState.lastChild);
             }
         }
@@ -198,9 +201,9 @@ implements DomUpdateSupport, SynchronizePeer {
     private void renderChild(RenderContext rc, ServerComponentUpdate update, Element containerElement, 
             Component component, Component child) {
         Document document = containerElement.getOwnerDocument();
-        String childId = child.getId();
+        String childId = ContainerInstance.getElementId(child);
         Element divElement = document.createElement("div");
-        String cellId = component.getId() + "_cell_" + childId;
+        String cellId = ContainerInstance.getElementId(component) + "_cell_" + childId;
         divElement.setAttribute("id", cellId);
         
         // Configure cell style.
@@ -239,7 +242,8 @@ implements DomUpdateSupport, SynchronizePeer {
         Extent cellSpacing = (Extent) row.getRenderProperty(Row.PROPERTY_CELL_SPACING);
         if (!ExtentRender.isZeroLength(cellSpacing) && row.indexOf(child) != row.getComponentCount() - 1) {
             Element spacingElement = divElement.getOwnerDocument().createElement("div");
-            spacingElement.setAttribute("id", row.getId() + "_spacing_" + child.getId());
+            spacingElement.setAttribute("id", ContainerInstance.getElementId(row) + "_spacing_" 
+                    + ContainerInstance.getElementId(child));
             CssStyle spacingCssStyle = new CssStyle();
             spacingCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(cellSpacing));
             spacingCssStyle.setAttribute("font-size", "1px");
@@ -264,7 +268,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         Document document = parent.getOwnerDocument();
         Element divElement = document.createElement("div");
-        divElement.setAttribute("id", component.getId());
+        divElement.setAttribute("id", ContainerInstance.getElementId(row));
         
         CssStyle divCssStyle = new CssStyle();
         BorderRender.renderToStyle(divCssStyle, (Border) row.getRenderProperty(Row.PROPERTY_BORDER));
@@ -300,17 +304,19 @@ implements DomUpdateSupport, SynchronizePeer {
     private void renderRemoveChildren(RenderContext rc, ServerComponentUpdate update) {
         Component[] removedChildren = update.getRemovedChildren();
         Component parent = update.getParent();
+        String parentId = ContainerInstance.getElementId(parent);
         for (int i = 0; i < removedChildren.length; ++i) {
+            String childId = ContainerInstance.getElementId(removedChildren[i]);
             DomUpdate.createDomRemove(rc.getServerMessage(), 
-                    parent.getId() + "_cell_" + removedChildren[i].getId());
+                    parentId + "_cell_" + childId);
             DomUpdate.createDomRemove(rc.getServerMessage(), 
-                    parent.getId() + "_spacing_" + removedChildren[i].getId());
+                    parentId + "_spacing_" + childId);
         }
 
         int componentCount = parent.getComponentCount();
         if (componentCount > 0) {
-            DomUpdate.createDomRemove(rc.getServerMessage(), parent.getId() + "_spacing_" 
-                    + parent.getComponent(componentCount - 1).getId());
+            DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_spacing_" 
+                    + ContainerInstance.getElementId(parent.getComponent(componentCount - 1)));
         }
     }
     
@@ -332,7 +338,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+            DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             // Perform incremental updates.

@@ -112,7 +112,7 @@ public class ClientProperties {
      *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
      */
-    public static final String QUIRK_TEXTAREA_NEWLINE_OBLITERATION = "textareaNewlineObliteration";
+    public static final String QUIRK_TEXTAREA_NEWLINE_OBLITERATION = "quirkTextareaNewlineObliteration";
     
     /**
      * Width of the screen in pixels (integer).

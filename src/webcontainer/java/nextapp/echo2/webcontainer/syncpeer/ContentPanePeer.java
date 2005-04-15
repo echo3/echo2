@@ -37,6 +37,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
@@ -64,7 +65,8 @@ implements DomUpdateSupport, SynchronizePeer {
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return child.getParent().getId() + "_container_" + child.getId();
+        String parentId = ContainerInstance.getElementId(child.getParent());
+        return parentId + "_container_" + ContainerInstance.getElementId(child);
     }
     
     /**
@@ -86,6 +88,7 @@ implements DomUpdateSupport, SynchronizePeer {
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         Component component = update.getParent();
+        String elementId = ContainerInstance.getElementId(component);
         Component[] components = update.getParent().getComponents();
         Component[] addedChildren = update.getAddedChildren();
         
@@ -94,10 +97,10 @@ implements DomUpdateSupport, SynchronizePeer {
                 if (addedChildren[addedChildrenIndex] == components[componentIndex]) {
                     Element contentElement;
                     if (componentIndex == components.length - 1) {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), component.getId());
+                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId);
                     } else {
                         contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), 
-                                component.getId(), getContainerId(components[componentIndex + 1]));
+                                elementId, getContainerId(components[componentIndex + 1]));
                     }
                     renderChild(rc, update, contentElement, component, components[componentIndex]);
 
@@ -149,7 +152,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         Document document = parent.getOwnerDocument();
         Element divElement = document.createElement("div");
-        divElement.setAttribute("id", component.getId());
+        divElement.setAttribute("id", ContainerInstance.getElementId(component));
         
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("width", "100%");
@@ -179,11 +182,13 @@ implements DomUpdateSupport, SynchronizePeer {
         Component[] removedChildren = update.getRemovedChildren();
         for (int i = 0; i < removedChildren.length; ++i) {
             DomUpdate.createDomRemove(rc.getServerMessage(), 
-                    update.getParent().getId() + "_container_" + removedChildren[i].getId());
+                    ContainerInstance.getElementId(update.getParent()) + "_container_" +
+                    ContainerInstance.getElementId(removedChildren[i]));
         }
     }
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
         boolean fullReplace = false;
@@ -195,7 +200,8 @@ implements DomUpdateSupport, SynchronizePeer {
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+            DomUpdate.createDomRemove(rc.getServerMessage(), 
+                    ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             renderRemoveChildren(rc, update);

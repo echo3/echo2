@@ -106,7 +106,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             Element[] propertyElements = DomUtil.getChildElementsByTagName(messagePartElement, "property");
             for (int i = 0; i < propertyElements.length; ++i) {
                 String componentId = propertyElements[i].getAttribute("componentid");
-                Component component = ci.getApplicationInstance().getComponent(componentId);
+                Component component = ci.getComponentByElementId(componentId);
                 SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
                 if (!(syncPeer instanceof PropertyUpdateProcessor)) {
                     throw new IllegalStateException("Target peer is not an PropertyUpdateProcessor.");
@@ -130,7 +130,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             ContainerInstance ci = (ContainerInstance) userInstance;
             Element actionElement = DomUtil.getChildElementByTagName(messagePartElement, "action");
             String componentId = actionElement.getAttribute("componentid");
-            Component component = ci.getApplicationInstance().getComponent(componentId);
+            Component component =ci.getComponentByElementId(componentId);
             SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
             if (!(syncPeer instanceof ActionProcessor)) {
                 throw new IllegalStateException("Target peer is not an ActionProcessor.");

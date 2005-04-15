@@ -76,7 +76,7 @@ implements Service {
         //BUGBUG. Currently grabs default window.
         Window window = app.getWindows()[0];
         conn.setContentType(ContentType.TEXT_HTML);
-        BaseHtmlDocument baseDoc = new BaseHtmlDocument(window.getId());
+        BaseHtmlDocument baseDoc = new BaseHtmlDocument(ContainerInstance.getElementId(window));
         baseDoc.setTitle(window.getTitle());
         baseDoc.setGenarator(ApplicationInstance.ID_STRING);
         

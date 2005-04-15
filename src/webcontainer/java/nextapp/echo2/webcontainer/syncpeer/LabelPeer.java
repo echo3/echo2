@@ -37,6 +37,7 @@ import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
@@ -127,7 +128,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
      */
     private void renderIconLabel(RenderContext rc, Element parentElement, Label label) {
         Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, label, IMAGE_ID_ICON);
-        imgElement.setAttribute("id", label.getId());
+        imgElement.setAttribute("id", ContainerInstance.getElementId(label));
         imgElement.setAttribute("style", "border:0px none;");
         parentElement.appendChild(imgElement);
     }
@@ -165,7 +166,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
             }
         }
         
-        TriCellTable tct = new TriCellTable(document, label.getId(), orientation, iconTextMargin);
+        TriCellTable tct = new TriCellTable(document, ContainerInstance.getElementId(label), orientation, iconTextMargin);
         
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
@@ -203,7 +204,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
         Document document = rc.getServerMessage().getDocument();
         
         Element spanElement = document.createElement("span");
-        spanElement.setAttribute("id", label.getId());
+        spanElement.setAttribute("id", ContainerInstance.getElementId(label));
         DomUtil.setElementText(spanElement, (String) label.getRenderProperty(Label.PROPERTY_TEXT));
 
         CssStyle cssStyle = new CssStyle();
@@ -221,7 +222,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+        DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
         renderAdd(rc, update, targetId, update.getParent());
         return false;
     }

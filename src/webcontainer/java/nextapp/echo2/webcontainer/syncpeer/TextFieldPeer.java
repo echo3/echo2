@@ -33,6 +33,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.PasswordField;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
@@ -54,12 +55,13 @@ implements DomUpdateSupport {
     public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate,
             Element parent, Component component) {
         TextField textField = (TextField) component;
+        String elementId = ContainerInstance.getElementId(textField);
 
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId(), true);
         
         Element inputElement = parent.getOwnerDocument().createElement("input");
-        inputElement.setAttribute("id", textField.getId());
+        inputElement.setAttribute("id", elementId);
         if (textField instanceof PasswordField) {
             inputElement.setAttribute("type", "password");
         } else {
@@ -77,9 +79,7 @@ implements DomUpdateSupport {
         
         parent.appendChild(inputElement);
         //BUGBUG. Mozilla not responding to blurs correctly...using keyup as well.
-        EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", textField.getId(), 
-                "EchoTextComponent.processUpdate");
-        EventUpdate.createEventAdd(rc.getServerMessage(), "blur", textField.getId(), 
-                "EchoTextComponent.processUpdate");
+        EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
+        EventUpdate.createEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");
     }
 }

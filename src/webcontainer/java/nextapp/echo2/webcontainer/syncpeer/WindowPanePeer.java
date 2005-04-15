@@ -99,7 +99,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return child.getParent().getId() + "_content";
+        return ContainerInstance.getElementId(child.getParent()) + "_content";
     }
     
     /**
@@ -159,9 +159,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        EventUpdate.createEventRemove(rc.getServerMessage(), "click", component.getId() + "_close");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", component.getId() + "_close");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", component.getId() + "_title");
+        String elementId = ContainerInstance.getElementId(component);
+        EventUpdate.createEventRemove(rc.getServerMessage(), "click", elementId + "_close");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_close");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_title");
     }
     
     /**
@@ -171,6 +172,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public void renderHtml(RenderContext rc, ServerComponentUpdate update,
             Element parentElement, Component component) {
         WindowPane windowPane = (WindowPane) component;
+        String elementId = ContainerInstance.getElementId(windowPane);
         String title = (String) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE);
         Extent width = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_WIDTH);
         Extent height = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_HEIGHT);
@@ -180,7 +182,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         
         Document document = serverMessage.getDocument();
         Element windowDivElement = document.createElement("div");
-        windowDivElement.setAttribute("id", windowPane.getId());
+        windowDivElement.setAttribute("id", elementId);
         
         CssStyle outerDivCssStyle = new CssStyle();
         outerDivCssStyle.setAttribute("padding", "0px");
@@ -205,7 +207,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         windowDivElement.setAttribute("style", outerDivCssStyle.renderInline());
 
         Element outerTitleDivElement = document.createElement("div"); 
-        outerTitleDivElement.setAttribute("id", windowPane.getId() + "_title");
+        outerTitleDivElement.setAttribute("id", elementId + "_title");
         CssStyle outerTitleDivCssStyle = new CssStyle();
         outerTitleDivCssStyle.setAttribute("cursor", "move");
         ColorRender.renderToStyle(outerTitleDivCssStyle, 
@@ -217,7 +219,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         outerTitleDivElement.setAttribute("style", outerTitleDivCssStyle.renderInline());
         
         Element innerTitleDivElement = document.createElement("div");
-        innerTitleDivElement.setAttribute("id", windowPane.getId() + "_innertitle");
+        innerTitleDivElement.setAttribute("id", elementId + "_innertitle");
         CssStyle innerTitleDivCssStyle = new CssStyle();
         InsetsRender.renderToStyle(innerTitleDivCssStyle, "padding", 
                 (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
@@ -243,7 +245,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         
         Element closeSpanElement = document.createElement("span");
-        closeSpanElement.setAttribute("id", windowPane.getId() + "_close");
+        closeSpanElement.setAttribute("id", elementId + "_close");
         closeSpanElement.setAttribute("style", "cursor: pointer;");
         titleControlsTdElement.appendChild(closeSpanElement);
         
@@ -260,7 +262,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         innerTitleDivElement.appendChild(titleTableElement);
 
         Element contentDivElement = document.createElement("div");
-        contentDivElement.setAttribute("id", windowPane.getId() + "_content");
+        contentDivElement.setAttribute("id", elementId + "_content");
         CssStyle contentDivCssStyle = new CssStyle();
         contentDivCssStyle.setAttribute("overflow", "auto");
         contentDivCssStyle.setAttribute("padding", "0px");
@@ -276,12 +278,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         windowDivElement.appendChild(contentDivElement);
         parentElement.appendChild(windowDivElement);
         
-        EventUpdate.createEventAdd(serverMessage, "click", windowPane.getId() + "_close", 
-                "EchoDragWindow.userCloseClick");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", windowPane.getId() + "_close", 
-                "EchoDragWindow.userCloseMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", windowPane.getId() + "_title", 
-                "EchoDragWindow.mouseDown");
+        EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoDragWindow.userCloseClick");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoDragWindow.userCloseMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoDragWindow.mouseDown");
 
         if (windowPane.getComponentCount() != 0) {
             Component child = windowPane.getComponent(0);
@@ -289,7 +288,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             if (syncPeer instanceof DomUpdateSupport) {
                 ((DomUpdateSupport) syncPeer).renderHtml(rc, update, contentDivElement, child);
             } else {
-                syncPeer.renderAdd(rc, update, windowPane.getId(), child);
+                syncPeer.renderAdd(rc, update, elementId, child);
             }
         }
     }
@@ -299,7 +298,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.createDomRemove(rc.getServerMessage(), update.getParent().getId());
+        DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
         renderAdd(rc, update, targetId, update.getParent());
         return true;
     }

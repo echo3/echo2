@@ -30,7 +30,6 @@
 package nextapp.echo2.webcontainer.image;
 
 import java.io.IOException;
-
 import nextapp.echo2.app.AwtImageReference;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.webrender.server.Connection;
@@ -70,11 +69,20 @@ public class AwtImageService extends AbstractImageService {
      */
     public void renderImage(Connection conn, ImageReference imageReference) 
     throws IOException {
-        if (!(imageReference instanceof AwtImageReference)) {
-            throw new IOException("Image is not an AwtImageReference.");
+        try {
+            if (!(imageReference instanceof AwtImageReference)) {
+                throw new IOException("Image is not an AwtImageReference.");
+            }
+            PngEncoder encoder = new PngEncoder(((AwtImageReference) imageReference).getImage(), true, null, 3);
+            conn.setContentType(ContentType.IMAGE_PNG);
+            encoder.encode(conn.getOutputStream());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            //BUGBUG. Socket exceptions (wrapped in Tomcat ClientAbortException (an IO Exception)) when "rapid clicking" in 
+            // Internet Explorer in test app....source is PNG renderer.
+            // this may be an issue we have to deal with globally that is only manifesting itself here.
+            // Or it might be a tomcat bug (was testing w/ 4.1.31).
+            // Research this issue and solve&doc.
         }
-        PngEncoder encoder = new PngEncoder(((AwtImageReference) imageReference).getImage(), true, null, 3);
-        conn.setContentType(ContentType.IMAGE_PNG);
-        encoder.encode(conn.getOutputStream());
     }
 }
