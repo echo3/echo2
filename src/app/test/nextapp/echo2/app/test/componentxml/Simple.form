@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+ <component type="nextapp.echo2.app.ContentPane">
+  <children>
+   <component type="nextapp.echo2.app.Row">
+    <children>
+     <component type="nextapp.echo2.app.Button">
+      <properties>
+       <property name="width" value="100px"/>
+       <property name="height" value="50px"/>
+       <property name="text" value="Button"/>
+       <property name="border">
+        <border size="20px" style="groove" color="#abcdef"/>
+       </property>
+      </properties>
+     </component>
+     <component type="nextapp.echo2.app.Label">
+      <properties>
+       <property name="text" value="label text"/>
+       <property name="foreground" value="#ff0000"/>
+       <property name="background" value="#00ffff"/>
+      </properties>
+     </component>
+     <component type="nextapp.echo2.app.TextField"/>
+    </children>
+   </component>
+  </children>
+ </component>
+</form>

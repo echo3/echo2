@@ -1,0 +1,282 @@
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+     
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <title>Debug</title>
+  <style type="text/css">
+    DIV.button {
+        background: #8f8faf; 
+        border: #9f9fbf 1px outset; 
+        color: black; 
+        cursor: pointer;
+        padding: 2px 5px; 
+    }
+  </style>
+  <script type="text/javascript">
+    function EchoDebug() { }
+    
+    EchoDebug.activeTabId = "synctab";
+    
+    EchoDebug.nextId = 0;
+    
+    EchoDebug.consoleClear = function() {
+        var outputElement = document.getElementById("consoletab_output");
+        while (outputElement.childNodes.length > 0) {
+            outputElement.removeChild(outputElement.childNodes[0]);
+        }
+    };
+    
+    EchoDebug.consoleWrite = function(message) {
+        var divElement = document.createElement("div");
+        divElement.setAttribute("id", "x_" + ++EchoDebug.nextId);
+        divElement.style.padding = "4px";
+        divElement.style.margin = "0px 0px 4px 0px";
+        divElement.style.border = "#4f4f6f 1px inset";
+
+        var timestampDivElement = document.createElement("div");
+        timestampDivElement.style.color = "#ffffaf";
+        timestampDivElement.style.fontFamily = "Courier New, Courier, Monospace";
+        timestampDivElement.style.fontSize = "10px";
+        timestampDivElement.appendChild(document.createTextNode(new Date().toLocaleString()));
+        divElement.appendChild(timestampDivElement);
+
+        divElement.appendChild(document.createTextNode(message));
+
+        var outputElement = document.getElementById("consoletab_output");
+        outputElement.appendChild(divElement);
+        EchoDebug.paneFade(divElement.getAttribute("id"));
+    };
+    
+    EchoDebug.displayClientMessage = function(clientMessageDocument) {
+        EchoDebug.displayDocument("synctab_pane_client", clientMessageDocument);
+    };
+
+    EchoDebug.displayServerMessage = function(serverMessageDocument) {
+        EchoDebug.displayDocument("synctab_pane_server", serverMessageDocument);
+    };
+    
+    EchoDebug.displayTab = function(newTabId) {
+        var tabElement = document.getElementById(EchoDebug.activeTabId + "_tab");
+        tabElement.style.backgroundColor = "#4f4f6f";
+        var contentElement = document.getElementById(EchoDebug.activeTabId);
+        contentElement.style.display = "none";
+        EchoDebug.activeTabId = newTabId;
+        tabElement = document.getElementById(newTabId + "_tab");
+        tabElement.style.backgroundColor = "#8f8faf";
+        contentElement = document.getElementById(newTabId);
+        contentElement.style.display = "block";
+    };
+    
+    EchoDebug.displayDocument = function(id, xmlDocument) {
+        var rootElement = document.getElementById(id);
+        var docLength = 0;
+        if (rootElement.hasChildNodes) {
+            var childNode = rootElement.firstChild;
+            while (childNode) {
+                var nextChildNode = childNode.nextSibling;
+                rootElement.removeChild(childNode);
+                childNode = nextChildNode;
+            }
+        }
+        
+        var docString = EchoXmlSourceRender.render(xmlDocument);
+        var firstIndex = 0;
+        var lastIndex = docString.indexOf("\n");
+        while (lastIndex != -1) {
+            var indent = 0;
+            while (docString.charAt(firstIndex + indent) == " ") {
+                ++indent;
+            }
+            
+            var divElement = document.createElement("div");
+            divElement.style.padding = "0px 0px 0px " + (indent * 10) + "px;";
+            var textString = docString.substring(firstIndex, lastIndex);
+            docLength += textString.length;
+            var divText = document.createTextNode(textString);
+            divElement.appendChild(divText);
+            if (!(textString.charAt(indent) == "<" && textString.charAt(textString.length - 1) == ">")) {
+                divElement.style.color = "#ffff5f";
+            }
+            rootElement.appendChild(divElement);
+            
+            firstIndex = lastIndex + 1;
+            lastIndex = docString.indexOf("\n", firstIndex);
+        }
+        
+        var statsString = "Content Length: " + docLength + " bytes";
+        var statsDivElement = document.createElement("div");
+        statsDivElement.appendChild(document.createTextNode(statsString));
+        statsDivElement.style.color = "#cf9f9f";
+        statsDivElement.style.backgroundColor = "#434363";
+        rootElement.insertBefore(statsDivElement, rootElement.firstChild);
+        
+        EchoDebug.paneFade(id);
+    };
+    
+    EchoDebug.introspectDom = function() {
+        var outputElement = document.getElementById("domtab_output");
+        while (outputElement.childNodes.length > 0) {
+            outputElement.removeChild(outputElement.childNodes[0]);
+        }
+        
+        if (window.opener && window.opener.document) {
+            EchoDebug.displayDocument("domtab_output", window.opener.document);
+        } else {
+            outputElement.appendChild("Unable to introspect DOM.");
+        }
+    };
+    
+    EchoDebug.paneFade = function(id) {
+        EchoDebug.paneFadeStep(id, 0, "#7f7fcf");
+        EchoDebug.paneFadeStep(id, 50, "#7777bf");
+        EchoDebug.paneFadeStep(id, 100, "#6f6faf");
+        EchoDebug.paneFadeStep(id, 150, "#67679f");
+        EchoDebug.paneFadeStep(id, 200, "#5f5f8f");
+        EchoDebug.paneFadeStep(id, 250, "#57577f");
+        EchoDebug.paneFadeStep(id, 300, "#4f4f6f");
+    };
+    
+    EchoDebug.paneFadeStep = function(id, delayTime, backgroundColor) {
+        var execString = "document.getElementById(\"" + id + "\").style.backgroundColor = \"" + backgroundColor + "\";"
+        if (delayTime == 0) {
+            eval (execString);
+        } else {
+            setTimeout(execString, delayTime);
+        }
+    };
+    
+    function EchoXmlSourceRender() { }
+    
+    EchoXmlSourceRender.render = function(xmlDocument) {
+        return EchoXmlSourceRender.renderElement(xmlDocument.documentElement, 0);
+    }
+    
+    EchoXmlSourceRender.createIndent = function(level) {
+        var out = "";
+        for (var i = 0; i < level; ++i) {
+            out += " ";
+        }
+        return out;
+    }
+    
+    EchoXmlSourceRender.renderElement = function(xmlElement, level) {
+        var indentString = EchoXmlSourceRender.createIndent(level);
+        var out = indentString + "<" + xmlElement.nodeName;
+        
+        for (var i = 0; i < xmlElement.attributes.length; ++i) {
+            var attribute = xmlElement.attributes[i];
+            if (attribute.nodeValue) {
+                out += " " + attribute.nodeName + "=\"" + attribute.nodeValue + "\"";
+            }
+        }
+        
+        if (xmlElement.hasChildNodes && xmlElement.firstChild) {
+            out += ">\n";
+            for (var childNode = xmlElement.firstChild; childNode; childNode = childNode.nextSibling) {
+                switch (childNode.nodeType) {
+                case 1:
+                    out += EchoXmlSourceRender.renderElement(childNode, level + 1);
+                    break;
+                case 3:
+                    out += EchoXmlSourceRender.createIndent(level + 1) + childNode.nodeValue + "\n";
+                    break;
+                }
+            }
+            out += indentString + "</" + xmlElement.nodeName + ">\n";
+        } else {
+            out += "/>\n";
+        }
+        
+        return out;
+    }
+    
+    function test() {
+        var clientMessageDocument;
+        if (document.implementation && document.implementation.createDocument) {
+            clientMessageDocument = document.implementation.createDocument("http://www.nextapp.com/products/echo2/climsg",
+                    "clientmessage", null);
+        } else if (window.ActiveXObject) {
+            clientMessageDocument = new ActiveXObject("Microsoft.XMLDOM");
+            var clientMessageElement = clientMessageDocument.createElement("clientmessage");
+            clientMessageDocument.appendChild(clientMessageElement);
+        } else {
+            throw "Unable to instantiate ClientMessage Object: Cannot create client message DOM.";
+        }
+        clientMessageDocument.documentElement.setAttribute("test", "value");
+        clientMessageDocument.documentElement.setAttribute("alpha", "bravo");
+        var messagePartElement = clientMessageDocument.createElement("messagepart");
+        clientMessageDocument.documentElement.appendChild(messagePartElement);
+        messagePartElement.appendChild(clientMessageDocument.createTextNode("test text"));
+        EchoDebug.displayServerMessage(clientMessageDocument);
+        EchoDebug.displayClientMessage(document);
+        
+        EchoDebug.consoleWrite("Test message");
+    }
+  </script>
+ </head>
+  
+ <body style="margin: 0px; padding: 0px; font-family: verdana, arial, helvetica, sans-serif; font-size:12px; width:100%; height:100%;">
+  <div id="debug" style="position: absolute; padding: 0px; width: 100%; height: 100%">
+   <div id="tabs" style="position: absolute; top: 0px; height: 25px; width: 100%; background-color: #0f0f1f; padding: 4px 0px 0px 0px;">
+    <table style="border-collapse: collapse;">
+     <tbody>
+      <tr>
+       <td style="width: 10px;"/>
+       <td id="synctab_tab" onclick="EchoDebug.displayTab('synctab');" style="cursor: pointer; padding: 3px 10px; background-color: #8f8faf;">Synchronization</td>
+       <td style="width: 10px;"/>
+       <td id="domtab_tab" onclick="EchoDebug.displayTab('domtab');" style="cursor: pointer; padding: 3px 10px; background-color: #4f4f6f;">DOM State</td>
+       <td style="width: 10px;"/>
+       <td id="consoletab_tab" onclick="EchoDebug.displayTab('consoletab');" style="cursor: pointer; padding: 3px 10px; background-color: #4f4f6f;">Debug Console</td>
+       <td style="width: 10px;"/>
+      </tr>
+     </tbody>
+    </table>
+    <div id="tab_separator" style="padding: 0px; background: #8f8faf; color: #ffffff; top: 0px; height: 4px; width: 100%; overflow: none; font-size:1px; line-height:0px;"></div>
+   </div>
+   <div id="content" style="position: absolute; width:100%; top: 29px; bottom: 0px; height: expression((document.documentElement.clientHeight-29)+'px');">
+    <div id="synctab" style="display: block; width: 100%; height: 100%;">
+     <div id="synctab_pane_client_header" style="position: absolute; background: #0f0f2f; color: #ffffff; top: 0px; height: 24px; left: 0px; right: 0px; overflow: none; padding: 2px 2px 2px 20px;  width:expression((document.getElementById('content').clientWidth-22)+'px');">Client Request Message</div>
+     <div id="synctab_pane_client" style="position: absolute; padding: 4px; background: #4f4f6f; color: #ffffff; top: 28px; height: 222px; left: 0px; right: 0px; overflow: auto; width:expression((document.getElementById('content').clientWidth-8)+'px');"></div>
+     <div id="synctab_pane_separator" style="position: absolute; padding: 0px; background: #8f8faf; color: #ffffff; top: 258px; height: 4px; width: 100%; overflow: none; font-size:1px; line-height:0px;"></div>
+     <div id="synctab_pane_server_header" style="position: absolute; background: #0f0f2f; color: #ffffff; top:262px; height: 24px; left: 0px; right: 0px; overflow: none; padding: 2px 2px 2px 20px; width:expression((document.getElementById('content').clientWidth-22)+'px');">Server Response Message</div>
+     <div id="synctab_pane_server" style="position: absolute; padding: 4px; background: #4f4f6f; color: #ffffff; top: 290px; left: 0px; right:0px; bottom: 0px;    overflow: auto; width:expression((document.getElementById('content').clientWidth-8)+'px'); height: expression((document.getElementById('content').clientHeight-298)+'px');"></div>
+    </div>
+    <div id="domtab" style="display: none; width: 100%; height: 100%; overflow: auto; background: #4f4f6f;">
+     <div id="domtab_controls" style="padding: 10px 10px 0px 10px;">
+      <table>
+       <tbody>
+        <tr>
+         <td>
+          <div onclick="EchoDebug.introspectDom();" class="button">Introspect DOM</div>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <div id="domtab_output" style="padding: 10px; color: white;">
+      
+     </div>
+    </div>
+    <div id="consoletab" style="display: none; width: 100%; height: 100%; overflow: auto; color: white; background: #4f4f6f;">
+     <div id="consoletab_controls" style="padding: 10px 10px 0px 10px;">
+      <table>
+       <tbody>
+        <tr>
+         <td>
+          <div onclick="EchoDebug.consoleClear();" class="button">Clear Console</div>
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <div id="consoletab_output" style="padding: 10px">
+      
+     </div>
+    </div>
+    
+   </div>
+  </div>
+ </body> 
+</html>
