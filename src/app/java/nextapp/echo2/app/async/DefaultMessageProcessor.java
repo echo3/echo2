@@ -92,7 +92,7 @@ implements MessageProcessor {
     }
     
     /**
-     * @see nextapp.echo2.app.async.OldMessageQueue#processMessages()
+     * @see nextapp.echo2.app.async.MessageProcessor#processMessages()
      */
     public void processMessages() {
         if (!enabled) {

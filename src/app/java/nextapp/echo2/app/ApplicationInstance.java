@@ -148,7 +148,7 @@ implements Serializable {
      * @param key a unique identifier to represent this 
      *        <code>MessageProcessor</code> (typically, though not necessarily,
      *        a String)
-     * @param messageProcesor the <code>MessageProcessor</code> to add
+     * @param messageProcessor the <code>MessageProcessor</code> to add
      */
     public void addMessageProcessor(Object key, MessageProcessor messageProcessor) {
         if (messageProcessorMap == null) {
@@ -282,8 +282,8 @@ implements Serializable {
      * Returns the <code>MessageProcessor</code> attached to the application
      * with the given key value.
      * 
-     * @param the key value assigned to the <code>MessageProcessor</code> when
-     *        it was added to the application
+     * @param key the key value assigned to the <code>MessageProcessor</code>
+     *        when it was added to the application
      * @return the <code>MessageProcessor</code>, or null if none exists
      */
     public MessageProcessor getMessageProcessor(Object key) {
@@ -345,7 +345,7 @@ implements Serializable {
      * Determines if the application has any enabled 
      * <code>MessageProcessor</code>s attached.
      * 
-     * @return true if one or more active <code>MessageProcessor</code>s are
+     * @return true if one or more enabled <code>MessageProcessor</code>s are
      *         attached to the application.
      */
     public boolean hasEnabledMessageProcessors() {
