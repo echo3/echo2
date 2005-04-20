@@ -72,7 +72,7 @@ public class TextFieldTest extends TestCase {
      */
     public void testInput() {
         TextField textField = new TextField();
-        textField.processInput(TextField.INPUT_TEXT, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        textField.processInput(TextField.TEXT_CHANGED_PROPERTY, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         assertEquals("ABCDEFGHIJKLMNOPQRSTUVWXYZ", textField.getDocument().getText());
     }
 

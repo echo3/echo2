@@ -29,29 +29,42 @@
 
 package nextapp.echo2.app.update;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import nextapp.echo2.app.Component;
 
 /**
- * A representation of an update to a component from the client.
+ * A representation of all updates made on the client to an individual
+ * component.
  */
-class ClientComponentUpdate {
+public class ClientComponentUpdate {
         
     private Component component;
-    private String inputName;
-    private Object inputValue;
+    private Map inputs;
     
     /**
      * Creates a <code>ClientComponentUpdate</code>.
      * 
      * @param component the updated component
-     * @param inputName the name of the input property
-     * @param inputValue the value of the input property
      */
-    ClientComponentUpdate(Component component, String inputName, Object inputValue) {
+    ClientComponentUpdate(Component component) {
         super();
         this.component = component;
-        this.inputName = inputName;
-        this.inputValue = inputValue;
+        inputs = new HashMap();
+    }
+    
+    /**
+     * Adds an input property to the update, describing a single change
+     * to the component's client-side state.
+     * 
+     * @param inputName the name of the input property
+     * @param inputValue the new state of the property
+     */
+    public void addInput(String inputName, Object inputValue) {
+        inputs.put(inputName, inputValue);
     }
 
     /**
@@ -59,25 +72,36 @@ class ClientComponentUpdate {
      * 
      * @return the component
      */
-    Component getComponent() {
+    public Component getComponent() {
         return component;
     }
     
     /**
-     * Returns the name of the input property.
+     * Returns an iterator over the names of all input properties.
      * 
-     * @return the name
+     * @return the <code>Iterator</code>
      */
-    String getInputName() {
-        return inputName;
+    public Iterator getInputNames() {
+        return Collections.unmodifiableSet(inputs.keySet()).iterator();
+    }
+
+    /**
+     * Retrieves the new state of the specified input property.
+     * 
+     * @param inputName the name of the input property
+     * @return the new state
+     */
+    public Object getInputValue(String inputName) {
+        return inputs.get(inputName);
     }
     
     /**
-     * Returns the value of the input property.
+     * Determines if an input was posted with the specified property name.
      * 
-     * @return the value
+     * @param inputName the input property name
+     * @return true if an input is posted
      */
-    Object getInputValue() {
-        return inputValue;
+    public boolean hasInput(String inputName) {
+        return inputs.containsKey(inputName);
     }
 }

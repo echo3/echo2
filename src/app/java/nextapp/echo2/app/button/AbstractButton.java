@@ -49,7 +49,7 @@ import nextapp.echo2.app.event.ChangeListener;
  */
 public abstract class AbstractButton extends Component {
 
-    public static final String INPUT_CLICK = "click";
+    public static final String INPUT_CLICK = "input_click";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";

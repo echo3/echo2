@@ -54,6 +54,8 @@ public class UpdateManager {
         this.applicationInstance = applicationInstance;
         clientUpdateManager = new ClientUpdateManager();
         serverUpdateManager = new ServerUpdateManager();
+        
+        serverUpdateManager.init(clientUpdateManager);
     }
     
     /**
@@ -69,6 +71,16 @@ public class UpdateManager {
     }
     
     /**
+     * Returns the <code>ClientUpdateManager</code>, which is responsible for 
+     * queueing and processing updates received from the client. 
+     * 
+     * @return the <code>ClientUpdateManager</code>
+     */
+    public ClientUpdateManager getClientUpdateManager() {
+        return clientUpdateManager;
+    }
+    
+    /**
      * Retrieves all <code>ServerComponentUpdate</code>s.
      * The state of the server updates in unchanged by this operation (they
      * are not purged).  The updates will be returned
@@ -81,23 +93,14 @@ public class UpdateManager {
         return serverUpdateManager.getComponentUpdates();
     }
     
-    //BUGBUG. serverUpdateManager had to be exposed due to design changes...not sure I like this.
     /**
-     * Returns the <code>ServerUpdateManager</code>.
+     * Returns the <code>ServerUpdateManager</code>, which is responsible for
+     * queueing server-side updates and rendering them to the client.
      * 
      * @return the <code>ServerUpdateManager</code>
      */
     public ServerUpdateManager getServerUpdateManager() {
         return serverUpdateManager;
-    }
-    
-    /**
-     * Determines if a full refresh of the client state is required.
-     * 
-     * @return true if a full refresh is required
-     */
-    public boolean isFullRefreshRequired() {
-        return serverUpdateManager.isFullRefreshRequired();
     }
     
     /**
@@ -112,9 +115,10 @@ public class UpdateManager {
     }
     
     /**
-     * Purges all server updates.
+     * Purges all client and server updates.
      */
-    public void purgeServerUpdates() {
+    public void purge() {
+        clientUpdateManager.purge();
         serverUpdateManager.purge();
     }
 }

@@ -52,8 +52,7 @@ implements DomUpdateSupport {
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate,
-            Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate, Element parent, Component component) {
         TextField textField = (TextField) component;
         String elementId = ContainerInstance.getElementId(textField);
 
@@ -67,7 +66,7 @@ implements DomUpdateSupport {
         } else {
             inputElement.setAttribute("type", "text");
         }
-        String value = textField.getDocument().getText();
+        String value = textField.getText();
         if (value != null) {
             inputElement.setAttribute("value", value);
         }

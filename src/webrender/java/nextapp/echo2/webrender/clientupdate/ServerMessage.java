@@ -344,4 +344,8 @@ public class ServerMessage extends XmlDocument {
         }
         return element;
     }
+    
+    public void setAsynchronousMonitor(boolean enabled) {
+        serverMessageElement.setAttribute("async", Boolean.toString(enabled));
+    }
 }

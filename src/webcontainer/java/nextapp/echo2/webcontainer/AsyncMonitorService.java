@@ -29,37 +29,54 @@
 
 package nextapp.echo2.webcontainer;
 
+import java.io.IOException;
+
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.server.Connection;
+import nextapp.echo2.webrender.server.ContentType;
+import nextapp.echo2.webrender.server.Service;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * A service which handles server poll requests to determine if any 
+ * asynchronous operations have completed since the last server interaction,
+ * such that the client might resynchronize with the server.
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
+public class AsyncMonitorService 
+implements Service {
+    
+    
+    public static final Service INSTANCE = new AsyncMonitorService();
 
+    public static final String SERVICE_ID = "Echo.AsyncMonitor";
+    
     /**
-     * Default constructor.
+     * @see nextapp.echo2.webrender.server.Service#getId()
      */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
-        
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
+    public String getId() {
+        return SERVICE_ID;
     }
     
     /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
-     * 
-     * @return a new <code>ApplicationInstance</code>
+     * @see nextapp.echo2.webrender.server.Service#getVersion()
      */
-    public abstract ApplicationInstance newApplicationInstance();
+    public int getVersion() {
+        return DO_NOT_CACHE;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
+     */
+    public void service(Connection conn) throws IOException {
+        ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
+        ApplicationInstance app = ci.getApplicationInstance();
+        conn.setContentType(ContentType.TEXT_XML);
+        if (app.hasMessagesQueued()) {
+//BUGBUG. debug code.            
+System.err.println("ASYNC=TRUE");
+            conn.getWriter().write("<asyncmonitor requestsync=\"true\"/>");
+        } else {
+System.err.println("async=false"); 
+            conn.getWriter().write("<asyncmonitor requestsync=\"false\"/>");
+        }
+    }
 }

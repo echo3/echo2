@@ -27,39 +27,38 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
-
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+package nextapp.echo2.app.async;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * A container of queued messages and message receivers.
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
-
-    /**
-     * Default constructor.
-     */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
-        
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
-    }
+public interface MessageProcessor {
     
     /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
+     * Retrieves the <code>MessageQueue</code> providing storage for
+     * messages between processings.
      * 
-     * @return a new <code>ApplicationInstance</code>
+     * @return the <code>MessageQueue</code>
      */
-    public abstract ApplicationInstance newApplicationInstance();
+    public MessageQueue getMessageQueue();
+    
+    /**
+     * Retrieves the <code>MessageRegistry</code> providing notification
+     * to listeners registered to process messages.
+     * 
+     * @return the <code>MessageRegistry</code>
+     */
+    public MessageRegistry getMessageRegistry();
+    
+    /**
+     * Determines the enabled state of the <code>MessageProcessor</code>.
+     * 
+     * @return true if the <code>MessageProcessor</code> is enabled
+     */
+    public boolean isEnabled();
+    
+    /**
+     * Processes received messages.
+     */
+    public void processMessages();
 }

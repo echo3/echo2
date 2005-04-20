@@ -105,6 +105,7 @@ public class TestPane extends ContentPane {
         testLaunchButtonsRow = new Row();
         controlsRow.add(testLaunchButtonsRow);
 
+        addTest("Asynchronous Updates", "AsynchronousTest");
         addTest("Button", "ButtonTest");
         addTest("Client Properties", "ClientPropertiesTest");
         //addTest("ContentPane", "ContentPaneTest");
@@ -138,6 +139,5 @@ public class TestPane extends ContentPane {
         button.setStyleName(Styles.DEFAULT_STYLE_NAME);
         button.addActionListener(commandActionListener);
         testLaunchButtonsRow.add(button);
-        
     }
 }

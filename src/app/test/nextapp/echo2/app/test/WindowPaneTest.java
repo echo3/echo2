@@ -51,8 +51,8 @@ public class WindowPaneTest extends TestCase {
         windowPane.add(new Label("a label"));
         windowPane.setPositionX(TestConstants.EXTENT_100_PX);
         windowPane.setPositionY(TestConstants.EXTENT_100_PX);
-        windowPane.processInput(WindowPane.INPUT_POSITION_X, TestConstants.EXTENT_200_PX);
-        windowPane.processInput(WindowPane.INPUT_POSITION_Y, TestConstants.EXTENT_30_PX);
+        windowPane.processInput(WindowPane.PROPERTY_POSITION_X, TestConstants.EXTENT_200_PX);
+        windowPane.processInput(WindowPane.PROPERTY_POSITION_Y, TestConstants.EXTENT_30_PX);
         assertEquals(TestConstants.EXTENT_200_PX, windowPane.getPositionX());
         assertEquals(TestConstants.EXTENT_30_PX, windowPane.getPositionY());
     }

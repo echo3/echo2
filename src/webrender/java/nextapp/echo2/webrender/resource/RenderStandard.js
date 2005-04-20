@@ -27,6 +27,66 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+// _____________________________
+// Object EchoAsyncMonitor
+
+function EchoAsyncMonitor() { }
+
+/**
+ * The time, in milleseconds, between polling requests.
+ */
+EchoAsyncMonitor.timeInterval = 400;
+
+//BUGBUG....make a "baseUri" that is available to EVERYONE.
+
+EchoAsyncMonitor.pollServiceRequest = "?serviceId=Echo.AsyncMonitor";
+
+EchoAsyncMonitor.timeoutId = null;
+
+EchoAsyncMonitor.connect = function() {
+    var response = new EchoXmlHttpResponse();
+    var request = new EchoXmlHttpRequest(EchoServerTransaction.baseUri + EchoAsyncMonitor.pollServiceRequest, 
+            null);
+    response.validResponseHandler = EchoAsyncMonitor.validResponseHandler;
+    response.invalidResponseHandler = EchoAsyncMonitor.invalidResponseHandler;
+    request.connect(response);
+};
+
+/**
+ * Processes an invalid response from the server.
+ */
+EchoAsyncMonitor.invalidResponseHandler = function() {
+    alert("Invalid response from server to asynchronous polling connection.");
+};
+
+EchoAsyncMonitor.start = function() {
+    if (!EchoServerTransaction.active) {
+        EchoAsyncMonitor.timeoutId = window.setTimeout("EchoAsyncMonitor.connect();", 
+                EchoAsyncMonitor.timeInterval);
+    }
+};
+
+EchoAsyncMonitor.stop = function() {
+    if (EchoAsyncMonitor.timeoutId) {
+        window.clearTimeout(EchoAsyncMonitor.timeoutId);
+        EchoAsyncMonitor.timeoutId = null;
+    }
+};
+
+/**
+ * Processes a valid response from the server.
+ *
+ * @param responseXml the XML message received from the server
+ */
+EchoAsyncMonitor.validResponseHandler = function(responseXml) {
+    if ("true" == responseXml.documentElement.getAttribute("requestsync")) {
+        EchoServerTransaction.connect();
+    } else {
+        EchoAsyncMonitor.start();
+    }
+    
+};
+
 // _______________________
 // Object EchoBlockingPane
 
@@ -573,7 +633,11 @@ EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, u
 EchoDomUtil.createDocument = function(namespaceUri, qualifiedName) {
     if (document.implementation && document.implementation.createDocument) {
         // DOM Level 2 Browsers
-        return document.implementation.createDocument(namespaceUri, qualifiedName, null);
+        var dom = document.implementation.createDocument(namespaceUri, qualifiedName, null);
+        if (!dom.documentElement) {
+            dom.appendChild(dom.createElement(qualifiedName));
+        }
+        return dom;
     } else if (window.ActiveXObject) {
         // Internet Explorer
         var createdDocument = new ActiveXObject("Microsoft.XMLDOM");
@@ -963,6 +1027,21 @@ EchoServerMessage.loadLibraries = function() {
 };
 
 /**
+ * Processes the server message.
+ * The processing is done asynchronously--this method will return before
+ * the processing has been completed.
+ */
+EchoServerMessage.process = function() {
+    EchoServerMessage.processPhase1();
+};
+
+EchoServerMessage.processAsyncConfig = function() {
+    if ("true" == EchoServerMessage.messageDocument.documentElement.getAttribute("async")) {
+        EchoAsyncMonitor.start();
+    }
+};
+
+/**
  * Processes all of the 'messagepart' directives contained in the server message.
  */
 EchoServerMessage.processMessageParts = function() {
@@ -989,19 +1068,19 @@ EchoServerMessage.processMessageParts = function() {
     }
 };
 
-/**
- * Processes the server message.
- * The processing is done asynchronously--this method will return before
- * the processing has been completed.
- */
-EchoServerMessage.process = function() {
+EchoServerMessage.processPhase1 = function() {
     EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
     EchoServerMessage.loadLibraries();
     if (EchoServerMessage.isLibraryLoadComplete()) {
-        EchoServerMessage.processMessageParts();
+        EchoServerMessage.processPhase2();
     } else {
         EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
     }
+};
+
+EchoServerMessage.processPhase2  = function() {
+    EchoServerMessage.processMessageParts();
+    EchoServerMessage.processAsyncConfig();
 };
 
 /**
@@ -1013,7 +1092,7 @@ EchoServerMessage.waitForLibraries = function() {
     if (EchoServerMessage.isLibraryLoadComplete()) {
         window.clearInterval(EchoServerMessage.backgroundIntervalId);
         EchoServerMessage.backgroundIntervalId = null;
-        EchoServerMessage.processMessageParts();
+        EchoServerMessage.processPhase2();
     }
 };
 
@@ -1047,6 +1126,7 @@ EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
  */
 EchoServerTransaction.connect = function() {
     EchoBlockingPane.activate();
+    EchoAsyncMonitor.stop();
     var response = new EchoXmlHttpResponse();
     var request = new EchoXmlHttpRequest(EchoServerTransaction.baseUri + EchoServerTransaction.synchronizeServiceRequest, 
             EchoClientMessage.messageDocument);

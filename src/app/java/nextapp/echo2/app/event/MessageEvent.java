@@ -27,39 +27,38 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.app.event;
 
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import java.util.EventObject;
+
+import nextapp.echo2.app.async.Message;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * An event indicating receipt of an asynchronous <code>Message</code>.
+ *
+ * @see nextapp.echo2.app.event.MessageListener
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
+public class MessageEvent extends EventObject {
 
+    private Message message;
+    
     /**
-     * Default constructor.
-     */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
-        
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
+     * Creates an ActionEvent.
+     *
+     * @param source the object from which the event originated
+     * @param message the message received
+     */ 
+    public MessageEvent(Object source, Message message) {
+        super(source);
+        this.message = message;
     }
     
     /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
+     * Returns the message received.
      * 
-     * @return a new <code>ApplicationInstance</code>
+     * @return the message
      */
-    public abstract ApplicationInstance newApplicationInstance();
+    public Message getMessage() {
+        return message;
+    }
 }

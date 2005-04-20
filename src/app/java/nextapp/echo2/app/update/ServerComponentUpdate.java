@@ -154,6 +154,23 @@ public class ServerComponentUpdate {
     }
     
     /**
+     * Cancels an update to a property.  A cancellation of a property update
+     * is performed when the update manager discovers that the state of a 
+     * property is already correct on the client.
+     * 
+     * @param propertyName the property update to cancel
+     */
+    public void cancelUpdateProperty(String propertyName) {
+        if (propertyUpdates == null) {
+            return;
+        }
+        propertyUpdates.remove(propertyName);
+        if (propertyUpdates.size() == 0) {
+            propertyUpdates = null;
+        }
+    }
+    
+    /**
      * Appends the removed descendant components of the given 
      * <code>ServerComponentUpdate</code> to this 
      * <code>ServerComponentUpdate</code>'s list of removed descendants.

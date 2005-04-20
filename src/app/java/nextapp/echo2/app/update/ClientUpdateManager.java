@@ -29,9 +29,9 @@
 
 package nextapp.echo2.app.update;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import nextapp.echo2.app.Component;
 
@@ -41,9 +41,9 @@ import nextapp.echo2.app.Component;
  * 
  * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
  */
-class ClientUpdateManager {
+public class ClientUpdateManager {
      
-    private List propertyUpdates = new ArrayList();
+    private Map clientUpdates = new HashMap();
     
     /**
      * Creates a new <Code>ClientUpdateManager</code>.
@@ -58,7 +58,31 @@ class ClientUpdateManager {
      * @param inputValue the value of the input property
      */
     void addPropertyUpdate(Component component, String inputName, Object inputValue) {
-        propertyUpdates.add(new ClientComponentUpdate(component, inputName, inputValue));
+        ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientUpdates.get(component);
+        if (clientUpdate == null) {
+            clientUpdate = new ClientComponentUpdate(component);
+            clientUpdates.put(component, clientUpdate);
+        }
+        clientUpdate.addInput(inputName, inputValue);
+    }
+    
+    /**
+     * Retrieves the <code>ClientComponentUpdate</code> object representing
+     * the specified <code>Component</code>, or null, if no client updates
+     * have been made to the <code>Component</code>.
+     * 
+     * @param component the <code>Component</code>
+     * @return the representing <code>ClientComponentUpdate</code>
+     */
+    public ClientComponentUpdate getUpdate(Component component) {
+        return (ClientComponentUpdate) clientUpdates.get(component); 
+    }
+    
+    /**
+     * Purges all updates from the <code>ClientUpdateManager</code>.
+     */
+    public void purge() {
+        clientUpdates.clear();
     }
     
     /**
@@ -69,11 +93,14 @@ class ClientUpdateManager {
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     void process() {
-        Iterator it = propertyUpdates.iterator();
-        while (it.hasNext()) {
-            ClientComponentUpdate update = (ClientComponentUpdate) it.next();
-            update.getComponent().processInput(update.getInputName(), update.getInputValue());
+        Iterator updateIt = clientUpdates.values().iterator();
+        while (updateIt.hasNext()) {
+            ClientComponentUpdate update = (ClientComponentUpdate) updateIt.next();
+            Iterator inputNameIt = update.getInputNames();
+            while (inputNameIt.hasNext()) {
+                String inputName = (String) inputNameIt.next();
+                update.getComponent().processInput(inputName, update.getInputValue(inputName));
+            }
         }
-        propertyUpdates.clear();
     }
 }

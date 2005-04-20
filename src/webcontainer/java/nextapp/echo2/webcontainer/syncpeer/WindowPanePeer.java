@@ -137,10 +137,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
         if ("positionX".equals(propertyName)) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.INPUT_POSITION_X, 
+            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_X, 
                     ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
         } else if ("positionY".equals(propertyName)) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.INPUT_POSITION_Y, 
+            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_Y, 
                     ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
         }
     }

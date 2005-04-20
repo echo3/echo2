@@ -40,6 +40,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.PropertyRenderRegistry;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RenderState;
@@ -121,7 +122,18 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     static {
         WebRenderServlet.getServiceRegistry().add(DRAG_PANE_SERVICE);
     }
+    
+    private PropertyRenderRegistry propertyRenderRegistry;
 
+    /**
+     * Default contructor.
+     */
+    public SplitPanePeer() {
+        super();
+        propertyRenderRegistry = new PropertyRenderRegistry();
+        //BUGBUG. add property renderers to registry.
+    }
+    
     /**
      * Calculates the pixel position of the separator.
      * 
@@ -190,6 +202,8 @@ System.err.println(component);
         return backgroundImage.getImage();
     }
 
+//BUGBUG. replace all INPUT_blah with PROPERTY_blah except for input-only properties.
+//BUGBUG. rename input-only properties to be prefaced with input or somesuch.
     /**
      * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
      *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
@@ -523,7 +537,9 @@ System.err.println(component);
         if (update.hasUpdatedLayoutDataChildren()) {
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
-            fullReplace = true;
+            if (!propertyRenderRegistry.canProcess(rc, update)) {
+                fullReplace = true;
+            }
         }
         
         if (fullReplace) {
@@ -531,9 +547,11 @@ System.err.println(component);
             DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
-            // Note that these render methods are called regardless of whether updates
-            renderRemoveChildren(rc, update);
-            renderAddChildren(rc, update);
+            propertyRenderRegistry.process(rc, update);
+            if (update.hasAddedChildren() || update.hasRemovedChildren()) {
+                renderRemoveChildren(rc, update);
+                renderAddChildren(rc, update);
+            }
         }
         
         updateRenderState(rc, update.getParent());

@@ -172,6 +172,9 @@ public abstract class Component {
         } else {
             children.add(n, c);
         }
+        
+        // Invoke registration lifecycle method.
+        c.init();
 
         // Notify PropertyChangeListeners of change.
         firePropertyChange(CHILDREN_CHANGED_PROPERTY, null, c);
@@ -188,6 +191,13 @@ public abstract class Component {
         }
         propertyChangeSupport.addPropertyChangeListener(l);
     }
+    
+    /**
+     * Lifecycle method invoked when the <code>Component</code> is removed 
+     * from a registered hierarchy.  Implementations should always invoke
+     * <code>super.dispose()</code>.
+     */
+    public void dispose() { }
     
     /**
      * Returns the component with the specified id.  The search is performed
@@ -559,6 +569,13 @@ public abstract class Component {
     }
     
     /**
+     * Lifecycle method invoked when the <code>Component</code> is added 
+     * to a registered hierarchy.  Implementations should always invoke
+     * <code>super.init()</code>.
+     */
+    public void init() { }
+    
+    /**
      * Determines if this <code>Component</code> is or is an ancestor of 
      * the specified <code>Component</code>.
      * 
@@ -641,6 +658,9 @@ public abstract class Component {
             // Do-nothing if component is not a child.
             return;
         }
+        
+        // Invoke disposal lifecycle method.
+        c.dispose();
 
         // Dissolve references between parent and child.
         children.remove(c);

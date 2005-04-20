@@ -27,39 +27,12 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
-
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+package nextapp.echo2.app.async;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * A handle interface representing a asynchronously received message.
+ * Implementors may extend as necessary to provide storage for message content.
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
+public interface Message {
 
-    /**
-     * Default constructor.
-     */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
-        
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
-    }
-    
-    /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
-     * 
-     * @return a new <code>ApplicationInstance</code>
-     */
-    public abstract ApplicationInstance newApplicationInstance();
 }

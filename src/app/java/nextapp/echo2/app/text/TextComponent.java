@@ -44,15 +44,17 @@ import nextapp.echo2.app.event.DocumentListener;
 public class TextComponent 
 extends Component {
     
-    public static final String INPUT_TEXT = "text";
-    
     public static final String PROPERTY_ALIGNMENT = "alignment";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
-    public static final String PROPERTY_DOCUMENT = "document";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_WIDTH = "width";
+    
+    public static final String DOCUMENT_CHANGED_PROPERTY = "document";
+    public static final String TEXT_CHANGED_PROPERTY = "text";
+    
+    private Document document;
     
     /**
      * Local listener to monitor changes to document.
@@ -63,7 +65,7 @@ extends Component {
          * @see nextapp.echo2.app.event.DocumentListener#documentUpdate(nextapp.echo2.app.event.DocumentEvent)
          */
         public void documentUpdate(DocumentEvent e) {
-            firePropertyChange(PROPERTY_DOCUMENT, null, null);
+            firePropertyChange(TEXT_CHANGED_PROPERTY, null, ((Document) e.getSource()).getText());
         }
     };
     
@@ -111,7 +113,7 @@ extends Component {
      * @return the model
      */
     public Document getDocument() {
-        return (Document) getProperty(PROPERTY_DOCUMENT);
+        return document;
     }
 
     /**
@@ -130,6 +132,16 @@ extends Component {
      */
     public Insets getInsets() {
         return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
+    /**
+     * Returns the text contained in the <code>Document</code> model of
+     * this text component.
+     * 
+     * @return the text contained in the document
+     */
+    public String getText() {
+        return document.getText();
     }
     
     /**
@@ -156,8 +168,8 @@ extends Component {
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
         
-        if (INPUT_TEXT.equals(inputName)) {
-            getDocument().setText((String) inputValue);
+        if (TEXT_CHANGED_PROPERTY.equals(inputName)) {
+            setText((String) inputValue);
         }
     }
     
@@ -202,7 +214,7 @@ extends Component {
             oldValue.removeDocumentListener(documentListener);
         }
         newValue.addDocumentListener(documentListener);
-        setProperty(PROPERTY_DOCUMENT, newValue);
+        document = newValue;
     }
     
     /**
@@ -221,6 +233,15 @@ extends Component {
      */
     public void setInsets(Insets newValue) {
         setProperty(PROPERTY_INSETS, newValue);
+    }
+    
+    /**
+     * Sets the text of document model of this text component.
+     * 
+     * @param newValue the new text
+     */
+    public void setText(String newValue) {
+        getDocument().setText(newValue);
     }
     
     /**

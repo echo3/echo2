@@ -27,39 +27,47 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.app.async;
 
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * Default <code>MessageQueue</code> implementation.
+ * Messages are stored in order, enabling FIFO processing.
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
+public class DefaultMessageQueue implements MessageQueue {
 
+    private List messageList = new ArrayList();
+    
     /**
-     * Default constructor.
+     * @see nextapp.echo2.app.async.MessageQueue#dequeueMessages()
      */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
+    public Message[] dequeueMessages() {
+        Message[] messages;
+        synchronized (messageList) {
+            messages = (Message[]) messageList.toArray(new Message[messageList.size()]);
+            messageList.clear();
+        }
         
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
+        return messages;
     }
     
     /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
-     * 
-     * @return a new <code>ApplicationInstance</code>
+     * @see nextapp.echo2.app.async.MessageQueue#enqueueMessage(nextapp.echo2.app.async.Message)
      */
-    public abstract ApplicationInstance newApplicationInstance();
+    public void enqueueMessage(Message message) {
+        synchronized (messageList) {
+            messageList.add(message);
+        }
+    }
+    
+    /**
+     * @see nextapp.echo2.app.async.MessageQueue#hasMessages()
+     */
+    public boolean hasMessages() {
+        synchronized (messageList) {
+            return messageList.size() > 0;
+        }
+    }
 }

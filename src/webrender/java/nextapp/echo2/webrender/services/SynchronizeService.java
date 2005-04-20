@@ -101,9 +101,10 @@ implements Service {
     private Document parseRequestDocument(Connection conn) 
     throws IOException {
         HttpServletRequest request =  conn.getRequest();
-        if (!request.getContentType().equals("text/xml")) {
-            throw new IOException("Invalid content type.");
-        }
+//BUGBUG. seems to break konqueror....temporarily removed (investigating konq support).
+//        if (!request.getContentType().equals("text/xml")) {
+//            throw new IOException("Invalid content type: " + request.getContentType());
+//        }
         InputStream in = null;
         try {
             in = request.getInputStream();
@@ -112,11 +113,11 @@ implements Service {
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(in);
         } catch (ParserConfigurationException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex.toString());
+            throw new IOException("Provided InputStream cannot be parsed: " + ex);
         } catch (SAXException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex.toString());
+            throw new IOException("Provided InputStream cannot be parsed: " + ex);
         } catch (IOException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex.toString());
+            throw new IOException("Provided InputStream cannot be parsed: " + ex);
         } finally {
             if (in != null) { try { in.close(); } catch (IOException ex) { } }
         }

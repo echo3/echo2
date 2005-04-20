@@ -30,6 +30,7 @@
 package nextapp.echo2.app.test;
 
 import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.DuplicateIdException;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
@@ -40,6 +41,21 @@ import junit.framework.TestCase;
  * Unit test(s) for the <code>nextapp.echo2.app.ApplicationInstance</code> object.
  */
 public class ApplicationInstanceTest extends TestCase {
+    
+    private class RegistrationTestComponent extends Component {
+        boolean initialized = false;
+        boolean disposed = false;
+        
+        public void dispose() {
+            super.dispose();
+            disposed = true;
+        }
+
+        public void init() {
+            super.init();
+            initialized = true;
+        }
+    }  
 
     private class IdLabel extends Label {
         
@@ -122,6 +138,30 @@ public class ApplicationInstanceTest extends TestCase {
         assertTrue(label.isRegistered());
         rowApp.getContentPane().remove(rowApp.getRow());
         assertFalse(label.isRegistered());
+    }
+    
+    /**
+     * Test component-application registration lifecycle methods, i.e.,
+     * <code>Component.init()</code> / <code>Component.dispose()</code>.
+     */
+    public void testRegistrationLifecycle() {
+        RegistrationTestComponent rtc = new RegistrationTestComponent();
+        RowApp rowApp = new RowApp();
+        rowApp.doInit();
+        Row row = rowApp.getRow();
+        
+        assertFalse(rtc.initialized);
+        assertFalse(rtc.disposed);
+        
+        row.add(rtc);
+        
+        assertTrue(rtc.initialized);
+        assertFalse(rtc.disposed);
+        
+        row.remove(rtc);
+        
+        assertTrue(rtc.initialized);
+        assertTrue(rtc.disposed);
     }
     
     /**

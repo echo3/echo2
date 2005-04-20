@@ -77,14 +77,14 @@ implements DomUpdateSupport, SynchronizePeer {
         public Component lastChild;
     }
     
-    protected PropertyRenderRegistry propertyRenderRegistry = new PropertyRenderRegistry();
+    protected PropertyRenderRegistry propertyRenderRegistry;
     
     /**
      * Default constructor.
      */
     public RowPeer() {
-        //BUGBUG. add registry property renderers for color, font.
-        propertyRenderRegistry.add(Row.PROPERTY_BORDER, new PropertyRenderRegistry.PropertyRender() {
+        propertyRenderRegistry = new PropertyRenderRegistry();
+        propertyRenderRegistry.add(Row.PROPERTY_BORDER, new PropertyRenderRegistry.PropertyRenderAdapter() {
             
             /**
              * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
@@ -96,7 +96,7 @@ implements DomUpdateSupport, SynchronizePeer {
                 BorderRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(row), border);
             }
         });
-        propertyRenderRegistry.add(Row.PROPERTY_INSETS, new PropertyRenderRegistry.PropertyRender() {
+        propertyRenderRegistry.add(Row.PROPERTY_INSETS, new PropertyRenderRegistry.PropertyRenderAdapter() {
 
             /**
              * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
@@ -109,6 +109,8 @@ implements DomUpdateSupport, SynchronizePeer {
                         "padding", insets);
             }
         });
+        
+        //BUGBUG. add registry property renderers for color, font.
     }
     
     /**
@@ -331,7 +333,7 @@ implements DomUpdateSupport, SynchronizePeer {
             // BUGBUG. performing unnecessary full replace on layout changes.
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
-            if (!propertyRenderRegistry.canProcess(update)) {
+            if (!propertyRenderRegistry.canProcess(rc, update)) {
                 fullReplace = true;
             }
         }

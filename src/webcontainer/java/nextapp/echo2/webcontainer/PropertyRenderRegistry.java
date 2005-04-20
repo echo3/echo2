@@ -51,6 +51,8 @@ public class PropertyRenderRegistry {
      */
     public static interface PropertyRender {
         
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update);
+        
         /**
          * @param rc the relevant <code>RenderContext</code>
          * @param update the <code>ServerComponentUpdate</code> to be 
@@ -58,7 +60,23 @@ public class PropertyRenderRegistry {
          */
         public void renderProperty(RenderContext rc, ServerComponentUpdate update);
     }
-
+    
+    /**
+     * Base implementation of a <code>PropertyRender</code> which provides a
+     * default implementation of <code>canRenderProperty()</code> which always 
+     * returns true.
+     */
+    public static abstract class PropertyRenderAdapter 
+    implements PropertyRender {
+        
+        /**
+         * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+            return true;
+        }
+    }
+    
     private Map registry = null;
 
     /**
@@ -78,17 +96,21 @@ public class PropertyRenderRegistry {
      * Determines if this <code>PropertyRenderRegistry</code> has renderers
      * to update all changed properties specified in <code>update</code>.
      * 
+     * @param rc the relevant <code>RenderContext</code>
      * @param update the update
      * @return true if this registry is capable of performing all the 
      *         described property updates
      */
-    public boolean canProcess(ServerComponentUpdate update) {
+    public boolean canProcess(RenderContext rc, ServerComponentUpdate update) {
         if (registry == null) {
             return false;
         }
         String[] propertyNames = update.getUpdatedPropertyNames();
         for (int i = 0; i < propertyNames.length; ++i) {
-            if (!registry.containsKey(propertyNames[i])) {
+            PropertyRender propertyRender = (PropertyRender) registry.get(propertyNames[i]);
+            if (propertyRender == null) {
+                return false;
+            } else if (!propertyRender.canRenderProperty(rc, update)) {
                 return false;
             }
         }

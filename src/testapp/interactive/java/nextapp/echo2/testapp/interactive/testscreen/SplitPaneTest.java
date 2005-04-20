@@ -274,6 +274,16 @@ public class SplitPaneTest extends SplitPane {
         controlsRow.add(new Label("Configure SplitPane"));
         groupContainerRow.add(controlsRow);
         
+        controlsRow.addButton("Set Separator Position = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setSeparatorPosition(null);
+            }
+        });
+        controlsRow.addButton("Set Separator Position = 300px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setSeparatorPosition(new Extent(300));
+            }
+        });
         controlsRow.addButton("Swap Orientation", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getOrienation() == SplitPane.ORIENTATION_VERTICAL) {

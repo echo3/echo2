@@ -82,13 +82,15 @@ public class ServerUpdateManager {
 
     private Map componentUpdateMap = new HashMap();
     private ServerComponentUpdate fullRefreshUpdate = null;
+    private ClientUpdateManager clientUpdateManager;
     
     /**
      * Creates a new <code>ServerUpdateManager</code>.
      * 
-     * <strong>Warning:</strong> the <code>dispose()</code> method must
-     * be called by the creator before the <code>ServerUpdateManager</code> 
-     * is dereferenced.
+     * <strong>Warning:</strong> the <code>init()</code> method must be 
+     * invoked before the <code>ServerUpdateManager</code> is used.
+     * 
+     * @see #init(nextapp.echo2.app.update.ClientUpdateManager)
      */
     public ServerUpdateManager() {
         super();
@@ -134,6 +136,17 @@ public class ServerUpdateManager {
             Arrays.sort(serverComponentUpdates, hierarchyDepthUpdateComparator);
             return serverComponentUpdates;
         }
+    }
+    
+    /**
+     * Initialization life-cycle method.  Must be invoked before using 
+     * the <code>ServerUpdateManager</code>.
+     * 
+     * @param clientUpdateManager the <code>ClientUpdateManager</code> that
+     *        will be used to procss input from the client
+     */
+    public void init(ClientUpdateManager clientUpdateManager) {
+        this.clientUpdateManager = clientUpdateManager;
     }
     
     /**
@@ -286,6 +299,24 @@ public class ServerUpdateManager {
             // Do nothing.
             return;
         }
+        
+        // Do not add update (and if necessary cancel any update) if the property is being updated
+        // as the result of input from the client (and thus client and server state of property are
+        // already synchronized).
+        ClientComponentUpdate clientComponentUpdate = clientUpdateManager.getUpdate(updatedComponent);
+        if (clientComponentUpdate != null) {
+            if (clientComponentUpdate.hasInput(propertyName)) {
+                Object inputValue = clientComponentUpdate.getInputValue(propertyName);
+                if (inputValue == newValue || (inputValue != null && inputValue.equals(newValue))) {
+                    ServerComponentUpdate update = (ServerComponentUpdate) componentUpdateMap.get(updatedComponent);
+                    if (update != null) {
+                        update.cancelUpdateProperty(propertyName);
+                    }
+                    return;
+                }
+            }
+        }
+        
         ServerComponentUpdate update = createComponentUpdate(updatedComponent);
         update.updateProperty(propertyName, oldValue, newValue);
     }

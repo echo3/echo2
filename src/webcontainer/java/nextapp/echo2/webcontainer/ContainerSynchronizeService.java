@@ -40,6 +40,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.server.Connection;
@@ -130,7 +131,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             ContainerInstance ci = (ContainerInstance) userInstance;
             Element actionElement = DomUtil.getChildElementByTagName(messagePartElement, "action");
             String componentId = actionElement.getAttribute("componentid");
-            Component component =ci.getComponentByElementId(componentId);
+            Component component = ci.getComponentByElementId(componentId);
             SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
             if (!(syncPeer instanceof ActionProcessor)) {
                 throw new IllegalStateException("Target peer is not an ActionProcessor.");
@@ -178,9 +179,10 @@ public class ContainerSynchronizeService extends SynchronizeService {
      */
     private void processServerUpdates(RenderContext rc) {
         UpdateManager updateManager = rc.getContainerInstance().getUpdateManager();
+        ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
         ServerComponentUpdate[] componentUpdates = updateManager.getServerComponentUpdates();
         
-        if (updateManager.isFullRefreshRequired()) {
+        if (serverUpdateManager.isFullRefreshRequired()) {
             //BUGBUG. hardcoded to window 0.
             Window window = rc.getContainerInstance().getApplicationInstance().getWindows()[0];
             ServerComponentUpdate fullRefreshUpdate = componentUpdates[0];
@@ -229,8 +231,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 }
             }
         }
-        
-        updateManager.purgeServerUpdates();
     }
     
     /**
@@ -243,16 +243,18 @@ public class ContainerSynchronizeService extends SynchronizeService {
         try {
             ApplicationInstance.setActive(applicationInstance);
             processClientMessage(conn, clientMessageDocument);
-            ContainerInstance ci = rc.getContainerInstance();
-            ci.getUpdateManager().purgeServerUpdates();
-            Window window = ci.getApplicationInstance().getWindows()[0];
+            applicationInstance.getUpdateManager().purge();
+
+            Window window = applicationInstance.getWindows()[0];
             ContentPane content = window.getContent();
+            
             ServerComponentUpdate componentUpdate = new ServerComponentUpdate(content);
             SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(content.getClass());
             SynchronizePeer parentSyncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);
+            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasMessageProcessors());
             return rc.getServerMessage();
         } finally {
             ApplicationInstance.setActive(null);
@@ -265,17 +267,28 @@ public class ContainerSynchronizeService extends SynchronizeService {
      */
     protected ServerMessage renderUpdate(Connection conn, Document clientMessageDocument) {
         RenderContext rc = new RenderContextImpl(conn);
+        
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+
+        
         try {
             // Mark instance as active.
             ApplicationInstance.setActive(applicationInstance);
             
+            UpdateManager updateManager = applicationInstance.getUpdateManager();
+            
             // Process updates from client.
             processClientMessage(conn, clientMessageDocument);
-            rc.getContainerInstance().getUpdateManager().processClientUpdates();
+            updateManager.processClientUpdates();
+            applicationInstance.processMessages();
             
             // Process updates from server.
             processServerUpdates(rc);
+            
+            //BUGBUG. experimental.
+            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasMessageProcessors());
+
+            updateManager.purge();
             
             // Return generated ServerMessage.
             return rc.getServerMessage();

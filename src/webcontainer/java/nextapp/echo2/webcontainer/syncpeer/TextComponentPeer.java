@@ -43,6 +43,7 @@ import nextapp.echo2.app.text.TextComponent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.PropertyRenderRegistry;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
@@ -78,6 +79,16 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     
     static {
         WebRenderServlet.getServiceRegistry().add(TEXT_COMPONENT_SERVICE);
+    }
+    
+    private PropertyRenderRegistry propertyRenderRegistry;
+    
+    /**
+     * Default constructor.
+     */
+    public TextComponentPeer() {
+        propertyRenderRegistry = new PropertyRenderRegistry();
+        //BUGBUG. add property renderers to registry.
     }
     
     /**
@@ -145,9 +156,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
-        if (TextComponent.INPUT_TEXT.equals(propertyName)) {
+        if (TextComponent.TEXT_CHANGED_PROPERTY.equals(propertyName)) {
             String propertyValue = DomUtil.getElementText(propertyElement);
-            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.INPUT_TEXT, propertyValue);
+            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.TEXT_CHANGED_PROPERTY, propertyValue);
         }
     }
 
@@ -174,8 +185,21 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
-        renderAdd(rc, update, targetId, update.getParent());
+        boolean fullReplace = false;
+        if (update.hasUpdatedProperties()) {
+            if (!propertyRenderRegistry.canProcess(rc, update)) {
+                fullReplace = true;
+            }
+        }
+        
+        if (fullReplace) {
+            // Perform full update.
+            DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+            renderAdd(rc, update, targetId, update.getParent());
+        } else {
+            propertyRenderRegistry.process(rc, update);
+        }
+        
         return false;
     }
 }

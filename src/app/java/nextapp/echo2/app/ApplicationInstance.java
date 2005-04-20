@@ -34,12 +34,14 @@ import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import nextapp.echo2.app.async.MessageProcessor;
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
 
@@ -50,7 +52,7 @@ public abstract class ApplicationInstance
 implements Serializable {
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0alpha4";
+    public static final String ID_STRING = "NextApp Echo v2.0alpha4+";
 
     /** 
      * Holds a thread local reference to the active ApplicationInstance for
@@ -58,9 +60,9 @@ implements Serializable {
      */ 
     private static final ThreadLocal activeInstance = new InheritableThreadLocal();
 
-    public static final String PROPERTY_FOCUSED_COMPONENT = "focusedComponent";
-    public static final String PROPERTY_LOCALE = "locale";
-    public static final String PROPERTY_WINDOWS = "windows";
+    public static final String FOCUSED_COMPONENT_CHANGED_PROPERTY = "focusedComponent";
+    public static final String LOCALE_CHANGED_PROPERTY = "locale";
+    public static final String WINDOWS_CHANGED_PROPERTY = "windows";
     
     /**
      * Returns a reference to the <code>ApplicationInstance</code> that is 
@@ -87,19 +89,36 @@ implements Serializable {
      */
     private WeakReference focusedComponent;
 
-    /** The default locale of the component. */
+    /** 
+     * The default locale of the component. 
+     */
     Locale locale;
 
-    /** Contextual data */
+    /** 
+     * Contextual data 
+     */
     private Map context;
     
+    /**
+     * Mapping between the ids of all registered components and the components
+     * themselves.
+     */
     private Map idToComponentMap;
+    
+    /**
+     * Mapping between application-defined 'keys' and 
+     * <code>MessageProcessor</code>s.
+     */
+    private HashMap messageProcessorMap;
     
     /**
      * Fires property change events for the instance object.
      */
     private PropertyChangeSupport propertyChangeSupport;
 
+    /**
+     * The <code>UpdateManager</code> handling updates from this application.
+     */
     private UpdateManager updateManager;
     
     /**
@@ -107,10 +126,13 @@ implements Serializable {
      */
     private List windows;
     
+    /**
+     * The <code>StyleSheet</code> used by the application.
+     */
     private StyleSheet styleSheet;
     
-    /**
-     * Creates an <code>ApplicationInstance</code>.
+    /** 
+     * Creates an <code>ApplicationInstance</code>. 
      */
     public ApplicationInstance() {
         super();
@@ -119,7 +141,28 @@ implements Serializable {
         idToComponentMap = new HashMap();
         windows = new ArrayList();
     }
+
+    /**
+     * Adds a <code>MessageProcessor</code> to the application.
+     * 
+     * @param key a unique identifier to represent this 
+     *        <code>MessageProcessor</code> (typically, though not necessarily,
+     *        a String)
+     * @param messageProcesor the <code>MessageProcessor</code> to add
+     */
+    public void addMessageProcessor(Object key, MessageProcessor messageProcessor) {
+        if (messageProcessorMap == null) {
+            messageProcessorMap = new HashMap();
+        }
+        messageProcessorMap.put(key, messageProcessor);
+    }
     
+    /**
+     * Adds a <code>PropertyChangeListener</code> to receive notification of
+     * application-level property changes.
+     * 
+     * @param l the listener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener l) {
         propertyChangeSupport.addPropertyChangeListener(l);
     }
@@ -133,17 +176,19 @@ implements Serializable {
         if (windows.size() > 0) {
             throw new UnsupportedOperationException("Current support is limited to a single top-level window.");
         }
-        
+
         if (!windows.contains(window)) {
             windows.add(window);
             window.setApplicationInstance(this);
-            firePropertyChange(PROPERTY_WINDOWS, null, window);
+            firePropertyChange(WINDOWS_CHANGED_PROPERTY, null, window);
         }
     }
     
     /**
      * Initializes the <code>ApplicationInstance</code>.
      * This method should be invoked from the application container.
+     * 
+     * @return the initial <code>Window</code> of the application
      */
     public Window doInit() {
         Window mainWindow = init();
@@ -174,7 +219,7 @@ implements Serializable {
             doValidation(c.getComponent(index));
         }
     }
-
+    
     /**
      * Reports a bound property change.
      *
@@ -234,6 +279,31 @@ implements Serializable {
     }
     
     /**
+     * Returns the <code>MessageProcessor</code> attached to the application
+     * with the given key value.
+     * 
+     * @param the key value assigned to the <code>MessageProcessor</code> when
+     *        it was added to the application
+     * @return the <code>MessageProcessor</code>, or null if none exists
+     */
+    public MessageProcessor getMessageProcessor(Object key) {
+        return messageProcessorMap == null ? null : (MessageProcessor) messageProcessorMap.get(key);
+    }
+    
+    /**
+     * Returns an <code>Iterator</code> over the keys of all attached 
+     * <code>MessageProcessor</code>s.  Note that any <code>Object</code>
+     * can be used as a key for a <code>MessageProcessor</code> so it is
+     * not safe to cast the keys.
+     * 
+     * @return an <code>Iterator</code> over the keys of all attached
+     * <code>MessageProcessor</code>s
+     */
+    public Iterator getMessageProcessorKeys() {
+        return Collections.unmodifiableSet(messageProcessorMap.keySet()).iterator();
+    }
+    
+    /**
      * Retrieves the style for the specified specified class of 
      * component / style name.
      * 
@@ -269,6 +339,47 @@ implements Serializable {
      */
     public Window[] getWindows() {
         return (Window[]) windows.toArray(new Window[windows.size()]);
+    }
+    
+    /**
+     * Determines if the application has any enabled 
+     * <code>MessageProcessor</code>s attached.
+     * 
+     * @return true if one or more active <code>MessageProcessor</code>s are
+     *         attached to the application.
+     */
+    public boolean hasMessageProcessors() {
+        if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
+            return false;
+        }
+        Iterator it = messageProcessorMap.values().iterator();
+        while (it.hasNext()) {
+            MessageProcessor messageProcessor = (MessageProcessor) it.next();
+            if (messageProcessor.isEnabled()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Determines if any <code>Message</code>s are in the queues of any 
+     * attached and enabled <code>MessageProcessor</code>s.
+     * 
+     * @return true if messages are waiting to be processed
+     */
+    public boolean hasMessagesQueued() {
+        if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
+            return false;
+        }
+        Iterator it = messageProcessorMap.values().iterator();
+        while (it.hasNext()) {
+            MessageProcessor messageProcessor = (MessageProcessor) it.next();
+            if (messageProcessor.getMessageQueue().hasMessages()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -312,6 +423,24 @@ implements Serializable {
     }
 
     /**
+     * Processes queued messages in the queues of all enabled
+     * <code>MessageProcessor</code>s.  This method may only be invoked
+     * from within a UI thread.
+     */
+    public void processMessages() {
+        if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
+            return;
+        }
+        Iterator it = messageProcessorMap.values().iterator();
+        while (it.hasNext()) {
+            MessageProcessor messageProcessor = (MessageProcessor) it.next();
+            if (messageProcessor.isEnabled()) {
+                messageProcessor.processMessages();
+            }
+        }
+    }
+    
+    /**
      * Registers a component with the <code>ApplicationInstance</code>.
      * <p>
      * This method is invoked by <code>Component.setApplicationInstance()</code>
@@ -329,8 +458,19 @@ implements Serializable {
     }
     
     /**
-     * Removes a <code>PropertyChangeListener</code> from being notified of
-     * property changes.
+     * Removes a <code>MessageProcessor</code> from the application. 
+     * 
+     * @param key the key indicating the 
+     */
+    public void removeMessageProcessor(Object key) {
+        if (messageProcessorMap != null) {
+            messageProcessorMap.remove(key);
+        }
+    }
+    
+    /**
+     * Removes a <code>PropertyChangeListener</code> from receiving 
+     * notification of application-level property changes.
      * 
      * @param l the listener to remove
      */
@@ -369,7 +509,7 @@ implements Serializable {
         } else {
             focusedComponent = new WeakReference(newValue);
         }
-        propertyChangeSupport.firePropertyChange(PROPERTY_FOCUSED_COMPONENT, oldValue, newValue);
+        propertyChangeSupport.firePropertyChange(FOCUSED_COMPONENT_CHANGED_PROPERTY, oldValue, newValue);
     }
 
     /**

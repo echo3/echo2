@@ -27,39 +27,21 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.app.event;
 
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import java.util.EventListener;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * The listener interface for receiving message events.
+ *
+ * @see nextapp.echo2.app.event.MessageEvent
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
-
-    /**
-     * Default constructor.
-     */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
-        
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
-    }
+public interface MessageListener extends EventListener {
     
     /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
-     * 
-     * @return a new <code>ApplicationInstance</code>
+     * Invoked when a message is received.
+     *
+     * @param e the received <code>MessageEvent</code>
      */
-    public abstract ApplicationInstance newApplicationInstance();
+    public void messageReceived(MessageEvent e);
 }

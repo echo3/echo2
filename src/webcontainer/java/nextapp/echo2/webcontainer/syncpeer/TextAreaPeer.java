@@ -61,7 +61,7 @@ public class TextAreaPeer extends TextComponentPeer {
         Element textAreaElement = parent.getOwnerDocument().createElement("textarea");
         textAreaElement.setAttribute("id", elementId);
         
-        String value = textArea.getDocument().getText();
+        String value = textArea.getText();
         if (value != null) {
             if (rc.getContainerInstance().getClientProperties().getBoolean(
                     ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {

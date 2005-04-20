@@ -44,9 +44,7 @@ package nextapp.echo2.app;
  */
 public class WindowPane extends Component {
     
-    public static final String INPUT_CLOSE = "close";
-    public static final String INPUT_POSITION_X = "positionX";
-    public static final String INPUT_POSITION_Y = "positionY";
+    public static final String INPUT_CLOSE = "input_close";
     
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CLOSE_ICON = "closeIcon";
@@ -270,9 +268,9 @@ public class WindowPane extends Component {
     public void processInput(String inputName, Object inputValue) {
         if (INPUT_CLOSE.equals(inputName)) {
             userClose();
-        } else if (INPUT_POSITION_X.equals(inputName)) {
+        } else if (PROPERTY_POSITION_X.equals(inputName)) {
             setPositionX((Extent) inputValue);
-        } else if (INPUT_POSITION_Y.equals(inputName)) {
+        } else if (PROPERTY_POSITION_Y.equals(inputName)) {
             setPositionY((Extent) inputValue);
         }
     }

@@ -27,39 +27,44 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.app.async;
 
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.app.event.MessageEvent;
+import nextapp.echo2.app.event.MessageListener;
 
 /**
- * Web container <code>HttpServlet</code> implementation.
- * An Echo application should provide an derivative of this
- * class which is registered in the web application
- * deployment descriptor.
+ * A registry of <code>MessageEventListener</code>s to provide message
+ * notification for a specific <code>MessageProcessor</code>.
  */
-public abstract class WebContainerServlet extends WebRenderServlet {
-
-    /**
-     * Default constructor.
-     */
-    public WebContainerServlet() {
-        super();
-        ServiceRegistry serviceRegistry = getServiceRegistry();
-        
-        //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
-        // especially considering 90% of Echo2 services are global.
-        serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
-        serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
-    }
+public interface MessageRegistry {
     
     /**
-     * Creates a new <code>ApplicationInstance</code> for visitor to an 
-     * application.
+     * Adds a <code>MessageListener</code> to receive notifications 
+     * about new messages.
      * 
-     * @return a new <code>ApplicationInstance</code>
+     * @param l the listener to add
      */
-    public abstract ApplicationInstance newApplicationInstance();
+    public void addMessageListener(MessageListener l);
+    
+    /**
+     * Notifies listeners of a <code>MessageEvent</code>.
+     * 
+     * @param e the <code>MessageEvent</code>
+     */
+    public void fireMessageEvent(MessageEvent e);
+    
+    /** 
+     * Determines if the queue has any listeners.
+     * 
+     * @return true if any <code>MessageListener</code>s are registered
+     */
+    public boolean hasMessageListeners();
+
+    /**
+     * Removes a <code>MessageListener</code> from receiving notifications 
+     * about new messages.
+     * 
+     * @param l the listener to remove
+     */
+    public void removeMessageListener(MessageListener l);
 }

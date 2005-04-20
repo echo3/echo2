@@ -37,6 +37,7 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
+import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.layout.RowLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.update.UpdateManager;
@@ -64,7 +65,7 @@ public class UpdateManagerTest extends TestCase  {
      */
     public void testUpdateSorting1() {
         ServerComponentUpdate[] componentUpdates;
-        manager.purgeServerUpdates();
+        manager.purge();
 
         rowApp.getLabel().setBackground(Color.BLUE);
         rowApp.getContentPane().setBackground(Color.RED);
@@ -86,7 +87,7 @@ public class UpdateManagerTest extends TestCase  {
         rowApp.getRow().add(row2);
         Label label2 = new Label();
         row2.add(label2);
-        manager.purgeServerUpdates();
+        manager.purge();
 
         rowApp.getLabel().setBackground(Color.BLUE);
         rowApp.getContentPane().setBackground(Color.RED);
@@ -108,7 +109,7 @@ public class UpdateManagerTest extends TestCase  {
     public void testAddChlidToAddedParent() {
         ServerComponentUpdate[] componentUpdates;
         Component[] addedChildren;
-        manager.purgeServerUpdates();
+        manager.purge();
 
         // Add a row.
         Row row1 = new Row();
@@ -156,7 +157,7 @@ public class UpdateManagerTest extends TestCase  {
         ServerComponentUpdate[] componentUpdates;
         RowLayoutData rowLayoutData;
  
-        manager.purgeServerUpdates();
+        manager.purge();
         
         // Setup.
         Row row = new Row();
@@ -171,7 +172,7 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(1, componentUpdates.length);
         assertEquals(false, componentUpdates[0].hasUpdatedLayoutDataChildren());
         
-        manager.purgeServerUpdates();
+        manager.purge();
         
         rowLayoutData = new RowLayoutData();
         rowLayoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
@@ -188,43 +189,56 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(1, components.length);
         assertEquals(label1, components[0]);
     }
-
-    //BUGBUG. This test is now bogus, at least until we solve the issue of 
-    // how exactly windows are added to the update queue.
-    // Right now they are being added with a property change update....which doesn't
-    // block child updates....hence this test failing.
-    /*
-    public void testSimple() {
-        ServerComponentUpdate[] componentUpdates;
-        Component[] addedChildren;
+    
+    public void testPropertyUpdateCancellation1() {
+        TextField textField = new TextField();
+        rowApp.getRow().add(textField);
         
-        assertEquals(1, manager.getServerComponentUpdates().length);
-System.err.println(manager.getServerComponentUpdates()[0]);        
+        manager.purge();
+        manager.addClientPropertyUpdate(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
+        manager.processClientUpdates();
         
-        rowApp.getLabel().setBackground(Color.GREEN);
-        componentUpdates = manager.getServerComponentUpdates();
-        
-System.err.println(componentUpdates[0].getParent().isAncestorOf(rowApp.getLabel()));        
-        
-System.err.println(componentUpdates[0]);        
-System.err.println(componentUpdates[1]);        
-        assertEquals(1, componentUpdates.length);
-        
-        addedChildren = componentUpdates[0].getAddedChildren();
-        assertEquals(1, addedChildren.length);
-        assertEquals(rowApp.getContentPane(), addedChildren[0]);
-
-        rowApp.getRow().remove(rowApp.getLabel());
-        
-        componentUpdates = manager.getServerComponentUpdates();
-        assertEquals(1, componentUpdates.length);
+        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(0, componentUpdates.length);
     }
-    */
+    
+    public void testPropertyUpdateCancellation2() {
+        TextField textField = new TextField();
+        rowApp.getRow().add(textField);
         
+        manager.purge();
+        textField.setBackground(Color.BLUE);
+        manager.addClientPropertyUpdate(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
+        manager.processClientUpdates();
+        
+        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(1, componentUpdates.length);
+        ServerComponentUpdate.PropertyUpdate backgroundUpdate = 
+                  componentUpdates[0].getUpdatedProperty(TextField.PROPERTY_BACKGROUND);
+        assertNotNull(backgroundUpdate);
+        assertEquals(Color.BLUE, backgroundUpdate.getNewValue());
+        assertNull(componentUpdates[0].getUpdatedProperty(TextField.TEXT_CHANGED_PROPERTY));
+    }
+    
+    public void testPropertyUpdateCancellation3() {
+        TextField textField = new TextField();
+        rowApp.getRow().add(textField);
+        
+        manager.purge();
+        textField.setText("first the application set it to this.");
+        manager.addClientPropertyUpdate(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
+        manager.processClientUpdates();
+        
+        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(1, componentUpdates.length);
+        assertFalse(componentUpdates[0].hasUpdatedProperties());
+    }
+    
+    
     public void testPropertyUpdate() {
         ServerComponentUpdate[] componentUpdates;
         // Remove previous updates.
-        manager.purgeServerUpdates();
+        manager.purge();
         
         // Update text property of label and verify.
         rowApp.getLabel().setText("Hi there");
@@ -250,8 +264,9 @@ System.err.println(componentUpdates[1]);
     }
     
     public void testPurge() {
-        manager.purgeServerUpdates();
-        assertEquals(0, manager.getServerComponentUpdates().length);
+        assertFalse(manager.getServerComponentUpdates().length == 0);
+        manager.purge();
+        assertTrue(manager.getServerComponentUpdates().length == 0);
     }
 
     public void testRemove1() {
@@ -259,7 +274,7 @@ System.err.println(componentUpdates[1]);
         Label label = new Label();
         row.add(label);
         rowApp.getRow().add(row);
-        manager.purgeServerUpdates();
+        manager.purge();
         
         rowApp.getRow().remove(row);
         
@@ -285,7 +300,7 @@ System.err.println(componentUpdates[1]);
         Label label = new Label();
         row2.add(label);
         rowApp.getRow().add(row1);
-        manager.purgeServerUpdates();
+        manager.purge();
         
         row1.remove(row2);
         rowApp.getRow().remove(row1);
