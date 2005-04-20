@@ -348,7 +348,7 @@ implements Serializable {
      * @return true if one or more active <code>MessageProcessor</code>s are
      *         attached to the application.
      */
-    public boolean hasMessageProcessors() {
+    public boolean hasEnabledMessageProcessors() {
         if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
             return false;
         }
