@@ -32,12 +32,11 @@
 
 function EchoAsyncMonitor() { }
 
+//BUGBUG. Make interval configurable.
 /**
  * The time, in milleseconds, between polling requests.
  */
-EchoAsyncMonitor.timeInterval = 400;
-
-//BUGBUG....make a "baseUri" that is available to EVERYONE.
+EchoAsyncMonitor.timeInterval = 500;
 
 EchoAsyncMonitor.pollServiceRequest = "?serviceId=Echo.AsyncMonitor";
 
@@ -45,7 +44,7 @@ EchoAsyncMonitor.timeoutId = null;
 
 EchoAsyncMonitor.connect = function() {
     var response = new EchoXmlHttpResponse();
-    var request = new EchoXmlHttpRequest(EchoServerTransaction.baseUri + EchoAsyncMonitor.pollServiceRequest, 
+    var request = new EchoXmlHttpRequest(EchoClientEngine.baseServerUri + EchoAsyncMonitor.pollServiceRequest, 
             null);
     response.validResponseHandler = EchoAsyncMonitor.validResponseHandler;
     response.invalidResponseHandler = EchoAsyncMonitor.invalidResponseHandler;
@@ -170,6 +169,32 @@ EchoBlockingPane.setDelayMessage = function(setDelayMessageElement) {
     for (i = 0; i < setDelayMessageElement.childNodes.length; ++i) {
         blockingPane.appendChild(EchoDomUtil.importNode(document, setDelayMessageElement.childNodes[i], true));
     }
+};
+
+// _______________________
+// Object EchoClientEngine
+
+function EchoClientEngine() { }
+
+EchoClientEngine.baseServerUri;
+
+EchoClientEngine.init = function(baseServerUri) {
+    // Store base URI.
+    EchoClientEngine.baseServerUri = baseServerUri;
+    
+    // Launch debug window if requested in URI.
+    if (window.location.search && window.location.search.toLowerCase().indexOf("debug") != -1) {
+        EchoDebugManager.launch();
+    }
+
+    // Confiugre initial client message.
+    EchoClientMessage.setInitialize();
+    
+    // Acquire client information.
+    EchoClientProperties.acquire();
+    
+    // Synchronize initial state from server.
+    EchoServerTransaction.connect();
 };
 
 // ________________________
@@ -299,14 +324,7 @@ EchoClientMessage.setPropertyValue = function(componentId, propertyName, newValu
 };
 
 EchoClientMessage.setInitialize = function() {
-    //BUGBUG. The following line is temporary...should be moved to general initialization code.
-    if (window.location.search && window.location.search.toLowerCase().indexOf("debug") != -1) {
-        EchoDebugManager.launch();
-    }
-
     EchoClientMessage.messageDocument.documentElement.setAttribute("type", "initialize");
-    EchoClientProperties.acquire();
-    
 };
 
 // ___________________________
@@ -403,7 +421,7 @@ EchoDebugManager.consoleWrite = function(message) {
 };
 
 EchoDebugManager.launch = function() {
-    EchoDebugManager.debugWindow = window.open(EchoServerTransaction.baseUri + "?serviceId=Echo.Debug", "EchoDebug", 
+    EchoDebugManager.debugWindow = window.open(EchoClientEngine.baseServerUri + "?serviceId=Echo.Debug", "EchoDebug", 
             "width=400,height=650,resizable=yes", true);
 };
 
@@ -1115,8 +1133,6 @@ function EchoServerTransaction() { }
  */
 EchoServerTransaction.active = false;
 
-EchoServerTransaction.baseUri = null;
-
 EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
 
 /**
@@ -1128,7 +1144,7 @@ EchoServerTransaction.connect = function() {
     EchoBlockingPane.activate();
     EchoAsyncMonitor.stop();
     var response = new EchoXmlHttpResponse();
-    var request = new EchoXmlHttpRequest(EchoServerTransaction.baseUri + EchoServerTransaction.synchronizeServiceRequest, 
+    var request = new EchoXmlHttpRequest(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
             EchoClientMessage.messageDocument);
     response.validResponseHandler = EchoServerTransaction.validResponseHandler;
     response.invalidResponseHandler = EchoServerTransaction.invalidResponseHandler;

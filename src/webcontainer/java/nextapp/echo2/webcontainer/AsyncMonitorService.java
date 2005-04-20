@@ -71,11 +71,8 @@ implements Service {
         ApplicationInstance app = ci.getApplicationInstance();
         conn.setContentType(ContentType.TEXT_XML);
         if (app.hasMessagesQueued()) {
-//BUGBUG. debug code.            
-System.err.println("ASYNC=TRUE");
             conn.getWriter().write("<asyncmonitor requestsync=\"true\"/>");
         } else {
-System.err.println("async=false"); 
             conn.getWriter().write("<asyncmonitor requestsync=\"false\"/>");
         }
     }

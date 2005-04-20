@@ -82,16 +82,7 @@ implements Service {
         
         baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.RENDER_STANDARD));
         
-        StringBuffer loadScript = new StringBuffer();
-        loadScript.append("function echoPageLoad() {\n");
-        loadScript.append("EchoServerTransaction.baseUri = \"");
-        loadScript.append(ci.getApplicationUri());
-        loadScript.append("\";\n");
-        loadScript.append("EchoClientMessage.setInitialize();\n");
-        loadScript.append("EchoServerTransaction.connect();\n}");
-        baseDoc.addJavaScriptText(loadScript.toString());
-        
-        baseDoc.getBodyElement().setAttribute("onload", "echoPageLoad();");
+        baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getApplicationUri() + "');");
         
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("font-family", "verdana, arial, helvetica, sans-serif");

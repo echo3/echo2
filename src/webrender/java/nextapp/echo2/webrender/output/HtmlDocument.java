@@ -41,8 +41,6 @@ import org.w3c.dom.Text;
  */
 public class HtmlDocument extends XmlDocument {
     
-    private static final String DEFAULT_JAVASCRIPT_LANGUAGE = "JavaScript1.5";
-    
     /**
      * Creates a new <code>HtmlDocument</code>.
      */
@@ -71,7 +69,6 @@ public class HtmlDocument extends XmlDocument {
         Text textNode = document.createTextNode(code);
         scriptElement.appendChild(textNode);
         scriptElement.setAttribute("type", "text/javascript");
-        scriptElement.setAttribute("language", DEFAULT_JAVASCRIPT_LANGUAGE);
         headElement.appendChild(scriptElement);
     }
     
@@ -88,7 +85,6 @@ public class HtmlDocument extends XmlDocument {
         scriptElement.appendChild(textNode);
         scriptElement.setAttribute("type", "text/javascript");
         scriptElement.setAttribute("src", uri);
-        scriptElement.setAttribute("language", DEFAULT_JAVASCRIPT_LANGUAGE);
         headElement.appendChild(scriptElement);
     }
     

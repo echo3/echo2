@@ -46,7 +46,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.Styles;
 
 /**
- * 
+ * Test for asynchronous operations.
  */
 public class AsynchronousTest extends Row {
     
@@ -59,14 +59,10 @@ public class AsynchronousTest extends Row {
         }
     }
     
-    private class AsynchronousTask 
+    private class SimulatedTask 
     implements Runnable {
         
         private int percentComplete = 0;
-        
-        private AsynchronousTask() {
-            super();
-        }
         
         public void run() {
             while (percentComplete < 100) {
@@ -77,11 +73,9 @@ public class AsynchronousTest extends Row {
                 ApplicationInstance app = getApplicationInstance();
                 if (app != null) {
                     messageProcessor.getMessageQueue().enqueueMessage(new TaskMessage(percentComplete));
-    System.err.println(this + ": Thread iteration: " + percentComplete);
                     try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                    }
+                        Thread.sleep((long) (Math.random() * 1000));
+                    } catch (InterruptedException ex) { }
                 }
             }
         }
@@ -95,12 +89,18 @@ public class AsynchronousTest extends Row {
         public void messageReceived(MessageEvent e) {
             if (e.getMessage() instanceof TaskMessage) {
                 TaskMessage taskMessage = (TaskMessage) e.getMessage();
-                statusLabel.setText("Asynchronous operation in progress; " + taskMessage.percentComplete 
-                        + "% complete.");
+                if (taskMessage.percentComplete < 100) {
+                    statusLabel.setText("Asynchronous operation in progress; " + taskMessage.percentComplete 
+                            + "% complete.");
+                } else {
+                    statusLabel.setText("Asynchronous operation complete.");
+                    simulatedTask = null;
+                }
             }
         }
     };
     
+    private SimulatedTask simulatedTask;
     private Label statusLabel;
     private MessageProcessor messageProcessor;
     
@@ -122,9 +122,11 @@ public class AsynchronousTest extends Row {
         startButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                AsynchronousTask task = new AsynchronousTask();
-                Thread t = new Thread(task);
-                t.start();
+                if (simulatedTask == null) {
+                    simulatedTask = new SimulatedTask();
+                    Thread t = new Thread(simulatedTask);
+                    t.start();
+                }
             }
         });
         add(startButton);
@@ -134,7 +136,6 @@ public class AsynchronousTest extends Row {
      * @see nextapp.echo2.app.Component#dispose()
      */
     public void dispose() {
-        
         getApplicationInstance().removeMessageProcessor("AsyncTest");
         super.dispose();
     }
@@ -144,7 +145,6 @@ public class AsynchronousTest extends Row {
      */
     public void init() {
         super.init();
-        
         getApplicationInstance().addMessageProcessor("AsyncTest", messageProcessor);
     }
     
