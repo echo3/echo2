@@ -37,7 +37,6 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.async.DefaultMessageProcessor;
 import nextapp.echo2.app.async.Message;
-import nextapp.echo2.app.async.MessageProcessor;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.MessageEvent;
@@ -103,6 +102,7 @@ public class AsynchronousTest extends Row {
                 } else {
                     statusLabel.setText("Asynchronous operation complete.");
                     simulatedTask = null;
+                    messageProcessor.setEnabled(false);
                 }
             }
         }
@@ -110,11 +110,11 @@ public class AsynchronousTest extends Row {
     
     private SimulatedTask simulatedTask;
     private Label statusLabel;
-    private MessageProcessor messageProcessor;
+    private DefaultMessageProcessor messageProcessor;
     
     public AsynchronousTest() {
         super();
-        messageProcessor = new DefaultMessageProcessor();
+        messageProcessor = new DefaultMessageProcessor(null, null, false);
         messageProcessor.getMessageRegistry().addMessageListener(messageListener);
         
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
@@ -131,6 +131,7 @@ public class AsynchronousTest extends Row {
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (simulatedTask == null) {
+                    messageProcessor.setEnabled(true);
                     simulatedTask = new SimulatedTask();
                     Thread t = new Thread(simulatedTask);
                     t.start();
