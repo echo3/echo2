@@ -46,7 +46,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.Styles;
 
 /**
- * Test for asynchronous operations.
+ * Test for asynchronous (server push) operations.
  */
 public class AsynchronousTest extends Row {
     
@@ -59,6 +59,14 @@ public class AsynchronousTest extends Row {
         }
     }
     
+    /**
+     * Thread to simulate long-running operation on server.
+     * Note that threading is not allowed by the J2EE containers
+     * conforming to the 1.3 (or earlier) J2EE specification.
+     * If you plan on deploying an Echo2 user interface to such
+     * a container, please refrain from using this class as 
+     * an example.
+     */
     private class SimulatedTask 
     implements Runnable {
         
@@ -118,7 +126,7 @@ public class AsynchronousTest extends Row {
         statusLabel = new Label("Asynchronous operation not active.");
         add(statusLabel);
         
-        Button startButton = new Button("Start asynchronous operation.");
+        Button startButton = new Button("Start Asynchronous (Server Push) Operation");
         startButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
