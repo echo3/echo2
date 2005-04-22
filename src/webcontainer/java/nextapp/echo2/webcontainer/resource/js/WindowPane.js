@@ -62,6 +62,12 @@ EchoWindowPane.resizeModeHorizontal = 0;
 
 EchoWindowPane.resizeModeVertical = 0;
 
+//BUGBUG. hardcoded.
+EchoWindowPane.minimumWidth = 100;
+EchoWindowPane.minimumHeight = 100;
+EchoWindowPane.maximumWidth= 800;
+EchoWindowPane.maximumHeight = 600;
+
 /** 
  * The maximum allowed horizontal position of the upper-left corner of 
  * the window. 
@@ -260,13 +266,33 @@ EchoWindowPane.windowResizeMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
     if (EchoWindowPane.resizeModeHorizontal != 0) {
-        var newX = (EchoWindowPane.initialWindowWidth + e.clientX - EchoWindowPane.mouseOffsetX);
-        EchoWindowPane.activeElement.style.width = newX + "px";
+        var newWidth = (EchoWindowPane.initialWindowWidth + 
+                (e.clientX - EchoWindowPane.mouseOffsetX) * EchoWindowPane.resizeModeHorizontal);
+        if (newWidth < EchoWindowPane.minimumWidth) {
+            newWidth = EchoWindowPane.minimumWidth;
+        } else if (newWidth > EchoWindowPane.maximumWidth) {
+            newWidth = EchoWindowPane.maximumWidth;
+        }
+        EchoWindowPane.activeElement.style.width = newWidth + "px";
+        if (EchoWindowPane.resizeModeHorizontal == -1) {
+            var newX = EchoWindowPane.initialWindowX + EchoWindowPane.initialWindowWidth - newWidth;
+            EchoWindowPane.activeElement.style.left = newX + "px";
+        }
     }
 
     if (EchoWindowPane.resizeModeVertical != 0) {
-        var newY = (EchoWindowPane.initialWindowHeight + e.clientY - EchoWindowPane.mouseOffsetY);
-        EchoWindowPane.activeElement.style.height = newY + "px";
+        var newHeight = (EchoWindowPane.initialWindowHeight + 
+                (e.clientY - EchoWindowPane.mouseOffsetY) * EchoWindowPane.resizeModeVertical);
+        if (newHeight < EchoWindowPane.minimumHeight) {
+            newHeight = EchoWindowPane.minimumHeight;
+        } else if (newHeight > EchoWindowPane.maximumHeight) {
+            newHeight = EchoWindowPane.maximumHeight;
+        }
+        EchoWindowPane.activeElement.style.height = newHeight + "px";
+        if (EchoWindowPane.resizeModeVertical == -1) {
+            var newY = EchoWindowPane.initialWindowY + EchoWindowPane.initialWindowHeight - newHeight;
+            EchoWindowPane.activeElement.style.top = newY + "px";
+        }
     }
 };
 
