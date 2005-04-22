@@ -58,6 +58,10 @@ EchoWindowPane.mouseOffsetY = -1;
 /** The active window DIV element being dragged */
 EchoWindowPane.activeElement = null;
 
+EchoWindowPane.resizeModeHorizontal = 0;
+
+EchoWindowPane.resizeModeVertical = 0;
+
 /** 
  * The maximum allowed horizontal position of the upper-left corner of 
  * the window. 
@@ -213,7 +217,28 @@ EchoWindowPane.windowMoveMouseUp = function(e) {
 
 EchoWindowPane.windowResizeMouseDown = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    
+    var lastUnderscoreIndex = elementId.lastIndexOf("_");
+    if (lastUnderscoreIndex == -1) {
+        // Should not occur.
+        throw "Invalid element id: " + elementId;
+    }
+    var directionName = elementId.substring(lastUnderscoreIndex + 1);
+    var verticalMode, horizontalMode;
+    switch(directionName) {
+    case "nw": EchoWindowPane.resizeModeHorizontal = -1; EchoWindowPane.resizeModeVertical = -1; break;
+    case "n":  EchoWindowPane.resizeModeHorizontal =  0; EchoWindowPane.resizeModeVertical = -1; break;
+    case "ne": EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical = -1; break;
+    case "w":  EchoWindowPane.resizeModeHorizontal = -1; EchoWindowPane.resizeModeVertical =  0; break;
+    case "e":  EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical =  0; break;
+    case "sw": EchoWindowPane.resizeModeHorizontal = -1; EchoWindowPane.resizeModeVertical =  1; break;
+    case "s":  EchoWindowPane.resizeModeHorizontal =  0; EchoWindowPane.resizeModeVertical =  1; break;
+    case "se": EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical =  1; break;
+    default: throw "Invalid direction name: " + directionName;
+    }
+    
+    var componentId = EchoDomUtil.getComponentId(elementId);
     var windowPaneElement = document.getElementById(componentId);
     if (windowPaneElement != EchoWindowPane.activeElement) {
 
@@ -233,10 +258,16 @@ EchoWindowPane.windowResizeMouseDown = function(echoEvent) {
 
 EchoWindowPane.windowResizeMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
-    var newX = (EchoWindowPane.initialWindowWidth + e.clientX - EchoWindowPane.mouseOffsetX);
-    var newY = (EchoWindowPane.initialWindowHeight + e.clientY - EchoWindowPane.mouseOffsetY);
-    EchoWindowPane.activeElement.style.width = newX + "px";
-    EchoWindowPane.activeElement.style.height = newY + "px";
+
+    if (EchoWindowPane.resizeModeHorizontal != 0) {
+        var newX = (EchoWindowPane.initialWindowWidth + e.clientX - EchoWindowPane.mouseOffsetX);
+        EchoWindowPane.activeElement.style.width = newX + "px";
+    }
+
+    if (EchoWindowPane.resizeModeVertical != 0) {
+        var newY = (EchoWindowPane.initialWindowHeight + e.clientY - EchoWindowPane.mouseOffsetY);
+        EchoWindowPane.activeElement.style.height = newY + "px";
+    }
 };
 
 EchoWindowPane.windowResizeMouseUp = function(e) {

@@ -197,6 +197,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         EventUpdate.createEventRemove(rc.getServerMessage(), "click", elementId + "_close");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_close");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_title");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_e");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_s");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_se");
     }
     
@@ -540,6 +542,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoWindowPane.userCloseClick");
         EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoWindowPane.userCloseMouseDown");
         EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoWindowPane.windowMoveMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_e", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_s", "EchoWindowPane.windowResizeMouseDown");
         EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", "EchoWindowPane.windowResizeMouseDown");
 
         if (windowPane.getComponentCount() != 0) {
