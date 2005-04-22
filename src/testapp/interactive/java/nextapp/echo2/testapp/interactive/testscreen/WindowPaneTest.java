@@ -34,8 +34,11 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.TextField;
@@ -58,6 +61,43 @@ public class WindowPaneTest extends SplitPane {
         
         private WindowTestControls(String targetName, final ContentPane targetContentPane) {
             add(new Label(targetName));
+            addButton("Add FillImageBorder Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final WindowPane windowPane = new WindowPane();
+                    positionWindowPane(windowPane);
+                    windowPane.setTitle("FillImageBorder Window #" + windowNumber++);
+                    windowPane.setTitleInsets(new Insets(10, 5));
+                    windowPane.setTitleBackground(new Color(0x2f2f4f));
+                    windowPane.setWidth(new Extent(500, Extent.PX));
+                    windowPane.setHeight(new Extent(280, Extent.PX));
+                    targetContentPane.add(windowPane);
+                    
+                    FillImageBorder fib = new FillImageBorder();
+                    fib.setContentInsets(new Insets(7, 7, 13, 13));
+                    fib.setBorderInsets(new Insets(17, 17, 23, 23));
+//                    fib.setColor(Color.RED);
+                    fib.setNorthWest(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderNW.png")));
+                    fib.setNorth(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderN.png")));
+                    fib.setNorthEast(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderNE.png")));
+                    fib.setWest(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderW.png")));
+                    fib.setEast(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderE.png")));
+                    fib.setSouthWest(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderSW.png")));
+                    fib.setSouth(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderS.png")));
+                    fib.setSouthEast(new FillImage(new ResourceImageReference(
+                            "/nextapp/echo2/testapp/interactive/resource/BorderSE.png")));
+                    
+                    windowPane.setBorder(fib);
+                    
+                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                }
+            });
             addButton("Add Simple Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();
@@ -85,7 +125,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     windowPane.setHeight(new Extent(280, Extent.PX));
-                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(240, Extent.PX));
+                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(210, Extent.PX));
                     SplitPaneLayoutData splitPaneLayoutData;
                     
                     Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);

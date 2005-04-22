@@ -29,7 +29,7 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
@@ -140,7 +140,7 @@ public class TextComponentTest extends SplitPane {
         });
         controlsRow.addButton("Toggle Background Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                BackgroundImage backgroundImage = textField.getBackgroundImage();
+                FillImage backgroundImage = textField.getBackgroundImage();
                 if (backgroundImage == null) {
                     textField.setBackgroundImage(Styles.BG_NW_SHADOW);
                     passwordField.setBackgroundImage(Styles.BG_NW_SHADOW);

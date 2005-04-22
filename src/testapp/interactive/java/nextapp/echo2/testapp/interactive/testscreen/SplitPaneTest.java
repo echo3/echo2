@@ -29,7 +29,7 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
@@ -118,7 +118,7 @@ public class SplitPaneTest extends SplitPane {
                         return;
                     }
                     SplitPaneLayoutData splitPaneLayoutData = getLayoutData(paneNumber);
-                    BackgroundImage backgroundImage = splitPaneLayoutData.getBackgroundImage();
+                    FillImage backgroundImage = splitPaneLayoutData.getBackgroundImage();
                     if (backgroundImage == null) {
                         splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
                     } else {

@@ -31,7 +31,7 @@ package nextapp.echo2.app.componentxml.propertypeer;
 
 import org.w3c.dom.Element;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.componentxml.InvalidPropertyException;
@@ -41,9 +41,9 @@ import nextapp.echo2.app.util.DomUtil;
 
 /**
  * <code>PropertyXmlPeer</code> implementation for 
- * <code>nextapp.echo2.BackgroundImage</code> properties.
+ * <code>nextapp.echo2.app.FillImage</code> properties.
  */
-public class BackgroundImagePeer 
+public class FillImagePeer 
 implements PropertyXmlPeer {
 
     /**
@@ -52,33 +52,33 @@ implements PropertyXmlPeer {
      */
     public Object getValue(ClassLoader classLoader, Class objectClass, Element propertyElement)
     throws InvalidPropertyException {
-        Element backgroundImageElement = DomUtil.getChildElementByTagName(propertyElement, "backgroundimage");
-        if (backgroundImageElement == null) {
-            throw new InvalidPropertyException("Invalid BackgroundImage property.", null);
+        Element fillImageElement = DomUtil.getChildElementByTagName(propertyElement, "fillimage");
+        if (fillImageElement == null) {
+            throw new InvalidPropertyException("Invalid FillImage property.", null);
         }
         
-        int attachment = "fixed".equals(backgroundImageElement.getAttribute("attachment")) 
-                ? BackgroundImage.ATTACHMENT_FIXED : BackgroundImage.ATTACHMENT_SCROLL;
-        Extent offsetX = backgroundImageElement.hasAttribute("horizontal")
-                ? ExtentPeer.toExtent(backgroundImageElement.getAttribute("horizontal")) : null;
-        Extent offsetY = backgroundImageElement.hasAttribute("vertical")
-                ? ExtentPeer.toExtent(backgroundImageElement.getAttribute("vertical")) : null;
+        int attachment = "fixed".equals(fillImageElement.getAttribute("attachment")) 
+                ? FillImage.ATTACHMENT_FIXED : FillImage.ATTACHMENT_SCROLL;
+        Extent offsetX = fillImageElement.hasAttribute("horizontal")
+                ? ExtentPeer.toExtent(fillImageElement.getAttribute("horizontal")) : null;
+        Extent offsetY = fillImageElement.hasAttribute("vertical")
+                ? ExtentPeer.toExtent(fillImageElement.getAttribute("vertical")) : null;
         
         int repeat;
-        String repeatString = backgroundImageElement.getAttribute("repeat");
+        String repeatString = fillImageElement.getAttribute("repeat");
         if ("horizontal".equals(repeatString)) {
-            repeat = BackgroundImage.REPEAT_HORIZONTAL;
+            repeat = FillImage.REPEAT_HORIZONTAL;
         } else if ("vertical".equals(repeatString)) {
-            repeat = BackgroundImage.REPEAT_VERTICAL;
+            repeat = FillImage.REPEAT_VERTICAL;
         } else if ("none".equals(repeatString)) {
-            repeat = BackgroundImage.NO_REPEAT;
+            repeat = FillImage.NO_REPEAT;
         } else {
-            repeat = BackgroundImage.REPEAT;
+            repeat = FillImage.REPEAT;
         }
         
-        Element imageElement = DomUtil.getChildElementByTagName(backgroundImageElement, "image");
+        Element imageElement = DomUtil.getChildElementByTagName(fillImageElement, "image");
         if (imageElement == null) {
-            throw new InvalidPropertyException("Invalid BackgroundImage property.", null);
+            throw new InvalidPropertyException("Invalid FillImage property.", null);
         }
         String imageType = imageElement.getAttribute("type");
         PropertyLoader propertyLoader = PropertyLoader.forClassLoader(classLoader);
@@ -87,18 +87,18 @@ implements PropertyXmlPeer {
         try {
             propertyClass = Class.forName(imageType, true, classLoader);
         } catch (ClassNotFoundException ex) {
-            throw new InvalidPropertyException("Invalid BackgroundImage property (type \"" + imageType + "\" not found.", ex);
+            throw new InvalidPropertyException("Invalid FillImage property (type \"" + imageType + "\" not found.", ex);
         }
         
-        Object imagePropertyValue = propertyLoader.getPropertyValue(BackgroundImage.class, propertyClass, imageElement);
+        Object imagePropertyValue = propertyLoader.getPropertyValue(FillImage.class, propertyClass, imageElement);
         if (!(imagePropertyValue instanceof ImageReference)) {
-            throw new InvalidPropertyException("Invalid BackgroundImage proeprty (type \"" + imageType 
+            throw new InvalidPropertyException("Invalid FillImage proeprty (type \"" + imageType 
                     + "\" is not an ImageReference.", null);
         }
 
         ImageReference imageReference = (ImageReference) imagePropertyValue;
-        BackgroundImage backgroundImage = new BackgroundImage(imageReference, offsetX, offsetY, repeat, attachment);
+        FillImage fillImage = new FillImage(imageReference, offsetX, offsetY, repeat, attachment);
         
-        return backgroundImage;
+        return fillImage;
     }
 }

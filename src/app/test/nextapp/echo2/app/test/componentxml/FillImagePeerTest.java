@@ -31,7 +31,7 @@ package nextapp.echo2.app.test.componentxml;
 
 import java.io.InputStream;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.ResourceImageReference;
@@ -42,9 +42,9 @@ import nextapp.echo2.app.text.TextComponent;
 import junit.framework.TestCase;
 
 /**
- * Unit test(s) for <code>nextapp.echo2.app.componentxml.propertypeer.BackgroundImagePeer</code>.
+ * Unit test(s) for <code>nextapp.echo2.app.componentxml.propertypeer.FillImagePeer</code>.
  */
-public class BackgroundImagePeerTest extends TestCase {
+public class FillImagePeerTest extends TestCase {
 
     private StyleSheet styleSheet;
     
@@ -53,34 +53,34 @@ public class BackgroundImagePeerTest extends TestCase {
      */
     public void setUp()
     throws Exception {
-        InputStream in = BackgroundImagePeerTest.class.getResourceAsStream("BackgroundImagePeerTest.stylesheet");
+        InputStream in = FillImagePeerTest.class.getResourceAsStream("FillImagePeerTest.stylesheet");
         styleSheet = StyleSheetLoader.load(in, StyleSheetLoaderTest.class.getClassLoader());
         in.close();
     }
 
     public void testCustom() {
         Style bravoStyle = styleSheet.getStyle(TextComponent.class, "bravo");
-        BackgroundImage backgroundImage = (BackgroundImage) bravoStyle.getProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+        FillImage backgroundImage = (FillImage) bravoStyle.getProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
         assertNotNull(backgroundImage);
         ImageReference imageReference = backgroundImage.getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
-        assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
+        assertEquals("/nextapp/echo2/test/componentxml/FillImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
-        assertEquals(BackgroundImage.ATTACHMENT_FIXED, backgroundImage.getAttachment());
-        assertEquals(BackgroundImage.REPEAT_HORIZONTAL, backgroundImage.getRepeat());
+        assertEquals(FillImage.ATTACHMENT_FIXED, backgroundImage.getAttachment());
+        assertEquals(FillImage.REPEAT_HORIZONTAL, backgroundImage.getRepeat());
         assertEquals(new Extent(50), backgroundImage.getHorizontalOffset());
         assertEquals(new Extent(-30, Extent.PERCENT), backgroundImage.getVerticalOffset());
     }
     
     public void testSimple() {
         Style alphaStyle = styleSheet.getStyle(TextComponent.class, "alpha");
-        BackgroundImage backgroundImage = (BackgroundImage) alphaStyle.getProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+        FillImage backgroundImage = (FillImage) alphaStyle.getProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
         assertNotNull(backgroundImage);
         ImageReference imageReference = backgroundImage.getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
-        assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
+        assertEquals("/nextapp/echo2/test/componentxml/FillImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
     }
 }

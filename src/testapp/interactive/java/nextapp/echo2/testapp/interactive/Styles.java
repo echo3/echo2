@@ -29,7 +29,7 @@
 
 package nextapp.echo2.testapp.interactive;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.ComponentXmlException;
@@ -40,9 +40,9 @@ import nextapp.echo2.app.componentxml.StyleSheetLoader;
  */
 public class Styles {
 
-    public static final BackgroundImage BG_NW_SHADOW = new BackgroundImage(new ResourceImageReference(
-            "/nextapp/echo2/testapp/interactive/bg_nw_shadow.png"), null, null, BackgroundImage.NO_REPEAT, 
-            BackgroundImage.ATTACHMENT_FIXED);
+    public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
+            "/nextapp/echo2/testapp/interactive/bg_nw_shadow.png"), null, null, FillImage.NO_REPEAT, 
+            FillImage.ATTACHMENT_FIXED);
     
     public static final ResourceImageReference ICON_LOGO = 
             new ResourceImageReference("/nextapp/echo2/testapp/interactive/nextapp_logo.png");

@@ -30,7 +30,7 @@
 package nextapp.echo2.app.text;
 
 import nextapp.echo2.app.Alignment;
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -94,8 +94,8 @@ extends Component {
      * 
      * @return the background image
      */
-    public BackgroundImage getBackgroundImage() {
-        return (BackgroundImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
     }
     
     /**
@@ -187,7 +187,7 @@ extends Component {
      * 
      * @param newValue the new background image
      */
-    public void setBackgroundImage(BackgroundImage newValue) {
+    public void setBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     

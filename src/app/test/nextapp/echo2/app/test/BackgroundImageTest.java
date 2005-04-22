@@ -29,7 +29,7 @@
 
 package nextapp.echo2.app.test;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import junit.framework.TestCase;
 
 /**
@@ -42,24 +42,24 @@ public class BackgroundImageTest extends TestCase {
      * Test simpleconstructor.
      */
     public void testConstructorSimple() {
-        BackgroundImage backgroundImage = new BackgroundImage(TestConstants.ICON);
+        FillImage backgroundImage = new FillImage(TestConstants.ICON);
         assertEquals(TestConstants.ICON, backgroundImage.getImage());
         assertEquals(null, backgroundImage.getHorizontalOffset());
         assertEquals(null, backgroundImage.getVerticalOffset());
-        assertEquals(BackgroundImage.ATTACHMENT_SCROLL, backgroundImage.getAttachment());
-        assertEquals(BackgroundImage.REPEAT, backgroundImage.getRepeat());
+        assertEquals(FillImage.ATTACHMENT_SCROLL, backgroundImage.getAttachment());
+        assertEquals(FillImage.REPEAT, backgroundImage.getRepeat());
     }
     
     /**
      * Test full-featured constructor.
      */
     public void testConstructorFullFeature() {
-        BackgroundImage backgroundImage = new BackgroundImage(TestConstants.ICON, TestConstants.EXTENT_30_PX, 
-                TestConstants.EXTENT_50_PERCENT, BackgroundImage.REPEAT_HORIZONTAL, BackgroundImage.ATTACHMENT_FIXED);
+        FillImage backgroundImage = new FillImage(TestConstants.ICON, TestConstants.EXTENT_30_PX, 
+                TestConstants.EXTENT_50_PERCENT, FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_FIXED);
         assertEquals(TestConstants.ICON, backgroundImage.getImage());
         assertEquals(TestConstants.EXTENT_30_PX, backgroundImage.getHorizontalOffset());
         assertEquals(TestConstants.EXTENT_50_PERCENT, backgroundImage.getVerticalOffset());
-        assertEquals(BackgroundImage.ATTACHMENT_FIXED, backgroundImage.getAttachment());
-        assertEquals(BackgroundImage.REPEAT_HORIZONTAL, backgroundImage.getRepeat());
+        assertEquals(FillImage.ATTACHMENT_FIXED, backgroundImage.getAttachment());
+        assertEquals(FillImage.REPEAT_HORIZONTAL, backgroundImage.getRepeat());
     }
 }

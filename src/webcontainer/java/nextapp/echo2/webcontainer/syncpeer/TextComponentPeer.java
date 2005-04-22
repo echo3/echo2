@@ -31,7 +31,7 @@ package nextapp.echo2.webcontainer.syncpeer;
 
 import org.w3c.dom.Element;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
@@ -48,7 +48,7 @@ import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
-import nextapp.echo2.webcontainer.propertyrender.BackgroundImageRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
@@ -102,7 +102,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     protected CssStyle createBaseCssStyle(RenderContext rc, TextComponent textComponent) {
         Extent width = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_WIDTH);
         Extent height = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HEIGHT);
-        BackgroundImage backgroundImage = (BackgroundImage) textComponent.getRenderProperty(
+        FillImage backgroundImage = (FillImage) textComponent.getRenderProperty(
                 TextComponent.PROPERTY_BACKGROUND_IMAGE);
 
         CssStyle cssStyle = new CssStyle();
@@ -112,7 +112,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT));
         if (backgroundImage != null) {
-            BackgroundImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, 
+            FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, 
                     backgroundImage, true);
         }
         InsetsRender.renderToStyle(cssStyle, "padding", 
@@ -138,7 +138,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      */
     public ImageReference getImage(Component component, String imageId) {
         if (IMAGE_ID_BACKGROUND.equals(imageId)) {
-            BackgroundImage backgroundImage = (BackgroundImage) component.getRenderProperty(
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(
                     TextComponent.PROPERTY_BACKGROUND_IMAGE);
             if (backgroundImage == null) {
                 return null;

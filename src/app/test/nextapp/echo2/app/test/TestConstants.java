@@ -28,7 +28,7 @@
  */
 package nextapp.echo2.app.test;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
@@ -55,8 +55,8 @@ public class TestConstants {
     public static final Insets INSETS_1234 = new Insets(new Extent(1, Extent.PX), new Extent(2, Extent.PX), 
             new Extent(3, Extent.PX), new Extent(4, Extent.PX));
     
-    public static final BackgroundImage BACKGROUND_IMAGE = new BackgroundImage(ICON, new Extent(5), new Extent(30), 
-            BackgroundImage.REPEAT_HORIZONTAL, BackgroundImage.ATTACHMENT_SCROLL);
+    public static final FillImage BACKGROUND_IMAGE = new FillImage(ICON, new Extent(5), new Extent(30), 
+            FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_SCROLL);
 
     public static final Extent EXTENT_500_PX = new Extent(500);
     public static final Extent EXTENT_200_PX = new Extent(200);

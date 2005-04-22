@@ -32,11 +32,12 @@ package nextapp.echo2.webcontainer.syncpeer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
@@ -51,6 +52,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
@@ -61,6 +63,7 @@ import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.server.ClientProperties;
 import nextapp.echo2.webrender.server.Service;
 import nextapp.echo2.webrender.server.WebRenderServlet;
 import nextapp.echo2.webrender.services.JavaScriptService;
@@ -82,17 +85,26 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String IMAGE_ID_TITLE_BACKGROUND = "background";
     private static final String IMAGE_ID_CLOSE_ICON = "close";
     
+    private static final String IMAGE_ID_BORDER_NW = "borderNW";
+    private static final String IMAGE_ID_BORDER_N = "borderN";
+    private static final String IMAGE_ID_BORDER_NE = "borderNE";
+    private static final String IMAGE_ID_BORDER_W = "borderW";
+    private static final String IMAGE_ID_BORDER_E = "borderE";
+    private static final String IMAGE_ID_BORDER_SW = "borderSW";
+    private static final String IMAGE_ID_BORDER_S = "borderS";
+    private static final String IMAGE_ID_BORDER_SE = "borderSE";
+    
     private static final ImageReference DEFAULT_CLOSE_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/DefaultCloseButton.gif");
     
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service DRAG_WINDOW_SERVICE = JavaScriptService.forResource("Echo.DragWindow", 
-            "/nextapp/echo2/webcontainer/resource/js/DragWindow.js");
+    public static final Service WINDOW_PANE_SERVICE = JavaScriptService.forResource("Echo.WindowPane", 
+            "/nextapp/echo2/webcontainer/resource/js/WindowPane.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(DRAG_WINDOW_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(WINDOW_PANE_SERVICE);
     }
 
     /**
@@ -108,7 +120,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     public ImageReference getImage(Component component, String imageId) {
         if (IMAGE_ID_TITLE_BACKGROUND.equals(imageId)) {
-            BackgroundImage backgroundImage = (BackgroundImage) component.getRenderProperty(
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(
                     WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE);
             if (backgroundImage == null) {
                 return null;
@@ -118,6 +130,22 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         } else if (IMAGE_ID_CLOSE_ICON.equals(imageId)) {
             return (ImageReference) component.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON,
                     DEFAULT_CLOSE_ICON);
+        } else if (IMAGE_ID_BORDER_NW.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getNorthWest().getImage();
+        } else if (IMAGE_ID_BORDER_N.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getNorth().getImage();
+        } else if (IMAGE_ID_BORDER_NE.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getNorthEast().getImage();
+        } else if (IMAGE_ID_BORDER_W.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getWest().getImage();
+        } else if (IMAGE_ID_BORDER_E.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getEast().getImage();
+        } else if (IMAGE_ID_BORDER_SW.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getSouthWest().getImage();
+        } else if (IMAGE_ID_BORDER_S.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getSouth().getImage();
+        } else if (IMAGE_ID_BORDER_SE.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getSouthEast().getImage();
         } else {
             return null;
         }
@@ -136,11 +164,17 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
-        if ("positionX".equals(propertyName)) {
+        if (WindowPane.PROPERTY_POSITION_X.equals(propertyName)) {
             ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_X, 
                     ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
-        } else if ("positionY".equals(propertyName)) {
+        } else if (WindowPane.PROPERTY_POSITION_Y.equals(propertyName)) {
             ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_Y, 
+                    ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+        } else if (WindowPane.PROPERTY_WIDTH.equals(propertyName)) {
+            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_WIDTH, 
+                    ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+        } else if (WindowPane.PROPERTY_HEIGHT.equals(propertyName)) {
+            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_HEIGHT, 
                     ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
         }
     }
@@ -163,6 +197,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         EventUpdate.createEventRemove(rc.getServerMessage(), "click", elementId + "_close");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_close");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_title");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_se");
     }
     
     /**
@@ -173,38 +208,255 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             Element parentElement, Component component) {
         WindowPane windowPane = (WindowPane) component;
         String elementId = ContainerInstance.getElementId(windowPane);
+        String bodyElementId = elementId + "_body";
         String title = (String) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE);
         Extent width = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_WIDTH);
         Extent height = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_HEIGHT);
+        int titleHeightPixels = ExtentRender.toPixels(
+                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_HEIGHT), 28);
+        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
+                .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
+        boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
+                .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
         
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(DRAG_WINDOW_SERVICE.getId(), true);
+        serverMessage.addLibrary(WINDOW_PANE_SERVICE.getId(), true);
         
         Document document = serverMessage.getDocument();
         Element windowDivElement = document.createElement("div");
         windowDivElement.setAttribute("id", elementId);
         
-        CssStyle outerDivCssStyle = new CssStyle();
-        outerDivCssStyle.setAttribute("padding", "0px");
-        outerDivCssStyle.setAttribute("position", "absolute");
-        outerDivCssStyle.setAttribute("top", ExtentRender.renderCssAttributeValue(
+        CssStyle windowDivCssStyle = new CssStyle();
+        //BUGBUG. Hardcoded z-index.
+        windowDivCssStyle.setAttribute("z-index", "2");
+        windowDivCssStyle.setAttribute("padding", "0px");
+        windowDivCssStyle.setAttribute("position", "absolute");
+        windowDivCssStyle.setAttribute("top", ExtentRender.renderCssAttributeValue(
                 (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_POSITION_Y, DEFAULT_POSITION_Y)));
-        outerDivCssStyle.setAttribute("left", ExtentRender.renderCssAttributeValue(
+        windowDivCssStyle.setAttribute("left", ExtentRender.renderCssAttributeValue(
                 (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_POSITION_X, DEFAULT_POSITION_X)));
         if (width == null) {
-            outerDivCssStyle.setAttribute("width", DEFAULT_WIDTH);
+            windowDivCssStyle.setAttribute("width", DEFAULT_WIDTH);
         } else {
-            outerDivCssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
+            windowDivCssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
-        ColorRender.renderToStyle(outerDivCssStyle, (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_FOREGROUND),
+        if (height == null) {
+            windowDivCssStyle.setAttribute("height", DEFAULT_HEIGHT);
+        } else {
+            windowDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+        }
+        
+        Border border = (Border) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
+        if (border instanceof FillImageBorder) {
+            FillImageBorder fillImageBorder = (FillImageBorder) border;
+            Color borderColor = fillImageBorder.getColor();
+            Insets borderInsets = fillImageBorder.getBorderInsets() == null 
+                    ? new Insets(0) : fillImageBorder.getBorderInsets();
+                    
+            int borderTopPixels = ExtentRender.toPixels(borderInsets.getTop(), 0);
+            int borderLeftPixels = ExtentRender.toPixels(borderInsets.getLeft(), 0);
+            int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
+            int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
+            int borderVerticalPixels = borderTopPixels + borderBottomPixels;
+            int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
+                    
+            Element borderDivElement;
+            CssStyle borderCssStyle;
+            
+            // North West
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_nw");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", "0px");
+            borderCssStyle.setAttribute("left", "0px");
+            borderCssStyle.setAttribute("height", borderTopPixels + "px");
+            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+            borderCssStyle.setAttribute("cursor", "nw-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NW, 
+                    fillImageBorder.getNorthWest(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // North
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_n");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", "0px");
+            borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+            borderCssStyle.setAttribute("height", borderTopPixels + "px");
+            if (renderPositioningBothSides) {
+                borderCssStyle.setAttribute("right", borderRightPixels + "px");
+            } else if (renderSizeExpression) {
+                borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                        + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
+            }
+            borderCssStyle.setAttribute("cursor", "n-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_N, 
+                    fillImageBorder.getNorth(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // North East
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_ne");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", "0px");
+            borderCssStyle.setAttribute("right", "0px");
+            borderCssStyle.setAttribute("height", borderTopPixels + "px");
+            borderCssStyle.setAttribute("width", borderRightPixels + "px");
+            borderCssStyle.setAttribute("cursor", "ne-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NE, 
+                    fillImageBorder.getNorthEast(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // West
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_w");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", borderTopPixels + "px");
+            borderCssStyle.setAttribute("left", "0px");
+            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+            if (renderPositioningBothSides) {
+                borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+            } else if (renderSizeExpression) {
+                borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                        + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+                
+            }
+            borderCssStyle.setAttribute("cursor", "w-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_W, 
+                    fillImageBorder.getWest(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // East
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_e");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", borderTopPixels + "px");
+            borderCssStyle.setAttribute("right", "0px");
+            borderCssStyle.setAttribute("width", borderRightPixels + "px");
+            if (renderPositioningBothSides) {
+                borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+            } else if (renderSizeExpression) {
+                borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                        + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+                
+            }
+            borderCssStyle.setAttribute("cursor", "e-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_E, 
+                    fillImageBorder.getEast(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // South West
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_sw");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("bottom", "0px");
+            borderCssStyle.setAttribute("left", "0px");
+            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+            borderCssStyle.setAttribute("cursor", "sw-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SW, 
+                    fillImageBorder.getSouthWest(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // South
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_s");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("bottom", "0px");
+            borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+            if (renderPositioningBothSides) {
+                borderCssStyle.setAttribute("right", borderRightPixels + "px");
+            } else if (renderSizeExpression) {
+                borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                        + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
+                
+            }
+            borderCssStyle.setAttribute("cursor", "s-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_S, 
+                    fillImageBorder.getSouth(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+            
+            // South East
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_se");
+            borderCssStyle = new CssStyle();
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("bottom", "0px");
+            borderCssStyle.setAttribute("right", "0px");
+            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+            borderCssStyle.setAttribute("width", borderRightPixels + "px");
+            borderCssStyle.setAttribute("cursor", "se-resize");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SE, 
+                    fillImageBorder.getSouthEast(), false);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+        } else {
+            BorderRender.renderToStyle(windowDivCssStyle, border);
+        }
+        
+        windowDivElement.setAttribute("style", windowDivCssStyle.renderInline());
+        
+        Element windowBodyDivElement = document.createElement("div");
+        windowBodyDivElement.setAttribute("id", bodyElementId);
+        CssStyle windowBodyDivCssStyle = new CssStyle();
+        ColorRender.renderToStyle(windowBodyDivCssStyle, (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_FOREGROUND),
                 (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_BACKGROUND));
-        FontRender.renderToStyle(outerDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_FONT));
-        if (outerDivCssStyle.getAttribute("background-color") == null) {
-            outerDivCssStyle.setAttribute("background-color", "white");
+        FontRender.renderToStyle(windowBodyDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_FONT));
+        if (windowBodyDivCssStyle.getAttribute("background-color") == null) {
+            windowBodyDivCssStyle.setAttribute("background-color", "white");
         }
-        BorderRender.renderToStyle(outerDivCssStyle, 
-                (Border) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER));
-        windowDivElement.setAttribute("style", outerDivCssStyle.renderInline());
+        windowBodyDivCssStyle.setAttribute("position", "absolute");
+        windowBodyDivCssStyle.setAttribute("z-index", "1");
+        if (border instanceof FillImageBorder) {
+            FillImageBorder fillImageBorder = (FillImageBorder) border;
+            Insets contentInsets = fillImageBorder.getContentInsets() == null 
+                    ? new Insets(0) : fillImageBorder.getContentInsets();
+            int left = ExtentRender.toPixels(contentInsets.getLeft(), 0);
+            int right = ExtentRender.toPixels(contentInsets.getRight(), 0);
+            int top = ExtentRender.toPixels(contentInsets.getTop(), 0);
+            int bottom = ExtentRender.toPixels(contentInsets.getBottom(), 0);
+            windowBodyDivCssStyle.setAttribute("top", top + "px");
+            windowBodyDivCssStyle.setAttribute("left", left + "px");
+            if (renderPositioningBothSides) {
+                windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
+                windowBodyDivCssStyle.setAttribute("right", right + "px");
+            } else if (renderSizeExpression) {
+                windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                        + elementId + "').clientHeight-" + (top + bottom) + ")+'px')");
+                windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                        + elementId + "').clientWidth-" + (left + right) + ")+'px')");
+            }
+        } else {
+            windowBodyDivCssStyle.setAttribute("top", "0px");
+            windowBodyDivCssStyle.setAttribute("left", "0px");
+            windowBodyDivCssStyle.setAttribute("width", "100%");
+            windowBodyDivCssStyle.setAttribute("height", "100%");
+        }
+        windowBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
+        windowDivElement.appendChild(windowBodyDivElement);
 
         Element outerTitleDivElement = document.createElement("div"); 
         outerTitleDivElement.setAttribute("id", elementId + "_title");
@@ -214,14 +466,17 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND, Color.WHITE),
                 (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
         FontRender.renderToStyle(outerTitleDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
-                
+
+        outerTitleDivCssStyle.setAttribute("position", "absolute");
+        outerTitleDivCssStyle.setAttribute("top", "0px");
+        outerTitleDivCssStyle.setAttribute("height", titleHeightPixels + "px");
         outerTitleDivCssStyle.setAttribute("width", "100%");
         outerTitleDivElement.setAttribute("style", outerTitleDivCssStyle.renderInline());
         
         Element innerTitleDivElement = document.createElement("div");
         innerTitleDivElement.setAttribute("id", elementId + "_innertitle");
         CssStyle innerTitleDivCssStyle = new CssStyle();
-        InsetsRender.renderToStyle(innerTitleDivCssStyle, "padding", 
+        InsetsRender.renderToStyle(innerTitleDivCssStyle, "padding",
                 (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
         if (innerTitleDivCssStyle.hasAttributes()) {
             innerTitleDivElement.setAttribute("style", innerTitleDivCssStyle.renderInline());
@@ -266,21 +521,26 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         CssStyle contentDivCssStyle = new CssStyle();
         contentDivCssStyle.setAttribute("overflow", "auto");
         contentDivCssStyle.setAttribute("padding", "0px");
-        contentDivCssStyle.setAttribute("position", "relative");
-        if (height == null) {
-            contentDivCssStyle.setAttribute("height", DEFAULT_HEIGHT);
-        } else {
-            contentDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+        contentDivCssStyle.setAttribute("position", "absolute");
+        contentDivCssStyle.setAttribute("width", "100%");
+        contentDivCssStyle.setAttribute("top", titleHeightPixels + "px");
+        if (renderPositioningBothSides) {
+            contentDivCssStyle.setAttribute("bottom", "0px");
+        }
+        if (renderSizeExpression) {
+            contentDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + bodyElementId + "').clientHeight-" + titleHeightPixels + ")+'px')");
         }
         contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
         
-        windowDivElement.appendChild(outerTitleDivElement);
-        windowDivElement.appendChild(contentDivElement);
+        windowBodyDivElement.appendChild(outerTitleDivElement);
+        windowBodyDivElement.appendChild(contentDivElement);
         parentElement.appendChild(windowDivElement);
         
-        EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoDragWindow.userCloseClick");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoDragWindow.userCloseMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoDragWindow.mouseDown");
+        EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoWindowPane.userCloseClick");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoWindowPane.userCloseMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoWindowPane.windowMoveMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", "EchoWindowPane.windowResizeMouseDown");
 
         if (windowPane.getComponentCount() != 0) {
             Component child = windowPane.getComponent(0);

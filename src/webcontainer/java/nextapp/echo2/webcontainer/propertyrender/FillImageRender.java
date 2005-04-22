@@ -29,7 +29,7 @@
 
 package nextapp.echo2.webcontainer.propertyrender;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
@@ -37,61 +37,62 @@ import nextapp.echo2.webcontainer.image.ImageTools;
 import nextapp.echo2.webrender.output.CssStyle;
 
 /**
- * Utility class for rendering <code>nextapp.echo2.app.BackgroundImage</code>
+ * Utility class for rendering <code>nextapp.echo2.FillImage</code>
  * properties to CSS.
  */
-public class BackgroundImageRender {
+public class FillImageRender {
     
     /** Non-instantiable class. */
-    private BackgroundImageRender() { }
-    
-    //BUGBUG. need to provide options to disable
+    private FillImageRender() { }
     
     /**
-     * Renders a <code>BackgroundImage</code> to a CSS style.
+     * Renders a <code>FillImage</code> to a CSS style.
      * 
      * @param cssStyle the CSS style to be updated
      * @param rc the relevant <code>RenderContext</code>
-     * @param irs a <code>SynchronizePeer</code> providing <code>ImageRenderSupport</code>
+     * @param irs a <code>SynchronizePeer</code> providing 
+     *        <code>ImageRenderSupport</code>
      * @param component the relevant <code>Component</code>
      * @param imageId the image id of the background image
-     * @param backgroundImage the backgruond image property value
+     * @param fillImage the <code>FillImage</code> property value
+     * @param disableFixedMode a flag indicating that the 'fixed' property of 
+     *        the <code>FillImage</code> should be ignored
      */
     public static void renderToStyle(CssStyle cssStyle, RenderContext rc, ImageRenderSupport irs, 
-            Component component, String imageId, BackgroundImage backgroundImage, boolean disableFixedMode) {
-        if (backgroundImage == null) {
+            Component component, String imageId, FillImage fillImage, boolean disableFixedMode) {
+        if (fillImage == null) {
             return;
         }
         String imageUri = ImageTools.getUri(rc, irs, component, imageId);
         cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
-        if (!disableFixedMode && backgroundImage.getAttachment() == BackgroundImage.ATTACHMENT_FIXED) {
+        if (!disableFixedMode && fillImage.getAttachment() == FillImage.ATTACHMENT_FIXED) {
             cssStyle.setAttribute("background-attachment", "fixed");
         }
-        switch (backgroundImage.getRepeat()) {
-        case BackgroundImage.NO_REPEAT:
+        switch (fillImage.getRepeat()) {
+        case FillImage.NO_REPEAT:
             cssStyle.setAttribute("background-repeat", "no-repeat");
             break;
-        case BackgroundImage.REPEAT_HORIZONTAL:
+        case FillImage.REPEAT_HORIZONTAL:
             cssStyle.setAttribute("background-repeat", "repeat-x");
             break;
-        case BackgroundImage.REPEAT_VERTICAL:
+        case FillImage.REPEAT_VERTICAL:
             cssStyle.setAttribute("background-repeat", "repeat-y");
             break;
         default:
             cssStyle.setAttribute("background-repeat", "repeat");
         }
-        if (backgroundImage.getHorizontalOffset() != null || backgroundImage.getVerticalOffset() != null) {
+        if (fillImage.getHorizontalOffset() != null || fillImage.getVerticalOffset() != null) {
             StringBuffer positionText = new StringBuffer();
-            if (backgroundImage.getHorizontalOffset() != null) {
+            if (fillImage.getHorizontalOffset() != null) {
                 positionText.append("0px");
             } else {
-                positionText.append(ExtentRender.renderCssAttributeValue(backgroundImage.getHorizontalOffset()));
+                positionText.append(ExtentRender.renderCssAttributeValue(fillImage.getHorizontalOffset()));
             }
             positionText.append(" " );
-            if (backgroundImage.getVerticalOffset() != null) {
+            if (fillImage.getVerticalOffset() != null) {
                 positionText.append("0px");
             } else {
-                positionText.append(ExtentRender.renderCssAttributeValue(backgroundImage.getVerticalOffset()));
+                positionText.append(ExtentRender.renderCssAttributeValue(fillImage.getVerticalOffset()));
             }
         }
     }    

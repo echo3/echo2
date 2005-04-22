@@ -29,7 +29,7 @@
 
 package nextapp.echo2.app.layout;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Color;
 
 /**
@@ -39,7 +39,7 @@ import nextapp.echo2.app.Color;
 public class GridCellLayoutData extends CellLayoutData {
     
     private Color background = null;
-    private BackgroundImage backgroundImage = null;
+    private FillImage backgroundImage = null;
     private int columnSpan = 1;
     private int rowSpan = 1;
     
@@ -57,7 +57,7 @@ public class GridCellLayoutData extends CellLayoutData {
      * 
      * @return the background image
      */
-    public BackgroundImage getBackgroundImage() {
+    public FillImage getBackgroundImage() {
         return backgroundImage;
     }
     
@@ -93,7 +93,7 @@ public class GridCellLayoutData extends CellLayoutData {
      * 
      * @param newValue the new background image
      */
-    public void setBackgroundImage(BackgroundImage newValue) {
+    public void setBackgroundImage(FillImage newValue) {
         backgroundImage = newValue;
     }
     

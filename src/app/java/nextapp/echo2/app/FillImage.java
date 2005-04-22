@@ -30,23 +30,25 @@
 package nextapp.echo2.app;
 
 /**
- * Describes the background image of a particular component or region of
+ * Describes how an image should 'fill' a particular component or region of
  * the user interface.  Includes information about the image itself, its
  * positioning, repitition, and scrolling.
  */
-public class BackgroundImage {
+public class FillImage {
     
+    //BUGBUG. Remove all "BackgroundImage" references in this class and all clasess that use it
+    //        there are still some test classes that refer to these as background images.
     //BUGBUG. equals() implementation required.
 
     /** 
      * A constant for the attachment property that indicates that the 
-     * background image should remain fixed and NOT scroll with content.
+     * fill image should remain fixed and NOT scroll with content.
      */
     public static final int ATTACHMENT_FIXED = 0;
     
     /**
      * A constant for the attachment property that indicates that the
-     * background image should scroll with content above it.
+     * fill image should scroll with content above it.
      */
     public static final int ATTACHMENT_SCROLL = 1;
     
@@ -63,28 +65,28 @@ public class BackgroundImage {
     private Extent verticalOffset;
     
     /**
-     * Creates a new <code>BackgroundImage</code> with no horizontal/vertical 
+     * Creates a new <code>FillImage</code> with no horizontal/vertical 
      * offset that scrolls with content and repeats both horizontally and 
      * vertically.
      * 
      * @param image the <code>ImageReference</code> to be displayed in the 
-     *        background
+     *        fill
      */
-    public BackgroundImage(ImageReference image) {
+    public FillImage(ImageReference image) {
         this(image, null, null, REPEAT, ATTACHMENT_SCROLL);
     }
 
     /**
-     * Creates a new <code>BackgroundImage</code>.
+     * Creates a new <code>FillImage</code>.
      * 
      * @param image the <code>ImageReference</code> to be displayed in the 
-     *        background
-     * @param horizontalOffset the horizontal offset of the background image:
+     *        fill
+     * @param horizontalOffset the horizontal offset of the fill image:
      *        Positive values indicate an offest from the left side of the 
      *        region.
      *        Negative values indicate an offset from the right side of the 
      *        region.
-     * @param verticalOffset the vertical offset of the background image:
+     * @param verticalOffset the vertical offset of the fill image:
      *        Positive values indicate an offset from the top of the region.
      *        Negative values indicate an offset from the bototm of the region.
      * @param repeat the repeat mode of the image, one of the following values:
@@ -101,7 +103,7 @@ public class BackgroundImage {
      *         <li><code>ATTACHMENT_SCROLL</code> (the default)</li>
      *        </ul>
      */
-    public BackgroundImage(ImageReference image, Extent horizontalOffset, Extent verticalOffset,
+    public FillImage(ImageReference image, Extent horizontalOffset, Extent verticalOffset,
             int repeat, int attachment) {
         super();
         this.image = image;
@@ -125,7 +127,7 @@ public class BackgroundImage {
     }
     
     /**
-     * Returns the horizontal offset of the background image.
+     * Returns the horizontal offset of the fill image.
      * Positive values indicate an offest from the left side of the region.
      * Negative values indicate an offset from the right side of the region.
      * 
@@ -135,9 +137,9 @@ public class BackgroundImage {
         return horizontalOffset;
     }
     /**
-     * Returns the background image.
+     * Returns the fill image.
      * 
-     * @return the background image
+     * @return the fill image
      */
     public ImageReference getImage() {
         return image;
@@ -159,7 +161,7 @@ public class BackgroundImage {
     }
     
     /**
-     * Returns the vertical offset of the background image.
+     * Returns the vertical offset of the fill image.
      * Positive values indicate an offset from the top of the region.
      * Negative values indicate an offset from the bototm of the region.
      * 

@@ -8,11 +8,11 @@
       <property name="background" value="#abcdef"/>
       <property name="insets" value="20px 30px"/>
       <property name="backgroundImage">
-       <backgroundimage>
+       <fillimage>
         <image type="nextapp.echo2.app.ResourceImageReference">
          <resourceimagereference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
         </image>
-       </backgroundimage>
+       </fillimage>
       </property>
      </properties>
     </layoutdata>

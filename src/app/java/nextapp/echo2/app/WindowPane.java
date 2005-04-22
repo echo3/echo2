@@ -58,6 +58,7 @@ public class WindowPane extends Component {
     public static final String PROPERTY_TITLE_BACKGROUND_IMAGE = "titleBackgroundImage";
     public static final String PROPERTY_TITLE_FONT = "titleFont";
     public static final String PROPERTY_TITLE_FOREGROUND = "titleForeground";
+    public static final String PROPERTY_TITLE_HEIGHT = "titleHeight";
     public static final String PROPERTY_TITLE_INSETS = "titleInsets";
     public static final String PROPERTY_WIDTH = "width";
 
@@ -81,7 +82,7 @@ public class WindowPane extends Component {
      * hierarhcy when a user attempts to close it.
      */
     public static final int DISPOSE_ON_CLOSE = 2;
-
+    
     /**
      * Creates a  new <code>WindowPane</code>.
      */    
@@ -204,8 +205,8 @@ public class WindowPane extends Component {
      * 
      * @return the background image
      */
-    public BackgroundImage getTitleBackgroundImage() {
-        return (BackgroundImage) getProperty(PROPERTY_TITLE_BACKGROUND_IMAGE);
+    public FillImage getTitleBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_TITLE_BACKGROUND_IMAGE);
     }
     
     /**
@@ -227,9 +228,18 @@ public class WindowPane extends Component {
     }
     
     /**
+     * Returns the height of the title region.
+     * 
+     * @return the height
+     */
+    public Extent getTitleHeight() {
+        return (Extent) getProperty(PROPERTY_TITLE_HEIGHT);
+    }
+
+    /**
      * Returns the insets of the title region.
      * 
-     * @return the insets.
+     * @return the insets
      */
     public Insets getTitleInsets() {
         return (Insets) getProperty(PROPERTY_TITLE_INSETS);
@@ -272,6 +282,10 @@ public class WindowPane extends Component {
             setPositionX((Extent) inputValue);
         } else if (PROPERTY_POSITION_Y.equals(inputName)) {
             setPositionY((Extent) inputValue);
+        } else if (PROPERTY_WIDTH.equals(inputName)) {
+            setWidth((Extent) inputValue);
+        } else if (PROPERTY_HEIGHT.equals(inputName)) {
+            setHeight((Extent) inputValue);
         }
     }
 
@@ -389,6 +403,15 @@ public class WindowPane extends Component {
      */
     public void setTitleForeground(Color newValue) {
         setProperty(PROPERTY_TITLE_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the height of the title region.
+     * 
+     * @param newValue the new height
+     */
+    public void setTitleHeight(Extent newValue) {
+        setProperty(PROPERTY_TITLE_HEIGHT, newValue);
     }
     
     /**

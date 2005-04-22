@@ -55,7 +55,7 @@ public class SplitPaneLayoutDataPeerTest extends TestCase {
      */
     public void setUp()
     throws Exception {
-        InputStream in = BackgroundImagePeerTest.class.getResourceAsStream("SplitPaneLayoutDataPeerTest.stylesheet");
+        InputStream in = FillImagePeerTest.class.getResourceAsStream("SplitPaneLayoutDataPeerTest.stylesheet");
         styleSheet = StyleSheetLoader.load(in, StyleSheetLoaderTest.class.getClassLoader());
         in.close();
     }

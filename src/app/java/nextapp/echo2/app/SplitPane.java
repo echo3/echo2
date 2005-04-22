@@ -101,8 +101,8 @@ public class SplitPane extends Component {
      * 
      * @return the background image
      */
-    public BackgroundImage getSeparatorBackgroundImage() {
-        return (BackgroundImage) getProperty(PROPERTY_SEPARATOR_BACKGROUND_IMAGE);
+    public FillImage getSeparatorBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_SEPARATOR_BACKGROUND_IMAGE);
     }
     
     /**
@@ -190,7 +190,7 @@ public class SplitPane extends Component {
      * 
      * @param newValue the new background image
      */
-    public void setSeparatorBackgroundImage(BackgroundImage newValue) {
+    public void setSeparatorBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_SEPARATOR_BACKGROUND_IMAGE, newValue);
     }
     

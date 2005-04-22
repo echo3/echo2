@@ -29,7 +29,7 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -195,7 +195,7 @@ System.err.println(component);
         if (!(layoutData instanceof SplitPaneLayoutData)) {
             return null;
         }
-        BackgroundImage backgroundImage = ((SplitPaneLayoutData) layoutData).getBackgroundImage();
+        FillImage backgroundImage = ((SplitPaneLayoutData) layoutData).getBackgroundImage();
         if (backgroundImage == null) {
             return null;
         }

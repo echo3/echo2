@@ -30,7 +30,7 @@
 package nextapp.echo2.app.layout;
 
 import nextapp.echo2.app.Alignment;
-import nextapp.echo2.app.BackgroundImage;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
@@ -52,7 +52,7 @@ implements LayoutData {
     private Color background;
     private Extent maximumSize;
     private Extent minimumSize;
-    private BackgroundImage backgroundImage;
+    private FillImage backgroundImage;
     private Insets insets;
     
     /**
@@ -79,7 +79,7 @@ implements LayoutData {
      * 
      * @return the background image
      */
-    public BackgroundImage getBackgroundImage() {
+    public FillImage getBackgroundImage() {
         return backgroundImage;
     }
     
@@ -149,7 +149,7 @@ implements LayoutData {
      * 
      * @param newValue the new <code>BackgroundImage</code>
      */
-    public void setBackgroundImage(BackgroundImage newValue) {
+    public void setBackgroundImage(FillImage newValue) {
         backgroundImage = newValue;
     }
     

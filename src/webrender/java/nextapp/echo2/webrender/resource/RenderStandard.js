@@ -858,6 +858,8 @@ EchoEventProcessor.processEvent = function(e) {
     } catch (ex) {
         throw "Invalid handler: " + handlerName + " (" + ex + ")";
     }
+    //BUGBUG. above code does not effectively check if handler is invalid.
+    
     handler(e);
 };
 
