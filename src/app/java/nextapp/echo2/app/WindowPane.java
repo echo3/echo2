@@ -116,8 +116,8 @@ public class WindowPane extends Component {
      * 
      * @return border
      */
-    public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
+    public FillImageBorder getBorder() {
+        return (FillImageBorder) getProperty(PROPERTY_BORDER);
     }
     
     /**
@@ -294,7 +294,7 @@ public class WindowPane extends Component {
      * 
      * @param newValue the new border
      */
-    public void setBorder(Border newValue) {
+    public void setBorder(FillImageBorder newValue) {
         setProperty(PROPERTY_BORDER, newValue);
     }
     

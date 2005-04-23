@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.FillImage;
-import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -53,7 +52,6 @@ import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
-import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -75,7 +73,8 @@ import nextapp.echo2.webrender.util.DomUtil;
 public class WindowPanePeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor,  SynchronizePeer {
     
-    private static final Border DEFAULT_BORDER = new Border(new Extent(1, Extent.PX), Color.BLACK, Border.STYLE_SOLID);
+    private static final FillImageBorder DEFAULT_BORDER 
+            = new FillImageBorder(Color.CYAN, new Insets(20), new Insets(3));
     private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
     private static final Extent DEFAULT_POSITION_Y = new Extent(64, Extent.PX);
     
@@ -206,7 +205,188 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_s");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_se");
     }
-    
+    /*
+    private void renderBorder(RenderContext rc, Element windowDivElement, WindowPane windowPane) {
+        FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
+        Color borderColor = border.getColor();
+        Insets borderInsets = border.getBorderInsets() == null 
+                ? new Insets(0) : border.getBorderInsets();
+        Document document = rc.getServerMessage().getDocument();
+        String elementId = ContainerInstance.getElementId(windowPane);
+                
+        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
+                .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
+        boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
+                .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
+        int borderTopPixels = ExtentRender.toPixels(borderInsets.getTop(), 0);
+        int borderLeftPixels = ExtentRender.toPixels(borderInsets.getLeft(), 0);
+        int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
+        int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
+        int borderVerticalPixels = borderTopPixels + borderBottomPixels;
+        int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
+
+        // North West
+        Element borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_nw");
+        CssStyle borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", "0px");
+        borderCssStyle.setAttribute("left", "0px");
+        borderCssStyle.setAttribute("height", borderTopPixels + "px");
+        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("cursor", "nw-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NW, 
+                border.getNorthWest(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // North
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_n");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", "0px");
+        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("height", borderTopPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("right", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                    + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
+        }
+        borderCssStyle.setAttribute("cursor", "n-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_N, 
+                border.getNorth(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // North East
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_ne");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", "0px");
+        borderCssStyle.setAttribute("right", "0px");
+        borderCssStyle.setAttribute("height", borderTopPixels + "px");
+        borderCssStyle.setAttribute("width", borderRightPixels + "px");
+        borderCssStyle.setAttribute("cursor", "ne-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NE, 
+                border.getNorthEast(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // West
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_w");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", borderTopPixels + "px");
+        borderCssStyle.setAttribute("left", "0px");
+        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+            
+        }
+        borderCssStyle.setAttribute("cursor", "w-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_W, 
+                border.getWest(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // East
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_e");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", borderTopPixels + "px");
+        borderCssStyle.setAttribute("right", "0px");
+        borderCssStyle.setAttribute("width", borderRightPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+            
+        }
+        borderCssStyle.setAttribute("cursor", "e-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_E, 
+                border.getEast(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // South West
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_sw");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("bottom", "0px");
+        borderCssStyle.setAttribute("left", "0px");
+        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("cursor", "sw-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SW, 
+                border.getSouthWest(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // South
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_s");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("bottom", "0px");
+        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("right", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                    + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
+            
+        }
+        borderCssStyle.setAttribute("cursor", "s-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_S, 
+                border.getSouth(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // South East
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_se");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("bottom", "0px");
+        borderCssStyle.setAttribute("right", "0px");
+        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+        borderCssStyle.setAttribute("width", borderRightPixels + "px");
+        borderCssStyle.setAttribute("cursor", "se-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SE, 
+                border.getSouthEast(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        ServerMessage serverMessage = rc.getServerMessage();
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_nw", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_n", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_ne", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_w", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_e", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_sw", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_s", "EchoWindowPane.windowResizeMouseDown");
+        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", "EchoWindowPane.windowResizeMouseDown");
+    }
+    */
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
@@ -253,176 +433,171 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             windowDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
         }
         
-        Border border = (Border) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
-        if (border instanceof FillImageBorder) {
-            FillImageBorder fillImageBorder = (FillImageBorder) border;
-            Color borderColor = fillImageBorder.getColor();
-            Insets borderInsets = fillImageBorder.getBorderInsets() == null 
-                    ? new Insets(0) : fillImageBorder.getBorderInsets();
-                    
-            int borderTopPixels = ExtentRender.toPixels(borderInsets.getTop(), 0);
-            int borderLeftPixels = ExtentRender.toPixels(borderInsets.getLeft(), 0);
-            int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
-            int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
-            int borderVerticalPixels = borderTopPixels + borderBottomPixels;
-            int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
-                    
-            Element borderDivElement;
-            CssStyle borderCssStyle;
-            
-            // North West
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_nw");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("top", "0px");
-            borderCssStyle.setAttribute("left", "0px");
-            borderCssStyle.setAttribute("height", borderTopPixels + "px");
-            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-            borderCssStyle.setAttribute("cursor", "nw-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NW, 
-                    fillImageBorder.getNorthWest(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // North
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_n");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("top", "0px");
-            borderCssStyle.setAttribute("left", borderLeftPixels + "px");
-            borderCssStyle.setAttribute("height", borderTopPixels + "px");
-            if (renderPositioningBothSides) {
-                borderCssStyle.setAttribute("right", borderRightPixels + "px");
-            } else if (renderSizeExpression) {
-                borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
-                        + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
-            }
-            borderCssStyle.setAttribute("cursor", "n-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_N, 
-                    fillImageBorder.getNorth(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // North East
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_ne");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("top", "0px");
-            borderCssStyle.setAttribute("right", "0px");
-            borderCssStyle.setAttribute("height", borderTopPixels + "px");
-            borderCssStyle.setAttribute("width", borderRightPixels + "px");
-            borderCssStyle.setAttribute("cursor", "ne-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NE, 
-                    fillImageBorder.getNorthEast(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // West
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_w");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("top", borderTopPixels + "px");
-            borderCssStyle.setAttribute("left", "0px");
-            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-            if (renderPositioningBothSides) {
-                borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
-            } else if (renderSizeExpression) {
-                borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
-                        + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+        FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
+        Color borderColor = border.getColor();
+        Insets borderInsets = border.getBorderInsets() == null 
+                ? new Insets(0) : border.getBorderInsets();
                 
-            }
-            borderCssStyle.setAttribute("cursor", "w-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_W, 
-                    fillImageBorder.getWest(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // East
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_e");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("top", borderTopPixels + "px");
-            borderCssStyle.setAttribute("right", "0px");
-            borderCssStyle.setAttribute("width", borderRightPixels + "px");
-            if (renderPositioningBothSides) {
-                borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
-            } else if (renderSizeExpression) {
-                borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
-                        + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+        int borderTopPixels = ExtentRender.toPixels(borderInsets.getTop(), 0);
+        int borderLeftPixels = ExtentRender.toPixels(borderInsets.getLeft(), 0);
+        int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
+        int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
+        int borderVerticalPixels = borderTopPixels + borderBottomPixels;
+        int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
                 
-            }
-            borderCssStyle.setAttribute("cursor", "e-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_E, 
-                    fillImageBorder.getEast(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // South West
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_sw");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("bottom", "0px");
-            borderCssStyle.setAttribute("left", "0px");
-            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-            borderCssStyle.setAttribute("cursor", "sw-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SW, 
-                    fillImageBorder.getSouthWest(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // South
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_s");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("bottom", "0px");
-            borderCssStyle.setAttribute("left", borderLeftPixels + "px");
-            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-            if (renderPositioningBothSides) {
-                borderCssStyle.setAttribute("right", borderRightPixels + "px");
-            } else if (renderSizeExpression) {
-                borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
-                        + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
-                
-            }
-            borderCssStyle.setAttribute("cursor", "s-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_S, 
-                    fillImageBorder.getSouth(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-            
-            // South East
-            borderDivElement = document.createElement("div");
-            borderDivElement.setAttribute("id", elementId + "_border_se");
-            borderCssStyle = new CssStyle();
-            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-            borderCssStyle.setAttribute("position", "absolute");
-            borderCssStyle.setAttribute("bottom", "0px");
-            borderCssStyle.setAttribute("right", "0px");
-            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-            borderCssStyle.setAttribute("width", borderRightPixels + "px");
-            borderCssStyle.setAttribute("cursor", "se-resize");
-            FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SE, 
-                    fillImageBorder.getSouthEast(), false);
-            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-            windowDivElement.appendChild(borderDivElement);
-        } else {
-            BorderRender.renderToStyle(windowDivCssStyle, border);
+        Element borderDivElement;
+        CssStyle borderCssStyle;
+        
+        // North West
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_nw");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", "0px");
+        borderCssStyle.setAttribute("left", "0px");
+        borderCssStyle.setAttribute("height", borderTopPixels + "px");
+        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("cursor", "nw-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NW, 
+                border.getNorthWest(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // North
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_n");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", "0px");
+        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("height", borderTopPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("right", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                    + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
         }
+        borderCssStyle.setAttribute("cursor", "n-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_N, 
+                border.getNorth(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // North East
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_ne");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", "0px");
+        borderCssStyle.setAttribute("right", "0px");
+        borderCssStyle.setAttribute("height", borderTopPixels + "px");
+        borderCssStyle.setAttribute("width", borderRightPixels + "px");
+        borderCssStyle.setAttribute("cursor", "ne-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NE, 
+                border.getNorthEast(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // West
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_w");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", borderTopPixels + "px");
+        borderCssStyle.setAttribute("left", "0px");
+        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+            
+        }
+        borderCssStyle.setAttribute("cursor", "w-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_W, 
+                border.getWest(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // East
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_e");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("top", borderTopPixels + "px");
+        borderCssStyle.setAttribute("right", "0px");
+        borderCssStyle.setAttribute("width", borderRightPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
+            
+        }
+        borderCssStyle.setAttribute("cursor", "e-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_E, 
+                border.getEast(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // South West
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_sw");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("bottom", "0px");
+        borderCssStyle.setAttribute("left", "0px");
+        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("cursor", "sw-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SW, 
+                border.getSouthWest(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // South
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_s");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("bottom", "0px");
+        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+        if (renderPositioningBothSides) {
+            borderCssStyle.setAttribute("right", borderRightPixels + "px");
+        } else if (renderSizeExpression) {
+            borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                    + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
+            
+        }
+        borderCssStyle.setAttribute("cursor", "s-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_S, 
+                border.getSouth(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
+        
+        // South East
+        borderDivElement = document.createElement("div");
+        borderDivElement.setAttribute("id", elementId + "_border_se");
+        borderCssStyle = new CssStyle();
+        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+        borderCssStyle.setAttribute("position", "absolute");
+        borderCssStyle.setAttribute("bottom", "0px");
+        borderCssStyle.setAttribute("right", "0px");
+        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+        borderCssStyle.setAttribute("width", borderRightPixels + "px");
+        borderCssStyle.setAttribute("cursor", "se-resize");
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SE, 
+                border.getSouthEast(), false);
+        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+        windowDivElement.appendChild(borderDivElement);
         
         windowDivElement.setAttribute("style", windowDivCssStyle.renderInline());
         
@@ -437,31 +612,25 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         windowBodyDivCssStyle.setAttribute("position", "absolute");
         windowBodyDivCssStyle.setAttribute("z-index", "1");
-        if (border instanceof FillImageBorder) {
-            FillImageBorder fillImageBorder = (FillImageBorder) border;
-            Insets contentInsets = fillImageBorder.getContentInsets() == null 
-                    ? new Insets(0) : fillImageBorder.getContentInsets();
-            int left = ExtentRender.toPixels(contentInsets.getLeft(), 0);
-            int right = ExtentRender.toPixels(contentInsets.getRight(), 0);
-            int top = ExtentRender.toPixels(contentInsets.getTop(), 0);
-            int bottom = ExtentRender.toPixels(contentInsets.getBottom(), 0);
-            windowBodyDivCssStyle.setAttribute("top", top + "px");
-            windowBodyDivCssStyle.setAttribute("left", left + "px");
-            if (renderPositioningBothSides) {
-                windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
-                windowBodyDivCssStyle.setAttribute("right", right + "px");
-            } else if (renderSizeExpression) {
-                windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
-                        + elementId + "').clientHeight-" + (top + bottom) + ")+'px')");
-                windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" 
-                        + elementId + "').clientWidth-" + (left + right) + ")+'px')");
-            }
-        } else {
-            windowBodyDivCssStyle.setAttribute("top", "0px");
-            windowBodyDivCssStyle.setAttribute("left", "0px");
-            windowBodyDivCssStyle.setAttribute("width", "100%");
-            windowBodyDivCssStyle.setAttribute("height", "100%");
+        
+        Insets contentInsets = border.getContentInsets() == null 
+                ? new Insets(0) : border.getContentInsets();
+        int left = ExtentRender.toPixels(contentInsets.getLeft(), 0);
+        int right = ExtentRender.toPixels(contentInsets.getRight(), 0);
+        int top = ExtentRender.toPixels(contentInsets.getTop(), 0);
+        int bottom = ExtentRender.toPixels(contentInsets.getBottom(), 0);
+        windowBodyDivCssStyle.setAttribute("top", top + "px");
+        windowBodyDivCssStyle.setAttribute("left", left + "px");
+        if (renderPositioningBothSides) {
+            windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
+            windowBodyDivCssStyle.setAttribute("right", right + "px");
+        } else if (renderSizeExpression) {
+            windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + elementId + "').clientHeight-" + (top + bottom) + ")+'px')");
+            windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" 
+                    + elementId + "').clientWidth-" + (left + right) + ")+'px')");
         }
+
         windowBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
         windowDivElement.appendChild(windowBodyDivElement);
 

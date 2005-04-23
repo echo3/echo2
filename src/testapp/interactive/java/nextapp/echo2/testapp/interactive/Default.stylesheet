@@ -60,9 +60,6 @@
  <style name="default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <property name="titleInsets" value="10px 5px"/>
-   <property name="border">
-    <border size="2px" style="groove" color="#0f0f2f"/>
-   </property>
    <property name="titleBackground" value="#2f2f4f"/>
    <property name="titleForeground" value="#ffffff"/>
   </properties>

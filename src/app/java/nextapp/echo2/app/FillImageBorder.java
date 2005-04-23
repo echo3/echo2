@@ -29,14 +29,20 @@
 //BUGBUG? Restructure API for borders...this is BAD.
 package nextapp.echo2.app;
 
-public class FillImageBorder extends Border {
+public class FillImageBorder {
 
     private Insets contentInsets, borderInsets;
     private Color color;
     private FillImage northWest, north, northEast, west, east, southWest, south, southEast;
 
     public FillImageBorder() {
-        super(0, null, STYLE_NONE);
+    }
+    
+    public FillImageBorder(Color color, Insets borderInsets, Insets contentInsets) {
+        super();
+        this.color = color;
+        this.borderInsets = borderInsets;
+        this.contentInsets = contentInsets;
     }
 
     public Insets getBorderInsets() {
