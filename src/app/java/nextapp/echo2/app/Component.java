@@ -38,7 +38,17 @@ import java.util.Locale;
 
 import nextapp.echo2.app.event.EventListenerList;
 
+//BUGBUG. Removal of custom id assigment idea needs to be reviewed.
 //BUGBUG. Add documentation to discuss local style/shared style/application style relationship.
+
+//BUGBUG. Component ids are now being assigned on registration...
+//  While this guarantees a component has a unique identifier within the application,
+//  it does not permit components to be placed into a pool and reused by multiple applications
+//  (the first app would assign an id, later apps would retain the old app's id, which is not
+//  guaranteed to be unique in the app.
+// Solution idea 1: hold weakref to application....if it's ever null, reset id.
+// Solution idea 2: provide lifecycle method which must be called when adding component to application.
+
 /**
  * A representation of an Echo component.
  * This is an abstact base class from which all Echo components are derived.
@@ -61,9 +71,6 @@ public abstract class Component {
 
     private static final int FLAG_VISIBLE = 0x2;
     
-    /** The next available unique identifier. */
-    private static long nextId = 0;
-    
     /**
      * Boolean flags for this component, including enabled state, visibility, 
      * and registration.  Multiple booleans are wrapped in a single integer
@@ -75,7 +82,7 @@ public abstract class Component {
     /** A collection of references to child components. */
     private List children;
     
-    /** A unique identifier for this component. */
+    /** A application-wide unique identifier for this component. */
     private String id;
 
     /** The locale of the component. */
@@ -108,7 +115,6 @@ public abstract class Component {
     public Component() {
         super();
         flags = FLAG_VISIBLE;
-        id = Long.toString(nextId++);
         listenerList = new EventListenerList();
         propertyChangeSupport = null;
         localStyle = new MutableStyle();
@@ -140,7 +146,7 @@ public abstract class Component {
      *         component's state or is of an invalid type.
      */
     public void add(Component c, int n) 
-    throws DuplicateIdException, IllegalChildException {
+    throws IllegalChildException {
         
         if (!isValidChild(c)) {
             throw new IllegalChildException(this, c);
@@ -363,9 +369,13 @@ public abstract class Component {
     }
     
     /**
-     * Returns the unique id of this component.
+     * Returns the application-wide unique id of this component.
+     * This id is only guaranteed to be unique within the application
+     * to which this component is registered.  This method returns
+     * null in the event that the component is not registered to an
+     * application.
      * 
-     * @return the unique id of this component
+     * @return the application-wide unique id of this component
      */
     public String getId() {
         return id;
@@ -546,13 +556,6 @@ public abstract class Component {
      */
     public final String getStyleName() {
         return styleName;
-    }
-    
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
-        return id.hashCode();
     }
     
     /**
@@ -778,15 +781,12 @@ public abstract class Component {
     
     /**
      * Sets the unique identifier of this <code>Component</code>.
-     * The identifier may not be modified while a <code>Component</code> is
-     * registered to an <code>ApplicationInstance</code>.
+     * This method is invoked by the <code>ApplicationInstance</code>
+     * when the component is registered or deregistered.
      * 
-     * @param id the new unique identifier
+     * @param id the new identifier
      */
-    public void setId(String id) {
-        if (isRegistered()) {
-            throw new IllegalStateException("id may not be set on a registered component");
-        }
+    void setId(String id) {
         this.id = id;
     }
     

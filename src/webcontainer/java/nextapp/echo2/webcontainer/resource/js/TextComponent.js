@@ -30,7 +30,7 @@
 //_________________________
 // Object EchoTextComponent
 
-function EchoTextComponent() { }
+EchoTextComponent = function() { };
 
 EchoTextComponent.processUpdate = function(e) {
     var textComponent = e.target;
@@ -44,5 +44,3 @@ EchoTextComponent.processUpdate = function(e) {
     }
     EchoDebugManager.updateClientMessage();
 };
-
-EchoScriptLibraryManager.setStateLoaded("Echo.TextComponent");

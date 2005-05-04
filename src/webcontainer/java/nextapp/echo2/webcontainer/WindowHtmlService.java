@@ -85,6 +85,7 @@ implements Service {
         baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getApplicationUri() + "');");
         
         CssStyle cssStyle = new CssStyle();
+        cssStyle.setAttribute("position", "absolute");
         cssStyle.setAttribute("font-family", "verdana, arial, helvetica, sans-serif");
         cssStyle.setAttribute("font-size", "10pt");
         cssStyle.setAttribute("height", "100%");

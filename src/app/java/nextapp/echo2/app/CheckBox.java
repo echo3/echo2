@@ -32,10 +32,8 @@ package nextapp.echo2.app;
 import nextapp.echo2.app.button.DefaultToggleButtonModel;
 import nextapp.echo2.app.button.ToggleButton;
 
-//BUGBUG. this componenent has no rendering behavior.
-
 /**
- * A checkbox implementation (NOT YET FUNCTIONAL).
+ * A checkbox implementation.
  */
 public class CheckBox extends ToggleButton {
 

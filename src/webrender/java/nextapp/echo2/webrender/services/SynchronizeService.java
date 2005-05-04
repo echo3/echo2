@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webrender.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -97,17 +99,13 @@ implements Service {
     public int getVersion() {
         return DO_NOT_CACHE;
     }
-
+    
     private Document parseRequestDocument(Connection conn) 
     throws IOException {
-        HttpServletRequest request =  conn.getRequest();
-//BUGBUG. seems to break konqueror....temporarily removed (investigating konq support).
-//        if (!request.getContentType().equals("text/xml")) {
-//            throw new IOException("Invalid content type: " + request.getContentType());
-//        }
+        HttpServletRequest request = conn.getRequest();
         InputStream in = null;
         try {
-            in = request.getInputStream();
+            in = cleanXmlInputStream(request.getInputStream());
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -122,6 +120,39 @@ implements Service {
             if (in != null) { try { in.close(); } catch (IOException ex) { } }
         }
     }
+
+    //BUGBUG. this method is present purely to prevent the XML parser from choking on input from
+    //XMLHttpRequests from the Konqueror browser.  If possible, fix using some other means, as this
+    //is a hack.
+    //If not possible w/ other means, this method should be disabled for all other browsers via
+    //ClientProperties.
+    //BUGBUG. this method is unsafe with anything but 7-bit ascii input  (String.getBytes() is used).
+    private InputStream cleanXmlInputStream(InputStream in) 
+    throws IOException{
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        
+        byte[] buffer = new byte[4096];
+        int bytesRead = 0;
+        
+        try {
+            do {
+                bytesRead = in.read(buffer);
+                if (bytesRead > 0) {
+                    byteOut.write(buffer, 0, bytesRead);
+                }
+            } while (bytesRead > 0);
+        } finally {
+            if (in != null) { try { in.close(); } catch (IOException ex) { } } 
+        }
+        
+        in.close();
+        
+        byte[] data = byteOut.toByteArray();
+        data = new String(data).trim().getBytes();
+        
+        return new ByteArrayInputStream(data);
+    }
+    
     
     protected abstract ServerMessage renderInit(Connection conn, Document clientMessageDocument);
     

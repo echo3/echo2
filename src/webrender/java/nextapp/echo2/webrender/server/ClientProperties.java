@@ -115,6 +115,9 @@ public class ClientProperties {
      */
     public static final String QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY = "quirkCssPositioningOneSideOnly";
     
+    //BUGBUG. Doc.
+    public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
+    
     /**
      * A quirk flag indicating the incorect parsing of newlines in the content of a 'textarea'.
      * <p>

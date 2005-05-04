@@ -52,7 +52,7 @@ public class BaseHtmlDocument extends HtmlDocument {
 	    Document document = getDocument();
         
         Element blockingPaneDivElement = document.createElement("div");
-        blockingPaneDivElement.setAttribute("id", "blockingPane");
+        blockingPaneDivElement.setAttribute("id", "blockingPane");        
         CssStyle blockingPaneDivCssStyle = new CssStyle();
         blockingPaneDivCssStyle.setAttribute("position", "absolute");
         blockingPaneDivCssStyle.setAttribute("top", "0px");
@@ -69,6 +69,7 @@ public class BaseHtmlDocument extends HtmlDocument {
         blockingPaneDivElement.appendChild(document.createTextNode(" "));
         
 	    Element formElement = document.createElement("form");
+        formElement.setAttribute("style", "padding:0px;margin:0px;");
         formElement.setAttribute("action", "#");
 	    formElement.setAttribute("id", contentId);
 	    formElement.setAttribute("onsubmit", "return false;");

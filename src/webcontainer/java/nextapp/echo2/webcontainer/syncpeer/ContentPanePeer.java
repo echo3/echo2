@@ -155,6 +155,7 @@ implements DomUpdateSupport, SynchronizePeer {
         divElement.setAttribute("id", ContainerInstance.getElementId(component));
         
         CssStyle cssStyle = new CssStyle();
+        cssStyle.setAttribute("position", "absolute");
         cssStyle.setAttribute("width", "100%");
         cssStyle.setAttribute("height", "100%");
         ColorRender.renderToStyle(cssStyle, (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_FOREGROUND),

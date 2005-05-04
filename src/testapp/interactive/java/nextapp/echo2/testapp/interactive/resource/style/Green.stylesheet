@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
- <style name="default" type="nextapp.echo2.app.Button">
+ <style name="default" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
    <property name="background" value="#4f7f4f"/>
    <property name="foreground" value="#efefff"/>

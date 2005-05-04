@@ -62,7 +62,7 @@ public class StyleSheetTest extends Column {
     static {
         InputStream in = null;
         try {
-            in = StyleSheetTest.class.getResourceAsStream("/nextapp/echo2/testapp/interactive/Default.stylesheet");
+            in = StyleSheetTest.class.getResourceAsStream(Styles.STYLE_PATH + "Default.stylesheet");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             StringBuffer out = new StringBuffer();
             String line;

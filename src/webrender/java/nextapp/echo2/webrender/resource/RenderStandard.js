@@ -42,12 +42,10 @@ EchoAsyncMonitor.pollServiceRequest = "?serviceId=Echo.AsyncMonitor";
 EchoAsyncMonitor.timeoutId = null;
 
 EchoAsyncMonitor.connect = function() {
-    var response = new EchoXmlHttpResponse();
-    var request = new EchoXmlHttpRequest(EchoClientEngine.baseServerUri + EchoAsyncMonitor.pollServiceRequest, 
-            null);
-    response.validResponseHandler = EchoAsyncMonitor.validResponseHandler;
-    response.invalidResponseHandler = EchoAsyncMonitor.invalidResponseHandler;
-    request.connect(response);
+    var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoAsyncMonitor.pollServiceRequest, "GET");
+    conn.responseHandler = EchoAsyncMonitor.responseHandler;
+    conn.invalidResponseHandler = EchoAsyncMonitor.invalidResponseHandler;
+    conn.connect();
 };
 
 /**
@@ -74,10 +72,10 @@ EchoAsyncMonitor.stop = function() {
 /**
  * Processes a valid response from the server.
  *
- * @param responseXml the XML message received from the server
+ * @param conn the EchoHttpConnection containing the response information.
  */
-EchoAsyncMonitor.validResponseHandler = function(responseXml) {
-    if ("true" == responseXml.documentElement.getAttribute("requestsync")) {
+EchoAsyncMonitor.responseHandler = function(conn) {
+    if ("true" == conn.getResponseXml().documentElement.getAttribute("requestsync")) {
         EchoServerTransaction.connect();
     } else {
         EchoAsyncMonitor.start();
@@ -150,14 +148,14 @@ EchoBlockingPane.process = function(messagePartElement) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
             case "setdelaymessage":
-                EchoBlockingPane.setDelayMessage(messagePartElement.childNodes[i]);
+                EchoBlockingPane.processSetDelayMessage(messagePartElement.childNodes[i]);
                 break;
             }
         }
     }
 };
 
-EchoBlockingPane.setDelayMessage = function(setDelayMessageElement) {
+EchoBlockingPane.processSetDelayMessage = function(setDelayMessageElement) {
     var blockingPane = document.getElementById("blockingPane");
     var i;
     // Remove existing children.
@@ -175,7 +173,7 @@ EchoBlockingPane.setDelayMessage = function(setDelayMessageElement) {
 
 function EchoClientEngine() { }
 
-EchoClientEngine.baseServerUri;
+EchoClientEngine.baseServerUri = null;
 
 EchoClientEngine.init = function(baseServerUri) {
     // Store base URI.
@@ -223,10 +221,10 @@ EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
         } 
     }
     if (!propertyElement) {
-		propertyElement = messagePartElement.ownerDocument.createElement("property");
-	    propertyElement.setAttribute("componentid", componentId);
-	    propertyElement.setAttribute("name", propertyName);
-	    messagePartElement.appendChild(propertyElement);
+        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        propertyElement.setAttribute("componentid", componentId);
+        propertyElement.setAttribute("name", propertyName);
+        messagePartElement.appendChild(propertyElement);
     }
     
     return propertyElement;
@@ -791,6 +789,14 @@ EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener
     }
 };
 
+EchoDomUtil.stopPropogation = function(e) {
+    if (e.stopPropogation) {
+        e.stopPropogation();
+    } else {
+        e.cancelBubble = true;
+    }
+};
+
 // ________________________
 // Object EchoEventProcessor
 
@@ -799,7 +805,10 @@ function EchoEventProcessor() { }
 
 EchoEventProcessor.eventTypeToHandlersMap = new Array();
 
-EchoEventProcessor.addHandler = function(eventType, elementId, handler) {
+EchoEventProcessor.addHandler = function(elementId, eventType, handler) {
+    var element = document.getElementById(elementId);
+    EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
+    
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
     if (!elementIdToHandlerMap) {
         elementIdToHandlerMap = new Array();
@@ -823,9 +832,9 @@ EchoEventProcessor.getHandlerElementIds = function(eventType) {
     var elementIds = new Array();
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
     if (elementIdToHandlerMap) {
-	    for (var elementId in elementIdToHandlerMap) {
-	        elementIds.push(elementId);
-	    }
+        for (var elementId in elementIdToHandlerMap) {
+            elementIds.push(elementId);
+        }
     }
     return elementIds;
 };
@@ -850,6 +859,7 @@ EchoEventProcessor.getHandlerEventTypes = function() {
  */
 EchoEventProcessor.processEvent = function(e) {
     e = e ? e : window.event;
+    EchoDomUtil.stopPropogation(e);
     var eventType = e.type;
     if (!e.target && e.srcElement) {
         // The Internet Explorer event model stores the target element in the 'srcElement' property of an event.
@@ -857,27 +867,29 @@ EchoEventProcessor.processEvent = function(e) {
         e.target = e.srcElement;
     }
     var targetElement = e.target;
-    if (targetElement.nodeType != 1) {
+//    if (targetElement.nodeType != 1) {
         // Only process events from element nodes.
-        return;
-    }
+//        return;
+//    }
     
     var handlerName = null;
     while (!handlerName && targetElement) {
-        handlerName = EchoEventProcessor.getHandler(eventType, targetElement.getAttribute("id"));
+        if (targetElement.nodeType == 1) { // Element Node
+            handlerName = EchoEventProcessor.getHandler(eventType, targetElement.getAttribute("id"));
+        }
         if (!handlerName) {
             targetElement = targetElement.parentNode;
         }
     }
     e.registeredTarget = targetElement;
     
-    if (! handlerName) {
-        throw "Event handler for event type \"" + eventType + "\" not found for element id \"" + 
-                targetElement.getAttribute("id")  + "\".";
+    if (!handlerName) {
+        //BUGBUG. IE can hit this case under rapid clicking.  Ensure this is not indicative of a problem.
+        return;
     }
 
     var handler;
-    try {    
+    try {
         handler = eval(handlerName);
     } catch (ex) {
         throw "Invalid handler: " + handlerName + " (" + ex + ")";
@@ -887,7 +899,12 @@ EchoEventProcessor.processEvent = function(e) {
     handler(e);
 };
 
-EchoEventProcessor.removeHandler = function(eventType, elementId) {
+EchoEventProcessor.removeHandler = function(elementId, eventType) {
+    var element = document.getElementById(elementId);
+    if (element) {
+        EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
+    }
+
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
     if (!elementIdToHandlerMap) {
         return;
@@ -911,35 +928,102 @@ function EchoEventUpdate() { }
  *        to process.
  */
 EchoEventUpdate.process = function(messagePartElement) {
-    var i, j, eventType, handler, addItems, removeItems, elementId, element;
+    var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
     var adds = messagePartElement.getElementsByTagName("eventadd");
     var removes = messagePartElement.getElementsByTagName("eventremove");
     for (i = 0; i < adds.length; ++i) {
-        eventType = adds[i].getAttribute("type");
-        handler = adds[i].getAttribute("handler");
+    
+        eventTypes = adds[i].getAttribute("type").split(",");
+        handlers = adds[i].getAttribute("handler").split(",");
+        if (handlers.length != eventTypes.length) {
+            throw "Handler count and event type count do not match.";
+        }
+        
         addItems = adds[i].getElementsByTagName("item");
         for (j = 0; j < addItems.length; ++j) {
             elementId = addItems[j].getAttribute("eid");
-            element = document.getElementById(elementId);
-            
-            //BUGBUG. these two operations need to get rolled into one, handled by EchoEventProcessor.
-	        EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
-	        EchoEventProcessor.addHandler(eventType, elementId, handler);
+            for (k = 0; k < eventTypes.length; ++k) {
+                EchoEventProcessor.addHandler(elementId, eventTypes[k], handlers[k]);
+            }
         }
     }
     for (i = 0; i < removes.length; ++i) {
-        eventType = removes[i].getAttribute("type");
+        eventTypes = removes[i].getAttribute("type");
         removeItems = removes[i].getElementsByTagName("item");
         for (j = 0; j < removeItems.length; ++j) {
             elementId = removeItems[j].getAttribute("eid");
-            element = document.getElementById(elementId);
+            for (k = 0; k < eventTypes.length; ++k) {
+                EchoEventProcessor.removeHandler(elementId, eventTypes[k]);
+            }
+        }
+    }
+};
 
-            //BUGBUG. these two operations need to get rolled into one, handled by EchoEventProcessor.
-	        if (element) {
-	            EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
-	        }
-	        EchoEventProcessor.removeHandler(eventType, elementId);
-	    }
+// _________________________
+// Object EchoHttpConnection
+
+function EchoHttpConnection(url, method, messageObject, contentType) {
+    this.url = url;
+    this.contentType = contentType;
+    this.method = method;
+    this.messageObject = messageObject;
+    this.responseHandler = null;
+    this.invalidResponseHandler = null;
+}
+
+EchoHttpConnection.prototype.connect = function() {
+    var usingActiveXObject = false;
+    if (window.XMLHttpRequest) {
+        this.xmlHttpRequest = new XMLHttpRequest();
+    } else if (window.ActiveXObject) {
+        usingActiveXObject = true;
+        this.xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+    } else {
+        throw "Connect failed: Cannot create XMLHttpRequest.";
+    }
+    var instance = this;
+    this.xmlHttpRequest.onreadystatechange = function() { instance.processReadyStateChange(); };
+    this.xmlHttpRequest.open(this.method, this.url, true);
+    if (this.contentType && (usingActiveXObject || this.xmlHttpRequest.setRequestHeader)) {
+        this.xmlHttpRequest.setRequestHeader("Content-Type", this.contentType);
+    }
+    this.xmlHttpRequest.send(this.messageObject ? this.messageObject : null);
+};
+
+/**
+ * Returns the response as text.
+ * This method may only be invoked from a response handler.
+ *
+ * @return the response, as text
+ */
+EchoHttpConnection.prototype.getResponseText = function() {
+    return this.xmlHttpRequest ? this.xmlHttpRequest.responseText : null;
+};
+
+/**
+ * Returns the response as an XML DOM.
+ * This method may only be invoked from a response handler.
+ *
+ * @return the response, as an XML DOM
+ */
+EchoHttpConnection.prototype.getResponseXml = function() {
+    return this.xmlHttpRequest ? this.xmlHttpRequest.responseXML : null;
+};
+
+EchoHttpConnection.prototype.processReadyStateChange = function() {
+    if (this.xmlHttpRequest.readyState == 4) {
+        if (this.xmlHttpRequest.status == 200) {
+            if (!this.responseHandler) {
+                throw "EchoHttpConnection response handler not set.";
+            }
+            this.responseHandler(this);
+        } else {
+            if (this.invalidResponseHandler) {
+                this.invalidResponseHandler(this);
+            } else {
+                throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
+            }
+        }
     }
 };
 
@@ -970,17 +1054,26 @@ EchoScriptLibraryManager.loadLibrary = function(serviceId, serviceUri) {
         return;
     }
 
-    var headElement = document.getElementsByTagName("head").item(0);
-    var scriptElement = document.createElement("script");
-    scriptElement.setAttribute("type", "text/javascript");
-    scriptElement.setAttribute("id", serviceId);
-    scriptElement.setAttribute("src", serviceUri);
-    headElement.appendChild(scriptElement);
+    var conn = new EchoHttpConnection(serviceUri, "GET");
+    conn.serviceId = serviceId;
+    conn.responseHandler = EchoScriptLibraryManager.responseHandler;
+    conn.connect();
+    
+    // Mark state as "requested" so that application will wait for library to load.
     EchoScriptLibraryManager.loadedLibraries[serviceId] = EchoScriptLibraryManager.STATE_REQUESTED;
 };
 
-EchoScriptLibraryManager.setStateLoaded = function(serviceId) {
-    EchoScriptLibraryManager.loadedLibraries[serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+/**
+ * Processes a valid response from the server.
+ *
+ * @param conn the EchoHttpConnection containing the response information.
+ */
+EchoScriptLibraryManager.responseHandler = function(conn) {
+    // Execute library code.
+    eval(conn.getResponseText());
+
+    // Mark state as "loaded" so that application will discontinue waiting for library to load.
+    EchoScriptLibraryManager.loadedLibraries[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
 };
 
 // ________________________
@@ -1032,18 +1125,18 @@ EchoServerMessage.isLibraryLoadComplete = function() {
     var complete = false;
     try {
         var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
-	    var libraryElements = librariesElement.getElementsByTagName("library");
-	    
+        var libraryElements = librariesElement.getElementsByTagName("library");
+        
         var returnValue = true;
-	    for (var i = 0; i < libraryElements.length; ++i) {
-	        var serviceId = libraryElements.item(i).getAttribute("serviceid");
-	        if (libraryElements.item(i).getAttribute("wait") == "true" &&
-	                EchoScriptLibraryManager.getState(serviceId) != EchoScriptLibraryManager.STATE_LOADED) {
-	            // A library that requires immediate loading is not yet available.
-	            returnValue = false;
-	            break;
-	        }
-	    }
+        for (var i = 0; i < libraryElements.length; ++i) {
+            var serviceId = libraryElements.item(i).getAttribute("serviceid");
+            if (libraryElements.item(i).getAttribute("wait") == "true" &&
+                    EchoScriptLibraryManager.getState(serviceId) != EchoScriptLibraryManager.STATE_LOADED) {
+                // A library that requires immediate loading is not yet available.
+                returnValue = false;
+                break;
+            }
+        }
         complete = true;
         return returnValue;
     } finally {
@@ -1098,17 +1191,17 @@ EchoServerMessage.processMessageParts = function() {
     // 'complete' flag is used to set status to 'failed' in the event of an exception.
     var complete = false;
     try {
-	    var messagePartElements = EchoServerMessage.messageDocument.getElementsByTagName("messagepart");
-	    for (var i = 0; i < messagePartElements.length; ++i) {
-	        var messagePartElement = messagePartElements[i];
-	        var processorName = messagePartElement.getAttribute("processor");
-	        var processor = eval(processorName);
-	        if (!processor || !processor.process) {
-	            throw "Processor \"" + processorName + "\" not available.";
-	        }
-	        processor.process(messagePartElement);
-	    }
-	    complete = true;
+        var messagePartElements = EchoServerMessage.messageDocument.getElementsByTagName("messagepart");
+        for (var i = 0; i < messagePartElements.length; ++i) {
+            var messagePartElement = messagePartElements[i];
+            var processorName = messagePartElement.getAttribute("processor");
+            var processor = eval(processorName);
+            if (!processor || !processor.process) {
+                throw "Processor \"" + processorName + "\" not available.";
+            }
+            processor.process(messagePartElement);
+        }
+        complete = true;
     } finally {
         EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
                 : EchoServerMessage.STATUS_PROCESSING_FAILED;
@@ -1128,7 +1221,7 @@ EchoServerMessage.processPhase1 = function() {
     }
 };
 
-EchoServerMessage.processPhase2  = function() {
+EchoServerMessage.processPhase2 = function() {
     EchoServerMessage.processMessageParts();
     EchoServerMessage.processAsyncConfig();
 };
@@ -1175,13 +1268,12 @@ EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
 EchoServerTransaction.connect = function() {
     EchoBlockingPane.activate();
     EchoAsyncMonitor.stop();
-    var response = new EchoXmlHttpResponse();
-    var request = new EchoXmlHttpRequest(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
-            EchoClientMessage.messageDocument);
-    response.validResponseHandler = EchoServerTransaction.validResponseHandler;
-    response.invalidResponseHandler = EchoServerTransaction.invalidResponseHandler;
+    var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
+            "POST", EchoClientMessage.messageDocument, "text/xml");
+    conn.responseHandler = EchoServerTransaction.responseHandler;
+    conn.invalidResponseHandler = EchoServerTransaction.invalidResponseHandler;
     EchoServerTransaction.active = true;
-    request.connect(response);
+    conn.connect();
     
     // Reset client message.
     EchoClientMessage.reset();
@@ -1192,81 +1284,25 @@ EchoServerTransaction.postProcess = function() {
     EchoServerTransaction.active = false;
 };
 
-//BUGBUG. Need to pass httprequest data to both valid/invalid response handler
-// without just passing responseXml/responseText!
 /**
  * Processes an invalid response from the server.
  */
-EchoServerTransaction.invalidResponseHandler = function(responseText) {
+EchoServerTransaction.invalidResponseHandler = function(conn) {
     EchoServerTransaction.postProcess();
-    alert("Invalid response from server: " + responseText);
+    alert("Invalid response from server: " + conn.getResponseText());
 };
 
 /**
- * Processes a valid response frmo the server.
+ * Processes a valid response from the server.
  *
- * @param responseXml the XML message received from the server
+ * @param conn the EchoHttpConnection containing the response information.
  */
-EchoServerTransaction.validResponseHandler = function(responseXml) {
-    EchoServerMessage.init(responseXml, EchoServerTransaction.postProcess);
+EchoServerTransaction.responseHandler = function(conn) {
+    EchoServerMessage.init(conn.getResponseXml(), EchoServerTransaction.postProcess);
     EchoServerMessage.process();
-};
-
-// _________________________
-// Object EchoXmlHttpRequest
-
-function EchoXmlHttpRequest(url, messageDocument) {
-    this.url = url;
-    this.messageDocument = messageDocument;
-}
-
-EchoXmlHttpRequest.prototype.connect = function(echoXmlHttpResponse) {
-    var xmlHttpRequest;
-    if (window.XMLHttpRequest) {
-        xmlHttpRequest = new XMLHttpRequest();
-    } else if (window.ActiveXObject) {
-        xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-    } else {
-        throw "Connect failed: Cannot create XMLHttpRequest.";
-    }
-    echoXmlHttpResponse.setXmlHttpRequest(xmlHttpRequest);
-    xmlHttpRequest.onreadystatechange = function() { echoXmlHttpResponse.processReadyStateChange(); };
-    xmlHttpRequest.open("POST", this.url, true);
-    xmlHttpRequest.send(this.messageDocument);
-};
-
-// __________________________
-// Object EchoXmlHttpResponse 
-
-function EchoXmlHttpResponse() {
-    this.validResponseHandler = null;
-    this.invalidResponseHandler = null;
-}
-
-EchoXmlHttpResponse.prototype.processReadyStateChange = function() {
-    if (this.xmlHttpRequest.readyState == 4) {
-        if (this.xmlHttpRequest.status == 200) {
-            if (!this.xmlHttpRequest || !this.xmlHttpRequest.responseXML) {
-                throw "Request not available, unable to parse.";
-            }
-            var responseXml = this.xmlHttpRequest.responseXML;
-            this.validResponseHandler(responseXml);
-        } else {
-            if (this.invalidResponseHandler) {
-                this.invalidResponseHandler(this.xmlHttpRequest.responseText);
-            } else {
-                throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
-            }
-        }
-    }
-};
-
-EchoXmlHttpResponse.prototype.setXmlHttpRequest = function(xmlHttpRequest) {
-    this.xmlHttpRequest = xmlHttpRequest;
 };
 
 // _____________________
 // Static Initialization
 
 EchoClientMessage.reset();
-

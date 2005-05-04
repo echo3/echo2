@@ -30,6 +30,8 @@
 package nextapp.echo2.testapp.interactive;
 
 import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.FillImageBorder;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.ComponentXmlException;
@@ -39,13 +41,38 @@ import nextapp.echo2.app.componentxml.StyleSheetLoader;
  * 
  */
 public class Styles {
+    
+    public static final String IMAGE_PATH = "/nextapp/echo2/testapp/interactive/resource/image/";
+    public static final String STYLE_PATH = "/nextapp/echo2/testapp/interactive/resource/style/";
 
+    public static final FillImageBorder SHADOW_BORDER;
+    static {
+        FillImageBorder border = new FillImageBorder();
+        border.setContentInsets(new Insets(8, 8, 14, 14));
+        border.setBorderInsets(new Insets(17, 17, 23, 23));
+        border.setNorthWest(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNW.png")));
+        border.setNorth(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderN.png")));
+        border.setNorthEast(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNE.png")));
+        border.setWest(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderW.png")));
+        border.setEast(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderE.png")));
+        border.setSouthWest(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSW.png")));
+        border.setSouth(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderS.png")));
+        border.setSouthEast(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSE.png")));
+        SHADOW_BORDER = border;
+    }
+    
     public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
-            "/nextapp/echo2/testapp/interactive/bg_nw_shadow.png"), null, null, FillImage.NO_REPEAT, 
+            IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
             FillImage.ATTACHMENT_FIXED);
     
-    public static final ResourceImageReference ICON_LOGO = 
-            new ResourceImageReference("/nextapp/echo2/testapp/interactive/nextapp_logo.png");
+    public static final FillImage BUTTON_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ButtonBackground.png"));
+    public static final FillImage BUTTON_PRESSED_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ButtonPressedBackground.png"));
+    public static final FillImage BUTTON_ROLLOVER_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ButtonRolloverBackground.png"));
+    
+    public static final ResourceImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
 
     public static final String APPLICATION_CONTROLS_COLUMN_STYLE_NAME = "applicationControlsColumn";
     public static final String DEFAULT_STYLE_NAME = "default";
@@ -57,9 +84,9 @@ public class Styles {
     public static final StyleSheet GREEN_STYLE_SHEET;
     static {
         try {
-            DEFAULT_STYLE_SHEET = StyleSheetLoader.load("nextapp/echo2/testapp/interactive/Default.stylesheet", 
+            DEFAULT_STYLE_SHEET = StyleSheetLoader.load(STYLE_PATH + "Default.stylesheet", 
                     Thread.currentThread().getContextClassLoader());
-            GREEN_STYLE_SHEET = StyleSheetLoader.load("nextapp/echo2/testapp/interactive/Green.stylesheet", 
+            GREEN_STYLE_SHEET = StyleSheetLoader.load(STYLE_PATH + "Green.stylesheet", 
                     Thread.currentThread().getContextClassLoader());
         } catch (ComponentXmlException ex) {
             throw new RuntimeException(ex);

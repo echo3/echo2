@@ -43,6 +43,7 @@ import nextapp.echo2.app.HttpImageReference;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StreamImageReference;
+import nextapp.echo2.testapp.interactive.Styles;
 import nextapp.echo2.testapp.interactive.TestGrid;
 
 /**
@@ -50,7 +51,7 @@ import nextapp.echo2.testapp.interactive.TestGrid;
  */
 public class ImageReferenceTest extends TestGrid {
     
-    private static final String RESOURCE_IMAGE_LOCATION = "/nextapp/echo2/testapp/interactive/two.jpg";
+    private static final String RESOURCE_IMAGE_LOCATION = Styles.IMAGE_PATH + "Two.jpg";
     
     private static final int BUFFER_SIZE = 4096;
     
@@ -69,10 +70,16 @@ public class ImageReferenceTest extends TestGrid {
     
     private StreamImageReference streamImageReference = new StreamImageReference() {
 
+        /**
+         * @see nextapp.echo2.app.StreamImageReference#getContentType()
+         */
         public String getContentType() {
             return "image/jpeg";
         }
 
+        /**
+         * @see nextapp.echo2.app.StreamImageReference#render(java.io.OutputStream)
+         */
         public void render(OutputStream out) throws IOException {
             InputStream in = null;
             byte[] buffer = new byte[BUFFER_SIZE];

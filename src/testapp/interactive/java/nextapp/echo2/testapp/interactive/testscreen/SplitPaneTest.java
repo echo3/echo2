@@ -293,7 +293,6 @@ public class SplitPaneTest extends SplitPane {
                 }
             }
         });
-        
         controlsColumn.addButton("Disable Resize", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testPane.setResizable(!testPane.isResizable());

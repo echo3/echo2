@@ -130,6 +130,10 @@ public class StyleSheetLoader {
                     throw new ComponentXmlException("Invalid base style name for style name " + name + ".", null);
                 }
                 Style baseStyle = (Style) classToStyleMap.get(componentClass);
+                while (baseStyle == null && componentClass != Object.class) {
+                    componentClass = componentClass.getSuperclass();
+                    baseStyle = (Style) classToStyleMap.get(componentClass);
+                }
                 if (baseStyle == null) {
                     throw new ComponentXmlException("Invalid base style name for style name " + name + ".", null);
                 }

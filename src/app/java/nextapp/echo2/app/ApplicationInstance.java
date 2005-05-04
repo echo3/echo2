@@ -50,7 +50,7 @@ public abstract class ApplicationInstance
 implements Serializable {
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0alpha8";
+    public static final String ID_STRING = "NextApp Echo v2.0alpha8+";
 
     /** 
      * Holds a thread local reference to the active ApplicationInstance for
@@ -129,6 +129,8 @@ implements Serializable {
      * The <code>StyleSheet</code> used by the application.
      */
     private StyleSheet styleSheet;
+
+    private long nextId;
     
     /** 
      * Creates an <code>ApplicationInstance</code>. 
@@ -252,6 +254,15 @@ implements Serializable {
      */
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+    }
+    
+    /**
+     * Generates an application-wide unique identifier.
+     * 
+     * @return the unique identifer
+     */
+    public String generateId() {
+        return Long.toString(nextId++);
     }
     
     /**
@@ -441,13 +452,10 @@ implements Serializable {
      * This method is invoked by <code>Component.setApplicationInstance()</code>
      * 
      * @param component the component to unregister
-     * @throws DuplicateIdException if id of the component conflicts with that
-     *         of a previously registered component.
      */
-    void registerComponent(Component component) 
-    throws DuplicateIdException {
-        if (idToComponentMap.containsKey(component.getId())) {
-            throw new DuplicateIdException(component);
+    void registerComponent(Component component) {
+        if (component.getId() == null) {
+            component.setId(generateId());
         }
         idToComponentMap.put(component.getId(), component); 
     }

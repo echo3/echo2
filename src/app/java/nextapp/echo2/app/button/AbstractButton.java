@@ -36,6 +36,7 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
@@ -49,6 +50,7 @@ import nextapp.echo2.app.event.ActionListener;
 public abstract class AbstractButton extends Component {
 
     public static final String INPUT_CLICK = "input_click";
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";
@@ -56,12 +58,14 @@ public abstract class AbstractButton extends Component {
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_MODEL = "model";
     public static final String PROPERTY_PRESSED_BACKGROUND = "pressedBackground";
+    public static final String PROPERTY_PRESSED_BACKGROUND_IMAGE = "pressedBackgroundImage";
     public static final String PROPERTY_PRESSED_BORDER = "pressedBorder";
     public static final String PROPERTY_PRESSED_ENABLED = "pressedEnabled";
     public static final String PROPERTY_PRESSED_FONT = "pressedFont";
     public static final String PROPERTY_PRESSED_FOREGROUND = "pressedForeground";
     public static final String PROPERTY_PRESSED_ICON = "pressedIcon";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
+    public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
     public static final String PROPERTY_ROLLOVER_BORDER = "rolloverBorder";
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
@@ -124,6 +128,15 @@ public abstract class AbstractButton extends Component {
      */
     public String getActionCommand() {
         return getModel().getActionCommand();
+    }
+    
+    /**
+     * Returns the background image of the button.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
     }
 
     /**
@@ -192,6 +205,15 @@ public abstract class AbstractButton extends Component {
     }
 
     /**
+     * Returns the background image displayed when the button is pressed. 
+     * 
+     * @return the background image
+     */
+    public FillImage getPressedBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_PRESSED_BACKGROUND_IMAGE);
+    }
+
+    /**
      * Returns the border displayed around the button when the button is
      * pressed.
      * 
@@ -237,6 +259,16 @@ public abstract class AbstractButton extends Component {
      */
     public Color getRolloverBackground() {
         return (Color) getProperty(PROPERTY_ROLLOVER_BACKGROUND);
+    }
+
+    /**
+     * Returns the background image displayed when the mouse cursor is inside
+     * the button's bounds. 
+     * 
+     * @return the background image
+     */
+    public FillImage getRolloverBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_PRESSED_BACKGROUND_IMAGE);
     }
 
     /**
@@ -316,6 +348,16 @@ public abstract class AbstractButton extends Component {
     }
 
     /**
+     * Determines if the button has any <code>ActionListener</code>s 
+     * registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActionListeners() {
+        return getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
+    
+    /**
      * Determines if pressed effects are enabled.
      * 
      * @return true if pressed effects are enabled
@@ -374,6 +416,15 @@ public abstract class AbstractButton extends Component {
      */
     public void setActionCommand(String newValue) {
         getModel().setActionCommand(newValue);
+    }
+    
+    /**
+     * Sets the background image of the button.
+     * 
+     * @param newValue the new background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
 
     /**
@@ -454,6 +505,15 @@ public abstract class AbstractButton extends Component {
     }
 
     /**
+     * Sets the background image displayed when the button is pressed.
+     * 
+     * @param newValue the new background image
+     */
+    public void setPressedBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_PRESSED_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
      * Sets the border displayed around the button when the button is pressed.
      * 
      * @param newValue the new border
@@ -508,6 +568,16 @@ public abstract class AbstractButton extends Component {
      */
     public void setRolloverBackground(Color newValue) {
         setProperty(PROPERTY_ROLLOVER_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the background image displayed when the mouse cursor is inside the
+     * button's bounds
+     * 
+     * @param newValue the new background image
+     */
+    public void setRolloverBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE, newValue);
     }
 
     /**

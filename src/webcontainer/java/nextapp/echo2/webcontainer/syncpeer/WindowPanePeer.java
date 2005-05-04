@@ -495,7 +495,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             windowBodyDivCssStyle.setAttribute("background-color", "white");
         }
         windowBodyDivCssStyle.setAttribute("position", "absolute");
-        windowBodyDivCssStyle.setAttribute("z-index", "1");
+        windowBodyDivCssStyle.setAttribute("z-index", "2");
         FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
         Insets contentInsets = border.getContentInsets() == null 
                 ? new Insets(0) : border.getContentInsets();
@@ -516,6 +516,19 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         windowBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
         windowDivElement.appendChild(windowBodyDivElement);
+        
+        // Create Internet Explorer Select Element blocking IFRAME.
+        if (true || rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_Z_INDEX)) {
+            Element iframeQuirkDivElement = document.createElement("div");
+            // Resuse/modify windowBodyDivCssStyle.
+            windowBodyDivCssStyle.setAttribute("z-index", "1");
+            iframeQuirkDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
+            windowDivElement.appendChild(iframeQuirkDivElement);
+            Element iframeQuirkIframeElement = document.createElement("iframe");
+            iframeQuirkIframeElement.setAttribute("width", "100%");
+            iframeQuirkIframeElement.setAttribute("height", "100%");
+            iframeQuirkDivElement.appendChild(iframeQuirkIframeElement);
+        }
 
         // Create outer title DIV element.
         Element outerTitleDivElement = document.createElement("div"); 

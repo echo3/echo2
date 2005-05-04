@@ -27,32 +27,58 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app;
+package nextapp.echo2.app.button;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import nextapp.echo2.app.RadioButton;
 
 /**
- * An exception which describes an attempt to add a component to a hierarchy
- * when the component's id is currently being used.
+ * A collection of radio buttons which allows the selection of only one
+ * radio button at a time.
  */
-public class DuplicateIdException extends RuntimeException {
-
-    private Component component;
+public class ButtonGroup 
+implements Serializable {
+    
+    private static final RadioButton[] EMPTY = new RadioButton[0];
+    
+    private Set buttons;
     
     /**
-     * Creates a new <code>DuplicateIdException</code>.
+     * Adds a <code>RadioButton</code> to the group.
      * 
-     * @param component the component with the conflicting id.
+     * @param radioButton the <code>RadioButton</code> to add
      */
-    public DuplicateIdException(Component component) {
-        super();
-        this.component = component;
+    public void addButton(RadioButton radioButton) {
+        if (buttons == null) {
+            buttons = new HashSet();
+        }
+        buttons.add(radioButton);
     }
     
     /**
-     * Returns the component with the conflicting id.
+     * Returns all <code>RadioButton</code>s in the group.
      * 
-     * @return the component
+     * @return the <code>RadioButton</code>
      */
-    public Component getComponent() {
-        return component;
+    public RadioButton[] getButtons() {
+        if (buttons == null) {
+            return EMPTY;
+        } else {
+            return (RadioButton[]) buttons.toArray(new RadioButton[buttons.size()]);
+        }
+    }
+    
+    /**
+     * Removes a <code>RadioButton</code> from the group.
+     * 
+     * @param radioButton the <code>RadioButton</code> to remove
+     */
+    public void removeButton(RadioButton radioButton) {
+        if (buttons != null) {
+            buttons.remove(radioButton);
+        }
     }
 }

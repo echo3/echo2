@@ -35,24 +35,29 @@ import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.button.AbstractButton;
+import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.button.ToggleButton;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
+import nextapp.echo2.webcontainer.image.ImageTools;
 import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
@@ -75,7 +80,7 @@ import org.w3c.dom.Text;
  * components.
  */
 public class AbstractButtonPeer 
-implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
+implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
 
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Alignment DEFAULT_STATE_POSITION = new Alignment(Alignment.LEADING, Alignment.DEFAULT);
@@ -89,14 +94,12 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
     private static final ImageReference DEFAULT_SELECTED_RADIOBUTTON_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOn.gif");
     
-//    private static final String IMAGE_ID_BACKGROUND = "background";
+    private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_ICON = "icon";
-//    private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
+    private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
     private static final String IMAGE_ID_ROLLOVER_ICON = "rolloverIcon";
-//    private static final String IMAGE_ID_ROLLOVER_STATE_ICON = "rolloverStateIcon";
-//    private static final String IMAGE_ID_PRESSED_BACKGROUND = "pressedBackground";
+    private static final String IMAGE_ID_PRESSED_BACKGROUND = "pressedBackground";
     private static final String IMAGE_ID_PRESSED_ICON = "pressedIcon";
-//    private static final String IMAGE_ID_PRESSED_STATE_ICON = "pressedStateIcon";
     private static final String IMAGE_ID_STATE_ICON = "stateIcon";
     private static final String IMAGE_ID_SELECTED_STATE_ICON = "selectedStateIcon";
     
@@ -110,7 +113,17 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         WebRenderServlet.getServiceRegistry().add(BUTTON_SERVICE);
     }
     
-    private static int convertIconTextPositionToOrientation(Alignment alignment, Component component) {
+    private static final String[] SET_GROUP_KEYS = new String[]{"groupid"};
+    
+    private void createSetGroup(ServerMessage serverMessage, String elementId, String groupId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    private int convertIconTextPositionToOrientation(Alignment alignment, Component component) {
         if (alignment.getVertical() == Alignment.DEFAULT) {
             if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
                 return TriCellTable.LEFT_RIGHT;
@@ -126,7 +139,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         }
     }
     
-    private static int convertStatePositionToOrientation(Alignment alignment, Component component) {
+    private int convertStatePositionToOrientation(Alignment alignment, Component component) {
         if (alignment.getVertical() == Alignment.DEFAULT) {
             if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
                 return TriCellTable.RIGHT_LEFT;
@@ -142,7 +155,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         }
     }
     
-    private static ImageReference getStateIcon(ToggleButton toggleButton) {
+    private ImageReference getStateIcon(ToggleButton toggleButton) {
         ImageReference stateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_STATE_ICON);
         if (stateIcon == null) {
             if (toggleButton instanceof CheckBox) {
@@ -154,7 +167,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         return stateIcon;
     }
     
-    private static ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
+    private ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
         ImageReference selectedStateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_SELECTED_STATE_ICON);
         if (selectedStateIcon == null) {
             if (toggleButton instanceof CheckBox) {
@@ -188,6 +201,30 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             return getStateIcon((ToggleButton) component);
         } else if (IMAGE_ID_SELECTED_STATE_ICON.equals(imageId)) {
             return getSelectedStateIcon((ToggleButton) component);
+        } else if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage 
+                    = (FillImage) component.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
+            if (backgroundImage == null) {
+                return null;
+            } else {
+                return backgroundImage.getImage();
+            }
+        } else if (IMAGE_ID_ROLLOVER_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage 
+                    = (FillImage) component.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
+            if (backgroundImage == null) {
+                return null;
+            } else {
+                return backgroundImage.getImage();
+            }
+        } else if (IMAGE_ID_PRESSED_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage 
+                    = (FillImage) component.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND_IMAGE);
+            if (backgroundImage == null) {
+                return null;
+            } else {
+                return backgroundImage.getImage();
+            }
         } else {
             return null;
         }
@@ -202,6 +239,16 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
     }
 
     /**
+     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
+        if (ToggleButton.SELECTED_CHANGED_PROPERTY.equals(propertyElement.getAttribute(PROPERTY_NAME))) {
+            ToggleButton toggleButton = (ToggleButton) component;
+            toggleButton.setSelected("true".equals(propertyElement.getAttribute("value")));
+        }
+    }
+
+    /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
@@ -210,6 +257,15 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         renderHtml(rc, update, contentElement, component);
     }
     
+    
+    /**
+     * Renders the content of the button, i.e., its text, icon, and/or state icon.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param buttonContainerElement the <code>Element</code> which will 
+     *        contain the content
+     * @param button the <code>AbstractButton</code> being rendered
+     */
     private void renderButtonContent(RenderContext rc, Element buttonContainerElement, AbstractButton button) {
         Node contentNode;
         Document document = rc.getServerMessage().getDocument();
@@ -220,16 +276,31 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         ImageReference icon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_ICON);
         
         // Create entities.
-        Element iconElement = icon == null ? null : ImageReferenceRender.renderImageReferenceElement(
-                rc, AbstractButtonPeer.this, button, IMAGE_ID_ICON);
         Text textNode = text == null ? null : rc.getServerMessage().getDocument().createTextNode(
                 (String) button.getRenderProperty(AbstractButton.PROPERTY_TEXT));
         
-        Element stateIconElement = toggleButton == null ? null :
-                ImageReferenceRender.renderImageReferenceElement(rc, AbstractButtonPeer.this, button, 
-                toggleButton.isSelected() ? IMAGE_ID_SELECTED_STATE_ICON : IMAGE_ID_STATE_ICON);
+        Element iconElement;
+        if (icon == null) {
+            iconElement = null;
+        } else {
+            iconElement = ImageReferenceRender.renderImageReferenceElement(rc, AbstractButtonPeer.this, button, 
+                    IMAGE_ID_ICON);
+            iconElement.setAttribute("id", elementId + "_icon");
+        }
+
+        Element stateIconElement;
+        if (toggleButton == null) {
+            stateIconElement = null;
+        } else {
+            stateIconElement = ImageReferenceRender.renderImageReferenceElement(rc, AbstractButtonPeer.this, button, 
+                    toggleButton.isSelected() ? IMAGE_ID_SELECTED_STATE_ICON : IMAGE_ID_STATE_ICON);
+            stateIconElement.setAttribute("id", elementId + "_stateicon");
+        }
         
         int entityCount = (textNode == null ? 0 : 1) + (iconElement == null ? 0 : 1) + (stateIconElement == null ? 0 : 1);
+        
+        Extent iconTextMargin;
+        Alignment textPosition;
         
         switch (entityCount) {
         case 1:
@@ -242,27 +313,18 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             }
             break;
         case 2:
-            Extent iconTextMargin = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_ICON_TEXT_MARGIN, 
+            iconTextMargin = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_ICON_TEXT_MARGIN, 
                     DEFAULT_ICON_TEXT_MARGIN);
             TriCellTable tct;
-            Alignment textPosition = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_POSITION, 
+            textPosition = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_POSITION, 
                     DEFAULT_TEXT_POSITION);
             if (stateIconElement == null) {
                 // Not rendering a ToggleButton.
                 int orientation = convertIconTextPositionToOrientation(textPosition, button);
                 tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
                 
-                Element textTdElement = tct.getTdElement(0);
-                CssStyle textTdCssStyle = new CssStyle();
-                textTdCssStyle.setAttribute("padding", "0px");
-                AlignmentRender.renderToStyle(textTdCssStyle, button, 
-                        (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT));
-                textTdElement.setAttribute("style", textTdCssStyle.renderInline());
-                textTdElement.appendChild(textNode);
-         
-                Element iconTdElement = tct.getTdElement(1);
-                iconTdElement.setAttribute("style", "padding: 0px");
-                iconTdElement.appendChild(iconElement);
+                renderCellText(tct, textNode, button);
+                renderCellIcon(tct, iconElement, 1);
                 
                 Element tableElement = tct.getTableElement();
                 tableElement.setAttribute("id", elementId + "_table");
@@ -276,23 +338,12 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
                 int orientation = convertStatePositionToOrientation(statePosition, button);
                 tct = new TriCellTable(document, elementId, orientation, stateMargin);
 
-                Element textOrIconTdElement = tct.getTdElement(0);
-                CssStyle textOrIconTdCssStyle = new CssStyle();
-                textOrIconTdCssStyle.setAttribute("padding", "0px");
-                textOrIconTdElement.setAttribute("style", textOrIconTdCssStyle.renderInline());
                 if (textNode == null) {
-                    textOrIconTdElement.appendChild(iconElement);
+                    renderCellIcon(tct, iconElement, 0);
                 } else {
-                    textOrIconTdElement.appendChild(textNode);
+                    renderCellText(tct, textNode, button);
                 }
-
-                Element stateTdElement = tct.getTdElement(1);
-                CssStyle stateTdCssStyle = new CssStyle();
-                stateTdCssStyle.setAttribute("padding", "0px");
-                AlignmentRender.renderToStyle(stateTdCssStyle, button, 
-                        (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_ALIGNMENT));
-                stateTdElement.setAttribute("style", stateTdCssStyle.renderInline());
-                stateTdElement.appendChild(stateIconElement);
+                renderCellState(tct, stateIconElement, 1, button);
                 
                 Element tableElement = tct.getTableElement();
                 tableElement.setAttribute("id", elementId + "_table");
@@ -300,8 +351,25 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             }
             break;
         case 3:
-            //BUGBUG. Implement three-item button renderer.
-            contentNode = null;
+            iconTextMargin = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_ICON_TEXT_MARGIN, 
+                    DEFAULT_ICON_TEXT_MARGIN);
+            textPosition = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_POSITION, 
+                    DEFAULT_TEXT_POSITION);
+            Extent stateMargin = (Extent) button.getRenderProperty(ToggleButton.PROPERTY_STATE_MARGIN, 
+                    DEFAULT_ICON_TEXT_MARGIN);
+            Alignment statePosition = (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_POSITION,
+                    DEFAULT_STATE_POSITION);
+            int stateOrientation = convertStatePositionToOrientation(statePosition, button);
+            int orientation = convertIconTextPositionToOrientation(textPosition, button);
+            tct = new TriCellTable(document, elementId, orientation, iconTextMargin, stateOrientation, stateMargin);
+
+            renderCellText(tct, textNode, button);
+            renderCellIcon(tct, iconElement, 1);
+            renderCellState(tct, stateIconElement, 2, button);
+            
+            Element tableElement = tct.getTableElement();
+            tableElement.setAttribute("id", elementId + "_table");
+            contentNode = tableElement;
             break;
         default:
             // 0 element button.
@@ -314,21 +382,77 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
     }
     
     /**
+     * Renders the content of the <code>TriCellTable</code> cell which 
+     * contains the button's icon.
+     * 
+     * @param tct the <code>TriCellTable</code> to update
+     * @param textNode the text
+     * @param cellIndex the index of the cell in the <code>TriCellTable</code>
+     *        that should contain the icon
+     */
+    private void renderCellIcon(TriCellTable tct, Element iconElement, int cellIndex) {
+        Element iconTdElement = tct.getTdElement(cellIndex);
+        iconTdElement.setAttribute("style", "padding: 0px");
+        iconTdElement.appendChild(iconElement);
+    }
+    
+    /**
+     * Renders the content of the <code>TriCellTable</code> cell which 
+     * contains the button's state icon.
+     * 
+     * @param tct the <code>TriCellTable</code> to update
+     * @param textNode the text
+     * @param cellIndex the index of the cell in the <code>TriCellTable</code>
+     *        that should contain the state icon
+     * @param button the <code>AbstractButton</code> being rendered
+     */
+    private void renderCellState(TriCellTable tct, Element stateIconElement, int cellIndex, AbstractButton button) {
+        Element stateTdElement = tct.getTdElement(cellIndex);
+        CssStyle stateTdCssStyle = new CssStyle();
+        stateTdCssStyle.setAttribute("padding", "0px");
+        AlignmentRender.renderToStyle(stateTdCssStyle, button, 
+                (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_ALIGNMENT));
+        stateTdElement.setAttribute("style", stateTdCssStyle.renderInline());
+        stateTdElement.appendChild(stateIconElement);
+    }
+    
+    /**
+     * Renders the content of the <code>TriCellTable</code> cell which 
+     * contains the button's text.
+     * Text is always rendered in cell #0 of the table.
+     * 
+     * @param tct the <code>TriCellTable</code> to update
+     * @param textNode the text
+     * @param button the <code>AbstractButton</code> being rendered
+     */
+    private void renderCellText(TriCellTable tct, Text textNode, AbstractButton button) {
+        Element textTdElement = tct.getTdElement(0);
+        CssStyle textTdCssStyle = new CssStyle();
+        textTdCssStyle.setAttribute("padding", "0px");
+        AlignmentRender.renderToStyle(textTdCssStyle, button, 
+                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT));
+        textTdElement.setAttribute("style", textTdCssStyle.renderInline());
+        textTdElement.appendChild(textNode);
+    }
+    
+    /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         String id = ContainerInstance.getElementId(component);
-        EventUpdate.createEventRemove(serverMessage, "click", id);
-        EventUpdate.createEventRemove(serverMessage, "mouseover", id);
-        EventUpdate.createEventRemove(serverMessage, "mousedown", id);
+        EventUpdate.createEventRemove(serverMessage, "click,mouseover,mousedown,mouseout,mouseup", id);
     }
     
+    /**
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BUTTON_SERVICE.getId(), true);
         AbstractButton button = (AbstractButton) component;
+        FillImage backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
         
         Document document = parent.getOwnerDocument();
         Element divElement = document.createElement("div");
@@ -338,7 +462,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         divElement.setAttribute("id", id);
         
         CssStyle cssStyle = new CssStyle();
-        cssStyle.setAttribute("position", "relative");
+//BUGBUG. this was a renderhack for IE rollovers being lame but now it tweaks Konqueror....seems to work fine in IE,
+// so this should just be deleted if it continues to not be an issue....otherwise, we need a client quirk flag to enable.
+//        cssStyle.setAttribute("position", "relative");
         cssStyle.setAttribute("cursor", "pointer");
         cssStyle.setAttribute("margin", "0px");
         cssStyle.setAttribute("border-spacing", "0px");
@@ -353,16 +479,17 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
                 (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
         InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
         FontRender.renderToStyle(cssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
+        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, true);
+        
         divElement.setAttribute("style", cssStyle.renderInline());
         
         parent.appendChild(divElement);
-        EventUpdate.createEventAdd(serverMessage, "click", id, "EchoButton.processAction");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", id, "EchoButton.processPressed");
         
         boolean rolloverEnabled = ((Boolean) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_ENABLED, 
                 Boolean.FALSE)).booleanValue();
         boolean pressedEnabled = ((Boolean) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_ENABLED, 
                 Boolean.FALSE)).booleanValue();
+        boolean addRolloverListener = false;
         
         if (rolloverEnabled || pressedEnabled) {
             CssStyle baseCssStyle = new CssStyle();
@@ -370,28 +497,44 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             ColorRender.renderToStyle(baseCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
                     (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
             FontRender.renderToStyle(baseCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
+            FillImageRender.renderToStyle(baseCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
+                    (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), true);
             DomPropertyStore.createDomPropertyStore(serverMessage, id, "baseStyle", 
                     baseCssStyle.renderInline());
             
             if (rolloverEnabled) {
                 CssStyle rolloverCssStyle = new CssStyle();
-                BorderRender.renderToStyle(rolloverCssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BORDER));
-                ColorRender.renderToStyle(rolloverCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_FOREGROUND),
+                BorderRender.renderToStyle(rolloverCssStyle, 
+                        (Border) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BORDER));
+                ColorRender.renderToStyle(rolloverCssStyle, 
+                        (Color) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_FOREGROUND),
                         (Color) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND));
-                FontRender.renderToStyle(rolloverCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_FONT));
+                FontRender.renderToStyle(rolloverCssStyle, 
+                        (Font) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_FONT));
+                if (backgroundImage != null) {
+                    FillImageRender.renderToStyle(rolloverCssStyle, rc, this, button, IMAGE_ID_ROLLOVER_BACKGROUND,
+                            (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
+                }
                 if (rolloverCssStyle.hasAttributes()) {
                     DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverStyle", 
                             rolloverCssStyle.renderInline());
-                    EventUpdate.createEventAdd(serverMessage, "mouseover", id, "EchoButton.processRolloverEnter");
+                    addRolloverListener = true;
                 }
             }
             
             if (pressedEnabled) {
                 CssStyle pressedCssStyle = new CssStyle();
-                BorderRender.renderToStyle(pressedCssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BORDER));
-                ColorRender.renderToStyle(pressedCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_FOREGROUND),
+                BorderRender.renderToStyle(pressedCssStyle, 
+                        (Border) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BORDER));
+                ColorRender.renderToStyle(pressedCssStyle, 
+                        (Color) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_FOREGROUND),
                         (Color) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND));
-                FontRender.renderToStyle(pressedCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_FONT));
+                FontRender.renderToStyle(pressedCssStyle, 
+                        (Font) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_FONT));
+                if (backgroundImage != null) {
+                    FillImageRender.renderToStyle(pressedCssStyle, rc, this, button, IMAGE_ID_PRESSED_BACKGROUND,
+                            (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND_IMAGE), true);
+                }
                 if (pressedCssStyle.hasAttributes()) {
                     DomPropertyStore.createDomPropertyStore(serverMessage, id, "pressedStyle", 
                             pressedCssStyle.renderInline());
@@ -399,7 +542,39 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             }
         }
         
+        if (addRolloverListener) {
+            EventUpdate.createEventAdd(serverMessage, "click,mousedown,mouseover", id, 
+                    "EchoButton.doAction,EchoButton.doPressed,EchoButton.doRolloverEnter");
+        } else {
+            EventUpdate.createEventAdd(serverMessage, "click,mousedown", id, 
+                    "EchoButton.doAction,EchoButton.doPressed");
+        }
+
         renderButtonContent(rc, divElement, button);
+
+        if (button instanceof ToggleButton) {
+            ToggleButton toggleButton = (ToggleButton) button;
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "toggle", "true");
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "selected", 
+                    toggleButton.isSelected() ? "true" : " false");
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "stateIcon", 
+                    ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_STATE_ICON));
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "selectedStateIcon", 
+                    ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_SELECTED_STATE_ICON));
+
+            if (button instanceof RadioButton) {
+                //BUGBUG. temporarily using Java identifier for button group id.
+                ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
+                if (buttonGroup != null) {
+                    String groupId = buttonGroup.toString();
+                    createSetGroup(serverMessage, id, groupId);
+                }
+            }
+        }
+        
+        if (!button.hasActionListeners()) {
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "serverNotify", "false"); 
+        }
     }
 
     /**

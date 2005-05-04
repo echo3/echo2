@@ -39,15 +39,16 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
+import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.button.AbstractButton;
+import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.button.ToggleButton;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.GridCellLayoutData;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
@@ -78,20 +79,12 @@ extends SplitPane {
         controlGroupsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
         add(controlGroupsColumn);
 
-        TestGrid testGrid = new TestGrid();
+        final TestGrid testGrid = new TestGrid();
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(15));
         testGrid.setLayoutData(splitPaneLayoutData);
         add(testGrid);
         
-        Label warningLabel = new Label("Note: ToggleButtons are under development and mostly non-functional.");
-        warningLabel.setForeground(Color.YELLOW);
-        GridCellLayoutData gridCellLayoutData = new GridCellLayoutData();
-        gridCellLayoutData.setBackground(Color.RED);
-        gridCellLayoutData.setColumnSpan(2);
-        warningLabel.setLayoutData(gridCellLayoutData);
-        testGrid.add(warningLabel);
-
         buttonList = new ArrayList();
         
         Button button;
@@ -134,44 +127,68 @@ extends SplitPane {
         
         RadioButton radioButton;
         testGrid.addHeaderCell("RadioButton");
+        
+        ButtonGroup buttonGroup = new ButtonGroup();
 
         radioButton = new RadioButton();
+        radioButton.setGroup(buttonGroup);
         testGrid.addTestCell("No Content", radioButton);
         buttonList.add(radioButton);
 
         radioButton = new RadioButton("Test RadioButton");
+        radioButton.setGroup(buttonGroup);
         testGrid.addTestCell("Text", radioButton);
         buttonList.add(radioButton);
         
         radioButton = new RadioButton(Styles.ICON_LOGO);
+        radioButton.setGroup(buttonGroup);
         testGrid.addTestCell("Icon", radioButton);
         buttonList.add(radioButton);
         
         radioButton = new RadioButton("Test RadioButton", Styles.ICON_LOGO);
+        radioButton.setGroup(buttonGroup);
         testGrid.addTestCell("Text and Icon", radioButton);
         buttonList.add(radioButton);
-    
-/*        
-        controlsColumn.addButton("Toggle Container Cell Spacing", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (testColumn.getCellSpacing() == null) {
-                    testColumn.setCellSpacing(new Extent(15));
-                } else {
-                    testColumn.setCellSpacing(null);
-                }
-            }
-        });
-*/      
 
-        ButtonColumn  controlsColumn;
+        buttonGroup = new ButtonGroup();
+        Grid radioGrid = new Grid();
+        radioGrid.setInsets(new Insets(10));
+        for (int i = 1; i <= 4; ++i) {
+            radioButton = new RadioButton(Integer.toString(i));
+            radioButton.setGroup(buttonGroup);
+            radioGrid.add(radioButton);
+            buttonList.add(radioButton);
+        }
+        testGrid.addTestCell("Separate ButtonGroup", radioGrid);
+        
+        radioButton = new RadioButton("Test");
+        buttonList.add(radioButton);
+        testGrid.addTestCell("Null ButtonGroup", radioButton);
+
+        ButtonColumn controlsColumn;
         
         // Create 'AbstractButton Controls Group'
         
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);
         
+        controlsColumn.add(new Label("Test Controls"));
+        controlsColumn.addButton("Toggle Container Cell Spacing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (testGrid.getInsets() != null && testGrid.getInsets().getTop().equals(new Extent(5))) {
+                    testGrid.setInsets(new Insets(0));
+                } else {
+                    testGrid.setInsets(new Insets(5));
+                }
+            }
+        });
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
         controlsColumn.add(new Label("AbstractButton Controls"));
         
+        // Base Settings
         controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Color color = StyleUtil.randomColor();
@@ -229,6 +246,216 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Set Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setBackgroundImage(Styles.BUTTON_BACKGROUND_IMAGE);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setBackgroundImage(null);
+                    }
+                });
+            }
+        });
+
+        // Rollover Effect Settings
+        controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverEnabled(true);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Disable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverEnabled(false);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Rollover Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverForeground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverForeground(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Rollover Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverBackground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverBackground(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Rollover Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Font font = StyleUtil.randomFont();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverFont(font);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverFont(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Rollover Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverBackgroundImage(Styles.BUTTON_ROLLOVER_BACKGROUND_IMAGE);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setRolloverBackgroundImage(null);
+                    }
+                });
+            }
+        });
+        
+        // Pressed Effect Settings
+        controlsColumn.addButton("Enable Pressed Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedEnabled(true);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Disable Pressed Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedEnabled(false);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Pressed Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedForeground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Pressed Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedForeground(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Pressed Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedBackground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Pressed Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedBackground(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Pressed Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Font font = StyleUtil.randomFont();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedFont(font);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Pressed Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedFont(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Pressed Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedBackgroundImage(Styles.BUTTON_PRESSED_BACKGROUND_IMAGE);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Pressed Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setPressedBackgroundImage(null);
+                    }
+                });
+            }
+        });
+        
+        // Style
         controlsColumn.addButton("Set StyleName = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -247,6 +474,8 @@ extends SplitPane {
                 });
             }
         });
+        
+        // TextPosition
         controlsColumn.addButton("TextPosition = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -292,6 +521,8 @@ extends SplitPane {
                 });
             }
         });
+        
+        // Text Alignment
         controlsColumn.addButton("TextAlignment = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -355,6 +586,8 @@ extends SplitPane {
                 });
             }
         });
+        
+        // Icon/Text Margin
         controlsColumn.addButton("IconTextMargin = default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {

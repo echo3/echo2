@@ -78,29 +78,34 @@ implements SynchronizeService.ClientMessagePartProcessor {
      */
     private void analyze(ClientProperties clientProperties) {
         String userAgent = clientProperties.getString(ClientProperties.NAVIGATOR_USER_AGENT).toLowerCase();
-        boolean browserInternetExplorer = false;
-        boolean browserFauxInternetExplorer = false;
-        boolean browserMozilla = userAgent.indexOf("gecko") != -1;
-        boolean browserFireFox = userAgent.indexOf("firefox") != -1;
-        boolean browserOpera = false;
         
-        if (userAgent.indexOf("opera") != -1) {
-            browserOpera = true;
-        }
-        if (!browserFauxInternetExplorer && userAgent.indexOf("msie") != -1) {
-            browserInternetExplorer = true;
-        }
+        boolean browserOpera = userAgent.indexOf("opera") != -1;
+        boolean browserSafari = userAgent.indexOf("safari") != -1;
+        boolean browserKonqueror = userAgent.indexOf("konqueror") != -1;
+        
+        // Note deceptive user agent fields:
+        // - Konqueror and Safari UA fields contain "like Gecko"
+        // - Opera UA field typically contains "MSIE"
+        boolean deceptiveUserAgent = browserOpera || browserSafari || browserKonqueror;
+        
+        boolean browserMozilla = !deceptiveUserAgent && userAgent.indexOf("gecko") != -1;
+        boolean browserFireFox = userAgent.indexOf("firefox") != -1;
+        boolean browserInternetExplorer = !deceptiveUserAgent && userAgent.indexOf("msie") != -1;
         
         // Store browser information.
         if (browserOpera) {
             clientProperties.setProperty(ClientProperties.BROWSER_OPERA, Boolean.TRUE);
-        } else if (browserInternetExplorer) {
-            clientProperties.setProperty(ClientProperties.BROWSER_INTERNET_EXPLORER, Boolean.TRUE);
+        } else if (browserKonqueror) {
+            clientProperties.setProperty(ClientProperties.BROWSER_KONQUEROR, Boolean.TRUE);
+        } else if (browserSafari) {
+            clientProperties.setProperty(ClientProperties.BROWSER_SAFARI, Boolean.TRUE);
         } else if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.BROWSER_MOZILLA, Boolean.TRUE);
             if (browserFireFox) {
                 clientProperties.setProperty(ClientProperties.BROWSER_MOZILLA_FIREFOX, Boolean.TRUE);
             }
+        } else if (browserInternetExplorer) {
+            clientProperties.setProperty(ClientProperties.BROWSER_INTERNET_EXPLORER, Boolean.TRUE);
         }
         
         // Set quirk flags.
@@ -110,6 +115,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
         }

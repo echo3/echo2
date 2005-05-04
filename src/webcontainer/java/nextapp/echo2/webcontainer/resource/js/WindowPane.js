@@ -35,7 +35,7 @@
  *
  * Do not instantiate.
  */
-function EchoWindowPane() { }
+EchoWindowPane = function() { };
 
 /** The initial horizontal position of the window. */
 EchoWindowPane.initialWindowX = -1;
@@ -351,6 +351,3 @@ EchoWindowPane.selectStart = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
     EchoDomUtil.preventEventDefault(e);
 };
-
-EchoScriptLibraryManager.setStateLoaded("Echo.WindowPane");
-

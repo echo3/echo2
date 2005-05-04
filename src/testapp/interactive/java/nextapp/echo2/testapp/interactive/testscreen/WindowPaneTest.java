@@ -33,11 +33,8 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.FillImage;
-import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.TextField;
@@ -56,30 +53,6 @@ public class WindowPaneTest extends SplitPane {
     
     private int nextPosition = 0;
     
-    private static final FillImageBorder SHADOW_BORDER;
-    static {
-        FillImageBorder border = new FillImageBorder();
-        border.setContentInsets(new Insets(8, 8, 14, 14));
-        border.setBorderInsets(new Insets(17, 17, 23, 23));
-        border.setNorthWest(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderNW.png")));
-        border.setNorth(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderN.png")));
-        border.setNorthEast(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderNE.png")));
-        border.setWest(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderW.png")));
-        border.setEast(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderE.png")));
-        border.setSouthWest(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderSW.png")));
-        border.setSouth(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderS.png")));
-        border.setSouthEast(new FillImage(new ResourceImageReference(
-                "/nextapp/echo2/testapp/interactive/resource/BorderSE.png")));
-        SHADOW_BORDER = border;
-    }
-    
     private class WindowTestControls extends ButtonColumn {
         
         private WindowTestControls(String targetName, final ContentPane targetContentPane) {
@@ -95,7 +68,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setWidth(new Extent(500));
                     windowPane.setHeight(new Extent(280));
                     targetContentPane.add(windowPane);
-                    windowPane.setBorder(SHADOW_BORDER);
+                    windowPane.setBorder(Styles.SHADOW_BORDER);
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
@@ -126,7 +99,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setWidth(new Extent(500));
                     windowPane.setHeight(new Extent(280));
                     targetContentPane.add(windowPane);
-                    windowPane.setBorder(SHADOW_BORDER);
+                    windowPane.setBorder(Styles.SHADOW_BORDER);
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
@@ -138,7 +111,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setResizable(false);
                     windowPane.setTitle("SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setBorder(SHADOW_BORDER);
+                    windowPane.setBorder(Styles.SHADOW_BORDER);
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     windowPane.setHeight(new Extent(300, Extent.PX));
@@ -181,7 +154,7 @@ public class WindowPaneTest extends SplitPane {
                     targetContentPane.add(windowPane);
                     windowPane.setTitle("Multiple SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setBorder(SHADOW_BORDER);
+                    windowPane.setBorder(Styles.SHADOW_BORDER);
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(700, Extent.PX));
                     windowPane.setWidth(new Extent(500, Extent.PX));

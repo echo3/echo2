@@ -35,7 +35,7 @@
  *
  * Do not instantiate.
  */
-function EchoDragPane() { }
+EchoDragPane = function() { };
 
 EchoDragPane.DEFAULT_MINIMUM_SIZE = 80;
 EchoDragPane.verticalDrag = false;
@@ -229,5 +229,3 @@ EchoDragPane.selectStart = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
     EchoDomUtil.preventEventDefault(e);
 };
-
-EchoScriptLibraryManager.setStateLoaded("Echo.DragPane");

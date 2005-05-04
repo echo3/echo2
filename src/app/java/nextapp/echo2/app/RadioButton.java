@@ -29,15 +29,18 @@
 
 package nextapp.echo2.app;
 
+import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.button.DefaultToggleButtonModel;
 import nextapp.echo2.app.button.ToggleButton;
 
-//BUGBUG. this componenent has no rendering behavior.
-
 /**
- * A radio button implementation (NOT YET FUNCTIONAL).
+ * A radio button implementation.
  */
 public class RadioButton extends ToggleButton {
+    
+    public static final String BUTTON_GROUP_CHANGED_PROPERTY = "buttonGroup";
+    
+    private ButtonGroup buttonGroup;
 
     /**
      * Creates a radio button with no text or icon.
@@ -77,5 +80,37 @@ public class RadioButton extends ToggleButton {
     
         setIcon(icon);
         setText(text);
+    }
+    
+    /**
+     * Retrieves the <code>ButtonGroup</code> to which this 
+     * <code>RadioButton</code> belongs.
+     * Only one radio button in a group may be selected at a time.
+     * 
+     * @return the button group
+     */
+    public ButtonGroup getGroup() {
+        return buttonGroup;
+    }
+    
+    /**
+     * Sets the <code>ButtonGroup</code> to which this
+     * <code>RadioButton</code> belongs.
+     * Only one radio button in a group may be selected at a time.
+     * 
+     * @param newValue the new button group
+     */
+    public void setGroup(ButtonGroup newValue) {
+        ButtonGroup oldValue = buttonGroup;
+        buttonGroup = newValue;
+        
+        if (oldValue != null) {
+            oldValue.removeButton(this);
+        }
+        if (newValue != null) {
+            newValue.addButton(this);
+        }
+        
+        firePropertyChange(BUTTON_GROUP_CHANGED_PROPERTY, oldValue, newValue);
     }
 }

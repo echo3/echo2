@@ -26,16 +26,6 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
- 
-//        *********************************************************************
-//        *********************************************************************
-//        *********************************************************************
-//BUGBUG! *** The Button.js module is due for a complete re-write, as it's 
-//        *** currently a half-working hack of an abomination that's unworthy 
-//        *** of the duct tape holding it together.
-//        *********************************************************************
-//        *********************************************************************
-//        *********************************************************************
 
 //BUGBUG. Changing button states are sometimes not reflected due to broken rollover/presss code.
 //BUGBUG. Cut this class up into a generic style-replacement system.
@@ -43,7 +33,7 @@
 //__________________
 // Object EchoButton
 
-function EchoButton() { }
+EchoButton = function() { };
 
 EchoButton.activeElementId = null;
 EchoButton.baseCssText = null;
@@ -51,16 +41,34 @@ EchoButton.pressedCssText = null;
 EchoButton.rolloverCssText = null;
 EchoButton.pressedActive = false;
 EchoButton.rolloverActive = false;
+EchoButton.buttonGroupIdToButtonArrayMap = new Array();
 
 EchoButton.STATE_ROLLOVER = 1;
 EchoButton.STATE_PRESSED = 2;
 
-EchoButton.activate = function(buttonElement) {
-    if (!buttonElement.getAttribute("id")) {
-        //BUGBUG. temporary until all events use EEP
-        return;
-    }
+EchoButton.MessageProcessor = function() { };
 
+EchoButton.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "setgroup":
+                EchoButton.MessageProcessor.processSetGroup(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+EchoButton.MessageProcessor.processSetGroup = function(setGroupMessageElement) {
+    var groupId = setGroupMessageElement.getAttribute("groupid");
+    for (var item = setGroupMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoButton.setButtonGroup(elementId, groupId);
+    }
+};
+
+EchoButton.activate = function(buttonElement) {
     EchoButton.activeElementId = buttonElement.getAttribute("id");
     EchoButton.baseCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "baseStyle");
     EchoButton.pressedCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "pressedStyle");
@@ -69,27 +77,7 @@ EchoButton.activate = function(buttonElement) {
     EchoButton.pressedActive = false;
 };
 
-EchoButton.deactivate = function() {
-    if (EchoButton.activeElementId) {
-	    var buttonElement = document.getElementById(EchoButton.activeElementId);
-	    if (buttonElement) {
-	        EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
-	    }
-    }
-	EchoButton.activeElementId = null;
-	EchoButton.baseCssText = null;
-	EchoButton.pressedCssText = null;
-	EchoButton.rolloverCssText = null;
-	EchoButton.pressedActive = false;
-	EchoButton.rolloverActive = false;
-};
-
 EchoButton.applyStyle = function(element, cssText) {
-    if (!cssText) {
-        //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.
-        return;
-    }
-
     var styleProperties = cssText.split(";");
     var styleData = new Array();
     for (var i = 0; i < styleProperties.length; ++i) {
@@ -104,13 +92,52 @@ EchoButton.applyStyle = function(element, cssText) {
     }
 };
 
-EchoButton.processAction = function(echoEvent) {
+EchoButton.deactivate = function() {
+    if (EchoButton.activeElementId) {
+        var buttonElement = document.getElementById(EchoButton.activeElementId);
+        if (buttonElement) {
+            EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
+        }
+    }
+    EchoButton.activeElementId = null;
+    EchoButton.baseCssText = null;
+    EchoButton.pressedCssText = null;
+    EchoButton.rolloverCssText = null;
+    EchoButton.pressedActive = false;
+    EchoButton.rolloverActive = false;
+};
+
+EchoButton.deselectRadioButton = function(groupId) {
+    var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
+    if (!buttonArray) {
+        //BUGBUG? can this ever happen?
+        return;
+    }
+    for (var i = 0; i < buttonArray.length; ++i) {
+        var elementId = buttonArray[i];
+        if (EchoButton.getSelectionState(elementId)) {
+            EchoButton.setSelectionState(elementId, false);
+        }
+    }
+};
+
+EchoButton.doAction = function(echoEvent) {
     if (EchoServerTransaction.active) {
         return;
     }
+    
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+
+    if ("true" == EchoDomPropertyStore.getPropertyValue(elementId, "toggle")) {
+        EchoButton.doToggle(echoEvent.registeredTarget);
+    }
+    
+    if ("false" == EchoDomPropertyStore.getPropertyValue(elementId, "serverNotify")) {
+        return;
+    }
+    
     EchoButton.deactivate();
     EchoButton.removeAllListeners();
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (document.selection && document.selection.empty) {
         document.selection.empty();
     }
@@ -118,57 +145,91 @@ EchoButton.processAction = function(echoEvent) {
     EchoServerTransaction.connect();
 };
 
-EchoButton.processPressed = function(echoEvent) {
+EchoButton.doPressed = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     if (EchoServerTransaction.active) {
         return;
     }
     var eventTarget = echoEvent.registeredTarget;
     if (!EchoDomPropertyStore.getPropertyValue(eventTarget.getAttribute("id"), "pressedStyle")) {
-        // Return if the button has not pressed effects.
+        // Return if the button has no pressed effects.
         return;
     }
     EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED, true);
-    EchoDomUtil.addEventListener(eventTarget, "mouseup", EchoButton.processReleased, true);
+    EchoEventProcessor.addHandler(echoEvent.registeredTarget.getAttribute("id"), 
+            "mouseup", "EchoButton.doReleased");
 };
 
-EchoButton.processReleased = function(e) {
-    var eventTarget = EchoDomUtil.getEventTarget(e);
-    EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED, false);
-    EchoDomUtil.removeEventListener(eventTarget, "mouseup", EchoButton.processReleased, true);
+EchoButton.doReleased = function(echoEvent) {
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_PRESSED, false);
+    EchoEventProcessor.removeHandler(echoEvent.registeredTarget.getAttribute("id"), "mouseup");
 };
 
-EchoButton.processRolloverEnter = function(echoEvent) {
+EchoButton.doRolloverEnter = function(echoEvent) {
     if (EchoServerTransaction.active) {
         return;
     }
-//BUGBUG. looking at registeredTarget here....do we want to look at registeredtarget universally?
-//        and if so, do we want to use EchoEventProcessor for *ALL* event registrations?--YES!
     var eventTarget = echoEvent.registeredTarget;
-//BUGBUG*    
-//EchoDebugManager.consoleWrite("rolloverEnter: " + e.registeredTarget.getAttribute("id"));
-    EchoButton.setState(eventTarget, EchoButton.STATE_ROLLOVER, true);
-    EchoDomUtil.addEventListener(eventTarget, "mouseout", EchoButton.processRolloverExit, true);
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER, true);
+    EchoEventProcessor.addHandler(echoEvent.registeredTarget.getAttribute("id"), 
+            "mouseout", "EchoButton.doRolloverExit");
 };
 
-EchoButton.processRolloverExit = function(e) {
-    var eventTarget = EchoDomUtil.getEventTarget(e);
-//BUGBUG*    
-//EchoDebugManager.consoleWrite("rolloverExit: " + eventTarget.getAttribute("id"));
-    EchoButton.setState(eventTarget, EchoButton.STATE_ROLLOVER, false);
-    EchoDomUtil.removeEventListener(eventTarget, "mouseout", EchoButton.processRolloverExit, true);
+EchoButton.doRolloverExit = function(echoEvent) {
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER, false);
+    EchoEventProcessor.removeHandler(echoEvent.registeredTarget.getAttribute("id"), "mouseout");
+};
+
+EchoButton.doToggle = function(buttonElement) {
+    var elementId = buttonElement.getAttribute("id");
+    var newState = !EchoButton.getSelectionState(elementId);
+    
+    var groupId = EchoButton.getButtonGroup(elementId);
+    if (groupId) {
+        if (!newState) {
+            // Clicking on selected radio button: do nothing.
+            return;
+        }
+        EchoButton.deselectRadioButton(groupId);
+    }
+    
+    EchoButton.setSelectionState(elementId, newState);
+};
+
+EchoButton.getButtonGroup = function(elementId) {
+    return EchoDomPropertyStore.getPropertyValue(elementId, "buttonGroup");
+};
+
+EchoButton.getSelectionState = function(elementId) {
+    return "true" == EchoDomPropertyStore.getPropertyValue(elementId, "selected");
 };
 
 EchoButton.removeAllListeners = function() {
-    if (!EchoButton.activeElementId) {
-        return;
+    EchoEventProcessor.removeHandler(EchoButton.activeElementId, "mouseout");
+    EchoEventProcessor.removeHandler(EchoButton.activeElementId, "mouseup");
+};
+
+EchoButton.setButtonGroup = function(elementId, groupId) {
+    var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
+    if (!buttonArray) {
+        buttonArray = new Array();
+        EchoButton.buttonGroupIdToButtonArrayMap[groupId] = buttonArray;
     }
-    var buttonElement = document.getElementById(EchoButton.activeElementId);
-    if (!buttonElement) {
-        return;
+    buttonArray.push(elementId);
+    EchoDomPropertyStore.setPropertyValue(elementId, "buttonGroup", groupId);
+};
+
+EchoButton.setSelectionState = function(elementId, newState) {
+    EchoDomPropertyStore.setPropertyValue(elementId, "selected", newState ? "true" : "false");
+
+    var stateIconUri = EchoDomPropertyStore.getPropertyValue(elementId, newState ? "selectedStateIcon" : "stateIcon");
+    if (!stateIconUri) {
+        throw "State icon not specified for selection state: " + newState;
     }
-    EchoDomUtil.removeEventListener(eventTarget, "mouseup", EchoButton.processReleased, true);
-    EchoDomUtil.removeEventListener(eventTarget, "mouseout", EchoButton.processRolloverExit, true);
+    var imgElement = document.getElementById(elementId + "_stateicon");
+    imgElement.src = stateIconUri;
+    
+    EchoClientMessage.setPropertyValue(elementId, "selected", newState ? "true" : "false");
 };
 
 EchoButton.setState = function(buttonElement, stateType, newValue) {
@@ -199,5 +260,3 @@ EchoButton.setState = function(buttonElement, stateType, newValue) {
         EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
     }
 };
-
-EchoScriptLibraryManager.setStateLoaded("Echo.Button");

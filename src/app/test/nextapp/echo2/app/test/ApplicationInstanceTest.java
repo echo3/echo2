@@ -31,7 +31,6 @@ package nextapp.echo2.app.test;
 
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.DuplicateIdException;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Window;
@@ -57,14 +56,6 @@ public class ApplicationInstanceTest extends TestCase {
         }
     }  
 
-    private class IdLabel extends Label {
-        
-        public IdLabel(String idText) {
-            super(idText);
-            setId(idText);
-        }
-    }
-    
     private class ValidatingLabel extends Label {
         
         boolean valid = false;
@@ -104,21 +95,6 @@ public class ApplicationInstanceTest extends TestCase {
         assertNull(app.getContextProperty("alpha"));
     }
 
-    /**
-     * Test behavior when adding components to hierarchy with same ids
-     * and existing components.
-     */
-    public void testDuplicateIds() {
-        ColumnApp app = new ColumnApp();
-        app.doInit();
-        Column column = app.getColumn();
-        try {
-            column.add(new IdLabel("alpha"));
-            column.add(new IdLabel("alpha"));
-            fail("Should have thrown DuplicateIdException");
-        } catch (DuplicateIdException expected) { }
-    }
-    
     /**
      * Test registration flag of components in hierarchies belong to the
      * <code>ApplicationInstance</code>.
