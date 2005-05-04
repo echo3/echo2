@@ -37,6 +37,9 @@ import java.util.Map;
  */
 public class ClientProperties {
     
+    //BUGBUG. Standardize quirk/proprietary names.
+    //BUGBUG. Ensure all properties are beign set, i.e., OS stuff and version stuff, otherwise discard unnecessary code.
+    
     /**
      * A quirk flag indicating whether the client will incorrectly render CSS 
      * collapsed borders such that they reside entirely within the region
@@ -62,6 +65,18 @@ public class ClientProperties {
      */
     public static final String QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY = "quirkDomPerformanceRemoveLargeHierarchy";
 
+    /**
+     * A quirk flag indicating that when a DIV element is dragged, better performance will result if it also
+     * moved.  This is an extremely weird performance quirk, but it does result in dramatically improved 
+     * DIV-dragging performance in Internet Explorer 6 for Windows.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_DOM_PERFORMANCE_RESIZE_ON_MOVE = "quirkDomPerformanceResizeOnMove";
+    
     /**
      * A quirk flag indicating the only means of acheiving 0 padding in table cells is to use 0px padding.
      * <p>
@@ -115,7 +130,16 @@ public class ClientProperties {
      */
     public static final String QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY = "quirkCssPositioningOneSideOnly";
     
-    //BUGBUG. Doc.
+    /**
+     * A quirk flag describing the issue of "windowed" select fields in Internet Explorer, which do not
+     * render correctly with regard to z-index value.
+     * See http://support.microsoft.com/kb/q177378/ for an expalanation of the underlying issue.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
     public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
     
     /**

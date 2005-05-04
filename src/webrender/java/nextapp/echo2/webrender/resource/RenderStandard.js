@@ -457,6 +457,7 @@ EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
     }
 };
 
+//BUGBUG. move this and similar process methods into inner static processor classes
 EchoDomPropertyStore.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {

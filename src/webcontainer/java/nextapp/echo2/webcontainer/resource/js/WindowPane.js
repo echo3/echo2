@@ -202,10 +202,12 @@ EchoWindowPane.windowMoveMouseMove = function(e) {
     EchoWindowPane.activeElement.style.left = newX + "px";
     EchoWindowPane.activeElement.style.top = newY + "px";
 
-//BUGBUG. IE perf hack...make IE only (though performance/visual effect is negligible on other browsers.
-    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
-    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
-    EchoWindowPane.activeElement.style.width = initialWidth + "px";
+    if ("true" == EchoDomPropertyStore.getPropertyValue(EchoWindowPane.activeElement.getAttribute("id"), "quirkResizeOnMove")) {
+        // Tickle window size for dramatic performance increase in Internet Explorer.
+	    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
+	    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
+	    EchoWindowPane.activeElement.style.width = initialWidth + "px";
+    }
 };
 
 /**
@@ -298,6 +300,15 @@ EchoWindowPane.windowResizeMouseMove = function(e) {
             var newY = EchoWindowPane.initialWindowY + EchoWindowPane.initialWindowHeight - newHeight;
             EchoWindowPane.activeElement.style.top = newY + "px";
         }
+
+	    if ("true" == EchoDomPropertyStore.getPropertyValue(EchoWindowPane.activeElement.getAttribute("id"), "quirkResizeOnMove")) {
+	        // Tickle window width because Internet Explorer will only recompute size of hidden IFRAME
+	        // on *WIDTH* adjustments, not height adjustments (this is a bug in IE).
+	        // This only need be applied when vertical resizes can be performed.
+		    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
+		    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
+		    EchoWindowPane.activeElement.style.width = initialWidth + "px";
+	    }
     }
 };
 

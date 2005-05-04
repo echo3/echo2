@@ -57,6 +57,7 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
@@ -518,7 +519,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         windowDivElement.appendChild(windowBodyDivElement);
         
         // Create Internet Explorer Select Element blocking IFRAME.
-        if (true || rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_Z_INDEX)) {
+        if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_Z_INDEX)) {
             Element iframeQuirkDivElement = document.createElement("div");
             // Resuse/modify windowBodyDivCssStyle.
             windowBodyDivCssStyle.setAttribute("z-index", "1");
@@ -618,13 +619,17 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
         outerContentDivElement.appendChild(contentDivElement);
 
+        if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_DOM_PERFORMANCE_RESIZE_ON_MOVE)) {
+            DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "quirkResizeOnMove", "true");
+        }
+        
         // Add event listeners.
         EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoWindowPane.userCloseClick");
         if (movable) {
             EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoWindowPane.userCloseMouseDown");
             EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoWindowPane.windowMoveMouseDown");
         }
-
+        
         // Render child.
         if (windowPane.getComponentCount() != 0) {
             Component child = windowPane.getComponent(0);
