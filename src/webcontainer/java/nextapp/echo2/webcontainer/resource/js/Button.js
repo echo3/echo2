@@ -89,6 +89,7 @@ EchoButton.applyStyle = function(element, cssText) {
         //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.
         return;
     }
+
     var styleProperties = cssText.split(";");
     var styleData = new Array();
     for (var i = 0; i < styleProperties.length; ++i) {

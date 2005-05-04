@@ -33,7 +33,7 @@ import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.DuplicateIdException;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Window;
 import junit.framework.TestCase;
 
@@ -109,12 +109,12 @@ public class ApplicationInstanceTest extends TestCase {
      * and existing components.
      */
     public void testDuplicateIds() {
-        RowApp app = new RowApp();
+        ColumnApp app = new ColumnApp();
         app.doInit();
-        Row row = app.getRow();
+        Column column = app.getColumn();
         try {
-            row.add(new IdLabel("alpha"));
-            row.add(new IdLabel("alpha"));
+            column.add(new IdLabel("alpha"));
+            column.add(new IdLabel("alpha"));
             fail("Should have thrown DuplicateIdException");
         } catch (DuplicateIdException expected) { }
     }
@@ -124,19 +124,19 @@ public class ApplicationInstanceTest extends TestCase {
      * <code>ApplicationInstance</code>.
      */
     public void testRegistration() {
-        RowApp rowApp = new RowApp();
-        Window window = rowApp.doInit();
+        ColumnApp columnApp = new ColumnApp();
+        Window window = columnApp.doInit();
         assertTrue(window.isRegistered());
-        assertTrue(rowApp.getRow().isRegistered());
+        assertTrue(columnApp.getColumn().isRegistered());
         Label label = new Label();
         assertFalse(label.isRegistered());
-        rowApp.getRow().add(label);
+        columnApp.getColumn().add(label);
         assertTrue(label.isRegistered());
-        rowApp.getRow().remove(label);
+        columnApp.getColumn().remove(label);
         assertFalse(label.isRegistered());
-        rowApp.getRow().add(label);
+        columnApp.getColumn().add(label);
         assertTrue(label.isRegistered());
-        rowApp.getContentPane().remove(rowApp.getRow());
+        columnApp.getContentPane().remove(columnApp.getColumn());
         assertFalse(label.isRegistered());
     }
     
@@ -146,19 +146,19 @@ public class ApplicationInstanceTest extends TestCase {
      */
     public void testRegistrationLifecycle() {
         RegistrationTestComponent rtc = new RegistrationTestComponent();
-        RowApp rowApp = new RowApp();
-        rowApp.doInit();
-        Row row = rowApp.getRow();
+        ColumnApp columnApp = new ColumnApp();
+        columnApp.doInit();
+        Column column = columnApp.getColumn();
         
         assertFalse(rtc.initialized);
         assertFalse(rtc.disposed);
         
-        row.add(rtc);
+        column.add(rtc);
         
         assertTrue(rtc.initialized);
         assertFalse(rtc.disposed);
         
-        row.remove(rtc);
+        column.remove(rtc);
         
         assertTrue(rtc.initialized);
         assertTrue(rtc.disposed);
@@ -170,10 +170,10 @@ public class ApplicationInstanceTest extends TestCase {
      */
     public void testValidation() {
         final ValidatingLabel validatingLabel = new ValidatingLabel();
-        RowApp app = new RowApp() {
+        ColumnApp app = new ColumnApp() {
             public Window init() {
                 Window window = super.init();
-                getRow().add(validatingLabel);
+                getColumn().add(validatingLabel);
                 return window;
             }
         };

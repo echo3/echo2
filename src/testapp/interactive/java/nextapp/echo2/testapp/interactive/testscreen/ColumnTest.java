@@ -35,144 +35,144 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.RowLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.app.layout.ColumnLayoutData;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
-public class RowTest extends SplitPane {
+public class ColumnTest extends SplitPane {
     
     private int nextValue = 0;
     
-    public RowTest() {
+    public ColumnTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250));
         setResizable(true);
         
-        ButtonRow controlsRow = new ButtonRow();
-        controlsRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(controlsRow);
+        ButtonColumn controlsColumn = new ButtonColumn();
+        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(controlsColumn);
 
-        final Row testRow = new Row();
-        testRow.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
-        add(testRow);
+        final Column testColumn = new Column();
+        testColumn.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
+        add(testColumn);
         
-        controlsRow.addButton("Add Item (at beginning)", new ActionListener() {
+        controlsColumn.addButton("Add Item (at beginning)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.add(new Label("Added item [" + nextValue++ + "]"), 0);
+                testColumn.add(new Label("Added item [" + nextValue++ + "]"), 0);
             }
         });
-        controlsRow.addButton("Add Item (at end)", new ActionListener() {
+        controlsColumn.addButton("Add Item (at end)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.add(new Label("Added item [" + nextValue++ + "]"));
+                testColumn.add(new Label("Added item [" + nextValue++ + "]"));
             }
         });
-        controlsRow.addButton("Remove Last Item", new ActionListener() {
+        controlsColumn.addButton("Remove Last Item", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (testRow.getComponentCount() > 0) {
-                    testRow.remove(testRow.getComponentCount() - 1);
+                if (testColumn.getComponentCount() > 0) {
+                    testColumn.remove(testColumn.getComponentCount() - 1);
                 }
             }
         });
-        controlsRow.addButton("Add Some Items, Remove Some Items", new ActionListener() {
+        controlsColumn.addButton("Add Some Items, Remove Some Items", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int count = 1 + ((int) (Math.random() * 10));
                 for (int i = 0; i < count; ++i) {
-                    int componentCount = testRow.getComponentCount();
+                    int componentCount = testColumn.getComponentCount();
                     if (componentCount > 0 && ((int) (Math.random() * 2)) == 0) {
                         // Perform remove.
                         int position = (int) (Math.random() * componentCount);
-                        testRow.remove(position);
+                        testColumn.remove(position);
                     } else {
                         // Perform add.
                         int position = (int) (Math.random() * (componentCount + 1));
-                        testRow.add(new Label("Added item [" + nextValue++ + "]"), position);
+                        testColumn.add(new Label("Added item [" + nextValue++ + "]"), position);
                     }
                 }
             }
         });
-        controlsRow.addButton("Randomly Remove and Re-insert Item", new ActionListener() {
+        controlsColumn.addButton("Randomly Remove and Re-insert Item", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int itemCount = testRow.getComponentCount();
+                int itemCount = testColumn.getComponentCount();
                 if (itemCount == 0) {
                     return;
                 }
-                Component item = testRow.getComponent((int) (Math.random() * itemCount));
-                testRow.remove(item);
-                testRow.add(item, (int) (Math.random() * (itemCount - 1)));
+                Component item = testColumn.getComponent((int) (Math.random() * itemCount));
+                testColumn.remove(item);
+                testColumn.add(item, (int) (Math.random() * (itemCount - 1)));
             }
         }); 
-        controlsRow.addButton("Change Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Change Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setBorder(StyleUtil.randomBorder());
+                testColumn.setBorder(StyleUtil.randomBorder());
             }
         });
-        controlsRow.addButton("Change Border Color", new ActionListener() {
+        controlsColumn.addButton("Change Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Border border = testRow.getBorder();
-                testRow.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+                Border border = testColumn.getBorder();
+                testColumn.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsRow.addButton("Change Border Size", new ActionListener() {
+        controlsColumn.addButton("Change Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setBorder(StyleUtil.nextBorderSize(testRow.getBorder()));
+                testColumn.setBorder(StyleUtil.nextBorderSize(testColumn.getBorder()));
             }
         });
-        controlsRow.addButton("Change Border Style", new ActionListener() {
+        controlsColumn.addButton("Change Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setBorder(StyleUtil.nextBorderStyle(testRow.getBorder()));
+                testColumn.setBorder(StyleUtil.nextBorderStyle(testColumn.getBorder()));
             }
         });
-        controlsRow.addButton("Cell Spacing -> 0px", new ActionListener() {
+        controlsColumn.addButton("Cell Spacing -> 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setCellSpacing(new Extent(0, Extent.PX));
+                testColumn.setCellSpacing(new Extent(0, Extent.PX));
             }
         });
-        controlsRow.addButton("Cell Spacing -> 2px", new ActionListener() {
+        controlsColumn.addButton("Cell Spacing -> 2px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setCellSpacing(new Extent(2, Extent.PX));
+                testColumn.setCellSpacing(new Extent(2, Extent.PX));
             }
         });
-        controlsRow.addButton("Cell Spacing -> 20px", new ActionListener() {
+        controlsColumn.addButton("Cell Spacing -> 20px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setCellSpacing(new Extent(20, Extent.PX));
+                testColumn.setCellSpacing(new Extent(20, Extent.PX));
             }
         });
-        controlsRow.addButton("Insets -> 0px", new ActionListener() {
+        controlsColumn.addButton("Insets -> 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setInsets(new Insets(0));
+                testColumn.setInsets(new Insets(0));
             }
         });
-        controlsRow.addButton("Insets -> 5px", new ActionListener() {
+        controlsColumn.addButton("Insets -> 5px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setInsets(new Insets(5));
+                testColumn.setInsets(new Insets(5));
             }
         });
-        controlsRow.addButton("Insets -> 10/20/30/40px", new ActionListener() {
+        controlsColumn.addButton("Insets -> 10/20/30/40px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.setInsets(new Insets(10, 20, 30, 40));
+                testColumn.setInsets(new Insets(10, 20, 30, 40));
             }
         });
-        controlsRow.addButton("Change Layout Data (of random item)", new ActionListener() {
+        controlsColumn.addButton("Change Layout Data (of random item)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int componentCount = testRow.getComponentCount();
+                int componentCount = testColumn.getComponentCount();
                 if (componentCount == 0) {
                     return;
                 }
-                Component component =  testRow.getComponent((int) (Math.random() * componentCount));
-                RowLayoutData rowLayoutData = new RowLayoutData();
-                rowLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
-                rowLayoutData.setBackground(StyleUtil.randomBrightColor());
-                component.setLayoutData(rowLayoutData);
+                Component component =  testColumn.getComponent((int) (Math.random() * componentCount));
+                ColumnLayoutData columnLayoutData = new ColumnLayoutData();
+                columnLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
+                columnLayoutData.setBackground(StyleUtil.randomBrightColor());
+                component.setLayoutData(columnLayoutData);
             }
         });
-        controlsRow.addButton("Add Item, Randomize Row Insets", new ActionListener() {
+        controlsColumn.addButton("Add Item, Randomize Column Insets", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testRow.add(new Label("Added item [" + nextValue++ + "]"));
-                testRow.setInsets(new Insets((int) (Math.random() * 50)));
+                testColumn.add(new Label("Added item [" + nextValue++ + "]"));
+                testColumn.setInsets(new Insets((int) (Math.random() * 50)));
             }
         });
     }

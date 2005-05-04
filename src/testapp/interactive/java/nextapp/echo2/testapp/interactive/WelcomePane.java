@@ -37,7 +37,7 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
@@ -47,25 +47,25 @@ import nextapp.echo2.app.event.ActionListener;
 public class WelcomePane extends ContentPane {
     
     public WelcomePane() {
-        Row row = new Row();
-        row.setBorder(new Border(3, new Color(0x4f4f7f), Border.STYLE_OUTSET));
-        row.setBackground(new Color(0x4f4f7f));
-        row.setForeground(Color.WHITE);
-        row.setInsets(new Insets(50));
-        row.setCellSpacing(new Extent(20));
-        add(row);
+        Column column = new Column();
+        column.setBorder(new Border(3, new Color(0x4f4f7f), Border.STYLE_OUTSET));
+        column.setBackground(new Color(0x4f4f7f));
+        column.setForeground(Color.WHITE);
+        column.setInsets(new Insets(50));
+        column.setCellSpacing(new Extent(20));
+        add(column);
         
         Label label;
         
         label = new Label("N E X T A P P | E C H O 2");
         label.setFont(new Font(Font.COURIER_NEW, Font.BOLD, new Extent(32)));
-        row.add(label);
+        column.add(label);
         
         label = new Label("Welcome to the NextApp Echo2 Test Application.  "
                 + "This application was built to interactively test components of Echo2 during development.  "
                 + "It is also being (mis)used as a public demonstration of Echo2's capabilities.  Many "
                 + "of the features and capabilities demonstrated in this application are not complete.");
-        row.add(label);
+        column.add(label);
         
         label = new Label("Note that you may watch the AJAX XML messages being sent between the client and server by "
                 + "enabling \"Debug Mode\".  Debug Mode may be enabled "
@@ -73,13 +73,13 @@ public class WelcomePane extends ContentPane {
                 + "\"http://demo.nextapp.com/InteractiveTest/ia?debug\"). "
                 + "Please be aware that Debug Mode will in most cases result in EXTREMELY SLOW PERFORMANCE. "
                 + "You may exit Debug Mode at any time by simply closing the Debug window.");
-        row.add(label);
+        column.add(label);
 
         label = new Label("Please visit the Echo2 Home Page @ http://www.nextapp.com/products/echo2 for more information.");
-        row.add(label);
+        column.add(label);
         
         label = new Label(Styles.ICON_LOGO);
-        row.add(label);
+        column.add(label);
 
         Button continueButton = new Button("Continue");
         continueButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
@@ -88,7 +88,7 @@ public class WelcomePane extends ContentPane {
                 InteractiveApp.getApp().displayTestPane();
             }
         });
-        row.add(continueButton);
+        column.add(continueButton);
     }
 
 }

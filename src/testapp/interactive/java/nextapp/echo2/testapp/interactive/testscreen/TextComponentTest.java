@@ -35,14 +35,14 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.PasswordField;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -54,30 +54,30 @@ public class TextComponentTest extends SplitPane {
 
         SplitPaneLayoutData splitPaneLayoutData;
         
-        ButtonRow controlsRow = new ButtonRow();
-        controlsRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(controlsRow);
+        ButtonColumn controlsColumn = new ButtonColumn();
+        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(controlsColumn);
 
-        Row testRow = new Row();
-        testRow.setCellSpacing(new Extent(15));
+        Column testColumn = new Column();
+        testColumn.setCellSpacing(new Extent(15));
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(15));
-        testRow.setLayoutData(splitPaneLayoutData);
-        add(testRow);
+        testColumn.setLayoutData(splitPaneLayoutData);
+        add(testColumn);
         
         final TextField textField = new TextField();
         textField.setBorder(new Border(1, Color.BLUE, Border.STYLE_SOLID));
-        testRow.add(textField);
+        testColumn.add(textField);
         
         final PasswordField passwordField = new PasswordField();
         passwordField.setBorder(new Border(1, Color.BLUE, Border.STYLE_SOLID));
-        testRow.add(passwordField);
+        testColumn.add(passwordField);
         
         final TextArea textArea = new TextArea();
         textArea.setBorder(new Border(1, Color.BLUE, Border.STYLE_SOLID));
-        testRow.add(textArea);
+        testColumn.add(textArea);
         
-        controlsRow.addButton("Set Text to Multiple Lines", new ActionListener() {
+        controlsColumn.addButton("Set Text to Multiple Lines", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String text = "This\nis\na\ntest.";
                 textField.getDocument().setText(text);
@@ -86,7 +86,7 @@ public class TextComponentTest extends SplitPane {
             }
         });
         
-        controlsRow.addButton("Test HTML Encoding", new ActionListener() {
+        controlsColumn.addButton("Test HTML Encoding", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String text = "<b>this should NOT be bold</b>";
                 textField.getDocument().setText(text);
@@ -95,7 +95,7 @@ public class TextComponentTest extends SplitPane {
             }
         });
         
-        controlsRow.addButton("Test Whitespace Encoding", new ActionListener() {
+        controlsColumn.addButton("Test Whitespace Encoding", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String text = "   There   are   three   spaces   leading,   trailing,   "
                         + "and   between   each   word.   ";
@@ -105,7 +105,7 @@ public class TextComponentTest extends SplitPane {
             }
         });
         
-        controlsRow.addButton("Change Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Change Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.randomBorder();
                 textField.setBorder(border);
@@ -113,7 +113,7 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBorder(border);
             }
         });
-        controlsRow.addButton("Change Border Color", new ActionListener() {
+        controlsColumn.addButton("Change Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = textField.getBorder();
                 border = new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle());
@@ -122,7 +122,7 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBorder(border);
             }
         });
-        controlsRow.addButton("Change Border Size", new ActionListener() {
+        controlsColumn.addButton("Change Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.nextBorderSize(textField.getBorder());
                 textField.setBorder(border);
@@ -130,7 +130,7 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBorder(border);
             }
         });
-        controlsRow.addButton("Change Border Style", new ActionListener() {
+        controlsColumn.addButton("Change Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.nextBorderStyle(textField.getBorder());
                 textField.setBorder(border);
@@ -138,7 +138,7 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBorder(border);
             }
         });
-        controlsRow.addButton("Toggle Background Image", new ActionListener() {
+        controlsColumn.addButton("Toggle Background Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 FillImage backgroundImage = textField.getBackgroundImage();
                 if (backgroundImage == null) {
@@ -152,7 +152,7 @@ public class TextComponentTest extends SplitPane {
                 }
             }
         });
-        controlsRow.addButton("Set Foreground", new ActionListener() {
+        controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 textField.setForeground(color);
@@ -160,14 +160,14 @@ public class TextComponentTest extends SplitPane {
                 textArea.setForeground(color);
             }
         });
-        controlsRow.addButton("Clear Foreground", new ActionListener() {
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setForeground(null);
                 passwordField.setForeground(null);
                 textArea.setForeground(null);
             }
         });
-        controlsRow.addButton("Set Background", new ActionListener() {
+        controlsColumn.addButton("Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 textField.setBackground(color);
@@ -175,70 +175,70 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBackground(color);
             }
         });
-        controlsRow.addButton("Clear Background", new ActionListener() {
+        controlsColumn.addButton("Clear Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setBackground(null);
                 passwordField.setBackground(null);
                 textArea.setBackground(null);
             }
         });
-        controlsRow.addButton("Insets -> null", new ActionListener() {
+        controlsColumn.addButton("Insets -> null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setInsets(null);
                 passwordField.setInsets(null);
                 textArea.setInsets(null);
             }
         });
-        controlsRow.addButton("Insets -> 0px", new ActionListener() {
+        controlsColumn.addButton("Insets -> 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setInsets(new Insets(0));
                 passwordField.setInsets(new Insets(0));
                 textArea.setInsets(new Insets(0));
             }
         });
-        controlsRow.addButton("Insets -> 5px", new ActionListener() {
+        controlsColumn.addButton("Insets -> 5px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setInsets(new Insets(5));
                 passwordField.setInsets(new Insets(5));
                 textArea.setInsets(new Insets(5));
             }
         });
-        controlsRow.addButton("Insets -> 10/20/30/40px", new ActionListener() {
+        controlsColumn.addButton("Insets -> 10/20/30/40px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setInsets(new Insets(10, 20, 30, 40));
                 passwordField.setInsets(new Insets(10, 20, 30, 40));
                 textArea.setInsets(new Insets(10, 20, 30, 40));
             }
         });
-        controlsRow.addButton("Width -> null", new ActionListener() {
+        controlsColumn.addButton("Width -> null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setWidth(null);
                 passwordField.setWidth(null);
                 textArea.setWidth(null);
             }
         });
-        controlsRow.addButton("Width -> 500px", new ActionListener() {
+        controlsColumn.addButton("Width -> 500px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setWidth(new Extent(500, Extent.PX));
                 passwordField.setWidth(new Extent(500, Extent.PX));
                 textArea.setWidth(new Extent(500, Extent.PX));
             }
         });
-        controlsRow.addButton("Width -> 100%", new ActionListener() {
+        controlsColumn.addButton("Width -> 100%", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setWidth(new Extent(100, Extent.PERCENT));
                 passwordField.setWidth(new Extent(100, Extent.PERCENT));
                 textArea.setWidth(new Extent(100, Extent.PERCENT));
             }
         });
-        controlsRow.addButton("Height -> null", new ActionListener() {
+        controlsColumn.addButton("Height -> null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setHeight(null);
                 passwordField.setHeight(null);
                 textArea.setHeight(null);
             }
         });
-        controlsRow.addButton("Height -> 300px", new ActionListener() {
+        controlsColumn.addButton("Height -> 300px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setHeight(new Extent(300, Extent.PX));
                 passwordField.setHeight(new Extent(300, Extent.PX));

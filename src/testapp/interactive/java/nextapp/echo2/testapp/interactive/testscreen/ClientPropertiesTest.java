@@ -35,8 +35,8 @@ import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
-import nextapp.echo2.app.layout.RowLayoutData;
+import nextapp.echo2.app.Column;
+import nextapp.echo2.app.layout.ColumnLayoutData;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.webcontainer.ContainerContext;
 import nextapp.echo2.webrender.server.ClientProperties;
@@ -48,7 +48,9 @@ import nextapp.echo2.webrender.server.ClientProperties;
  * Note that this object has a dependency on the Web Application Container 
  * and Web Renderer.
  */
-public class ClientPropertiesTest extends Row {
+public class ClientPropertiesTest extends Column {
+    
+    //BUGBUG. Use table when available.
     
     public ClientPropertiesTest() {
         super();
@@ -63,12 +65,12 @@ public class ClientPropertiesTest extends Row {
         ClientProperties clientProperties = containerContext.getClientProperties();
         String[] propertyNames = clientProperties.getPropertyNames();
         Arrays.sort(propertyNames);
-        RowLayoutData[] rowLayoutDatas = new RowLayoutData[]{ new RowLayoutData(), new RowLayoutData() };
-        rowLayoutDatas[0].setBackground(new Color(0xafffaf));
-        rowLayoutDatas[1].setBackground(new Color(0xffffaf));
+        ColumnLayoutData[] columnLayoutDatas = new ColumnLayoutData[]{ new ColumnLayoutData(), new ColumnLayoutData() };
+        columnLayoutDatas[0].setBackground(new Color(0xafffaf));
+        columnLayoutDatas[1].setBackground(new Color(0xffffaf));
         for (int i = 0; i < propertyNames.length; ++i) {
             Label label = new Label(propertyNames[i] + " = " + clientProperties.getString(propertyNames[i]));
-            label.setLayoutData(rowLayoutDatas[i % rowLayoutDatas.length]);
+            label.setLayoutData(columnLayoutDatas[i % columnLayoutDatas.length]);
             add(label);
         }
     }

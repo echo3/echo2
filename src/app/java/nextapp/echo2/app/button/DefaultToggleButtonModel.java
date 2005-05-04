@@ -27,55 +27,58 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app;
+package nextapp.echo2.app.button;
 
-import nextapp.echo2.app.button.DefaultToggleButtonModel;
-import nextapp.echo2.app.button.ToggleButton;
+import java.util.EventListener;
 
-//BUGBUG. this componenent has no rendering behavior.
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
 
 /**
- * A checkbox implementation (NOT YET FUNCTIONAL).
+ * Default <code>ToggleButtonModel</code> implementation.
  */
-public class CheckBox extends ToggleButton {
+public class DefaultToggleButtonModel extends DefaultButtonModel
+implements ToggleButtonModel {
+
+    private boolean selected;
 
     /**
-     * Creates a checkbox with no text or icon.
+     * @see nextapp.echo2.app.button.ToggleButtonModel#addChangeListener(nextapp.echo2.app.event.ChangeListener)
      */
-    public CheckBox() {
-        this(null, null);
+    public void addChangeListener(ChangeListener l) {
+        getEventListenerList().addListener(ChangeListener.class, l);
     }
     
     /**
-     * Creates a checkbox with text.
-     *
-     * @param text the text to be displayed in the checkbox
+     * Notifies all listeners that have registered for this event type.
      */
-    public CheckBox(String text) {
-        this(text, null);
-    }
-    
-    /**
-     * Creates a checkbox with an icon.
-     *
-     * @param icon the icon to be displayed in the checkbox
-     */
-    public CheckBox(ImageReference icon) {
-        this(null, icon);
+    public void fireStateChanged() {
+        EventListener[] listeners = getEventListenerList().getListeners(ChangeListener.class);
+        ChangeEvent e = new ChangeEvent(this);
+        for (int index = 0; index < listeners.length; ++index) {
+            ((ChangeListener) listeners[index]).stateChanged(e);
+        }
     }
 
     /**
-     * Creates a checkbox with text and an icon.
-     *
-     * @param text the text to be displayed in the checkbox
-     * @param icon the icon to be displayed in the checkbox
+     * @see nextapp.echo2.app.button.ToggleButtonModel#isSelected()
      */
-    public CheckBox(String text, ImageReference icon) {
-        super();
-        
-        setModel(new DefaultToggleButtonModel());
+    public boolean isSelected() {
+        return selected;
+    }
     
-        setIcon(icon);
-        setText(text);
+    /**
+     * @see nextapp.echo2.app.button.ToggleButtonModel#removeChangeListener(nextapp.echo2.app.event.ChangeListener)
+     */
+    public void removeChangeListener(ChangeListener l) {
+        getEventListenerList().removeListener(ChangeListener.class, l);
+    }
+    
+    /**
+     * @see nextapp.echo2.app.button.ToggleButtonModel#setSelected(boolean)
+     */
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        fireStateChanged();
     }
 }

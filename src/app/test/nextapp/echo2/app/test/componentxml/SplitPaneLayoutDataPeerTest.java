@@ -36,7 +36,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.ResourceImageReference;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Style;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.StyleSheetLoader;
@@ -61,7 +61,7 @@ public class SplitPaneLayoutDataPeerTest extends TestCase {
     }
     
     public void testBasic() {
-        Style alphaStyle = styleSheet.getStyle(Row.class, "alpha");
+        Style alphaStyle = styleSheet.getStyle(Column.class, "alpha");
         SplitPaneLayoutData layoutData = (SplitPaneLayoutData) alphaStyle.getProperty(Component.PROPERTY_LAYOUT_DATA);
         assertEquals(new Color(0xabcdef), layoutData.getBackground());
         assertEquals(new Insets(20, 30), layoutData.getInsets());

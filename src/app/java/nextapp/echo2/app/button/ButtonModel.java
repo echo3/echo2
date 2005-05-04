@@ -30,7 +30,6 @@
 package nextapp.echo2.app.button;
 
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.event.ChangeListener;
 
 /**
  * Model for button components.
@@ -46,14 +45,6 @@ public interface ButtonModel {
     public void addActionListener(ActionListener l);
     
     /**
-     * Adds a <code>ChangeListener</code> to receive notification of state
-     * changes, i.e., to the selected state of a <code>ToggleButton</code>.
-     * 
-     * @param l the listener to add
-     */
-    public void addChangeListener(ChangeListener l);
-    
-    /**
      * Notifies the model of the button's action having been invoked.
      */
     public void doAction();
@@ -64,13 +55,6 @@ public interface ButtonModel {
      * @return the action command
      */
     public String getActionCommand();
-    
-    /**
-     * Returns the selection state.
-     *
-     * @return the selection state
-     */
-    public boolean isSelected();
 
     /**
      * Removes an <code>ActionListener</code> from being notified of user 
@@ -81,24 +65,9 @@ public interface ButtonModel {
     public void removeActionListener(ActionListener l);
     
     /**
-     * Removes a <code>ChangeListener</code> from being notified of state
-     * changes, i.e., to the selected state of a <code>ToggleButton</code>.
-     * 
-     * @param l the listener to remove
-     */
-    public void removeChangeListener(ChangeListener l);
-    
-    /**
      * Sets the action command.
      * 
      * @param newValue the new action command
      */
     public void setActionCommand(String newValue);
-    
-    /**
-     * Sets the selection state.
-     * 
-     * @param newValue the new selection state
-     */
-    public void setSelected(boolean newValue);
 }

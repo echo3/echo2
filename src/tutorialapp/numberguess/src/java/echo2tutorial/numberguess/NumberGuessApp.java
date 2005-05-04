@@ -36,7 +36,7 @@ import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.ResourceImageReference;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.event.ActionEvent;
@@ -103,20 +103,20 @@ implements ActionListener {
     GamePane() {
         super();
         
-        Row layoutRow = new Row();
-        layoutRow.setCellSpacing(new Extent(10));
-        add(layoutRow);
+        Column layoutColumn = new Column();
+        layoutColumn.setCellSpacing(new Extent(10));
+        add(layoutColumn);
         
-        layoutRow.add(new Label(new ResourceImageReference("/echo2tutorial/numberguess/TitleBanner.png")));
-        layoutRow.add(statusLabel);
-        layoutRow.add(countLabel);
-        layoutRow.add(promptLabel);
+        layoutColumn.add(new Label(new ResourceImageReference("/echo2tutorial/numberguess/TitleBanner.png")));
+        layoutColumn.add(statusLabel);
+        layoutColumn.add(countLabel);
+        layoutColumn.add(promptLabel);
         
         guessEntryField = new TextField();
         
         guessEntryField.setForeground(Color.WHITE);
         guessEntryField.setBackground(Color.BLUE);
-        layoutRow.add(guessEntryField);
+        layoutColumn.add(guessEntryField);
         
         Button submitButton = new Button("Submit Your Guess");
         submitButton.setActionCommand("submit guess");
@@ -124,7 +124,7 @@ implements ActionListener {
         submitButton.setBackground(Color.GREEN);
         submitButton.setWidth(new Extent(200));
         submitButton.addActionListener(this);
-        layoutRow.add(submitButton);
+        layoutColumn.add(submitButton);
         
         Button newGameButton  = new Button("Start a New Game");
         newGameButton.setActionCommand("new game");
@@ -132,7 +132,7 @@ implements ActionListener {
         newGameButton.setBackground(Color.RED);
         newGameButton.setWidth(new Extent(200));
         newGameButton.addActionListener(this);
-        layoutRow.add(newGameButton);
+        layoutColumn.add(newGameButton);
     }
     
     /**
@@ -192,19 +192,19 @@ implements ActionListener {
      *        correct answer.
      */
     CongratulationsPane(int numberOfTries) {
-        Row layoutRow = new Row();
-        layoutRow.setCellSpacing(new Extent(30));
-        add(layoutRow);
+        Column layoutColumn = new Column();
+        layoutColumn.setCellSpacing(new Extent(30));
+        add(layoutColumn);
         
-        layoutRow.add(new Label(new ResourceImageReference("/echo2tutorial/numberguess/CongratulationsBanner.png")));
-        layoutRow.add(new Label("You got the correct answer in " + numberOfTries + (numberOfTries == 1 ? " try." : " tries.")));
+        layoutColumn.add(new Label(new ResourceImageReference("/echo2tutorial/numberguess/CongratulationsBanner.png")));
+        layoutColumn.add(new Label("You got the correct answer in " + numberOfTries + (numberOfTries == 1 ? " try." : " tries.")));
 
         Button button = new Button("Play Again");
         button.setForeground(Color.WHITE);
         button.setBackground(Color.RED);
         button.setWidth(new Extent(200));
         button.addActionListener(this);
-        layoutRow.add(button);
+        layoutColumn.add(button);
     }
 
     /**

@@ -27,33 +27,42 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app.layout;
+package nextapp.echo2.app.button;
 
-import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.event.ChangeListener;
 
 /**
- * A <code>LayoutData</code> object used to describe how a 
- * <code>Component</code> is rendered within a <code>Row</code>. 
+ * Model for two-state toggle button components.
  */
-public class RowLayoutData extends CellLayoutData {
-
-    private Extent width = null;
+public interface ToggleButtonModel extends ButtonModel {
     
     /**
-     * Returns the width of the cell.
+     * Adds a <code>ChangeListener</code> to receive notification of state
+     * changes, i.e., to the selected state of a <code>ToggleButton</code>.
      * 
-     * @return the cell width
+     * @param l the listener to add
      */
-    public Extent getWidth() {
-        return width;
-    }
+    public void addChangeListener(ChangeListener l);
     
     /**
-     * Sets the width of the cell.
-     * 
-     * @param width The cell width
+     * Returns the selection state.
+     *
+     * @return the selection state
      */
-    public void setWidth(Extent width) {
-        this.width = width;
-    }
+    public boolean isSelected();
+    
+    /**
+     * Removes a <code>ChangeListener</code> from being notified of state
+     * changes, i.e., to the selected state of a <code>ToggleButton</code>.
+     * 
+     * @param l the listener to remove
+     */
+    public void removeChangeListener(ChangeListener l);
+    
+    /**
+     * Sets the selection state.
+     * 
+     * @param newValue the new selection state
+     */
+    public void setSelected(boolean newValue);
 }

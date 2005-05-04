@@ -38,14 +38,14 @@ import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.ResourceImageReference;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
@@ -80,7 +80,7 @@ public class WindowPaneTest extends SplitPane {
         SHADOW_BORDER = border;
     }
     
-    private class WindowTestControls extends ButtonRow {
+    private class WindowTestControls extends ButtonColumn {
         
         private WindowTestControls(String targetName, final ContentPane targetContentPane) {
             add(new Label(targetName));
@@ -106,12 +106,12 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setTitle("Default-Border Window #" + windowNumber++);
                     targetContentPane.add(windowPane);
                     
-                    Row windowPaneRow = new Row();
-                    windowPane.add(windowPaneRow);
-                    windowPaneRow.add(new Label("First Name:"));
-                    windowPaneRow.add(new TextField());
-                    windowPaneRow.add(new Label("Last Name:"));
-                    windowPaneRow.add(new TextField());
+                    Column windowPaneColumn = new Column();
+                    windowPane.add(windowPaneColumn);
+                    windowPaneColumn.add(new Label("First Name:"));
+                    windowPaneColumn.add(new TextField());
+                    windowPaneColumn.add(new Label("Last Name:"));
+                    windowPaneColumn.add(new TextField());
                 }
             });
             addButton("Add Immovable Window", new ActionListener() {
@@ -250,19 +250,19 @@ public class WindowPaneTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setResizable(true);
         
-        ButtonRow controlsRow = new ButtonRow();
-        controlsRow.setCellSpacing(new Extent(5));
-        controlsRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(controlsRow);
+        ButtonColumn controlsColumn = new ButtonColumn();
+        controlsColumn.setCellSpacing(new Extent(5));
+        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(controlsColumn);
         
         final ContentPane contentPane = new ContentPane();
         add(contentPane);
 
         WindowTestControls windowTestControls;
         windowTestControls = new WindowTestControls("Root Level", InteractiveApp.getApp().getMainWindow().getContent());
-        controlsRow.add(windowTestControls);
+        controlsColumn.add(windowTestControls);
         windowTestControls = new WindowTestControls("Embedded", contentPane);
-        controlsRow.add(windowTestControls);
+        controlsColumn.add(windowTestControls);
     }
     
     private void positionWindowPane(WindowPane windowPane) {

@@ -201,6 +201,11 @@ EchoWindowPane.windowMoveMouseMove = function(e) {
     newY = newY <= EchoWindowPane.maxY ? newY : EchoWindowPane.maxY;
     EchoWindowPane.activeElement.style.left = newX + "px";
     EchoWindowPane.activeElement.style.top = newY + "px";
+
+//BUGBUG. IE perf hack...make IE only (though performance/visual effect is negligible on other browsers.
+    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
+    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
+    EchoWindowPane.activeElement.style.width = initialWidth + "px";
 };
 
 /**

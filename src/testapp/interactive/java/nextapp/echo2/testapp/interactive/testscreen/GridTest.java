@@ -36,12 +36,12 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.GridCellLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -64,34 +64,34 @@ public class GridTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setResizable(true);
         
-        Row groupContainerRow = new Row();
-        groupContainerRow.setCellSpacing(new Extent(5));
-        groupContainerRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(groupContainerRow);
+        Column groupContainerColumn = new Column();
+        groupContainerColumn.setCellSpacing(new Extent(5));
+        groupContainerColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(groupContainerColumn);
         
-        Row testRow = new Row();
-        add(testRow);
+        Column testColumn = new Column();
+        add(testColumn);
 
-        ButtonRow controlsRow;
+        ButtonColumn controlsColumn;
         
-        controlsRow = new ButtonRow();
-        controlsRow.add(new Label("Insert/Delete Cells"));
-        groupContainerRow.add(controlsRow);
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Insert/Delete Cells"));
+        groupContainerColumn.add(controlsColumn);
         
         final Grid grid = new Grid(4);
         grid.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
         while (nextCellNumber < 17) {
             grid.add(createGridCellButton());
         }
-        testRow.add(grid);
+        testColumn.add(grid);
 
-        controlsRow.addButton("Clear Selection", new ActionListener() {
+        controlsColumn.addButton("Clear Selection", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 selectCellButton(null);
             }
         });
 
-        controlsRow.addButton("Insert Cell Before Selected", new ActionListener() {
+        controlsColumn.addButton("Insert Cell Before Selected", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     grid.add(createGridCellButton(), grid.indexOf(selectedButton));
@@ -99,7 +99,7 @@ public class GridTest extends SplitPane {
             }
         });
 
-        controlsRow.addButton("Append New Cell", new ActionListener() {
+        controlsColumn.addButton("Append New Cell", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Button button = createGridCellButton(); 
                 grid.add(button);
@@ -107,7 +107,7 @@ public class GridTest extends SplitPane {
             }
         });
 
-        controlsRow.addButton("Delete Selected Cell", new ActionListener() {
+        controlsColumn.addButton("Delete Selected Cell", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     int index = grid.indexOf(selectedButton);
@@ -125,81 +125,81 @@ public class GridTest extends SplitPane {
             }
         });
         
-        controlsRow = new ButtonRow();
-        controlsRow.add(new Label("Configure Grid"));
-        groupContainerRow.add(controlsRow);
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Configure Grid"));
+        groupContainerColumn.add(controlsColumn);
         
-        controlsRow.addButton("[+] Size", new ActionListener() {
+        controlsColumn.addButton("[+] Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setSize(grid.getSize() + 1);
             }
         });
 
-        controlsRow.addButton("[-] Size", new ActionListener() {
+        controlsColumn.addButton("[-] Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (grid.getSize() > 1) {
                     grid.setSize(grid.getSize() - 1);
                 }
             }
         });
-        controlsRow.addButton("Change Foreground", new ActionListener() {
+        controlsColumn.addButton("Change Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setForeground(StyleUtil.randomColor());
             }
         });
-        controlsRow.addButton("Change Background", new ActionListener() {
+        controlsColumn.addButton("Change Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setBackground(StyleUtil.randomColor());
             }
         });
-        controlsRow.addButton("Change Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Change Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setBorder(StyleUtil.randomBorder());
             }
         });
-        controlsRow.addButton("Change Border Color", new ActionListener() {
+        controlsColumn.addButton("Change Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = grid.getBorder();
                 grid.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsRow.addButton("Change Border Size", new ActionListener() {
+        controlsColumn.addButton("Change Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setBorder(StyleUtil.nextBorderSize(grid.getBorder()));
             }
         });
-        controlsRow.addButton("Change Border Style", new ActionListener() {
+        controlsColumn.addButton("Change Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setBorder(StyleUtil.nextBorderStyle(grid.getBorder()));
             }
         });
         
-        controlsRow.addButton("Set Insets 0px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setInsets(new Insets(0));
             }
         });
-        controlsRow.addButton("Set Insets 2px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 2px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setInsets(new Insets(2));
             }
         });
-        controlsRow.addButton("Set Insets 10/5px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 10/5px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setInsets(new Insets(10, 5));
             }
         });
-        controlsRow.addButton("Set Insets 10/20/30/40px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 10/20/30/40px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setInsets(new Insets(10, 20, 30, 40));
             }
         });
         
-        controlsRow = new ButtonRow();
-        controlsRow.add(new Label("Configure Cell"));
-        groupContainerRow.add(controlsRow);
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Configure Cell"));
+        groupContainerColumn.add(controlsColumn);
         
-        controlsRow.addButton("[+] Column Span", new ActionListener() {
+        controlsColumn.addButton("[+] Column Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -210,7 +210,7 @@ public class GridTest extends SplitPane {
             }
         });
 
-        controlsRow.addButton("[-] Column Span", new ActionListener() {
+        controlsColumn.addButton("[-] Column Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -223,7 +223,7 @@ public class GridTest extends SplitPane {
             }
         });
         
-        controlsRow.addButton("[+] Row Span", new ActionListener() {
+        controlsColumn.addButton("[+] Row Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -234,7 +234,7 @@ public class GridTest extends SplitPane {
             }
         });
 
-        controlsRow.addButton("[-] Row Span", new ActionListener() {
+        controlsColumn.addButton("[-] Row Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -247,7 +247,7 @@ public class GridTest extends SplitPane {
             }
         });
 
-        controlsRow.addButton("Set Insets 0px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -256,7 +256,7 @@ public class GridTest extends SplitPane {
                 }
             }
         });
-        controlsRow.addButton("Set Insets 2px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 2px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -265,7 +265,7 @@ public class GridTest extends SplitPane {
                 }
             }
         });
-        controlsRow.addButton("Set Insets 10/5px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 10/5px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -274,7 +274,7 @@ public class GridTest extends SplitPane {
                 }
             }
         });
-        controlsRow.addButton("Set Insets 10/20/30/40px", new ActionListener() {
+        controlsColumn.addButton("Set Insets 10/20/30/40px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
@@ -283,7 +283,7 @@ public class GridTest extends SplitPane {
                 }
             }
         });
-        controlsRow.addButton("Toggle Line Wrap", new ActionListener() {
+        controlsColumn.addButton("Toggle Line Wrap", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();

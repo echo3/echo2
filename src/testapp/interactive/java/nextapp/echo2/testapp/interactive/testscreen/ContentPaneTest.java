@@ -37,7 +37,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 
@@ -52,21 +52,21 @@ public class ContentPaneTest extends SplitPane {
         
         final ContentPane contentPane = InteractiveApp.getApp().getMainWindow().getContent();
         
-        ButtonRow controlsRow = new ButtonRow();
+        ButtonColumn controlsColumn = new ButtonColumn();
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(new Color(0xafafef));
         splitPaneLayoutData.setInsets(new Insets(5));
         splitPaneLayoutData.setMinimumSize(new Extent(200));
         splitPaneLayoutData.setMaximumSize(new Extent(300));
-        controlsRow.setLayoutData(splitPaneLayoutData);
-        add(controlsRow);
+        controlsColumn.setLayoutData(splitPaneLayoutData);
+        add(controlsColumn);
 
-        controlsRow.addButton("Change Background", new ActionListener() {
+        controlsColumn.addButton("Change Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 contentPane.setBackground(StyleUtil.randomColor());
             }
         });
-        controlsRow.addButton("Change Foreground", new ActionListener() {
+        controlsColumn.addButton("Change Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 contentPane.setForeground(StyleUtil.randomColor());
             }

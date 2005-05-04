@@ -62,14 +62,14 @@ public class TriCellTable {
      * This constructor is called by the non-private constructors to set up 
      * common properties.
      * 
-     * @param id The id of the outer table element, and the id upon which the 
-     *        inner elements will be based.
+     * @param id The id the id upon which the inner elements will be based.
+     *        the id of the returned table element is not set and must be
+     *        set appropriately by the caller.
      */
     private TriCellTable(Document document, String id) {
         super();
         this.document = document;
         tableElement = document.createElement("table");
-        tableElement.setAttribute("id", id);
         tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", id + "_tbody");
         tableElement.appendChild(tbodyElement);

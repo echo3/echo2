@@ -27,49 +27,58 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive.testscreen;
+package nextapp.echo2.app.test;
 
-import nextapp.echo2.app.Button;
-import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
-import nextapp.echo2.app.event.ActionEvent;
-import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
+import nextapp.echo2.app.Window;
 
 /**
- * A test for handling of long-running server-interactions.
+ * Sample <code>ApplicationInstance</code> used by some tests.
+ * The application contains a single <code>Window</code> whose
+ * <code>ContentPane</code> contains a <code>Column</code>.
+ * The <code>Column</code> contains a <code>Label</code>.
  */
-public class DelayTest extends Column {
+class ColumnApp extends ApplicationInstance {
     
-    private int clickCount = 0;
+    private Window window;
+    private Column column;
+    private Label label;
+    private ContentPane contentPane;
     
-    public DelayTest() {
-        super();
-        
-        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
-        splitPaneLayoutData.setInsets(new Insets(10));
-        setLayoutData(splitPaneLayoutData);
-        
-        Button delayButton = new Button("Test 3 second delay");
-        delayButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
-        delayButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ex) {
-                }
-            }
-        });
-        add(delayButton);
-        
-        final Button blockedButton = new Button("This button has been clicked 0 times");
-        blockedButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
-        blockedButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                blockedButton.setText("This button has been clicked " + ++clickCount + " times");
-            }
-        });
-        add(blockedButton);
+    /**
+     * @see nextapp.echo2.app.ApplicationInstance#init()
+     */
+    public Window init() {
+        window = new Window();
+        contentPane = window.getContent();
+        column = new Column();
+        label = new Label("Label");
+        column.add(label);
+        contentPane.add(column);
+        return window;
+    }
+    
+    /**
+     * Returns the <code>ContentPane</code>.
+     */
+    public ContentPane getContentPane() {
+        return contentPane;
+    }
+    
+    /**
+     * Returns the <code>Label</code>.
+     */
+    public Label getLabel() {
+        return label;
+    }
+    
+    /**
+     * Returns the <code>Column</code>.
+     */
+    public Column getColumn() {
+        return column;
     }
 }

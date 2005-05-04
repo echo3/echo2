@@ -150,6 +150,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
         Alignment textPosition = (Alignment) label.getRenderProperty(Label.PROPERTY_TEXT_POSITION, DEFAULT_TEXT_POSITION);
         Extent iconTextMargin = (Extent) label.getRenderProperty(Label.PROPERTY_ICON_TEXT_MARGIN, 
                 DEFAULT_ICON_TEXT_MARGIN);
+        String elementId = ContainerInstance.getElementId(label);
         
         int orientation;
         if (textPosition.getVertical() == Alignment.DEFAULT) {
@@ -166,7 +167,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
             }
         }
         
-        TriCellTable tct = new TriCellTable(document, ContainerInstance.getElementId(label), orientation, iconTextMargin);
+        TriCellTable tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
         
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
@@ -181,6 +182,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
         iconTdElement.appendChild(imgElement);
         
         Element tableElement = tct.getTableElement();
+        tableElement.setAttribute("id", elementId);
         
         CssStyle cssStyle = new CssStyle();
         ColorRender.renderToStyle(cssStyle, (Color) label.getRenderProperty(Label.PROPERTY_FOREGROUND), 

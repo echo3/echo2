@@ -47,10 +47,10 @@ public class Styles {
     public static final ResourceImageReference ICON_LOGO = 
             new ResourceImageReference("/nextapp/echo2/testapp/interactive/nextapp_logo.png");
 
-    public static final String APPLICATION_CONTROLS_ROW_STYLE_NAME = "applicationControlsRow";
+    public static final String APPLICATION_CONTROLS_COLUMN_STYLE_NAME = "applicationControlsColumn";
     public static final String DEFAULT_STYLE_NAME = "default";
     public static final String SELECTED_BUTTON_STYLE_NAME = "selectedButton";
-    public static final String TEST_CONTROLS_ROW_STYLE_NAME = "testControlsRow";
+    public static final String TEST_CONTROLS_COLUMN_STYLE_NAME = "testControlsColumn";
     public static final String TITLE_LABEL_STYLE_NAME = "titleLabel";
 
     public static final StyleSheet DEFAULT_STYLE_SHEET;

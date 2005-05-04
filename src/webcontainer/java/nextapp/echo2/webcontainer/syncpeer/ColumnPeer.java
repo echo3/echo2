@@ -38,7 +38,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.layout.CellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -56,15 +56,15 @@ import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.output.CssStyle;
 /**
- * Synchronization peer for <code>nextapp.echo2.app.Row</code> components.
+ * Synchronization peer for <code>nextapp.echo2.app.Column</code> components.
  */
-public class RowPeer 
+public class ColumnPeer 
 implements DomUpdateSupport, SynchronizePeer {
 
     /**
      * Rendering state.
      */
-    private static class RowPeerRenderState 
+    private static class ColumnPeerRenderState 
     implements RenderState {
         
         /**
@@ -82,30 +82,30 @@ implements DomUpdateSupport, SynchronizePeer {
     /**
      * Default constructor.
      */
-    public RowPeer() {
+    public ColumnPeer() {
         propertyRenderRegistry = new PropertyRenderRegistry();
-        propertyRenderRegistry.add(Row.PROPERTY_BORDER, new PropertyRenderRegistry.PropertyRenderAdapter() {
+        propertyRenderRegistry.add(Column.PROPERTY_BORDER, new PropertyRenderRegistry.PropertyRenderAdapter() {
             
             /**
              * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
              *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
              */
             public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-                Row row = (Row) update.getParent();
-                Border border = (Border) row.getRenderProperty(Row.PROPERTY_BORDER);
-                BorderRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(row), border);
+                Column column = (Column) update.getParent();
+                Border border = (Border) column.getRenderProperty(Column.PROPERTY_BORDER);
+                BorderRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(column), border);
             }
         });
-        propertyRenderRegistry.add(Row.PROPERTY_INSETS, new PropertyRenderRegistry.PropertyRenderAdapter() {
+        propertyRenderRegistry.add(Column.PROPERTY_INSETS, new PropertyRenderRegistry.PropertyRenderAdapter() {
 
             /**
              * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
              *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
              */
             public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-                Row row = (Row) update.getParent();
-                Insets insets = (Insets) row.getRenderProperty(Row.PROPERTY_INSETS);
-                InsetsRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(row), 
+                Column column = (Column) update.getParent();
+                Insets insets = (Insets) column.getRenderProperty(Column.PROPERTY_INSETS);
+                InsetsRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(column), 
                         "padding", insets);
             }
         });
@@ -147,15 +147,15 @@ implements DomUpdateSupport, SynchronizePeer {
     }
     
     /**
-     * Renders child components which were added to a <code>Row</code>, as 
+     * Renders child components which were added to a <code>Colunm</code>, as 
      * described in the provided <code>ServerComponentUpdate</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
-        Row row = (Row) update.getParent();
-        String elementId = ContainerInstance.getElementId(row);
+        Column column = (Column) update.getParent();
+        String elementId = ContainerInstance.getElementId(column);
         
         Component[] components = update.getParent().getComponents();
         Component[] addedChildren = update.getAddedChildren();
@@ -170,34 +170,34 @@ implements DomUpdateSupport, SynchronizePeer {
                         contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId, 
                                 elementId + "_cell_" + ContainerInstance.getElementId(components[componentIndex + 1]));
                     }
-                    renderChild(rc, update, contentElement, row, components[componentIndex]);
+                    renderChild(rc, update, contentElement, column, components[componentIndex]);
                     //BUGBUG. continue outside for loop...no reason to continue searching added children.
                 }
             }
         }
 
-        // Special case: Recall the child which was rendered at the last index of the row on the previous
+        // Special case: Recall the child which was rendered at the last index of the column on the previous
         // rendering.  If this child is still present but is no longer at the last index, render a spacing
         // row beneath it (if necessary).
-        RowPeerRenderState renderState = (RowPeerRenderState) rc.getContainerInstance().getRenderState(row);
+        ColumnPeerRenderState renderState = (ColumnPeerRenderState) rc.getContainerInstance().getRenderState(column);
         if (renderState != null && renderState.lastChild != null) {
-            int previousLastChildIndex = row.indexOf(renderState.lastChild);
-            if (previousLastChildIndex != -1 && previousLastChildIndex != row.getComponentCount() - 1) {
+            int previousLastChildIndex = column.indexOf(renderState.lastChild);
+            if (previousLastChildIndex != -1 && previousLastChildIndex != column.getComponentCount() - 1) {
                 // Child which was previously last is present, but no longer last.
                 
                 Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId,
                         elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]));
-                renderCellSpacingRow(contentElement, row, renderState.lastChild);
+                renderCellSpacingRow(contentElement, column, renderState.lastChild);
             }
         }
     }
     
     /**
-     * Renders an individual child component of the <code>Row</code>.
+     * Renders an individual child component of the <code>Column</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> being performed.
-     * @param containerElement The containing &lt;div&gt; element of the row.
+     * @param containerElement The containing &lt;div&gt; element of the column.
      * @param child The child <code>Component</code> to be rendered.
      */
     private void renderChild(RenderContext rc, ServerComponentUpdate update, Element containerElement, 
@@ -227,24 +227,24 @@ implements DomUpdateSupport, SynchronizePeer {
         
         containerElement.appendChild(divElement);
         
-        renderCellSpacingRow(containerElement, (Row) component, child);
+        renderCellSpacingRow(containerElement, (Column) component, child);
         
         renderAddChild(rc, update, divElement, child);
     }
     
     /**
-     * Renders a "spacing row" beneath row cells to provide
+     * Renders a "spacing row" beneath a column cell to provide
      * cell spacing.
      * 
      * @param divElement the outer <code>div</code> element
-     * @param row the <code>Row</code> being updated
-     * @param child the child preceeding the spacing row
+     * @param column the <code>Column</code> being updated
+     * @param child the child preceeding the spacing column
      */
-    private void renderCellSpacingRow(Element divElement, Row row, Component child) {
-        Extent cellSpacing = (Extent) row.getRenderProperty(Row.PROPERTY_CELL_SPACING);
-        if (!ExtentRender.isZeroLength(cellSpacing) && row.indexOf(child) != row.getComponentCount() - 1) {
+    private void renderCellSpacingRow(Element divElement, Column column, Component child) {
+        Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
+        if (!ExtentRender.isZeroLength(cellSpacing) && column.indexOf(child) != column.getComponentCount() - 1) {
             Element spacingElement = divElement.getOwnerDocument().createElement("div");
-            spacingElement.setAttribute("id", ContainerInstance.getElementId(row) + "_spacing_" 
+            spacingElement.setAttribute("id", ContainerInstance.getElementId(column) + "_spacing_" 
                     + ContainerInstance.getElementId(child));
             CssStyle spacingCssStyle = new CssStyle();
             spacingCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(cellSpacing));
@@ -266,18 +266,18 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-        Row row = (Row) component;
+        Column column = (Column) component;
         
         Document document = parent.getOwnerDocument();
         Element divElement = document.createElement("div");
-        divElement.setAttribute("id", ContainerInstance.getElementId(row));
+        divElement.setAttribute("id", ContainerInstance.getElementId(column));
         
         CssStyle divCssStyle = new CssStyle();
-        BorderRender.renderToStyle(divCssStyle, (Border) row.getRenderProperty(Row.PROPERTY_BORDER));
-        ColorRender.renderToStyle(divCssStyle, (Color) row.getRenderProperty(Row.PROPERTY_FOREGROUND), 
-                (Color) row.getRenderProperty(Row.PROPERTY_BACKGROUND));
-        FontRender.renderToStyle(divCssStyle, (Font) row.getRenderProperty(Row.PROPERTY_FONT));
-        Insets insets = (Insets) row.getRenderProperty(Row.PROPERTY_INSETS);
+        BorderRender.renderToStyle(divCssStyle, (Border) column.getRenderProperty(Column.PROPERTY_BORDER));
+        ColorRender.renderToStyle(divCssStyle, (Color) column.getRenderProperty(Column.PROPERTY_FOREGROUND), 
+                (Color) column.getRenderProperty(Column.PROPERTY_BACKGROUND));
+        FontRender.renderToStyle(divCssStyle, (Font) column.getRenderProperty(Column.PROPERTY_FONT));
+        Insets insets = (Insets) column.getRenderProperty(Column.PROPERTY_INSETS);
         if (insets == null) {
             divCssStyle.setAttribute("padding", "0px");
         } else {
@@ -287,17 +287,17 @@ implements DomUpdateSupport, SynchronizePeer {
         
         parent.appendChild(divElement);
         
-        Component[] children = row.getComponents();
+        Component[] children = column.getComponents();
         for (int i = 0; i < children.length; ++i) {
             renderChild(rc, update, divElement, component, children[i]);
         }
         
-        storeRenderState(rc, row);
+        storeRenderState(rc, column);
     }
     
     /**
      * Renders removal operations for child components which were removed from 
-     * a <code>Row</code>, as described in the provided 
+     * a <code>Column</code>, as described in the provided 
      * <code>ServerComponentUpdate</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -363,11 +363,11 @@ implements DomUpdateSupport, SynchronizePeer {
      * Update the stored <code>RenderState</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param component the <code>Row</code> component
+     * @param component the <code>Column</code> component
      */
     private void storeRenderState(RenderContext rc, Component component) {
         int componentCount = component.getComponentCount();
-        RowPeerRenderState renderState = new RowPeerRenderState();
+        ColumnPeerRenderState renderState = new ColumnPeerRenderState();
         if (componentCount > 0) {
             renderState.lastChild = component.getComponent(componentCount - 1);
         }

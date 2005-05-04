@@ -42,7 +42,7 @@ import junit.framework.TestCase;
 public class ApplicationStyleTest extends TestCase  {
     
     public void testApplicationStyles() {
-        RowApp app = new RowApp();
+        ColumnApp app = new ColumnApp();
         app.doInit();
         assertTrue(app.getLabel().isRegistered());
         
@@ -70,9 +70,9 @@ public class ApplicationStyleTest extends TestCase  {
         app.getLabel().setStyleName("bravo");
         assertEquals(Color.RED, app.getLabel().getRenderProperty(Label.PROPERTY_FOREGROUND));
         
-        assertNull(app.getRow().getRenderProperty(Label.PROPERTY_FOREGROUND));
-        app.getRow().setStyleName("bravo");
-        assertNull(app.getRow().getRenderProperty(Label.PROPERTY_FOREGROUND));
+        assertNull(app.getColumn().getRenderProperty(Label.PROPERTY_FOREGROUND));
+        app.getColumn().setStyleName("bravo");
+        assertNull(app.getColumn().getRenderProperty(Label.PROPERTY_FOREGROUND));
         
         assertEquals(Color.RED, app.getLabel().getRenderProperty(Label.PROPERTY_FOREGROUND));
         app.setStyleSheet(null);

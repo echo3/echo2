@@ -27,49 +27,18 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive.testscreen;
+package nextapp.echo2.testapp.interactive;
 
 import nextapp.echo2.app.Button;
-import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Column;
-import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
 
-/**
- * A test for handling of long-running server-interactions.
- */
-public class DelayTest extends Column {
+public class ButtonColumn extends Column {
     
-    private int clickCount = 0;
-    
-    public DelayTest() {
-        super();
-        
-        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
-        splitPaneLayoutData.setInsets(new Insets(10));
-        setLayoutData(splitPaneLayoutData);
-        
-        Button delayButton = new Button("Test 3 second delay");
-        delayButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
-        delayButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ex) {
-                }
-            }
-        });
-        add(delayButton);
-        
-        final Button blockedButton = new Button("This button has been clicked 0 times");
-        blockedButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
-        blockedButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                blockedButton.setText("This button has been clicked " + ++clickCount + " times");
-            }
-        });
-        add(blockedButton);
+    public void addButton(String label, ActionListener actionListener) {
+        Button button = new Button(label);
+        button.addActionListener(actionListener);
+        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        add(button);
     }
 }

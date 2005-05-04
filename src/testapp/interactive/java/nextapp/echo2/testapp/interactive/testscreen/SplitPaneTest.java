@@ -34,12 +34,12 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -48,9 +48,9 @@ import nextapp.echo2.testapp.interactive.Styles;
  */
 public class SplitPaneTest extends SplitPane {
     
-    private class PaneControlsRow extends ButtonRow {
+    private class PaneControlsColumn extends ButtonColumn {
         
-        private PaneControlsRow(final int paneNumber) {
+        private PaneControlsColumn(final int paneNumber) {
             add(new Label("Confgiure Pane #" + paneNumber));
     
             addButton("Fill With Text", new ActionListener() {
@@ -214,32 +214,32 @@ public class SplitPaneTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setResizable(true);
         
-        Row groupContainerRow = new Row();
-        groupContainerRow.setCellSpacing(new Extent(5));
-        groupContainerRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(groupContainerRow);
+        Column groupContainerColumn = new Column();
+        groupContainerColumn.setCellSpacing(new Extent(5));
+        groupContainerColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(groupContainerColumn);
 
-        ButtonRow controlsRow;
+        ButtonColumn controlsColumn;
         
-        controlsRow = new ButtonRow();
-        controlsRow.add(new Label("Add / Remove Panes"));
-        groupContainerRow.add(controlsRow);
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Add / Remove Panes"));
+        groupContainerColumn.add(controlsColumn);
         
-        controlsRow.addButton("Remove Pane 0", new ActionListener() {
+        controlsColumn.addButton("Remove Pane 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() >= 1) {
                     testPane.remove(0);
                 }
             }
         });
-        controlsRow.addButton("Remove Pane 1", new ActionListener() {
+        controlsColumn.addButton("Remove Pane 1", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() >= 2) {
                     testPane.remove(1);
                 }
             }
         });
-        controlsRow.addButton("Replace Pane 0", new ActionListener() {
+        controlsColumn.addButton("Replace Pane 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() >= 1) {
                     testPane.remove(0);
@@ -247,7 +247,7 @@ public class SplitPaneTest extends SplitPane {
                 testPane.add(createPaneLabel("Replacement for Pane 0"), 0);
             }
         });
-        controlsRow.addButton("Replace Pane 1", new ActionListener() {
+        controlsColumn.addButton("Replace Pane 1", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() >= 2) {
                     testPane.remove(1);
@@ -255,14 +255,14 @@ public class SplitPaneTest extends SplitPane {
                 testPane.add(createPaneLabel("Replacement for Pane 1"));
             }
         });
-        controlsRow.addButton("Add at Beginning", new ActionListener() {
+        controlsColumn.addButton("Add at Beginning", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() < 2) {
                     testPane.add(createPaneLabel("Added at Beginning"), 0);
                 }
             }
         });
-        controlsRow.addButton("Add at End", new ActionListener() {
+        controlsColumn.addButton("Add at End", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() < 2) {
                     testPane.add(createPaneLabel("Added at End"));
@@ -270,21 +270,21 @@ public class SplitPaneTest extends SplitPane {
             }
         });
         
-        controlsRow = new ButtonRow();
-        controlsRow.add(new Label("Configure SplitPane"));
-        groupContainerRow.add(controlsRow);
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Configure SplitPane"));
+        groupContainerColumn.add(controlsColumn);
         
-        controlsRow.addButton("Set Separator Position = null", new ActionListener() {
+        controlsColumn.addButton("Set Separator Position = null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testPane.setSeparatorPosition(null);
             }
         });
-        controlsRow.addButton("Set Separator Position = 300px", new ActionListener() {
+        controlsColumn.addButton("Set Separator Position = 300px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testPane.setSeparatorPosition(new Extent(300));
             }
         });
-        controlsRow.addButton("Swap Orientation", new ActionListener() {
+        controlsColumn.addButton("Swap Orientation", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getOrienation() == SplitPane.ORIENTATION_VERTICAL) {
                     testPane.setOrientation(SplitPane.ORIENTATION_HORIZONTAL);
@@ -294,15 +294,15 @@ public class SplitPaneTest extends SplitPane {
             }
         });
         
-        controlsRow.addButton("Disable Resize", new ActionListener() {
+        controlsColumn.addButton("Disable Resize", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testPane.setResizable(!testPane.isResizable());
                 ((Button) e.getSource()).setText(testPane.isResizable() ? "Disable Resize" : "Enable Resize");
             }
         });
         
-        groupContainerRow.add(new PaneControlsRow(0));
-        groupContainerRow.add(new PaneControlsRow(1));
+        groupContainerColumn.add(new PaneControlsColumn(0));
+        groupContainerColumn.add(new PaneControlsColumn(1));
 
         testPane = new SplitPane(ORIENTATION_VERTICAL, new Extent(200, Extent.PX));
         testPane.setResizable(true);

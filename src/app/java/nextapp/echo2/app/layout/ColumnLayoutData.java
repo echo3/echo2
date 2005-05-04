@@ -27,58 +27,33 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app.test;
+package nextapp.echo2.app.layout;
 
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.ContentPane;
-import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
-import nextapp.echo2.app.Window;
+import nextapp.echo2.app.Extent;
 
 /**
- * Sample <code>ApplicationInstance</code> used by some tests.
- * The application contains a single <code>Window</code> whose
- * <code>ContentPane</code> contains a <code>Row</code>.
- * The <code>Row</code> contains a <code>Label</code>.
+ * A <code>LayoutData</code> object used to describe how a 
+ * <code>Component</code> is rendered within a <code>Column</code>. 
  */
-class RowApp extends ApplicationInstance {
-    
-    private Window window;
-    private Row row;
-    private Label label;
-    private ContentPane contentPane;
+public class ColumnLayoutData extends CellLayoutData {
+
+    private Extent height = null;
     
     /**
-     * @see nextapp.echo2.app.ApplicationInstance#init()
+     * Returns the height of the cell.
+     * 
+     * @return the cell height
      */
-    public Window init() {
-        window = new Window();
-        contentPane = window.getContent();
-        row = new Row();
-        label = new Label("Label");
-        row.add(label);
-        contentPane.add(row);
-        return window;
+    public Extent getHeight() {
+        return height;
     }
     
     /**
-     * Returns the <code>ContentPane</code>.
+     * Sets the height of the cell.
+     * 
+     * @param height The cell height
      */
-    public ContentPane getContentPane() {
-        return contentPane;
-    }
-    
-    /**
-     * Returns the <code>Label</code>.
-     */
-    public Label getLabel() {
-        return label;
-    }
-    
-    /**
-     * Returns the <code>Row</code>.
-     */
-    public Row getRow() {
-        return row;
+    public void setHeight(Extent height) {
+        this.height = height;
     }
 }

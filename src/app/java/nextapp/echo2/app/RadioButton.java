@@ -27,18 +27,55 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
+package nextapp.echo2.app;
 
-import nextapp.echo2.app.Button;
-import nextapp.echo2.app.Row;
-import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.button.DefaultToggleButtonModel;
+import nextapp.echo2.app.button.ToggleButton;
 
-public class ButtonRow extends Row {
+//BUGBUG. this componenent has no rendering behavior.
+
+/**
+ * A radio button implementation (NOT YET FUNCTIONAL).
+ */
+public class RadioButton extends ToggleButton {
+
+    /**
+     * Creates a radio button with no text or icon.
+     */
+    public RadioButton() {
+        this(null, null);
+    }
     
-    public void addButton(String label, ActionListener actionListener) {
-        Button button = new Button(label);
-        button.addActionListener(actionListener);
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
-        add(button);
+    /**
+     * Creates a radio button with text.
+     *
+     * @param text the text to be displayed in the radio button
+     */
+    public RadioButton(String text) {
+        this(text, null);
+    }
+    
+    /**
+     * Creates a radio button with an icon.
+     *
+     * @param icon the icon to be displayed in the radio button
+     */
+    public RadioButton(ImageReference icon) {
+        this(null, icon);
+    }
+
+    /**
+     * Creates a radio button with text and an icon.
+     *
+     * @param text the text to be displayed in the radio button
+     * @param icon the icon to be displayed in the radio button
+     */
+    public RadioButton(String text, ImageReference icon) {
+        super();
+        
+        setModel(new DefaultToggleButtonModel());
+    
+        setIcon(icon);
+        setText(text);
     }
 }

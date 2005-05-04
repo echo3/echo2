@@ -32,17 +32,20 @@ package nextapp.echo2.app.test;
 import junit.framework.TestCase;
 
 import nextapp.echo2.app.Button;
+import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.IllegalChildException;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.button.ButtonModel;
+import nextapp.echo2.app.button.ToggleButtonModel;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 
 /**
- * Unit test(s) for the <code>nextapp.echo2.app.Button</code> component.
+ * Unit test(s) for the <code>nextapp.echo2.app.AbstractButton</code>-based 
+ * components.
  */
 public class ButtonTest extends TestCase {
     
@@ -121,16 +124,16 @@ public class ButtonTest extends TestCase {
     public void testChangeListener() {
         ChangeHandler buttonChangeListener = new ChangeHandler();
         ChangeHandler modelChangeListener = new ChangeHandler();
-        Button button = new Button("Test");
-        ButtonModel model = button.getModel();
-        button.addChangeListener(buttonChangeListener);
+        CheckBox checkBox = new CheckBox("Test");
+        ToggleButtonModel model = (ToggleButtonModel) checkBox.getModel();
+        checkBox.addChangeListener(buttonChangeListener);
         model.addChangeListener(modelChangeListener);
         assertEquals(0, buttonChangeListener.eventCount);
         assertEquals(0, modelChangeListener.eventCount);
-        button.setSelected(true);
+        checkBox.setSelected(true);
         assertEquals(1, buttonChangeListener.eventCount);
         assertEquals(1, modelChangeListener.eventCount);
-        assertEquals(button, buttonChangeListener.lastEvent.getSource());
+        assertEquals(checkBox, buttonChangeListener.lastEvent.getSource());
         assertEquals(model, modelChangeListener.lastEvent.getSource());
 
         buttonChangeListener.lastEvent = null;
@@ -142,7 +145,7 @@ public class ButtonTest extends TestCase {
         
         assertEquals(2, buttonChangeListener.eventCount);
         assertEquals(2, modelChangeListener.eventCount);
-        assertEquals(button, buttonChangeListener.lastEvent.getSource());
+        assertEquals(checkBox, buttonChangeListener.lastEvent.getSource());
         assertEquals(model, modelChangeListener.lastEvent.getSource());
     }
     

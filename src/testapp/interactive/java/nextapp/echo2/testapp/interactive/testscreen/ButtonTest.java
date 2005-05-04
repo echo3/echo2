@@ -29,21 +29,30 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Button;
+import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
-import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Label;
+import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.button.AbstractButton;
+import nextapp.echo2.app.button.ToggleButton;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.GridCellLayoutData;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
+import nextapp.echo2.testapp.interactive.TestGrid;
 
 /**
  * 
@@ -51,42 +60,119 @@ import nextapp.echo2.testapp.interactive.Styles;
 public class ButtonTest 
 extends SplitPane {
 
+    private List buttonList;
+    
     private interface Applicator {
         
         public void apply(AbstractButton button);
     }
     
-    private Row testRow;
-
     public ButtonTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setResizable(true);
 
         SplitPaneLayoutData splitPaneLayoutData;
         
-        ButtonRow controlsRow = new ButtonRow();
-        controlsRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(controlsRow);
+        Column controlGroupsColumn = new Column();
+        controlGroupsColumn.setCellSpacing(new Extent(5));
+        controlGroupsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(controlGroupsColumn);
 
-        testRow = new Row();
-        testRow.setCellSpacing(new Extent(15));
+        TestGrid testGrid = new TestGrid();
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(15));
-        testRow.setLayoutData(splitPaneLayoutData);
-        add(testRow);
+        testGrid.setLayoutData(splitPaneLayoutData);
+        add(testGrid);
         
-        addButtons();
+        Label warningLabel = new Label("Note: ToggleButtons are under development and mostly non-functional.");
+        warningLabel.setForeground(Color.YELLOW);
+        GridCellLayoutData gridCellLayoutData = new GridCellLayoutData();
+        gridCellLayoutData.setBackground(Color.RED);
+        gridCellLayoutData.setColumnSpan(2);
+        warningLabel.setLayoutData(gridCellLayoutData);
+        testGrid.add(warningLabel);
+
+        buttonList = new ArrayList();
         
-        controlsRow.addButton("Toggle Container Cell Spacing", new ActionListener() {
+        Button button;
+        testGrid.addHeaderCell("Button");
+
+        button = new Button();
+        testGrid.addTestCell("No Content", button);
+        buttonList.add(button);
+
+        button = new Button("Test Button");
+        testGrid.addTestCell("Text", button);
+        buttonList.add(button);
+        
+        button = new Button(Styles.ICON_LOGO);
+        testGrid.addTestCell("Icon", button);
+        buttonList.add(button);
+        
+        button = new Button("Test Button", Styles.ICON_LOGO);
+        testGrid.addTestCell("Text and Icon", button);
+        buttonList.add(button);
+        
+        CheckBox checkBox;
+        testGrid.addHeaderCell("CheckBox");
+
+        checkBox = new CheckBox();
+        testGrid.addTestCell("No Content", checkBox);
+        buttonList.add(checkBox);
+
+        checkBox = new CheckBox("Test CheckBox");
+        testGrid.addTestCell("Text", checkBox);
+        buttonList.add(checkBox);
+        
+        checkBox = new CheckBox(Styles.ICON_LOGO);
+        testGrid.addTestCell("Icon", checkBox);
+        buttonList.add(checkBox);
+        
+        checkBox = new CheckBox("Test CheckBox", Styles.ICON_LOGO);
+        testGrid.addTestCell("Text and Icon", checkBox);
+        buttonList.add(checkBox);
+        
+        RadioButton radioButton;
+        testGrid.addHeaderCell("RadioButton");
+
+        radioButton = new RadioButton();
+        testGrid.addTestCell("No Content", radioButton);
+        buttonList.add(radioButton);
+
+        radioButton = new RadioButton("Test RadioButton");
+        testGrid.addTestCell("Text", radioButton);
+        buttonList.add(radioButton);
+        
+        radioButton = new RadioButton(Styles.ICON_LOGO);
+        testGrid.addTestCell("Icon", radioButton);
+        buttonList.add(radioButton);
+        
+        radioButton = new RadioButton("Test RadioButton", Styles.ICON_LOGO);
+        testGrid.addTestCell("Text and Icon", radioButton);
+        buttonList.add(radioButton);
+    
+/*        
+        controlsColumn.addButton("Toggle Container Cell Spacing", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (testRow.getCellSpacing() == null) {
-                    testRow.setCellSpacing(new Extent(15));
+                if (testColumn.getCellSpacing() == null) {
+                    testColumn.setCellSpacing(new Extent(15));
                 } else {
-                    testRow.setCellSpacing(null);
+                    testColumn.setCellSpacing(null);
                 }
             }
         });
-        controlsRow.addButton("Set Foreground", new ActionListener() {
+*/      
+
+        ButtonColumn  controlsColumn;
+        
+        // Create 'AbstractButton Controls Group'
+        
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("AbstractButton Controls"));
+        
+        controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Color color = StyleUtil.randomColor();
                 apply(new Applicator() {
@@ -96,7 +182,7 @@ extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Clear Foreground", new ActionListener() {
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
@@ -105,7 +191,7 @@ extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Set Background", new ActionListener() {
+        controlsColumn.addButton("Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Color color = StyleUtil.randomColor();
                 apply(new Applicator() {
@@ -115,7 +201,7 @@ extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Clear Background", new ActionListener() {
+        controlsColumn.addButton("Clear Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
@@ -124,7 +210,7 @@ extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Set Font", new ActionListener() {
+        controlsColumn.addButton("Set Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Font font = StyleUtil.randomFont();
                 apply(new Applicator() {
@@ -134,7 +220,7 @@ extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Clear Font", new ActionListener() {
+        controlsColumn.addButton("Clear Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
@@ -143,8 +229,7 @@ extends SplitPane {
                 });
             }
         });
-        
-        controlsRow.addButton("Set StyleName = Null", new ActionListener() {
+        controlsColumn.addButton("Set StyleName = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
@@ -153,8 +238,7 @@ extends SplitPane {
                 });
             }
         });
-        
-        controlsRow.addButton("Set StyleName = Default", new ActionListener() {
+        controlsColumn.addButton("Set StyleName = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
@@ -163,20 +247,318 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("TextPosition = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextPosition = Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(new Alignment(Alignment.DEFAULT, Alignment.TOP));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextPosition = Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(new Alignment(Alignment.DEFAULT, Alignment.BOTTOM));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextPosition = Left", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextPosition = Right", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.DEFAULT, Alignment.TOP));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Center (V)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.DEFAULT, Alignment.CENTER));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.DEFAULT, Alignment.BOTTOM));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Left", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Center (H)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Right", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setIconTextMargin(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setIconTextMargin(new Extent(0));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 10px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setIconTextMargin(new Extent(10));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 1in", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setIconTextMargin(new Extent(1, Extent.IN));
+                    }
+                });
+            }
+        });
 
-    }
-    
-    private void addButtons() {
-        testRow.removeAll();
-        testRow.add(new Button("Test Button"));
-        testRow.add(new Button(Styles.ICON_LOGO));
-//        testRow.add(new Button("Test Button", Styles.ICON_LOGO));
+        // Create 'ToggleButton Controls Group'
+        
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("ToggleButton Controls"));
+        
+        controlsColumn.addButton("Selected = False", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setSelected(false);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Selected = True", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setSelected(true);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(null);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(new Alignment(Alignment.DEFAULT, Alignment.TOP));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(new Alignment(Alignment.DEFAULT, Alignment.BOTTOM));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Left", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Right", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(null);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.DEFAULT, Alignment.TOP));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Center (V)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.DEFAULT, Alignment.CENTER));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.DEFAULT, Alignment.BOTTOM));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Left", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Center (H)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Right", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
     }
     
     public void apply(Applicator applicator) {
-        Component[] components = testRow.getComponents();
-        for (int i = 0; i < components.length; ++i) {
-            applicator.apply((AbstractButton) components[i]);
+        AbstractButton[] buttons = (AbstractButton[]) buttonList.toArray(new AbstractButton[buttonList.size()]);
+        for (int i = 0; i < buttons.length; ++i) {
+            applicator.apply(buttons[i]);
         }
     }
 }

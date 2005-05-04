@@ -64,7 +64,7 @@
    <property name="titleForeground" value="#ffffff"/>
   </properties>
  </style>
- <style name="applicationControlsRow" type="nextapp.echo2.app.Row">
+ <style name="applicationControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
@@ -78,7 +78,7 @@
    </property>
   </properties>
  </style>
- <style name="testControlsRow" type="nextapp.echo2.app.Row">
+ <style name="testControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">

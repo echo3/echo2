@@ -35,7 +35,7 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.TaskQueue;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
@@ -44,7 +44,7 @@ import nextapp.echo2.testapp.interactive.Styles;
 /**
  * Test for asynchronous (server push) operations.
  */
-public class AsynchronousTest extends Row {
+public class AsynchronousTest extends Column {
     
     /**
      * Thread to simulate long-running operation on server.

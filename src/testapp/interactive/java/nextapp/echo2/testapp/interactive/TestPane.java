@@ -34,7 +34,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -79,7 +79,7 @@ public class TestPane extends ContentPane {
         }
     };
     
-    private Row testLaunchButtonsRow;
+    private Column testLaunchButtonsColumn;
     
     public TestPane() {
         super();
@@ -96,32 +96,32 @@ public class TestPane extends ContentPane {
         horizontalPane.setResizable(true);
         verticalPane.add(horizontalPane);
         
-        Row controlsRow = new Row();
-        controlsRow.setStyleName(Styles.APPLICATION_CONTROLS_ROW_STYLE_NAME);
-        controlsRow.setCellSpacing(new Extent(5));
+        Column controlsColumn = new Column();
+        controlsColumn.setStyleName(Styles.APPLICATION_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setCellSpacing(new Extent(5));
         
-        horizontalPane.add(controlsRow);
+        horizontalPane.add(controlsColumn);
         
-        testLaunchButtonsRow = new Row();
-        controlsRow.add(testLaunchButtonsRow);
+        testLaunchButtonsColumn = new Column();
+        controlsColumn.add(testLaunchButtonsColumn);
 
         addTest("Asynchronous Updates", "AsynchronousTest");
         addTest("Button", "ButtonTest");
         addTest("Client Properties", "ClientPropertiesTest");
         //addTest("ContentPane", "ContentPaneTest");
+        addTest("Column", "ColumnTest");
         addTest("Delay", "DelayTest");
         addTest("Grid", "GridTest");
         addTest("Image", "ImageReferenceTest");
         addTest("Label", "LabelTest");
-        addTest("Row", "RowTest");
         addTest("SplitPane (Basic)", "SplitPaneTest");
         addTest("SplitPane (Nested)", "SplitPaneNestedTest");
         addTest("StyleSheet", "StyleSheetTest");
         addTest("TextComponent", "TextComponentTest");
         addTest("WindowPane", "WindowPaneTest");
         
-        Row applicationControlsRow = new Row();
-        controlsRow.add(applicationControlsRow);
+        Column applicationControlsColumn = new Column();
+        controlsColumn.add(applicationControlsColumn);
 
         Button button = new Button("Exit");
         button.setStyleName(Styles.DEFAULT_STYLE_NAME);
@@ -130,7 +130,7 @@ public class TestPane extends ContentPane {
                 InteractiveApp.getApp().displayWelcomePane();
             }
         });
-        applicationControlsRow.add(button);
+        applicationControlsColumn.add(button);
     }
     
     private void addTest(String name, String action) {
@@ -138,6 +138,6 @@ public class TestPane extends ContentPane {
         button.setActionCommand(action);
         button.setStyleName(Styles.DEFAULT_STYLE_NAME);
         button.addActionListener(commandActionListener);
-        testLaunchButtonsRow.add(button);
+        testLaunchButtonsColumn.add(button);
     }
 }

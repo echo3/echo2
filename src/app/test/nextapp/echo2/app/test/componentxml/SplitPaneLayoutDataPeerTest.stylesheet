@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
- <style name="alpha" type="nextapp.echo2.app.Row">
+ <style name="alpha" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">

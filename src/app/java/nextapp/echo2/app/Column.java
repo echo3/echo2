@@ -27,29 +27,26 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. kill width property!
-
 package nextapp.echo2.app;
 
 /**
- * A layout <code>Component</code> which renders its contents in a vertical
- * row.
+ * A layout <code>Component</code> which renders its contents in a single 
+ * vertical column of cells.
  * <p>
  * <strong>Child LayoutData</code>: Children of this component may provide
  * layout information using the 
- * <code>nextapp.echo2.app.layout.RowLayoutData</code> layout data object.
+ * <code>nextapp.echo2.app.layout.ColumnLayoutData</code> layout data object.
  * 
- * @see nextapp.echo2.app.layout.RowLayoutData
+ * @see nextapp.echo2.app.layout.ColumnLayoutData
  */
-public class Row extends Component {
+public class Column extends Component {
     
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CELL_SPACING = "cellSpacing";
     public static final String PROPERTY_INSETS = "insets";
-    public static final String PROPERTY_WIDTH = "width";
     
     /**
-     * Returns the <code>Border</code> that encloses the entire <code>Row</code>.
+     * Returns the <code>Border</code> that encloses the entire <code>Column</code>.
      * 
      * @return the border
      */
@@ -58,7 +55,7 @@ public class Row extends Component {
     }
     
     /**
-     * Returns the spacing between individual cells of the <code>Row</code>.
+     * Returns the spacing between individual cells of the <code>Column</code>.
      * 
      * @return the cell spacing
      */
@@ -67,7 +64,7 @@ public class Row extends Component {
     }
     
     /**
-     * Returns the inset between the border and cells of the <code>Row</code>.
+     * Returns the inset between the border and cells of the <code>Column</code>.
      *
      * @return the inset
      */
@@ -75,17 +72,8 @@ public class Row extends Component {
         return (Insets) getProperty(PROPERTY_INSETS);
     }
     
-    /**
-     * Returns overall width of the <code>Row</code>.
-     * 
-     * @return the width 
-     */
-    public Extent getWidth() {
-        return (Extent) getProperty(PROPERTY_WIDTH);
-    }
-    
      /**
-     * Sets the <code>Border</code> that encloses the entire <code>Row</code>.
+     * Sets the <code>Border</code> that encloses the entire <code>Column</code>.
      * 
      * @param newValue the new border
      */
@@ -94,7 +82,7 @@ public class Row extends Component {
     }
     
     /**
-     * Sets the spacing between individual cells of the <code>Row</code>.
+     * Sets the spacing between individual cells of the <code>Column</code>.
      * 
      * @param newValue the new spacing
      */
@@ -103,20 +91,11 @@ public class Row extends Component {
     }
     
     /**
-     * Sets the inset between the border and cells of the <code>Row</code>.
+     * Sets the inset between the border and cells of the <code>Column</code>.
      * 
      * @param newValue the new inset
      */
     public void setInsets(Insets newValue) {
         setProperty(PROPERTY_INSETS, newValue);
-    }
-    
-    /**
-     * Sets the overall width of the <code>Row</code>
-     * 
-     * @param newValue the new width
-     */
-    public void setWidth(Extent newValue) {
-        setProperty(PROPERTY_WIDTH, newValue);
     }
 }

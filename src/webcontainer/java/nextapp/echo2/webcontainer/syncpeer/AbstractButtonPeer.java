@@ -29,14 +29,19 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
+import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.RadioButton;
+import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.button.AbstractButton;
+import nextapp.echo2.app.button.ToggleButton;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -44,6 +49,7 @@ import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
+import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
@@ -58,10 +64,11 @@ import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.Service;
 import nextapp.echo2.webrender.server.WebRenderServlet;
 import nextapp.echo2.webrender.services.JavaScriptService;
-import nextapp.echo2.webrender.util.DomUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.AbstractButton</code>-derived 
@@ -70,6 +77,18 @@ import org.w3c.dom.Element;
 public class AbstractButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
 
+    private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
+    private static final Alignment DEFAULT_STATE_POSITION = new Alignment(Alignment.LEADING, Alignment.DEFAULT);
+    private static final Extent DEFAULT_ICON_TEXT_MARGIN = new Extent(3);
+    private static final ImageReference DEFAULT_CHECKBOX_ICON
+            = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/CheckBoxOff.gif");
+    private static final ImageReference DEFAULT_SELECTED_CHECKBOX_ICON 
+            = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/CheckBoxOn.gif");
+    private static final ImageReference DEFAULT_RADIOBUTTON_ICON
+            = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOff.gif");
+    private static final ImageReference DEFAULT_SELECTED_RADIOBUTTON_ICON 
+            = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOn.gif");
+    
 //    private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_ICON = "icon";
 //    private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
@@ -78,7 +97,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
 //    private static final String IMAGE_ID_PRESSED_BACKGROUND = "pressedBackground";
     private static final String IMAGE_ID_PRESSED_ICON = "pressedIcon";
 //    private static final String IMAGE_ID_PRESSED_STATE_ICON = "pressedStateIcon";
-//    private static final String IMAGE_ID_STATE_ICON = "stateIcon";
+    private static final String IMAGE_ID_STATE_ICON = "stateIcon";
+    private static final String IMAGE_ID_SELECTED_STATE_ICON = "selectedStateIcon";
     
     /**
      * Service to provide supporting JavaScript library.
@@ -88,6 +108,62 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
 
     static {
         WebRenderServlet.getServiceRegistry().add(BUTTON_SERVICE);
+    }
+    
+    private static int convertIconTextPositionToOrientation(Alignment alignment, Component component) {
+        if (alignment.getVertical() == Alignment.DEFAULT) {
+            if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
+                return TriCellTable.LEFT_RIGHT;
+            } else {
+                return TriCellTable.RIGHT_LEFT;
+            }
+        } else {
+            if (alignment.getVertical() == Alignment.TOP) {
+                return TriCellTable.TOP_BOTTOM;
+            } else {
+                return TriCellTable.BOTTOM_TOP;
+            }
+        }
+    }
+    
+    private static int convertStatePositionToOrientation(Alignment alignment, Component component) {
+        if (alignment.getVertical() == Alignment.DEFAULT) {
+            if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
+                return TriCellTable.RIGHT_LEFT;
+            } else {
+                return TriCellTable.LEFT_RIGHT;
+            }
+        } else {
+            if (alignment.getVertical() == Alignment.TOP) {
+                return TriCellTable.BOTTOM_TOP;
+            } else {
+                return TriCellTable.TOP_BOTTOM;
+            }
+        }
+    }
+    
+    private static ImageReference getStateIcon(ToggleButton toggleButton) {
+        ImageReference stateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_STATE_ICON);
+        if (stateIcon == null) {
+            if (toggleButton instanceof CheckBox) {
+                stateIcon = DEFAULT_CHECKBOX_ICON;
+            } else if (toggleButton instanceof RadioButton) {
+                stateIcon = DEFAULT_RADIOBUTTON_ICON;
+            }
+        }
+        return stateIcon;
+    }
+    
+    private static ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
+        ImageReference selectedStateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_SELECTED_STATE_ICON);
+        if (selectedStateIcon == null) {
+            if (toggleButton instanceof CheckBox) {
+                selectedStateIcon = DEFAULT_SELECTED_CHECKBOX_ICON;
+            } else if (toggleButton instanceof RadioButton) {
+                selectedStateIcon = DEFAULT_SELECTED_RADIOBUTTON_ICON;
+            }
+        }
+        return selectedStateIcon;
     }
     
     /**
@@ -108,6 +184,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             return (ImageReference) component.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_ICON);
         } else if (IMAGE_ID_PRESSED_ICON.equals(imageId)) {
             return (ImageReference) component.getRenderProperty(AbstractButton.PROPERTY_PRESSED_ICON);
+        } else if (IMAGE_ID_STATE_ICON.equals(imageId)) {
+            return getStateIcon((ToggleButton) component);
+        } else if (IMAGE_ID_SELECTED_STATE_ICON.equals(imageId)) {
+            return getSelectedStateIcon((ToggleButton) component);
         } else {
             return null;
         }
@@ -130,6 +210,109 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         renderHtml(rc, update, contentElement, component);
     }
     
+    private void renderButtonContent(RenderContext rc, Element buttonContainerElement, AbstractButton button) {
+        Node contentNode;
+        Document document = rc.getServerMessage().getDocument();
+        ToggleButton toggleButton = button instanceof ToggleButton ? (ToggleButton) button : null;
+        String elementId = ContainerInstance.getElementId(button);
+        
+        String text = (String) button.getRenderProperty(AbstractButton.PROPERTY_TEXT);
+        ImageReference icon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_ICON);
+        
+        // Create entities.
+        Element iconElement = icon == null ? null : ImageReferenceRender.renderImageReferenceElement(
+                rc, AbstractButtonPeer.this, button, IMAGE_ID_ICON);
+        Text textNode = text == null ? null : rc.getServerMessage().getDocument().createTextNode(
+                (String) button.getRenderProperty(AbstractButton.PROPERTY_TEXT));
+        
+        Element stateIconElement = toggleButton == null ? null :
+                ImageReferenceRender.renderImageReferenceElement(rc, AbstractButtonPeer.this, button, 
+                toggleButton.isSelected() ? IMAGE_ID_SELECTED_STATE_ICON : IMAGE_ID_STATE_ICON);
+        
+        int entityCount = (textNode == null ? 0 : 1) + (iconElement == null ? 0 : 1) + (stateIconElement == null ? 0 : 1);
+        
+        switch (entityCount) {
+        case 1:
+            if (textNode != null) {
+                contentNode = textNode;
+            } else if (iconElement != null) {
+                contentNode = iconElement;
+            } else { // stateIconElement must not be null.
+                contentNode = stateIconElement;
+            }
+            break;
+        case 2:
+            Extent iconTextMargin = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_ICON_TEXT_MARGIN, 
+                    DEFAULT_ICON_TEXT_MARGIN);
+            TriCellTable tct;
+            Alignment textPosition = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_POSITION, 
+                    DEFAULT_TEXT_POSITION);
+            if (stateIconElement == null) {
+                // Not rendering a ToggleButton.
+                int orientation = convertIconTextPositionToOrientation(textPosition, button);
+                tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
+                
+                Element textTdElement = tct.getTdElement(0);
+                CssStyle textTdCssStyle = new CssStyle();
+                textTdCssStyle.setAttribute("padding", "0px");
+                AlignmentRender.renderToStyle(textTdCssStyle, button, 
+                        (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT));
+                textTdElement.setAttribute("style", textTdCssStyle.renderInline());
+                textTdElement.appendChild(textNode);
+         
+                Element iconTdElement = tct.getTdElement(1);
+                iconTdElement.setAttribute("style", "padding: 0px");
+                iconTdElement.appendChild(iconElement);
+                
+                Element tableElement = tct.getTableElement();
+                tableElement.setAttribute("id", elementId + "_table");
+                contentNode = tableElement;
+            } else {
+                 // Rendering a ToggleButton.
+                Extent stateMargin = (Extent) button.getRenderProperty(ToggleButton.PROPERTY_STATE_MARGIN, 
+                        DEFAULT_ICON_TEXT_MARGIN);
+                Alignment statePosition = (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_POSITION,
+                        DEFAULT_STATE_POSITION);
+                int orientation = convertStatePositionToOrientation(statePosition, button);
+                tct = new TriCellTable(document, elementId, orientation, stateMargin);
+
+                Element textOrIconTdElement = tct.getTdElement(0);
+                CssStyle textOrIconTdCssStyle = new CssStyle();
+                textOrIconTdCssStyle.setAttribute("padding", "0px");
+                textOrIconTdElement.setAttribute("style", textOrIconTdCssStyle.renderInline());
+                if (textNode == null) {
+                    textOrIconTdElement.appendChild(iconElement);
+                } else {
+                    textOrIconTdElement.appendChild(textNode);
+                }
+
+                Element stateTdElement = tct.getTdElement(1);
+                CssStyle stateTdCssStyle = new CssStyle();
+                stateTdCssStyle.setAttribute("padding", "0px");
+                AlignmentRender.renderToStyle(stateTdCssStyle, button, 
+                        (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_ALIGNMENT));
+                stateTdElement.setAttribute("style", stateTdCssStyle.renderInline());
+                stateTdElement.appendChild(stateIconElement);
+                
+                Element tableElement = tct.getTableElement();
+                tableElement.setAttribute("id", elementId + "_table");
+                contentNode = tableElement;
+            }
+            break;
+        case 3:
+            //BUGBUG. Implement three-item button renderer.
+            contentNode = null;
+            break;
+        default:
+            // 0 element button.
+            contentNode = null;
+        }
+        
+        if (contentNode != null) {
+            buttonContainerElement.appendChild(contentNode);
+        }
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
@@ -142,10 +325,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
         EventUpdate.createEventRemove(serverMessage, "mousedown", id);
     }
     
-    /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
-     */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BUTTON_SERVICE.getId(), true);
@@ -220,51 +399,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
             }
         }
         
-        int itemCount = 0;
-        
-        ImageReference icon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_ICON);
-        String text = (String) button.getRenderProperty(AbstractButton.PROPERTY_TEXT);
-        ImageReference stateIcon = null; // TODO. 
-        
-        if (text != null) {
-            ++itemCount;
-        }
-        if (icon != null) {
-            ++itemCount;
-        }
-        if (itemCount == 1) {
-            if (text != null) {
-                renderText(divElement, button);
-            }
-            if (icon !=  null) {
-                renderIcon(rc, divElement, button);
-            }
-        }
-        
-        if (itemCount == 2) {
-            if (stateIcon == null) {
-                // Icon & Text.
-                
-            }
-        }
-    }
-    
-    /**
-     * @param rc
-     * @param containerElement
-     * @param button
-     */
-    private void renderIcon(RenderContext rc, Element containerElement, AbstractButton button) {
-        Element imageElement = ImageReferenceRender.renderImageReferenceElement(rc, this, button, IMAGE_ID_ICON);
-        containerElement.appendChild(imageElement);
-    }
-    
-    /**
-     * @param containerElement
-     * @param button
-     */
-    private void renderText(Element containerElement, AbstractButton button) {
-        DomUtil.setElementText(containerElement, (String) button.getRenderProperty(AbstractButton.PROPERTY_TEXT));
+        renderButtonContent(rc, divElement, button);
     }
 
     /**

@@ -34,8 +34,6 @@ import java.util.EventListener;
 
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.event.ChangeEvent;
-import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.event.EventListenerList;
 
 /**
@@ -46,20 +44,12 @@ implements ButtonModel, Serializable {
     
     private EventListenerList listenerList = new EventListenerList();
     private String actionCommand;
-    private boolean selected;
 
     /**
      * @see nextapp.echo2.app.button.ButtonModel#addActionListener(nextapp.echo2.app.event.ActionListener)
      */
     public void addActionListener(ActionListener l) {
         listenerList.addListener(ActionListener.class, l);
-    }
-    
-    /**
-     * @see nextapp.echo2.app.button.ButtonModel#addChangeListener(nextapp.echo2.app.event.ChangeListener)
-     */
-    public void addChangeListener(ChangeListener l) {
-        listenerList.addListener(ChangeListener.class, l);
     }
     
     /**
@@ -83,17 +73,6 @@ implements ButtonModel, Serializable {
     }
     
     /**
-     * Notifies all listeners that have registered for this event type.
-     */
-    public void fireStateChanged() {
-        EventListener[] listeners = listenerList.getListeners(ChangeListener.class);
-        ChangeEvent e = new ChangeEvent(this);
-        for (int index = 0; index < listeners.length; ++index) {
-            ((ChangeListener) listeners[index]).stateChanged(e);
-        }
-    }
-    
-    /**
      * @see nextapp.echo2.app.button.ButtonModel#getActionCommand()
      */
     public String getActionCommand() {
@@ -101,10 +80,12 @@ implements ButtonModel, Serializable {
     }
     
     /**
-     * @see nextapp.echo2.app.button.ButtonModel#isSelected()
+     * Returns the local <code>EventListenerList</code>.
+     * 
+     * @return the listener list
      */
-    public boolean isSelected() {
-        return selected;
+    protected EventListenerList getEventListenerList() {
+        return listenerList;
     }
     
     /**
@@ -115,24 +96,9 @@ implements ButtonModel, Serializable {
     }
     
     /**
-     * @see nextapp.echo2.app.button.ButtonModel#removeChangeListener(nextapp.echo2.app.event.ChangeListener)
-     */
-    public void removeChangeListener(ChangeListener l) {
-        listenerList.removeListener(ChangeListener.class, l);
-    }
-    
-    /**
      * @see nextapp.echo2.app.button.ButtonModel#setActionCommand(java.lang.String)
      */
     public void setActionCommand(String actionCommand) {
         this.actionCommand = actionCommand;
-    }
-    
-    /**
-     * @see nextapp.echo2.app.button.ButtonModel#setSelected(boolean)
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-        fireStateChanged();
     }
 }

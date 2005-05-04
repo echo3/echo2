@@ -36,12 +36,12 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.ButtonRow;
+import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -55,7 +55,7 @@ public class LabelTest extends SplitPane {
         public void apply(Label label);
     }
     
-    private Row testRow;
+    private Column testColumn;
     
     public LabelTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
@@ -63,36 +63,36 @@ public class LabelTest extends SplitPane {
 
         SplitPaneLayoutData splitPaneLayoutData;
         
-        ButtonRow controlsRow = new ButtonRow();
-        controlsRow.setStyleName(Styles.TEST_CONTROLS_ROW_STYLE_NAME);
-        add(controlsRow);
+        ButtonColumn controlsColumn = new ButtonColumn();
+        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(controlsColumn);
 
-        testRow = new Row();
-        testRow.setCellSpacing(new Extent(15));
+        testColumn = new Column();
+        testColumn.setCellSpacing(new Extent(15));
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(15));
-        testRow.setLayoutData(splitPaneLayoutData);
-        add(testRow);
+        testColumn.setLayoutData(splitPaneLayoutData);
+        add(testColumn);
         
         final Label iconLabel = new Label(Styles.ICON_LOGO);
-        testRow.add(iconLabel);
+        testColumn.add(iconLabel);
         
         final Label textLabel = new Label("Test Label");
-        testRow.add(textLabel);
+        testColumn.add(textLabel);
         
         final Label iconTextLabel = new Label("Test Label", Styles.ICON_LOGO);
-        testRow.add(iconTextLabel);
+        testColumn.add(iconTextLabel);
 
-        controlsRow.addButton("Toggle Container Cell Spacing", new ActionListener() {
+        controlsColumn.addButton("Toggle Container Cell Spacing", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (testRow.getCellSpacing() == null) {
-                    testRow.setCellSpacing(new Extent(15));
+                if (testColumn.getCellSpacing() == null) {
+                    testColumn.setCellSpacing(new Extent(15));
                 } else {
-                    testRow.setCellSpacing(null);
+                    testColumn.setCellSpacing(null);
                 }
             }
         });
-        controlsRow.addButton("Set Foreground", new ActionListener() {
+        controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Color color = StyleUtil.randomColor();
                 apply(new Applicator() {
@@ -102,7 +102,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Clear Foreground", new ActionListener() {
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -111,7 +111,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Set Background", new ActionListener() {
+        controlsColumn.addButton("Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Color color = StyleUtil.randomColor();
                 apply(new Applicator() {
@@ -121,7 +121,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Clear Background", new ActionListener() {
+        controlsColumn.addButton("Clear Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -130,7 +130,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Set Font", new ActionListener() {
+        controlsColumn.addButton("Set Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Font font = StyleUtil.randomFont();
                 apply(new Applicator() {
@@ -140,7 +140,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("Clear Font", new ActionListener() {
+        controlsColumn.addButton("Clear Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -149,7 +149,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextPosition = Default", new ActionListener() {
+        controlsColumn.addButton("TextPosition = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -158,7 +158,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextPosition = Top", new ActionListener() {
+        controlsColumn.addButton("TextPosition = Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -167,7 +167,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextPosition = Bottom", new ActionListener() {
+        controlsColumn.addButton("TextPosition = Bottom", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -176,7 +176,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextPosition = Left", new ActionListener() {
+        controlsColumn.addButton("TextPosition = Left", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -185,7 +185,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextPosition = Right", new ActionListener() {
+        controlsColumn.addButton("TextPosition = Right", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -194,7 +194,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextAlignment = Default", new ActionListener() {
+        controlsColumn.addButton("TextAlignment = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -203,7 +203,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextAlignment = Top", new ActionListener() {
+        controlsColumn.addButton("TextAlignment = Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -212,7 +212,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextAlignment = Bottom", new ActionListener() {
+        controlsColumn.addButton("TextAlignment = Bottom", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -221,7 +221,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextAlignment = Left", new ActionListener() {
+        controlsColumn.addButton("TextAlignment = Left", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -230,7 +230,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("TextAlignment = Right", new ActionListener() {
+        controlsColumn.addButton("TextAlignment = Right", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -239,7 +239,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("IconTextMargin = default", new ActionListener() {
+        controlsColumn.addButton("IconTextMargin = default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -248,7 +248,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("IconTextMargin = 0px", new ActionListener() {
+        controlsColumn.addButton("IconTextMargin = 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -257,7 +257,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("IconTextMargin = 10px", new ActionListener() {
+        controlsColumn.addButton("IconTextMargin = 10px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -266,7 +266,7 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        controlsRow.addButton("IconTextMargin = 1in", new ActionListener() {
+        controlsColumn.addButton("IconTextMargin = 1in", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
@@ -278,7 +278,7 @@ public class LabelTest extends SplitPane {
     }
 
     public void apply(Applicator applicator) {
-        Component[] components = testRow.getComponents();
+        Component[] components = testColumn.getComponents();
         for (int i = 0; i < components.length; ++i) {
             applicator.apply((Label) components[i]);
         }

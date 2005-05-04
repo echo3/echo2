@@ -41,7 +41,7 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Row;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.WindowPane;
@@ -56,7 +56,7 @@ import nextapp.echo2.testapp.interactive.Styles;
 /**
  * A test for <code>StyleSheet</code>s.
  */
-public class StyleSheetTest extends Row {
+public class StyleSheetTest extends Column {
     
     private static final String DEFAULT_STYLE_SHEET_TEXT;
     static {
@@ -88,8 +88,8 @@ public class StyleSheetTest extends Row {
         setLayoutData(splitPaneLayoutData);
         setCellSpacing(new Extent(20));
         
-        Row controlsRow = new Row();
-        add(controlsRow);
+        Column controlsColumn = new Column();
+        add(controlsColumn);
         
         Button defaultButton = new Button("Slate Blue Style Sheet (DEFAULT)");
         defaultButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
@@ -98,7 +98,7 @@ public class StyleSheetTest extends Row {
                 getApplicationInstance().setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
             }
         });
-        controlsRow.add(defaultButton);
+        controlsColumn.add(defaultButton);
         
         Button greenButton = new Button("Forest Green Style Sheet");
         greenButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
@@ -107,7 +107,7 @@ public class StyleSheetTest extends Row {
                 getApplicationInstance().setStyleSheet(Styles.GREEN_STYLE_SHEET);
             }
         });
-        controlsRow.add(greenButton);
+        controlsColumn.add(greenButton);
         
         Button nullButton = new Button("No Style Sheet");
         nullButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
@@ -116,7 +116,7 @@ public class StyleSheetTest extends Row {
                 getApplicationInstance().setStyleSheet(null);
             }
         });
-        controlsRow.add(nullButton);
+        controlsColumn.add(nullButton);
         
         Button customButton = new Button("Custom Style Sheet (Edit Below)");
         customButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
@@ -130,7 +130,7 @@ public class StyleSheetTest extends Row {
                 }
             }
         });
-        controlsRow.add(customButton);
+        controlsColumn.add(customButton);
         
         styleSheetEntryTextArea = new TextArea();
         styleSheetEntryTextArea.getDocument().setText(DEFAULT_STYLE_SHEET_TEXT);
