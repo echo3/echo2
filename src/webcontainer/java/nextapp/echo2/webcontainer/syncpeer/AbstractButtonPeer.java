@@ -135,8 +135,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, SynchronizePee
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        EventUpdate.createEventRemove(rc.getServerMessage(), "click", 
-                ContainerInstance.getElementId(component));
+        ServerMessage serverMessage = rc.getServerMessage();
+        String id = ContainerInstance.getElementId(component);
+        EventUpdate.createEventRemove(serverMessage, "click", id);
+        EventUpdate.createEventRemove(serverMessage, "mouseover", id);
+        EventUpdate.createEventRemove(serverMessage, "mousedown", id);
     }
     
     /**

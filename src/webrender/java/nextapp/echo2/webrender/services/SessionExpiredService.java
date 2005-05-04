@@ -27,38 +27,50 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app.async;
+package nextapp.echo2.webrender.services;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
+import nextapp.echo2.webrender.server.Connection;
+import nextapp.echo2.webrender.server.ContentType;
+import nextapp.echo2.webrender.server.Service;
+import nextapp.echo2.webrender.server.WebRenderServlet;
 
 /**
- * A container of queued messages and message receivers.
+ * A <code>Service</code> which renders a 400 (Bad Request) with the message
+ * "Session Expired". 
  */
-public interface MessageProcessor {
+public class SessionExpiredService 
+implements Service {
+
+    /**
+     * Singleton instance.
+     */
+    public static final Service INSTANCE = new SessionExpiredService();
     
     /**
-     * Retrieves the <code>MessageQueue</code> providing storage for
-     * messages between processings.
-     * 
-     * @return the <code>MessageQueue</code>
+     * @see nextapp.echo2.webrender.server.Service#getId()
      */
-    public MessageQueue getMessageQueue();
+    public String getId() {
+        return WebRenderServlet.SERVICE_ID_SESSION_EXPIRED;
+    }
     
     /**
-     * Retrieves the <code>MessageRegistry</code> providing notification
-     * to listeners registered to process messages.
-     * 
-     * @return the <code>MessageRegistry</code>
+     * @see nextapp.echo2.webrender.server.Service#getVersion()
      */
-    public MessageRegistry getMessageRegistry();
+    public int getVersion() {
+        return DO_NOT_CACHE;
+    }
     
     /**
-     * Determines the enabled state of the <code>MessageProcessor</code>.
-     * 
-     * @return true if the <code>MessageProcessor</code> is enabled
+     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
      */
-    public boolean isEnabled();
-    
-    /**
-     * Processes received messages.
-     */
-    public void processMessages();
+    public void service(Connection conn) 
+    throws IOException {
+        conn.setContentType(ContentType.TEXT_HTML);
+        conn.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        conn.getWriter().write("Session Expired");
+    }
 }

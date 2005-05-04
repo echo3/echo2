@@ -1,6 +1,6 @@
 /* 
  * This file is part of the Echo Web Application Framework (hereinafter "Echo").
- * Copyright (C) 2002-2005 NextApp, Inc.
+ * Copyright (C) 2002-2004 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -27,44 +27,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app.async;
-
-import nextapp.echo2.app.event.MessageEvent;
-import nextapp.echo2.app.event.MessageListener;
+package nextapp.echo2.app;
 
 /**
- * A registry of <code>MessageEventListener</code>s to provide message
- * notification for a specific <code>MessageProcessor</code>.
+ * Handle interface representing a queue of tasks to be run.
+ * This is only a handle, the actual tasks are queued in the
+ * <code>ApplicationInstance</code>.
+ * This interface should not be implemented outside of the
+ * framework itself. 
  */
-public interface MessageRegistry {
-    
-    /**
-     * Adds a <code>MessageListener</code> to receive notifications 
-     * about new messages.
-     * 
-     * @param l the listener to add
-     */
-    public void addMessageListener(MessageListener l);
-    
-    /**
-     * Notifies listeners of a <code>MessageEvent</code>.
-     * 
-     * @param e the <code>MessageEvent</code>
-     */
-    public void fireMessageEvent(MessageEvent e);
-    
-    /** 
-     * Determines if the queue has any listeners.
-     * 
-     * @return true if any <code>MessageListener</code>s are registered
-     */
-    public boolean hasMessageListeners();
-
-    /**
-     * Removes a <code>MessageListener</code> from receiving notifications 
-     * about new messages.
-     * 
-     * @param l the listener to remove
-     */
-    public void removeMessageListener(MessageListener l);
-}
+public interface TaskQueue { }

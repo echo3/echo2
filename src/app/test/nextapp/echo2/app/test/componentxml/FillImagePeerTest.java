@@ -65,7 +65,7 @@ public class FillImagePeerTest extends TestCase {
         ImageReference imageReference = backgroundImage.getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
-        assertEquals("/nextapp/echo2/test/componentxml/FillImage.png", 
+        assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
         assertEquals(FillImage.ATTACHMENT_FIXED, backgroundImage.getAttachment());
         assertEquals(FillImage.REPEAT_HORIZONTAL, backgroundImage.getRepeat());
@@ -80,7 +80,7 @@ public class FillImagePeerTest extends TestCase {
         ImageReference imageReference = backgroundImage.getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
-        assertEquals("/nextapp/echo2/test/componentxml/FillImage.png", 
+        assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
     }
 }

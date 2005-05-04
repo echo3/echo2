@@ -94,6 +94,17 @@ public class ClientProperties {
     public static final String PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED = "proprietaryIECssExpressionsSupported";
     
     /**
+     * A proprietary feature flag indicating that PNG alpha channel support is
+     * available only by using a 'filter'.
+     * <p>
+     * This proprietary feature is provided by:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED = "proprietaryIEPngAlphaFilterRequired";
+    
+    /**
      * A quirk flag indicating that CSS positioning values do not work correctly when either both 
      * "top" and "bottom" or "left" and "right" positions are set at the same time.
      * <p>

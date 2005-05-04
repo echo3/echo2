@@ -84,25 +84,26 @@ public class WindowPaneTest extends SplitPane {
         
         private WindowTestControls(String targetName, final ContentPane targetContentPane) {
             add(new Label(targetName));
-            addButton("Add FillImageBorder Window", new ActionListener() {
+            addButton("Add Label Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();
                     positionWindowPane(windowPane);
-                    windowPane.setTitle("FillImageBorder Window #" + windowNumber++);
+                    windowPane.setTitle("Label Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setWidth(new Extent(500, Extent.PX));
-                    windowPane.setHeight(new Extent(280, Extent.PX));
+                    windowPane.setInsets(new Insets(10));
+                    windowPane.setWidth(new Extent(500));
+                    windowPane.setHeight(new Extent(280));
                     targetContentPane.add(windowPane);
                     windowPane.setBorder(SHADOW_BORDER);
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
-            addButton("Add Simple Window", new ActionListener() {
+            addButton("Add Default-Border Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();
                     positionWindowPane(windowPane);
-                    windowPane.setTitle("Simple Window #" + windowNumber++);
+                    windowPane.setTitle("Default-Border Window #" + windowNumber++);
                     targetContentPane.add(windowPane);
                     
                     Row windowPaneRow = new Row();
@@ -113,19 +114,35 @@ public class WindowPaneTest extends SplitPane {
                     windowPaneRow.add(new TextField());
                 }
             });
-    
+            addButton("Add Immovable Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final WindowPane windowPane = new WindowPane();
+                    positionWindowPane(windowPane);
+                    windowPane.setMovable(false);
+                    windowPane.setTitle("Immovable Window #" + windowNumber++);
+                    windowPane.setTitleInsets(new Insets(10, 5));
+                    windowPane.setTitleBackground(new Color(0x2f2f4f));
+                    windowPane.setInsets(new Insets(10));
+                    windowPane.setWidth(new Extent(500));
+                    windowPane.setHeight(new Extent(280));
+                    targetContentPane.add(windowPane);
+                    windowPane.setBorder(SHADOW_BORDER);
+                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                }
+            });
             addButton("Add SplitPane Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();
                     positionWindowPane(windowPane);
                     targetContentPane.add(windowPane);
+                    windowPane.setResizable(false);
                     windowPane.setTitle("SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
                     windowPane.setBorder(SHADOW_BORDER);
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
-                    windowPane.setHeight(new Extent(280, Extent.PX));
-                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(210, Extent.PX));
+                    windowPane.setHeight(new Extent(300, Extent.PX));
+                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(210));
                     SplitPaneLayoutData splitPaneLayoutData;
                     
                     Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
@@ -163,12 +180,13 @@ public class WindowPaneTest extends SplitPane {
                     positionWindowPane(windowPane);
                     targetContentPane.add(windowPane);
                     windowPane.setTitle("Multiple SplitPane Window #" + windowNumber++);
+                    windowPane.setTitleInsets(new Insets(10, 5));
                     windowPane.setBorder(SHADOW_BORDER);
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(700, Extent.PX));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     
-                    SplitPane splitPane1 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(100, Extent.PX));
+                    SplitPane splitPane1 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(100));
                     splitPane1.setResizable(true);
                     SplitPaneLayoutData splitPaneLayoutData;
                     
@@ -177,41 +195,46 @@ public class WindowPaneTest extends SplitPane {
                     label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
                     splitPaneLayoutData = new SplitPaneLayoutData();
                     splitPaneLayoutData.setBackground(new Color(0x3fbf5f));
+                    splitPaneLayoutData.setInsets(new Insets(5));
                     label.setLayoutData(splitPaneLayoutData);
                     splitPane1.add(label);
 
-                    SplitPane splitPane2 = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(200, Extent.PX));
+                    SplitPane splitPane2 = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(120));
                     splitPane2.setResizable(true);
                     
-                    SplitPane splitPane3 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(200, Extent.PX));
+                    SplitPane splitPane3 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(200));
                     splitPane3.setResizable(true);
                     splitPane2.add(splitPane3);
                     
-                    SplitPane splitPane4 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(300, Extent.PX));
+                    SplitPane splitPane4 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(300));
                     splitPane4.setResizable(true);
                     splitPane2.add(splitPane4);
                     
                     label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
                     splitPaneLayoutData = new SplitPaneLayoutData();
                     splitPaneLayoutData.setBackground(new Color(0x5f3fbf));
+                    splitPaneLayoutData.setInsets(new Insets(5));
                     label.setLayoutData(splitPaneLayoutData);
                     splitPane3.add(label);
                     
                     label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
                     splitPaneLayoutData = new SplitPaneLayoutData();
                     splitPaneLayoutData.setBackground(new Color(0x3f5fbf));
+                    splitPaneLayoutData.setInsets(new Insets(5));
                     label.setLayoutData(splitPaneLayoutData);
                     splitPane3.add(label);
                     
                     label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
                     splitPaneLayoutData = new SplitPaneLayoutData();
                     splitPaneLayoutData.setBackground(new Color(0xbf5f3f));
+                    splitPaneLayoutData.setInsets(new Insets(5));
                     label.setLayoutData(splitPaneLayoutData);
                     splitPane4.add(label);
                     
                     label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
                     splitPaneLayoutData = new SplitPaneLayoutData();
                     splitPaneLayoutData.setBackground(new Color(0xbf3f5f));
+                    splitPaneLayoutData.setInsets(new Insets(5));
                     label.setLayoutData(splitPaneLayoutData);
                     splitPane4.add(label);
     

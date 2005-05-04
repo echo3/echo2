@@ -26,7 +26,18 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
+ 
+//        *********************************************************************
+//        *********************************************************************
+//        *********************************************************************
+//BUGBUG! *** The Button.js module is due for a complete re-write, as it's 
+//        *** currently a half-working hack of an abomination that's unworthy 
+//        *** of the duct tape holding it together.
+//        *********************************************************************
+//        *********************************************************************
+//        *********************************************************************
 
+//BUGBUG. Changing button states are sometimes not reflected due to broken rollover/presss code.
 //BUGBUG. Cut this class up into a generic style-replacement system.
 
 //__________________
@@ -45,6 +56,11 @@ EchoButton.STATE_ROLLOVER = 1;
 EchoButton.STATE_PRESSED = 2;
 
 EchoButton.activate = function(buttonElement) {
+    if (!buttonElement.getAttribute("id")) {
+        //BUGBUG. temporary until all events use EEP
+        return;
+    }
+
     EchoButton.activeElementId = buttonElement.getAttribute("id");
     EchoButton.baseCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "baseStyle");
     EchoButton.pressedCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "pressedStyle");
@@ -54,9 +70,11 @@ EchoButton.activate = function(buttonElement) {
 };
 
 EchoButton.deactivate = function() {
-    var buttonElement = document.getElementById(EchoButton.activeElementId);
-    if (buttonElement) {
-        EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
+    if (EchoButton.activeElementId) {
+	    var buttonElement = document.getElementById(EchoButton.activeElementId);
+	    if (buttonElement) {
+	        EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
+	    }
     }
 	EchoButton.activeElementId = null;
 	EchoButton.baseCssText = null;
@@ -92,19 +110,19 @@ EchoButton.processAction = function(echoEvent) {
     EchoButton.deactivate();
     EchoButton.removeAllListeners();
     var elementId = echoEvent.registeredTarget.getAttribute("id");
-    if (document.selection && document.selection.clear) {
-        document.selection.clear();
+    if (document.selection && document.selection.empty) {
+        document.selection.empty();
     }
     EchoClientMessage.setActionValue(elementId, "click");
     EchoServerTransaction.connect();
 };
 
-EchoButton.processPressed = function(e) {
-    EchoDomUtil.preventEventDefault(e);
+EchoButton.processPressed = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
     if (EchoServerTransaction.active) {
         return;
     }
-    var eventTarget = EchoDomUtil.getEventTarget(e);
+    var eventTarget = echoEvent.registeredTarget;
     if (!EchoDomPropertyStore.getPropertyValue(eventTarget.getAttribute("id"), "pressedStyle")) {
         // Return if the button has not pressed effects.
         return;
@@ -119,13 +137,13 @@ EchoButton.processReleased = function(e) {
     EchoDomUtil.removeEventListener(eventTarget, "mouseup", EchoButton.processReleased, true);
 };
 
-EchoButton.processRolloverEnter = function(e) {
+EchoButton.processRolloverEnter = function(echoEvent) {
     if (EchoServerTransaction.active) {
         return;
     }
 //BUGBUG. looking at registeredTarget here....do we want to look at registeredtarget universally?
-//        and if so, do we want to use EchoEventProcessor for *ALL* event registrations?
-    var eventTarget = e.registeredTarget;
+//        and if so, do we want to use EchoEventProcessor for *ALL* event registrations?--YES!
+    var eventTarget = echoEvent.registeredTarget;
 //BUGBUG*    
 //EchoDebugManager.consoleWrite("rolloverEnter: " + e.registeredTarget.getAttribute("id"));
     EchoButton.setState(eventTarget, EchoButton.STATE_ROLLOVER, true);

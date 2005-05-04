@@ -35,6 +35,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.image.ImageTools;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.server.ClientProperties;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.FillImage</code>
@@ -64,7 +65,16 @@ public class FillImageRender {
             return;
         }
         String imageUri = ImageTools.getUri(rc, irs, component, imageId);
-        cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
+        
+        if (rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED)) {
+            cssStyle.setAttribute("filter",
+                    "progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale src="
+                    + imageUri + "')");
+        } else {
+            cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
+        }
+        
         if (!disableFixedMode && fillImage.getAttachment() == FillImage.ATTACHMENT_FIXED) {
             cssStyle.setAttribute("background-attachment", "fixed");
         }

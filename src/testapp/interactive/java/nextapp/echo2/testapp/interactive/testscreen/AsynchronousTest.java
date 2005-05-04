@@ -34,13 +34,10 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.app.Row;
-import nextapp.echo2.app.async.DefaultMessageProcessor;
-import nextapp.echo2.app.async.Message;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.event.MessageEvent;
-import nextapp.echo2.app.event.MessageListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -49,25 +46,16 @@ import nextapp.echo2.testapp.interactive.Styles;
  */
 public class AsynchronousTest extends Row {
     
-    private class TaskMessage implements Message {
-        
-        private int percentComplete;
-        
-        private TaskMessage(int percentComplete) {
-            this.percentComplete = percentComplete;
-        }
-    }
-    
     /**
      * Thread to simulate long-running operation on server.
-     * Note that threading is not allowed by the J2EE containers
+     * Note that threading is not allowed by J2EE containers
      * conforming to the 1.3 (or earlier) J2EE specification.
      * If you plan on deploying an Echo2 user interface to such
      * a container, please refrain from using this class as 
      * an example.
      */
-    private class SimulatedTask 
-    implements Runnable {
+    private class SimulatedServerOperation 
+    extends Thread {
         
         private int percentComplete = 0;
         
@@ -79,7 +67,7 @@ public class AsynchronousTest extends Row {
                 }
                 ApplicationInstance app = getApplicationInstance();
                 if (app != null) {
-                    messageProcessor.getMessageQueue().enqueueMessage(new TaskMessage(percentComplete));
+                    app.enqueueTask(taskQueue, new ProgressUpdateTask(percentComplete));
                     try {
                         Thread.sleep((long) (Math.random() * 1000));
                     } catch (InterruptedException ex) { }
@@ -88,34 +76,35 @@ public class AsynchronousTest extends Row {
         }
     }
     
-    private MessageListener messageListener = new MessageListener() {
+    private class ProgressUpdateTask 
+    implements Runnable {
+        
+        private int percentComplete;
+        
+        private ProgressUpdateTask(int percentComplete) {
+            this.percentComplete = percentComplete;
+        }
         
         /**
          * @see nextapp.echo2.app.event.MessageListener#messageReceived(nextapp.echo2.app.event.MessageEvent)
          */
-        public void messageReceived(MessageEvent e) {
-            if (e.getMessage() instanceof TaskMessage) {
-                TaskMessage taskMessage = (TaskMessage) e.getMessage();
-                if (taskMessage.percentComplete < 100) {
-                    statusLabel.setText("Asynchronous operation in progress; " + taskMessage.percentComplete 
-                            + "% complete.");
-                } else {
-                    statusLabel.setText("Asynchronous operation complete.");
-                    simulatedTask = null;
-                    messageProcessor.setEnabled(false);
-                }
+        public void run() {
+            if (percentComplete < 100) {
+                statusLabel.setText("Asynchronous operation in progress; " + percentComplete 
+                        + "% complete.");
+            } else {
+                statusLabel.setText("Asynchronous operation complete.");
+                getApplicationInstance().removeTaskQueue(taskQueue);
+                taskQueue = null;
             }
         }
-    };
+    }
     
-    private SimulatedTask simulatedTask;
+    private TaskQueue taskQueue;
     private Label statusLabel;
-    private DefaultMessageProcessor messageProcessor;
     
     public AsynchronousTest() {
         super();
-        messageProcessor = new DefaultMessageProcessor(null, null, false);
-        messageProcessor.getMessageRegistry().addMessageListener(messageListener);
         
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(10));
@@ -130,11 +119,10 @@ public class AsynchronousTest extends Row {
         startButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (simulatedTask == null) {
-                    messageProcessor.setEnabled(true);
-                    simulatedTask = new SimulatedTask();
-                    Thread t = new Thread(simulatedTask);
-                    t.start();
+                if (taskQueue == null) {
+                    // Only start new operation if taskQueue is null, indicating that last operation has completed.
+                    taskQueue = getApplicationInstance().createTaskQueue();
+                    new SimulatedServerOperation().start();
                 }
             }
         });
@@ -145,16 +133,10 @@ public class AsynchronousTest extends Row {
      * @see nextapp.echo2.app.Component#dispose()
      */
     public void dispose() {
-        getApplicationInstance().removeMessageProcessor("AsyncTest");
+        if (taskQueue != null) {
+            getApplicationInstance().removeTaskQueue(taskQueue);
+        }
         super.dispose();
-    }
-    
-    /**
-     * @see nextapp.echo2.app.Component#init()
-     */
-    public void init() {
-        super.init();
-        getApplicationInstance().addMessageProcessor("AsyncTest", messageProcessor);
     }
     
 }

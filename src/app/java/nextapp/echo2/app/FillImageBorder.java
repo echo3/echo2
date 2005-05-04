@@ -26,6 +26,8 @@
  */
 
 //BUGBUG. Doc.
+//BUGBUG. needs equals.
+//BUGBUG. needs xml parse peer.
 //BUGBUG? Restructure API for borders...this is BAD.
 package nextapp.echo2.app;
 

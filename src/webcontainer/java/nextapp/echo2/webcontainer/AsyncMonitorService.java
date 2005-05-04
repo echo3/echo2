@@ -43,8 +43,10 @@ import nextapp.echo2.webrender.server.Service;
  */
 public class AsyncMonitorService 
 implements Service {
-    
-    
+
+    /**
+     * Singleton instance.
+     */
     public static final Service INSTANCE = new AsyncMonitorService();
 
     public static final String SERVICE_ID = "Echo.AsyncMonitor";
@@ -70,7 +72,7 @@ implements Service {
         ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
         ApplicationInstance app = ci.getApplicationInstance();
         conn.setContentType(ContentType.TEXT_XML);
-        if (app.hasMessagesQueued()) {
+        if (app.hasQueuedTasks()) {
             conn.getWriter().write("<asyncmonitor requestsync=\"true\"/>");
         } else {
             conn.getWriter().write("<asyncmonitor requestsync=\"false\"/>");

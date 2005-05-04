@@ -32,6 +32,7 @@ package nextapp.echo2.webcontainer;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.webrender.server.ServiceRegistry;
 import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.services.SessionExpiredService;
 
 /**
  * Web container <code>HttpServlet</code> implementation.
@@ -52,6 +53,7 @@ public abstract class WebContainerServlet extends WebRenderServlet {
         // especially considering 90% of Echo2 services are global.
         serviceRegistry.add(NewInstanceService.INSTANCE);
         serviceRegistry.add(AsyncMonitorService.INSTANCE);
+        serviceRegistry.add(SessionExpiredService.INSTANCE);
         serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
     }
     

@@ -178,6 +178,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         EventUpdate.createEventRemove(rc.getServerMessage(), "blur", ContainerInstance.getElementId(component));
+        EventUpdate.createEventRemove(rc.getServerMessage(), "keyup", ContainerInstance.getElementId(component));
     }
     
     /**

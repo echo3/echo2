@@ -74,7 +74,7 @@ public class WindowPanePeer
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor,  SynchronizePeer {
     
     private static final FillImageBorder DEFAULT_BORDER 
-            = new FillImageBorder(Color.CYAN, new Insets(20), new Insets(3));
+            = new FillImageBorder(new Color(0x00007f), new Insets(20), new Insets(3));
     private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
     private static final Extent DEFAULT_POSITION_Y = new Extent(64, Extent.PX);
     
@@ -163,18 +163,29 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
+        WindowPane windowPane = (WindowPane) component;
+        boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
+        boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
         if (WindowPane.PROPERTY_POSITION_X.equals(propertyName)) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_X, 
-                    ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            if (movable) {
+                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_X, 
+                        ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            }
         } else if (WindowPane.PROPERTY_POSITION_Y.equals(propertyName)) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_Y, 
-                    ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            if (movable) {
+                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_Y, 
+                        ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            }
         } else if (WindowPane.PROPERTY_WIDTH.equals(propertyName)) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_WIDTH, 
-                    ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            if (resizable) {
+                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_WIDTH, 
+                        ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            }
         } else if (WindowPane.PROPERTY_HEIGHT.equals(propertyName)) {
+            if (resizable) {
             ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_HEIGHT, 
                     ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            }
         }
     }
 
@@ -187,6 +198,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         renderHtml(rc, update, contentElement, component);
     }
     
+    /**
+     * Renders the <code>FillImageBorder</code> as HTML.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param windowDivElement the main DIV element of the window
+     * @param windowPane the <code>WindowPane</code> instance
+     */
     private void renderBorder(RenderContext rc, Element windowDivElement, WindowPane windowPane) {
         FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
         Color borderColor = border.getColor();
@@ -194,6 +212,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 ? new Insets(0) : border.getBorderInsets();
         Document document = rc.getServerMessage().getDocument();
         String elementId = ContainerInstance.getElementId(windowPane);
+        boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
                 
         boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
@@ -216,7 +235,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderCssStyle.setAttribute("left", "0px");
         borderCssStyle.setAttribute("height", borderTopPixels + "px");
         borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        borderCssStyle.setAttribute("cursor", "nw-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "nw-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NW, 
                 border.getNorthWest(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -237,7 +258,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("width", "expression((document.getElementById('" 
                     + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
         }
-        borderCssStyle.setAttribute("cursor", "n-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "n-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_N, 
                 border.getNorth(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -253,7 +276,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderCssStyle.setAttribute("right", "0px");
         borderCssStyle.setAttribute("height", borderTopPixels + "px");
         borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        borderCssStyle.setAttribute("cursor", "ne-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "ne-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NE, 
                 border.getNorthEast(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -275,7 +300,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
             
         }
-        borderCssStyle.setAttribute("cursor", "w-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "w-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_W, 
                 border.getWest(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -297,7 +324,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     + elementId + "').clientHeight-" + (borderVerticalPixels) + ")+'px')");
             
         }
-        borderCssStyle.setAttribute("cursor", "e-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "e-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_E, 
                 border.getEast(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -313,7 +342,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderCssStyle.setAttribute("left", "0px");
         borderCssStyle.setAttribute("height", borderBottomPixels + "px");
         borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        borderCssStyle.setAttribute("cursor", "sw-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "sw-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SW, 
                 border.getSouthWest(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -335,7 +366,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     + elementId + "').clientWidth-" + (borderHorizontalPixels) + ")+'px')");
             
         }
-        borderCssStyle.setAttribute("cursor", "s-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "s-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_S, 
                 border.getSouth(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -351,21 +384,34 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderCssStyle.setAttribute("right", "0px");
         borderCssStyle.setAttribute("height", borderBottomPixels + "px");
         borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        borderCssStyle.setAttribute("cursor", "se-resize");
+        if (resizable) {
+            borderCssStyle.setAttribute("cursor", "se-resize");
+        }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SE, 
                 border.getSouthEast(), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
         ServerMessage serverMessage = rc.getServerMessage();
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_nw", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_n", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_ne", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_w", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_e", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_sw", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_s", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", "EchoWindowPane.windowResizeMouseDown");
+        
+        if (resizable) {
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_nw", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_n", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_ne", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_w", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_e", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_sw", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_s", 
+                    "EchoWindowPane.windowResizeMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", 
+                    "EchoWindowPane.windowResizeMouseDown");
+        }
     }
     
     /**
@@ -401,6 +447,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Extent height = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_HEIGHT);
         int titleHeightPixels = ExtentRender.toPixels(
                 (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_HEIGHT), 28);
+        boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
         boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
         boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
@@ -474,7 +521,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element outerTitleDivElement = document.createElement("div"); 
         outerTitleDivElement.setAttribute("id", elementId + "_title");
         CssStyle outerTitleDivCssStyle = new CssStyle();
-        outerTitleDivCssStyle.setAttribute("cursor", "move");
+        if (movable) {
+            outerTitleDivCssStyle.setAttribute("cursor", "move");
+        }
         ColorRender.renderToStyle(outerTitleDivCssStyle, 
                 (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND, Color.WHITE),
                 (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
@@ -528,37 +577,40 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         innerTitleDivElement.appendChild(titleTableElement);
 
-        // Create Content DIV Element.
+        // Create outer content DIV Element.
+        Element outerContentDivElement = document.createElement("div");
+        outerContentDivElement.setAttribute("id", elementId + "_outercontent");
+        CssStyle outerContentDivCssStyle = new CssStyle();
+        outerContentDivCssStyle.setAttribute("overflow", "auto");
+        outerContentDivCssStyle.setAttribute("padding", "0px");
+        outerContentDivCssStyle.setAttribute("position", "absolute");
+        outerContentDivCssStyle.setAttribute("width", "100%");
+        outerContentDivCssStyle.setAttribute("top", titleHeightPixels + "px");
+        if (renderPositioningBothSides) {
+            outerContentDivCssStyle.setAttribute("bottom", "0px");
+        }
+        if (renderSizeExpression) {
+            outerContentDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
+                    + bodyElementId + "').clientHeight-" + titleHeightPixels + ")+'px')");
+        }
+        outerContentDivElement.setAttribute("style", outerContentDivCssStyle.renderInline());
+        windowBodyDivElement.appendChild(outerContentDivElement);
+        
+        // Create inset content DIV Element.
         Element contentDivElement = document.createElement("div");
         contentDivElement.setAttribute("id", elementId + "_content");
         CssStyle contentDivCssStyle = new CssStyle();
-        contentDivCssStyle.setAttribute("overflow", "auto");
-        contentDivCssStyle.setAttribute("padding", "0px");
-        contentDivCssStyle.setAttribute("position", "absolute");
-        contentDivCssStyle.setAttribute("width", "100%");
-        contentDivCssStyle.setAttribute("top", titleHeightPixels + "px");
-        if (renderPositioningBothSides) {
-            contentDivCssStyle.setAttribute("bottom", "0px");
-        }
-        if (renderSizeExpression) {
-            contentDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
-                    + bodyElementId + "').clientHeight-" + titleHeightPixels + ")+'px')");
-        }
+        InsetsRender.renderToStyle(contentDivCssStyle, "padding", 
+                (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_INSETS));
         contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
-        windowBodyDivElement.appendChild(contentDivElement);
+        outerContentDivElement.appendChild(contentDivElement);
 
         // Add event listeners.
         EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoWindowPane.userCloseClick");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoWindowPane.userCloseMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoWindowPane.windowMoveMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_nw", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_n", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_ne", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_w", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_e", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_sw", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_s", "EchoWindowPane.windowResizeMouseDown");
-        EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", "EchoWindowPane.windowResizeMouseDown");
+        if (movable) {
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoWindowPane.userCloseMouseDown");
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoWindowPane.windowMoveMouseDown");
+        }
 
         // Render child.
         if (windowPane.getComponentCount() != 0) {

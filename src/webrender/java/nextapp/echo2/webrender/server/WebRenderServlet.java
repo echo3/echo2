@@ -50,9 +50,9 @@ public abstract class WebRenderServlet extends HttpServlet {
     
     public static final String SERVICE_ID_PARAMETER = "serviceId";
     
-    public static final String SERVICE_ID_DEFAULT = "EchoDefault";
-    public static final String SERVICE_ID_NEW_INSTANCE = "EchoNewInstance";
-    public static final String SERVICE_ID_SESSION_EXPIRED = "EchoExpired"; 
+    public static final String SERVICE_ID_DEFAULT = "Echo.Default";
+    public static final String SERVICE_ID_NEW_INSTANCE = "Echo.NewInstance";
+    public static final String SERVICE_ID_SESSION_EXPIRED = "Echo.Expired"; 
     
     /**
      * The time delta (in seconds) when cached services will expire.

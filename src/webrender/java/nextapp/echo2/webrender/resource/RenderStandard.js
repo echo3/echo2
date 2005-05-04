@@ -818,6 +818,31 @@ EchoEventProcessor.getHandler = function(eventType, elementId) {
 };
 
 /**
+ * Returns the element ids of all event handlers of the specified type.
+ */
+EchoEventProcessor.getHandlerElementIds = function(eventType) {
+    var elementIds = new Array();
+    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
+    if (elementIdToHandlerMap) {
+	    for (var elementId in elementIdToHandlerMap) {
+	        elementIds.push(elementId);
+	    }
+    }
+    return elementIds;
+};
+
+/**
+ * Returns the types of all registered event handlers.
+ */
+EchoEventProcessor.getHandlerEventTypes = function() {
+    var handlerTypes = new Array();
+    for (var eventType in EchoEventProcessor.eventTypeToHandlersMap) {
+        handlerTypes.push(eventType);
+    }
+    return handlerTypes;
+};
+
+/**
  * Master event handler for all DOM events.
  * This method is registered as the event handler for all
  * client-side event registrations.  Events are processed,
@@ -897,6 +922,8 @@ EchoEventUpdate.process = function(messagePartElement) {
         for (j = 0; j < addItems.length; ++j) {
             elementId = addItems[j].getAttribute("eid");
             element = document.getElementById(elementId);
+            
+            //BUGBUG. these two operations need to get rolled into one, handled by EchoEventProcessor.
 	        EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
 	        EchoEventProcessor.addHandler(eventType, elementId, handler);
         }
@@ -907,6 +934,8 @@ EchoEventUpdate.process = function(messagePartElement) {
         for (j = 0; j < removeItems.length; ++j) {
             elementId = removeItems[j].getAttribute("eid");
             element = document.getElementById(elementId);
+
+            //BUGBUG. these two operations need to get rolled into one, handled by EchoEventProcessor.
 	        if (element) {
 	            EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
 	        }
@@ -1162,12 +1191,14 @@ EchoServerTransaction.postProcess = function() {
     EchoServerTransaction.active = false;
 };
 
+//BUGBUG. Need to pass httprequest data to both valid/invalid response handler
+// without just passing responseXml/responseText!
 /**
  * Processes an invalid response from the server.
  */
-EchoServerTransaction.invalidResponseHandler = function() {
+EchoServerTransaction.invalidResponseHandler = function(responseText) {
     EchoServerTransaction.postProcess();
-    alert("Invalid response from server.");
+    alert("Invalid response from server: " + responseText);
 };
 
 /**
@@ -1221,7 +1252,7 @@ EchoXmlHttpResponse.prototype.processReadyStateChange = function() {
             this.validResponseHandler(responseXml);
         } else {
             if (this.invalidResponseHandler) {
-                this.invalidResponseHandler();
+                this.invalidResponseHandler(this.xmlHttpRequest.responseText);
             } else {
                 throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
             }

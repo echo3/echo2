@@ -51,8 +51,11 @@ public class WindowPane extends Component {
     public static final String PROPERTY_DEFAULT_CLOSE_OPERATION = "defaultCloseOperation";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";
+    public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_POSITION_X = "positionX";
     public static final String PROPERTY_POSITION_Y = "positionY";
+    public static final String PROPERTY_MOVABLE = "movable";
+    public static final String PROPERTY_RESIZABLE = "resizable";
     public static final String PROPERTY_TITLE = "title";
     public static final String PROPERTY_TITLE_BACKGROUND = "titleBackground";
     public static final String PROPERTY_TITLE_BACKGROUND_IMAGE = "titleBackgroundImage";
@@ -163,6 +166,15 @@ public class WindowPane extends Component {
     }
     
     /**
+     * Returns the inset of the window content.
+     * 
+     * @return the inset
+     */
+    public Insets getInsets() {
+        return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
+    /**
      * Returns the horizontal (Y) position of the <code>WindowPane</code> with
      * respsect to its container.
      * 
@@ -255,6 +267,26 @@ public class WindowPane extends Component {
     }
     
     /**
+     * Determines if the window is movable.
+     * 
+     * @return true if the window is movable.
+     */
+    public boolean isMovable() {
+        Boolean value = (Boolean) getProperty(PROPERTY_MOVABLE);
+        return value == null ? true : value.booleanValue();
+    }
+
+    /**
+     * Determines if the window is resizable.
+     * 
+     * @return true if the window is resizable.
+     */
+    public boolean isResizable() {
+        Boolean value = (Boolean) getProperty(PROPERTY_RESIZABLE);
+        return value == null ? true : value.booleanValue(); 
+    }
+    
+    /**
      * Limit content to a single child.
      * 
      * @see nextapp.echo2.app.Component#isValidChild(nextapp.echo2.app.Component)
@@ -341,6 +373,24 @@ public class WindowPane extends Component {
     }
     
     /**
+     * Sets the inset of the window content.
+     * 
+     * @param newValue the new inset
+     */
+    public void setInsets(Insets newValue) {
+        setProperty(PROPERTY_INSETS, newValue);
+    }
+    
+    /**
+     * Sets whether the window is movable.
+     * 
+     * @param newValue true if the window may be moved by the user
+     */
+    public void setMovable(boolean newValue) {
+        setProperty(PROPERTY_MOVABLE, new Boolean(newValue));
+    }
+    
+    /**
      * Sets the horizontal (X) position of the <code>WindowPane</code> with
      * respect to its container.
      * 
@@ -358,6 +408,15 @@ public class WindowPane extends Component {
      */
     public void setPositionY(Extent newValue) {
         setProperty(PROPERTY_POSITION_Y, newValue);
+    }
+
+    /**
+     * Sets whether the window is resizable.
+     * 
+     * @param newValue true if the window may be resized by the user
+     */
+    public void setResizable(boolean newValue) {
+        setProperty(PROPERTY_RESIZABLE, new Boolean(newValue));
     }
     
     /**

@@ -34,14 +34,12 @@ import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import nextapp.echo2.app.async.MessageProcessor;
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
 
@@ -52,7 +50,7 @@ public abstract class ApplicationInstance
 implements Serializable {
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0alpha5";
+    public static final String ID_STRING = "NextApp Echo v2.0alpha6";
 
     /** 
      * Holds a thread local reference to the active ApplicationInstance for
@@ -106,10 +104,11 @@ implements Serializable {
     private Map idToComponentMap;
     
     /**
-     * Mapping between application-defined 'keys' and 
-     * <code>MessageProcessor</code>s.
+     * Mapping between <code>TaskQueue</code> handles and <code>List</code>s
+     * of tasks.  Values may be null if a particular <code>TaskQueue</code>
+     * does not contain any tasks. 
      */
-    private HashMap messageProcessorMap;
+    private HashMap taskQueueMap;
     
     /**
      * Fires property change events for the instance object.
@@ -140,21 +139,7 @@ implements Serializable {
         updateManager = new UpdateManager(this);
         idToComponentMap = new HashMap();
         windows = new ArrayList();
-    }
-
-    /**
-     * Adds a <code>MessageProcessor</code> to the application.
-     * 
-     * @param key a unique identifier to represent this 
-     *        <code>MessageProcessor</code> (typically, though not necessarily,
-     *        a String)
-     * @param messageProcessor the <code>MessageProcessor</code> to add
-     */
-    public void addMessageProcessor(Object key, MessageProcessor messageProcessor) {
-        if (messageProcessorMap == null) {
-            messageProcessorMap = new HashMap();
-        }
-        messageProcessorMap.put(key, messageProcessor);
+        taskQueueMap = new HashMap();
     }
     
     /**
@@ -182,6 +167,20 @@ implements Serializable {
             window.setApplicationInstance(this);
             firePropertyChange(WINDOWS_CHANGED_PROPERTY, null, window);
         }
+    }
+    
+    /**
+     * Creates a new task queue.  A handle object representing the created task
+     * queue is returned.
+     * 
+     * @return the new task queue handle
+     */
+    public TaskQueue createTaskQueue() {
+        TaskQueue taskQueue = new TaskQueue() { };
+        synchronized (taskQueueMap) {
+            taskQueueMap.put(taskQueue, null);
+        }
+        return taskQueue;
     }
     
     /**
@@ -219,6 +218,30 @@ implements Serializable {
             doValidation(c.getComponent(index));
         }
     }
+
+    /**
+     * Enqueues a task to be run on during the next client/server 
+     * synchronization.  The task will be run 
+     * <b>synchronously</b> in the UI processing thread.
+     * Enqueuing a task in response to an external event will result 
+     * in changes being pushed to the client.
+     * 
+     * @param taskQueue the <code>TaskQueue</code> handle representing the
+     *        queue into which this task should be placed
+     * @param task the task to run when on client/server synchronization
+     *        
+     */
+    public void enqueueTask(TaskQueue taskQueue, Runnable task) {
+        synchronized (taskQueueMap) {
+            List taskList = (List) taskQueueMap.get(taskQueue);
+            if (taskList == null) {
+                taskList = new ArrayList();
+                taskQueueMap.put(taskQueue, taskList);
+            }
+            taskList.add(task);
+        }
+    }
+    
     
     /**
      * Reports a bound property change.
@@ -279,31 +302,6 @@ implements Serializable {
     }
     
     /**
-     * Returns the <code>MessageProcessor</code> attached to the application
-     * with the given key value.
-     * 
-     * @param key the key value assigned to the <code>MessageProcessor</code>
-     *        when it was added to the application
-     * @return the <code>MessageProcessor</code>, or null if none exists
-     */
-    public MessageProcessor getMessageProcessor(Object key) {
-        return messageProcessorMap == null ? null : (MessageProcessor) messageProcessorMap.get(key);
-    }
-    
-    /**
-     * Returns an <code>Iterator</code> over the keys of all attached 
-     * <code>MessageProcessor</code>s.  Note that any <code>Object</code>
-     * can be used as a key for a <code>MessageProcessor</code> so it is
-     * not safe to cast the keys.
-     * 
-     * @return an <code>Iterator</code> over the keys of all attached
-     * <code>MessageProcessor</code>s
-     */
-    public Iterator getMessageProcessorKeys() {
-        return Collections.unmodifiableSet(messageProcessorMap.keySet()).iterator();
-    }
-    
-    /**
      * Retrieves the style for the specified specified class of 
      * component / style name.
      * 
@@ -342,40 +340,29 @@ implements Serializable {
     }
     
     /**
-     * Determines if the application has any enabled 
-     * <code>MessageProcessor</code>s attached.
+     * Determines if this application instance currently has any active
+     * tasks queues, which might be monitoring external events.
      * 
-     * @return true if one or more enabled <code>MessageProcessor</code>s are
-     *         attached to the application.
+     * @return true if the instance has any task queues
      */
-    public boolean hasEnabledMessageProcessors() {
-        if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
-            return false;
-        }
-        Iterator it = messageProcessorMap.values().iterator();
-        while (it.hasNext()) {
-            MessageProcessor messageProcessor = (MessageProcessor) it.next();
-            if (messageProcessor.isEnabled()) {
-                return true;
-            }
-        }
-        return false;
+    public boolean hasTaskQueues() {
+        return taskQueueMap.size() > 0;
     }
     
     /**
-     * Determines if any <code>Message</code>s are in the queues of any 
-     * attached and enabled <code>MessageProcessor</code>s.
+     * Determines if there are any queued tasks in any of the task
+     * queues associated with this application instance.
      * 
-     * @return true if messages are waiting to be processed
+     * @return true if any tasks are queued
      */
-    public boolean hasMessagesQueued() {
-        if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
+    public boolean hasQueuedTasks() {
+        if (taskQueueMap.size() == 0) {
             return false;
         }
-        Iterator it = messageProcessorMap.values().iterator();
+        Iterator it = taskQueueMap.values().iterator();
         while (it.hasNext()) {
-            MessageProcessor messageProcessor = (MessageProcessor) it.next();
-            if (messageProcessor.getMessageQueue().hasMessages()) {
+            List taskList = (List) it.next();
+            if (taskList != null && taskList.size() > 0) {
                 return true;
             }
         }
@@ -423,19 +410,25 @@ implements Serializable {
     }
 
     /**
-     * Processes queued messages in the queues of all enabled
-     * <code>MessageProcessor</code>s.  This method may only be invoked
+     * Processes all queued tasks.  This method may only be invoked
      * from within a UI thread.
      */
-    public void processMessages() {
-        if (messageProcessorMap == null || messageProcessorMap.size() == 0) {
+    public void processQueuedTasks() {
+        if (taskQueueMap.size() == 0) {
             return;
         }
-        Iterator it = messageProcessorMap.values().iterator();
-        while (it.hasNext()) {
-            MessageProcessor messageProcessor = (MessageProcessor) it.next();
-            if (messageProcessor.isEnabled()) {
-                messageProcessor.processMessages();
+        synchronized (taskQueueMap) {
+            Iterator taskListsIt = taskQueueMap.values().iterator();
+            while (taskListsIt.hasNext()) {
+                List tasks = (List) taskListsIt.next();
+                if (tasks != null) {
+                    Iterator tasksIt = tasks.iterator();
+                    while (tasksIt.hasNext()) {
+                        Runnable task = (Runnable) tasksIt.next();
+                        task.run();
+                        tasksIt.remove();
+                    }
+                }
             }
         }
     }
@@ -458,17 +451,6 @@ implements Serializable {
     }
     
     /**
-     * Removes a <code>MessageProcessor</code> from the application. 
-     * 
-     * @param key the key indicating the 
-     */
-    public void removeMessageProcessor(Object key) {
-        if (messageProcessorMap != null) {
-            messageProcessorMap.remove(key);
-        }
-    }
-    
-    /**
      * Removes a <code>PropertyChangeListener</code> from receiving 
      * notification of application-level property changes.
      * 
@@ -476,6 +458,18 @@ implements Serializable {
      */
     public void removePropertyChangeListener(PropertyChangeListener l) {
         propertyChangeSupport.removePropertyChangeListener(l);
+    }
+    
+    /**
+     * Removes the <code>TaskQueue</code> referenced by the specified handle.
+     * 
+     * @param taskQueue the handle specifying the <code>TaskQueue</code> to
+     *        remove.
+     */
+    public void removeTaskQueue(TaskQueue taskQueue) {
+        synchronized(taskQueueMap) {
+            taskQueueMap.remove(taskQueue);
+        }
     }
     
     /**

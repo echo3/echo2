@@ -105,12 +105,13 @@ implements SynchronizeService.ClientMessagePartProcessor {
         
         // Set quirk flags.
         if (browserInternetExplorer) {
+            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
         }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY, Boolean.TRUE);
@@ -143,5 +144,4 @@ implements SynchronizeService.ClientMessagePartProcessor {
         userInstance.setClientProperties(clientProperties);
         analyze(clientProperties);
     }
-    
 }    

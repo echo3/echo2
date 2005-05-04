@@ -254,7 +254,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);
-            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasEnabledMessageProcessors());
+            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasTaskQueues());
             return rc.getServerMessage();
         } finally {
             ApplicationInstance.setActive(null);
@@ -269,7 +269,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
         RenderContext rc = new RenderContextImpl(conn);
         
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
-
         
         try {
             // Mark instance as active.
@@ -280,13 +279,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
             // Process updates from client.
             processClientMessage(conn, clientMessageDocument);
             updateManager.processClientUpdates();
-            applicationInstance.processMessages();
+            applicationInstance.processQueuedTasks();
             
             // Process updates from server.
             processServerUpdates(rc);
             
             //BUGBUG. experimental.
-            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasEnabledMessageProcessors());
+            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasTaskQueues());
 
             updateManager.purge();
             
