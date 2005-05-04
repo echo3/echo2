@@ -44,6 +44,9 @@ import nextapp.echo2.app.Component;
 public class ClientUpdateManager {
      
     private Map clientUpdates = new HashMap();
+    private Component actionComponent;
+    private String actionName;
+    private Object actionValue;
     
     /**
      * Creates a new <Code>ClientUpdateManager</code>.
@@ -79,20 +82,13 @@ public class ClientUpdateManager {
     }
     
     /**
-     * Purges all updates from the <code>ClientUpdateManager</code>.
-     */
-    public void purge() {
-        clientUpdates.clear();
-    }
-    
-    /**
      * Notifies components of input from the client via the 
      * <code>Component.processInput()</code> method.
-     * Purges stored updates.
      * 
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     void process() {
+        // Process property updates. 
         Iterator updateIt = clientUpdates.values().iterator();
         while (updateIt.hasNext()) {
             ClientComponentUpdate update = (ClientComponentUpdate) updateIt.next();
@@ -102,5 +98,36 @@ public class ClientUpdateManager {
                 update.getComponent().processInput(inputName, update.getInputValue(inputName));
             }
         }
+        
+        // Process action.
+        if (actionComponent != null) {
+            actionComponent.processInput(actionName, actionValue);
+        }
+    }
+
+    /**
+     * Purges all updates from the <code>ClientUpdateManager</code>.
+     */
+    public void purge() {
+        clientUpdates.clear();
+        actionComponent = null;
+        actionName = null;
+        actionValue = null;
+    }
+    
+    /**
+     * Sets the action received from the client.  The 'action' describes the
+     * client-side update which necessitated the occurrence of this 
+     * client-server interaction.  The application will be notified of the 
+     * action AFTER it has been notified of all other property updates.
+     * 
+     * @param actionComponent the action-producing component
+     * @param actionName the name of the action
+     * @param actionValue the value of the action
+     */
+    void setAction(Component actionComponent, String actionName, Object actionValue) {
+        this.actionComponent = actionComponent;
+        this.actionName = actionName;
+        this.actionValue = actionValue;
     }
 }

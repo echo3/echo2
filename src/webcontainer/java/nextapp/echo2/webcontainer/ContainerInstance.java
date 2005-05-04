@@ -30,10 +30,13 @@
 package nextapp.echo2.webcontainer;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webrender.RenderInstance;
 import nextapp.echo2.webrender.server.Connection;
@@ -42,6 +45,11 @@ import nextapp.echo2.webrender.server.Connection;
  * Web application container user instance.
  */
 public class ContainerInstance extends RenderInstance {
+
+    /**
+     * Default asynchronous monitor callback interval (in ms).
+     */
+    private static final int DEFAULT_CALLBACK_INTERVAL = 500;
     
     /**
      * Returns the base HTML element id that should be used when rendering the
@@ -65,6 +73,7 @@ public class ContainerInstance extends RenderInstance {
     
     private Map componentToRenderStateMap = new HashMap();
     private ApplicationInstance applicationInstance;
+    private Map taskQueueToCallbackIntervalMap;
     
     /**
      * Default constructor for serialization use only.
@@ -112,6 +121,32 @@ public class ContainerInstance extends RenderInstance {
         return applicationInstance;
     }
     
+    //BUGBUG. current method of iterating weak-keyed map of taskqueues
+    // is not adequate.  If the app were to for whatever reason hold on
+    // to a dead taskqueue, its interval setting would effect the
+    // calculation.
+    // One solution: add a getTaskQueues() method to ApplicationInstance
+    /**
+     * Determines the application-specified asynchronous monitoring
+     * service callback interval.
+     * 
+     * @return the callback interval, in ms
+     */
+    public int getCallbackInterval() {
+        if (taskQueueToCallbackIntervalMap == null || taskQueueToCallbackIntervalMap.size() == 0) {
+            return DEFAULT_CALLBACK_INTERVAL;
+        }
+        Iterator it = taskQueueToCallbackIntervalMap.values().iterator();
+        int returnInterval = Integer.MAX_VALUE;
+        while (it.hasNext()) {
+            int interval = ((Integer) it.next()).intValue();
+            if (interval < returnInterval) {
+                returnInterval = interval;
+            }
+        }
+        return returnInterval;
+    }
+    
     /**
      * Retrieves the <code>Component</code> with the specfied element id.
      * 
@@ -137,10 +172,12 @@ public class ContainerInstance extends RenderInstance {
         return (RenderState) componentToRenderStateMap.get(component);
     }
     
-    //BUGBUG. now a convenience method....redoc at minimum.
     /**
-     * Returns the <code>UpdateManager</code> being used to synchronize
+     * Convenience method to retrieve the application's 
+     * <code>UpdateManager</code>, which is used to synchronize
      * client and server states.
+     * This method is equivalent to invoking
+     * <code>getApplicationInstance().getUpdateManager()</code>.
      * 
      * @return the <code>UpdateManager</code>
      */
@@ -156,6 +193,26 @@ public class ContainerInstance extends RenderInstance {
      */
     public void removeRenderState(Component component) {
         componentToRenderStateMap.remove(component);
+    }
+    
+    /**
+     * Sets the interval between asynchronous callbacks from the client to check
+     * for queued tasks for a given <code>TaskQueue</code>.  If multiple 
+     * <code>TaskQueue</code>s are active, the smallest specified interval should
+     * be used.  The default interval is 500ms.
+     * Application access to this method should be accessed via the 
+     * <code>ContainerContext</code>.
+     * 
+     * @param taskQueue the <code>TaskQueue</code>
+     * @param ms the number of milleseconds between asynchronous client 
+     *        callbacks
+     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueue, int)
+     */
+    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms) {
+        if (taskQueueToCallbackIntervalMap == null) {
+            taskQueueToCallbackIntervalMap = new WeakHashMap();
+        }
+        taskQueueToCallbackIntervalMap.put(taskQueue, new Integer(ms));
     }
     
     /**

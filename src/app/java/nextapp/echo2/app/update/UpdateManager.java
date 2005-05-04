@@ -121,4 +121,18 @@ public class UpdateManager {
         clientUpdateManager.purge();
         serverUpdateManager.purge();
     }
+
+    /**
+     * Sets the action received from the client.  The 'action' describes the
+     * client-side update which necessitated the occurrence of this 
+     * client-server interaction.  The application will be notified of the 
+     * action AFTER it has been notified of all other property updates.
+     * 
+     * @param actionComponent the action-producing component
+     * @param actionName the name of the action
+     * @param actionValue the value of the action
+     */
+    public void setClientAction(Component actionComponent, String actionName, Object actionValue) {
+        clientUpdateManager.setAction(actionComponent, actionName, actionValue);
+    }
 }

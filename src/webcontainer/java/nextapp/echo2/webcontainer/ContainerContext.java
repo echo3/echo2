@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer;
 
+import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.webrender.server.ClientProperties;
 
 /**
@@ -50,6 +51,20 @@ public interface ContainerContext {
     /**
      * Returns the <code>ClientProperties</code> describing the user's
      * client web browser environment.
+     * 
+     * @return the <code>ClientProperties</code> object
      */
     public ClientProperties getClientProperties();
+    
+    /**
+     * Sets the interval between asynchronous callbacks from the client to check
+     * for queued tasks for a given <code>TaskQueue</code>.  If multiple 
+     * <code>TaskQueue</code>s are active, the smallest specified interval should
+     * be used.  The default interval is 500ms.
+     * 
+     * @param taskQueue the <code>TaskQueue</code>
+     * @param ms the number of milleseconds between asynchronous client 
+     *        callbacks
+     */
+    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms);
 }

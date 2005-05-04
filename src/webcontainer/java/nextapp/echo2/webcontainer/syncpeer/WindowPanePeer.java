@@ -154,7 +154,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @see nextapp.echo2.webcontainer.ActionProcessor#processAction(nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.INPUT_CLOSE, null);
+        ci.getUpdateManager().setClientAction(component, WindowPane.INPUT_CLOSE, null);
     }
 
     /**

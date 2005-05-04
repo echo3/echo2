@@ -50,7 +50,7 @@ public abstract class ApplicationInstance
 implements Serializable {
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0alpha7";
+    public static final String ID_STRING = "NextApp Echo v2.0alpha8";
 
     /** 
      * Holds a thread local reference to the active ApplicationInstance for
@@ -417,19 +417,21 @@ implements Serializable {
         if (taskQueueMap.size() == 0) {
             return;
         }
+        
+        List currentTasks = new ArrayList();
         synchronized (taskQueueMap) {
             Iterator taskListsIt = taskQueueMap.values().iterator();
             while (taskListsIt.hasNext()) {
                 List tasks = (List) taskListsIt.next();
                 if (tasks != null) {
-                    Iterator tasksIt = tasks.iterator();
-                    while (tasksIt.hasNext()) {
-                        Runnable task = (Runnable) tasksIt.next();
-                        task.run();
-                        tasksIt.remove();
-                    }
+                    currentTasks.addAll(tasks);
+                    tasks.clear();
                 }
             }
+        }
+        Iterator it = currentTasks.iterator();
+        while (it.hasNext()) {
+            ((Runnable) it.next()).run();
         }
     }
     

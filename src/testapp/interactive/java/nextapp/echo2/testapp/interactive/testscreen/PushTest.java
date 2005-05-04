@@ -44,7 +44,7 @@ import nextapp.echo2.testapp.interactive.Styles;
 /**
  * Test for asynchronous (server push) operations.
  */
-public class AsynchronousTest extends Column {
+public class PushTest extends Column {
     
     /**
      * Thread to simulate long-running operation on server.
@@ -103,7 +103,7 @@ public class AsynchronousTest extends Column {
     private TaskQueue taskQueue;
     private Label statusLabel;
     
-    public AsynchronousTest() {
+    public PushTest() {
         super();
         
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();

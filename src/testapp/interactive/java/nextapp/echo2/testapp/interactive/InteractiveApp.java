@@ -35,6 +35,9 @@ import nextapp.echo2.app.WindowPane;
 
 public class InteractiveApp extends ApplicationInstance {
     
+    // BUGBUG. This needs to be done more cleanly...e.g., have the app itself start/stop/manage the ghost test.
+    public boolean ghostTestRunning = false;
+    
     public static final String ACTION_WINDOW_PANE_TEST = "windowPaneTest";
     
     public static InteractiveApp getApp() {

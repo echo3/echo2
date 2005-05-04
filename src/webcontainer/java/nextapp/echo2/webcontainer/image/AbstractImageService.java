@@ -31,12 +31,15 @@ package nextapp.echo2.webcontainer.image;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webrender.server.Connection;
+import nextapp.echo2.webrender.server.ContentType;
 import nextapp.echo2.webrender.server.Service;
 
 /**
@@ -82,28 +85,40 @@ implements Service {
     throws IOException {
         ContainerInstance containerInstance = (ContainerInstance) conn.getUserInstance();
         if (containerInstance == null) {
-            throw new IOException("No container available.");
+            serviceBadRequest(conn, "No container available.");
+            return;
         }
         String componentId = conn.getRequest().getParameter(PARAMETER_COMPONENT_ID);
         if (componentId == null) {
-            throw new IOException("Component id not specified.");
+            serviceBadRequest(conn, "Component id not specified.");
+            return;
         }
         String imageId = conn.getRequest().getParameter(PARAMETER_IMAGE_ID);
         if (imageId == null) {
-            throw new IOException("Image id not specified.");
+            serviceBadRequest(conn, "Image id not specified.");
+            return;
         }
         Component component = containerInstance.getApplicationInstance().getComponent(componentId);
         if (component == null) {
-            throw new IOException("Invalid component id.");
+            serviceBadRequest(conn, "Invalid component id.");
+            return;
         }
         SynchronizePeer synchronizePeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
         if (!(synchronizePeer instanceof ImageRenderSupport)) {
-            throw new IOException("Component synchronization peer does not support image rendering.");
+            serviceBadRequest(conn, "Component synchronization peer does not support image rendering.");
+            return;
         }
         ImageReference imageReference = (((ImageRenderSupport) synchronizePeer).getImage(component, imageId));
         if (imageReference == null) {
-            throw new IOException("Image id is not valid.");
+            serviceBadRequest(conn, "Image id is not valid.");
+            return;
         }
         renderImage(conn, imageReference);
+    }
+    
+    public void serviceBadRequest(Connection conn, String message) {
+        conn.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        conn.setContentType(ContentType.TEXT_PLAIN);
+        conn.getWriter().write(message);
     }
 }

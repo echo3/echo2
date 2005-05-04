@@ -32,7 +32,6 @@
 
 function EchoAsyncMonitor() { }
 
-//BUGBUG. Make interval configurable.
 /**
  * The time, in milleseconds, between polling requests.
  */
@@ -1085,7 +1084,9 @@ EchoServerMessage.process = function() {
 };
 
 EchoServerMessage.processAsyncConfig = function() {
-    if ("true" == EchoServerMessage.messageDocument.documentElement.getAttribute("async")) {
+    var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("asyncinterval"));
+    if (!isNaN(timeInterval)) {
+        EchoAsyncMonitor.timeInterval = timeInterval;
         EchoAsyncMonitor.start();
     }
 };

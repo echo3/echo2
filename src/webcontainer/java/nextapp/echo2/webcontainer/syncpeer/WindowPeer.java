@@ -39,6 +39,8 @@ import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 
+//BUGBUG. does not currently support updates to window title.
+
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Window</code> components.
  */

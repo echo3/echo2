@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer;
 
+import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.webrender.server.ClientProperties;
 
 /**
@@ -54,5 +55,12 @@ implements ContainerContext {
      */
     public ClientProperties getClientProperties() {
         return containerInstance.getClientProperties();
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueue, int)
+     */
+    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms) {
+        containerInstance.setTaskQueueCallbackInterval(taskQueue, ms);
     }
 }

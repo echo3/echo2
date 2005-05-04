@@ -105,15 +105,16 @@ public class TestPane extends ContentPane {
         testLaunchButtonsColumn = new Column();
         controlsColumn.add(testLaunchButtonsColumn);
 
-        addTest("Asynchronous Updates", "AsynchronousTest");
         addTest("Button", "ButtonTest");
         addTest("Client Properties", "ClientPropertiesTest");
-        //addTest("ContentPane", "ContentPaneTest");
+        //addTest("ContentPane", "ContentPaneTest"); //BUGBUG. fix this.
         addTest("Column", "ColumnTest");
         addTest("Delay", "DelayTest");
         addTest("Grid", "GridTest");
         addTest("Image", "ImageReferenceTest");
         addTest("Label", "LabelTest");
+        addTest("Push (Basic)", "PushTest");
+        addTest("Push (Ghost Test)", "PushGhostTest");
         addTest("SplitPane (Basic)", "SplitPaneTest");
         addTest("SplitPane (Nested)", "SplitPaneNestedTest");
         addTest("StyleSheet", "StyleSheetTest");

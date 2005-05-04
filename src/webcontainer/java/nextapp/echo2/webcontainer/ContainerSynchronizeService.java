@@ -108,6 +108,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
             for (int i = 0; i < propertyElements.length; ++i) {
                 String componentId = propertyElements[i].getAttribute("componentid");
                 Component component = ci.getComponentByElementId(componentId);
+                if (component == null) {
+                    // Component removed.  This should not frequently occur, however in certain cases,
+                    // e.g., dragging a window during an during before, during, after a server pushed update
+                    // can result in the condition where input is received from a component which no longer
+                    // is registered.
+                    continue;
+                }
                 SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
                 if (!(syncPeer instanceof PropertyUpdateProcessor)) {
                     throw new IllegalStateException("Target peer is not an PropertyUpdateProcessor.");
@@ -132,6 +139,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
             Element actionElement = DomUtil.getChildElementByTagName(messagePartElement, "action");
             String componentId = actionElement.getAttribute("componentid");
             Component component = ci.getComponentByElementId(componentId);
+            if (component == null) {
+                // Component removed.  This should not frequently occur, however in certain cases,
+                // e.g., dragging a window during an during before, during, after a server pushed update
+                // can result in the condition where input is received from a component which no longer
+                // is registered.
+                return;
+            }
             SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
             if (!(syncPeer instanceof ActionProcessor)) {
                 throw new IllegalStateException("Target peer is not an ActionProcessor.");
@@ -254,7 +268,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);
-            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasTaskQueues());
+            setAsynchronousMonitorInterval(rc);
             return rc.getServerMessage();
         } finally {
             ApplicationInstance.setActive(null);
@@ -283,9 +297,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             // Process updates from server.
             processServerUpdates(rc);
-            
-            //BUGBUG. experimental.
-            rc.getServerMessage().setAsynchronousMonitor(applicationInstance.hasTaskQueues());
+
+            setAsynchronousMonitorInterval(rc);
 
             updateManager.purge();
             
@@ -294,6 +307,21 @@ public class ContainerSynchronizeService extends SynchronizeService {
         } finally {
             // Mark instance as inactive.
             ApplicationInstance.setActive(null);
+        }
+    }
+
+    /**
+     * Sets the interval between asynchronous monitor requests.
+     * 
+     * @param rc the relevant <code>RenderContext</code>.
+     */
+    private void setAsynchronousMonitorInterval(RenderContext rc) {
+        boolean hasTaskQueues = rc.getContainerInstance().getApplicationInstance().hasTaskQueues();
+        if (hasTaskQueues) {
+            int interval = rc.getContainerInstance().getCallbackInterval();
+            rc.getServerMessage().setAsynchronousMonitorInterval(interval);
+        } else {
+            rc.getServerMessage().setAsynchronousMonitorInterval(-1);
         }
     }
 }

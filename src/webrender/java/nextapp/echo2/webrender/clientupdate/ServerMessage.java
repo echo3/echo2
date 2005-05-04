@@ -345,7 +345,11 @@ public class ServerMessage extends XmlDocument {
         return element;
     }
     
-    public void setAsynchronousMonitor(boolean enabled) {
-        serverMessageElement.setAttribute("async", Boolean.toString(enabled));
+    public void setAsynchronousMonitorInterval(int newValue) {
+        if (newValue < 0) {
+            serverMessageElement.setAttribute("asyncinterval", "disable");
+        } else {
+            serverMessageElement.setAttribute("asyncinterval", Integer.toString(newValue));
+        }
     }
 }
