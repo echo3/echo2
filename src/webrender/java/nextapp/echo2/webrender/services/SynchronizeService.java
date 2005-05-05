@@ -105,7 +105,13 @@ implements Service {
         HttpServletRequest request = conn.getRequest();
         InputStream in = null;
         try {
-            in = cleanXmlInputStream(request.getInputStream());
+            String userAgent = conn.getRequest().getHeader("user-agent");
+            if (userAgent != null && userAgent.indexOf("onqueror") != -1) {
+                // Invoke XML 'cleaner' on Konqueror 
+                in = cleanXmlInputStream(request.getInputStream(), conn.getUserInstance().getCharacterEncoding());
+            } else {
+                in = request.getInputStream();
+            }
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -126,8 +132,7 @@ implements Service {
     //is a hack.
     //If not possible w/ other means, this method should be disabled for all other browsers via
     //ClientProperties.
-    //BUGBUG. this method is unsafe with anything but 7-bit ascii input  (String.getBytes() is used).
-    private InputStream cleanXmlInputStream(InputStream in) 
+    private InputStream cleanXmlInputStream(InputStream in, String characterEncoding) 
     throws IOException{
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         
@@ -148,11 +153,10 @@ implements Service {
         in.close();
         
         byte[] data = byteOut.toByteArray();
-        data = new String(data).trim().getBytes();
+        data = new String(data, characterEncoding).trim().getBytes(characterEncoding);
         
         return new ByteArrayInputStream(data);
     }
-    
     
     protected abstract ServerMessage renderInit(Connection conn, Document clientMessageDocument);
     

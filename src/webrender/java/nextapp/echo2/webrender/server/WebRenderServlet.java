@@ -27,10 +27,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. We probably want to pass in the type of the service being requested,
-// such that in an error condition we can respond with an appropriate filler.
-// if the error is not critical and we need to hand something back to the client.
-
 package nextapp.echo2.webrender.server;
 
 import java.io.IOException;
@@ -61,13 +57,6 @@ public abstract class WebRenderServlet extends HttpServlet {
     
     /** A convenience for setting the cache header */
     private static final String CACHE_MAX_AGE = "max-age=" + CACHED_SERVICE_TIMEOUT;
-
-    /**
-     * The app container name and version, as well as the framework name and 
-     * version.  This information will be printed in META tags in all generated
-     * documents.
-     */
-    public static final String ID_STRING = "NextApp WebRenderServlet v2.0alpha0";
 
     private static MultipartRequestWrapper multipartRequestWrapper;
 
