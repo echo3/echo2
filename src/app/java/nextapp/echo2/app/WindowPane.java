@@ -42,7 +42,8 @@ package nextapp.echo2.app;
  * 
  * @see nextapp.echo2.app.layout.WindowPaneLayoutData
  */
-public class WindowPane extends Component {
+public class WindowPane extends Component 
+implements ModalSupport {
     
     public static final String INPUT_CLOSE = "input_close";
     
@@ -85,6 +86,8 @@ public class WindowPane extends Component {
      * hierarhcy when a user attempts to close it.
      */
     public static final int DISPOSE_ON_CLOSE = 2;
+    
+    private boolean modal = false;
     
     /**
      * Creates a  new <code>WindowPane</code>.
@@ -267,6 +270,13 @@ public class WindowPane extends Component {
     }
     
     /**
+     * @see nextapp.echo2.app.ModalSupport#isModal()
+     */
+    public boolean isModal() {
+        return modal;
+    }
+    
+    /**
      * Determines if the window is movable.
      * 
      * @return true if the window is movable.
@@ -320,7 +330,7 @@ public class WindowPane extends Component {
             setHeight((Extent) inputValue);
         }
     }
-
+    
     /**
      * Sets the border which surrounds the entire <code>WindowPane</code>.
      * 
@@ -379,6 +389,15 @@ public class WindowPane extends Component {
      */
     public void setInsets(Insets newValue) {
         setProperty(PROPERTY_INSETS, newValue);
+    }
+    
+    /**
+     * @see nextapp.echo2.app.ModalSupport#setModal(boolean)
+     */
+    public void setModal(boolean newValue) {
+        boolean oldValue = modal;
+        modal = newValue;
+        firePropertyChange(MODAL_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
     }
     
     /**

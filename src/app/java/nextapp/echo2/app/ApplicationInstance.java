@@ -35,10 +35,12 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
@@ -59,6 +61,7 @@ implements Serializable {
     private static final ThreadLocal activeInstance = new InheritableThreadLocal();
 
     public static final String FOCUSED_COMPONENT_CHANGED_PROPERTY = "focusedComponent";
+    public static final String MODAL_COMPONENTS_CHANGED_PROPERTY = "modalComponents";
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String WINDOWS_CHANGED_PROPERTY = "windows";
     
@@ -130,6 +133,8 @@ implements Serializable {
      */
     private StyleSheet styleSheet;
 
+    private Set modalComponents;
+    
     private long nextId;
     
     /** 
@@ -381,6 +386,17 @@ implements Serializable {
     }
     
     /**
+     * Determines if the given component is modal (i.e., that only components
+     * below it in the hierarchy should be enabled).
+     * 
+     * @param component the <code>Component</code>
+     * @return true if the <code>Component</code> is modal 
+     */
+    private boolean isModal(Component component) {
+        return modalComponents != null && modalComponents.contains(component);
+    }
+    
+    /**
      * Invoked to initialize the application, returning the primary window.
      * The returned window must be visible.
      *
@@ -416,6 +432,9 @@ implements Serializable {
         } else if (Component.PROPERTY_LAYOUT_DATA.equals(propertyName)) {
             serverUpdateManager.processLayoutDataUpdate(parent);
         } else {
+            if (parent instanceof ModalSupport && ModalSupport.MODAL_CHANGED_PROPERTY.equals(propertyName)) {
+                setModal(parent, ((Boolean) newValue).booleanValue());
+            }
             serverUpdateManager.processPropertyUpdate(parent, propertyName, oldValue, newValue);
         }
     }
@@ -458,6 +477,9 @@ implements Serializable {
             component.setId(generateId());
         }
         idToComponentMap.put(component.getId(), component); 
+        if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
+            setModal(component, true);
+        }
     }
     
     /**
@@ -515,6 +537,28 @@ implements Serializable {
         }
         propertyChangeSupport.firePropertyChange(FOCUSED_COMPONENT_CHANGED_PROPERTY, oldValue, newValue);
     }
+    
+    /**
+     * Sets the modal state of a component (i.e, whether only components below
+     * it in the hierarchy should be enabled.
+     * 
+     * @param component the <code>Component</code>
+     * @param newValue the new modal state
+     */
+    private void setModal(Component component, boolean newValue) {
+        boolean oldValue = isModal(component);
+        if (newValue) {
+            if (modalComponents == null) {
+                modalComponents = new HashSet();
+            }
+            modalComponents.add(component);
+        } else {
+            if (modalComponents != null) {
+                modalComponents.remove(component);
+            }
+        }
+        firePropertyChange(MODAL_COMPONENTS_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
+    }
 
     /**
      * Sets the <code>StyleSheet</code> of this instance.
@@ -537,13 +581,16 @@ implements Serializable {
     }
 
     /**
-     * Registers a component with the <code>ApplicationInstance</code>.
+     * Unregisters a component with from the <code>ApplicationInstance</code>.
      * <p>
      * This method is invoked by <code>Component.setApplicationInstance()</code>
      * 
      * @param component the component to unregister
      */
     void unregisterComponent(Component component) {
-        idToComponentMap.remove(component.getId());   
+        idToComponentMap.remove(component.getId());
+        if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
+            setModal(component, false);
+        }
     }
 }

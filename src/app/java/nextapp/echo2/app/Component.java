@@ -101,7 +101,7 @@ public abstract class Component {
     
     /** The parent of the component. */
     private Component parent;
-
+    
     /** The propery change event dispatcher. */
     private PropertyChangeSupport propertyChangeSupport;
     
@@ -596,7 +596,7 @@ public abstract class Component {
     }
     
     /**
-     * Determines the enabled-state of this component.
+     * Determines the enabled state of this <code>Component</code>.
      * 
      * @return true if the component is enabled
      */

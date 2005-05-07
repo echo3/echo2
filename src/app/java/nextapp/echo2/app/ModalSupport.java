@@ -29,13 +29,26 @@
 
 package nextapp.echo2.app;
 
-//BUGBUG? rename TaskQueueHandle?
-
 /**
- * Handle interface representing a queue of tasks to be run.
- * This is only a handle, the actual tasks are queued in the
- * <code>ApplicationInstance</code>.
- * This interface should not be implemented outside of the
- * framework itself. 
+ * An interface for components which support a modal state.
  */
-public interface TaskQueue { }
+public interface ModalSupport { 
+    
+    public static final String MODAL_CHANGED_PROPERTY = "modal";
+
+    /**
+     * Determines the modal state of this component.
+     * 
+     * @return true if the component is modal
+     */
+    public boolean isModal();
+
+    /**
+     * Sets the modal state of the <code>Component</code>.
+     * 
+     * @param newValue the new modal state
+     * @throws UnsupportedOperationException if this component does not  
+     *         implement the <code>ModalSupport</code> marker interface.
+     */
+    public void setModal(boolean newValue);
+}
