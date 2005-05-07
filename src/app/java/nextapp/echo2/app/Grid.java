@@ -42,7 +42,6 @@ public class Grid extends Component {
     
     public static final int DEFAULT_SIZE = 2;
     
-    public static final String PROPERTY_SIZE = "size";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
     public static final String PROPERTY_HEIGHT = "height";
@@ -50,6 +49,7 @@ public class Grid extends Component {
     public static final String PROPERTY_ORIGIN = "origin";
     public static final String PROPERTY_ORIENTATION = "orientation";
     public static final String PROPERTY_ROW_HEIGHT = "rowHeight";
+    public static final String PROPERTY_SIZE = "size";
     public static final String PROPERTY_WIDTH = "width";
 
     /**
@@ -92,7 +92,7 @@ public class Grid extends Component {
     }
     
     /**
-     * Returns the overall height of the grid.
+     * Returns the overall height.
      * 
      * @return the height
      */
@@ -101,7 +101,7 @@ public class Grid extends Component {
     }
     
     /**
-     * Returns the default cell insets
+     * Returns the default cell insets.
      * 
      * @return the default cell insets
      */

@@ -35,7 +35,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 
 /**
- * An abstract base layout object for components which render their
+ * An abstract base layout data object for components which render their
  * children in cells.
  */
 public abstract class CellLayoutData 
