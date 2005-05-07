@@ -54,6 +54,25 @@ public class ComponentTest extends TestCase {
         assertEquals(new Color(0x12, 0x34, 0x56), c.getBackground());
         assertEquals(Component.PROPERTY_BACKGROUND, pce.lastEvent.getPropertyName());
     }
+    
+    /**
+     * Test <code>enabled</code> property.
+     */
+    public void testEnabled() {
+        NullComponent c = new NullComponent();
+        PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
+        c.addPropertyChangeListener(pce);
+        assertTrue(c.isEnabled());
+        c.setEnabled(false);
+        assertFalse(c.isEnabled());
+        assertEquals(Component.ENABLED_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
+        c.setEnabled(false);
+        assertFalse(c.isEnabled());
+        c.setEnabled(true);
+        assertTrue(c.isEnabled());
+        c.setEnabled(true);
+        assertTrue(c.isEnabled());
+    }
 
     /**
      * Test <code>font</code> property. 
@@ -216,5 +235,24 @@ public class ComponentTest extends TestCase {
         assertEquals(1, parent.indexOf(b));
         assertEquals(2, parent.indexOf(d));
         assertEquals(-1, parent.indexOf(c));
+    }
+    
+    /**
+     * Test <code>visible</code> property.
+     */
+    public void testVisible() {
+        NullComponent c = new NullComponent();
+        PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
+        c.addPropertyChangeListener(pce);
+        assertTrue(c.isVisible());
+        c.setVisible(false);
+        assertFalse(c.isVisible());
+        assertEquals(Component.VISIBLE_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
+        c.setVisible(false);
+        assertFalse(c.isVisible());
+        c.setVisible(true);
+        assertTrue(c.isVisible());
+        c.setVisible(true);
+        assertTrue(c.isVisible());
     }
 }

@@ -62,13 +62,15 @@ public abstract class Component {
     public static final String PROPERTY_FONT = "font";
     public static final String PROPERTY_FOREGROUND = "foreground";
     public static final String PROPERTY_LAYOUT_DATA = "layoutData";
-    public static final String PROPERTY_VISIBLE = "visible";
     
     public static final String CHILDREN_CHANGED_PROPERTY = "children";
+    public static final String ENABLED_CHANGED_PROPERTY = "enabled";
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String STYLE_CHANGED_PROPERTY = "style";
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
+    public static final String VISIBLE_CHANGED_PROPERTY = "visible";
 
+    private static final int FLAG_ENABLED = 0x1;
     private static final int FLAG_VISIBLE = 0x2;
     
     /**
@@ -114,7 +116,7 @@ public abstract class Component {
      */
     public Component() {
         super();
-        flags = FLAG_VISIBLE;
+        flags = FLAG_ENABLED | FLAG_VISIBLE;
         listenerList = new EventListenerList();
         propertyChangeSupport = null;
         localStyle = new MutableStyle();
@@ -594,6 +596,15 @@ public abstract class Component {
     }
     
     /**
+     * Determines the enabled-state of this component.
+     * 
+     * @return true if the component is enabled
+     */
+    public boolean isEnabled() {
+        return (flags & FLAG_ENABLED) != 0;
+    }
+    
+    /**
      * Returns true if the <code>Component</code> is registered to an application.
      * 
      * @return true if the <code>Component</code> is registered to an application
@@ -762,6 +773,19 @@ public abstract class Component {
     }
     
     /**
+     * Sets the enabled state of the <code>Component</code>.
+     * 
+     * @param newValue the new state
+     */
+    public void setEnabled(boolean newValue) {
+        boolean oldValue = (flags & FLAG_ENABLED) != 0;
+        if (oldValue != newValue) {
+            flags ^= FLAG_ENABLED; // Toggle FLAG_ENABLED bit.
+            firePropertyChange(ENABLED_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
+        }
+    }
+    
+    /**
      * Sets the default text font of the <code>Component</code>.
      * 
      * @param font the new <code>Font</code>
@@ -880,7 +904,11 @@ public abstract class Component {
      * @param newValue the new visibility state
      */
     public void setVisible(boolean newValue) {
-        setProperty(PROPERTY_VISIBLE, new Boolean(newValue));
+        boolean oldValue = (flags & FLAG_VISIBLE) != 0;
+        if (oldValue != newValue) {
+            flags ^= FLAG_VISIBLE; // Toggle FLAG_VISIBLE bit.
+            firePropertyChange(VISIBLE_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
+        }
     }
 
     /**
