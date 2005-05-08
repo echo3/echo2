@@ -850,10 +850,10 @@ public abstract class Component {
         firePropertyChange(LOCALE_CHANGED_PROPERTY, oldValue, newValue);
     }
     
-//BUGBUG. property changes will not be fired if oldvalue=newvalue...which is a common case where we DO want them to be fired,
-// i.e., adjusting property of layout manager.  Well, then again, once we stop using prop chagne events to pipe out updates....
-//....maybe this isn't a problem after all.  Then again, what if someone else wants to use PCLs for a similar purpose and these
-// events are suppressed.
+    //BUGBUG. Currently firing null, null in the event that oldValue = newValue,
+    //due to PCS design....perhaps we want to use something other than PCS.
+    //(case where we want prop event fired on equal items: setting attributes of
+    // layout data.)
     /**
      * Sets a generic property of the <code>Component</code>.
      * The value will be stored in this <code>Component</code>'s local style.
@@ -916,4 +916,31 @@ public abstract class Component {
      * it is in a valid state.
      */
     public void validate() { }
+    
+    /**
+     * Invoked by <code>ClientUpdateManager</code> on each component in the
+     * hierarchy whose <code>processInput()</code> method will layer be invoked
+     * in the current transaction.  This method should return true if the 
+     * component will be capable of processing the given input in its current 
+     * state or false otherwise.  This method should not do any of the actual
+     * processing work if overridden (any actual processing should be done in
+     * the <code>processInput()</code> implementation.
+     * <p>
+     * The default implementation verifies that the component is visible, 
+     * enabled, and not "obscured" by the presence of any modal component.
+     * If overriding this method, your implementation should invoke
+     * <code>super.verifyInput()</code> if you wish to retain these behaviors.
+     * 
+     * @param inputName the name of the input
+     * @param inputValue the value of the input
+     * @return true if the input is allowed to be processed by this component
+     *         in its current state
+     */
+    public boolean verifyInput(String inputName, Object inputValue) {
+        //BUGBUG. Block if another component is modal and this is not a child.
+        //BUGBUG. what if the enabled state changes on the client and then it receives input--or do we
+        //        just want to make such practice illegal...or does the component simply need to handle 
+        //        (mind the fact that ordering of inputs cannot be guaranteed).
+        return isVisible() && isEnabled();
+    }
 }

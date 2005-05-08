@@ -48,7 +48,8 @@ import nextapp.echo2.app.event.ActionListener;
  * model, and event handling facilities.
  */
 public abstract class AbstractButton extends Component {
-
+    
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String INPUT_CLICK = "input_click";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
@@ -99,6 +100,9 @@ public abstract class AbstractButton extends Component {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
     /**
@@ -406,6 +410,9 @@ public abstract class AbstractButton extends Component {
      */
     public void removeActionListener(ActionListener l) {
         getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
 
     /**

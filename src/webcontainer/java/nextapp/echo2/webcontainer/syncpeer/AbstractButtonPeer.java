@@ -76,8 +76,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 /**
- * Synchronization peer for <code>nextapp.echo2.app.AbstractButton</code>-derived 
- * components.
+ * Synchronization peer for 
+ * <code>nextapp.echo2.app.AbstractButton</code>-derived components.
  */
 public class AbstractButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
@@ -115,14 +115,16 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     
     private static final String[] SET_GROUP_KEYS = new String[]{"groupid"};
     
-    private void createSetGroup(ServerMessage serverMessage, String elementId, String groupId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
-                "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
-    }
-    
+    /**
+     * Converts the value of the <code>alignment</code> property of an 
+     * <code>AbstractButton</code> into a value suitable to be passed to a
+     * <code>TriCellTable</code> as an <code>orientation</code> constructor
+     * parameter.
+     * 
+     * @param alignment the <code>Alignment</code>
+     * @param component the button being rendered
+     * @return the <code>orientation</code> value
+     */
     private int convertIconTextPositionToOrientation(Alignment alignment, Component component) {
         if (alignment.getVertical() == Alignment.DEFAULT) {
             if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
@@ -139,6 +141,16 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
     }
     
+    /**
+     * Converts the value of the <code>stateAlignment</code> property of a 
+     * <code>ToggleButton</code> into a value suitable to be passed to a
+     * <code>TriCellTable</code> as an <code>orientation</code> constructor
+     * parameter.
+     * 
+     * @param alignment the state <code>Alignment</code>
+     * @param component the button being rendered
+     * @return the <code>orientation</code> value
+     */
     private int convertStatePositionToOrientation(Alignment alignment, Component component) {
         if (alignment.getVertical() == Alignment.DEFAULT) {
             if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
@@ -155,6 +167,50 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
     }
     
+    /**
+     * Appends a directive to the outgoing <code>ServerMessage</code> to 
+     * assign the specified button element identifier to the specified 
+     * radio group identifier.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML id of the button
+     * @param groupId the unique radio button group identifier
+     */
+    private void createSetGroup(ServerMessage serverMessage, String elementId, String groupId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    /**
+     * Determines the selected state icon of the specified
+     * <code>ToggleButton</code>.
+     * 
+     * @param toggleButton the <code>ToggleButton</code>
+     * @return the selected state icon
+     */
+    private ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
+        ImageReference selectedStateIcon 
+                = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_SELECTED_STATE_ICON);
+        if (selectedStateIcon == null) {
+            if (toggleButton instanceof CheckBox) {
+                selectedStateIcon = DEFAULT_SELECTED_CHECKBOX_ICON;
+            } else if (toggleButton instanceof RadioButton) {
+                selectedStateIcon = DEFAULT_SELECTED_RADIOBUTTON_ICON;
+            }
+        }
+        return selectedStateIcon;
+    }
+    
+    /**
+     * Determines the default (non-selected) state icon of the specified
+     * <code>ToggleButton</code>.
+     * 
+     * @param toggleButton the <code>ToggleButton</code>
+     * @return the state icon
+     */
     private ImageReference getStateIcon(ToggleButton toggleButton) {
         ImageReference stateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_STATE_ICON);
         if (stateIcon == null) {
@@ -165,18 +221,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             }
         }
         return stateIcon;
-    }
-    
-    private ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
-        ImageReference selectedStateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_SELECTED_STATE_ICON);
-        if (selectedStateIcon == null) {
-            if (toggleButton instanceof CheckBox) {
-                selectedStateIcon = DEFAULT_SELECTED_CHECKBOX_ICON;
-            } else if (toggleButton instanceof RadioButton) {
-                selectedStateIcon = DEFAULT_SELECTED_RADIOBUTTON_ICON;
-            }
-        }
-        return selectedStateIcon;
     }
     
     /**
@@ -239,7 +283,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
+     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
+     *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         if (ToggleButton.SELECTED_CHANGED_PROPERTY.equals(propertyElement.getAttribute(PROPERTY_NAME))) {
@@ -256,7 +301,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
         renderHtml(rc, update, contentElement, component);
     }
-    
     
     /**
      * Renders the content of the button, i.e., its text, icon, and/or state icon.
@@ -444,9 +488,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         String id = ContainerInstance.getElementId(component);
         EventUpdate.createEventRemove(serverMessage, "click,mouseover,mousedown,mouseout,mouseup", id);
     }
-    
+
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
@@ -462,9 +507,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         divElement.setAttribute("id", id);
         
         CssStyle cssStyle = new CssStyle();
-//BUGBUG. this was a renderhack for IE rollovers being lame but now it tweaks Konqueror....seems to work fine in IE,
-// so this should just be deleted if it continues to not be an issue....otherwise, we need a client quirk flag to enable.
-//        cssStyle.setAttribute("position", "relative");
         cssStyle.setAttribute("cursor", "pointer");
         cssStyle.setAttribute("margin", "0px");
         cssStyle.setAttribute("border-spacing", "0px");
@@ -563,7 +605,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_SELECTED_STATE_ICON));
 
             if (button instanceof RadioButton) {
-                //BUGBUG. temporarily using Java identifier for button group id.
+                //BUGBUG. temporarily using default toString() impl (they contain unique memory address) for button group id.
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {
                     String groupId = buttonGroup.toString();

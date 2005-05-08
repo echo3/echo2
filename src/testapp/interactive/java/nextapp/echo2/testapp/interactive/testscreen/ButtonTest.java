@@ -44,11 +44,14 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.button.ToggleButton;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
@@ -61,12 +64,58 @@ import nextapp.echo2.testapp.interactive.TestGrid;
 public class ButtonTest 
 extends SplitPane {
 
-    private List buttonList;
+    private class ConsoleWindowPane extends WindowPane {
+        
+        private Column column;
+        
+        public ConsoleWindowPane() {
+            column = new Column();
+            add(column);
+        }
+        
+        public void printMessage(String message) {
+            column.add(new Label(message));
+        }
+    }
     
     private interface Applicator {
         
         public void apply(AbstractButton button);
     }
+    
+    private List buttonList;
+    private ConsoleWindowPane console;
+    
+    private ActionListener actionListener = new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+            //BUGBUG...this should be done better, even for test app.
+            if (console == null) {
+                console = new ConsoleWindowPane();
+                getApplicationInstance().getWindows()[0].getContent().add(console);
+            } else if (console.getParent() == null) {
+                getApplicationInstance().getWindows()[0].getContent().add(console);
+            }
+            console.printMessage(e.toString());
+        }
+    };
+    
+    private ChangeListener changeListener = new ChangeListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
+         */
+        public void stateChanged(ChangeEvent e) {
+            //BUGBUG...this should be done better, even for test app.
+            if (console == null) {
+                console = new ConsoleWindowPane();
+                getApplicationInstance().getWindows()[0].getContent().add(console);
+            } else if (console.getParent() == null) {
+                getApplicationInstance().getWindows()[0].getContent().add(console);
+            }
+            console.printMessage(e.toString());
+        }
+    };
     
     public ButtonTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
@@ -89,7 +138,7 @@ extends SplitPane {
         
         Button button;
         testGrid.addHeaderCell("Button");
-
+        
         button = new Button();
         testGrid.addTestCell("No Content", button);
         buttonList.add(button);
@@ -180,6 +229,46 @@ extends SplitPane {
                 } else {
                     testGrid.setInsets(new Insets(5));
                 }
+            }
+        });
+        controlsColumn.addButton("Add ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.addActionListener(actionListener);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Remove ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.removeActionListener(actionListener);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Add ChangeListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).addChangeListener(changeListener);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Remove ChangeListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).removeChangeListener(changeListener);
+                        }
+                    }
+                });
             }
         });
 
@@ -792,6 +881,12 @@ extends SplitPane {
         AbstractButton[] buttons = (AbstractButton[]) buttonList.toArray(new AbstractButton[buttonList.size()]);
         for (int i = 0; i < buttons.length; ++i) {
             applicator.apply(buttons[i]);
+        }
+    }
+    
+    public void dispose() {
+        if (console != null && console.getParent() != null) {
+            console.getParent().remove(console);
         }
     }
 }

@@ -61,12 +61,14 @@ public class ClientUpdateManager {
      * @param inputValue the value of the input property
      */
     void addPropertyUpdate(Component component, String inputName, Object inputValue) {
-        ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientUpdates.get(component);
-        if (clientUpdate == null) {
-            clientUpdate = new ClientComponentUpdate(component);
-            clientUpdates.put(component, clientUpdate);
+        if (component.verifyInput(inputName, inputValue)) {
+            ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientUpdates.get(component);
+            if (clientUpdate == null) {
+                clientUpdate = new ClientComponentUpdate(component);
+                clientUpdates.put(component, clientUpdate);
+            }
+            clientUpdate.addInput(inputName, inputValue);
         }
-        clientUpdate.addInput(inputName, inputValue);
     }
     
     /**
