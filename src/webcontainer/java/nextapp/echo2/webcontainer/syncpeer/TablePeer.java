@@ -165,7 +165,7 @@ implements DomUpdateSupport, SynchronizePeer {
             tbodyElement.appendChild(trElement);
             
             for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
-                Component childComponent = table.getComponent(rowIndex * columns + columnIndex);
+                Component childComponent = table.getCellComponent(columnIndex, rowIndex);
                 Element tdElement = document.createElement("td");
                 tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getId());
                 

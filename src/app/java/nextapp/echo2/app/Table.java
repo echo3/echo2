@@ -69,7 +69,7 @@ public class Table extends Component {
     private TableModel model;
     private TableColumnModel columnModel;
     private boolean valid;
-    private Map rendererMap = new HashMap();
+    private Map defaultRendererMap = new HashMap();
     
     /**
      * Listener to monitor changes to model.
@@ -228,6 +228,21 @@ public class Table extends Component {
         return (Border) getProperty(PROPERTY_BORDER);
     }
 
+    /**
+     * Returns the component rendered at the specified cell position.
+     * Invocation will automatically perform validation if required.
+     * 
+     * @param column the column
+     * @param row the row
+     * @return the component
+     */
+    public Component getCellComponent(int column, int row) {
+        if (!valid) {
+            validate();
+        }
+        return getComponent(row * columnModel.getColumnCount() + column);
+    }
+    
     /** 
      * Returns the <code>TableColumnModel</code> describing this table's 
      * columns.
@@ -247,7 +262,7 @@ public class Table extends Component {
      * @return the <code>TableCellRenderer</code>
      */
     public TableCellRenderer getDefaultRenderer(Class columnClass) {
-        return (TableCellRenderer) rendererMap.get(columnClass);
+        return (TableCellRenderer) defaultRendererMap.get(columnClass);
     }
     
     /**
@@ -370,9 +385,9 @@ public class Table extends Component {
      */
     public void setDefaultRenderer(Class columnClass, TableCellRenderer renderer) {
         if (renderer == null) {
-            rendererMap.remove(renderer);
+            defaultRendererMap.remove(renderer);
         } else {
-            rendererMap.put(columnClass, renderer);
+            defaultRendererMap.put(columnClass, renderer);
         }
     }
 

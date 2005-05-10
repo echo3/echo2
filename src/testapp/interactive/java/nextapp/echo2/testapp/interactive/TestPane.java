@@ -107,7 +107,7 @@ public class TestPane extends ContentPane {
 
         addTest("Button", "ButtonTest");
         addTest("Client Properties", "ClientPropertiesTest");
-        //addTest("ContentPane", "ContentPaneTest"); //BUGBUG. fix this.
+        addTest("ContentPane", "ContentPaneTest");
         addTest("Column", "ColumnTest");
         addTest("Delay", "DelayTest");
         addTest("Grid", "GridTest");
