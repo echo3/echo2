@@ -63,6 +63,8 @@ public class Table extends Component {
 
     public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
     public static final String COLUMN_MODEL_CHANGED_PROPERTY = "columnModel";
+    public static final String DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY = "defaultHeaderRenderer";
+    public static final String DEFAULT_RENDERER_CHANGED_PROPERTY = "defaultRenderer";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     
     private boolean autoCreateColumnsFromModel;
@@ -70,6 +72,7 @@ public class Table extends Component {
     private TableColumnModel columnModel;
     private boolean valid;
     private Map defaultRendererMap = new HashMap();
+    private TableCellRenderer defaultHeaderRenderer;
     
     /**
      * Listener to monitor changes to model.
@@ -254,6 +257,18 @@ public class Table extends Component {
     }
     
     /**
+     * Returns the default <code>TableCellRenderer</code> used to render
+     * header cells.  The default header renderer will be used in the event 
+     * that a <code>TableColumn</code> does not provide a specific header
+     * renderer.
+     * 
+     * @return the <code>TableCellRenderer</code>
+     */
+    public TableCellRenderer getDefaultHeaderRenderer() {
+        return defaultHeaderRenderer;
+    }
+    
+    /**
      * Returns the default <code>TableCellRenderer</code> for the specified 
      * column class.  The default renderer will be used in the event that
      * a <code>TableColumn</code> does not provide a specific renderer.
@@ -376,19 +391,36 @@ public class Table extends Component {
     }
     
     /**
+     * Sets the default <code>TableCellRenderer</code> used to render
+     * header cells.  The default header renderer will be used in the event 
+     * that a <code>TableColumn</code> does not provide a specific header
+     * renderer.
+     * 
+     * @param newValue the <code>TableCellRenderer</code>
+     */
+    public void setDefaultHeaderRenderer(TableCellRenderer newValue) {
+        invalidate();
+        TableCellRenderer oldValue = defaultHeaderRenderer;
+        defaultHeaderRenderer = newValue;
+        firePropertyChange(DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY, oldValue, newValue);
+    }
+
+    /**
      * Sets the default <code>TableCellRenderer</code> for the specified 
      * column class.  The default renderer will be used in the event that
      * a <code>TableColumn</code> does not provide a specific renderer.
      * 
      * @param columnClass the column <code>Class</code>
-     * @param renderer the <code>TableCellRenderer</code>
+     * @param newValue the <code>TableCellRenderer</code>
      */
-    public void setDefaultRenderer(Class columnClass, TableCellRenderer renderer) {
-        if (renderer == null) {
-            defaultRendererMap.remove(renderer);
+    public void setDefaultRenderer(Class columnClass, TableCellRenderer newValue) {
+        invalidate();
+        if (newValue == null) {
+            defaultRendererMap.remove(columnClass);
         } else {
-            defaultRendererMap.put(columnClass, renderer);
+            defaultRendererMap.put(columnClass, newValue);
         }
+        firePropertyChange(DEFAULT_RENDERER_CHANGED_PROPERTY, null, null);
     }
 
     /**
