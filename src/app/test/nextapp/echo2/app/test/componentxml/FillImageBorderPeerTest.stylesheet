@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stylesheet>
+ <style name="alpha" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <property name="border">
+    <fillimageborder contentinsets="12px" borderinsets="6px 4px" color="#abcdef">
+     <borderpart position="northwest">
+      <fillimage horizontal="50px" vertical="-30%" repeat="horizontal" attachment="fixed">
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="north">
+      <fillimage horizontal="50px" vertical="-30%" repeat="horizontal" attachment="fixed">
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+    </fillimageborder>
+   </property>
+  </properties>
+ </style>
+</stylesheet>

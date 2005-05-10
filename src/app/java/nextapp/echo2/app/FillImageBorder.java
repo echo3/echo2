@@ -32,7 +32,7 @@
 package nextapp.echo2.app;
 
 public class FillImageBorder {
-
+    
     private Insets contentInsets, borderInsets;
     private Color color;
     private FillImage northWest, north, northEast, west, east, southWest, south, southEast;
