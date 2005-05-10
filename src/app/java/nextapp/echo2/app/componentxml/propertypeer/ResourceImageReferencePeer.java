@@ -71,12 +71,7 @@ implements PropertyXmlPeer {
             if (resourceImageReferenceElement.hasAttribute("height")) {
                 height = ExtentPeer.toExtent(resourceImageReferenceElement.getAttribute("height"));
             }
-            
-            if (contentType == null) {
-                return new ResourceImageReference(resource, width, height);
-            } else {
-                return new ResourceImageReference(resource, contentType, width, height);
-            }
+            return new ResourceImageReference(resource, contentType, width, height);
         }
     }
 }
