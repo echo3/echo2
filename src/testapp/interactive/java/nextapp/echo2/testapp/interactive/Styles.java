@@ -50,14 +50,14 @@ public class Styles {
         FillImageBorder border = new FillImageBorder();
         border.setContentInsets(new Insets(8, 8, 14, 14));
         border.setBorderInsets(new Insets(17, 17, 23, 23));
-        border.setNorthWest(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNW.png")));
-        border.setNorth(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderN.png")));
-        border.setNorthEast(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNE.png")));
-        border.setWest(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderW.png")));
-        border.setEast(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderE.png")));
-        border.setSouthWest(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSW.png")));
-        border.setSouth(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderS.png")));
-        border.setSouthEast(new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSE.png")));
+        border.setFillImage(FillImageBorder.TOP_LEFT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNW.png")));
+        border.setFillImage(FillImageBorder.TOP, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderN.png")));
+        border.setFillImage(FillImageBorder.TOP_RIGHT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNE.png")));
+        border.setFillImage(FillImageBorder.LEFT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderW.png")));
+        border.setFillImage(FillImageBorder.RIGHT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderE.png")));
+        border.setFillImage(FillImageBorder.BOTTOM_LEFT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSW.png")));
+        border.setFillImage(FillImageBorder.BOTTOM, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderS.png")));
+        border.setFillImage(FillImageBorder.BOTTOM_RIGHT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSE.png")));
         SHADOW_BORDER = border;
     }
     

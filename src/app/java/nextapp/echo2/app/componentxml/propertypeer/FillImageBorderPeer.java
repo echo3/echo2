@@ -83,22 +83,22 @@ implements PropertyXmlPeer {
             FillImage fillImage = (FillImage) propertyLoader.getPropertyValue(FillImageBorder.class, FillImage.class, 
                     borderPartElement);
             
-            if ("northwest".equals(position)) {
-                fillImageBorder.setNorthWest(fillImage);
-            } else if ("north".equals(position)) {
-                fillImageBorder.setNorth(fillImage);
-            } else if ("northeast".equals(position)) {
-                fillImageBorder.setNorthEast(fillImage);
-            } else if ("west".equals(position)) {
-                fillImageBorder.setWest(fillImage);
-            } else if ("east".equals(position)) {
-                fillImageBorder.setEast(fillImage);
-            } else if ("southwest".equals(position)) {
-                fillImageBorder.setSouthWest(fillImage);
-            } else if ("south".equals(position)) {
-                fillImageBorder.setSouth(fillImage);
-            } else if ("southeast".equals(position)) {
-                fillImageBorder.setSouthEast(fillImage);
+            if ("topleft".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.TOP_LEFT, fillImage);
+            } else if ("top".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.TOP, fillImage);
+            } else if ("topright".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.TOP_RIGHT, fillImage);
+            } else if ("left".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.LEFT, fillImage);
+            } else if ("right".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.RIGHT, fillImage);
+            } else if ("bottomleft".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.BOTTOM_LEFT, fillImage);
+            } else if ("bottom".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.BOTTOM, fillImage);
+            } else if ("bottomright".equals(position)) {
+                fillImageBorder.setFillImage(FillImageBorder.BOTTOM_RIGHT, fillImage);
             }
         }
         

@@ -68,16 +68,16 @@ public class FillImageBorderPeerTest extends TestCase {
         assertEquals(new Insets(12), fillImageBorder.getContentInsets());
         assertEquals(new Insets(6, 4), fillImageBorder.getBorderInsets());
         
-        FillImage northWestFillImage = fillImageBorder.getNorthWest();
-        assertNotNull(northWestFillImage);
-        ImageReference imageReference = northWestFillImage.getImage();
+        FillImage topLeftFillImage = fillImageBorder.getFillImage(FillImageBorder.TOP_LEFT);
+        assertNotNull(topLeftFillImage);
+        ImageReference imageReference = topLeftFillImage.getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
         assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
-        assertEquals(FillImage.ATTACHMENT_FIXED, northWestFillImage.getAttachment());
-        assertEquals(FillImage.REPEAT_HORIZONTAL, northWestFillImage.getRepeat());
-        assertEquals(new Extent(50), northWestFillImage.getHorizontalOffset());
-        assertEquals(new Extent(-30, Extent.PERCENT), northWestFillImage.getVerticalOffset());
+        assertEquals(FillImage.ATTACHMENT_FIXED, topLeftFillImage.getAttachment());
+        assertEquals(FillImage.REPEAT_HORIZONTAL, topLeftFillImage.getRepeat());
+        assertEquals(new Extent(50), topLeftFillImage.getHorizontalOffset());
+        assertEquals(new Extent(-30, Extent.PERCENT), topLeftFillImage.getVerticalOffset());
     }
 }

@@ -27,19 +27,39 @@
 
 //BUGBUG. Doc.
 //BUGBUG. needs equals.
-//BUGBUG. needs xml parse peer.
-//BUGBUG? Restructure API for borders...this is BAD.
+
 package nextapp.echo2.app;
 
+/**
+ * A represntation of a graphical border drawn using a series of 
+ * <code>FillImage</code>s.
+ */
 public class FillImageBorder {
+
+    public static final int TOP_LEFT = 0;
+    public static final int TOP = 1;
+    public static final int TOP_RIGHT= 2;
+    public static final int LEFT = 3;
+    public static final int RIGHT = 4;
+    public static final int BOTTOM_LEFT= 5;
+    public static final int BOTTOM = 6;
+    public static final int BOTTOM_RIGHT = 7;
     
     private Insets contentInsets, borderInsets;
     private Color color;
-    private FillImage northWest, north, northEast, west, east, southWest, south, southEast;
+    private FillImage[] fillImages;
 
+    /**
+     * Creates a new <code>FillImageBorder</code>.
+     */
     public FillImageBorder() {
+        super();
     }
     
+    /**
+     * Creates a new <code>FillImageBorder</code> with the specified color,
+     * border insets, and content insets.
+     */
     public FillImageBorder(Color color, Insets borderInsets, Insets contentInsets) {
         super();
         this.color = color;
@@ -59,38 +79,30 @@ public class FillImageBorder {
         return contentInsets;
     }
 
-    public FillImage getEast() {
-        return east;
+    /**
+     * Retrieves the <code>FillImage</code> at the specified position.
+     * 
+     * @param position the position, one of the following values:
+     *        <ul>
+     *         <li><code>TOP_LEFT</code> the top left corner image</li>
+     *         <li><code>TOP</code> the top side image</li>
+     *         <li><code>TOP_RIGHT</code> the top right corner image</li>
+     *         <li><code>LEFT</code> the left side image</li>
+     *         <li><code>RIGHT</code> the right side image</li>
+     *         <li><code>BOTTOM_LFET</code> the bottom left corner image</li>
+     *         <li><code>BOTTOM</code> the bottom side image</li>
+     *         <li><code>BOTTOM_RIGHT</code> the bottom right corner image</li>
+     *        </ul>
+     * @return the <code>FillImage</code>
+     */
+    public FillImage getFillImage(int position) {
+        if (fillImages == null) {
+            return null;
+        } else {
+            return fillImages[position];
+        }
     }
-
-    public FillImage getNorth() {
-        return north;
-    }
-
-    public FillImage getNorthEast() {
-        return northEast;
-    }
-
-    public FillImage getNorthWest() {
-        return northWest;
-    }
-
-    public FillImage getSouth() {
-        return south;
-    }
-
-    public FillImage getSouthEast() {
-        return southEast;
-    }
-
-    public FillImage getSouthWest() {
-        return southWest;
-    }
-
-    public FillImage getWest() {
-        return west;
-    }
-
+    
     public void setBorderInsets(Insets borderInsets) {
         this.borderInsets = borderInsets;
     }
@@ -103,35 +115,29 @@ public class FillImageBorder {
         this.contentInsets = contentInsets;
     }
 
-    public void setEast(FillImage east) {
-        this.east = east;
-    }
-
-    public void setNorth(FillImage north) {
-        this.north = north;
-    }
-
-    public void setNorthEast(FillImage northEast) {
-        this.northEast = northEast;
-    }
-
-    public void setNorthWest(FillImage northWest) {
-        this.northWest = northWest;
-    }
-
-    public void setSouth(FillImage south) {
-        this.south = south;
-    }
-
-    public void setSouthEast(FillImage southEast) {
-        this.southEast = southEast;
-    }
-
-    public void setSouthWest(FillImage southWest) {
-        this.southWest = southWest;
-    }
-
-    public void setWest(FillImage west) {
-        this.west = west;
+    /**
+     * Sets the <code>FillImage</code> at the specified position.
+     * 
+     * @param position the position, one of the following values:
+     *        <ul>
+     *         <li><code>TOP_LEFT</code> the top left corner image</li>
+     *         <li><code>TOP</code> the top side image</li>
+     *         <li><code>TOP_RIGHT</code> the top right corner image</li>
+     *         <li><code>LEFT</code> the left side image</li>
+     *         <li><code>RIGHT</code> the right side image</li>
+     *         <li><code>BOTTOM_LFET</code> the bottom left corner image</li>
+     *         <li><code>BOTTOM</code> the bottom side image</li>
+     *         <li><code>BOTTOM_RIGHT</code> the bottom right corner image</li>
+     *        </ul>
+     * @param fillImage the new <code>FillIamge</code>
+     */
+    public void setFillImage(int position, FillImage fillImage) {
+        if (fillImages == null) {
+            if (fillImage == null) {
+                return;
+            }
+            fillImages = new FillImage[8];
+        }
+        fillImages[position] = fillImage;
     }
 }

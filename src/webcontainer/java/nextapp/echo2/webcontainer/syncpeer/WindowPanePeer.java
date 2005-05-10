@@ -85,14 +85,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String IMAGE_ID_TITLE_BACKGROUND = "background";
     private static final String IMAGE_ID_CLOSE_ICON = "close";
     
-    private static final String IMAGE_ID_BORDER_NW = "borderNW";
-    private static final String IMAGE_ID_BORDER_N = "borderN";
-    private static final String IMAGE_ID_BORDER_NE = "borderNE";
-    private static final String IMAGE_ID_BORDER_W = "borderW";
-    private static final String IMAGE_ID_BORDER_E = "borderE";
-    private static final String IMAGE_ID_BORDER_SW = "borderSW";
-    private static final String IMAGE_ID_BORDER_S = "borderS";
-    private static final String IMAGE_ID_BORDER_SE = "borderSE";
+    private static final String IMAGE_ID_BORDER_TOP_LEFT = "borderTopLeft";
+    private static final String IMAGE_ID_BORDER_TOP = "borderTop";
+    private static final String IMAGE_ID_BORDER_TOP_RIGHT = "borderTopRight";
+    private static final String IMAGE_ID_BORDER_LEFT = "borderLeft";
+    private static final String IMAGE_ID_BORDER_RIGHT = "borderRight";
+    private static final String IMAGE_ID_BORDER_BOTTOM_LEFT = "borderBottomLeft";
+    private static final String IMAGE_ID_BORDER_BOTTOM = "borderBottom";
+    private static final String IMAGE_ID_BORDER_BOTTOM_RIGHT = "borderBottomRight";
     
     private static final ImageReference DEFAULT_CLOSE_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/DefaultCloseButton.gif");
@@ -130,22 +130,30 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         } else if (IMAGE_ID_CLOSE_ICON.equals(imageId)) {
             return (ImageReference) component.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON,
                     DEFAULT_CLOSE_ICON);
-        } else if (IMAGE_ID_BORDER_NW.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getNorthWest().getImage();
-        } else if (IMAGE_ID_BORDER_N.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getNorth().getImage();
-        } else if (IMAGE_ID_BORDER_NE.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getNorthEast().getImage();
-        } else if (IMAGE_ID_BORDER_W.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getWest().getImage();
-        } else if (IMAGE_ID_BORDER_E.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getEast().getImage();
-        } else if (IMAGE_ID_BORDER_SW.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getSouthWest().getImage();
-        } else if (IMAGE_ID_BORDER_S.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getSouth().getImage();
-        } else if (IMAGE_ID_BORDER_SE.equals(imageId)) {
-            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER)).getSouthEast().getImage();
+        } else if (IMAGE_ID_BORDER_TOP_LEFT.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.TOP_LEFT).getImage();
+        } else if (IMAGE_ID_BORDER_TOP.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.TOP).getImage();
+        } else if (IMAGE_ID_BORDER_TOP_RIGHT.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.TOP_RIGHT).getImage();
+        } else if (IMAGE_ID_BORDER_LEFT.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.LEFT).getImage();
+        } else if (IMAGE_ID_BORDER_RIGHT.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.RIGHT).getImage();
+        } else if (IMAGE_ID_BORDER_BOTTOM_LEFT.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.BOTTOM_LEFT).getImage();
+        } else if (IMAGE_ID_BORDER_BOTTOM.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.BOTTOM).getImage();
+        } else if (IMAGE_ID_BORDER_BOTTOM_RIGHT.equals(imageId)) {
+            return ((FillImageBorder) component.getRenderProperty(WindowPane.PROPERTY_BORDER))
+                    .getFillImage(FillImageBorder.BOTTOM_RIGHT).getImage();
         } else {
             return null;
         }
@@ -226,9 +234,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         int borderVerticalPixels = borderTopPixels + borderBottomPixels;
         int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
 
-        // North West
+        // Top Left Corner
         Element borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_nw");
+        borderDivElement.setAttribute("id", elementId + "_border_tl");
         CssStyle borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -239,14 +247,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "nw-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NW, 
-                border.getNorthWest(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP_LEFT, 
+                border.getFillImage(FillImageBorder.TOP_LEFT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // North
+        // Top Side
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_n");
+        borderDivElement.setAttribute("id", elementId + "_border_t");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -262,14 +270,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "n-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_N, 
-                border.getNorth(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP, 
+                border.getFillImage(FillImageBorder.TOP), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // North East
+        // Top Right Corner
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_ne");
+        borderDivElement.setAttribute("id", elementId + "_border_tr");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -280,14 +288,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "ne-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_NE, 
-                border.getNorthEast(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP_RIGHT, 
+                border.getFillImage(FillImageBorder.TOP_RIGHT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // West
+        // Left Side
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_w");
+        borderDivElement.setAttribute("id", elementId + "_border_l");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -304,14 +312,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "w-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_W, 
-                border.getWest(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_LEFT, 
+                border.getFillImage(FillImageBorder.LEFT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // East
+        // Right Side
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_e");
+        borderDivElement.setAttribute("id", elementId + "_border_r");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -328,14 +336,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "e-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_E, 
-                border.getEast(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_RIGHT, 
+                border.getFillImage(FillImageBorder.RIGHT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // South West
+        // Bottom Left Corner
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_sw");
+        borderDivElement.setAttribute("id", elementId + "_border_bl");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -346,14 +354,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "sw-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SW, 
-                border.getSouthWest(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM_LEFT, 
+                border.getFillImage(FillImageBorder.BOTTOM_LEFT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // South
+        // Bottom Side
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_s");
+        borderDivElement.setAttribute("id", elementId + "_border_b");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -370,14 +378,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "s-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_S, 
-                border.getSouth(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM, 
+                border.getFillImage(FillImageBorder.BOTTOM), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
-        // South East
+        // Bottom Right Side
         borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_se");
+        borderDivElement.setAttribute("id", elementId + "_border_br");
         borderCssStyle = new CssStyle();
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
@@ -388,29 +396,29 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (resizable) {
             borderCssStyle.setAttribute("cursor", "se-resize");
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_SE, 
-                border.getSouthEast(), false);
+        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM_RIGHT, 
+                border.getFillImage(FillImageBorder.BOTTOM_RIGHT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
         
         ServerMessage serverMessage = rc.getServerMessage();
         
         if (resizable) {
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_nw", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_tl", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_n", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_t", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_ne", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_tr", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_w", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_l", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_e", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_r", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_sw", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_bl", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_s", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_b", 
                     "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_se", 
+            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_br", 
                     "EchoWindowPane.windowResizeMouseDown");
         }
     }
@@ -424,14 +432,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         EventUpdate.createEventRemove(rc.getServerMessage(), "click", elementId + "_close");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_close");
         EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_title");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_nw");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_n");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_ne");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_w");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_e");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_sw");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_s");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_se");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_tl");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_t");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_tr");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_l");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_r");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_bl");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_b");
+        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_br");
     }
     
     /**
