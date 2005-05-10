@@ -204,6 +204,8 @@ public class DefaultTableModel extends AbstractTableModel {
         while (columnNames.size() < newValue) {
             columnNames.add(null);
         }
+        
+        fireTableStructureChanged();
     }
 
     /**
@@ -223,6 +225,8 @@ public class DefaultTableModel extends AbstractTableModel {
         while (rows.size() < newValue) {
             rows.add(null);
         }
+        
+        fireTableDataChanged();
     }
 
     /**

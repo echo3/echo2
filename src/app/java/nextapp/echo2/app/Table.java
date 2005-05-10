@@ -32,11 +32,16 @@ package nextapp.echo2.app;
 import java.util.HashMap;
 import java.util.Map;
 
+import nextapp.echo2.app.event.TableColumnModelEvent;
+import nextapp.echo2.app.event.TableColumnModelListener;
 import nextapp.echo2.app.event.TableModelEvent;
 import nextapp.echo2.app.event.TableModelListener;
 import nextapp.echo2.app.table.DefaultTableCellRenderer;
+import nextapp.echo2.app.table.DefaultTableColumnModel;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
+import nextapp.echo2.app.table.TableColumn;
+import nextapp.echo2.app.table.TableColumnModel;
 import nextapp.echo2.app.table.TableModel;
 
 /**
@@ -56,22 +61,59 @@ public class Table extends Component {
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_WIDTH = "width";
 
+    public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
+    public static final String COLUMN_MODEL_CHANGED_PROPERTY = "columnModel";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     
+    private boolean autoCreateColumnsFromModel;
     private TableModel model;
-    private boolean valid = false;
+    private TableColumnModel columnModel;
+    private boolean valid;
     private Map rendererMap = new HashMap();
     
-    private TableModelListener renderListener = new TableModelListener() {
+    /**
+     * Listener to monitor changes to model.
+     */
+    private TableModelListener modelListener = new TableModelListener() {
         
         /**
          * @see nextapp.echo2.app.event.TableModelListener#tableChanged(nextapp.echo2.app.event.TableModelEvent)
          */
         public void tableChanged(TableModelEvent e) {
             invalidate();
+            if ((e == null || e.getType() == TableModelEvent.STRUCTURE_CHANGED) && isAutoCreateColumnsFromModel()) {
+                createDefaultColumnsFromModel();
+            }
         }
     };
     
+    /**
+     * Listener to monitor changes to column model.
+     */
+    private TableColumnModelListener columnModelListener = new TableColumnModelListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.TableColumnModelListener#columnAdded(nextapp.echo2.app.event.TableColumnModelEvent)
+         */
+        public void columnAdded(TableColumnModelEvent e) {
+            invalidate();
+        }
+
+        /**
+         * @see nextapp.echo2.app.event.TableColumnModelListener#columnMoved(nextapp.echo2.app.event.TableColumnModelEvent)
+         */
+        public void columnMoved(TableColumnModelEvent e) {
+            invalidate();
+        }
+
+        /**
+         * @see nextapp.echo2.app.event.TableColumnModelListener#columnRemoved(nextapp.echo2.app.event.TableColumnModelEvent)
+         */
+        public void columnRemoved(TableColumnModelEvent e) {
+            invalidate();
+        }
+    };
+
     /**
      * Creates a new <code>Table</code> with an empty
      * <code>DefaultTableModel</code>.
@@ -98,33 +140,80 @@ public class Table extends Component {
      * @param modelthe initial model
      */
     public Table(TableModel model) {
+        this(model, null);
+    }
+    
+    /** 
+     * Creates a <code>Table</code> with the supplied 
+     * <code>TableModel</code> and the specified <code>TableColumnModel</code>.
+     *
+     * @param modelthe initial model
+     */
+    public Table(TableModel model, TableColumnModel columnModel) {
         super();
+
+        if (columnModel == null) {
+            setColumnModel(new DefaultTableColumnModel());
+            setAutoCreateColumnsFromModel(true);
+        } else {
+            setColumnModel(columnModel);
+        }
+
         setModel(model);
     }
     
     /**
+     * Creates a <code>TableColumnModel</code> based on the 
+     * <code>TableModel</code>.  This method is invoked automatically when the 
+     * <code>TableModel</code>'s structure changes if the 
+     * <code>autoCreateColumnsFromModel</code> flag is set.
+     */
+    public void createDefaultColumnsFromModel() {
+        if (model != null) {
+            while (columnModel.getColumnCount() > 0) {
+                columnModel.removeColumn(columnModel.getColumn(0));
+            }
+            
+            int columnCount = model.getColumnCount();
+            for (int index = 0; index < columnCount; ++index) {
+                columnModel.addColumn(new TableColumn(index));
+            }
+        }
+    }
+
+    /**
      * Re-renders changed rows.
      */
     protected void doRender() {
+        //BUGBUG. no header rendering yet.
+        //BUGBUG. currently always performs whole rerender.
         removeAll();
         int rowCount = model.getRowCount();
-        int columnCount = model.getColumnCount();
+        int columnCount = columnModel.getColumnCount();
         
+        TableColumn[] tableColumns = new TableColumn[columnCount];
         TableCellRenderer[] columnRenderers = new TableCellRenderer[columnCount];
+        
         for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex) {
-            Class columnClass = model.getColumnClass(columnIndex);
-            if (columnClass == null) {
-                columnRenderers[columnIndex] = DEFAULT_TABLE_CELL_RENDERER;
-            } else {
-                columnRenderers[columnIndex] = getRenderer(columnClass);
+            tableColumns[columnIndex] = columnModel.getColumn(columnIndex);
+            
+            TableCellRenderer renderer = tableColumns[columnIndex].getCellRenderer();
+            if (renderer == null) {
+                Class columnClass = model.getColumnClass(tableColumns[columnIndex].getModelIndex());
+                renderer = getDefaultRenderer(columnClass);
+                if (renderer == null) {
+                    renderer = DEFAULT_TABLE_CELL_RENDERER;
+                }
             }
+            columnRenderers[columnIndex] = renderer;
         }
         
         for (int rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
             for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex) {
-                Object modelValue = model.getValueAt(columnIndex, rowIndex);
+                int modelColumnIndex = tableColumns[columnIndex].getModelIndex();
+                Object modelValue = model.getValueAt(modelColumnIndex, rowIndex);
                 Component renderedComponent 
-                        = columnRenderers[columnIndex].getTableCellRendererComponent(this, modelValue, columnIndex, rowIndex);
+                        = columnRenderers[columnIndex].getTableCellRendererComponent(this, modelValue, modelColumnIndex, rowIndex);
                 add(renderedComponent);
             }
         }
@@ -139,6 +228,28 @@ public class Table extends Component {
         return (Border) getProperty(PROPERTY_BORDER);
     }
 
+    /** 
+     * Returns the <code>TableColumnModel</code> describing this table's 
+     * columns.
+     *
+     * @return the column model
+     */
+    public TableColumnModel getColumnModel() {
+        return columnModel;
+    }
+    
+    /**
+     * Returns the default <code>TableCellRenderer</code> for the specified 
+     * column class.  The default renderer will be used in the event that
+     * a <code>TableColumn</code> does not provide a specific renderer.
+     * 
+     * @param columnClass the column <code>Class</code>
+     * @return the <code>TableCellRenderer</code>
+     */
+    public TableCellRenderer getDefaultRenderer(Class columnClass) {
+        return (TableCellRenderer) rendererMap.get(columnClass);
+    }
+    
     /**
      * Returns the overall height.
      * 
@@ -168,17 +279,6 @@ public class Table extends Component {
     }
     
     /**
-     * Returns the <code>TableCellRenderer</code> for the specified column 
-     * class.
-     * 
-     * @param columnClass the column <code>Class</code>
-     * @return the <code>TableCellRenderer</code>
-     */
-    public TableCellRenderer getRenderer(Class columnClass) {
-        return (TableCellRenderer) rendererMap.get(columnClass);
-    }
-    
-    /**
      * Returns the overall width of the grid.
      * 
      * @return the width
@@ -195,6 +295,41 @@ public class Table extends Component {
     }
     
     /**
+     * Determines whether the <code>TableColumnModel</code> will be created
+     * automatically from the <code>TableModel</code>.  If this flag is set,
+     * changes to the <code>TableModel</code> will automatically cause the
+     * <code>TableColumnModel</code> to be re-created.  This flag is true
+     * by default unless a <code>TableColumnModel</code> is specified in the
+     * constructor.
+     *
+     * @return true if the <code>TableColumnModel</code> will be created
+     *         automatically from the <code>TableModel</code>
+     */
+    public boolean isAutoCreateColumnsFromModel() {
+        return autoCreateColumnsFromModel;
+    }
+        
+    /**
+     * Sets whether the <code>TableColumnModel</code> will be created
+     * automatically from the <code>TableModel</code>.
+     *
+     * @param newValue true if the <code>TableColumnModel</code> should be 
+     *         created automatically from the <code>TableModel</code>
+     * @see #isAutoCreateColumnsFromModel()
+     */
+    public void setAutoCreateColumnsFromModel(boolean newValue) {
+        boolean oldValue = autoCreateColumnsFromModel;
+        autoCreateColumnsFromModel = newValue;
+        
+        if (!oldValue && newValue) {
+            createDefaultColumnsFromModel();
+        }
+        
+        firePropertyChange(AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY, 
+                Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
+    }
+
+    /**
      * Sets the <code>Border</code>.
      * 
      * @param newValue the new border
@@ -203,6 +338,44 @@ public class Table extends Component {
         setProperty(PROPERTY_BORDER, newValue);
     }
     
+    /** 
+     * Sets the <code>TableColumnModel</code> describing this table's 
+     * columns.
+     *
+     * @return the new column model
+     */
+    public void setColumnModel(TableColumnModel newValue) {
+        invalidate();
+        
+        if (newValue == null) {
+            throw new IllegalArgumentException("The model may not be null.");
+        }
+        
+        TableColumnModel oldValue = columnModel;
+        if (oldValue != null) {
+            oldValue.removeColumnModelListener(columnModelListener);
+        }
+        columnModel = newValue;
+        newValue.addColumnModelListener(columnModelListener);
+        firePropertyChange(COLUMN_MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the default <code>TableCellRenderer</code> for the specified 
+     * column class.  The default renderer will be used in the event that
+     * a <code>TableColumn</code> does not provide a specific renderer.
+     * 
+     * @param columnClass the column <code>Class</code>
+     * @param renderer the <code>TableCellRenderer</code>
+     */
+    public void setDefaultRenderer(Class columnClass, TableCellRenderer renderer) {
+        if (renderer == null) {
+            rendererMap.remove(renderer);
+        } else {
+            rendererMap.put(columnClass, renderer);
+        }
+    }
+
     /**
      * Sets the overall height of the grid.
      * 
@@ -227,34 +400,26 @@ public class Table extends Component {
      * @param newValue the new model (may not be null)
      */
     public void setModel(TableModel newValue) {
+        invalidate();
+        
         if (newValue == null) {
             throw new IllegalArgumentException("The model may not be null.");
         }
         
         TableModel oldValue = model;
         if (oldValue != null) {
-            oldValue.removeTableModelListener(renderListener);
+            oldValue.removeTableModelListener(modelListener);
         }
         model = newValue;
-        newValue.addTableModelListener(renderListener);
+        newValue.addTableModelListener(modelListener);
+        
+        if (isAutoCreateColumnsFromModel()) {
+            createDefaultColumnsFromModel();
+        }
+        
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
     
-    /**
-     * Sets the <code>TableCellRenderer</code> for the specified column 
-     * class.
-     * 
-     * @param columnClass the column <code>Class</code>
-     * @param renderer the <code>TableCellRenderer</code>
-     */
-    public void setRenderer(Class columnClass, TableCellRenderer renderer) {
-        if (renderer == null) {
-            rendererMap.remove(renderer);
-        } else {
-            rendererMap.put(columnClass, renderer);
-        }
-    }
-
     /**
      * Sets the overall width of the grid.
      * 

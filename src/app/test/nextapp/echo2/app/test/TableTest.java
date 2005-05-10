@@ -85,7 +85,7 @@ public class TableTest extends TestCase {
     
     public void testRender() {
         Table table = new Table();
-        table.setRenderer(Object.class, new TableCellRenderer() {
+        table.setDefaultRenderer(Object.class, new TableCellRenderer() {
             public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
                 switch (column) {
                 case 0:

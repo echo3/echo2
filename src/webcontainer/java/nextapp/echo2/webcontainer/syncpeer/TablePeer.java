@@ -29,22 +29,20 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.Table;
+import nextapp.echo2.app.layout.TableCellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.PropertyRenderRegistry;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
@@ -57,33 +55,32 @@ import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.ClientProperties;
 
-//BUGBUG? find way to line-wrap cross platform or remove. 
-
 /**
- * Synchronization peer for <code>nextapp.echo2.app.Grid</code> components.
+ * Synchronization peer for <code>nextapp.echo2.app.Table</code> components.
  */
-public class GridPeer 
+public class TablePeer 
 implements DomUpdateSupport, SynchronizePeer {
+
+    protected PropertyRenderRegistry propertyRenderRegistry;
     
     /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return ContainerInstance.getElementId(child.getParent()) + "_td_" 
-                + ContainerInstance.getElementId(child);
+        return ContainerInstance.getElementId(child.getParent()) + "_cell_" + child.getParent().indexOf(child);
     }
     
     /**
-     * Returns the <code>GridCellLayoutData</code> of the given child,
-     * or null if it does not provide <code>GridCellLayoutData</code>.
+     * Returns the <code>TableCellLayoutData</code> of the given child,
+     * or null if it does not provide <code>TableCellLayoutData</code>.
      * 
      * @param child the child component
      * @return the layout data
      */
-    private GridCellLayoutData getLayoutData(Component child) {
-        LayoutData layoutData = (LayoutData) child.getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
-        if (layoutData instanceof GridCellLayoutData) {
-            return (GridCellLayoutData) layoutData;
+    private TableCellLayoutData getLayoutData(Component child) {
+        LayoutData layoutData = (LayoutData) child.getRenderProperty(Table.PROPERTY_LAYOUT_DATA);
+        if (layoutData instanceof TableCellLayoutData) {
+            return (TableCellLayoutData) layoutData;
         } else {
             return null;
         }
@@ -119,23 +116,19 @@ implements DomUpdateSupport, SynchronizePeer {
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
-    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) { }
-
+    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
-        
-//BUGBUG. Eliminate fully spanned over rows/columns.
-//BUGBUG. Render in any direction.
-//BUGBUG. Fill remaining cells.
-        
-        Grid grid = (Grid) component;
-        Border border = (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER);
+        Table table = (Table) component;
+        Border border = (Border) table.getRenderProperty(Table.PROPERTY_BORDER);
         Extent borderSize = border == null ? null : border.getSize();
-        
-        String elementId = ContainerInstance.getElementId(grid);
+
+        String elementId = ContainerInstance.getElementId(table);
         
         Document document = parentElement.getOwnerDocument();
         Element tableElement = document.createElement("table");
@@ -144,9 +137,8 @@ implements DomUpdateSupport, SynchronizePeer {
         CssStyle tableCssStyle = new CssStyle();
         tableCssStyle.setAttribute("border-collapse", "collapse");
         
-        Insets gridInsets = (Insets) grid.getRenderProperty(Grid.PROPERTY_INSETS);
-        String defaultInsetsAttributeValue = gridInsets == null 
-                ? "0px" : InsetsRender.renderCssAttributeValue(gridInsets);
+        Insets tableInsets = (Insets) table.getRenderProperty(Table.PROPERTY_INSETS);
+        String defaultInsetsAttributeValue = tableInsets == null ? "0px" : InsetsRender.renderCssAttributeValue(tableInsets);
         
         ColorRender.renderToStyle(tableCssStyle, component);
         FontRender.renderToStyle(tableCssStyle, component);
@@ -165,44 +157,21 @@ implements DomUpdateSupport, SynchronizePeer {
         tbodyElement.setAttribute("id", elementId + "_tbody");
         tableElement.appendChild(tbodyElement);
         
-        GridProcessor gridProcessor = new GridProcessor(grid);
-
-        int gridXSize = gridProcessor.getGridXSize();
-        int gridYSize = gridProcessor.getGridYSize();
-        Set renderedCells = new HashSet();
+        int columns = table.getColumnModel().getColumnCount();
+        int rows = table.getModel().getRowCount();
         
-        for (int y = 0; y < gridYSize; ++y) {
+        for (int rowIndex = 0; rowIndex < rows; ++rowIndex) {
             Element trElement = document.createElement("tr");
-            trElement.setAttribute("id", elementId + "_tr_" + y);
             tbodyElement.appendChild(trElement);
-            for (int x = 0; x < gridXSize; ++x) {
-                Component cell = gridProcessor.getContent(x, y);
-                if (cell == null) {
-                    //BUGBUG. breaking out here is a TEMPORARY solution..this cause major breakage for stuff like RTL tables.
-                    break;
-                }
-                GridCellLayoutData layoutData = getLayoutData(cell);
-                if (renderedCells.contains(cell)) {
-                    // Cell already rendered.
-                    continue;
-                }
-                renderedCells.add(cell);
-                
-                Element tdElement = document.createElement("td");
-                tdElement.setAttribute("id", elementId + "_td_" + ContainerInstance.getElementId(cell));
-                trElement.appendChild(tdElement);
-
-                int componentIndex = gridProcessor.getComponentIndex(x, y);
-                if (gridProcessor.getXSpan(componentIndex) > 1) {
-                    tdElement.setAttribute("colspan", Integer.toString(gridProcessor.getXSpan(componentIndex)));
-                }
-                
-                if (gridProcessor.getYSpan(componentIndex) > 1) {
-                    tdElement.setAttribute("rowspan", Integer.toString(gridProcessor.getYSpan(componentIndex)));
-                }
             
+            for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
+                Component childComponent = table.getComponent(rowIndex * columns + columnIndex);
+                Element tdElement = document.createElement("td");
+                tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getId());
+                
                 CssStyle tdCssStyle = new CssStyle();
-                BorderRender.renderToStyle(tdCssStyle, (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER));
+                BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
+                TableCellLayoutData layoutData = getLayoutData(childComponent);
                 if (layoutData == null) {
                     tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
                 } else {
@@ -216,18 +185,18 @@ implements DomUpdateSupport, SynchronizePeer {
                 }
                 tdElement.setAttribute("style", tdCssStyle.renderInline());
                 
-                renderAddChild(rc, update, tdElement, cell);
+                trElement.appendChild(tdElement);
+                renderAddChild(rc, update, tdElement, childComponent);
             }
         }
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.Synchr2onizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        String parentId = ContainerInstance.getElementId(update.getParent());
-        DomUpdate.createDomRemove(rc.getServerMessage(), parentId);
+        DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
         renderAdd(rc, update, targetId, update.getParent());
         return true;
     }
