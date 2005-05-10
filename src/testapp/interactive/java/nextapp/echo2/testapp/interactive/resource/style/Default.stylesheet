@@ -62,6 +62,66 @@
    <property name="titleInsets" value="10px 5px"/>
    <property name="titleBackground" value="#2f2f4f"/>
    <property name="titleForeground" value="#ffffff"/>
+   <property name="border">
+    <fillimageborder contentinsets="8px 8px 14px 14px" borderinsets="17px 17px 23px 23px">
+     <borderpart position="topleft">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderTopLeft.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="top">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderTop.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="topright">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderTopRight.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="left">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderLeft.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="right">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderRight.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="bottomleft">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderBottomLeft.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="bottom">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderBottom.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="bottomright">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderBottomRight.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+    </fillimageborder>
+   </property>
   </properties>
  </style>
  <style name="applicationControlsColumn" type="nextapp.echo2.app.Column">

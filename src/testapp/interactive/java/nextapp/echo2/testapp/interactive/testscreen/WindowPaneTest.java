@@ -68,7 +68,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setWidth(new Extent(500));
                     windowPane.setHeight(new Extent(280));
                     targetContentPane.add(windowPane);
-                    windowPane.setBorder(Styles.SHADOW_BORDER);
+                    windowPane.setStyleName("default");
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
@@ -99,7 +99,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setWidth(new Extent(500));
                     windowPane.setHeight(new Extent(280));
                     targetContentPane.add(windowPane);
-                    windowPane.setBorder(Styles.SHADOW_BORDER);
+                    windowPane.setStyleName("default");
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
@@ -111,7 +111,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setResizable(false);
                     windowPane.setTitle("SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setBorder(Styles.SHADOW_BORDER);
+                    windowPane.setStyleName("default");
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     windowPane.setHeight(new Extent(300, Extent.PX));
@@ -154,7 +154,7 @@ public class WindowPaneTest extends SplitPane {
                     targetContentPane.add(windowPane);
                     windowPane.setTitle("Multiple SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setBorder(Styles.SHADOW_BORDER);
+                    windowPane.setStyleName("default");
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(700, Extent.PX));
                     windowPane.setWidth(new Extent(500, Extent.PX));

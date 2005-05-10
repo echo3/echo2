@@ -30,8 +30,6 @@
 package nextapp.echo2.testapp.interactive;
 
 import nextapp.echo2.app.FillImage;
-import nextapp.echo2.app.FillImageBorder;
-import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.ComponentXmlException;
@@ -45,22 +43,6 @@ public class Styles {
     public static final String IMAGE_PATH = "/nextapp/echo2/testapp/interactive/resource/image/";
     public static final String STYLE_PATH = "/nextapp/echo2/testapp/interactive/resource/style/";
 
-    public static final FillImageBorder SHADOW_BORDER;
-    static {
-        FillImageBorder border = new FillImageBorder();
-        border.setContentInsets(new Insets(8, 8, 14, 14));
-        border.setBorderInsets(new Insets(17, 17, 23, 23));
-        border.setFillImage(FillImageBorder.TOP_LEFT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNW.png")));
-        border.setFillImage(FillImageBorder.TOP, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderN.png")));
-        border.setFillImage(FillImageBorder.TOP_RIGHT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderNE.png")));
-        border.setFillImage(FillImageBorder.LEFT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderW.png")));
-        border.setFillImage(FillImageBorder.RIGHT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderE.png")));
-        border.setFillImage(FillImageBorder.BOTTOM_LEFT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSW.png")));
-        border.setFillImage(FillImageBorder.BOTTOM, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderS.png")));
-        border.setFillImage(FillImageBorder.BOTTOM_RIGHT, new FillImage(new ResourceImageReference(IMAGE_PATH + "BorderSE.png")));
-        SHADOW_BORDER = border;
-    }
-    
     public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
             FillImage.ATTACHMENT_FIXED);

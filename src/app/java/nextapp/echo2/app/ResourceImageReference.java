@@ -100,14 +100,16 @@ extends StreamImageReference {
      * @param resource the resource name containing the binary image data
      */
     public ResourceImageReference(String resource) {
-        this(resource, getContentType(resource), null, null);
+        this(resource, null, null, null);
     }
     
     /**
      * Creates a <code>ResourceImageReference</code>.
      * 
      * @param resource the resource name containing the binary image data
-     * @param contentType the content type of the image
+     * @param contentType the content type of the image (or null to 
+     *        automatically determine the content type based on the resource
+     *        extension)
      */
     public ResourceImageReference(String resource, String contentType) {
         this(resource, contentType, null, null);
@@ -122,14 +124,16 @@ extends StreamImageReference {
      * @param height the height of the image
      */
     public ResourceImageReference(String resource, Extent width, Extent height) {
-        this(resource, getContentType(resource), width, height);
+        this(resource, null, width, height);
     }
 
     /**
      * Creates a <code>ResourceImageReference</code>.
      * 
      * @param resource the resource name containing the binary image data
-     * @param contentType the content type of the image
+     * @param contentType the content type of the image (or null to 
+     *        automatically determine the content type based on the resource
+     *        extension)
      * @param width the width of the image
      * @param height the height of the image
      */
@@ -137,7 +141,7 @@ extends StreamImageReference {
         super();
         
         this.resource = resource;
-        this.contentType = contentType;
+        this.contentType = contentType == null ? getContentType(resource) : contentType;
         this.width = width;
         this.height = height;
     }
