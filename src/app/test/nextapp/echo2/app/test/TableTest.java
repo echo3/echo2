@@ -43,9 +43,21 @@ import junit.framework.TestCase;
 public class TableTest extends TestCase {
 
     public void testDefaultTableModel() {
-        Table table = new Table();
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        DefaultTableModel model = new DefaultTableModel();
         model.setColumnCount(3);
+        
+        assertEquals("A", model.getColumnName(0));
+        assertEquals("B", model.getColumnName(1));
+        assertEquals("C", model.getColumnName(2));
+        
+        model.setColumnName(0, "Employee Name");
+        model.setColumnName(1, "Age");
+        model.setColumnName(2, "Manager");
+        
+        assertEquals("Employee Name", model.getColumnName(0));
+        assertEquals("Age", model.getColumnName(1));
+        assertEquals("Manager", model.getColumnName(2));
+        
         model.insertRow(0, new Object[]{"Bob Johnson", new Integer(32), Boolean.TRUE});
         model.insertRow(1, new Object[]{"Bill Simmons", new Integer(27), Boolean.TRUE});
         model.insertRow(2, new Object[]{"Tracy Smith", new Integer(54), Boolean.TRUE});
@@ -108,17 +120,31 @@ public class TableTest extends TestCase {
         model.insertRow(3, new Object[]{"Cathy Rogers", new Integer(21), Boolean.FALSE});
         model.insertRow(4, new Object[]{"Xavier Doe", new Integer(77), Boolean.TRUE});
         table.validate();
-        assertEquals(15, table.getComponentCount());
+        assertEquals(18, table.getComponentCount());
         Component[] components = table.getComponents();
-        for (int i = 0; i < components.length; ++i) {
+        for (int i = 3; i < components.length; ++i) {
             if (i % 3 == 2) {
                 assertEquals(CheckBox.class, components[i].getClass());
             } else {
                 assertEquals(Label.class, components[i].getClass());
             }
         }
-        assertTrue(((CheckBox) components[2]).isSelected());
+        assertTrue(components[0] instanceof Label);
+        assertEquals("A", ((Label) components[0]).getText());
+        assertTrue(components[5] instanceof CheckBox);
         assertTrue(((CheckBox) components[5]).isSelected());
-        assertFalse(((CheckBox) components[11]).isSelected());
+        assertTrue(components[8] instanceof CheckBox);
+        assertTrue(((CheckBox) components[8]).isSelected());
+        assertTrue(components[14] instanceof CheckBox);
+        assertFalse(((CheckBox) components[14]).isSelected());
+
+        assertTrue(table.getCellComponent(0, 0) instanceof Label);
+        assertEquals("A", ((Label) table.getCellComponent(0, Table.HEADER_ROW)).getText());
+        assertTrue(table.getCellComponent(2, 0) instanceof CheckBox);
+        assertTrue(((CheckBox) table.getCellComponent(2, 0)).isSelected());
+        assertTrue(table.getCellComponent(2, 1) instanceof CheckBox);
+        assertTrue(((CheckBox) table.getCellComponent(2, 1)).isSelected());
+        assertTrue(table.getCellComponent(2, 3) instanceof CheckBox);
+        assertFalse(((CheckBox) table.getCellComponent(2, 3)).isSelected());
     }
 }

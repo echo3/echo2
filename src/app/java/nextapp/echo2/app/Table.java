@@ -65,9 +65,13 @@ public class Table extends Component {
     public static final String COLUMN_MODEL_CHANGED_PROPERTY = "columnModel";
     public static final String DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY = "defaultHeaderRenderer";
     public static final String DEFAULT_RENDERER_CHANGED_PROPERTY = "defaultRenderer";
+    public static final String HEADER_VISIBLE_CHANGED_PROPERTY = "headerVisible";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     
+    public static final int HEADER_ROW = -1;
+    
     private boolean autoCreateColumnsFromModel;
+    private boolean headerVisible = true;
     private TableModel model;
     private TableColumnModel columnModel;
     private boolean valid;
@@ -209,6 +213,30 @@ public class Table extends Component {
                 }
             }
             columnRenderers[columnIndex] = renderer;
+
+        }
+
+        if (isHeaderVisible()) {
+            for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex) {
+                int modelColumnIndex = tableColumns[columnIndex].getModelIndex();
+                Object headerValue = tableColumns[columnIndex].getHeaderValue();
+                if (headerValue == null) {
+                    headerValue = model.getColumnName(modelColumnIndex);
+                }
+                TableCellRenderer headerRenderer = tableColumns[columnIndex].getHeaderRenderer();
+                if (headerRenderer == null) {
+                    headerRenderer = defaultHeaderRenderer;
+                    if (headerRenderer == null) {
+                        headerRenderer = DEFAULT_TABLE_CELL_RENDERER;
+                    }
+                }
+                Component renderedComponent 
+                        = headerRenderer.getTableCellRendererComponent(this, headerValue, modelColumnIndex, HEADER_ROW);
+                if (renderedComponent == null) {
+                    renderedComponent = new Label();
+                }
+                add(renderedComponent);
+            }
         }
         
         for (int rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
@@ -217,6 +245,9 @@ public class Table extends Component {
                 Object modelValue = model.getValueAt(modelColumnIndex, rowIndex);
                 Component renderedComponent 
                         = columnRenderers[columnIndex].getTableCellRendererComponent(this, modelValue, modelColumnIndex, rowIndex);
+                if (renderedComponent == null) {
+                    renderedComponent = new Label();
+                }
                 add(renderedComponent);
             }
         }
@@ -243,7 +274,15 @@ public class Table extends Component {
         if (!valid) {
             validate();
         }
-        return getComponent(row * columnModel.getColumnCount() + column);
+        if (isHeaderVisible()) {
+            return getComponent((row + 1) * columnModel.getColumnCount()   + column);
+        } else {
+            if (row == HEADER_ROW) {
+                return null;
+            } else {
+                return getComponent(row * columnModel.getColumnCount() + column);
+            }
+        }
     }
     
     /** 
@@ -322,6 +361,15 @@ public class Table extends Component {
      */
     protected void invalidate() {
         valid = false;
+    }
+    
+    /**
+     * Determines if the table header is visible.
+     * 
+     * @return the header visibility state
+     */
+    public boolean isHeaderVisible() {
+        return headerVisible;
     }
     
     /**
@@ -421,6 +469,18 @@ public class Table extends Component {
             defaultRendererMap.put(columnClass, newValue);
         }
         firePropertyChange(DEFAULT_RENDERER_CHANGED_PROPERTY, null, null);
+    }
+    
+    /**
+     * Sets the visibility state of the table header.
+     * 
+     * @param newValue true if the header should be displayed
+     */
+    public void setHeaderVisible(boolean newValue) {
+        invalidate();
+        boolean oldValue = headerVisible;
+        headerVisible = newValue;
+        firePropertyChange(HEADER_VISIBLE_CHANGED_PROPERTY, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
     }
 
     /**

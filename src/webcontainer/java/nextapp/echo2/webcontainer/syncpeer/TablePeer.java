@@ -156,38 +156,60 @@ implements DomUpdateSupport, SynchronizePeer {
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");
         tableElement.appendChild(tbodyElement);
+
+        if (table.isHeaderVisible()) {
+            renderRow(rc, update, tbodyElement, table, Table.HEADER_ROW, defaultInsetsAttributeValue);
+        }
+        
+        int rows = table.getModel().getRowCount();
+        for (int rowIndex = 0; rowIndex < rows; ++rowIndex) {
+            renderRow(rc, update, tbodyElement, table, rowIndex, defaultInsetsAttributeValue);
+        }
+    }
+    
+    /**
+     * Renders a single row of a table.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> being processed
+     * @param tbodyElemetn the <code>tbody</code> element to which to append 
+     *        the rendered content
+     * @param table the <code>Table</code> being rendered
+     * @param rowIndex the row to render
+     * @param defaultInsetsAttribute the default CSS padding attribute value
+     */
+    private void renderRow(RenderContext rc, ServerComponentUpdate update, Element tbodyElement, Table table, int rowIndex,
+            String defaultInsetsAttributeValue) {
+        Document document = tbodyElement.getOwnerDocument();
+        
+        Element trElement = document.createElement("tr");
+        tbodyElement.appendChild(trElement);
+        String elementId = ContainerInstance.getElementId(table);
         
         int columns = table.getColumnModel().getColumnCount();
-        int rows = table.getModel().getRowCount();
-        
-        for (int rowIndex = 0; rowIndex < rows; ++rowIndex) {
-            Element trElement = document.createElement("tr");
-            tbodyElement.appendChild(trElement);
+        for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
+            Component childComponent = table.getCellComponent(columnIndex, rowIndex);
+            Element tdElement = document.createElement("td");
+            tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getId());
             
-            for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
-                Component childComponent = table.getCellComponent(columnIndex, rowIndex);
-                Element tdElement = document.createElement("td");
-                tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getId());
-                
-                CssStyle tdCssStyle = new CssStyle();
-                BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
-                TableCellLayoutData layoutData = getLayoutData(childComponent);
-                if (layoutData == null) {
+            CssStyle tdCssStyle = new CssStyle();
+            BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
+            TableCellLayoutData layoutData = getLayoutData(childComponent);
+            if (layoutData == null) {
+                tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
+            } else {
+                Insets cellInsets = layoutData.getInsets();
+                if (cellInsets == null) {
                     tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
                 } else {
-                    Insets cellInsets = layoutData.getInsets();
-                    if (cellInsets == null) {
-                        tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
-                    } else {
-                        tdCssStyle.setAttribute("padding", InsetsRender.renderCssAttributeValue(cellInsets));
-                    }
-                    ColorRender.renderToStyle(tdCssStyle, null, layoutData.getBackground());
+                    tdCssStyle.setAttribute("padding", InsetsRender.renderCssAttributeValue(cellInsets));
                 }
-                tdElement.setAttribute("style", tdCssStyle.renderInline());
-                
-                trElement.appendChild(tdElement);
-                renderAddChild(rc, update, tdElement, childComponent);
+                ColorRender.renderToStyle(tdCssStyle, null, layoutData.getBackground());
             }
+            tdElement.setAttribute("style", tdCssStyle.renderInline());
+            
+            trElement.appendChild(tdElement);
+            renderAddChild(rc, update, tdElement, childComponent);
         }
     }
     

@@ -126,14 +126,13 @@ public class DefaultTableModel extends AbstractTableModel {
      * @see nextapp.echo2.app.table.TableModel#getColumnName(int)
      */
     public String getColumnName(int column) {
-        String name;
-        
+        String name = null;
         if (column < columnNames.size()) {
             name = (String) columnNames.get(column);
-        } else {
-            name = "";
         }
-        
+        if (name == null) {
+            name = super.getColumnName(column);
+        }
         return name;
     }
     
@@ -206,6 +205,16 @@ public class DefaultTableModel extends AbstractTableModel {
         }
         
         fireTableStructureChanged();
+    }
+    
+    /**
+     * Sets the name of the specified column.
+     * 
+     * @param column the column index
+     * @param columnName the new column name
+     */
+    public void setColumnName(int column, String columnName) {
+        columnNames.set(column, columnName);
     }
 
     /**

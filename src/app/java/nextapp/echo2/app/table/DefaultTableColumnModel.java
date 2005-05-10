@@ -118,6 +118,7 @@ implements Serializable, TableColumnModel {
             ((TableColumnModelListener) listeners[index]).columnRemoved(e);
         }   
     }
+    
     /**
      * @see nextapp.echo2.app.table.TableColumnModel#getColumn(int)
      */
@@ -126,7 +127,7 @@ implements Serializable, TableColumnModel {
             return null;
         }
 
-        return (TableColumn)columns.get(index);
+        return (TableColumn) columns.get(index);
     }
     
     /**
