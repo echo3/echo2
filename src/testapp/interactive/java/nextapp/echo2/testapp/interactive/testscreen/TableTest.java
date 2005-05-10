@@ -33,17 +33,24 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.Table;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.table.AbstractTableModel;
+import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
+import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * A test for <code>Tables</code>s.
  */
 public class TableTest extends SplitPane {
+    
+    private Table testTable;
     
     private class MultiplicationTableModel extends AbstractTableModel {
 
@@ -84,11 +91,79 @@ public class TableTest extends SplitPane {
         ButtonColumn controlsColumn;
         
         controlsColumn = new ButtonColumn();
-        controlsColumn.add(new Label("Model Controls"));
         groupContainerColumn.add(controlsColumn);
+
+        controlsColumn.add(new Label("TableModel"));
         
-        final Table table = new Table(new MultiplicationTableModel());
-        table.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
-        testColumn.add(table);
+        controlsColumn.addButton("Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setModel(new MultiplicationTableModel());
+            }
+        });
+        
+        controlsColumn.addButton("DefaultTableModel", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setModel(new DefaultTableModel());
+            }
+        });
+        
+        testTable = new Table();
+        testTable.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
+        testColumn.add(testTable);
+
+        controlsColumn.add(new Label("Appearance"));
+        
+        controlsColumn.addButton("Change Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Change Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Change Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Change Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = testTable.getBorder();
+                testTable.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+            }
+        });
+        controlsColumn.addButton("Change Border Size", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setBorder(StyleUtil.nextBorderSize(testTable.getBorder()));
+            }
+        });
+        controlsColumn.addButton("Change Border Style", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setBorder(StyleUtil.nextBorderStyle(testTable.getBorder()));
+            }
+        });
+        
+        controlsColumn.addButton("Set Insets 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set Insets 2px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setInsets(new Insets(2));
+            }
+        });
+        controlsColumn.addButton("Set Insets 10/5px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setInsets(new Insets(10, 5));
+            }
+        });
+        controlsColumn.addButton("Set Insets 10/20/30/40px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setInsets(new Insets(10, 20, 30, 40));
+            }
+        });
     }
 }
