@@ -61,6 +61,7 @@ import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webcontainer.util.IdManager;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
@@ -605,10 +606,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_SELECTED_STATE_ICON));
 
             if (button instanceof RadioButton) {
-                //BUGBUG. temporarily using default toString() impl (they contain unique memory address) for button group id.
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {
-                    String groupId = buttonGroup.toString();
+                    String groupId = rc.getContainerInstance().getIdManager().getId(buttonGroup);
                     createSetGroup(serverMessage, id, groupId);
                 }
             }

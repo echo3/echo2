@@ -38,6 +38,7 @@ import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.app.update.UpdateManager;
+import nextapp.echo2.webcontainer.util.IdManager;
 import nextapp.echo2.webrender.RenderInstance;
 import nextapp.echo2.webrender.server.Connection;
 
@@ -74,6 +75,7 @@ public class ContainerInstance extends RenderInstance {
     private Map componentToRenderStateMap = new HashMap();
     private ApplicationInstance applicationInstance;
     private Map taskQueueToCallbackIntervalMap;
+    private IdManager idManager = new IdManager();
     
     /**
      * Default constructor for serialization use only.
@@ -159,6 +161,11 @@ public class ContainerInstance extends RenderInstance {
         } catch (IndexOutOfBoundsException ex) {
             throw new IllegalArgumentException("Invalid component element id: " + elementId);
         }
+    }
+    
+    //TODO doc.
+    public IdManager getIdManager() {
+        return idManager;
     }
     
     /**

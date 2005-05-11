@@ -65,6 +65,11 @@ implements Service {
     public String createUri(ContainerInstance containerInstance, String componentId, String imageId) {
         return containerInstance.getServiceUri(this, URL_PARAMETERS, new String[]{componentId, imageId});
     }
+    
+    //BUGBUG. VERY experimental....uses IdManager.
+    public String createUri(ContainerInstance containerInstance, String imageId) {
+        return containerInstance.getServiceUri(this, new String[]{"imageuuid"}, new String[]{imageId});
+    }
 
     /**
      * Renders the specified image to the given connection.
@@ -88,6 +93,7 @@ implements Service {
             serviceBadRequest(conn, "No container available.");
             return;
         }
+/*        
         String componentId = conn.getRequest().getParameter(PARAMETER_COMPONENT_ID);
         if (componentId == null) {
             serviceBadRequest(conn, "Component id not specified.");
@@ -109,6 +115,16 @@ implements Service {
             return;
         }
         ImageReference imageReference = (((ImageRenderSupport) synchronizePeer).getImage(component, imageId));
+*/
+        
+        //BUGBUG. experimental.
+        String imageId = conn.getRequest().getParameter("imageuuid");
+        if (imageId == null) {
+            serviceBadRequest(conn, "Image UUID not specified.");
+            return;
+        }
+        ImageReference imageReference = (ImageReference) containerInstance.getIdManager().getObject(imageId);
+        
         if (imageReference == null) {
             serviceBadRequest(conn, "Image id is not valid.");
             return;
