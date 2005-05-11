@@ -44,8 +44,9 @@ import java.util.WeakHashMap;
  * Provides the capability to transparently assign generated unique string 
  * identifiers to arbitrary objects.  The identifier to object mapping is 
  * stored using <code>WeakReference</code>s such that the identified objects
- * may be garbage collected without regard for this object.  The identifiers
- * are also destroyed when the underlying objects are garbage collected. 
+ * may be garbage collected without regard for this object's references to 
+ * them.  The identifiers themselves are also destroyed when the underlying 
+ * objects are garbage collected. 
  */
 public class IdTable 
 implements Serializable {
@@ -55,6 +56,14 @@ implements Serializable {
     //BUGBUG. Serialization.
     private transient ReferenceQueue referenceQueue = new ReferenceQueue();
     
+    /**
+     * Creates or retrieves a unique identifier for the specified object.
+     * Future invocations of this method with the same object will result
+     * in the same identifier being returned.
+     * 
+     * @param object the object to identify
+     * @return a unique identifier
+     */
     public String getId(Object object) {
         purge();
         String id = (String) objectToIdMap.get(object);
@@ -67,6 +76,13 @@ implements Serializable {
         return id;
     }
     
+    /**
+     * Retrieves the object associated with the specified identifier.
+     * 
+     * @param id the identifier
+     * @return the object (or null, if the object is not in the queue, perhaps
+     *         due to having been dereferenced and garbage collected)
+     */
     public Object getObject(String id) {
         purge();
         WeakReference weakReference = (WeakReference) idToReferenceMap.get(id);
@@ -77,6 +93,10 @@ implements Serializable {
         return object;
     }
     
+    /**
+     * Purges dereferenced/garbage collected entries from the 
+     * <code>IdTable</code>.
+     */
     private void purge() {
         Reference reference = referenceQueue.poll();
         if (reference == null) {
