@@ -43,7 +43,7 @@ import java.util.WeakHashMap;
 /**
  * Provides the capability to transparently assign generated unique string 
  * identifiers to arbitrary objects.  The identifier to object mapping is 
- * stored using <code>WeakReferences</code> such that the identified objects
+ * stored using <code>WeakReference</code>s such that the identified objects
  * may be garbage collected without regard for this object.  The identifiers
  * are also destroyed when the underlying objects are garbage collected. 
  */
@@ -51,7 +51,7 @@ public class IdTable
 implements Serializable {
     
     private Map objectToIdMap = new WeakHashMap();
-    private HashMap idToObjectMap = new HashMap();
+    private HashMap idToReferenceMap = new HashMap();
     //BUGBUG. Serialization.
     private transient ReferenceQueue referenceQueue = new ReferenceQueue();
     
@@ -62,14 +62,14 @@ implements Serializable {
             id = Uid.generateUidString();
             objectToIdMap.put(object, id);
             WeakReference weakReference = new WeakReference(object, referenceQueue);
-            idToObjectMap.put(id, weakReference);
+            idToReferenceMap.put(id, weakReference);
         }
         return id;
     }
     
     public Object getObject(String id) {
         purge();
-        WeakReference weakReference = (WeakReference) idToObjectMap.get(id);
+        WeakReference weakReference = (WeakReference) idToReferenceMap.get(id);
         if (weakReference == null) {
             return null;
         }
@@ -87,11 +87,10 @@ implements Serializable {
             referenceSet.add(reference);
             reference = referenceQueue.poll();
         }
-        Iterator idIt = idToObjectMap.keySet().iterator();
+        Iterator idIt = idToReferenceMap.keySet().iterator();
         while (idIt.hasNext()) {
             String id = (String) idIt.next();
-            
-            if (referenceSet.contains(idToObjectMap.get(id))) {
+            if (referenceSet.contains(idToReferenceMap.get(id))) {
                 idIt.remove();
             }
         }
