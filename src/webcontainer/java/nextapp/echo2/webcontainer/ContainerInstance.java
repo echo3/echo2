@@ -38,7 +38,7 @@ import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.app.update.UpdateManager;
-import nextapp.echo2.webcontainer.util.IdManager;
+import nextapp.echo2.webcontainer.util.IdTable;
 import nextapp.echo2.webrender.RenderInstance;
 import nextapp.echo2.webrender.server.Connection;
 
@@ -75,7 +75,7 @@ public class ContainerInstance extends RenderInstance {
     private Map componentToRenderStateMap = new HashMap();
     private ApplicationInstance applicationInstance;
     private Map taskQueueToCallbackIntervalMap;
-    private IdManager idManager = new IdManager();
+    private IdTable idTable = new IdTable();
     
     /**
      * Default constructor for serialization use only.
@@ -163,9 +163,16 @@ public class ContainerInstance extends RenderInstance {
         }
     }
     
-    //TODO doc.
-    public IdManager getIdManager() {
-        return idManager;
+
+    /**
+     * Retrieves the <code>IdTable</code> used by this 
+     * <code>ContainerInstance</code> to assign weakly-referenced unique 
+     * identifiers to arbitrary objects.
+     * 
+     * @return the <code>IdTable</code>
+     */
+    public IdTable getIdTable() {
+        return idTable;
     }
     
     /**

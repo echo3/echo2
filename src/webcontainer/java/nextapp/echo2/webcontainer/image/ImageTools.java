@@ -54,12 +54,12 @@ public class ImageTools {
     public static String getUri(RenderContext rc, ImageRenderSupport irs, Component component, String imageId) {
         ImageReference imageReference = irs.getImage(component, imageId);
         if (imageReference instanceof StreamImageReference) {
-            String id = rc.getContainerInstance().getIdManager().getId(imageReference);
+            String id = rc.getContainerInstance().getIdTable().getId(imageReference);
             return StreamImageService.INSTANCE.createUri(rc.getContainerInstance(), id);
         } else if (imageReference instanceof HttpImageReference) {
             return ((HttpImageReference) imageReference).getUri();
         } else if (imageReference instanceof AwtImageReference) {
-            String id = rc.getContainerInstance().getIdManager().getId(imageReference);
+            String id = rc.getContainerInstance().getIdTable().getId(imageReference);
             return AwtImageService.INSTANCE.createUri(rc.getContainerInstance(), id);
         } else {
             throw new IllegalArgumentException("Unsupported image type.");

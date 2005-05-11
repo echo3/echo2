@@ -29,13 +29,13 @@
 
 package nextapp.echo2.webcontainer.test;
 
-import nextapp.echo2.webcontainer.util.IdManager;
+import nextapp.echo2.webcontainer.util.IdTable;
 import junit.framework.TestCase;
 
 /**
  * 
  */
-public class IdManagerTest extends TestCase {
+public class IdTableTest extends TestCase {
 
     private static class TestObject { }
     
@@ -46,7 +46,7 @@ public class IdManagerTest extends TestCase {
      * thus this test may randomly fail. 
      */
     public void testReferenceRelease() {
-        IdManager idManager = new IdManager();
+        IdTable idManager = new IdTable();
         TestObject testObject = new TestObject();
         String id = idManager.getId(testObject);
         assertNotNull(idManager.getObject(id));

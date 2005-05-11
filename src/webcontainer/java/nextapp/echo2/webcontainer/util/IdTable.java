@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer.util;
 
+import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -39,15 +40,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-//BUGBUG. Doc.
-
 /**
- * 
+ * Provides the capability to transparently assign generated unique string 
+ * identifiers to arbitrary objects.  The identifier to object mapping is 
+ * stored using <code>WeakReferences</code> such that the identified objects
+ * may be garbage collected without regard for this object.  The identifiers
+ * are also destroyed when the underlying objects are garbage collected. 
  */
-public class IdManager {
+public class IdTable 
+implements Serializable {
     
     private Map objectToIdMap = new WeakHashMap();
     private HashMap idToObjectMap = new HashMap();
+    //BUGBUG. Serialization.
     private transient ReferenceQueue referenceQueue = new ReferenceQueue();
     
     public String getId(Object object) {

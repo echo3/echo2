@@ -89,7 +89,7 @@ implements Service {
             serviceBadRequest(conn, "Image UID not specified.");
             return;
         }
-        ImageReference imageReference = (ImageReference) containerInstance.getIdManager().getObject(imageId);
+        ImageReference imageReference = (ImageReference) containerInstance.getIdTable().getObject(imageId);
         
         if (imageReference == null) {
             serviceBadRequest(conn, "Image UID is not valid.");
