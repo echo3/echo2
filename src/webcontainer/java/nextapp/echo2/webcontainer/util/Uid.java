@@ -30,7 +30,7 @@
 package nextapp.echo2.webcontainer.util;
 
 /**
- * 
+ * A universally unique identifier.
  */
 public class Uid {
 
@@ -40,12 +40,24 @@ public class Uid {
     private final int count = ++globalCount;
     private final long time = System.currentTimeMillis();
     
+    /**
+     * Generates a new identifier String.
+     */
     public static final String generateUidString() {
         String idString = new Uid().toString();
-        System.err.println(idString);
         return idString;
     }
 
+    /**
+     * Generates a new identifier.
+     */
+    private Uid() {
+        super();
+    }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         String timeString = Long.toHexString(time);
         String countString = Integer.toHexString(count);

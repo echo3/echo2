@@ -39,13 +39,26 @@ public class IdManagerTest extends TestCase {
 
     private static class TestObject { }
     
+    /**
+     * Tests to ensure references are released.  This test relies on
+     * <code>System.gc()</code> acutally causing weak references to
+     * be collected.  It is not technically safe to rely on this,
+     * thus this test may randomly fail. 
+     */
     public void testReferenceRelease() {
         IdManager idManager = new IdManager();
         TestObject testObject = new TestObject();
         String id = idManager.getId(testObject);
         assertNotNull(idManager.getObject(id));
+        assertNotNull(idManager.getId(testObject));
         testObject = null;
         System.gc();
+        System.gc();
+        System.gc();
+        System.gc();
+        System.gc();
+        System.gc();
+        assertNull(idManager.getObject(id));
         assertNull(idManager.getObject(id));
     }
 }

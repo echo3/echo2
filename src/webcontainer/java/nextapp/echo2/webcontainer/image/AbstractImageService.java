@@ -33,11 +33,8 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.webcontainer.ContainerInstance;
-import nextapp.echo2.webcontainer.SynchronizePeer;
-import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webrender.server.Connection;
 import nextapp.echo2.webrender.server.ContentType;
 import nextapp.echo2.webrender.server.Service;
@@ -49,26 +46,20 @@ import nextapp.echo2.webrender.server.Service;
 public abstract class AbstractImageService 
 implements Service {
 
-    private static final String PARAMETER_IMAGE_ID = "imageid"; 
-    private static final String PARAMETER_COMPONENT_ID = "componentid"; 
+    private static final String PARAMETER_IMAGE_UID = "imageuid"; 
 
-    private static final String[] URL_PARAMETERS = new String[]{PARAMETER_COMPONENT_ID, PARAMETER_IMAGE_ID}; 
+    private static final String[] URL_PARAMETERS = new String[]{PARAMETER_IMAGE_UID}; 
     
     /**
      * Creates a URI to retrieve a specific image for a specific component 
      * from the server.
      * 
      * @param containerInstance the relevant application container instance.
-     * @param componentId the id of the component
-     * @param imageId the id of the image
+     * @param imageId the unique id to retrieve the image from the
+     *        <code>ContainerInstance</code>
      */
-    public String createUri(ContainerInstance containerInstance, String componentId, String imageId) {
-        return containerInstance.getServiceUri(this, URL_PARAMETERS, new String[]{componentId, imageId});
-    }
-    
-    //BUGBUG. VERY experimental....uses IdManager.
     public String createUri(ContainerInstance containerInstance, String imageId) {
-        return containerInstance.getServiceUri(this, new String[]{"imageuuid"}, new String[]{imageId});
+        return containerInstance.getServiceUri(this, URL_PARAMETERS, new String[]{imageId});
     }
 
     /**
@@ -93,40 +84,15 @@ implements Service {
             serviceBadRequest(conn, "No container available.");
             return;
         }
-/*        
-        String componentId = conn.getRequest().getParameter(PARAMETER_COMPONENT_ID);
-        if (componentId == null) {
-            serviceBadRequest(conn, "Component id not specified.");
-            return;
-        }
-        String imageId = conn.getRequest().getParameter(PARAMETER_IMAGE_ID);
+        String imageId = conn.getRequest().getParameter(PARAMETER_IMAGE_UID);
         if (imageId == null) {
-            serviceBadRequest(conn, "Image id not specified.");
-            return;
-        }
-        Component component = containerInstance.getApplicationInstance().getComponent(componentId);
-        if (component == null) {
-            serviceBadRequest(conn, "Invalid component id.");
-            return;
-        }
-        SynchronizePeer synchronizePeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
-        if (!(synchronizePeer instanceof ImageRenderSupport)) {
-            serviceBadRequest(conn, "Component synchronization peer does not support image rendering.");
-            return;
-        }
-        ImageReference imageReference = (((ImageRenderSupport) synchronizePeer).getImage(component, imageId));
-*/
-        
-        //BUGBUG. experimental.
-        String imageId = conn.getRequest().getParameter("imageuuid");
-        if (imageId == null) {
-            serviceBadRequest(conn, "Image UUID not specified.");
+            serviceBadRequest(conn, "Image UID not specified.");
             return;
         }
         ImageReference imageReference = (ImageReference) containerInstance.getIdManager().getObject(imageId);
         
         if (imageReference == null) {
-            serviceBadRequest(conn, "Image id is not valid.");
+            serviceBadRequest(conn, "Image UID is not valid.");
             return;
         }
         renderImage(conn, imageReference);

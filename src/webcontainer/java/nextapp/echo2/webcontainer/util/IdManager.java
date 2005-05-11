@@ -39,6 +39,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+//BUGBUG. Doc.
+
 /**
  * 
  */
@@ -53,7 +55,6 @@ public class IdManager {
         String id = (String) objectToIdMap.get(object);
         if (id == null) {
             id = Uid.generateUidString();
-System.err.println(id + ":" + object);            
             objectToIdMap.put(object, id);
             WeakReference weakReference = new WeakReference(object, referenceQueue);
             idToObjectMap.put(id, weakReference);
@@ -81,11 +82,12 @@ System.err.println(id + ":" + object);
             referenceSet.add(reference);
             reference = referenceQueue.poll();
         }
-        Iterator keyIt = idToObjectMap.keySet().iterator();
-        while (keyIt.hasNext()) {
-            if (referenceSet.contains(keyIt.next())) {
-System.err.println("removing!");
-                keyIt.remove();
+        Iterator idIt = idToObjectMap.keySet().iterator();
+        while (idIt.hasNext()) {
+            String id = (String) idIt.next();
+            
+            if (referenceSet.contains(idToObjectMap.get(id))) {
+                idIt.remove();
             }
         }
     }

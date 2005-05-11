@@ -56,13 +56,11 @@ public class ImageTools {
         if (imageReference instanceof StreamImageReference) {
             String id = rc.getContainerInstance().getIdManager().getId(imageReference);
             return StreamImageService.INSTANCE.createUri(rc.getContainerInstance(), id);
-//            return StreamImageService.INSTANCE.createUri(rc.getContainerInstance(), component.getId(), imageId);
         } else if (imageReference instanceof HttpImageReference) {
             return ((HttpImageReference) imageReference).getUri();
         } else if (imageReference instanceof AwtImageReference) {
             String id = rc.getContainerInstance().getIdManager().getId(imageReference);
             return AwtImageService.INSTANCE.createUri(rc.getContainerInstance(), id);
-//            return AwtImageService.INSTANCE.createUri(rc.getContainerInstance(), component.getId(), imageId);
         } else {
             throw new IllegalArgumentException("Unsupported image type.");
         }

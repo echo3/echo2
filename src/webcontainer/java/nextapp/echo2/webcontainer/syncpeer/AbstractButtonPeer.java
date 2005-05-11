@@ -61,7 +61,6 @@ import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webcontainer.util.IdManager;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
