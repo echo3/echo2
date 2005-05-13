@@ -141,7 +141,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      * @return the position of the separator in pixels
      */
     private int calculateSeparatorPosition(SplitPane splitPane) {
-        return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION), 100);
+        int separatorPosition = ExtentRender.toPixels(
+                (Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION), 100);
+        return Math.abs(separatorPosition);
     }
 
     /**
@@ -158,6 +160,11 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         } else {
             return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_SIZE), 0);
         }
+    }
+    
+    //BUGBUG. doc...and maybe rename...this sounds weird.
+    private boolean calculateNegativeSeparator(SplitPane splitPane) {
+        return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION), 100) < 0;
     }
 
     /**
@@ -202,15 +209,13 @@ System.err.println(component);
         return backgroundImage.getImage();
     }
 
-//BUGBUG. replace all INPUT_blah with PROPERTY_blah except for input-only properties.
-//BUGBUG. rename input-only properties to be prefaced with input or somesuch.
     /**
      * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
      *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         if ("separatorPosition".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, SplitPane.INPUT_SEPARATOR_POSITION, 
+            ci.getUpdateManager().addClientPropertyUpdate(component, SplitPane.PROPERTY_SEPARATOR_POSITION, 
                     ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
         }
     }
@@ -292,17 +297,23 @@ System.err.println(component);
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         SplitPane splitPane = (SplitPane) component;
+        
+        String elementId = ContainerInstance.getElementId(splitPane);
+        
         Extent separatorPosition = (Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION);
         if (separatorPosition == null) {
             separatorPosition = new Extent(100, Extent.PX);
         }
 
+        DomPropertyStore.createDomPropertyStore(rc.getServerMessage(), elementId, "fixedPane", 
+                calculateNegativeSeparator(splitPane) ? "1" : "0");
+        
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(DRAG_PANE_SERVICE.getId(), true);
 
         Document document = parent.getOwnerDocument();
         Element outerDivElement = document.createElement("div");
-        outerDivElement.setAttribute("id", ContainerInstance.getElementId(splitPane));
+        outerDivElement.setAttribute("id", elementId);
 
         CssStyle outerDivStyle = new CssStyle();
         outerDivStyle.setAttribute("position", "absolute");
@@ -323,6 +334,63 @@ System.err.println(component);
         
         updateRenderState(rc, component);
     }
+    
+    private void renderCssPositionExpression(CssStyle cssStyle, String parentElementId, int position, boolean vertical) {
+        if (vertical) {
+            cssStyle.setAttribute("height", 
+                    "expression((document.getElementById('" + parentElementId + "').clientHeight-" + position + ")+'px')");
+        } else {
+            cssStyle.setAttribute("width", 
+                    "expression((document.getElementById('" + parentElementId + "').clientWidth-" + position + ")+'px')");
+        }
+
+    }
+    
+    private void renderPaneCssDimensions(RenderContext rc, SplitPane splitPane, int paneNumber, CssStyle paneDivCssStyle) {
+        int separatorPosition = calculateSeparatorPosition(splitPane);
+        int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
+        boolean renderingFixedPane = paneNumber == fixedPaneNumber;
+        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
+                .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
+        boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
+                .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
+        String elementId = ContainerInstance.getElementId(splitPane);
+        Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
+        boolean orientationVertical = (orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue()) 
+                == SplitPane.ORIENTATION_VERTICAL;
+
+        if (orientationVertical) { // Vertical Orientation
+            paneDivCssStyle.setAttribute("width", "100%");
+            if (renderingFixedPane) {
+                paneDivCssStyle.setAttribute(paneNumber == 0 ? "top" : "bottom", "0px");
+                paneDivCssStyle.setAttribute("height", separatorPosition + "px");
+            } else {
+                int separatorSize = calculateSeparatorSize(splitPane);
+                paneDivCssStyle.setAttribute(paneNumber == 0 ? "bottom" : "top", (separatorPosition + separatorSize) + "px");
+                if (renderPositioningBothSides) {
+                    paneDivCssStyle.setAttribute(paneNumber == 0 ? "top" : "bottom", "0px");
+                }
+                if (renderSizeExpression) {
+                    renderCssPositionExpression(paneDivCssStyle, elementId, separatorPosition + separatorSize, true);
+                }
+            }
+        } else { // Horizontal Orientation
+            paneDivCssStyle.setAttribute("height", "100%");
+            if (renderingFixedPane) {
+                paneDivCssStyle.setAttribute(paneNumber == 0 ? "left" : "right", "0px");
+                paneDivCssStyle.setAttribute("width", separatorPosition + "px");
+            } else {
+                int separatorSize = calculateSeparatorSize(splitPane);
+                paneDivCssStyle.setAttribute(paneNumber == 0 ? "right" : "left", (separatorPosition + separatorSize) + "px");
+                if (renderPositioningBothSides) {
+                    paneDivCssStyle.setAttribute(paneNumber == 0 ? "left" : "right", "0px");
+                }
+                if (renderSizeExpression) {
+                    renderCssPositionExpression(paneDivCssStyle, elementId, separatorPosition + separatorSize, false);
+                }
+            }
+        }
+    }
 
     /**
      * Renders a single pane container.
@@ -331,15 +399,9 @@ System.err.println(component);
      */
     private void renderPane(RenderContext rc, ServerComponentUpdate update, Element parentElement, 
             SplitPane splitPane, int paneNumber) {
-        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
-                .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
-        boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
-                .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
         Document document = parentElement.getOwnerDocument();
         Component paneComponent = splitPane.getComponent(paneNumber);
         String elementId = ContainerInstance.getElementId(splitPane);
-        
-        int separatorPosition = calculateSeparatorPosition(splitPane);
         
         Element paneDivElement = document.createElement("div");
         String paneDivElementId = elementId + "_pane_" + paneNumber;
@@ -348,44 +410,8 @@ System.err.println(component);
         paneDivCssStyle.setAttribute("overflow", "auto");
         paneDivCssStyle.setAttribute("position", "absolute");
         paneDivCssStyle.setAttribute("padding", "0px");
-        Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
-        boolean orientationVertical = (orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue()) 
-                == SplitPane.ORIENTATION_VERTICAL;
-        if (orientationVertical) {
-            if (paneNumber == 0) {
-                paneDivCssStyle.setAttribute("top", "0px");
-                paneDivCssStyle.setAttribute("height", separatorPosition + "px");
-                paneDivCssStyle.setAttribute("width", "100%");
-            } else {
-                int separatorSize = calculateSeparatorSize(splitPane);
-                paneDivCssStyle.setAttribute("top", (separatorPosition + separatorSize) + "px");
-                if (renderPositioningBothSides) {
-                    paneDivCssStyle.setAttribute("bottom", "0px");
-                }
-                paneDivCssStyle.setAttribute("width", "100%");
-                if (renderSizeExpression) {
-                    paneDivCssStyle.setAttribute("height", "expression((document.getElementById('" 
-                            + elementId + "').clientHeight-" + (separatorPosition + separatorSize) + ")+'px')");
-                }
-            }
-        } else {
-            if (paneNumber == 0) {
-                paneDivCssStyle.setAttribute("left", "0px");
-                paneDivCssStyle.setAttribute("width", separatorPosition + "px");
-                paneDivCssStyle.setAttribute("height", "100%");
-            } else {
-                int separatorSize = calculateSeparatorSize(splitPane);
-                paneDivCssStyle.setAttribute("left", (separatorPosition + separatorSize) + "px");
-                if (renderPositioningBothSides) {
-                    paneDivCssStyle.setAttribute("right", "0px");
-                }
-                if (renderSizeExpression) {
-                    paneDivCssStyle.setAttribute("width", "expression((document.getElementById('" 
-                            + elementId + "').clientWidth-" + (separatorPosition + separatorSize) + ")+'px')");
-                }
-                paneDivCssStyle.setAttribute("height", "100%");
-            }
-        }
+        
+        renderPaneCssDimensions(rc, splitPane, paneNumber, paneDivCssStyle);
         
         Element paneContentDivElement = document.createElement("div");
         paneContentDivElement.setAttribute("id", elementId + "_panecontent_" + paneNumber);
@@ -459,6 +485,7 @@ System.err.println(component);
         Element separatorDivElement = document.createElement("div");
         separatorDivElement.setAttribute("id", separatorElementId);
         int separatorPosition = calculateSeparatorPosition(splitPane);
+        int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
         
         CssStyle separatorDivCssStyle = new CssStyle();
         // font-size/line-height styles correct for IE minimum DIV height rendering issue.
@@ -472,7 +499,11 @@ System.err.println(component);
         Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
         int orientation = orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue();
         if (orientation == SplitPane.ORIENTATION_VERTICAL) {
-            separatorDivCssStyle.setAttribute("top", separatorPosition + "px");
+            if (fixedPaneNumber == 0) {
+                separatorDivCssStyle.setAttribute("top", separatorPosition + "px");
+            } else {
+                separatorDivCssStyle.setAttribute("bottom", separatorPosition + "px");
+            }
             separatorDivCssStyle.setAttribute("width", "100%");
             if (separatorSize == 0) {
                 separatorDivCssStyle.setAttribute("visibility", "hidden");
@@ -484,7 +515,11 @@ System.err.println(component);
                 separatorDivCssStyle.setAttribute("cursor", "s-resize");
             }
         } else {
-            separatorDivCssStyle.setAttribute("left", separatorPosition + "px");
+            if (fixedPaneNumber == 0) {
+                separatorDivCssStyle.setAttribute("left", separatorPosition + "px");
+            } else {
+                separatorDivCssStyle.setAttribute("right", separatorPosition + "px");
+            }
             if (separatorSize == 0) {
                 separatorDivCssStyle.setAttribute("visibility", "hidden");
                 separatorDivCssStyle.setAttribute("width", "1px");

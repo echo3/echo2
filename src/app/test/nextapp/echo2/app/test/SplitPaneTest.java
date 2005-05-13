@@ -59,7 +59,7 @@ public class SplitPaneTest extends TestCase {
         splitPane.add(new Label("one label"));
         splitPane.add(new Label("one more label"));
         splitPane.setSeparatorPosition(new Extent(80));
-        splitPane.processInput(SplitPane.INPUT_SEPARATOR_POSITION, new Extent(212));
+        splitPane.processInput(SplitPane.PROPERTY_SEPARATOR_POSITION, new Extent(212));
         assertEquals(new Extent(212), splitPane.getSeparatorPosition());
     }
     

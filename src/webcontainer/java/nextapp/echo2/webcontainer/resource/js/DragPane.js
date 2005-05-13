@@ -27,6 +27,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+//BUGBUG. Ensure we are calculating/setting separator size and not just using default (4px)
+
 // ___________________
 // Object EchoDragPane
 
@@ -39,6 +41,7 @@ EchoDragPane = function() { };
 
 EchoDragPane.DEFAULT_MINIMUM_SIZE = 80;
 EchoDragPane.verticalDrag = false;
+EchoDragPane.fixedPane = 0;
 EchoDragPane.initialWindowPosition = -1;
 EchoDragPane.mouseOffset = -1;
 EchoDragPane.activePaneId = null;
@@ -61,6 +64,9 @@ EchoDragPane.mouseDown = function(echoEvent) {
     var mouseDownElement = echoEvent.target;
     if (mouseDownElement != EchoDragPane.separatorElement) {
         EchoDragPane.activePaneSeparatorDiv = mouseDownElement;
+
+        EchoDragPane.negativePosition = EchoDomPropertyStore.getPropertyValue(
+                EchoDragPane.activePaneId, "fixedPane") == "1" ? 1 : 0;
         EchoDragPane.verticalDrag = EchoDragPane.activePaneSeparatorDiv.style.cursor == "s-resize";
         EchoDragPane.activePaneId = mouseDownElement.parentNode.getAttribute("id");
         EchoDragPane.activePaneDiv = document.getElementById(EchoDragPane.activePaneId);
@@ -152,32 +158,66 @@ EchoDragPane.mouseMove = function(e) {
         newSeparatorBegin = EchoDragPane.constrainSeparatorPosition(newSeparatorBegin, EchoDragPane.activePaneDiv.clientHeight);
         newSeparatorEnd = newSeparatorBegin + 4;
 
-        EchoDragPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
-        if (EchoDragPane.activePane0Div) {
-            EchoDragPane.activePane0Div.style.height = newSeparatorBegin + "px";
-        }
-        if (EchoDragPane.activePane1Div) {
-            EchoDragPane.activePane1Div.style.top = newSeparatorEnd + "px";
-            if (EchoDragPane.activePane1Div.style.setExpression) {
-                EchoDragPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
-                        + EchoDragPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
+        if (EchoDragPane.fixedPane == 1) {
+//BUGBUG.        
+/*        
+            EchoDragPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
+            if (EchoDragPane.activePane1Div) {
+                EchoDragPane.activePane1Div.style.height = newSeparatorBegin + "px";
             }
+            if (EchoDragPane.activePane0Div) {
+                EchoDragPane.activePane0Div.style.bottom = newSeparatorEnd + "px";
+                if (EchoDragPane.activePane0Div.style.setExpression) {
+                    EchoDragPane.activePane0Div.style.setExpression("height", "(document.getElementById('" 
+                            + EchoDragPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
+                }
+            }
+*/            
+        } else {
+	        EchoDragPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
+	        if (EchoDragPane.activePane0Div) {
+	            EchoDragPane.activePane0Div.style.height = newSeparatorBegin + "px";
+	        }
+	        if (EchoDragPane.activePane1Div) {
+	            EchoDragPane.activePane1Div.style.top = newSeparatorEnd + "px";
+	            if (EchoDragPane.activePane1Div.style.setExpression) {
+	                EchoDragPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
+	                        + EchoDragPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
+	            }
+	        }
         }
     } else {
         newSeparatorBegin = (EchoDragPane.initialWindowPosition + e.clientX - EchoDragPane.mouseOffset);
         newSeparatorBegin = EchoDragPane.constrainSeparatorPosition(newSeparatorBegin, EchoDragPane.activePaneDiv.clientWidth);
         newSeparatorEnd = newSeparatorBegin + 4;
 
-        EchoDragPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
-        if (EchoDragPane.activePane0Div) {
-            EchoDragPane.activePane0Div.style.width = newSeparatorBegin + "px";
-        }
-        if (EchoDragPane.activePane1Div) {
-            EchoDragPane.activePane1Div.style.left = newSeparatorEnd + "px";
-            if (EchoDragPane.activePane1Div.style.setExpression) {
-                EchoDragPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
-                        + EchoDragPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
+        if (EchoDragPane.fixedPane == 1) {
+//BUGBUG.        
+/*        
+            EchoDragPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
+            if (EchoDragPane.activePane1Div) {
+                EchoDragPane.activePane1Div.style.width = newSeparatorBegin + "px";
             }
+            if (EchoDragPane.activePane0Div) {
+                EchoDragPane.activePane0Div.style.right = newSeparatorEnd + "px";
+                if (EchoDragPane.activePane0Div.style.setExpression) {
+                    EchoDragPane.activePane0Div.style.setExpression("width", "(document.getElementById('" 
+                            + EchoDragPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
+                }
+            }
+*/            
+        } else {
+	        EchoDragPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
+	        if (EchoDragPane.activePane0Div) {
+	            EchoDragPane.activePane0Div.style.width = newSeparatorBegin + "px";
+	        }
+	        if (EchoDragPane.activePane1Div) {
+	            EchoDragPane.activePane1Div.style.left = newSeparatorEnd + "px";
+	            if (EchoDragPane.activePane1Div.style.setExpression) {
+	                EchoDragPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
+	                        + EchoDragPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
+	            }
+	        }
         }
     }
 };

@@ -51,9 +51,10 @@ import java.util.WeakHashMap;
 public class IdTable 
 implements Serializable {
     
-    private Map objectToIdMap = new WeakHashMap();
-    private HashMap idToReferenceMap = new HashMap();
-    //BUGBUG. Serialization.
+    //BUGBUG. This object needs a fully custom serialization/deserialization strategy such that weak refs will be held.
+
+    private transient Map objectToIdMap = new WeakHashMap();
+    private transient HashMap idToReferenceMap = new HashMap();
     private transient ReferenceQueue referenceQueue = new ReferenceQueue();
     
     /**
