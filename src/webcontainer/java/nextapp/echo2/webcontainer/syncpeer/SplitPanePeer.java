@@ -215,8 +215,13 @@ System.err.println(component);
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         if ("separatorPosition".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, SplitPane.PROPERTY_SEPARATOR_POSITION, 
-                    ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            Extent oldValue = (Extent) component.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION);
+            Extent newValue = ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)); 
+            if (oldValue != null && oldValue.getValue() < 0) {
+                // If sign of old value is negative, adjust sign of new value to be negative as well.
+                newValue = new Extent(0 - newValue.getValue(), newValue.getUnits()); 
+            }
+            ci.getUpdateManager().addClientPropertyUpdate(component, SplitPane.PROPERTY_SEPARATOR_POSITION, newValue);
         }
     }
 
