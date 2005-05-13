@@ -116,11 +116,11 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service DRAG_PANE_SERVICE = JavaScriptService.forResource("Echo.DragPane",
-            "/nextapp/echo2/webcontainer/resource/js/DragPane.js");
+    public static final Service SPLIT_PANE_SERVICE = JavaScriptService.forResource("Echo.SplitPane",
+            "/nextapp/echo2/webcontainer/resource/js/SplitPane.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(DRAG_PANE_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(SPLIT_PANE_SERVICE);
     }
     
     private PropertyRenderRegistry propertyRenderRegistry;
@@ -314,7 +314,7 @@ System.err.println(component);
                 calculateNegativeSeparator(splitPane) ? "1" : "0");
         
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(DRAG_PANE_SERVICE.getId(), true);
+        serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId(), true);
 
         Document document = parent.getOwnerDocument();
         Element outerDivElement = document.createElement("div");
@@ -484,7 +484,7 @@ System.err.println(component);
         String separatorElementId = ContainerInstance.getElementId(splitPane) + "_separator";
         
         if (resizable) {
-            EventUpdate.createEventAdd(rc.getServerMessage(), "mousedown", separatorElementId, "EchoDragPane.mouseDown");
+            EventUpdate.createEventAdd(rc.getServerMessage(), "mousedown", separatorElementId, "EchoSplitPane.mouseDown");
         }
 
         Element separatorDivElement = document.createElement("div");
