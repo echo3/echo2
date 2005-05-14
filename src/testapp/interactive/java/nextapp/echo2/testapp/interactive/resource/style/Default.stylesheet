@@ -130,7 +130,14 @@
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="background" value="#4f4f6f"/>
-      <property name="insets" value="5px"/>
+      <property name="backgroundImage">
+       <fillimage repeat="none">
+        <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackground.png"/>
+        </image>
+       </fillimage>
+      </property>
+      <property name="insets" value="10px 7px"/>
       <property name="minimumSize" value="200px"/>
       <property name="maximumSize" value="300px"/>
      </properties>
@@ -144,7 +151,14 @@
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="background" value="#afafef"/>
-      <property name="insets" value="5px"/>
+      <property name="backgroundImage">
+       <fillimage repeat="none">
+        <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackground.png"/>
+        </image>
+       </fillimage>
+      </property>
+      <property name="insets" value="10px 7px"/>
       <property name="minimumSize" value="200px"/>
       <property name="maximumSize" value="300px"/>
      </properties>
