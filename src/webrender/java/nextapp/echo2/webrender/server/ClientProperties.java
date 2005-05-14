@@ -47,10 +47,21 @@ public class ClientProperties {
      * <p>
      * This quirk occurs with:
      * <ul>
-     *  <li>Internet Explorer Win32</li>
+     *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
      */
     public static final String QUIRK_CSS_BORDER_COLLAPSE_MARGIN = "quirkCssBorderCollapse1";
+    
+    /**
+     * A quirk flag indicating that the 'fixed' attribute should be used to
+     * for fixed-to-element background attachment.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED = "quirkCssBackgroundAttachmentUseFixed";
     
     /**
      * A quirk flag indicating whether the client has poor perforamnce when

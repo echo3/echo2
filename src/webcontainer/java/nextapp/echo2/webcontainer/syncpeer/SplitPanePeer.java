@@ -50,6 +50,7 @@ import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
@@ -179,7 +180,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
      */
     public ImageReference getImage(Component component, String imageId) {
-System.err.println(component);        
         if (IMAGE_ID_PANE_0_BACKGROUND.equals(imageId)) {
             return getPaneBackgroundImage(component);
         } else if (IMAGE_ID_PANE_1_BACKGROUND.equals(imageId)) {
@@ -441,12 +441,9 @@ System.err.println(component);
                         ColorRender.renderCssAttributeValue(splitPaneLayoutData.getBackground()));
             }
             if (splitPaneLayoutData.getBackgroundImage() != null) {
-//BUGBUG. bgimage stuff is very broken.                
-/*                
-                BackgroundImageRender.renderToStyle(paneDivCssStyle, rc, this, paneComponent, 
+                FillImageRender.renderToStyle(paneDivCssStyle, rc, this, paneComponent, 
                         paneNumber == 0 ? IMAGE_ID_PANE_0_BACKGROUND : IMAGE_ID_PANE_1_BACKGROUND, 
                         splitPaneLayoutData.getBackgroundImage(), false);
-*/                        
             }
             switch (splitPaneLayoutData.getOverflow()) {
             case SplitPaneLayoutData.OVERFLOW_AUTO:

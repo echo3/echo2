@@ -61,6 +61,7 @@ public class FillImageRender {
      */
     public static void renderToStyle(CssStyle cssStyle, RenderContext rc, ImageRenderSupport irs, 
             Component component, String imageId, FillImage fillImage, boolean disableFixedMode) {
+        
         if (fillImage == null) {
             return;
         }
@@ -75,9 +76,16 @@ public class FillImageRender {
             cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
         }
         
-        if (!disableFixedMode && fillImage.getAttachment() == FillImage.ATTACHMENT_FIXED) {
+//BUGBUG. actually, this is still necessary for IE text field backgrounds.        
+//        if (!disableFixedMode && fillImage.getAttachment() == FillImage.ATTACHMENT_FIXED) {
+//            cssStyle.setAttribute("background-attachment", "fixed");
+//        }
+        
+        if (rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED)) {
             cssStyle.setAttribute("background-attachment", "fixed");
         }
+        
         switch (fillImage.getRepeat()) {
         case FillImage.NO_REPEAT:
             cssStyle.setAttribute("background-repeat", "no-repeat");
