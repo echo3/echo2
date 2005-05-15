@@ -32,12 +32,13 @@ package nextapp.echo2.testapp.interactive.testscreen;
 import java.util.Arrays;
 
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Column;
-import nextapp.echo2.app.layout.ColumnLayoutData;
+import nextapp.echo2.app.Table;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.app.table.DefaultTableModel;
+import nextapp.echo2.app.table.TableCellRenderer;
 import nextapp.echo2.webcontainer.ContainerContext;
 import nextapp.echo2.webrender.server.ClientProperties;
 
@@ -48,12 +49,26 @@ import nextapp.echo2.webrender.server.ClientProperties;
  * Note that this object has a dependency on the Web Application Container 
  * and Web Renderer.
  */
-public class ClientPropertiesTest extends Column {
+public class ClientPropertiesTest extends Table {
     
-    //BUGBUG. Use table when available.
-    
+    private class PropertyTableCellRenderer 
+    implements TableCellRenderer {
+
+        /**
+         * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table, 
+         *      java.lang.Object, int, int)
+         */
+        public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+            Label label = new Label(value.toString());
+            label.setStyleName(row % 2 == 0 ? "evenCellLabel" : "oddCellLabel");
+            return label;
+        }
+    }
+
     public ClientPropertiesTest() {
         super();
+        
+        setStyleName("default");
         
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(10));
@@ -65,13 +80,16 @@ public class ClientPropertiesTest extends Column {
         ClientProperties clientProperties = containerContext.getClientProperties();
         String[] propertyNames = clientProperties.getPropertyNames();
         Arrays.sort(propertyNames);
-        ColumnLayoutData[] columnLayoutDatas = new ColumnLayoutData[]{ new ColumnLayoutData(), new ColumnLayoutData() };
-        columnLayoutDatas[0].setBackground(new Color(0xafffaf));
-        columnLayoutDatas[1].setBackground(new Color(0xffffaf));
+        
+        DefaultTableModel model = (DefaultTableModel) getModel();
+        model.setColumnCount(2);
         for (int i = 0; i < propertyNames.length; ++i) {
-            Label label = new Label(propertyNames[i] + " = " + clientProperties.getString(propertyNames[i]));
-            label.setLayoutData(columnLayoutDatas[i % columnLayoutDatas.length]);
-            add(label);
+            model.insertRow(0, new Object[]{propertyNames[i], clientProperties.getString(propertyNames[i])});
         }
+        
+        setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
+        
+        getColumnModel().getColumn(0).setHeaderValue("Property");
+        getColumnModel().getColumn(1).setHeaderValue("Value");
     }
 }

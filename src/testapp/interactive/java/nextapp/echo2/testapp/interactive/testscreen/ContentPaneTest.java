@@ -29,17 +29,15 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
-import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
+import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * 
@@ -53,14 +51,16 @@ public class ContentPaneTest extends SplitPane {
         final ContentPane contentPane = InteractiveApp.getApp().getMainWindow().getContent();
         
         ButtonColumn controlsColumn = new ButtonColumn();
-        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
-        splitPaneLayoutData.setBackground(new Color(0xafafef));
-        splitPaneLayoutData.setInsets(new Insets(5));
-        splitPaneLayoutData.setMinimumSize(new Extent(200));
-        splitPaneLayoutData.setMaximumSize(new Extent(300));
-        controlsColumn.setLayoutData(splitPaneLayoutData);
+        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
         add(controlsColumn);
 
+        controlsColumn.addButton("Reset", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                contentPane.setBackground(null);
+                contentPane.setForeground(null);
+                contentPane.setFont(null);
+            }
+        });
         controlsColumn.addButton("Change Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 contentPane.setBackground(StyleUtil.randomColor());
@@ -69,6 +69,11 @@ public class ContentPaneTest extends SplitPane {
         controlsColumn.addButton("Change Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 contentPane.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Change Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                contentPane.setFont(StyleUtil.randomFont());
             }
         });
     }

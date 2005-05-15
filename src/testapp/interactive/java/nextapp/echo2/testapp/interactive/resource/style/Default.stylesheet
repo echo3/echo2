@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
+ <style name="default" type="nextapp.echo2.app.Table">
+  <properties>
+   <property name="insets" value="5px 2px"/>
+   <property name="border">
+    <border size="2px" style="groove" color="#afffaf"/>
+   </property>
+  </properties>
+ </style>
+ <style name="evenCellLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
+     <properties>
+      <property name="background" value="#afffaf"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="oddCellLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
+     <properties>
+      <property name="background" value="#ffffaf"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
  <style name="default" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
    <property name="background" value="#4f4f5f"/>

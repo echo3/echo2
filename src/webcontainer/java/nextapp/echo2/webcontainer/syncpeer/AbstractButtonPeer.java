@@ -81,6 +81,8 @@ import org.w3c.dom.Text;
  */
 public class AbstractButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
+    
+    //BUGBUG. support rollover and pressed properties where base property value is null (currently renders wrong).
 
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Alignment DEFAULT_STATE_POSITION = new Alignment(Alignment.LEADING, Alignment.DEFAULT);
