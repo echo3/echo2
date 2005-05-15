@@ -213,6 +213,9 @@ implements DomUpdateSupport, SynchronizePeer {
                         tdCssStyle.setAttribute("padding", InsetsRender.renderCssAttributeValue(cellInsets));
                     }
                     ColorRender.renderToStyle(tdCssStyle, null, layoutData.getBackground());
+                    if (!layoutData.isLineWrap()) {
+                        tdCssStyle.setAttribute("white-space", "nowrap");
+                    }
                 }
                 tdElement.setAttribute("style", tdCssStyle.renderInline());
                 
