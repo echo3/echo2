@@ -77,7 +77,7 @@ public class Column extends Component {
      * 
      * @param newValue the new border
      */
-   public void setBorder(Border newValue) {
+    public void setBorder(Border newValue) {
         setProperty(PROPERTY_BORDER, newValue);
     }
     

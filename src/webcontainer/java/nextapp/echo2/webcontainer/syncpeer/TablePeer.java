@@ -47,6 +47,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
+import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -194,18 +195,7 @@ implements DomUpdateSupport, SynchronizePeer {
             
             CssStyle tdCssStyle = new CssStyle();
             BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
-            TableCellLayoutData layoutData = getLayoutData(childComponent);
-            if (layoutData == null) {
-                tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
-            } else {
-                Insets cellInsets = layoutData.getInsets();
-                if (cellInsets == null) {
-                    tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
-                } else {
-                    tdCssStyle.setAttribute("padding", InsetsRender.renderCssAttributeValue(cellInsets));
-                }
-                ColorRender.renderToStyle(tdCssStyle, null, layoutData.getBackground());
-            }
+            CellLayoutDataRender.renderToStyle(tdCssStyle, getLayoutData(childComponent), defaultInsetsAttributeValue);
             tdElement.setAttribute("style", tdCssStyle.renderInline());
             
             trElement.appendChild(tdElement);

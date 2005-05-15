@@ -49,6 +49,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
+import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -181,7 +182,6 @@ implements DomUpdateSupport, SynchronizePeer {
                     //BUGBUG. breaking out here is a TEMPORARY solution..this cause major breakage for stuff like RTL tables.
                     break;
                 }
-                GridCellLayoutData layoutData = getLayoutData(cell);
                 if (renderedCells.contains(cell)) {
                     // Cell already rendered.
                     continue;
@@ -203,20 +203,7 @@ implements DomUpdateSupport, SynchronizePeer {
             
                 CssStyle tdCssStyle = new CssStyle();
                 BorderRender.renderToStyle(tdCssStyle, (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER));
-                if (layoutData == null) {
-                    tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
-                } else {
-                    Insets cellInsets = layoutData.getInsets();
-                    if (cellInsets == null) {
-                        tdCssStyle.setAttribute("padding", defaultInsetsAttributeValue);
-                    } else {
-                        tdCssStyle.setAttribute("padding", InsetsRender.renderCssAttributeValue(cellInsets));
-                    }
-                    ColorRender.renderToStyle(tdCssStyle, null, layoutData.getBackground());
-                    if (!layoutData.isLineWrap()) {
-                        tdCssStyle.setAttribute("white-space", "nowrap");
-                    }
-                }
+                CellLayoutDataRender.renderToStyle(tdCssStyle, getLayoutData(cell), defaultInsetsAttributeValue);
                 tdElement.setAttribute("style", tdCssStyle.renderInline());
                 
                 renderAddChild(rc, update, tdElement, cell);

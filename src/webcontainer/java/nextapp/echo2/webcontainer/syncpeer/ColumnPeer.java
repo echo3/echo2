@@ -39,6 +39,7 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.layout.CellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -49,6 +50,7 @@ import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
+import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -120,6 +122,22 @@ implements DomUpdateSupport, SynchronizePeer {
         return ContainerInstance.getElementId(child.getParent()) + "_cell_" + ContainerInstance.getElementId(child);
     }
     
+    /**
+     * Returns the <code>CellLayoutData</code> of the given child,
+     * or null if it does not provide <code>CellLayoutData</code>.
+     * 
+     * @param child the child component
+     * @return the layout data
+     */
+    private CellLayoutData getLayoutData(Component child) {
+        LayoutData layoutData = (LayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
+        if (layoutData instanceof CellLayoutData) {
+            return (CellLayoutData) layoutData;
+        } else {
+            return null;
+        }
+    }
+
     /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
@@ -210,19 +228,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         // Configure cell style.
         CssStyle cssStyle = new CssStyle();
-        if (child.getLayoutData() instanceof CellLayoutData) {
-            CellLayoutData cellLayoutData = (CellLayoutData) child.getLayoutData();
-            if (cellLayoutData.getBackground() != null) {
-                ColorRender.renderToStyle(cssStyle, null, cellLayoutData.getBackground());
-            }
-            if (cellLayoutData.getInsets() == null) {
-                cssStyle.setAttribute("padding", "0px");
-            } else {
-                InsetsRender.renderToStyle(cssStyle, "padding", cellLayoutData.getInsets());
-            }
-        } else {
-            cssStyle.setAttribute("padding", "0px");
-        }
+        CellLayoutDataRender.renderToStyle(cssStyle, getLayoutData(child), "0px");
         divElement.setAttribute("style", cssStyle.renderInline());
         
         containerElement.appendChild(divElement);
