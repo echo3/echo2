@@ -27,20 +27,33 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app.event;
+package nextapp.echo2.app.test;
 
-import java.util.EventListener;
+import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.HttpImageReference;
+import junit.framework.TestCase;
 
 /**
- * The listener interface for receiving notifications of changes to a 
- * <code>TableModel</code>.
+ * Unit test(s) for the <code>nextapp.echo2.app.HttpImageReference</code> property 
+ * value object.
  */
-public interface TableModelListener extends EventListener {
+public class HttpImageReferenceTest extends TestCase {
+
+    private static final HttpImageReference image1 = new HttpImageReference("http://www.nextapp.com/home/images/logo.png", 
+            new Extent(50), new Extent(40));
+    private static final HttpImageReference image1Copy = new HttpImageReference("http://www.nextapp.com/home/images/logo.png", 
+            new Extent(50), new Extent(40));
+    private static final HttpImageReference image2 = 
+            new HttpImageReference("http://www.nextapp.com/home/images/nav_contact_rollover.png", 
+            new Extent(50), new Extent(40));
     
     /**
-     * Invoked when a table is changed.
-     *
-     * @param e an event describing the change
+     * Test equality.
      */
-    public void tableChanged(TableModelEvent e);
+    public void testEquals() {
+        assertTrue(image1.equals(image1Copy));
+        assertFalse(image1.equals(image2));
+        assertFalse(image1.equals(new Object()));
+        assertFalse(image1.equals(null));
+    }
 }

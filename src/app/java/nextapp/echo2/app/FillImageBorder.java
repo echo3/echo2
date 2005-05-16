@@ -26,6 +26,7 @@
  */
 
 //BUGBUG. Doc more, expalin how these are used.
+//BUGBUG. needs a unit test.
 
 package nextapp.echo2.app;
 
@@ -58,6 +59,13 @@ public class FillImageBorder {
     /**
      * Creates a new <code>FillImageBorder</code> with the specified color,
      * border inset, and content inset.
+     *
+     * @param color the solid color background of the border
+     * @param borderInsets the border inset
+     * @param contentInsets the content inset
+     * @see #setBorderInsets(nextapp.echo2.app.Insets)
+     * @see #setContentInsets(nextapp.echo2.app.Insets)
+     * @see #setColor(nextapp.echo2.app.Color)
      */
     public FillImageBorder(Color color, Insets borderInsets, Insets contentInsets) {
         super();
@@ -103,7 +111,7 @@ public class FillImageBorder {
     /**
      * Returns the content inset.
      * 
-     * @see #setBorderInset(nextapp.echo2.app.Insets)
+     * @see #setBorderInsets(nextapp.echo2.app.Insets)
      * @return the border inset
      */
     public Insets getBorderInsets() {
@@ -123,7 +131,7 @@ public class FillImageBorder {
     /**
      * Sets the content inset.
      * 
-     * @see #setContentInset(nextapp.echo2.app.Insets)
+     * @see #setContentInsets(nextapp.echo2.app.Insets)
      * @return the content inset
      */
     public Insets getContentInsets() {

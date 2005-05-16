@@ -27,20 +27,32 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app.event;
+package nextapp.echo2.app.test;
 
-import java.util.EventListener;
+import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.ResourceImageReference;
+import junit.framework.TestCase;
 
 /**
- * The listener interface for receiving notifications of changes to a 
- * <code>TableModel</code>.
+ * Unit test(s) for the <code>nextapp.echo2.app.ResourceImageReference</code> property 
+ * value object.
  */
-public interface TableModelListener extends EventListener {
+public class ResourceImageReferenceTest extends TestCase {
+
+    private static final ResourceImageReference image1 = new ResourceImageReference("image1.png", "image/png", 
+            new Extent(50), new Extent(40));
+    private static final ResourceImageReference image1Copy = new ResourceImageReference("image1.png", "image/png", 
+            new Extent(50), new Extent(40));
+    private static final ResourceImageReference image2 = new ResourceImageReference("image2.png", "image/png", 
+            new Extent(50), new Extent(40));
     
     /**
-     * Invoked when a table is changed.
-     *
-     * @param e an event describing the change
+     * Test equality.
      */
-    public void tableChanged(TableModelEvent e);
+    public void testEquals() {
+        assertTrue(image1.equals(image1Copy));
+        assertFalse(image1.equals(image2));
+        assertFalse(image1.equals(new Object()));
+        assertFalse(image1.equals(null));
+    }
 }

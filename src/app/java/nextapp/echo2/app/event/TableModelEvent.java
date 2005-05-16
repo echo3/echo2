@@ -34,10 +34,6 @@ import nextapp.echo2.app.table.TableModel;
 
 /**
  * An event describing a change to a <code>TableModel</code>.
- *
- * @see nextapp.echo.Table
- * @see nextapp.echo.event.TableModelListener
- * @see nextapp.echo.table.TableModel
  */
 public class TableModelEvent extends EventObject {
 

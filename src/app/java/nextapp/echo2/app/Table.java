@@ -47,7 +47,7 @@ import nextapp.echo2.app.table.TableModel;
 /**
  * A component used to display data in a tabular format.
  *
- * @see nextapp.echo.table
+ * @see nextapp.echo2.app.table
  */
 public class Table extends Component {
 
@@ -143,7 +143,7 @@ public class Table extends Component {
      * Creates a <code>Table</code> using the supplied 
      * <code>TableModel</code>.
      *
-     * @param modelthe initial model
+     * @param model the initial model
      */
     public Table(TableModel model) {
         this(model, null);
@@ -153,7 +153,8 @@ public class Table extends Component {
      * Creates a <code>Table</code> with the supplied 
      * <code>TableModel</code> and the specified <code>TableColumnModel</code>.
      *
-     * @param modelthe initial model
+     * @param model the initial model
+     * @param columnModel the initial column model
      */
     public Table(TableModel model, TableColumnModel columnModel) {
         super();
