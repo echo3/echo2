@@ -57,6 +57,7 @@ import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.output.CssStyle;
+
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Column</code> components.
  */

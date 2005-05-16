@@ -221,7 +221,8 @@ extends SplitPane {
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);
         
-        controlsColumn.add(new Label("Test Controls"));
+        controlsColumn.add(new Label("General Settings"));
+        
         controlsColumn.addButton("Toggle Container Cell Spacing", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testGrid.getInsets() != null && testGrid.getInsets().getTop().equals(new Extent(5))) {
@@ -267,6 +268,24 @@ extends SplitPane {
                         if (button instanceof ToggleButton) {
                             ((ToggleButton) button).removeChangeListener(changeListener);
                         }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set StyleName = Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setStyleName(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set StyleName = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
                     }
                 });
             }
@@ -355,6 +374,12 @@ extends SplitPane {
         });
 
         // Rollover Effect Settings
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Rollover Effects"));
+
         controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -369,6 +394,28 @@ extends SplitPane {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
                         button.setRolloverEnabled(false);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Rollover Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getIcon() != null) {
+                            button.setRolloverIcon(Styles.ROLLOVER_ICON_LOGO);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getIcon() != null) {
+                            button.setRolloverIcon(null);
+                        }
                     }
                 });
             }
@@ -450,6 +497,12 @@ extends SplitPane {
         });
         
         // Pressed Effect Settings
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Pressed Effects"));
+
         controlsColumn.addButton("Enable Pressed Effects", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -464,6 +517,28 @@ extends SplitPane {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
                         button.setPressedEnabled(false);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Pressed Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getIcon() != null) {
+                            button.setPressedIcon(Styles.ROLLOVER_ICON_LOGO);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Pressed Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getIcon() != null) {
+                            button.setPressedIcon(null);
+                        }
                     }
                 });
             }
@@ -544,27 +619,13 @@ extends SplitPane {
             }
         });
         
-        // Style
-        controlsColumn.addButton("Set StyleName = Null", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                apply(new Applicator() {
-                    public void apply(AbstractButton button) {
-                        button.setStyleName(null);
-                    }
-                });
-            }
-        });
-        controlsColumn.addButton("Set StyleName = Default", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                apply(new Applicator() {
-                    public void apply(AbstractButton button) {
-                        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
-                    }
-                });
-            }
-        });
+        // Text Position
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
         
-        // TextPosition
+        controlsColumn.add(new Label("Text Position"));
+
         controlsColumn.addButton("TextPosition = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -612,6 +673,12 @@ extends SplitPane {
         });
         
         // Text Alignment
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Text Alignment"));
+
         controlsColumn.addButton("TextAlignment = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -677,6 +744,12 @@ extends SplitPane {
         });
         
         // Icon/Text Margin
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Icon/Text Margin"));
+
         controlsColumn.addButton("IconTextMargin = default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -719,7 +792,7 @@ extends SplitPane {
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);
         
-        controlsColumn.add(new Label("ToggleButton Controls"));
+        controlsColumn.add(new Label("General ToggleButton Controls"));
         
         controlsColumn.addButton("Selected = False", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -743,6 +816,14 @@ extends SplitPane {
                 });
             }
         });
+
+        // ToggleButton State Position
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("ToggleButton State Alignment"));
+        
         controlsColumn.addButton("StatePosition = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -798,6 +879,14 @@ extends SplitPane {
                 });
             }
         });
+        
+        // ToggleButton State Alignment
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("ToggleButton State Alignment"));
+        
         controlsColumn.addButton("StateAlignment = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {

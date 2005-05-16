@@ -39,6 +39,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.Table;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
@@ -86,6 +87,9 @@ public class TableTest extends SplitPane {
         add(groupContainerColumn);
         
         Column testColumn = new Column();
+        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
+        splitPaneLayoutData.setInsets(new Insets(10, 5));
+        testColumn.setLayoutData(splitPaneLayoutData);
         add(testColumn);
 
         ButtonColumn controlsColumn;
@@ -163,6 +167,36 @@ public class TableTest extends SplitPane {
         controlsColumn.addButton("Set Insets 10/20/30/40px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testTable.setInsets(new Insets(10, 20, 30, 40));
+            }
+        });
+        controlsColumn.addButton("Set Width = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setWidth(null);
+            }
+        });
+        controlsColumn.addButton("Set Width = 500px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setWidth(new Extent(500));
+            }
+        });
+        controlsColumn.addButton("Set Width = 100%", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setWidth(new Extent(100, Extent.PERCENT));
+            }
+        });
+        controlsColumn.addButton("Set Height = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setHeight(null);
+            }
+        });
+        controlsColumn.addButton("Set Height = 500px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setHeight(new Extent(500));
+            }
+        });
+        controlsColumn.addButton("Set Height = 100%", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setHeight(new Extent(100, Extent.PERCENT));
             }
         });
     }

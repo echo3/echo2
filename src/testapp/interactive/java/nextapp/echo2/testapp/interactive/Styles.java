@@ -55,6 +55,10 @@ public class Styles {
             IMAGE_PATH + "ButtonRolloverBackground.png"));
     
     public static final ResourceImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
+    public static final ResourceImageReference ROLLOVER_ICON_LOGO 
+            = new ResourceImageReference(IMAGE_PATH + "NextAppLogoRollover.png");
+    public static final ResourceImageReference PRESSED_ICON_LOGO 
+            = new ResourceImageReference(IMAGE_PATH + "NextAppLogoPressed.png");
 
     public static final String APPLICATION_CONTROLS_COLUMN_STYLE_NAME = "applicationControlsColumn";
     public static final String DEFAULT_STYLE_NAME = "default";
