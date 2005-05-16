@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * state indicators).  This class supports all possible permutations for
  * placement of each of the two or three contained components.
  */
-public class TriCellTable {
+class TriCellTable {
 
     static final int INVERTED = 1;
     static final int VERTICAL = 2;
@@ -360,7 +360,7 @@ public class TriCellTable {
      * @param name The name of the attribute.
      * @param value The value of the attribute.
      */
-    public void addGlobalAttribute(String name, String value) {
+    void addGlobalAttribute(String name, String value) {
         for (int index = 0; index < tdElements.length; ++index) {
             tdElements[index].setAttribute(name, value);
         }

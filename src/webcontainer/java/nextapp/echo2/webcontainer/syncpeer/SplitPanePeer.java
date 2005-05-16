@@ -29,10 +29,12 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.SplitPane;
@@ -51,6 +53,7 @@ import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
+import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
@@ -325,6 +328,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         outerDivStyle.setAttribute("padding", "0px");
         outerDivStyle.setAttribute("width", "100%");
         outerDivStyle.setAttribute("height", "100%");
+        ColorRender.renderToStyle(outerDivStyle, (Color) splitPane.getRenderProperty(ContentPane.PROPERTY_FOREGROUND),
+                (Color) splitPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND));
+        FontRender.renderToStyle(outerDivStyle, (Font) splitPane.getRenderProperty(ContentPane.PROPERTY_FONT));
         outerDivElement.setAttribute("style", outerDivStyle.renderInline());
 
         parent.appendChild(outerDivElement);
