@@ -432,7 +432,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * contains the button's icon.
      * 
      * @param tct the <code>TriCellTable</code> to update
-     * @param textNode the text
+     * @param iconElement the icon element
      * @param cellIndex the index of the cell in the <code>TriCellTable</code>
      *        that should contain the icon
      */
@@ -447,7 +447,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * contains the button's state icon.
      * 
      * @param tct the <code>TriCellTable</code> to update
-     * @param textNode the text
+     * @param stateIconElement the state icon element
      * @param cellIndex the index of the cell in the <code>TriCellTable</code>
      *        that should contain the state icon
      * @param button the <code>AbstractButton</code> being rendered

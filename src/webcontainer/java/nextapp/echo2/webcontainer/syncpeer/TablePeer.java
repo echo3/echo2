@@ -174,11 +174,11 @@ implements DomUpdateSupport, SynchronizePeer {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> being processed
-     * @param tbodyElemetn the <code>tbody</code> element to which to append 
+     * @param tbodyElement the <code>tbody</code> element to which to append 
      *        the rendered content
      * @param table the <code>Table</code> being rendered
      * @param rowIndex the row to render
-     * @param defaultInsetsAttribute the default CSS padding attribute value
+     * @param defaultInsetsAttributeValue the default CSS padding attribute value
      */
     private void renderRow(RenderContext rc, ServerComponentUpdate update, Element tbodyElement, Table table, int rowIndex,
             String defaultInsetsAttributeValue) {
@@ -205,7 +205,7 @@ implements DomUpdateSupport, SynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.Synchr2onizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
