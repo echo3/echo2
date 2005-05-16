@@ -38,7 +38,6 @@ public class FillImage {
     
     //BUGBUG. Remove all "BackgroundImage" references in this class and all clasess that use it
     //        there are still some test classes that refer to these as background images.
-    //BUGBUG. equals() implementation required.
 
     /** 
      * A constant for the attachment property that indicates that the 
@@ -111,6 +110,34 @@ public class FillImage {
         this.verticalOffset = verticalOffset;
         this.repeat = repeat;
         this.attachment = attachment;
+    }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof FillImage)) {
+            return false;
+        }
+        FillImage that = (FillImage) o;
+        if (this.repeat != that.repeat) {
+            return false;
+        }
+        if (this.attachment != that.attachment) {
+            return false;
+        }
+        if (!(this.image == that.image || (this.image != null && this.image.equals(that.image)))) {
+            return false;
+        }
+        if (!(this.horizontalOffset == that.horizontalOffset || 
+                (this.horizontalOffset != null && this.horizontalOffset.equals(that.horizontalOffset)))) {
+            return false;
+        }
+        if (!(this.verticalOffset == that.verticalOffset || 
+                (this.verticalOffset != null && this.verticalOffset.equals(that.verticalOffset)))) {
+            return false;
+        }
+        return true;
     }
     
     /**

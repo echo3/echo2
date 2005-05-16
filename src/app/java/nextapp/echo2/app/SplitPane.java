@@ -40,13 +40,14 @@ package nextapp.echo2.app;
  * @see nextapp.echo2.app.layout.SplitPaneLayoutData
  */
 public class SplitPane extends Component {
-    
-    public static final int ORIENTATION_HORIZONTAL_LEADING_TRAILING = 1;
-    public static final int ORIENTATION_HORIZONTAL_TRAILING_LEADING = 2;
-    public static final int ORIENTATION_HORIZONTAL_LEFT_RIGHT = 3;
-    public static final int ORIENTATION_HORIZONTAL_RIGHT_LEFT = 4;
-    public static final int ORIENTATION_VERTICAL_TOP_BOTTOM = 5;
-    public static final int ORIENTATION_VERTICAL_BOTTOM_TOP = 6;
+
+//BUGBUG. implement support for alternate orderings.    
+    private static final int ORIENTATION_HORIZONTAL_LEADING_TRAILING = 1;
+//    public static final int ORIENTATION_HORIZONTAL_TRAILING_LEADING = 2;
+//    public static final int ORIENTATION_HORIZONTAL_LEFT_RIGHT = 3;
+//    public static final int ORIENTATION_HORIZONTAL_RIGHT_LEFT = 4;
+    private static final int ORIENTATION_VERTICAL_TOP_BOTTOM = 5;
+//    public static final int ORIENTATION_VERTICAL_BOTTOM_TOP = 6;
     
     public static final int ORIENTATION_HORIZONTAL = ORIENTATION_HORIZONTAL_LEADING_TRAILING;
     public static final int ORIENTATION_VERTICAL = ORIENTATION_VERTICAL_TOP_BOTTOM;

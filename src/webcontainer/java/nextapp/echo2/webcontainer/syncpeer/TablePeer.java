@@ -151,7 +151,6 @@ implements DomUpdateSupport, SynchronizePeer {
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) table.getProperty(Table.PROPERTY_WIDTH));
-        ExtentRender.renderToStyle(tableCssStyle, "height", (Extent) table.getProperty(Table.PROPERTY_HEIGHT));
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         parentElement.appendChild(tableElement);

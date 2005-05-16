@@ -64,6 +64,20 @@ implements ImageReference {
         super();
         this.image = image;
     }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof AwtImageReference)) {
+            return false;
+        }
+        AwtImageReference that = (AwtImageReference) o;
+        if (!(this.image == that.image || (this.image != null && this.image.equals(that.image)))) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * @see nextapp.echo2.app.ImageReference#getHeight()

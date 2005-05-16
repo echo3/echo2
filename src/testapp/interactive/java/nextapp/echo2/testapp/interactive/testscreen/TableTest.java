@@ -184,20 +184,5 @@ public class TableTest extends SplitPane {
                 testTable.setWidth(new Extent(100, Extent.PERCENT));
             }
         });
-        controlsColumn.addButton("Set Height = null", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                testTable.setHeight(null);
-            }
-        });
-        controlsColumn.addButton("Set Height = 500px", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                testTable.setHeight(new Extent(500));
-            }
-        });
-        controlsColumn.addButton("Set Height = 100%", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                testTable.setHeight(new Extent(100, Extent.PERCENT));
-            }
-        });
     }
 }

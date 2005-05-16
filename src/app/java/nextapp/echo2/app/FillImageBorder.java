@@ -25,14 +25,13 @@
  * terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. Doc.
-//BUGBUG. needs equals.
+//BUGBUG. Doc more, expalin how these are used.
 
 package nextapp.echo2.app;
 
 /**
  * A represntation of a graphical border drawn using a series of 
- * <code>FillImage</code>s.
+ * eight <code>FillImage</code>s.
  */
 public class FillImageBorder {
 
@@ -58,7 +57,7 @@ public class FillImageBorder {
     
     /**
      * Creates a new <code>FillImageBorder</code> with the specified color,
-     * border insets, and content insets.
+     * border inset, and content inset.
      */
     public FillImageBorder(Color color, Insets borderInsets, Insets contentInsets) {
         super();
@@ -66,15 +65,67 @@ public class FillImageBorder {
         this.borderInsets = borderInsets;
         this.contentInsets = contentInsets;
     }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof FillImageBorder)) {
+            return false;
+        }
+        FillImageBorder that = (FillImageBorder) o;
+        if (!(this.color == that.color || 
+                (this.color != null && this.color.equals(that.color)))) {
+            return false;
+        }
+        if (!(this.borderInsets == that.borderInsets || 
+                (this.borderInsets != null && this.borderInsets.equals(that.borderInsets)))) {
+            return false;
+        }
+        if (!(this.contentInsets == that.contentInsets || 
+                (this.contentInsets != null && this.contentInsets.equals(that.contentInsets)))) {
+            return false;
+        }
+        if (this.fillImages != null || that.fillImages != null) {
+            if (this.fillImages == null || that.fillImages == null) {
+                return false;
+            }
+            for (int i = 0; i < fillImages.length; ++i) {
+                if (!(this.fillImages[i] == that.fillImages[i] || 
+                        (this.fillImages[i] != null && this.fillImages[i].equals(that.fillImages[i])))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    /**
+     * Returns the content inset.
+     * 
+     * @see #setBorderInset(nextapp.echo2.app.Insets)
+     * @return the border inset
+     */
     public Insets getBorderInsets() {
         return borderInsets;
     }
     
+    /**
+     * Returns the solid color background of the border.
+     * 
+     * @see #setColor(nextapp.echo2.app.Color)
+     * @return the color
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Sets the content inset.
+     * 
+     * @see #setContentInset(nextapp.echo2.app.Insets)
+     * @return the content inset
+     */
     public Insets getContentInsets() {
         return contentInsets;
     }
@@ -103,14 +154,37 @@ public class FillImageBorder {
         }
     }
     
+    /**
+     * Sets the inset of the border images, thus definining the width and 
+     * height of the border images.
+     * 
+     * @param borderInsets the new border inset
+     */
     public void setBorderInsets(Insets borderInsets) {
         this.borderInsets = borderInsets;
     }
     
+    /**
+     * Sets the solid color background of the border.
+     * Note that setting a solid background color for the border will cause
+     * the alpha channel of any <code>FillImage</code>s to be rendered against
+     * this color.
+     * 
+     * @return the color
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * Sets the inset of the content that is contained withing the border 
+     * relative to the outside of the border.  If this inset value is smaller
+     * than the the border inset, the content will be rendered partially on top
+     * of the border.  A null value for this property specifies that the
+     * content should be drawn at the border inset.
+     * 
+     * @param contentInsets the new content inset
+     */
     public void setContentInsets(Insets contentInsets) {
         this.contentInsets = contentInsets;
     }

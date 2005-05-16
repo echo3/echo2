@@ -48,6 +48,26 @@ implements ImageReference {
     }
     
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof HttpImageReference)) {
+            return false;
+        }
+        HttpImageReference that = (HttpImageReference) o;
+        if (!(this.uri == that.uri || (this.uri != null && this.uri.equals(that.uri)))) {
+            return false;
+        }
+        if (!(this.width == that.width || (this.width != null && this.width.equals(that.width)))) {
+            return false;
+        }
+        if (!(this.height == that.height || (this.height != null && this.height.equals(that.height)))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Creates a reference to an image at the specified URI of the given width
      * and height.  If the image is not of the given width and height, it will
      * be scaled to the given width and height.

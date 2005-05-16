@@ -147,6 +147,29 @@ extends StreamImageReference {
     }
     
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof ResourceImageReference)) {
+            return false;
+        }
+        ResourceImageReference that = (ResourceImageReference) o;
+        if (!(this.resource == that.resource || (this.resource != null && this.resource.equals(that.resource)))) {
+            return false;
+        }
+        if (!(this.contentType == that.contentType || (this.contentType != null && this.contentType.equals(that.contentType)))) {
+            return false;
+        }
+        if (!(this.width == that.width || (this.width != null && this.width.equals(that.width)))) {
+            return false;
+        }
+        if (!(this.height == that.height || (this.height != null && this.height.equals(that.height)))) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
      * @see nextapp.echo2.app.StreamImageReference#getContentType()
      */
     public String getContentType() {

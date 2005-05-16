@@ -57,7 +57,6 @@ public class Table extends Component {
     public static final TableCellRenderer DEFAULT_TABLE_CELL_RENDERER = new DefaultTableCellRenderer();
 
     public static final String PROPERTY_BORDER = "border";
-    public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_WIDTH = "width";
 
@@ -320,15 +319,6 @@ public class Table extends Component {
     }
     
     /**
-     * Returns the overall height.
-     * 
-     * @return the height
-     */
-    public Extent getHeight() {
-        return (Extent) getProperty(PROPERTY_HEIGHT);
-    }
-    
-    /**
      * Returns the default cell insets.
      * 
      * @return the default cell insets
@@ -481,15 +471,6 @@ public class Table extends Component {
         boolean oldValue = headerVisible;
         headerVisible = newValue;
         firePropertyChange(HEADER_VISIBLE_CHANGED_PROPERTY, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
-    }
-
-    /**
-     * Sets the overall height of the grid.
-     * 
-     * @param newValue the new height
-     */
-    public void setHeight(Extent newValue) {
-        setProperty(PROPERTY_HEIGHT, newValue);
     }
     
     /**
