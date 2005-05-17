@@ -949,7 +949,7 @@ EchoEventUpdate.process = function(messagePartElement) {
         }
     }
     for (i = 0; i < removes.length; ++i) {
-        eventTypes = removes[i].getAttribute("type");
+        eventTypes = removes[i].getAttribute("type").split(",");
         removeItems = removes[i].getElementsByTagName("item");
         for (j = 0; j < removeItems.length; ++j) {
             elementId = removeItems[j].getAttribute("eid");
