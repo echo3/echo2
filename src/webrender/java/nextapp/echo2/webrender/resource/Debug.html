@@ -95,7 +95,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     
     EchoDebug.displayDocument = function(id, xmlDocument) {
         var rootElement = document.getElementById(id);
-        var docLength = 0;
+        var docLength = 0, nodeCount = 0;
         if (rootElement.hasChildNodes) {
             var childNode = rootElement.firstChild;
             while (childNode) {
@@ -118,6 +118,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             divElement.style.padding = "0px 0px 0px " + (indent * 10) + "px;";
             var textString = docString.substring(firstIndex, lastIndex);
             docLength += textString.length;
+            nodeCount++;
             var divText = document.createTextNode(textString);
             divElement.appendChild(divText);
             if (!(textString.charAt(indent) == "<" && textString.charAt(textString.length - 1) == ">")) {
@@ -129,7 +130,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             lastIndex = docString.indexOf("\n", firstIndex);
         }
         
-        var statsString = "Content Length: " + docLength + " bytes";
+        var statsString = "Content Length: " + docLength + " bytes; Node Count: " + nodeCount;
         var statsDivElement = document.createElement("div");
         statsDivElement.appendChild(document.createTextNode(statsString));
         statsDivElement.style.color = "#cf9f9f";

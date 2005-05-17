@@ -108,14 +108,13 @@ public class WindowPaneTest extends SplitPane {
                     final WindowPane windowPane = new WindowPane();
                     positionWindowPane(windowPane);
                     targetContentPane.add(windowPane);
-                    windowPane.setResizable(false);
                     windowPane.setTitle("SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
                     windowPane.setStyleName("default");
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     windowPane.setHeight(new Extent(300, Extent.PX));
-                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(210));
+                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-42));
                     SplitPaneLayoutData splitPaneLayoutData;
                     
                     Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
