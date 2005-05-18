@@ -32,17 +32,17 @@
 
 EchoListBox = function() { };
 
-EchoListBox.mouseOverItem = function(e) {
+EchoListBox.doRolloverEnter = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
 
     if (!target.selected){
-        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id, "mouseoverStyle");
+        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id, "rolloverStyle");
         EchoListBox.applyStyle(target,style);
     }
 }
 
-EchoListBox.mouseOutItem = function(e) {
+EchoListBox.doRolloverExit = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
 

@@ -140,9 +140,9 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     protected CssStyle createRolloverCssStyle(ListBox listBox) {
         CssStyle style = new CssStyle();
         Color foregroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_FOREGROUND),
-                DEFAULT_FG_ROLLOVER);
+                DEFAULT_ROLLOVER_FOREGROUND);
         Color backgroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_BACKGROUND),
-                DEFAULT_BG_ROLLOVER);
+                DEFAULT_ROLLOVER_BACKGROUND);
 
         ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
         return style;
@@ -157,15 +157,16 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>ListBox</code> instance
      */
     protected void appendSelectedCssStyle(CssStyle style, ListBox listbox) {
-        ColorRender.renderToStyle(style, DEFAULT_FG_HIGHLIGHT, DEFAULT_BG_HIGHLIGHT);
+        ColorRender.renderToStyle(style, DEFAULT_SELECTED_FOREGROUND, DEFAULT_SELECTED_BACKGROUND);
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractListComponentPeer#appendDefaultCssStyle(nextapp.echo2.webrender.output.CssStyle, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractListComponentPeer#appendDefaultCssStyle(
+     *      nextapp.echo2.webrender.output.CssStyle, nextapp.echo2.app.Component)
      */
     protected void appendDefaultCssStyle(CssStyle style, Component component) {
-        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FG);
-        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BG);
+        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
+        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
         ColorRender.renderToStyle(style, foreground, background);
     }
 
@@ -279,21 +280,21 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             }
 
             EventUpdate.createEventAdd(rc.getServerMessage(), "click,mouseover,mouseout", optionId, 
-                    DEFAULT_LISTENER + ",EchoListBoxDhtml.mouseOverItem,EchoListBoxDhtml.mouseOutItem");
+                    DEFAULT_LISTENER + ",EchoListBoxDhtml.doRolloverEnter,EchoListBoxDhtml.doRolloverExit");
             listBoxElement.appendChild(optionElement);
         }
 
         CssStyle cssStyle = createListBoxCssStyle(rc, listBox);
         listBoxElement.setAttribute("style", cssStyle.renderInline());
 
-        CssStyle selectedCSSStyle = createSelectedCssStyle(listBox);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "selectedStyle", selectedCSSStyle.renderInline());
+        CssStyle selectedCssStyle = createSelectedCssStyle(listBox);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
 
-        CssStyle defaultCSSStyle = createDefaultCssStyle(listBox);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCSSStyle.renderInline());
+        CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
 
-        CssStyle mouseoverCSSStyle = createRolloverCssStyle(listBox);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "mouseoverStyle", mouseoverCSSStyle.renderInline());
+        CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
 
         if (ListSelectionModel.SINGLE_SELECTION == listBox.getSelectionMode()) {
             DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "singleSelect", "true");

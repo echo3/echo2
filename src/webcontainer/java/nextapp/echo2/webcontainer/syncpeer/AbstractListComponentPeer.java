@@ -81,12 +81,12 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     protected static final Insets DEFAULT_INSETS = new Insets(new Extent(0), new Extent(0));
 
     // Default Colors
-    protected static final Color DEFAULT_FG = Color.BLACK;
-    protected static final Color DEFAULT_BG = Color.WHITE;
-    protected static final Color DEFAULT_FG_HIGHLIGHT = Color.WHITE;
-    protected static final Color DEFAULT_BG_HIGHLIGHT = new Color(10, 36, 106);
-    protected static final Color DEFAULT_FG_ROLLOVER = Color.BLACK;
-    protected static final Color DEFAULT_BG_ROLLOVER = new Color(255, 255, 150);
+    protected static final Color DEFAULT_FOREGROUND = Color.BLACK;
+    protected static final Color DEFAULT_BACKGROUND = Color.WHITE;
+    protected static final Color DEFAULT_SELECTED_FOREGROUND = Color.WHITE;
+    protected static final Color DEFAULT_SELECTED_BACKGROUND = new Color(10, 36, 106);
+    protected static final Color DEFAULT_ROLLOVER_FOREGROUND = Color.BLACK;
+    protected static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 150);
 
     /**
      * Service to provide supporting JavaScript library.
@@ -160,9 +160,9 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     protected CssStyle createRolloverCssStyle(AbstractListComponent selectList) {
         CssStyle style = new CssStyle();
         Color foregroundHighlight = (Color) ensureValue(
-                selectList.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND), DEFAULT_FG_ROLLOVER);
+                selectList.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND), DEFAULT_ROLLOVER_FOREGROUND);
         Color backgroundHighlight = (Color) ensureValue(
-                selectList.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND), DEFAULT_BG_ROLLOVER);
+                selectList.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND), DEFAULT_ROLLOVER_BACKGROUND);
         ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
         return style;
     }
@@ -175,8 +175,8 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * @param the <code>nextapp.echo2.app.AbstractListComponent</code>
      */
     protected void appendDefaultCssStyle(CssStyle style, Component component) {
-        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FG);
-        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BG);
+        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
+        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
         ColorRender.renderToStyle(style, foreground, background);
     }
 
@@ -269,18 +269,18 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
             }
 
             EventUpdate.createEventAdd(rc.getServerMessage(), "mouseover,mouseout", optionId, 
-                    "EchoListBox.mouseOverItem,EchoListBox.mouseOutItem");
+                    "EchoListBox.doRolloverEnter,EchoListBox.doRolloverExit");
             listBoxElement.appendChild(optionElement);
         }
 
         CssStyle cssStyle = createListBoxCssStyle(rc, selectList);
         listBoxElement.setAttribute("style", cssStyle.renderInline());
 
-        CssStyle defaultCSSStyle = createDefaultCssStyle(selectList);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCSSStyle.renderInline());
+        CssStyle defaultCssStyle = createDefaultCssStyle(selectList);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
 
-        CssStyle mouseoverCSSStyle = createRolloverCssStyle(selectList);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "mouseoverStyle", mouseoverCSSStyle.renderInline());
+        CssStyle rolloverCssStyle = createRolloverCssStyle(selectList);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
 
         EventUpdate.createEventAdd(rc.getServerMessage(), "change", elementId + "_select", "EchoListBox.processSelection");
 
