@@ -73,12 +73,11 @@ import org.w3c.dom.Element;
  * the <code>nextapp.echo2.app.list.ListModel</code>
  *  
  */
-public abstract class AbstractListComponentPeer implements DomUpdateSupport,
-        PropertyUpdateProcessor, SynchronizePeer {
+public abstract class AbstractListComponentPeer 
+implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
 
     // Default Sizes
     protected static final Extent DEFAULT_WIDTH = new Extent(5, Extent.EM);
-
     protected static final Insets DEFAULT_INSETS = new Insets(new Extent(0), new Extent(0));
 
     // Default Colors

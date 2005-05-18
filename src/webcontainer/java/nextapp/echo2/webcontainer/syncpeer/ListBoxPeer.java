@@ -62,7 +62,6 @@ import org.w3c.dom.Element;
 public class ListBoxPeer extends AbstractListComponentPeer {
 
     public static final int DEFAULT_ROW_COUNT = 5;
-
     protected static final String DEFAULT_LISTENER = "EchoManualListBox.processSelection";
 
     /**
@@ -98,11 +97,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service LIST_BOX_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.ListBoxManual",
+    public static final Service LIST_BOX_COMPONENT_MANUAL_SERVICE = JavaScriptService.forResource("Echo.ListBoxManual",
             "/nextapp/echo2/webcontainer/resource/js/ListBoxManual.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(LIST_BOX_COMPONENT_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(LIST_BOX_COMPONENT_MANUAL_SERVICE);
     }
 
     /**
@@ -223,7 +222,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         ClientProperties props = rc.getContainerInstance().getClientProperties();
-        if (props.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE)) {
+        if (true || props.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE)) {
             doRenderManualHtml(rc, update, parent, component);
         } else {
             doRenderStandardHtml(rc, update, parent, component);
@@ -264,7 +263,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         String elementId = ContainerInstance.getElementId(component);
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(LIST_BOX_COMPONENT_SERVICE.getId(), true);
+        serverMessage.addLibrary(LIST_BOX_COMPONENT_MANUAL_SERVICE.getId(), true);
 
         Element listBoxElement = parent.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
