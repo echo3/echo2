@@ -138,15 +138,15 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     protected abstract Extent getDefaultHeight();
 
     /**
-     * Creates the unselected style based off of properties on the given
+     * Creates the default style based off of properties on the given
      * <code>nextapp.echo2.app.AbstractListComponent</code>
      * 
      * @param component the <code>ListBox</code> instance
      * @return the style
      */
-    protected CssStyle createUnselectedCssStyle(AbstractListComponent selectList) {
+    protected CssStyle createDefaultCssStyle(AbstractListComponent selectList) {
         CssStyle style = new CssStyle();
-        appendUnselectedCssStyle(style, selectList);
+        appendDefaultCssStyle(style, selectList);
         return style;
     }
 
@@ -168,15 +168,13 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     }
 
     /**
-     * Appends the unselected style to the given style based off of properties
+     * Appends the default style to the given style based off of properties
      * on the given <code>nextapp.echo2.app.AbstractListComponent</code>
      * 
-     * @param style
-     *            the style to append to
-     * @param the
-     *            <code>nextapp.echo2.app.AbstractListComponent</code>
+     * @param style the style to append to
+     * @param the <code>nextapp.echo2.app.AbstractListComponent</code>
      */
-    protected void appendUnselectedCssStyle(CssStyle style, Component component) {
+    protected void appendDefaultCssStyle(CssStyle style, Component component) {
         Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FG);
         Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BG);
         ColorRender.renderToStyle(style, foreground, background);
@@ -198,7 +196,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
                 getDefaultHeight());
         Insets insets = (Insets) ensureValue(selectList.getRenderProperty(AbstractListComponent.PROPERTY_INSETS), DEFAULT_INSETS);
 
-        appendUnselectedCssStyle(style, selectList);
+        appendDefaultCssStyle(style, selectList);
         FontRender.renderToStyle(style, (Font) selectList.getRenderProperty(AbstractListComponent.PROPERTY_FONT));
         InsetsRender.renderToStyle(style, "padding", insets);
 
@@ -267,7 +265,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
                 ColorRender.renderToStyle(optionStyle, styledListCell.getForeground(), styledListCell.getBackground());
                 FontRender.renderToStyle(optionStyle, styledListCell.getFont());
             } else {
-                appendUnselectedCssStyle(optionStyle, selectList);
+                appendDefaultCssStyle(optionStyle, selectList);
             }
 
             EventUpdate.createEventAdd(rc.getServerMessage(), "mouseover,mouseout", optionId, 
@@ -278,8 +276,8 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         CssStyle cssStyle = createListBoxCssStyle(rc, selectList);
         listBoxElement.setAttribute("style", cssStyle.renderInline());
 
-        CssStyle unselectedCSSStyle = createUnselectedCssStyle(selectList);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "unselectedStyle", unselectedCSSStyle.renderInline());
+        CssStyle defaultCSSStyle = createDefaultCssStyle(selectList);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCSSStyle.renderInline());
 
         CssStyle mouseoverCSSStyle = createRolloverCssStyle(selectList);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "mouseoverStyle", mouseoverCSSStyle.renderInline());

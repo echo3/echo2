@@ -28,65 +28,65 @@
  */
 
 //_________________________
-// Object EchoManualListBox
+// Object EchoListBoxDhtml
 
-   	EchoManualListBox = function() { };
+   	EchoListBoxDhtml = function() { };
   
-    EchoManualListBox.mouseOverItem = function(e) {
+    EchoListBoxDhtml.mouseOverItem = function(e) {
     	EchoDomUtil.preventEventDefault(e);
         var target = EchoDomUtil.getEventTarget(e);
         if (target.selectedState == null) {
-        	EchoManualListBox.applySelectedIndices(target.parentNode.id);
+        	EchoListBoxDhtml.applySelectedIndices(target.parentNode.id);
         }
         
         if (!target.selectedState){
 	    	var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "mouseoverStyle");
-		    EchoManualListBox.applyStyle(target,style);
+		    EchoListBoxDhtml.applyStyle(target,style);
 	    }
     }
     
-    EchoManualListBox.mouseOutItem = function(e) {
+    EchoListBoxDhtml.mouseOutItem = function(e) {
     	EchoDomUtil.preventEventDefault(e);
         var target = EchoDomUtil.getEventTarget(e);
         if (!target.selectedState) {
-        	var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "unselectedStyle");
-		    EchoManualListBox.applyStyle(target,style);
+        	var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
+		    EchoListBoxDhtml.applyStyle(target,style);
 		}
     }
     
     
-    EchoManualListBox.deselectItem = function(elementId) {
+    EchoListBoxDhtml.deselectItem = function(elementId) {
 		var target = document.getElementById(elementId);
 		target.selectedState = false;
-		var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "unselectedStyle");
+		var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
 		
-        EchoManualListBox.applyStyle(target,style);
+        EchoListBoxDhtml.applyStyle(target,style);
         
 	}
 	
-	EchoManualListBox.selectItem = function(elementId) {
+	EchoListBoxDhtml.selectItem = function(elementId) {
 		var target = document.getElementById(elementId);
 		var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "selectedStyle");
 		var singleSelect = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "singleSelect");
 
 		if (singleSelect) {
-			EchoManualListBox.clearSelectedValues(target.parentNode.id);
+			EchoListBoxDhtml.clearSelectedValues(target.parentNode.id);
 		}
 		target.selectedState = true;
 		
-        EchoManualListBox.applyStyle(target,style);
+        EchoListBoxDhtml.applyStyle(target,style);
 	}
 	
-	EchoManualListBox.processUpdates = function(elementId) {
+	EchoListBoxDhtml.processUpdates = function(elementId) {
 		var element = document.getElementById(elementId).parentNode;
 		var propertyElement  = EchoClientMessage.createPropertyElement(element.id, "selectedObjects");
 		
-		EchoManualListBox.createUpdates(element.id,propertyElement);
+		EchoListBoxDhtml.createUpdates(element.id,propertyElement);
 
 	    EchoDebugManager.updateClientMessage();
 	}
 	
-	EchoManualListBox.createUpdates = function(elementId,propertyElement){
+	EchoListBoxDhtml.createUpdates = function(elementId,propertyElement){
 		var element = document.getElementById(elementId);
 		
 		// remove previous values
@@ -108,7 +108,7 @@
 		}
 	}
 	
-    EchoManualListBox.processSelection = function(e) {
+    EchoListBoxDhtml.processSelection = function(e) {
         EchoDomUtil.preventEventDefault(e);
         
         // BUGBUG: Move into something common
@@ -121,29 +121,29 @@
 		// check to see if it's the first time this control has been activated
 		// by inspecting a custom attribute on the element.
         if (target.selectedState == null){
-        	EchoManualListBox.applySelectedIndices(target.parentNode.id);
+        	EchoListBoxDhtml.applySelectedIndices(target.parentNode.id);
         }
         
         if (target.selectedState) {
-            EchoManualListBox.deselectItem(target.id);
+            EchoListBoxDhtml.deselectItem(target.id);
             
         } else {
-			EchoManualListBox.selectItem(target.id);
+			EchoListBoxDhtml.selectItem(target.id);
         }
-        EchoManualListBox.processUpdates(target.id);
+        EchoListBoxDhtml.processUpdates(target.id);
     }
 	
-	EchoManualListBox.clearSelectedValues = function(elementId) {
+	EchoListBoxDhtml.clearSelectedValues = function(elementId) {
 		var element = document.getElementById(elementId);
         var optionDivElements = element.getElementsByTagName("div");
         for (var i = 0; i < optionDivElements.length; ++i) {
-        	var style = EchoDomPropertyStore.getPropertyValue(elementId, "unselectedStyle");
-			EchoManualListBox.applyStyle(optionDivElements[i],style);
+        	var style = EchoDomPropertyStore.getPropertyValue(elementId, "defaultStyle");
+			EchoListBoxDhtml.applyStyle(optionDivElements[i],style);
 			optionDivElements[i].selectedState = false;
         }
 	}
 	
-	EchoManualListBox.applySelectedIndices = function(elementId) {
+	EchoListBoxDhtml.applySelectedIndices = function(elementId) {
 		var element = document.getElementById(elementId);
         var optionDivElements = element.getElementsByTagName("div");
         for (var i = 0; i < optionDivElements.length; ++i) {
@@ -157,7 +157,7 @@
 	}
 	
 	// BUGBUG Copied verbatim from Button.js
-	EchoManualListBox.applyStyle = function(element, cssText) {
+	EchoListBoxDhtml.applyStyle = function(element, cssText) {
 	    if (!cssText) {
 	        //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.
 	        return;

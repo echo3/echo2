@@ -46,7 +46,7 @@ EchoListBox.mouseOutItem = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
 
-    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id , "unselectedStyle");
+    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id , "defaultStyle");
     EchoListBox.applyStyle(target,style);
 }
 
