@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  */
 public class EventUpdate {
     
-    private static final String[] EVENT_ADD_KEYS= new String[]{"type", "handler"};
+    private static final String[] EVENT_ADD_KEYS = new String[]{"type", "handler"};
     private static final String[] EVENT_REMOVE_KEYS = new String[]{"type"};
     
     /**

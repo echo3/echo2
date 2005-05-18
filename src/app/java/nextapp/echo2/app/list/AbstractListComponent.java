@@ -109,10 +109,20 @@ public class AbstractListComponent extends Component {
     private ListModel model;
     private ListSelectionModel selectionModel;
     
+    /**
+     * Creates a new <code>AbstractListComponent</code> with default models.
+     */
     public AbstractListComponent() {
         this(null, null);
     }
     
+    /**
+     * Creates a new <code>AbstractListComponent</code> with the specified 
+     * models.
+     * 
+     * @param model the list data model
+     * @param selectionModel the selection model
+     */
     public AbstractListComponent(ListModel model, ListSelectionModel selectionModel) {
         super();
         if (model == null) {

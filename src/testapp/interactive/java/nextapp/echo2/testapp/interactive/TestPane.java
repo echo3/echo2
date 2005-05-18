@@ -113,6 +113,7 @@ public class TestPane extends ContentPane {
         addTest("Grid", "GridTest");
         addTest("Image", "ImageReferenceTest");
         addTest("Label", "LabelTest");
+        addTest("ListBox", "ListBoxTest");
         addTest("Push (Basic)", "PushTest");
         addTest("Push (Ghost Test)", "PushGhostTest");
         addTest("SplitPane (Basic)", "SplitPaneTest");

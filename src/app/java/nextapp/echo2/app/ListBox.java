@@ -206,6 +206,21 @@ public class ListBox extends AbstractListComponent {
         return selectedValues;
     }
 
+    /**
+     * Returns the selection mode.
+     * 
+     * @return the selection mode, one of the following values:
+     *         <ul>
+     *          <li><code>ListSelectionModel.SINGLE_SELECTION</code>: only one 
+     *          list element may be selected.</li>
+     *          <li><code>ListSelectionModel.MULTIPLE_SELECTION</code>: 
+     *          multiple list elements may be selected.</li>
+     *         </ul>
+     */
+    public int getSelectionMode() {
+        return getSelectionModel().getSelectionMode();
+    }
+    
     //BUGBUG: Test Extent.EM and nix this if it works ok.
     public int getVisibleRowCount() {
 		Integer rowcount = (Integer)getProperty(PROPERTY_VISIBLE_ROW_COUNT);
@@ -263,12 +278,12 @@ public class ListBox extends AbstractListComponent {
     /**
      * Sets the selection mode.  
      * 
-     * @param newValue The selection mode, one of the following values:
+     * @param newValue the selection mode, one of the following values:
      *        <ul>
-     *        <li><code>ListSelectionModel.SINGLE_SELECTION</code>: only one 
-     *        list element may be selected.</li>
-     *        <li><code>ListSelectionModel.MULTIPLE_SELECTION</code>: 
-     *        multiple list elements may be selected.</li>
+     *         <li><code>ListSelectionModel.SINGLE_SELECTION</code>: only one 
+     *         list element may be selected.</li>
+     *         <li><code>ListSelectionModel.MULTIPLE_SELECTION</code>: 
+     *         multiple list elements may be selected.</li>
      *        </ul>
      */
     public void setSelectionMode(int newValue) {

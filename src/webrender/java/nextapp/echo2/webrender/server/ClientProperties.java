@@ -110,6 +110,16 @@ public class ClientProperties {
     public static final String QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR = "quirkIETablePercentWidthScrollbarError";
     
     /**
+     * A quirk flag indicating that select fields cannot be reliably manipulated using the client DOM API.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE = "quirkIESelectMultipleDomUpdate";
+
+     /**
      * A proprietary feature flag indicating support for IE-style CSS expressions.
      * <p>
      * This proprietary feature is provided by:

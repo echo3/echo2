@@ -116,6 +116,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
