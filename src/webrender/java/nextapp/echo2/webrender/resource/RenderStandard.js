@@ -860,6 +860,7 @@ EchoEventProcessor.getHandlerEventTypes = function() {
  */
 EchoEventProcessor.processEvent = function(e) {
     e = e ? e : window.event;
+    EchoDomUtil.preventEventDefault(e);
     EchoDomUtil.stopPropogation(e);
     var eventType = e.type;
     if (!e.target && e.srcElement) {

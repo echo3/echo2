@@ -35,28 +35,49 @@
 
 EchoButton = function() { };
 
-EchoButton.activeElementId = null;
-EchoButton.baseCssText = null;
-EchoButton.pressedCssText = null;
-EchoButton.rolloverCssText = null;
-EchoButton.pressedActive = false;
-EchoButton.rolloverActive = false;
 EchoButton.buttonGroupIdToButtonArrayMap = new Array();
 
+EchoButton.STATE_DEFAULT = 0;
 EchoButton.STATE_ROLLOVER = 1;
 EchoButton.STATE_PRESSED = 2;
 
+/**
+ * ServerMessage processor.
+ */
 EchoButton.MessageProcessor = function() { };
 
+/**
+ * ServerMessage process() implementation.
+ */
 EchoButton.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                EchoButton.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                EchoButton.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
             case "setgroup":
                 EchoButton.MessageProcessor.processSetGroup(messagePartElement.childNodes[i]);
                 break;
             }
         }
+    }
+};
+
+EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
+    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoButton.dispose(elementId);
+    }
+};
+
+EchoButton.MessageProcessor.processInit = function(initMessageElement) {
+    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoButton.init(elementId);
     }
 };
 
@@ -66,15 +87,6 @@ EchoButton.MessageProcessor.processSetGroup = function(setGroupMessageElement) {
         var elementId = item.getAttribute("eid");
         EchoButton.setButtonGroup(elementId, groupId);
     }
-};
-
-EchoButton.activate = function(buttonElement) {
-    EchoButton.activeElementId = buttonElement.getAttribute("id");
-    EchoButton.baseCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "baseStyle");
-    EchoButton.pressedCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "pressedStyle");
-    EchoButton.rolloverCssText = EchoDomPropertyStore.getPropertyValue(EchoButton.activeElementId, "rolloverStyle");
-    EchoButton.rolloverActive = false;
-    EchoButton.pressedActive = false;
 };
 
 EchoButton.applyStyle = function(element, cssText) {
@@ -92,21 +104,6 @@ EchoButton.applyStyle = function(element, cssText) {
     }
 };
 
-EchoButton.deactivate = function() {
-    if (EchoButton.activeElementId) {
-        var buttonElement = document.getElementById(EchoButton.activeElementId);
-        if (buttonElement) {
-            EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
-        }
-    }
-    EchoButton.activeElementId = null;
-    EchoButton.baseCssText = null;
-    EchoButton.pressedCssText = null;
-    EchoButton.rolloverCssText = null;
-    EchoButton.pressedActive = false;
-    EchoButton.rolloverActive = false;
-};
-
 EchoButton.deselectRadioButton = function(groupId) {
     var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
     if (!buttonArray) {
@@ -119,6 +116,14 @@ EchoButton.deselectRadioButton = function(groupId) {
             EchoButton.setSelectionState(elementId, false);
         }
     }
+};
+
+EchoButton.dispose = function(elementId) {
+    EchoEventProcessor.removeHandler(elementId, "mouseover");
+    EchoEventProcessor.removeHandler(elementId, "mouseout");
+    EchoEventProcessor.removeHandler(elementId, "mousedown");
+    EchoEventProcessor.removeHandler(elementId, "mouseup");
+    EchoEventProcessor.removeHandler(elementId, "click");
 };
 
 EchoButton.doAction = function(echoEvent) {
@@ -136,12 +141,11 @@ EchoButton.doAction = function(echoEvent) {
         return;
     }
     
-    EchoButton.deactivate();
-    EchoButton.removeAllListeners();
     if (document.selection && document.selection.empty) {
         document.selection.empty();
     }
     EchoClientMessage.setActionValue(elementId, "click");
+    
     EchoServerTransaction.connect();
 };
 
@@ -155,14 +159,11 @@ EchoButton.doPressed = function(echoEvent) {
         // Return if the button has no pressed effects.
         return;
     }
-    EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED, true);
-    EchoEventProcessor.addHandler(echoEvent.registeredTarget.getAttribute("id"), 
-            "mouseup", "EchoButton.doReleased");
+    EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED);
 };
 
 EchoButton.doReleased = function(echoEvent) {
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_PRESSED, false);
-    EchoEventProcessor.removeHandler(echoEvent.registeredTarget.getAttribute("id"), "mouseup");
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
 };
 
 EchoButton.doRolloverEnter = function(echoEvent) {
@@ -170,14 +171,11 @@ EchoButton.doRolloverEnter = function(echoEvent) {
         return;
     }
     var eventTarget = echoEvent.registeredTarget;
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER, true);
-    EchoEventProcessor.addHandler(echoEvent.registeredTarget.getAttribute("id"), 
-            "mouseout", "EchoButton.doRolloverExit");
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER);
 };
 
 EchoButton.doRolloverExit = function(echoEvent) {
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER, false);
-    EchoEventProcessor.removeHandler(echoEvent.registeredTarget.getAttribute("id"), "mouseout");
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
 };
 
 EchoButton.doToggle = function(buttonElement) {
@@ -204,9 +202,16 @@ EchoButton.getSelectionState = function(elementId) {
     return "true" == EchoDomPropertyStore.getPropertyValue(elementId, "selected");
 };
 
-EchoButton.removeAllListeners = function() {
-    EchoEventProcessor.removeHandler(EchoButton.activeElementId, "mouseout");
-    EchoEventProcessor.removeHandler(EchoButton.activeElementId, "mouseup");
+EchoButton.init = function(elementId) {
+    if (EchoDomPropertyStore.getPropertyValue(elementId, "rolloverStyle")) {
+	    EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.doRolloverEnter");
+	    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.doRolloverExit");
+    }
+    if (EchoDomPropertyStore.getPropertyValue(elementId, "pressedStyle")) {
+	    EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.doPressed");
+	    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.doReleased");
+    }
+    EchoEventProcessor.addHandler(elementId, "click", "EchoButton.doAction");
 };
 
 EchoButton.setButtonGroup = function(elementId, groupId) {
@@ -232,31 +237,22 @@ EchoButton.setSelectionState = function(elementId, newState) {
     EchoClientMessage.setPropertyValue(elementId, "selected", newState ? "true" : "false");
 };
 
-EchoButton.setState = function(buttonElement, stateType, newValue) {
+EchoButton.setState = function(buttonElement, newState) {
     if (buttonElement.nodeType != 1) {
         // Prevent TextNode events.
         return;
     }
 
-    if (buttonElement.getAttribute("id") != EchoButton.activeElementId) {
-        EchoButton.deactivate();
-        EchoButton.activate(buttonElement);
-    }
-
-    switch (stateType) {
+    var newStyle;
+    switch (newState) {
     case EchoButton.STATE_ROLLOVER:
-        EchoButton.rolloverActive = newValue;
+        newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "rolloverStyle");
         break;
     case EchoButton.STATE_PRESSED:
-        EchoButton.pressedActive = newValue;
+        newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "pressedStyle");
         break;
+    default:
+        newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "baseStyle");
     }
-
-    if (EchoButton.pressedActive && EchoButton.pressedCssText) {
-        EchoButton.applyStyle(buttonElement, EchoButton.pressedCssText);
-    } else if (EchoButton.rolloverActive && EchoButton.rolloverCssText) {
-        EchoButton.applyStyle(buttonElement, EchoButton.rolloverCssText);
-    } else {
-        EchoButton.applyStyle(buttonElement, EchoButton.baseCssText);
-    }
+    EchoButton.applyStyle(buttonElement, newStyle);
 };

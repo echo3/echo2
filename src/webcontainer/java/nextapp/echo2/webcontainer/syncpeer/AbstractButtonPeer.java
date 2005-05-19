@@ -186,6 +186,22 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         itemizedUpdateElement.appendChild(itemElement);
     }
     
+    private void createInit(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE,
+                "EchoButton.MessageProcessor", "init",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    private void createDispose(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_REMOVE,
+                "EchoButton.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
     /**
      * Determines the selected state icon of the specified
      * <code>ToggleButton</code>.
@@ -488,7 +504,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         String id = ContainerInstance.getElementId(component);
-        EventUpdate.createEventRemove(serverMessage, "click,mouseover,mousedown,mouseout,mouseup", id);
+//BUGBUG testing new method.        
+//        EventUpdate.createEventRemove(serverMessage, "click,mouseover,mousedown,mouseout,mouseup", id);
+        createDispose(serverMessage, id);
     }
 
     /**
@@ -586,6 +604,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             }
         }
         
+        //BUGBUG. testing new method.
+        /*
         if (addRolloverListener) {
             EventUpdate.createEventAdd(serverMessage, "click,mousedown,mouseover", id, 
                     "EchoButton.doAction,EchoButton.doPressed,EchoButton.doRolloverEnter");
@@ -593,6 +613,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             EventUpdate.createEventAdd(serverMessage, "click,mousedown", id, 
                     "EchoButton.doAction,EchoButton.doPressed");
         }
+        */
+        createInit(serverMessage, id);
 
         renderButtonContent(rc, divElement, button);
 
