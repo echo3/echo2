@@ -526,7 +526,7 @@ extends SplitPane {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
                         if (button.getIcon() != null) {
-                            button.setPressedIcon(Styles.ROLLOVER_ICON_LOGO);
+                            button.setPressedIcon(Styles.PRESSED_ICON_LOGO);
                         }
                     }
                 });

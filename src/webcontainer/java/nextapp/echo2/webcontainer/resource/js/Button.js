@@ -155,10 +155,6 @@ EchoButton.doPressed = function(echoEvent) {
         return;
     }
     var eventTarget = echoEvent.registeredTarget;
-    if (!EchoDomPropertyStore.getPropertyValue(eventTarget.getAttribute("id"), "pressedStyle")) {
-        // Return if the button has no pressed effects.
-        return;
-    }
     EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED);
 };
 
@@ -203,14 +199,10 @@ EchoButton.getSelectionState = function(elementId) {
 };
 
 EchoButton.init = function(elementId) {
-    if (EchoDomPropertyStore.getPropertyValue(elementId, "rolloverStyle")) {
-	    EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.doRolloverEnter");
-	    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.doRolloverExit");
-    }
-    if (EchoDomPropertyStore.getPropertyValue(elementId, "pressedStyle")) {
-	    EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.doPressed");
-	    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.doReleased");
-    }
+    EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.doRolloverEnter");
+    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.doRolloverExit");
+    EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.doPressed");
+    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.doReleased");
     EchoEventProcessor.addHandler(elementId, "click", "EchoButton.doAction");
 };
 
@@ -237,22 +229,35 @@ EchoButton.setSelectionState = function(elementId, newState) {
     EchoClientMessage.setPropertyValue(elementId, "selected", newState ? "true" : "false");
 };
 
+EchoButton.setIcon = function(elementId, newIconUri) {
+    var iconElement = document.getElementById(elementId + "_icon");
+    iconElement.src = newIconUri;
+};
+
 EchoButton.setState = function(buttonElement, newState) {
     if (buttonElement.nodeType != 1) {
         // Prevent TextNode events.
         return;
     }
 
-    var newStyle;
+    var newStyle, newIcon;
     switch (newState) {
     case EchoButton.STATE_ROLLOVER:
         newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "rolloverStyle");
+        newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "rolloverIcon");
         break;
     case EchoButton.STATE_PRESSED:
         newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "pressedStyle");
+        newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "pressedIcon");
         break;
     default:
-        newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "baseStyle");
+        newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultStyle");
+        newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultIcon");
     }
-    EchoButton.applyStyle(buttonElement, newStyle);
+    if (newStyle) {
+        EchoButton.applyStyle(buttonElement, newStyle);
+    }
+    if (newIcon) {
+        EchoButton.setIcon(buttonElement.id, newIcon);
+    }
 };

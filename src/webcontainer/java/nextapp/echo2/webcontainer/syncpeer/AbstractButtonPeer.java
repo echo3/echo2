@@ -81,7 +81,7 @@ import org.w3c.dom.Text;
 public class AbstractButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
     
-    //BUGBUG. support rollover and pressed properties where base property value is null (currently renders wrong).
+    //BUGBUG. support rollover and pressed properties where default property value is null (currently renders wrong).
 
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Alignment DEFAULT_STATE_POSITION = new Alignment(Alignment.LEADING, Alignment.DEFAULT);
@@ -552,15 +552,21 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 Boolean.FALSE)).booleanValue();
         
         if (rolloverEnabled || pressedEnabled) {
-            CssStyle baseCssStyle = new CssStyle();
-            BorderRender.renderToStyle(baseCssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
-            ColorRender.renderToStyle(baseCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
+            boolean hasIcon = button.getRenderProperty(AbstractButton.PROPERTY_ICON) != null;
+            CssStyle defaultCssStyle = new CssStyle();
+            BorderRender.renderToStyle(defaultCssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
+            ColorRender.renderToStyle(defaultCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
                     (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
-            FontRender.renderToStyle(baseCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
-            FillImageRender.renderToStyle(baseCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
+            FontRender.renderToStyle(defaultCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
+            FillImageRender.renderToStyle(defaultCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
                     (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), true);
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "baseStyle", 
-                    baseCssStyle.renderInline());
+            DomPropertyStore.createDomPropertyStore(serverMessage, id, "defaultStyle", 
+                    defaultCssStyle.renderInline());
+
+            if (hasIcon) {
+                DomPropertyStore.createDomPropertyStore(serverMessage, id, "defaultIcon", 
+                        ImageTools.getUri(rc, this, button, IMAGE_ID_ICON));
+            }
             
             if (rolloverEnabled) {
                 CssStyle rolloverCssStyle = new CssStyle();
@@ -578,6 +584,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 if (rolloverCssStyle.hasAttributes()) {
                     DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverStyle", 
                             rolloverCssStyle.renderInline());
+                }
+                if (hasIcon) {
+                    ImageReference rolloverIcon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_ICON);
+                    if (rolloverIcon != null) {
+                        DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverIcon", 
+                                ImageTools.getUri(rc, this, button, IMAGE_ID_ROLLOVER_ICON));
+                    }
                 }
             }
             
@@ -597,6 +610,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 if (pressedCssStyle.hasAttributes()) {
                     DomPropertyStore.createDomPropertyStore(serverMessage, id, "pressedStyle", 
                             pressedCssStyle.renderInline());
+                }
+                if (hasIcon) {
+                    ImageReference pressedIcon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_ICON);
+                    if (pressedIcon != null) {
+                        DomPropertyStore.createDomPropertyStore(serverMessage, id, "pressedIcon", 
+                                ImageTools.getUri(rc, this, button, IMAGE_ID_PRESSED_ICON));
+                    }
                 }
             }
         }
