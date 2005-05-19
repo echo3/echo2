@@ -63,7 +63,6 @@ import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.Service;
@@ -551,7 +550,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 Boolean.FALSE)).booleanValue();
         boolean pressedEnabled = ((Boolean) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_ENABLED, 
                 Boolean.FALSE)).booleanValue();
-        boolean addRolloverListener = false;
         
         if (rolloverEnabled || pressedEnabled) {
             CssStyle baseCssStyle = new CssStyle();
@@ -580,7 +578,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 if (rolloverCssStyle.hasAttributes()) {
                     DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverStyle", 
                             rolloverCssStyle.renderInline());
-                    addRolloverListener = true;
                 }
             }
             
@@ -604,16 +601,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             }
         }
         
-        //BUGBUG. testing new method.
-        /*
-        if (addRolloverListener) {
-            EventUpdate.createEventAdd(serverMessage, "click,mousedown,mouseover", id, 
-                    "EchoButton.doAction,EchoButton.doPressed,EchoButton.doRolloverEnter");
-        } else {
-            EventUpdate.createEventAdd(serverMessage, "click,mousedown", id, 
-                    "EchoButton.doAction,EchoButton.doPressed");
-        }
-        */
         createInit(serverMessage, id);
 
         renderButtonContent(rc, divElement, button);
