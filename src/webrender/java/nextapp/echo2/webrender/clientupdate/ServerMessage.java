@@ -152,37 +152,44 @@ public class ServerMessage extends XmlDocument {
         }
     }
     
-    //BUGBUG. doc preremove/postupdate.
-    
     /**
-     * Constant for the "remove" messagepartgroup.  Messageparts in this group
-     * are processed after the "init" group but before the "update" group.
-     */
-    public static final String GROUP_ID_REMOVE = "remove";
-    
-    /**
-     * Constant for the "remove" messagepartgroup.  Messageparts in this group
-     * are processed after the "init" group but before the "update" group.
-     */
-    public static final String GROUP_ID_PREREMOVE = "preremove";
-
-    /**
-     * Constant for the "init" messagepartgroup.  Messageparts in this group
-     * are processed before the "remove" and "update" groups.
+     * Constant for the "init" messagepartgroup.  
+     * Messageparts in this group are processed before the "preremove", 
+     * "remove" "update", and "postupdate" groups.
      */
     public static final String GROUP_ID_INIT = "init";
     
     /**
-     * Constant for the "update" messagepartgroup.  Messageparts in this group
-     * are procssed after the "init" and "remove" groups.
+     * Constant for the "preremove" messagepartgroup.
+     * Messageparts in this group are processed after the "init" group. 
+     * Messageparts in this group are processed before the "remove", "update" 
+     * and "postupdate" groups.
+     */
+    public static final String GROUP_ID_PREREMOVE = "preremove";
+    
+    /**
+     * Constant for the "remove" messagepartgroup.  
+     * Messageparts in this group are processed after the "init" and 
+     * "preremove" groups.
+     * Messageparts in this group are processed before the "update" and
+     * "postupdate" groups.
+     */
+    public static final String GROUP_ID_REMOVE = "remove";
+    
+    /**
+     * Constant for the "update" messagepartgroup.
+     * Messageparts in this group are processed after the "init", 
+     * "preremove" and "remove" groups.
+     * Messageparts in this group are processed before the "postupdate" gruop.
      */
     public static final String GROUP_ID_UPDATE = "update";
     
     /**
-     * Constant for the "update" messagepartgroup.  Messageparts in this group
-     * are procssed after the "init" and "remove" groups.
+     * Constant for the "postupdate" messagepartgroup.  
+     * Messageparts in this group are procssed after the "init", "preremove", 
+     * "remove" and "update" groups.
      */
-    public static final String GROUP_ID_POSTUPDATE = "update";
+    public static final String GROUP_ID_POSTUPDATE = "postupdate";
     
     private Set addedLibraries;
     private Element librariesElement;
@@ -361,6 +368,13 @@ public class ServerMessage extends XmlDocument {
         return element;
     }
     
+    /**
+     * Sets the interval between asynchronous requests to the server to check
+     * for server-pushed updates.
+     * 
+     * @param newValue the new interval in milleseconds (a negative value
+     *        will disable asynchronous requests)
+     */
     public void setAsynchronousMonitorInterval(int newValue) {
         if (newValue < 0) {
             serverMessageElement.setAttribute("asyncinterval", "disable");

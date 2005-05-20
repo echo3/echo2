@@ -29,7 +29,6 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.RenderContext;
 
