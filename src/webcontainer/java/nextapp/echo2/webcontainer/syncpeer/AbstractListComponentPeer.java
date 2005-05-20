@@ -266,8 +266,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
 
-        EventUpdate.createEventAdd(rc.getServerMessage(), "change", elementId + "_select", "EchoListBox.processSelection");
-
         Element containingDiv = parent.getOwnerDocument().createElement("div");
         containingDiv.setAttribute("id", elementId);
         containingDiv.appendChild(listBoxElement);

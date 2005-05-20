@@ -482,7 +482,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @param elementId the HTML element id of the button
      */
     private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_REMOVE,
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
                 "EchoButton.MessageProcessor", "dispose",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
@@ -639,7 +639,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @param elementId the HTML element id of the button
      */
     private void renderInitDirective(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE,
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoButton.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
@@ -656,7 +656,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @param groupId the unique radio button group identifier
      */
     private void renderSetGroupDirective(ServerMessage serverMessage, String elementId, String groupId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);

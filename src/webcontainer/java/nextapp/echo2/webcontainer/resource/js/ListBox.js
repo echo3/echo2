@@ -113,10 +113,11 @@ EchoListBox.createUpdates = function(elementId,propertyElement){
 
 EchoListBox.dispose = function(elementId) {
     var selectElement = document.getElementById(elementId + "_select");
-    var options = selectElement.options;
-    for (var i = 0; i < options.length; ++i) {
-        EchoEventProcessor.removeHandler(options[i].id, "mouseout");
-        EchoEventProcessor.removeHandler(options[i].id, "mouseover");
+    var optionElements = selectElement.options;
+    EchoEventProcessor.removeHandler(selectElement.id, "change");
+    for (var i = 0; i < optionElements.length; ++i) {
+        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseout");
+        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseover");
     }
 };
 
@@ -140,11 +141,18 @@ EchoListBox.doRolloverExit = function(e) {
 
 EchoListBox.init = function(elementId) {
     var selectElement = document.getElementById(elementId + "_select");
-    var options = selectElement.options;
-    for (var i = 0; i < options.length; ++i) {
-        EchoEventProcessor.addHandler(options[i].id, "mouseout", "EchoListBox.doRolloverExit");
-        EchoEventProcessor.addHandler(options[i].id, "mouseover", "EchoListBox.doRolloverEnter");
+    var optionElements = selectElement.options;
+    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListBox.processSelection");
+    for (var i = 0; i < optionElements.length; ++i) {
+        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListBox.doRolloverExit");
+        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListBox.doRolloverEnter");
     }
+};
+
+EchoListBox.processSelection = function(e) {
+    EchoDomUtil.preventEventDefault(e);
+    var target = EchoDomUtil.getEventTarget(e);
+    EchoListBox.processUpdates(target.id);
 };
 
 EchoListBox.processUpdates = function(elementId) {
@@ -155,10 +163,3 @@ EchoListBox.processUpdates = function(elementId) {
 
     EchoDebugManager.updateClientMessage();
 };
-
-EchoListBox.processSelection = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-    var target = EchoDomUtil.getEventTarget(e);
-    EchoListBox.processUpdates(target.id);
-};
-
