@@ -41,6 +41,9 @@ import org.w3c.dom.Element;
  * rendering buttons that have two or three elements (images, text labels, and 
  * state indicators).  This class supports all possible permutations for
  * placement of each of the two or three contained components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 class TriCellTable {
 

@@ -49,6 +49,9 @@ import nextapp.echo2.webrender.output.CssStyle;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.ContentPane</code> components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class ContentPanePeer 
 implements DomUpdateSupport, SynchronizePeer {

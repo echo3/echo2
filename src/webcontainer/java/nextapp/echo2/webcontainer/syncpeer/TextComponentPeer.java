@@ -65,6 +65,9 @@ import nextapp.echo2.webrender.util.DomUtil;
 /**
  * Abstract base synchronization peer for the built-in
  * <code>nextapp.echo2.app.text.TextComponent</code>-derived components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public abstract class TextComponentPeer
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {

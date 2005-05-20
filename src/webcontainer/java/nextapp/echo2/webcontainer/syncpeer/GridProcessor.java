@@ -35,7 +35,10 @@ import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.layout.GridCellLayoutData;
 
 /**
- * 
+ * Provides analysis of a Grid for rendering purposes.  
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class GridProcessor {
     

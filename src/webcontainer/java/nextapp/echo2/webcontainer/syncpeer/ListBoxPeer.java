@@ -57,6 +57,9 @@ import org.w3c.dom.Element;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.ListBox</code> components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
     

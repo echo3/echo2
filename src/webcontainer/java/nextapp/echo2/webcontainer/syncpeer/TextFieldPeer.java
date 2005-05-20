@@ -44,6 +44,9 @@ import org.w3c.dom.Element;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.TextField</code> components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class TextFieldPeer extends TextComponentPeer
 implements DomUpdateSupport {

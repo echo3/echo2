@@ -70,6 +70,9 @@ import nextapp.echo2.webrender.util.DomUtil;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.WindowPane</code> components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class WindowPanePeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor,  SynchronizePeer {

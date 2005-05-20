@@ -37,6 +37,9 @@ import org.w3c.dom.Element;
 /**
  * Synchronization peer for <code>nextapp.echo2.app.SelectList</code>
  * components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class SelectFieldPeer extends AbstractListComponentPeer {
 

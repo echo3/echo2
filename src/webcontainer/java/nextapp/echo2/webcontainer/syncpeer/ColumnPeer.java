@@ -60,6 +60,9 @@ import nextapp.echo2.webrender.output.CssStyle;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Column</code> components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class ColumnPeer 
 implements DomUpdateSupport, SynchronizePeer {

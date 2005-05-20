@@ -65,13 +65,15 @@ import org.w3c.dom.Element;
  * <code>nextapp.echo2.app.AbstractListComponent</code> -derived components.
  * The intention of this class is to serve as the superclass for any rendering
  * of a select element.
- * 
- * Since there are deviations in how to access models in the two current
+ * <p>
+ * Since there are deviations in how to access models in the current
  * subclasses, <code>nextapp.echo2.webcontainer.syncpeer.ListBoxPeer</code>
  * and <code>nextapp.echo2.webcontainer.syncpeer.SelectFieldPeer</code>,
  * certain methods are made abstract to provide access to and manipulation of
  * the <code>nextapp.echo2.app.list.ListModel</code>
- *  
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public abstract class AbstractListComponentPeer 
 implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {

@@ -77,6 +77,9 @@ import org.w3c.dom.Text;
 /**
  * Synchronization peer for 
  * <code>nextapp.echo2.app.AbstractButton</code>-derived components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class AbstractButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {

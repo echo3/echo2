@@ -62,6 +62,9 @@ import nextapp.echo2.webrender.server.ClientProperties;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Grid</code> components.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class GridPeer 
 implements DomUpdateSupport, SynchronizePeer {
