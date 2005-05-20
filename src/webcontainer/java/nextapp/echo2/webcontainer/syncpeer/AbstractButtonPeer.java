@@ -169,39 +169,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
     
     /**
-     * Appends a directive to the outgoing <code>ServerMessage</code> to 
-     * assign the specified button element identifier to the specified 
-     * radio group identifier.
-     * 
-     * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML id of the button
-     * @param groupId the unique radio button group identifier
-     */
-    private void createSetGroup(ServerMessage serverMessage, String elementId, String groupId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
-                "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
-    }
-    
-    private void createInit(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE,
-                "EchoButton.MessageProcessor", "init",  new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
-    }
-    
-    private void createDispose(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_REMOVE,
-                "EchoButton.MessageProcessor", "dispose",  new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
-    }
-    
-    /**
      * Determines the selected state icon of the specified
      * <code>ToggleButton</code>.
      * 
@@ -503,11 +470,25 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         String id = ContainerInstance.getElementId(component);
-//BUGBUG testing new method.        
-//        EventUpdate.createEventRemove(serverMessage, "click,mouseover,mousedown,mouseout,mouseup", id);
-        createDispose(serverMessage, id);
+        renderDisposeDirective(serverMessage, id);
     }
 
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a button, performing tasks such as deregistering
+     * event listeners on the client.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the button
+     */
+    private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_REMOVE,
+                "EchoButton.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
@@ -621,7 +602,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             }
         }
         
-        createInit(serverMessage, id);
+        renderInitDirective(serverMessage, id);
 
         renderButtonContent(rc, divElement, button);
 
@@ -639,7 +620,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {
                     String groupId = rc.getContainerInstance().getIdTable().getId(buttonGroup);
-                    createSetGroup(serverMessage, id, groupId);
+                    renderSetGroupDirective(serverMessage, id, groupId);
                 }
             }
         }
@@ -649,6 +630,39 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
     }
 
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a button, performing tasks such as registering
+     * event listeners on the client.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the button
+     */
+    private void renderInitDirective(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE,
+                "EchoButton.MessageProcessor", "init",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * assign the specified button element identifier to the specified 
+     * radio group identifier.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the button
+     * @param groupId the unique radio button group identifier
+     */
+    private void renderSetGroupDirective(ServerMessage serverMessage, String elementId, String groupId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)

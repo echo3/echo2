@@ -60,39 +60,10 @@ import org.w3c.dom.Element;
  * Synchronization peer for <code>nextapp.echo2.app.ListBox</code> components.
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
-
-    public static final int DEFAULT_ROW_COUNT = 5;
+    
     protected static final String DEFAULT_LISTENER = "EchoListBoxDhtml.processSelection";
 
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getDefaultHeight()
-     */
-    protected Extent getDefaultHeight() {
-        return new Extent(5, Extent.EM);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getListModel(AbstractListComponent)
-     */
-    protected ListModel getListModel(AbstractListComponent selectList) {
-        return ((ListBox) selectList).getModel();
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#setSelectedIndex(AbstractListComponent,
-     *      int)
-     */
-    protected void setSelectedIndex(AbstractListComponent selectList, int index) {
-        ((ListBox) selectList).setSelectedIndex(index, true);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#isIndexSelected(AbstractListComponent,
-     *      int)
-     */
-    protected boolean isIndexSelected(AbstractListComponent selectList, int index) {
-        return ((ListBox) selectList).isSelectedIndex(index);
-    }
+    public static final int DEFAULT_ROW_COUNT = 5;
 
     /**
      * Service to provide supporting JavaScript library.
@@ -105,47 +76,13 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * Creates the selected style for an inner div of the DHTML rendering based
-     * off of properties on the given <code>ListBox</code>.
-     * 
-     * @param component the <code>ListBox</code> instance
-     * @return the style
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractListComponentPeer#appendDefaultCssStyle(
+     *      nextapp.echo2.webrender.output.CssStyle, nextapp.echo2.app.Component)
      */
-    protected CssStyle createSelectedCssStyle(ListBox listBox) {
-        CssStyle style = new CssStyle();
-        appendSelectedCssStyle(style, listBox);
-        return style;
-    }
-
-    /**
-     * Creates the default style for an inner div of the DHTML rendering
-     * based off of properties on the given <code>ListBox</code>.
-     * 
-     * @param component the <code>ListBox</code> instance
-     * @return the style
-     */
-    protected CssStyle createDefaultCssStyle(ListBox listBox) {
-        CssStyle style = new CssStyle();
-        appendDefaultCssStyle(style, listBox);
-        return style;
-    }
-
-    /**
-     * Returns the rollover style for the DHTML rendering derived from
-     * properties on the given <code>ListBox</code>.
-     * 
-     * @param component the <code>ListBox</code> instance
-     * @return the style
-     */
-    protected CssStyle createRolloverCssStyle(ListBox listBox) {
-        CssStyle style = new CssStyle();
-        Color foregroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_FOREGROUND),
-                DEFAULT_ROLLOVER_FOREGROUND);
-        Color backgroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_BACKGROUND),
-                DEFAULT_ROLLOVER_BACKGROUND);
-
-        ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
-        return style;
+    protected void appendDefaultCssStyle(CssStyle style, Component component) {
+        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
+        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
+        ColorRender.renderToStyle(style, foreground, background);
     }
 
     /**
@@ -161,13 +98,16 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractListComponentPeer#appendDefaultCssStyle(
-     *      nextapp.echo2.webrender.output.CssStyle, nextapp.echo2.app.Component)
+     * Creates the default style for an inner div of the DHTML rendering
+     * based off of properties on the given <code>ListBox</code>.
+     * 
+     * @param component the <code>ListBox</code> instance
+     * @return the style
      */
-    protected void appendDefaultCssStyle(CssStyle style, Component component) {
-        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
-        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
-        ColorRender.renderToStyle(style, foreground, background);
+    protected CssStyle createDefaultCssStyle(ListBox listBox) {
+        CssStyle style = new CssStyle();
+        appendDefaultCssStyle(style, listBox);
+        return style;
     }
 
     /**
@@ -204,44 +144,56 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * Renders the appropriate <code>ListBox</code> control based off of the
-     * detection of the QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE quirk.
+     * Returns the rollover style for the DHTML rendering derived from
+     * properties on the given <code>ListBox</code>.
      * 
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
-     *      ServerComponentUpdate, Element, Component)
-     * @param rc the relevant <code>RenderContext</code>
-     * @param update the update
-     * @param parent the HTML element representing the parent of the given
-     *        component
      * @param component the <code>ListBox</code> instance
+     * @return the style
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-        ClientProperties props = rc.getContainerInstance().getClientProperties();
-        if (true || props.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE)) {
-            doRenderDynamicHtml(rc, update, parent, component);
-        } else {
-            doRenderStandardHtml(rc, update, parent, component);
-        }
+    protected CssStyle createRolloverCssStyle(ListBox listBox) {
+        CssStyle style = new CssStyle();
+        Color foregroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_FOREGROUND),
+                DEFAULT_ROLLOVER_FOREGROUND);
+        Color backgroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_BACKGROUND),
+                DEFAULT_ROLLOVER_BACKGROUND);
 
+        ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
+        return style;
     }
 
     /**
-     * Renders a standard select-based ListBox using the parent class's
-     * implementation.
+     * Creates the selected style for an inner div of the DHTML rendering based
+     * off of properties on the given <code>ListBox</code>.
      * 
-     * @param rc the relevant <code>RenderContext</code>
-     * @param update the update
-     * @param parentElement the HTML element which should contain the child
      * @param component the <code>ListBox</code> instance
+     * @return the style
      */
-    public void doRenderStandardHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    protected CssStyle createSelectedCssStyle(ListBox listBox) {
+        CssStyle style = new CssStyle();
+        appendSelectedCssStyle(style, listBox);
+        return style;
+    }
 
-        ListBox listBox = (ListBox) component;
-        boolean multiple = listBox.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION;
+    /**
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getDefaultHeight()
+     */
+    protected Extent getDefaultHeight() {
+        return new Extent(5, Extent.EM);
+    }
 
-        int visibleRows = listBox.getVisibleRowCount() <= 1 ? DEFAULT_ROW_COUNT : listBox.getVisibleRowCount();
+    /**
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getListModel(AbstractListComponent)
+     */
+    protected ListModel getListModel(AbstractListComponent selectList) {
+        return ((ListBox) selectList).getModel();
+    }
 
-        doRenderHtml(rc, update, parentElement, listBox, multiple, visibleRows);
+    /**
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#isIndexSelected(AbstractListComponent,
+     *      int)
+     */
+    protected boolean isIndexSelected(AbstractListComponent selectList, int index) {
+        return ((ListBox) selectList).isSelectedIndex(index);
     }
 
     /**
@@ -252,8 +204,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param parentElement the HTML element which should contain the child
      * @param child the child component to render
      */
-    protected void doRenderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-
+    protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         ListBox listBox = (ListBox) component;
         String elementId = ContainerInstance.getElementId(component);
 
@@ -270,7 +221,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
 
             Element optionElement = parent.getOwnerDocument().createElement("div");
-            String optionId = toOptionId(elementId, i);
+            String optionId = getOptionId(elementId, i);
             optionElement.setAttribute("id", optionId);
             optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(model.get(i).toString()));
 
@@ -287,11 +238,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         CssStyle cssStyle = createListBoxCssStyle(rc, listBox);
         listBoxElement.setAttribute("style", cssStyle.renderInline());
 
-        CssStyle selectedCssStyle = createSelectedCssStyle(listBox);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
-
         CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
+
+        CssStyle selectedCssStyle = createSelectedCssStyle(listBox);
+        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
 
         CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
@@ -301,5 +252,52 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         }
 
         parent.appendChild(listBoxElement);
+    }
+
+    /**
+     * Renders the appropriate <code>ListBox</code> control based off of the
+     * detection of the <code>QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE quirk</code>.
+     * 
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
+     *      ServerComponentUpdate, Element, Component)
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @param parent the HTML element representing the parent of the given
+     *        component
+     * @param component the <code>ListBox</code> instance
+     */
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+        ClientProperties props = rc.getContainerInstance().getClientProperties();
+        if (props.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE)) {
+            renderDynamicHtml(rc, update, parent, component);
+        } else {
+            renderStandardHtml(rc, update, parent, component);
+        }
+        super.renderHtml(rc, update, parent, component);
+    }
+
+    /**
+     * Renders a standard select-based ListBox using the parent class's
+     * implementation.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @param parentElement the HTML element which should contain the child
+     * @param component the <code>ListBox</code> instance
+     */
+    public void renderStandardHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+        ListBox listBox = (ListBox) component;
+        boolean multiple = listBox.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION;
+        int visibleRows = listBox.getVisibleRowCount() <= 1 ? DEFAULT_ROW_COUNT : listBox.getVisibleRowCount();
+
+        renderSelectElementHtml(rc, update, parentElement, listBox, multiple, visibleRows);
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#setSelectedIndex(AbstractListComponent,
+     *      int)
+     */
+    protected void setSelectedIndex(AbstractListComponent selectList, int index) {
+        ((ListBox) selectList).setSelectedIndex(index, true);
     }
 }

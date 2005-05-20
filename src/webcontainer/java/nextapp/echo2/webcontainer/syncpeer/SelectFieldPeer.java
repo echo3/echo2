@@ -52,14 +52,6 @@ public class SelectFieldPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
-     *      ServerComponentUpdate, Element, Component)
-     */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-        doRenderHtml(rc, update, parent, component, false, 1);
-    }
-
-    /**
      * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getListModel(AbstractListComponent)
      */
     protected ListModel getListModel(AbstractListComponent selectList) {
@@ -71,6 +63,15 @@ public class SelectFieldPeer extends AbstractListComponentPeer {
      */
     protected boolean isIndexSelected(AbstractListComponent selectList, int index) {
         return ((SelectField) selectList).getSelectedIndex() == index;
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
+     *      ServerComponentUpdate, Element, Component)
+     */
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+        renderSelectElementHtml(rc, update, parent, component, false, 1);
+        super.renderHtml(rc, update, parent, component);
     }
 
     /**

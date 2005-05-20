@@ -152,11 +152,19 @@ public class ServerMessage extends XmlDocument {
         }
     }
     
+    //BUGBUG. doc preremove/postupdate.
+    
     /**
      * Constant for the "remove" messagepartgroup.  Messageparts in this group
      * are processed after the "init" group but before the "update" group.
      */
     public static final String GROUP_ID_REMOVE = "remove";
+    
+    /**
+     * Constant for the "remove" messagepartgroup.  Messageparts in this group
+     * are processed after the "init" group but before the "update" group.
+     */
+    public static final String GROUP_ID_PREREMOVE = "preremove";
 
     /**
      * Constant for the "init" messagepartgroup.  Messageparts in this group
@@ -169,6 +177,12 @@ public class ServerMessage extends XmlDocument {
      * are procssed after the "init" and "remove" groups.
      */
     public static final String GROUP_ID_UPDATE = "update";
+    
+    /**
+     * Constant for the "update" messagepartgroup.  Messageparts in this group
+     * are procssed after the "init" and "remove" groups.
+     */
+    public static final String GROUP_ID_POSTUPDATE = "update";
     
     private Set addedLibraries;
     private Element librariesElement;
@@ -189,8 +203,10 @@ public class ServerMessage extends XmlDocument {
         
         // Add basic part groups.
         addPartGroup(GROUP_ID_INIT);
+        addPartGroup(GROUP_ID_PREREMOVE);
         addPartGroup(GROUP_ID_REMOVE);
         addPartGroup(GROUP_ID_UPDATE);
+        addPartGroup(GROUP_ID_POSTUPDATE);
     }
     
     /**
