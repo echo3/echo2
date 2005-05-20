@@ -28,49 +28,49 @@
   */
 
 //_________________________
-// Object EchoListBox
+// Object EchoListComponent
 
-EchoListBox = function() { };
+EchoListComponent = function() { };
 
 /**
  * ServerMessage processor.
  */
-EchoListBox.MessageProcessor = function() { };
+EchoListComponent.MessageProcessor = function() { };
 
 /**
  * ServerMessage process() implementation.
  */
-EchoListBox.MessageProcessor.process = function(messagePartElement) {
+EchoListComponent.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
             case "init":
-                EchoListBox.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                EchoListComponent.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
             case "dispose":
-                EchoListBox.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                EchoListComponent.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
                 break;
             }
         }
     }
 };
 
-EchoListBox.MessageProcessor.processDispose = function(disposeMessageElement) {
+EchoListComponent.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoListBox.dispose(elementId);
+        EchoListComponent.dispose(elementId);
     }
 };
 
-EchoListBox.MessageProcessor.processInit = function(initMessageElement) {
+EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoListBox.init(elementId);
+        EchoListComponent.init(elementId);
     }
 };
 
 // BUGBUG Copied verbatim from Button.js
-EchoListBox.applyStyle = function(element, cssText) {
+EchoListComponent.applyStyle = function(element, cssText) {
     if (!cssText) {
         //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.
         return;
@@ -89,7 +89,7 @@ EchoListBox.applyStyle = function(element, cssText) {
     }
 };
 
-EchoListBox.createUpdates = function(elementId,propertyElement){
+EchoListComponent.createUpdates = function(elementId,propertyElement){
     var element = document.getElementById(elementId);
 
     // remove previous values
@@ -111,7 +111,7 @@ EchoListBox.createUpdates = function(elementId,propertyElement){
     }
 };
 
-EchoListBox.dispose = function(elementId) {
+EchoListComponent.dispose = function(elementId) {
     var selectElement = document.getElementById(elementId + "_select");
     var optionElements = selectElement.options;
     EchoEventProcessor.removeHandler(selectElement.id, "change");
@@ -121,45 +121,45 @@ EchoListBox.dispose = function(elementId) {
     }
 };
 
-EchoListBox.doRolloverEnter = function(e) {
+EchoListComponent.doRolloverEnter = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
 
     if (!target.selected){
         var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id, "rolloverStyle");
-        EchoListBox.applyStyle(target,style);
+        EchoListComponent.applyStyle(target,style);
     }
 };
 
-EchoListBox.doRolloverExit = function(e) {
+EchoListComponent.doRolloverExit = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
 
     var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id , "defaultStyle");
-    EchoListBox.applyStyle(target,style);
+    EchoListComponent.applyStyle(target,style);
 };
 
-EchoListBox.init = function(elementId) {
+EchoListComponent.init = function(elementId) {
     var selectElement = document.getElementById(elementId + "_select");
     var optionElements = selectElement.options;
-    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListBox.processSelection");
+    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
     for (var i = 0; i < optionElements.length; ++i) {
-        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListBox.doRolloverExit");
-        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListBox.doRolloverEnter");
+        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListComponent.doRolloverExit");
+        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListComponent.doRolloverEnter");
     }
 };
 
-EchoListBox.processSelection = function(e) {
+EchoListComponent.processSelection = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
-    EchoListBox.processUpdates(target.id);
+    EchoListComponent.processUpdates(target.id);
 };
 
-EchoListBox.processUpdates = function(elementId) {
+EchoListComponent.processUpdates = function(elementId) {
     var element = document.getElementById(elementId);
     var propertyElement  = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
 
-    EchoListBox.createUpdates(element.id,propertyElement);
+    EchoListComponent.createUpdates(element.id,propertyElement);
 
     EchoDebugManager.updateClientMessage();
 };

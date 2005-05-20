@@ -51,7 +51,6 @@ import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.Service;
@@ -92,11 +91,11 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service LIST_BOX_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.ListBox",
-            "/nextapp/echo2/webcontainer/resource/js/ListBox.js");
+    public static final Service LIST_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.ListComponent",
+            "/nextapp/echo2/webcontainer/resource/js/ListComponent.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(LIST_BOX_COMPONENT_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(LIST_COMPONENT_SERVICE);
     }
 
     /**
@@ -140,7 +139,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * Creates the default style based off of properties on the given
      * <code>nextapp.echo2.app.AbstractListComponent</code>
      * 
-     * @param component the <code>ListBox</code> instance
+     * @param component the <code>AbstractListComponent</code> instance
      * @return the style
      */
     private CssStyle createDefaultCssStyle(AbstractListComponent listComponent) {
@@ -156,7 +155,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * @param rc the relevant <code>RenderContext</code>
      * @param listComponent the <code>nextapp.echo2.app.AbstractListComponent</code>
      */
-    private CssStyle createListBoxCssStyle(RenderContext rc, AbstractListComponent listComponent) {
+    private CssStyle createListComponentCssStyle(RenderContext rc, AbstractListComponent listComponent) {
         CssStyle style = new CssStyle();
 
         // Ensure defaults since proper rendering depends on reasonable values
@@ -169,8 +168,8 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT));
         InsetsRender.renderToStyle(style, "padding", insets);
 
-        style.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
-        style.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+        ExtentRender.renderToStyle(style, "width", width);
+        ExtentRender.renderToStyle(style, "height", height);
         style.setAttribute("position", "relative");
 
         return style;
@@ -180,7 +179,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * Creates the rollover style based off of properties on the given
      * <code>nextapp.echo2.app.AbstractListComponent</code>
      * 
-     * @param component the <code>ListBox</code> instance
+     * @param listComponent the <code>AbstractListComponent</code> instance
      * @return the style
      */
     private CssStyle createRolloverCssStyle(AbstractListComponent listComponent) {
@@ -212,16 +211,16 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         String elementId = ContainerInstance.getElementId(component);
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(LIST_BOX_COMPONENT_SERVICE.getId(), true);
+        serverMessage.addLibrary(LIST_COMPONENT_SERVICE.getId(), true);
 
-        Element listBoxElement = parent.getOwnerDocument().createElement(
+        Element listComponentElement = parent.getOwnerDocument().createElement(
                 "select");
-        listBoxElement.setAttribute("id", elementId + "_select");
-        listBoxElement.setAttribute("name", elementId + "_select");
-        listBoxElement.setAttribute("size", "" + visibleRows);
+        listComponentElement.setAttribute("id", elementId + "_select");
+        listComponentElement.setAttribute("name", elementId + "_select");
+        listComponentElement.setAttribute("size", "" + visibleRows);
 
         if (multiple) {
-            listBoxElement.setAttribute("multiple", "multiple");
+            listComponentElement.setAttribute("multiple", "multiple");
         }
 
         ListModel model = listComponent.getModel();
@@ -253,12 +252,12 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
             }
 
 //            EventUpdate.createEventAdd(rc.getServerMessage(), "mouseover,mouseout", optionId, 
-//                    "EchoListBox.doRolloverEnter,EchoListBox.doRolloverExit");
-            listBoxElement.appendChild(optionElement);
+//                    "EchoListComponent.doRolloverEnter,EchoListComponent.doRolloverExit");
+            listComponentElement.appendChild(optionElement);
         }
 
-        CssStyle cssStyle = createListBoxCssStyle(rc, listComponent);
-        listBoxElement.setAttribute("style", cssStyle.renderInline());
+        CssStyle cssStyle = createListComponentCssStyle(rc, listComponent);
+        listComponentElement.setAttribute("style", cssStyle.renderInline());
 
         CssStyle defaultCssStyle = createDefaultCssStyle(listComponent);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
@@ -268,7 +267,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
 
         Element containingDiv = parent.getOwnerDocument().createElement("div");
         containingDiv.setAttribute("id", elementId);
-        containingDiv.appendChild(listBoxElement);
+        containingDiv.appendChild(listComponentElement);
 
         parent.appendChild(containingDiv);
     }
@@ -295,7 +294,9 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * 
      * @return the default height of the component
      */
-    protected abstract Extent getDefaultHeight();
+    protected Extent getDefaultHeight() {
+        return null;
+    }
 
     //BUGBUG. doc.
     protected String getOptionId(String elementId, int index) {
@@ -348,7 +349,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      */
     private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
-                "EchoListBox.MessageProcessor", "dispose",  new String[0], new String[0]);
+                "EchoListComponent.MessageProcessor", "dispose",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
@@ -364,7 +365,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      */
     private void renderInitDirective(ServerMessage serverMessage, String elementId) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoListBox.MessageProcessor", "init",  new String[0], new String[0]);
+                "EchoListComponent.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);

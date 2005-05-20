@@ -30,9 +30,6 @@ package nextapp.echo2.webcontainer.syncpeer;
 
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.SelectField;
-import nextapp.echo2.app.list.AbstractListComponent;
-import nextapp.echo2.app.list.ListModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.RenderContext;
 
@@ -45,38 +42,10 @@ import org.w3c.dom.Element;
 public class SelectFieldPeer extends AbstractListComponentPeer {
 
     /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getDefaultHeight()
-     */
-    protected Extent getDefaultHeight() {
-        return new Extent(20);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getListModel(AbstractListComponent)
-     */
-    protected ListModel getListModel(AbstractListComponent selectList) {
-        return ((SelectField) selectList).getModel();
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#isIndexSelected(AbstractListComponent, int)
-     */
-    protected boolean isIndexSelected(AbstractListComponent selectList, int index) {
-        return ((SelectField) selectList).getSelectedIndex() == index;
-    }
-
-    /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
      *      ServerComponentUpdate, Element, Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         renderSelectElementHtml(rc, update, parent, component, false, 1);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#setSelectedIndex(AbstractListComponent, int)
-     */
-    protected void setSelectedIndex(AbstractListComponent selectList, int index) {
-        ((SelectField) selectList).setSelectedIndex(index);
     }
 }

@@ -93,25 +93,25 @@ public class ListBoxTest extends SplitPane {
                 }
             }
         });
-        controlsColumn.addButton("Set Unselected Foreground ", new ActionListener() {
+        controlsColumn.addButton("Set Default Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 listbox.setForeground(color);
             }
         });
-        controlsColumn.addButton("Set Unselected Background ", new ActionListener() {
+        controlsColumn.addButton("Set Default Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 listbox.setBackground(color);
             }
         });
-        controlsColumn.addButton("Set Mouseover Foreground ", new ActionListener() {
+        controlsColumn.addButton("Set Rollover Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 listbox.setRolloverForeground(color);
             }
         });
-        controlsColumn.addButton("Set Mouseover Background ", new ActionListener() {
+        controlsColumn.addButton("Set Rollover Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 listbox.setRolloverBackground(color);
@@ -179,25 +179,25 @@ public class ListBoxTest extends SplitPane {
 
         controlsColumn.add(new Label("Select Field"));
 
-        controlsColumn.addButton("Set Unselected Foreground ", new ActionListener() {
+        controlsColumn.addButton("Set Default Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 select.setForeground(color);
             }
         });
-        controlsColumn.addButton("Set Unselected Background ", new ActionListener() {
+        controlsColumn.addButton("Set Default Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 select.setBackground(color);
             }
         });
-        controlsColumn.addButton("Set Mouseover Foreground ", new ActionListener() {
+        controlsColumn.addButton("Set Rollover Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 select.setRolloverForeground(color);
             }
         });
-        controlsColumn.addButton("Set Mouseover Background ", new ActionListener() {
+        controlsColumn.addButton("Set Rollover Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 select.setRolloverBackground(color);

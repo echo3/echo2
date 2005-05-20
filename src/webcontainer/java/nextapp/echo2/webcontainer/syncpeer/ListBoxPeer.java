@@ -61,18 +61,18 @@ import org.w3c.dom.Element;
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
     
-    protected static final String DEFAULT_LISTENER = "EchoListBoxDhtml.processSelection";
+    protected static final String DEFAULT_LISTENER = "EchoListComponentDhtml.processSelection";
 
     public static final int DEFAULT_ROW_COUNT = 5;
 
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service LIST_BOX_COMPONENT_DHTML_SERVICE = JavaScriptService.forResource("Echo.ListBoxDhtml",
-            "/nextapp/echo2/webcontainer/resource/js/ListBoxDhtml.js");
+    public static final Service LIST_COMPONENT_DHTML_SERVICE = JavaScriptService.forResource("Echo.ListComponentDhtml",
+            "/nextapp/echo2/webcontainer/resource/js/ListComponentDhtml.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(LIST_BOX_COMPONENT_DHTML_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(LIST_COMPONENT_DHTML_SERVICE);
     }
 
     /**
@@ -209,7 +209,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         String elementId = ContainerInstance.getElementId(component);
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(LIST_BOX_COMPONENT_DHTML_SERVICE.getId(), true);
+        serverMessage.addLibrary(LIST_COMPONENT_DHTML_SERVICE.getId(), true);
 
         Element listBoxElement = parent.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
@@ -231,7 +231,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             }
 
             EventUpdate.createEventAdd(rc.getServerMessage(), "click,mouseover,mouseout", optionId, 
-                    DEFAULT_LISTENER + ",EchoListBoxDhtml.doRolloverEnter,EchoListBoxDhtml.doRolloverExit");
+                    DEFAULT_LISTENER + ",EchoListComponentDhtml.doRolloverEnter,EchoListComponentDhtml.doRolloverExit");
             listBoxElement.appendChild(optionElement);
         }
 
