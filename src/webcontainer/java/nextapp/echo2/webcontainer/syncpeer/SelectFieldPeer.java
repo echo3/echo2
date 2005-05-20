@@ -71,7 +71,6 @@ public class SelectFieldPeer extends AbstractListComponentPeer {
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         renderSelectElementHtml(rc, update, parent, component, false, 1);
-        super.renderHtml(rc, update, parent, component);
     }
 
     /**

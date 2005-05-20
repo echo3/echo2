@@ -206,6 +206,8 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      */
     protected void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component, 
             boolean multiple, int visibleRows) {
+        renderInitDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
+
         AbstractListComponent listComponent = (AbstractListComponent) component;
         String elementId = ContainerInstance.getElementId(component);
 
@@ -336,16 +338,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         renderDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
-        
-        //BUGBUG. Kill this code:
-        /*
-        AbstractListComponent listComponent = (AbstractListComponent) component;
-        ListModel model = listComponent.getModel();
-        for (int i = 0; i < model.size(); i++) {
-            String optionId = getOptionId(ContainerInstance.getElementId(listComponent), i);
-            EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown,mouseover,mouseout", optionId);
-        }
-        */
     }
 
     /**
@@ -362,15 +354,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
-     *      ServerComponentUpdate, Element, Component)
-     */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-//BUGBUG. this goes into renderselect NOW!  And then this method dies.
-        renderInitDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
     }
 
     /**

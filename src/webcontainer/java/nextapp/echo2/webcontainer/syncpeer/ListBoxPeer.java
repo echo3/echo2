@@ -273,7 +273,6 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         } else {
             renderStandardHtml(rc, update, parent, component);
         }
-        super.renderHtml(rc, update, parent, component);
     }
 
     /**
