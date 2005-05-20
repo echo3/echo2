@@ -192,6 +192,106 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         return style;
     }
     
+    protected Object ensureValue(Object value, Object defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        } else {
+            return value;
+        }
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
+     */
+    public String getContainerId(Component child) {
+        throw new UnsupportedOperationException("Component does not support children.");
+    }
+
+    /**
+     * Allows subclasses to define a default height for the rendered select
+     * control in the event that one has not been set on a particular
+     * <code>nextapp.echo2.app.AbstractListComponent</code>.
+     * 
+     * @return the default height of the component
+     */
+    protected Extent getDefaultHeight() {
+        return null;
+    }
+
+    //BUGBUG. doc.
+    protected String getOptionId(String elementId, int index) {
+        return elementId + "_" + index;
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
+     *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
+        AbstractListComponent listComponent = (AbstractListComponent) component;
+        ListSelectionModel selectionModel = listComponent.getSelectionModel();
+        Element[] selected = DomUtil.getChildElementsByTagName(propertyElement, "option");
+        for (int i = 0; i < selected.length; i++) {
+            Element option = selected[i];
+            String attribute = option.getAttribute("id");
+            int index = Integer.parseInt(attribute.substring(attribute.lastIndexOf("_") + 1));
+            
+            //BUGBUG! need to add deselect!
+            selectionModel.setSelectedIndex(index, true);
+        }
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
+     *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String,
+     *      nextapp.echo2.app.Component)
+     */
+    public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
+        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
+        renderHtml(rc, update, contentElement, component);
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a list component, performing tasks such as 
+     * deregistering event listeners on the client.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the list component
+     */
+    private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoListComponent.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a list component, performing tasks such as 
+     * registering event listeners on the client.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the list component
+     */
+    private void renderInitDirective(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoListComponent.MessageProcessor", "init",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+
+    /**
+     * @param rc
+     * @param update
+     * @param component
+     */
+    protected void renderSelectElementDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        renderDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
+    }
+    
     /**
      * Renders the select control reflecting the given multiple and visibleRows
      * parameters.
@@ -270,105 +370,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         containingDiv.appendChild(listComponentElement);
 
         parent.appendChild(containingDiv);
-    }
-
-    protected Object ensureValue(Object value, Object defaultValue) {
-        if (value == null) {
-            return defaultValue;
-        } else {
-            return value;
-        }
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
-     */
-    public String getContainerId(Component child) {
-        throw new UnsupportedOperationException("Component does not support children.");
-    }
-
-    /**
-     * Allows subclasses to define a default height for the rendered select
-     * control in the event that one has not been set on a particular
-     * <code>nextapp.echo2.app.AbstractListComponent</code>.
-     * 
-     * @return the default height of the component
-     */
-    protected Extent getDefaultHeight() {
-        return null;
-    }
-
-    //BUGBUG. doc.
-    protected String getOptionId(String elementId, int index) {
-        return elementId + "_" + index;
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
-     *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
-     */
-    public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
-        AbstractListComponent listComponent = (AbstractListComponent) component;
-        ListSelectionModel selectionModel = listComponent.getSelectionModel();
-        Element[] selected = DomUtil.getChildElementsByTagName(propertyElement, "option");
-        for (int i = 0; i < selected.length; i++) {
-            Element option = selected[i];
-            String attribute = option.getAttribute("id");
-            int index = Integer.parseInt(attribute.substring(attribute.lastIndexOf("_") + 1));
-            
-            //BUGBUG! need to add deselect!
-            selectionModel.setSelectedIndex(index, true);
-        }
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
-     *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String,
-     *      nextapp.echo2.app.Component)
-     */
-    public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext,
-     *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
-     */
-    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        renderDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
-    }
-
-    /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a list component, performing tasks such as 
-     * deregistering event listeners on the client.
-     * 
-     * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the list component
-     */
-    private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
-                "EchoListComponent.MessageProcessor", "dispose",  new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
-    }
-
-    /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * initialize the state of a list component, performing tasks such as 
-     * registering event listeners on the client.
-     * 
-     * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the list component
-     */
-    private void renderInitDirective(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoListComponent.MessageProcessor", "init",  new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
     }
 
     /**

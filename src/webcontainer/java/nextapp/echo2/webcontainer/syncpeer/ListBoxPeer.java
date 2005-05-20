@@ -46,7 +46,6 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.ClientProperties;
@@ -61,8 +60,6 @@ import org.w3c.dom.Element;
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
     
-    protected static final String DEFAULT_LISTENER = "EchoListComponentDhtml.processSelection";
-
     public static final int DEFAULT_ROW_COUNT = 5;
 
     /**
@@ -79,7 +76,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @see nextapp.echo2.webcontainer.syncpeer.AbstractListComponentPeer#appendDefaultCssStyle(
      *      nextapp.echo2.webrender.output.CssStyle, nextapp.echo2.app.Component)
      */
-    protected void appendDefaultCssStyle(CssStyle style, Component component) {
+    private void appendDefaultCssStyle(CssStyle style, Component component) {
         Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
         Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
         ColorRender.renderToStyle(style, foreground, background);
@@ -93,7 +90,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param style the <code>CssStyle</code> to append to
      * @param component the <code>ListBox</code> instance
      */
-    protected void appendSelectedCssStyle(CssStyle style, ListBox listbox) {
+    private void appendSelectedCssStyle(CssStyle style, ListBox listbox) {
         ColorRender.renderToStyle(style, DEFAULT_SELECTED_FOREGROUND, DEFAULT_SELECTED_BACKGROUND);
     }
 
@@ -104,7 +101,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>ListBox</code> instance
      * @return the style
      */
-    protected CssStyle createDefaultCssStyle(ListBox listBox) {
+    private CssStyle createDefaultCssStyle(ListBox listBox) {
         CssStyle style = new CssStyle();
         appendDefaultCssStyle(style, listBox);
         return style;
@@ -118,7 +115,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>ListBox</code> instance
      * @return the style
      */
-    protected CssStyle createListBoxCssStyle(RenderContext rc, ListBox listBox) {
+    private CssStyle createListBoxCssStyle(RenderContext rc, ListBox listBox) {
         CssStyle style = new CssStyle();
 
         // Ensure defaults since proper rendering depends on reasonable values
@@ -150,7 +147,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>ListBox</code> instance
      * @return the style
      */
-    protected CssStyle createRolloverCssStyle(ListBox listBox) {
+    private CssStyle createRolloverCssStyle(ListBox listBox) {
         CssStyle style = new CssStyle();
         Color foregroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_FOREGROUND),
                 DEFAULT_ROLLOVER_FOREGROUND);
@@ -168,7 +165,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>ListBox</code> instance
      * @return the style
      */
-    protected CssStyle createSelectedCssStyle(ListBox listBox) {
+    private CssStyle createSelectedCssStyle(ListBox listBox) {
         CssStyle style = new CssStyle();
         appendSelectedCssStyle(style, listBox);
         return style;
@@ -189,11 +186,63 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#isIndexSelected(AbstractListComponent,
-     *      int)
+     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#isIndexSelected(AbstractListComponent, int)
      */
     protected boolean isIndexSelected(AbstractListComponent selectList, int index) {
         return ((ListBox) selectList).isSelectedIndex(index);
+    }
+    
+    private boolean isDhtmlComponentRequired(RenderContext rc) {
+        ClientProperties clientProperties = rc.getContainerInstance().getClientProperties();
+        return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE);
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext,
+     *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
+     */
+    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        if (isDhtmlComponentRequired(rc)) {
+            renderDhtmlDispose(rc, update, component);
+        } else {
+            renderSelectElementDispose(rc, update, component);
+        }
+    }
+    
+    private void renderDhtmlDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        renderDhtmlDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a list component, performing tasks such as 
+     * deregistering event listeners on the client.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the list component
+     */
+    private void renderDhtmlDisposeDirective(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoListComponentDhtml.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a list component, performing tasks such as 
+     * registering event listeners on the client.
+     * 
+     * @param serverMessage the <code>serverMessage</code>
+     * @param elementId the HTML element id of the list component
+     */
+    private void renderDhtmlInitDirective(ServerMessage serverMessage, String elementId) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoListComponentDhtml.MessageProcessor", "init",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
     }
 
     /**
@@ -207,9 +256,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
         ListBox listBox = (ListBox) component;
         String elementId = ContainerInstance.getElementId(component);
-
+        
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(LIST_COMPONENT_DHTML_SERVICE.getId(), true);
+
+        renderDhtmlInitDirective(serverMessage, elementId);
 
         Element listBoxElement = parent.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
@@ -230,8 +281,6 @@ public class ListBoxPeer extends AbstractListComponentPeer {
                 DomPropertyStore.createDomPropertyStore(serverMessage, optionId, "selectedState", "selected");
             }
 
-            EventUpdate.createEventAdd(rc.getServerMessage(), "click,mouseover,mouseout", optionId, 
-                    DEFAULT_LISTENER + ",EchoListComponentDhtml.doRolloverEnter,EchoListComponentDhtml.doRolloverExit");
             listBoxElement.appendChild(optionElement);
         }
 
@@ -267,8 +316,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>ListBox</code> instance
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-        ClientProperties props = rc.getContainerInstance().getClientProperties();
-        if (props.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE)) {
+        if (isDhtmlComponentRequired(rc)) {
             renderDynamicHtml(rc, update, parent, component);
         } else {
             renderStandardHtml(rc, update, parent, component);

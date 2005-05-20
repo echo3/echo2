@@ -32,111 +32,40 @@
 
 EchoListComponentDhtml = function() { };
 
-EchoListComponentDhtml.doRolloverEnter = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-    var target = EchoDomUtil.getEventTarget(e);
-    if (target.selectedState == null) {
-        EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
-    }
+/**
+ * ServerMessage processor.
+ */
+EchoListComponentDhtml.MessageProcessor = function() { };
 
-    if (!target.selectedState){
-        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "rolloverStyle");
-        EchoListComponentDhtml.applyStyle(target,style);
-    }
-};
-
-EchoListComponentDhtml.doRolloverExit = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-    var target = EchoDomUtil.getEventTarget(e);
-    if (!target.selectedState) {
-        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
-        EchoListComponentDhtml.applyStyle(target,style);
-    }
-};
-
-EchoListComponentDhtml.deselectItem = function(elementId) {
-    var target = document.getElementById(elementId);
-    target.selectedState = false;
-    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
-    EchoListComponentDhtml.applyStyle(target,style);
-};
-
-EchoListComponentDhtml.selectItem = function(elementId) {
-    var target = document.getElementById(elementId);
-    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "selectedStyle");
-    var singleSelect = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "singleSelect");
-
-    if (singleSelect) {
-        EchoListComponentDhtml.clearSelectedValues(target.parentNode.id);
-    }
-    target.selectedState = true;
-
-    EchoListComponentDhtml.applyStyle(target,style);
-};
-
-EchoListComponentDhtml.processUpdates = function(elementId) {
-    var element = document.getElementById(elementId).parentNode;
-    var propertyElement  = EchoClientMessage.createPropertyElement(element.id, "selectedObjects");
-
-    EchoListComponentDhtml.createUpdates(element.id,propertyElement);
-
-    EchoDebugManager.updateClientMessage();
-};
-
-EchoListComponentDhtml.createUpdates = function(elementId,propertyElement){
-    var element = document.getElementById(elementId);
-
-    // remove previous values
-    while(propertyElement.hasChildNodes()){
-        var removed = propertyElement.removeChild(propertyElement.firstChild);
-    }
-
-    var optionDivElements = element.getElementsByTagName("div");
-
-    // add new values        
-    for (var i=0; i<optionDivElements.length; i++){
-        if (optionDivElements[i].selectedState) {
-            var optionId = optionDivElements[i].id;
-            var optionElement = EchoClientMessage.messageDocument.createElement("option");
-            optionElement.setAttribute("id",optionId);
-            // EchoDebugManager.consoleWrite("added " + optionId);
-            propertyElement.appendChild(optionElement);
+/**
+ * ServerMessage process() implementation.
+ */
+EchoListComponentDhtml.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                EchoListComponentDhtml.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                EchoListComponentDhtml.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
+            }
         }
     }
 };
 
-EchoListComponentDhtml.processSelection = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-
-    // BUGBUG: Move into something common
-    if (document.selection && document.selection.empty) {
-        document.selection.empty();
+EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessageElement) {
+    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoListComponentDhtml.dispose(elementId);
     }
-
-    var target = EchoDomUtil.getEventTarget(e);
-
-    // check to see if it's the first time this control has been activated
-    // by inspecting a custom attribute on the element.
-    if (target.selectedState == null){
-        EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
-    }
-
-    if (target.selectedState) {
-        EchoListComponentDhtml.deselectItem(target.id);
-
-    } else {
-        EchoListComponentDhtml.selectItem(target.id);
-    }
-    EchoListComponentDhtml.processUpdates(target.id);
 };
 
-EchoListComponentDhtml.clearSelectedValues = function(elementId) {
-    var element = document.getElementById(elementId);
-    var optionDivElements = element.getElementsByTagName("div");
-    for (var i = 0; i < optionDivElements.length; ++i) {
-        var style = EchoDomPropertyStore.getPropertyValue(elementId, "defaultStyle");
-        EchoListComponentDhtml.applyStyle(optionDivElements[i],style);
-        optionDivElements[i].selectedState = false;
+EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElement) {
+    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoListComponentDhtml.init(elementId);
     }
 };
 
@@ -171,5 +100,133 @@ EchoListComponentDhtml.applyStyle = function(element, cssText) {
         var propertyValue = styleProperties[i].substring(separatorIndex + 1);
         element.style[propertyName] = propertyValue;
     }
+};
+
+EchoListComponentDhtml.clearSelectedValues = function(elementId) {
+    var element = document.getElementById(elementId);
+    var optionDivElements = element.getElementsByTagName("div");
+    for (var i = 0; i < optionDivElements.length; ++i) {
+        var style = EchoDomPropertyStore.getPropertyValue(elementId, "defaultStyle");
+        EchoListComponentDhtml.applyStyle(optionDivElements[i],style);
+        optionDivElements[i].selectedState = false;
+    }
+};
+
+EchoListComponentDhtml.createUpdates = function(elementId,propertyElement){
+    var element = document.getElementById(elementId);
+
+    // remove previous values
+    while(propertyElement.hasChildNodes()){
+        var removed = propertyElement.removeChild(propertyElement.firstChild);
+    }
+
+    var optionDivElements = element.getElementsByTagName("div");
+
+    // add new values        
+    for (var i=0; i<optionDivElements.length; i++){
+        if (optionDivElements[i].selectedState) {
+            var optionId = optionDivElements[i].id;
+            var optionElement = EchoClientMessage.messageDocument.createElement("option");
+            optionElement.setAttribute("id",optionId);
+            // EchoDebugManager.consoleWrite("added " + optionId);
+            propertyElement.appendChild(optionElement);
+        }
+    }
+};
+
+EchoListComponentDhtml.deselectItem = function(elementId) {
+    var target = document.getElementById(elementId);
+    target.selectedState = false;
+    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
+    EchoListComponentDhtml.applyStyle(target,style);
+};
+
+EchoListComponentDhtml.dispose = function(elementId) {
+    var selectElement = document.getElementById(elementId);
+    var optionElements = selectElement.getElementsByTagName("div");
+    for (var i = 0; i < optionElements.length; ++i) {
+        EchoEventProcessor.removeHandler(optionElements[i].id, "click");
+        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseout");
+        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseover");
+    }
+};
+
+EchoListComponentDhtml.doRolloverEnter = function(e) {
+    EchoDomUtil.preventEventDefault(e);
+    var target = EchoDomUtil.getEventTarget(e);
+    if (target.selectedState == null) {
+        EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
+    }
+
+    if (!target.selectedState) {
+        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "rolloverStyle");
+        EchoListComponentDhtml.applyStyle(target,style);
+    }
+};
+
+EchoListComponentDhtml.doRolloverExit = function(e) {
+    EchoDomUtil.preventEventDefault(e);
+    var target = EchoDomUtil.getEventTarget(e);
+    if (!target.selectedState) {
+        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
+        EchoListComponentDhtml.applyStyle(target,style);
+    }
+};
+
+EchoListComponentDhtml.init = function(elementId) {
+    var selectElement = document.getElementById(elementId);
+    var optionElements = selectElement.getElementsByTagName("div");
+    for (var i = 0; i < optionElements.length; ++i) {
+        EchoEventProcessor.addHandler(optionElements[i].id, "click", "EchoListComponentDhtml.processSelection");
+        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListComponentDhtml.doRolloverExit");
+        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListComponentDhtml.doRolloverEnter");
+    }
+};
+
+EchoListComponentDhtml.processSelection = function(e) {
+    EchoDomUtil.preventEventDefault(e);
+
+    // BUGBUG: Move into something common
+    if (document.selection && document.selection.empty) {
+        document.selection.empty();
+    }
+
+    var target = EchoDomUtil.getEventTarget(e);
+
+    // check to see if it's the first time this control has been activated
+    // by inspecting a custom attribute on the element.
+    if (target.selectedState == null){
+        EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
+    }
+
+    if (target.selectedState) {
+        EchoListComponentDhtml.deselectItem(target.id);
+
+    } else {
+        EchoListComponentDhtml.selectItem(target.id);
+    }
+    EchoListComponentDhtml.processUpdates(target.id);
+};
+
+EchoListComponentDhtml.processUpdates = function(elementId) {
+    var element = document.getElementById(elementId).parentNode;
+    var propertyElement  = EchoClientMessage.createPropertyElement(element.id, "selectedObjects");
+
+    EchoListComponentDhtml.createUpdates(element.id,propertyElement);
+
+    EchoDebugManager.updateClientMessage();
+};
+
+EchoListComponentDhtml.selectItem = function(elementId) {
+    var target = document.getElementById(elementId);
+    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "selectedStyle");
+    var singleSelect = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "singleSelect");
+
+    if (singleSelect) {
+        EchoListComponentDhtml.clearSelectedValues(target.parentNode.id);
+    }
+    target.selectedState = true;
+
+    EchoListComponentDhtml.applyStyle(target,style);
 };
 
