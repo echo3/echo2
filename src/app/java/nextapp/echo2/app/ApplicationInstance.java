@@ -52,7 +52,7 @@ public abstract class ApplicationInstance
 implements Serializable {
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0alpha10";
+    public static final String ID_STRING = "NextApp Echo v2.0alpha11";
 
     /** 
      * Holds a thread local reference to the active ApplicationInstance for
