@@ -35,7 +35,6 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.ListBox;
-import nextapp.echo2.app.list.AbstractListComponent;
 import nextapp.echo2.app.list.ListModel;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -76,32 +75,10 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractListComponentPeer#appendDefaultCssStyle(
-     *      nextapp.echo2.webrender.output.CssStyle, nextapp.echo2.app.Component)
-     */
-    private void appendDefaultCssStyle(CssStyle style, Component component) {
-        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
-        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
-        ColorRender.renderToStyle(style, foreground, background);
-    }
-
-    /**
-     * Appends the selected style to the given style for an inner div of the
-     * DHTML rendering based off of properties on the given
-     * <code>ListBox</code>.
-     * 
-     * @param style the <code>CssStyle</code> to append to
-     * @param component the <code>ListBox</code> instance
-     */
-    private void appendSelectedCssStyle(CssStyle style, ListBox listbox) {
-        ColorRender.renderToStyle(style, DEFAULT_SELECTED_FOREGROUND, DEFAULT_SELECTED_BACKGROUND);
-    }
-
-    /**
      * Creates the default style for an inner div of the DHTML rendering
      * based off of properties on the given <code>ListBox</code>.
      * 
-     * @param component the <code>ListBox</code> instance
+     * @param listBox the <code>ListBox</code> instance
      * @return the style
      */
     private CssStyle createDefaultCssStyle(ListBox listBox) {
@@ -115,7 +92,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * properties on the given <code>ListBox</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param component the <code>ListBox</code> instance
+     * @param listBox the <code>ListBox</code> instance
      * @return the style
      */
     private CssStyle createListBoxCssStyle(RenderContext rc, ListBox listBox) {
@@ -147,7 +124,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * Returns the rollover style for the DHTML rendering derived from
      * properties on the given <code>ListBox</code>.
      * 
-     * @param component the <code>ListBox</code> instance
+     * @param listBox the <code>ListBox</code> instance
      * @return the style
      */
     private CssStyle createRolloverCssStyle(ListBox listBox) {
@@ -160,58 +137,27 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
         return style;
     }
-
-    /**
-     * Creates the selected style for an inner div of the DHTML rendering based
-     * off of properties on the given <code>ListBox</code>.
-     * 
-     * @param component the <code>ListBox</code> instance
-     * @return the style
-     */
-    private CssStyle createSelectedCssStyle(ListBox listBox) {
-        CssStyle style = new CssStyle();
-        appendSelectedCssStyle(style, listBox);
-        return style;
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getDefaultHeight()
-     */
-    protected Extent getDefaultHeight() {
-        return new Extent(5, Extent.EM);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#getListModel(AbstractListComponent)
-     */
-    protected ListModel getListModel(AbstractListComponent selectList) {
-        return ((ListBox) selectList).getModel();
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#isIndexSelected(AbstractListComponent, int)
-     */
-    protected boolean isIndexSelected(AbstractListComponent selectList, int index) {
-        return ((ListBox) selectList).isSelectedIndex(index);
-    }
     
+    /**
+     * Determines whether the use of the custom DHTML listbox widget is 
+     * required based on browser quirk information.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @return true if the custom DHTML listbox widget is required for the 
+     *         target client
+     */
     private boolean isDhtmlComponentRequired(RenderContext rc) {
         ClientProperties clientProperties = rc.getContainerInstance().getClientProperties();
         return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE);
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext,
-     *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
+     * Renders disposal code for a listbox rendered as a custom DHTML widget.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @param component the <code>AbstractListComponent</code> being disposed
      */
-    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        if (isDhtmlComponentRequired(rc)) {
-            renderDhtmlDispose(rc, update, component);
-        } else {
-            renderSelectElementDispose(rc, update, component);
-        }
-    }
-    
     private void renderDhtmlDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         renderDhtmlDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
     }
@@ -249,14 +195,28 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * Renders a DHTML scrollable div-based ListBox.
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext,
+     *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
+     */
+    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        if (isDhtmlComponentRequired(rc)) {
+            renderDhtmlDispose(rc, update, component);
+        } else {
+            renderSelectElementDispose(rc, update, component);
+        }
+    }
+    
+    /**
+     * Renders a custom DHTML listbox widget (used only for clients that have
+     * quirks using traditional SELECT-based listboxes, i.e., Internet
+     * Explorer 6).
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
      * @param parentElement the HTML element which should contain the child
-     * @param child the child component to render
+     * @param component the child component to render
      */
-    protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+    protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
         ListBox listBox = (ListBox) component;
         String elementId = ContainerInstance.getElementId(component);
         
@@ -265,8 +225,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
         renderDhtmlInitDirective(serverMessage, elementId);
 
-        Element listBoxElement = parent.getOwnerDocument().createElement("div");
+        Element listBoxElement = parentElement.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
+        
+        CssStyle selectedCssStyle  = new CssStyle();
+        ColorRender.renderToStyle(selectedCssStyle, DEFAULT_SELECTED_FOREGROUND, DEFAULT_SELECTED_BACKGROUND);
 
         ListModel model = listBox.getModel();
 
@@ -274,13 +237,13 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
             boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
 
-            Element optionElement = parent.getOwnerDocument().createElement("div");
+            Element optionElement = parentElement.getOwnerDocument().createElement("div");
             String optionId = getOptionId(elementId, i);
             optionElement.setAttribute("id", optionId);
             optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(model.get(i).toString()));
 
             if (selected) {
-                optionElement.setAttribute("style", createSelectedCssStyle(listBox).renderInline());
+                optionElement.setAttribute("style", selectedCssStyle.renderInline());
                 DomPropertyStore.createDomPropertyStore(serverMessage, optionId, "selectedState", "selected");
             }
 
@@ -293,7 +256,6 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
 
-        CssStyle selectedCssStyle = createSelectedCssStyle(listBox);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
 
         CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
@@ -303,7 +265,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "singleSelect", "true");
         }
 
-        parent.appendChild(listBoxElement);
+        parentElement.appendChild(listBoxElement);
     }
 
     /**
@@ -341,13 +303,5 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         int visibleRows = listBox.getVisibleRowCount() <= 1 ? DEFAULT_ROW_COUNT : listBox.getVisibleRowCount();
 
         renderSelectElementHtml(rc, update, parentElement, listBox, multiple, visibleRows);
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.syncpeer.AbstractSelectListPeer#setSelectedIndex(AbstractListComponent,
-     *      int)
-     */
-    protected void setSelectedIndex(AbstractListComponent selectList, int index) {
-        ((ListBox) selectList).setSelectedIndex(index, true);
     }
 }

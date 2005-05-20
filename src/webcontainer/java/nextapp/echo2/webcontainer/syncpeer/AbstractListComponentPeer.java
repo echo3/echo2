@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import java.util.BitSet;
+
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -62,15 +64,7 @@ import org.w3c.dom.Element;
 
 /**
  * Abstract synchronization peer for the built-in
- * <code>nextapp.echo2.app.AbstractListComponent</code> -derived components.
- * The intention of this class is to serve as the superclass for any rendering
- * of a select element.
- * <p>
- * Since there are deviations in how to access models in the current
- * subclasses, <code>nextapp.echo2.webcontainer.syncpeer.ListBoxPeer</code>
- * and <code>nextapp.echo2.webcontainer.syncpeer.SelectFieldPeer</code>,
- * certain methods are made abstract to provide access to and manipulation of
- * the <code>nextapp.echo2.app.list.ListModel</code>
+ * <code>nextapp.echo2.app.AbstractListComponent</code>-derived components.
  * <p>
  * This class should not be extended or used by classes outside of the
  * Echo framework.
@@ -100,14 +94,15 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         WebRenderServlet.getServiceRegistry().add(LIST_COMPONENT_SERVICE);
     }
 
+    //BUGBUG. determine if appendDefaultCssStyle is required after changes to rendering code (otherwise inline it)
     /**
      * Appends the default style to the given style based off of properties
      * on the given <code>nextapp.echo2.app.AbstractListComponent</code>
      * 
      * @param style the style to append to
-     * @param the <code>nextapp.echo2.app.AbstractListComponent</code>
+     * @param component the <code>nextapp.echo2.app.AbstractListComponent</code>
      */
-    private  void appendDefaultCssStyle(CssStyle style, Component component) {
+    protected void appendDefaultCssStyle(CssStyle style, Component component) {
         Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
         Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
         ColorRender.renderToStyle(style, foreground, background);
@@ -141,7 +136,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * Creates the default style based off of properties on the given
      * <code>nextapp.echo2.app.AbstractListComponent</code>
      * 
-     * @param component the <code>AbstractListComponent</code> instance
+     * @param listComponent the <code>AbstractListComponent</code> instance
      * @return the style
      */
     private CssStyle createDefaultCssStyle(AbstractListComponent listComponent) {
@@ -220,7 +215,13 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         return null;
     }
 
-    //BUGBUG. doc.
+    /**
+     * Determines the HTML element id of the rendered OPTION element with the 
+     * specified index.
+     * 
+     * @param elementId the element id of the root element of the rendered 
+     *        SELECT object.
+     */
     protected String getOptionId(String elementId, int index) {
         return elementId + "_" + index;
     }
@@ -231,15 +232,29 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         AbstractListComponent listComponent = (AbstractListComponent) component;
+        ListModel model = listComponent.getModel();
         ListSelectionModel selectionModel = listComponent.getSelectionModel();
-        Element[] selected = DomUtil.getChildElementsByTagName(propertyElement, "option");
-        for (int i = 0; i < selected.length; i++) {
-            Element option = selected[i];
-            String attribute = option.getAttribute("id");
-            int index = Integer.parseInt(attribute.substring(attribute.lastIndexOf("_") + 1));
+
+        if (selectionModel.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION) {
+            BitSet selectedIndices = new BitSet();
+            Element[] optionElements = DomUtil.getChildElementsByTagName(propertyElement, "option");
+            for (int i = 0; i < optionElements.length; ++i) {
+                String id = optionElements[i].getAttribute("id");
+                int index = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
+                selectedIndices.set(index, true);
+            }
             
-            //BUGBUG! need to add deselect!
-            selectionModel.setSelectedIndex(index, true);
+            int modelSize = model.size();
+            for (int i = 0; i < modelSize; ++i) {
+                selectionModel.setSelectedIndex(i, selectedIndices.get(i));
+            }
+        } else {
+            Element[] optionElements = DomUtil.getChildElementsByTagName(propertyElement, "option");
+            if (optionElements.length > 0) {
+                String id = optionElements[0].getAttribute("id");
+                int index = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
+                selectionModel.setSelectedIndex(index, true);
+            }
         }
     }
 
@@ -286,9 +301,11 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     }
 
     /**
-     * @param rc
-     * @param update
-     * @param component
+     * Renders disposal code for a standard SELECT-based control.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @param component the <code>AbstractListComponent</code> being disposed
      */
     protected void renderSelectElementDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         renderDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
@@ -352,9 +369,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
             } else {
                 appendDefaultCssStyle(optionStyle, listComponent);
             }
-
-//            EventUpdate.createEventAdd(rc.getServerMessage(), "mouseover,mouseout", optionId, 
-//                    "EchoListComponent.doRolloverEnter,EchoListComponent.doRolloverExit");
             listComponentElement.appendChild(optionElement);
         }
 

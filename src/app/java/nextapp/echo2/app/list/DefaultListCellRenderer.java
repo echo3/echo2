@@ -40,7 +40,8 @@ public class DefaultListCellRenderer
 implements ListCellRenderer, Serializable {
     
     /**
-     * @see nextapp.echo.ListCellRenderer#getListCellRendererComponent(nextapp.echo.Component, java.lang.Object, int)
+     * @see nextapp.echo2.app.list.ListCellRenderer#getListCellRendererComponent(nextapp.echo2.app.Component, 
+     *      java.lang.Object, int)
      */
     public Object getListCellRendererComponent(Component list, Object value, int index) {
         return value == null ? null : value.toString();

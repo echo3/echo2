@@ -82,21 +82,21 @@ public class AbstractListComponent extends Component {
     implements ListDataListener, Serializable {
     
         /**
-         * @see nextapp.echo.event.ListDataListener#contentsChanged(ListDataEvent)
+         * @see nextapp.echo2.app.event.ListDataListener#contentsChanged(nextapp.echo2.app.event.ListDataEvent)
          */
         public void contentsChanged(ListDataEvent e) {
             firePropertyChange(LIST_DATA_CHANGED_PROPERTY, null, null);
         }
 
         /**
-         * @see nextapp.echo.event.ListDataListener#intervalAdded(ListDataEvent)
+         * @see nextapp.echo2.app.event.ListDataListener#intervalAdded(nextapp.echo2.app.event.ListDataEvent)
          */
         public void intervalAdded(ListDataEvent e) {
             firePropertyChange(LIST_DATA_CHANGED_PROPERTY, null, null);
         }
 
         /**
-         * @see nextapp.echo.event.ListDataListener#intervalRemoved(ListDataEvent)
+         * @see nextapp.echo2.app.event.ListDataListener#intervalRemoved(nextapp.echo2.app.event.ListDataEvent)
          */
         public void intervalRemoved(ListDataEvent e) {
             firePropertyChange(LIST_DATA_CHANGED_PROPERTY, null, null);

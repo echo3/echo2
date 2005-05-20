@@ -34,7 +34,7 @@ import java.util.EventObject;
 /**
  * An event describing an update to items in a list.
  *
- * @see nextapp.echo.event.ListDataListener
+ * @see nextapp.echo2.app.event.ListDataListener
  */
 public class ListDataEvent extends EventObject {
 

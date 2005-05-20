@@ -55,7 +55,7 @@ implements ListModel, Serializable {
     }
  
     /**
-     * @see nextapp.echo.ListModel#addListDataListener(ListDataListener)
+     * @see nextapp.echo2.app.list.ListModel#addListDataListener(nextapp.echo2.app.event.ListDataListener)
      */
     public void addListDataListener(ListDataListener l) {
         listenerList.addListener(ListDataListener.class, l);
@@ -123,7 +123,7 @@ implements ListModel, Serializable {
     }
 
     /**
-     * @see nextapp.echo.ListModel#removeListDataListener(ListDataListener)
+     * @see nextapp.echo2.app.list.ListModel#removeListDataListener(nextapp.echo2.app.event.ListDataListener)
      */
     public void removeListDataListener(ListDataListener l) {
         listenerList.removeListener(ListDataListener.class, l);

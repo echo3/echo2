@@ -208,6 +208,8 @@ public class ListBoxTest extends SplitPane {
                 select.setSelectedIndex(0);
             }
         });
+//BUGBUG. these are broken when clicked without selection.        
+/*        
         controlsColumn.addButton("Select Next Even Index", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if ((select.getSelectedIndex() % 2) != 0) {
@@ -232,6 +234,7 @@ public class ListBoxTest extends SplitPane {
                 }
             }
         });
+*/        
         controlsColumn.addButton("Increase Width (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (select.getWidth() == null) {

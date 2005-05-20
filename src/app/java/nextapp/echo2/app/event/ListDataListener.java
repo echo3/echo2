@@ -34,7 +34,7 @@ import java.util.EventListener;
 /**
  * The listener interface for receiving <code>ListDataEvent</code>s.
  *
- * @see nextapp.echo.event.ListDataEvent
+ * @see nextapp.echo2.app.event.ListDataEvent
  */
 public interface ListDataListener extends EventListener {
 
