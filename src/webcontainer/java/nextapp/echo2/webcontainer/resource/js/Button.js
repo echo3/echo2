@@ -59,9 +59,6 @@ EchoButton.MessageProcessor.process = function(messagePartElement) {
             case "dispose":
                 EchoButton.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
                 break;
-            case "setgroup":
-                EchoButton.MessageProcessor.processSetGroup(messagePartElement.childNodes[i]);
-                break;
             }
         }
     }
@@ -75,17 +72,44 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
 };
 
 EchoButton.MessageProcessor.processInit = function(initMessageElement) {
+    var defaultStyle = initMessageElement.getAttribute("defaultstyle");
+    var rolloverStyle = initMessageElement.getAttribute("rolloverstyle");
+    var pressedStyle = initMessageElement.getAttribute("pressedstyle");
+
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoButton.init(elementId);
-    }
-};
-
-EchoButton.MessageProcessor.processSetGroup = function(setGroupMessageElement) {
-    var groupId = setGroupMessageElement.getAttribute("groupid");
-    for (var item = setGroupMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        EchoButton.setButtonGroup(elementId, groupId);
+        
+        if (defaultStyle) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
+        }
+        if (rolloverStyle) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
+        }
+        if (pressedStyle) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "pressedStyle", pressedStyle);
+        }
+        
+        if (item.getAttribute("defaulticon")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "defaultIcon", item.getAttribute("defaulticon"));
+        }
+        if (item.getAttribute("rollovericon")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "rolloverIcon", item.getAttribute("rollovericon"));
+        }
+        if (item.getAttribute("pressedicon")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "pressedIcon", item.getAttribute("pressedicon"));
+        }
+        
+        if (item.getAttribute("toggle") == "true") {
+            // ToggleButton
+            EchoDomPropertyStore.setPropertyValue(elementId, "toggle", "true");
+            EchoDomPropertyStore.setPropertyValue(elementId, "selected", item.getAttribute("selected"));
+            EchoDomPropertyStore.setPropertyValue(elementId, "stateIcon", item.getAttribute("stateicon"));
+            EchoDomPropertyStore.setPropertyValue(elementId, "selectedStateIcon", item.getAttribute("selectedstateicon"));
+            if (item.getAttribute("group")) {
+                EchoButton.setButtonGroup(elementId, item.getAttribute("group"));
+            }
+        }
     }
 };
 

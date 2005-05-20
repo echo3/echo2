@@ -61,7 +61,6 @@ import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
@@ -98,6 +97,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final ImageReference DEFAULT_SELECTED_RADIOBUTTON_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOn.gif");
     
+    private static final String[] BUTTON_INIT_KEYS = new String[]{"defaultstyle", "rolloverstyle", "pressedstyle"};
+    
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_ICON = "icon";
     private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
@@ -116,8 +117,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     static {
         WebRenderServlet.getServiceRegistry().add(BUTTON_SERVICE);
     }
-    
-    private static final String[] SET_GROUP_KEYS = new String[]{"groupid"};
     
     /**
      * Converts the value of the <code>alignment</code> property of an 
@@ -287,6 +286,42 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
         renderHtml(rc, update, contentElement, component);
+    }
+    
+    /**
+     * Renders the containing DIV element of a button.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param parentElement the HTML element which will contain the button
+     * @param button the <code>AbstractButton</code> being rendered
+     * @return the rendered DIV element (note that this element will already 
+     *         have been appended to the parent)
+     */
+    private Element renderButtonContainer(RenderContext rc, Element parentElement, AbstractButton button) {
+        Element divElement = parentElement.getOwnerDocument().createElement("div");
+        divElement.setAttribute("id", ContainerInstance.getElementId(button));
+        
+        FillImage backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
+        CssStyle cssStyle = new CssStyle();
+        cssStyle.setAttribute("cursor", "pointer");
+        cssStyle.setAttribute("margin", "0px");
+        cssStyle.setAttribute("border-spacing", "0px");
+        ExtentRender.renderToStyle(cssStyle, "width", (Extent) button.getRenderProperty(AbstractButton.PROPERTY_WIDTH));
+        Extent height = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_HEIGHT);
+        if (height != null) {
+            ExtentRender.renderToStyle(cssStyle, "height", height);
+            cssStyle.setAttribute("overflow", "hidden");
+        }
+        BorderRender.renderToStyle(cssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
+        ColorRender.renderToStyle(cssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
+                (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
+        InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
+        FontRender.renderToStyle(cssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
+        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, true);
+        
+        divElement.setAttribute("style", cssStyle.renderInline());
+        parentElement.appendChild(divElement);
+        return divElement;
     }
     
     /**
@@ -496,44 +531,37 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BUTTON_SERVICE.getId(), true);
         AbstractButton button = (AbstractButton) component;
+        Element containerDivElement = renderButtonContainer(rc, parentElement, button);
+        renderInitDirective(rc, button);
+        renderButtonContent(rc, containerDivElement, button);
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a button, performing tasks such as registering
+     * event listeners on the client.
+     */
+    private void renderInitDirective(RenderContext rc, AbstractButton button) {
+        String elementId = ContainerInstance.getElementId(button);
+        ServerMessage serverMessage = rc.getServerMessage();
         FillImage backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
-        
-        Document document = parent.getOwnerDocument();
-        Element divElement = document.createElement("div");
-        
-        String id = ContainerInstance.getElementId(button);
-        
-        divElement.setAttribute("id", id);
-        
-        CssStyle cssStyle = new CssStyle();
-        cssStyle.setAttribute("cursor", "pointer");
-        cssStyle.setAttribute("margin", "0px");
-        cssStyle.setAttribute("border-spacing", "0px");
-        ExtentRender.renderToStyle(cssStyle, "width", (Extent) button.getRenderProperty(AbstractButton.PROPERTY_WIDTH));
-        Extent height = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_HEIGHT);
-        if (height != null) {
-            ExtentRender.renderToStyle(cssStyle, "height", height);
-            cssStyle.setAttribute("overflow", "hidden");
-        }
-        BorderRender.renderToStyle(cssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
-        ColorRender.renderToStyle(cssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
-                (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
-        InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
-        FontRender.renderToStyle(cssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
-        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, true);
-        
-        divElement.setAttribute("style", cssStyle.renderInline());
-        
-        parent.appendChild(divElement);
         
         boolean rolloverEnabled = ((Boolean) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_ENABLED, 
                 Boolean.FALSE)).booleanValue();
         boolean pressedEnabled = ((Boolean) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_ENABLED, 
                 Boolean.FALSE)).booleanValue();
+        
+        String pressedStyle = "";
+        String defaultStyle = "";
+        String rolloverStyle = "";
+        
+        String defaultIconUri = null;
+        String rolloverIconUri = null;
+        String pressedIconUri = null;
         
         if (rolloverEnabled || pressedEnabled) {
             boolean hasIcon = button.getRenderProperty(AbstractButton.PROPERTY_ICON) != null;
@@ -544,12 +572,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             FontRender.renderToStyle(defaultCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
             FillImageRender.renderToStyle(defaultCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
                     (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), true);
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "defaultStyle", 
-                    defaultCssStyle.renderInline());
+            defaultStyle = defaultCssStyle.renderInline();
 
             if (hasIcon) {
-                DomPropertyStore.createDomPropertyStore(serverMessage, id, "defaultIcon", 
-                        ImageTools.getUri(rc, this, button, IMAGE_ID_ICON));
+                defaultIconUri = ImageTools.getUri(rc, this, button, IMAGE_ID_ICON);
             }
             
             if (rolloverEnabled) {
@@ -566,14 +592,12 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                             (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
                 }
                 if (rolloverCssStyle.hasAttributes()) {
-                    DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverStyle", 
-                            rolloverCssStyle.renderInline());
+                    rolloverStyle = rolloverCssStyle.renderInline();
                 }
                 if (hasIcon) {
                     ImageReference rolloverIcon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_ICON);
                     if (rolloverIcon != null) {
-                        DomPropertyStore.createDomPropertyStore(serverMessage, id, "rolloverIcon", 
-                                ImageTools.getUri(rc, this, button, IMAGE_ID_ROLLOVER_ICON));
+                        rolloverIconUri = ImageTools.getUri(rc, this, button, IMAGE_ID_ROLLOVER_ICON);
                     }
                 }
             }
@@ -592,77 +616,49 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                             (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND_IMAGE), true);
                 }
                 if (pressedCssStyle.hasAttributes()) {
-                    DomPropertyStore.createDomPropertyStore(serverMessage, id, "pressedStyle", 
-                            pressedCssStyle.renderInline());
+                    pressedStyle = pressedCssStyle.renderInline();
                 }
                 if (hasIcon) {
                     ImageReference pressedIcon = (ImageReference) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_ICON);
                     if (pressedIcon != null) {
-                        DomPropertyStore.createDomPropertyStore(serverMessage, id, "pressedIcon", 
-                                ImageTools.getUri(rc, this, button, IMAGE_ID_PRESSED_ICON));
+                        pressedIconUri = ImageTools.getUri(rc, this, button, IMAGE_ID_PRESSED_ICON);
                     }
                 }
             }
         }
         
-        renderInitDirective(serverMessage, id);
-
-        renderButtonContent(rc, divElement, button);
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoButton.MessageProcessor", "init",  BUTTON_INIT_KEYS, new String[]{defaultStyle, rolloverStyle, pressedStyle});
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        if (defaultIconUri != null) {
+            itemElement.setAttribute("defaulticon", defaultIconUri);
+        }
+        if (rolloverIconUri != null) {
+            itemElement.setAttribute("rollovericon", rolloverIconUri);
+        }
+        if (pressedIconUri != null) {
+            itemElement.setAttribute("pressedicon", pressedIconUri);
+        }
+        if (!button.hasActionListeners()) {
+            itemElement.setAttribute("serverNotify", "false");
+        }
 
         if (button instanceof ToggleButton) {
             ToggleButton toggleButton = (ToggleButton) button;
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "toggle", "true");
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "selected", 
-                    toggleButton.isSelected() ? "true" : " false");
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "stateIcon", 
-                    ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_STATE_ICON));
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "selectedStateIcon", 
-                    ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_SELECTED_STATE_ICON));
-
+            itemElement.setAttribute("toggle", "true");
+            itemElement.setAttribute("selected", toggleButton.isSelected() ? "true" : "false");
+            itemElement.setAttribute("stateicon", ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_STATE_ICON));
+            itemElement.setAttribute("selectedstateicon", ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_SELECTED_STATE_ICON));
             if (button instanceof RadioButton) {
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {
                     String groupId = rc.getContainerInstance().getIdTable().getId(buttonGroup);
-                    renderSetGroupDirective(serverMessage, id, groupId);
+                    itemElement.setAttribute("group", groupId);
                 }
             }
         }
         
-        if (!button.hasActionListeners()) {
-            DomPropertyStore.createDomPropertyStore(serverMessage, id, "serverNotify", "false"); 
-        }
-    }
-
-    /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * initialize the state of a button, performing tasks such as registering
-     * event listeners on the client.
-     * 
-     * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the button
-     */
-    private void renderInitDirective(ServerMessage serverMessage, String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoButton.MessageProcessor", "init",  new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
-    }
-    
-    /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * assign the specified button element identifier to the specified 
-     * radio group identifier.
-     * 
-     * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the button
-     * @param groupId the unique radio button group identifier
-     */
-    private void renderSetGroupDirective(ServerMessage serverMessage, String elementId, String groupId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                "EchoButton.MessageProcessor", "setgroup", SET_GROUP_KEYS, new String[]{groupId});
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
     }
     
