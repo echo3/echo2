@@ -39,14 +39,14 @@ public class CoreServices {
 
     private static final String RESOURCE_PATH = "/nextapp/echo2/webrender/resource/";
     
-    public static final Service RENDER_STANDARD 
-            = JavaScriptService.forResource("Echo.RenderStandard", RESOURCE_PATH + "RenderStandard.js");
+    public static final Service CLIENT_ENGINE
+            = JavaScriptService.forResource("Echo.ClientEngine", RESOURCE_PATH + "ClientEngine.js");
     public static final Service DEBUG 
             = StaticTextService.forResource("Echo.Debug", "text/html", RESOURCE_PATH + "Debug.html");
 
     
     public static void install(ServiceRegistry services) {
-        services.add(RENDER_STANDARD);
+        services.add(CLIENT_ENGINE);
         services.add(DEBUG);
     }
     

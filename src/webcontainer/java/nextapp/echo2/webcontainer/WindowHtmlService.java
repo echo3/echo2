@@ -80,7 +80,7 @@ implements Service {
         baseDoc.setTitle(window.getTitle());
         baseDoc.setGenarator(ApplicationInstance.ID_STRING);
         
-        baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.RENDER_STANDARD));
+        baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.CLIENT_ENGINE));
         
         baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getApplicationUri() + "');");
         
