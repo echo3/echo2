@@ -67,7 +67,11 @@ EchoButton.MessageProcessor.process = function(messagePartElement) {
 EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoButton.dispose(elementId);
+	    EchoEventProcessor.removeHandler(elementId, "mouseover");
+	    EchoEventProcessor.removeHandler(elementId, "mouseout");
+	    EchoEventProcessor.removeHandler(elementId, "mousedown");
+	    EchoEventProcessor.removeHandler(elementId, "mouseup");
+	    EchoEventProcessor.removeHandler(elementId, "click");
     }
 };
 
@@ -78,7 +82,6 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoButton.init(elementId);
         
         if (defaultStyle) {
             EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
@@ -110,6 +113,12 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
                 EchoButton.setButtonGroup(elementId, item.getAttribute("group"));
             }
         }
+
+	    EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.doRolloverEnter");
+	    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.doRolloverExit");
+	    EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.doPressed");
+	    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.doReleased");
+	    EchoEventProcessor.addHandler(elementId, "click", "EchoButton.doAction");
     }
 };
 
@@ -140,14 +149,6 @@ EchoButton.deselectRadioButton = function(groupId) {
             EchoButton.setSelectionState(elementId, false);
         }
     }
-};
-
-EchoButton.dispose = function(elementId) {
-    EchoEventProcessor.removeHandler(elementId, "mouseover");
-    EchoEventProcessor.removeHandler(elementId, "mouseout");
-    EchoEventProcessor.removeHandler(elementId, "mousedown");
-    EchoEventProcessor.removeHandler(elementId, "mouseup");
-    EchoEventProcessor.removeHandler(elementId, "click");
 };
 
 EchoButton.doAction = function(echoEvent) {
@@ -222,14 +223,6 @@ EchoButton.getSelectionState = function(elementId) {
     return "true" == EchoDomPropertyStore.getPropertyValue(elementId, "selected");
 };
 
-EchoButton.init = function(elementId) {
-    EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.doRolloverEnter");
-    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.doRolloverExit");
-    EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.doPressed");
-    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.doReleased");
-    EchoEventProcessor.addHandler(elementId, "click", "EchoButton.doAction");
-};
-
 EchoButton.setButtonGroup = function(elementId, groupId) {
     var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
     if (!buttonArray) {
@@ -238,6 +231,11 @@ EchoButton.setButtonGroup = function(elementId, groupId) {
     }
     buttonArray.push(elementId);
     EchoDomPropertyStore.setPropertyValue(elementId, "buttonGroup", groupId);
+};
+
+EchoButton.setIcon = function(elementId, newIconUri) {
+    var iconElement = document.getElementById(elementId + "_icon");
+    iconElement.src = newIconUri;
 };
 
 EchoButton.setSelectionState = function(elementId, newState) {
@@ -251,11 +249,6 @@ EchoButton.setSelectionState = function(elementId, newState) {
     imgElement.src = stateIconUri;
     
     EchoClientMessage.setPropertyValue(elementId, "selected", newState ? "true" : "false");
-};
-
-EchoButton.setIcon = function(elementId, newIconUri) {
-    var iconElement = document.getElementById(elementId + "_icon");
-    iconElement.src = newIconUri;
 };
 
 EchoButton.setState = function(buttonElement, newState) {
@@ -284,4 +277,10 @@ EchoButton.setState = function(buttonElement, newState) {
     if (newIcon) {
         EchoButton.setIcon(buttonElement.id, newIcon);
     }
+
+//BUGBUG. IE Performance Hack. (make IE only)    
+    var originalWidth = buttonElement.style.width;
+    var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
+    buttonElement.style.width = temporaryWidth + "px";
+    buttonElement.style.width = originalWidth;
 };
