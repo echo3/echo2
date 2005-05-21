@@ -168,6 +168,88 @@ EchoBlockingPane.processSetDelayMessage = function(setDelayMessageElement) {
     }
 };
 
+// _________________________
+// Object EchoClientAnalyzer
+
+/** Do not instantiate. */
+function EchoClientAnalyzer() { }
+
+/**
+ * Analyzes properties of client browser and stores them in the outgoing
+ * ClientMessage.
+ */
+EchoClientAnalyzer.analyze = function() {
+    var messagePartElement = EchoClientMessage.getMessagePart("EchoClientAnalyzer");
+    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppName", window.navigator.appName);
+    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppVersion", window.navigator.appVersion);
+    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppCodeName", window.navigator.appCodeName);
+    EchoClientAnalyzer.setBooleanProperty(messagePartElement, "navigatorCookieEnabled", window.navigator.cookieEnabled);
+    EchoClientAnalyzer.setBooleanProperty(messagePartElement, "navigatorJavaEnabled", window.navigator.javaEnabled());
+    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorLanguage", 
+            window.navigator.language ? window.navigator.language : window.navigator.userLanguage);
+    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorPlatform", window.navigator.platform);
+    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorUserAgent", window.navigator.userAgent);
+    if (window.screen) {
+        // Capture Display Information
+        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenWidth", window.screen.width);
+        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenHeight", window.screen.height);
+        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenColorDepth", window.screen.colorDepth);
+    }
+    EchoClientAnalyzer.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset()));
+};
+
+/**
+ * Stores a boolean client property.
+ *
+ * @param messagePartElement the XMLElement in which generated property 
+ *        XML elements should be stored
+ * @param propertyName the property name
+ * @param propertyValue the property value
+ */
+EchoClientAnalyzer.setBooleanProperty = function(messagePartElement, propertyName, propertyValue) {
+    propertyElement = messagePartElement.ownerDocument.createElement("property");
+    propertyElement.setAttribute("type", "boolean");
+    propertyElement.setAttribute("name", propertyName);
+    propertyElement.setAttribute("value", propertyValue ? "true" : "false");
+    messagePartElement.appendChild(propertyElement);
+};
+
+/**
+ * Stores a integer client property.
+ *
+ * @param messagePartElement the XMLElement in which generated property 
+ *        XML elements should be stored
+ * @param propertyName the property name
+ * @param propertyValue the property value
+ */
+EchoClientAnalyzer.setIntegerProperty = function(messagePartElement, propertyName, propertyValue) {
+    var intValue = parseInt(propertyValue);
+    if (isNaN(intValue)) {
+        return;
+    }
+    propertyElement = messagePartElement.ownerDocument.createElement("property");
+    propertyElement.setAttribute("type", "integer");
+    propertyElement.setAttribute("name", propertyName);
+    propertyElement.setAttribute("value", intValue);
+    messagePartElement.appendChild(propertyElement);
+};
+
+/**
+ * Stores a text client property.
+ *
+ * @param messagePartElement the XMLElement in which generated property 
+ *        XML elements should be stored
+ * @param propertyName the property name
+ * @param propertyValue the property value
+ */
+EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, propertyValue) {
+    propertyElement = messagePartElement.ownerDocument.createElement("property");
+    propertyElement.setAttribute("type", "text");
+    propertyElement.setAttribute("name", propertyName);
+    propertyElement.setAttribute("value", propertyValue);
+    messagePartElement.appendChild(propertyElement);
+};
+
 // _______________________
 // Object EchoClientEngine
 
@@ -187,8 +269,8 @@ EchoClientEngine.init = function(baseServerUri) {
     // Confiugre initial client message.
     EchoClientMessage.setInitialize();
     
-    // Acquire client information.
-    EchoClientProperties.acquire();
+    // Analyze client information.
+    EchoClientAnalyzer.analyze();
     
     // Synchronize initial state from server.
     EchoServerTransaction.connect();
@@ -327,84 +409,28 @@ EchoClientMessage.setInitialize = function() {
 // ___________________________
 // Object EchoClientProperties
 
-/** Do not instantiate. */
 function EchoClientProperties() { }
 
-/**
- * Analyzes properties of client browser and stores them in the outgoing
- * ClientMessage.
- */
-EchoClientProperties.acquire = function() {
-    var messagePartElement = EchoClientMessage.getMessagePart("EchoClientProperties");
-    EchoClientProperties.setTextProperty(messagePartElement, "navigatorAppName", window.navigator.appName);
-    EchoClientProperties.setTextProperty(messagePartElement, "navigatorAppVersion", window.navigator.appVersion);
-    EchoClientProperties.setTextProperty(messagePartElement, "navigatorAppCodeName", window.navigator.appCodeName);
-    EchoClientProperties.setBooleanProperty(messagePartElement, "navigatorCookieEnabled", window.navigator.cookieEnabled);
-    EchoClientProperties.setBooleanProperty(messagePartElement, "navigatorJavaEnabled", window.navigator.javaEnabled());
-    EchoClientProperties.setTextProperty(messagePartElement, "navigatorLanguage", 
-            window.navigator.language ? window.navigator.language : window.navigator.userLanguage);
-    EchoClientProperties.setTextProperty(messagePartElement, "navigatorPlatform", window.navigator.platform);
-    EchoClientProperties.setTextProperty(messagePartElement, "navigatorUserAgent", window.navigator.userAgent);
-    if (window.screen) {
-        // Capture Display Information
-        EchoClientProperties.setIntegerProperty(messagePartElement, "screenWidth", window.screen.width);
-        EchoClientProperties.setIntegerProperty(messagePartElement, "screenHeight", window.screen.height);
-        EchoClientProperties.setIntegerProperty(messagePartElement, "screenColorDepth", window.screen.colorDepth);
+EchoClientProperties.MessageProcessor = function() { };
+
+EchoClientProperties.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "store":
+                EchoClientProperties.MessageProcessor.processStore(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
     }
-    EchoClientProperties.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset()));
 };
 
-/**
- * Stores a boolean client property.
- *
- * @param messagePartElement the XMLElement in which generated property 
- *        XML elements should be stored
- * @param propertyName the property name
- * @param propertyValue the property value
- */
-EchoClientProperties.setBooleanProperty = function(messagePartElement, propertyName, propertyValue) {
-    propertyElement = messagePartElement.ownerDocument.createElement("property");
-    propertyElement.setAttribute("type", "boolean");
-    propertyElement.setAttribute("name", propertyName);
-    propertyElement.setAttribute("value", propertyValue ? "true" : "false");
-    messagePartElement.appendChild(propertyElement);
+EchoClientProperties.MessageProcessor.processStore = function(storeElement) {
+    
 };
 
-/**
- * Stores a integer client property.
- *
- * @param messagePartElement the XMLElement in which generated property 
- *        XML elements should be stored
- * @param propertyName the property name
- * @param propertyValue the property value
- */
-EchoClientProperties.setIntegerProperty = function(messagePartElement, propertyName, propertyValue) {
-    var intValue = parseInt(propertyValue);
-    if (isNaN(intValue)) {
-        return;
-    }
-    propertyElement = messagePartElement.ownerDocument.createElement("property");
-    propertyElement.setAttribute("type", "integer");
-    propertyElement.setAttribute("name", propertyName);
-    propertyElement.setAttribute("value", intValue);
-    messagePartElement.appendChild(propertyElement);
-};
-
-/**
- * Stores a text client property.
- *
- * @param messagePartElement the XMLElement in which generated property 
- *        XML elements should be stored
- * @param propertyName the property name
- * @param propertyValue the property value
- */
-EchoClientProperties.setTextProperty = function(messagePartElement, propertyName, propertyValue) {
-    propertyElement = messagePartElement.ownerDocument.createElement("property");
-    propertyElement.setAttribute("type", "text");
-    propertyElement.setAttribute("name", propertyName);
-    propertyElement.setAttribute("value", propertyValue);
-    messagePartElement.appendChild(propertyElement);
-};
+// _______________________
+// Object EchoDebugManager
 
 function EchoDebugManager() { }
 

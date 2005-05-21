@@ -70,7 +70,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
     }
 
     /**
-     * Analyzees the <code>ClientProperties</code> and adds additional
+     * Analyzes the <code>ClientProperties</code> and adds additional
      * inferred data, such as quirk attributes based on browser type.
      * 
      * @param clientProperties the <code>ClientProperties</code> to analyze
@@ -128,7 +128,8 @@ implements SynchronizeService.ClientMessagePartProcessor {
     }
     
     /**
-     * @see nextapp.echo2.webrender.services.SynchronizeService.ClientMessagePartProcessor#process(nextapp.echo2.webrender.server.UserInstance, org.w3c.dom.Element)
+     * @see nextapp.echo2.webrender.services.SynchronizeService.ClientMessagePartProcessor#process(
+     *      nextapp.echo2.webrender.server.UserInstance, org.w3c.dom.Element)
      */
     public void process(UserInstance userInstance, Element messagePartElement) {
         ClientProperties clientProperties = new ClientProperties();

@@ -79,7 +79,7 @@ implements Service {
     
     public SynchronizeService() {
         super();
-        addClientMessagePartProcessor("EchoClientProperties", new ClientPropertiesLoader());
+        addClientMessagePartProcessor("EchoClientAnalyzer", new ClientPropertiesLoader());
     }
     
     public void addClientMessagePartProcessor(String name, ClientMessagePartProcessor processor) {
