@@ -27,6 +27,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+//BUGBUG. may want to create repaint() function to force IE repaint to solve performance quirk...
+// currently Button and WindowPane use their own repaint-force schemes.
+
 // _____________________________
 // Object EchoAsyncMonitor
 
@@ -411,6 +414,8 @@ EchoClientMessage.setInitialize = function() {
 
 function EchoClientProperties() { }
 
+EchoClientProperties.propertyMap = new Array();
+
 EchoClientProperties.MessageProcessor = function() { };
 
 EchoClientProperties.MessageProcessor.process = function(messagePartElement) {
@@ -426,7 +431,21 @@ EchoClientProperties.MessageProcessor.process = function(messagePartElement) {
 };
 
 EchoClientProperties.MessageProcessor.processStore = function(storeElement) {
-    
+    var propertyElements = storeElement.getElementsByTagName("property");
+    for (var i = 0; i < propertyElements.length; ++i) {
+        var name = propertyElements[i].getAttribute("name");
+        var value = propertyElements[i].getAttribute("value");
+        if (value == "true") {
+            value = true;
+        } else if (value == "false") {
+            value = false;
+        }
+        EchoClientProperties.propertyMap[name] = value;
+    }
+};
+
+EchoClientProperties.get = function(name) {
+    return EchoClientProperties.propertyMap[name];
 };
 
 // _______________________

@@ -47,6 +47,7 @@ import org.xml.sax.SAXException;
 
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.server.ClientPropertiesLoader;
+import nextapp.echo2.webrender.server.ClientPropertiesStore;
 import nextapp.echo2.webrender.server.Connection;
 import nextapp.echo2.webrender.server.ContentType;
 import nextapp.echo2.webrender.server.Service;
@@ -66,7 +67,6 @@ import nextapp.echo2.webrender.util.DomUtil;
  */
 public abstract class SynchronizeService 
 implements Service {
-
     
     public static interface ClientMessagePartProcessor {
         
@@ -158,10 +158,6 @@ implements Service {
         return new ByteArrayInputStream(data);
     }
     
-    protected abstract ServerMessage renderInit(Connection conn, Document clientMessageDocument);
-    
-    protected abstract ServerMessage renderUpdate(Connection conn, Document clientMessageDocument);
-    
     protected void processClientMessage(Connection conn, Document clientMessageDocument) {
         UserInstance userInstance = conn.getUserInstance();
         Element[] messageParts = DomUtil.getChildElementsByTagName(clientMessageDocument.getDocumentElement(), 
@@ -177,19 +173,25 @@ implements Service {
         }
     }
     
+    protected abstract ServerMessage renderInit(Connection conn, ServerMessage serverMessage, Document clientMessageDocument);
+    
+    protected abstract ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument);
+    
     /**
      * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
      */
     public void service(Connection conn) throws IOException {
         Document clientMessageDocument = parseRequestDocument(conn);
         String messageType = clientMessageDocument.getDocumentElement().getAttribute("type");
-        
-        ServerMessage serverMessage;
+        ServerMessage serverMessage = new ServerMessage();
+        serverMessage.setApplicationUri(conn.getUserInstance().getApplicationUri());
         
         if ("initialize".equals(messageType)) {
-            serverMessage = renderInit(conn, clientMessageDocument);
+//BUGBUG. clientproperties stuff here is not well done, redo.            
+            serverMessage = renderInit(conn, serverMessage, clientMessageDocument);
+            ClientPropertiesStore.renderStoreDirective(serverMessage, conn.getUserInstance().getClientProperties());
         } else {
-            serverMessage = renderUpdate(conn, clientMessageDocument);
+            serverMessage = renderUpdate(conn, serverMessage, clientMessageDocument);
         }
         conn.setContentType(ContentType.TEXT_XML);
         serverMessage.render(conn.getWriter());       

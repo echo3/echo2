@@ -278,9 +278,10 @@ EchoButton.setState = function(buttonElement, newState) {
         EchoButton.setIcon(buttonElement.id, newIcon);
     }
 
-//BUGBUG. IE Performance Hack. (make IE only)    
-    var originalWidth = buttonElement.style.width;
-    var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
-    buttonElement.style.width = temporaryWidth + "px";
-    buttonElement.style.width = originalWidth;
+    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
+	    var originalWidth = buttonElement.style.width;
+	    var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
+	    buttonElement.style.width = temporaryWidth + "px";
+	    buttonElement.style.width = originalWidth;
+    }
 };

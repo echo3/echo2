@@ -77,16 +77,20 @@ public class ClientProperties {
     public static final String QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY = "quirkDomPerformanceRemoveLargeHierarchy";
 
     /**
-     * A quirk flag indicating that when a DIV element is dragged, better performance will result if it also
-     * moved.  This is an extremely weird performance quirk, but it does result in dramatically improved 
-     * DIV-dragging performance in Internet Explorer 6 for Windows.
+     * A quirk flag describing the curious repaint behavior found in Internet 
+     * Explorer 6, where repaints may be excessively delayed.  
+     * This quirky behavior is most visible when the DOM hierarchy is large and
+     * complex.  
+     * The unlikely workaround for this quirky behavior is to "tickle" (adjust
+     * and then reset) the CSS width of an element, which will force an 
+     * immediate repaint.   
      * <p>
      * This quirk occurs with:
      * <ul>
      *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
      */
-    public static final String QUIRK_DOM_PERFORMANCE_RESIZE_ON_MOVE = "quirkDomPerformanceResizeOnMove";
+    public static final String QUIRK_DOM_PERFORMANCE_IE_REPAINT = "quirkDomPerformanceIERepaint";
     
     /**
      * A quirk flag indicating the only means of acheiving 0 padding in table cells is to use 0px padding.

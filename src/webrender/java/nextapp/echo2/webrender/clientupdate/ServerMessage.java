@@ -197,14 +197,11 @@ public class ServerMessage extends XmlDocument {
     
     /**
      * Creates a new <code>ServerMessage</code>.
-     * 
-     * @param applicationUri the base URI of the application
      */
-    public ServerMessage(String applicationUri) {
+    public ServerMessage() {
         super("servermessage", null, null, "http://www.nextapp.com/products/echo2/svrmsg/servermessage");
         Document document = getDocument();
         serverMessageElement = document.getDocumentElement();
-        serverMessageElement.setAttribute("applicationuri", applicationUri);
         librariesElement = document.createElement("libraries");
         serverMessageElement.appendChild(librariesElement);
         
@@ -366,6 +363,10 @@ public class ServerMessage extends XmlDocument {
             itemizedDirectivesMap.put(itemizedDirectiveLookupKey, element);
         }
         return element;
+    }
+    
+    public void setApplicationUri(String applicationUri) {
+        serverMessageElement.setAttribute("applicationuri", applicationUri);
     }
     
     /**

@@ -249,10 +249,10 @@ public class ContainerSynchronizeService extends SynchronizeService {
     
     /**
      * @see nextapp.echo2.webrender.services.SynchronizeService#renderInit(nextapp.echo2.webrender.server.Connection, 
-     *      org.w3c.dom.Document)
+     *      nextapp.echo2.webrender.clientupdate.ServerMessage, org.w3c.dom.Document)
      */
-    protected ServerMessage renderInit(Connection conn, Document clientMessageDocument) {
-        RenderContext rc = new RenderContextImpl(conn);
+    protected ServerMessage renderInit(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
+        RenderContext rc = new RenderContextImpl(conn, serverMessage);
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
         try {
             ApplicationInstance.setActive(applicationInstance);
@@ -277,10 +277,10 @@ public class ContainerSynchronizeService extends SynchronizeService {
     
     /**
      * @see nextapp.echo2.webrender.services.SynchronizeService#renderUpdate(nextapp.echo2.webrender.server.Connection, 
-     *      org.w3c.dom.Document)
+     *      nextapp.echo2.webrender.clientupdate.ServerMessage, org.w3c.dom.Document)
      */
-    protected ServerMessage renderUpdate(Connection conn, Document clientMessageDocument) {
-        RenderContext rc = new RenderContextImpl(conn);
+    protected ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
+        RenderContext rc = new RenderContextImpl(conn, serverMessage);
         
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
         

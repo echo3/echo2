@@ -42,7 +42,7 @@ public class ServerMessageTest extends TestCase {
     // BUGBUG. Possibly remove this test given that we now have message part groups and 
     // appendPartDirective doesn't perform the "only add to existing if its the last one trickery."
     public void testServerMessage() {
-        ServerMessage message = new ServerMessage("/test");
+        ServerMessage message = new ServerMessage();
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domadd");
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domremove");
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domadd");

@@ -27,51 +27,42 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.webrender.server;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
-import nextapp.echo2.webrender.server.Connection;
 
 /**
- * Default <code>RenderContext</code> implementation.
+ * Provides capability to push analyzed <code>ClientProperties</code>
+ * information back to the client in order that the client side scripts
+ * will have the same quirk information as the server.
  */
-class RenderContextImpl 
-implements RenderContext {
-
-    Connection conn;
-    ServerMessage serverMessage;
+public class ClientPropertiesStore {
     
     /**
-     * Creates a new <code>RenderContextImpl</code> wrapping the specified
-     * <code>Connection</code> and <code>ServerMessage</code>.
+     * Renders a <code>ServerMessage</code> directive directing the 
+     * client to store the provided <code>ClientProperties</code> information.
      * 
-     * @param conn the <code>Connection</code>
-     * @param serverMessage the <code>ServerMessage</code> 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param clientProperties the <code>ClientProperties</code> information
      */
-    RenderContextImpl(Connection conn, ServerMessage serverMessage) {
-        super();
-        this.conn = conn;
-        this.serverMessage = serverMessage;
+    public static void renderStoreDirective(ServerMessage serverMessage, ClientProperties clientProperties) {
+        Document document = serverMessage.getDocument();
+        Element messagePartElement = serverMessage.addPart(ServerMessage.GROUP_ID_INIT, "EchoClientProperties.MessageProcessor");
+        Element storeElement = document.createElement("store");
+        messagePartElement.appendChild(storeElement);
+        
+        String[] propertyNames = clientProperties.getPropertyNames();
+        for (int i = 0; i < propertyNames.length; ++i) {
+            Element propertyElement = document.createElement("property");
+            storeElement.appendChild(propertyElement);
+            propertyElement.setAttribute("name", propertyNames[i]);
+            propertyElement.setAttribute("value", clientProperties.getString(propertyNames[i]));
+        }
     }
     
-    /**
-     * @see nextapp.echo2.webcontainer.RenderContext#getConnection()
-     */
-    public Connection getConnection() {
-        return conn;
-    }
-    
-    /**
-     * @see nextapp.echo2.webcontainer.RenderContext#getContainerInstance()
-     */
-    public ContainerInstance getContainerInstance() {
-        return (ContainerInstance) conn.getUserInstance();
-    }
-    
-    /**
-     * @see nextapp.echo2.webcontainer.RenderContext#getServerMessage()
-     */
-    public ServerMessage getServerMessage() {
-        return serverMessage;
-    }
+    /** Non-instantiable class. */
+    private ClientPropertiesStore() { }
 }

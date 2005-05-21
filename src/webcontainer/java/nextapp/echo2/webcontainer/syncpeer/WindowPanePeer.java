@@ -57,7 +57,6 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
@@ -630,10 +629,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
         outerContentDivElement.appendChild(contentDivElement);
 
-        if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_DOM_PERFORMANCE_RESIZE_ON_MOVE)) {
-            DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "quirkResizeOnMove", "true");
-        }
-        
         // Add event listeners.
         EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoWindowPane.userCloseClick");
         if (movable) {

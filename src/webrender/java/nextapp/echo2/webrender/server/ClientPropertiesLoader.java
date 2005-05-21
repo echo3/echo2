@@ -120,7 +120,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_RESIZE_ON_MOVE, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_IE_REPAINT, Boolean.TRUE);
         }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY, Boolean.TRUE);
