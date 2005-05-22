@@ -431,6 +431,8 @@ implements Serializable {
             }
         } else if (Component.PROPERTY_LAYOUT_DATA.equals(propertyName)) {
             serverUpdateManager.processLayoutDataUpdate(parent);
+        } else if (Component.VISIBLE_CHANGED_PROPERTY.equals(propertyName)) {
+            serverUpdateManager.processVisibleUpdate(parent);
         } else {
             if (parent instanceof ModalSupport && ModalSupport.MODAL_CHANGED_PROPERTY.equals(propertyName)) {
                 setModal(parent, ((Boolean) newValue).booleanValue());

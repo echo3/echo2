@@ -561,6 +561,74 @@ public abstract class Component {
     }
     
     /**
+     * Gets the nth immediate visible child component.
+     *
+     * @param n the index of the component to retrieve
+     * @return the component at index n
+     * @throws IndexOutOfBoundsException when the index is invalid
+     */
+    public Component getVisibleComponent(int n) {
+        if (children == null) {
+            throw new IndexOutOfBoundsException(Integer.toString(n));
+        }
+        int visibleComponentCount = 0;
+        Component component = null;
+        Iterator it = children.iterator();
+        while (visibleComponentCount <= n) {
+            if (!it.hasNext()) {
+              throw new IndexOutOfBoundsException(Integer.toString(n));
+            }
+            component = (Component) it.next();
+            if (component.isVisible()) {
+                ++visibleComponentCount;
+            }
+        }
+        return component;
+    }
+    
+    /**
+     * Returns an array of all immediate visible child components.
+     *
+     * @return an array of all immediate visible child components
+     */
+    public Component[] getVisibleComponents() {
+        if (children == null) {
+            return EMPTY_COMPONENT_ARRAY;
+        } else {
+            Iterator it = children.iterator();
+            List visibleChildList = new ArrayList();
+            while (it.hasNext()) {
+                Component component = (Component) it.next();
+                if (component.isVisible()) {
+                    visibleChildList.add(component);
+                }
+            }
+            return (Component[]) visibleChildList.toArray(new Component[visibleChildList.size()]);
+        }
+    }
+
+    /**
+     * Returns the number of immediate visible child components.
+     *
+     * @return the number of immediate visible child components
+     */
+    public int getVisibleComponentCount() {
+        if (children == null) {
+            return 0;
+        } else {
+            int visibleComponentCount = 0;
+            Iterator it = children.iterator();
+            while (it.hasNext()) {
+                Component component = (Component) it.next();
+                if (component.isVisible()) {
+                    ++visibleComponentCount;
+                }
+            }
+            return visibleComponentCount;
+        }
+    }
+    
+    /**
      * Determines the index of the given <code>Component</code> within the 
      * children of this <code>Component</code>.  If the given 
      * <code>Component</code> is not a child, returns -1.
@@ -605,6 +673,22 @@ public abstract class Component {
     }
     
     /**
+     * Determines if the component and all of its parents are visible.
+     * 
+     * @return true if the component is recursively visible
+     */
+    public boolean isRecursivelyVisible() {
+        Component component = this;
+        while (component != null) {
+            if ((component.flags & FLAG_VISIBLE) == 0) {
+                return false;
+            }
+            component = component.parent;
+        }
+        return true;
+    }
+
+    /**
      * Returns true if the <code>Component</code> is registered to an application.
      * 
      * @return true if the <code>Component</code> is registered to an application
@@ -612,7 +696,7 @@ public abstract class Component {
     public final boolean isRegistered() {
         return applicationInstance != null;
     }
-
+    
     /**
      * Determines if a given component is valid to be added as a child
      * to this component.  Default implementation always returns true,

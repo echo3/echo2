@@ -92,7 +92,7 @@ implements DomUpdateSupport, SynchronizePeer {
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         Component component = update.getParent();
         String elementId = ContainerInstance.getElementId(component);
-        Component[] components = update.getParent().getComponents();
+        Component[] components = update.getParent().getVisibleComponents();
         Component[] addedChildren = update.getAddedChildren();
         
         for (int componentIndex = components.length - 1; componentIndex >= 0; --componentIndex) {
@@ -168,7 +168,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         parent.appendChild(divElement);
         
-        Component[] children = contentPane.getComponents();
+        Component[] children = contentPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
             renderChild(rc, update, divElement, component, children[i]);
         }

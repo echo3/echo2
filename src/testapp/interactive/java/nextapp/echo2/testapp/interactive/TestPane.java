@@ -121,6 +121,7 @@ public class TestPane extends ContentPane {
         addTest("StyleSheet", "StyleSheetTest");
         addTest("Table", "TableTest");
         addTest("TextComponent", "TextComponentTest");
+        addTest("Visibility", "VisibilityTest");
         addTest("WindowPane", "WindowPaneTest");
         
         Column applicationControlsColumn = new Column();

@@ -318,4 +318,52 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(1, removedDescendants.length);
         assertEquals(label, removedDescendants[0]);
     }
+    
+    public void testVisibleUpdate() {
+        ServerComponentUpdate[] componentUpdates;
+ 
+        manager.purge();
+        
+        // Setup.
+        Column column = new Column();
+        columnApp.getColumn().add(column);
+        Label label1 = new Label("Label1");
+        column.add(label1);
+        Label label2 = new Label("Label2");
+        label2.setVisible(false);
+        column.add(label2);
+        label2.setLayoutData(new ColumnLayoutData());
+
+        manager.purge();
+        
+        label1.setVisible(false);
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(1, componentUpdates.length);
+        assertEquals(column, componentUpdates[0].getParent());
+        assertFalse(componentUpdates[0].hasAddedChildren());
+        assertTrue(componentUpdates[0].hasRemovedChildren());
+        assertFalse(componentUpdates[0].hasUpdatedProperties());
+        assertFalse(componentUpdates[0].hasUpdatedLayoutDataChildren());
+        
+        Component[] components = componentUpdates[0].getRemovedChildren();
+        assertEquals(1, components.length);
+        assertEquals(label1, components[0]);
+        
+        manager.purge();
+        
+        label2.setVisible(true);
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(1, componentUpdates.length);
+        assertEquals(column, componentUpdates[0].getParent());
+        assertTrue(componentUpdates[0].hasAddedChildren());
+        assertFalse(componentUpdates[0].hasRemovedChildren());
+        assertFalse(componentUpdates[0].hasUpdatedProperties());
+        assertFalse(componentUpdates[0].hasUpdatedLayoutDataChildren());
+
+        components = componentUpdates[0].getAddedChildren();
+        assertEquals(1, components.length);
+        assertEquals(label2, components[0]);
+        
+        label1.setVisible(true);
+    }
 }

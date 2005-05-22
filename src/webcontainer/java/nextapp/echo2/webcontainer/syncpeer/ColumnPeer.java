@@ -179,7 +179,7 @@ implements DomUpdateSupport, SynchronizePeer {
         Column column = (Column) update.getParent();
         String elementId = ContainerInstance.getElementId(column);
         
-        Component[] components = update.getParent().getComponents();
+        Component[] components = update.getParent().getVisibleComponents();
         Component[] addedChildren = update.getAddedChildren();
         
         for (int componentIndex = components.length - 1; componentIndex >= 0; --componentIndex) {
@@ -204,7 +204,7 @@ implements DomUpdateSupport, SynchronizePeer {
         ColumnPeerRenderState renderState = (ColumnPeerRenderState) rc.getContainerInstance().getRenderState(column);
         if (renderState != null && renderState.lastChild != null) {
             int previousLastChildIndex = column.indexOf(renderState.lastChild);
-            if (previousLastChildIndex != -1 && previousLastChildIndex != column.getComponentCount() - 1) {
+            if (previousLastChildIndex != -1 && previousLastChildIndex != column.getVisibleComponentCount() - 1) {
                 // Child which was previously last is present, but no longer last.
                 
                 Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId,
@@ -252,7 +252,7 @@ implements DomUpdateSupport, SynchronizePeer {
      */
     private void renderCellSpacingRow(Element divElement, Column column, Component child) {
         Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
-        if (!ExtentRender.isZeroLength(cellSpacing) && column.indexOf(child) != column.getComponentCount() - 1) {
+        if (!ExtentRender.isZeroLength(cellSpacing) && column.indexOf(child) != column.getVisibleComponentCount() - 1) {
             Element spacingElement = divElement.getOwnerDocument().createElement("div");
             spacingElement.setAttribute("id", ContainerInstance.getElementId(column) + "_spacing_" 
                     + ContainerInstance.getElementId(child));
@@ -297,7 +297,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         parent.appendChild(divElement);
         
-        Component[] children = column.getComponents();
+        Component[] children = column.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
             renderChild(rc, update, divElement, component, children[i]);
         }
@@ -325,10 +325,10 @@ implements DomUpdateSupport, SynchronizePeer {
                     parentId + "_spacing_" + childId);
         }
 
-        int componentCount = parent.getComponentCount();
+        int componentCount = parent.getVisibleComponentCount();
         if (componentCount > 0) {
             DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_spacing_" 
-                    + ContainerInstance.getElementId(parent.getComponent(componentCount - 1)));
+                    + ContainerInstance.getElementId(parent.getVisibleComponent(componentCount - 1)));
         }
     }
     
@@ -376,10 +376,10 @@ implements DomUpdateSupport, SynchronizePeer {
      * @param component the <code>Column</code> component
      */
     private void storeRenderState(RenderContext rc, Component component) {
-        int componentCount = component.getComponentCount();
+        int componentCount = component.getVisibleComponentCount();
         ColumnPeerRenderState renderState = new ColumnPeerRenderState();
         if (componentCount > 0) {
-            renderState.lastChild = component.getComponent(componentCount - 1);
+            renderState.lastChild = component.getVisibleComponent(componentCount - 1);
         }
         rc.getContainerInstance().setRenderState(component, renderState);
     }

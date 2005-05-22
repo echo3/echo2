@@ -50,7 +50,7 @@ public class GridProcessor {
     public GridProcessor(Grid grid) {
         int totalArea = 0;
         gridXSize = grid.getSize();
-        Component[] children = grid.getComponents();
+        Component[] children = grid.getVisibleComponents();
         boolean horizontalOrientation = grid.getOrientation() != Grid.ORIENTATION_VERTICAL;
 
         xSpans = new int[children.length];

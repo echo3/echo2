@@ -103,10 +103,11 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
          * @param splitPane the split pane
          */
         private RenderStateImpl(Component splitPane) {
-            pane0 = (splitPane.getComponentCount() < 1 || splitPane.getComponent(0) == null) 
-                        ? null : ContainerInstance.getElementId(splitPane.getComponent(0));
-            pane1 = (splitPane.getComponentCount() < 2 || splitPane.getComponent(1) == null) 
-                        ? null : ContainerInstance.getElementId(splitPane.getComponent(1));
+            int componentCount = splitPane.getVisibleComponentCount();
+            pane0 = (componentCount < 1 || splitPane.getVisibleComponent(0) == null) 
+                        ? null : ContainerInstance.getElementId(splitPane.getVisibleComponent(0));
+            pane1 = (componentCount < 2 || splitPane.getVisibleComponent(1) == null) 
+                        ? null : ContainerInstance.getElementId(splitPane.getVisibleComponent(1));
         }
     }
     
@@ -338,11 +339,12 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
 
         parent.appendChild(outerDivElement);
 
-        if (splitPane.getComponentCount() >= 1) {
+        int componentCount = splitPane.getVisibleComponentCount();
+        if (componentCount >= 1) {
             renderPane(rc, update, outerDivElement, splitPane, 0);
         }
         renderPaneSeparator(rc, outerDivElement, splitPane);
-        if (splitPane.getComponentCount() >= 2) {
+        if (componentCount >= 2) {
             renderPane(rc, update, outerDivElement, splitPane, 1);
         }
         
@@ -414,7 +416,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     private void renderPane(RenderContext rc, ServerComponentUpdate update, Element parentElement, 
             SplitPane splitPane, int paneNumber) {
         Document document = parentElement.getOwnerDocument();
-        Component paneComponent = splitPane.getComponent(paneNumber);
+        Component paneComponent = splitPane.getVisibleComponent(paneNumber);
         String elementId = ContainerInstance.getElementId(splitPane);
         
         Element paneDivElement = document.createElement("div");

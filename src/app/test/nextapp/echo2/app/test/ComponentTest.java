@@ -141,6 +141,101 @@ public class ComponentTest extends TestCase {
     }
 
     /**
+     * Test <code>getVisibleComponent()</code>.
+     */
+    public void testGetVisibleComponent() {
+        IndexOutOfBoundsException exception;
+        NullComponent parent = new NullComponent();
+        NullComponent child1 = new NullComponent();
+        NullComponent child2 = new NullComponent();
+        parent.add(child1);
+        parent.add(child2);
+        
+        assertSame(child1, parent.getVisibleComponent(0));
+        assertSame(child2, parent.getVisibleComponent(1));
+        exception = null;
+        try {
+            parent.getVisibleComponent(2);
+        } catch (IndexOutOfBoundsException ex) {
+            exception = ex;
+        }
+        assertNotNull(exception);
+
+        child1.setVisible(false);
+        assertSame(child2, parent.getVisibleComponent(0));
+        exception = null;
+        try {
+            parent.getVisibleComponent(1);
+        } catch (IndexOutOfBoundsException ex) {
+            exception = ex;
+        }
+        assertNotNull(exception);
+        
+        child2.setVisible(false);
+        exception = null;
+        try {
+            parent.getVisibleComponent(0);
+        } catch (IndexOutOfBoundsException ex) {
+            exception = ex;
+        }
+        assertNotNull(exception);
+
+        child1.setVisible(true);
+        assertSame(child1, parent.getVisibleComponent(0));
+        exception = null;
+        try {
+            parent.getVisibleComponent(1);
+        } catch (IndexOutOfBoundsException ex) {
+            exception = ex;
+        }
+        assertNotNull(exception);
+    }
+
+    /**
+     * Test <code>getVisibleComponentCount()</code>.
+     */
+    public void testGetVisibleComponentCount() {
+        NullComponent c = new NullComponent();
+        for (int i = 0; i < 5; ++ i) {
+            c.add(new NullComponent());
+        }
+        assertEquals(5, c.getVisibleComponentCount());
+        c.getComponent(1).setVisible(false);
+        assertEquals(4, c.getVisibleComponentCount());
+        c.getComponent(2).setVisible(false);
+        assertEquals(3, c.getVisibleComponentCount());
+    }
+    
+    /**
+     * Test <code>getVisibleComponents()</code>.
+     */
+    public void testGetVisibleComponents() {
+        NullComponent parent = new NullComponent();
+        NullComponent child1 = new NullComponent();
+        NullComponent child2 = new NullComponent();
+        parent.add(child1);
+        parent.add(child2);
+        Component[] children = parent.getVisibleComponents();
+        assertEquals(2, children.length);
+        assertSame(child1, children[0]);
+        assertSame(child2, children[1]);
+
+        child1.setVisible(false);
+        children = parent.getVisibleComponents();
+        assertEquals(1, children.length);
+        assertSame(child2, children[0]);
+        
+        child2.setVisible(false);
+        children = parent.getVisibleComponents();
+        assertEquals(0, children.length);
+
+        child1.setVisible(true);
+        children = parent.getVisibleComponents();
+        assertEquals(1, children.length);
+        assertSame(child1, children[0]);
+    }
+
+    /**
      * Test <code>layoutData</code> property.
      */
     public void testLayoutData() {

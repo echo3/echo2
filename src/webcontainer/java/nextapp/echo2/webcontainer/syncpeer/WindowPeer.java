@@ -82,7 +82,7 @@ implements RootSynchronizePeer {
         Window window = (Window) component;
         String elementId = ContainerInstance.getElementId(window);
         DomUpdate.createDomRemoveChildren(rc.getServerMessage(), elementId);
-        Component[] addedChildren = window.getComponents();
+        Component[] addedChildren = window.getVisibleComponents();
         for (int i = 0; i < addedChildren.length; ++i) {
             SynchronizePeer childSyncPeer = SynchronizePeerFactory.getPeerForComponent(addedChildren[i].getClass());
             childSyncPeer.renderAdd(rc, update, elementId, addedChildren[i]);

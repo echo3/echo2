@@ -201,9 +201,10 @@ public class ServerUpdateManager {
         if (isFullRefreshRequired()) {
             return;
         }
-        
+        if (!parent.isRecursivelyVisible()) {
+            return;
+        }
         if (isAncestorBeingAdded(child)) {
-            // Do nothing.
             return;
         }
         
@@ -222,9 +223,9 @@ public class ServerUpdateManager {
         if (isFullRefreshRequired()) {
             return;
         }
-
-        // Scan add map for parent/ancestor of component, and if found,
-        // do nothing (return).
+        if (!parent.isRecursivelyVisible()) {
+            return;
+        }
         if (isAncestorBeingAdded(parent)) {
             return;
         }
@@ -270,6 +271,9 @@ public class ServerUpdateManager {
         if (isFullRefreshRequired()) {
             return;
         }
+        if (!updatedComponent.isRecursivelyVisible()) {
+            return;
+        }
 
         Component parentComponent = updatedComponent.getParent();
         if (parentComponent == null || isAncestorBeingAdded(parentComponent)) {
@@ -294,9 +298,10 @@ public class ServerUpdateManager {
         if (isFullRefreshRequired()) {
             return;
         }
-
+        if (!updatedComponent.isRecursivelyVisible()) {
+            return;
+        }
         if (isAncestorBeingAdded(updatedComponent)) {
-            // Do nothing.
             return;
         }
         
@@ -319,6 +324,22 @@ public class ServerUpdateManager {
         
         ServerComponentUpdate update = createComponentUpdate(updatedComponent);
         update.updateProperty(propertyName, oldValue, newValue);
+    }
+    
+    /**
+     * Processes an update to the visible state of a copmonent.
+     * Creates/updates a <code>ServerComponentUpdate</code> if required.
+     * 
+     * @param updatedComponent a component which currently exists in the 
+     *        hierarchy whose visible state has changed.
+     */
+    public void processVisibleUpdate(Component updatedComponent) {
+        Component parentComponent = updatedComponent.getParent();
+        if (updatedComponent.isVisible()) {
+            processComponentAdd(parentComponent, updatedComponent);
+        } else {
+            processComponentRemove(parentComponent, updatedComponent);
+        }
     }
     
     /**
