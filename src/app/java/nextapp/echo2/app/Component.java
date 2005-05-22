@@ -1050,4 +1050,36 @@ public abstract class Component {
         //        (mind the fact that ordering of inputs cannot be guaranteed).
         return isVisible() && isEnabled();
     }
+
+    /**
+     * Determines the index of the given <code>Component</code> within the 
+     * visible children of this <code>Component</code>.  If the given 
+     * <code>Component</code> is not a child, returns -1.
+     * 
+     * @param c the <code>Component</code> to analyze
+     * @return the index of the given <code>Component</code> amongst the 
+     *         visible children of this <code>Component</code>
+     */
+    public final int visibleIndexOf(Component c) {
+        if (!c.isVisible()) {
+            return -1;
+        }
+        if (children == null) {
+            return -1;
+        }
+        int visibleIndex = 0;
+        Iterator it = children.iterator();
+        while (it.hasNext()) {
+            Component component = (Component) it.next();
+            if (!component.isVisible()) {
+                continue;
+            }
+            if (component.equals(c)) {
+                return visibleIndex;
+            }
+            ++visibleIndex;
+        }
+        return -1;
+    }
+    
 }

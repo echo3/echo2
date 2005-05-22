@@ -56,6 +56,9 @@ import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.ClientProperties;
 
+//BUGBUG. sort component visiblity with regard to rendered components
+// (may simply want to require returned components be visible (at Table level) and validate this)
+
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Table</code> components.
  * <p>

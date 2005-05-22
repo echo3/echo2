@@ -201,7 +201,7 @@ public class ServerUpdateManager {
         if (isFullRefreshRequired()) {
             return;
         }
-        if (!parent.isRecursivelyVisible()) {
+        if (!child.isRecursivelyVisible()) {
             return;
         }
         if (isAncestorBeingAdded(child)) {

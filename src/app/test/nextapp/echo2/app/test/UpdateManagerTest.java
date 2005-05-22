@@ -48,8 +48,8 @@ import junit.framework.TestCase;
  */
 public class UpdateManagerTest extends TestCase  {
     
-    private UpdateManager manager;
     private ColumnApp columnApp;
+    private UpdateManager manager;
     
     /**
      * @see junit.framework.TestCase#setUp()
@@ -58,52 +58,6 @@ public class UpdateManagerTest extends TestCase  {
         columnApp = new ColumnApp();
         columnApp.doInit();
         manager = columnApp.getUpdateManager();
-    }
-    
-    /**
-     * Ensure updates are returned sorted by component depth.
-     */
-    public void testUpdateSorting1() {
-        ServerComponentUpdate[] componentUpdates;
-        manager.purge();
-
-        columnApp.getLabel().setBackground(Color.BLUE);
-        columnApp.getContentPane().setBackground(Color.RED);
-        columnApp.getColumn().setBackground(Color.GREEN);
-        componentUpdates = manager.getServerComponentUpdates();
-
-        assertEquals(3, componentUpdates.length);
-        assertEquals(columnApp.getContentPane(), componentUpdates[0].getParent());
-        assertEquals(columnApp.getColumn(), componentUpdates[1].getParent());
-        assertEquals(columnApp.getLabel(), componentUpdates[2].getParent());
-    }
-    
-    /**
-     * Ensure updates are returned sorted by component depth.
-     */
-    public void testUpdateSorting2() {
-        ServerComponentUpdate[] componentUpdates;
-        Column column2 = new Column();
-        columnApp.getColumn().add(column2);
-        Label label2 = new Label();
-        column2.add(label2);
-        manager.purge();
-
-        columnApp.getLabel().setBackground(Color.BLUE);
-        columnApp.getContentPane().setBackground(Color.RED);
-        columnApp.getColumn().setBackground(Color.GREEN);
-        label2.setBackground(Color.YELLOW);
-        column2.setBackground(Color.ORANGE);
-
-        componentUpdates = manager.getServerComponentUpdates();
-        assertEquals(5, componentUpdates.length);
-        assertEquals(columnApp.getContentPane(), componentUpdates[0].getParent());
-        assertEquals(columnApp.getColumn(), componentUpdates[1].getParent());
-        assertTrue(columnApp.getLabel().equals(componentUpdates[2].getParent()) 
-                || columnApp.getLabel().equals(componentUpdates[3].getParent()));
-        assertTrue(column2.equals(componentUpdates[2].getParent()) 
-                || column2.equals(componentUpdates[3].getParent()));
-        assertEquals(label2, componentUpdates[4].getParent());
     }
     
     public void testAddChlidToAddedParent() {
@@ -154,6 +108,22 @@ public class UpdateManagerTest extends TestCase  {
     }
     
     /**
+     * Ensure adding an invisible component does not add entries.
+     */
+    public void testAddInvisibleComponent() {
+        ServerComponentUpdate[] componentUpdates;
+ 
+        manager.purge();
+        
+        Label label = new Label("Label1");
+        label.setVisible(false);
+        columnApp.getColumn().add(label);
+        
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(0, componentUpdates.length);
+    }
+    
+    /**
      * Ensure updates to invisible hierarchy do not add entries.
      */
     public void testInvisibleHierarchyUpdate() {
@@ -173,7 +143,7 @@ public class UpdateManagerTest extends TestCase  {
         componentUpdates = manager.getServerComponentUpdates();
         assertEquals(0, componentUpdates.length);
     }
-
+    
     public void testLayoutDataUpdate() {
         ServerComponentUpdate[] componentUpdates;
         ColumnLayoutData columnLayoutData;
@@ -209,6 +179,35 @@ public class UpdateManagerTest extends TestCase  {
         Component[] components = componentUpdates[0].getUpdatedLayoutDataChildren();
         assertEquals(1, components.length);
         assertEquals(label1, components[0]);
+    }
+    
+    
+    public void testPropertyUpdate() {
+        ServerComponentUpdate[] componentUpdates;
+        // Remove previous updates.
+        manager.purge();
+        
+        // Update text property of label and verify.
+        columnApp.getLabel().setText("Hi there");
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(columnApp.getLabel(), componentUpdates[0].getParent());
+        assertEquals(1, componentUpdates.length);
+        assertEquals(0, componentUpdates[0].getAddedChildren().length);
+        assertEquals(0, componentUpdates[0].getRemovedChildren().length);
+        
+        String[] updatedPropertyNames = componentUpdates[0].getUpdatedPropertyNames(); 
+        assertEquals(1, updatedPropertyNames.length);
+        assertEquals(Label.PROPERTY_TEXT, updatedPropertyNames[0]);
+        ServerComponentUpdate.PropertyUpdate propertyUpdate = componentUpdates[0].getUpdatedProperty(Label.PROPERTY_TEXT);
+        assertEquals("Label", propertyUpdate.getOldValue());
+        assertEquals("Hi there", propertyUpdate.getNewValue());
+        
+        // Remove label entirely and ensure property update disappears.
+        columnApp.getColumn().remove(columnApp.getLabel());
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(1, componentUpdates.length);
+        assertEquals(0, componentUpdates[0].getUpdatedPropertyNames().length);
+        assertEquals(0, componentUpdates[0].getAddedChildren().length);
     }
     
     public void testPropertyUpdateCancellation1() {
@@ -253,35 +252,6 @@ public class UpdateManagerTest extends TestCase  {
         ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertFalse(componentUpdates[0].hasUpdatedProperties());
-    }
-    
-    
-    public void testPropertyUpdate() {
-        ServerComponentUpdate[] componentUpdates;
-        // Remove previous updates.
-        manager.purge();
-        
-        // Update text property of label and verify.
-        columnApp.getLabel().setText("Hi there");
-        componentUpdates = manager.getServerComponentUpdates();
-        assertEquals(columnApp.getLabel(), componentUpdates[0].getParent());
-        assertEquals(1, componentUpdates.length);
-        assertEquals(0, componentUpdates[0].getAddedChildren().length);
-        assertEquals(0, componentUpdates[0].getRemovedChildren().length);
-        
-        String[] updatedPropertyNames = componentUpdates[0].getUpdatedPropertyNames(); 
-        assertEquals(1, updatedPropertyNames.length);
-        assertEquals(Label.PROPERTY_TEXT, updatedPropertyNames[0]);
-        ServerComponentUpdate.PropertyUpdate propertyUpdate = componentUpdates[0].getUpdatedProperty(Label.PROPERTY_TEXT);
-        assertEquals("Label", propertyUpdate.getOldValue());
-        assertEquals("Hi there", propertyUpdate.getNewValue());
-        
-        // Remove label entirely and ensure property update disappears.
-        columnApp.getColumn().remove(columnApp.getLabel());
-        componentUpdates = manager.getServerComponentUpdates();
-        assertEquals(1, componentUpdates.length);
-        assertEquals(0, componentUpdates[0].getUpdatedPropertyNames().length);
-        assertEquals(0, componentUpdates[0].getAddedChildren().length);
     }
     
     public void testPurge() {
@@ -338,6 +308,52 @@ public class UpdateManagerTest extends TestCase  {
         Component[] removedDescendants = componentUpdates[0].getRemovedDescendants();
         assertEquals(1, removedDescendants.length);
         assertEquals(label, removedDescendants[0]);
+    }
+
+    /**
+     * Ensure updates are returned sorted by component depth.
+     */
+    public void testUpdateSorting1() {
+        ServerComponentUpdate[] componentUpdates;
+        manager.purge();
+
+        columnApp.getLabel().setBackground(Color.BLUE);
+        columnApp.getContentPane().setBackground(Color.RED);
+        columnApp.getColumn().setBackground(Color.GREEN);
+        componentUpdates = manager.getServerComponentUpdates();
+
+        assertEquals(3, componentUpdates.length);
+        assertEquals(columnApp.getContentPane(), componentUpdates[0].getParent());
+        assertEquals(columnApp.getColumn(), componentUpdates[1].getParent());
+        assertEquals(columnApp.getLabel(), componentUpdates[2].getParent());
+    }
+    
+    /**
+     * Ensure updates are returned sorted by component depth.
+     */
+    public void testUpdateSorting2() {
+        ServerComponentUpdate[] componentUpdates;
+        Column column2 = new Column();
+        columnApp.getColumn().add(column2);
+        Label label2 = new Label();
+        column2.add(label2);
+        manager.purge();
+
+        columnApp.getLabel().setBackground(Color.BLUE);
+        columnApp.getContentPane().setBackground(Color.RED);
+        columnApp.getColumn().setBackground(Color.GREEN);
+        label2.setBackground(Color.YELLOW);
+        column2.setBackground(Color.ORANGE);
+
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(5, componentUpdates.length);
+        assertEquals(columnApp.getContentPane(), componentUpdates[0].getParent());
+        assertEquals(columnApp.getColumn(), componentUpdates[1].getParent());
+        assertTrue(columnApp.getLabel().equals(componentUpdates[2].getParent()) 
+                || columnApp.getLabel().equals(componentUpdates[3].getParent()));
+        assertTrue(column2.equals(componentUpdates[2].getParent()) 
+                || column2.equals(componentUpdates[3].getParent()));
+        assertEquals(label2, componentUpdates[4].getParent());
     }
     
     public void testVisibleUpdate() {

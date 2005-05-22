@@ -369,4 +369,37 @@ public class ComponentTest extends TestCase {
         c.setVisible(true);
         assertTrue(c.isVisible());
     }
+    
+    /**
+     * Test <code>visibleIndexOf()</code> method.
+     */
+    public void testVisibleIndexOf() {
+        NullComponent parent = new NullComponent();
+        NullComponent a = new NullComponent();
+        NullComponent b = new NullComponent();
+        NullComponent c = new NullComponent();
+        NullComponent d = new NullComponent();
+        parent.add(a);
+        parent.add(b);
+        parent.add(c);
+        assertEquals(0, parent.visibleIndexOf(a));
+        assertEquals(1, parent.visibleIndexOf(b));
+        assertEquals(2, parent.visibleIndexOf(c));
+        assertEquals(-1, parent.visibleIndexOf(d));
+        b.setVisible(false);
+        assertEquals(0, parent.visibleIndexOf(a));
+        assertEquals(-1, parent.visibleIndexOf(b));
+        assertEquals(1, parent.visibleIndexOf(c));
+        assertEquals(-1, parent.visibleIndexOf(d));
+        a.setVisible(false);
+        assertEquals(-1, parent.visibleIndexOf(a));
+        assertEquals(-1, parent.visibleIndexOf(b));
+        assertEquals(0, parent.visibleIndexOf(c));
+        assertEquals(-1, parent.visibleIndexOf(d));
+        c.setVisible(false);
+        assertEquals(-1, parent.visibleIndexOf(a));
+        assertEquals(-1, parent.visibleIndexOf(b));
+        assertEquals(-1, parent.visibleIndexOf(c));
+        assertEquals(-1, parent.visibleIndexOf(d));
+    }
 }

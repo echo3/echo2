@@ -203,7 +203,7 @@ implements DomUpdateSupport, SynchronizePeer {
         // row beneath it (if necessary).
         ColumnPeerRenderState renderState = (ColumnPeerRenderState) rc.getContainerInstance().getRenderState(column);
         if (renderState != null && renderState.lastChild != null) {
-            int previousLastChildIndex = column.indexOf(renderState.lastChild);
+            int previousLastChildIndex = column.visibleIndexOf(renderState.lastChild);
             if (previousLastChildIndex != -1 && previousLastChildIndex != column.getVisibleComponentCount() - 1) {
                 // Child which was previously last is present, but no longer last.
                 
@@ -252,7 +252,7 @@ implements DomUpdateSupport, SynchronizePeer {
      */
     private void renderCellSpacingRow(Element divElement, Column column, Component child) {
         Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
-        if (!ExtentRender.isZeroLength(cellSpacing) && column.indexOf(child) != column.getVisibleComponentCount() - 1) {
+        if (!ExtentRender.isZeroLength(cellSpacing) && column.visibleIndexOf(child) != column.getVisibleComponentCount() - 1) {
             Element spacingElement = divElement.getOwnerDocument().createElement("div");
             spacingElement.setAttribute("id", ContainerInstance.getElementId(column) + "_spacing_" 
                     + ContainerInstance.getElementId(child));

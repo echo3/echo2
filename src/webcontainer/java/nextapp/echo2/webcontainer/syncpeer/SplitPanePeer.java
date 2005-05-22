@@ -180,7 +180,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      */
     public String getContainerId(Component child) {
         return ContainerInstance.getElementId(child.getParent()) + "_panecontent_"
-                + child.getParent().indexOf(child);
+                + child.getParent().visibleIndexOf(child);
     }
     
     /**
