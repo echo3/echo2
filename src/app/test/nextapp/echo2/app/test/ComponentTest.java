@@ -333,6 +333,25 @@ public class ComponentTest extends TestCase {
     }
     
     /**
+     * Test <code>tabIndex</code> property.
+     */
+    public void testTabIndex() {
+        Component c = new NullComponent();
+        PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
+        c.addPropertyChangeListener(pce);
+        assertEquals(0, c.getTabIndex());
+        c.setTabIndex(5);
+        assertEquals(Component.TAB_INDEX_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
+        assertEquals(5, c.getTabIndex());
+        c.setVisible(false);
+        assertEquals(false, c.isVisible());
+        assertEquals(5, c.getTabIndex());
+        c.setTabIndex(70);
+        assertEquals(false, c.isVisible());
+        assertEquals(70, c.getTabIndex());
+    }
+    
+    /**
      * Test <code>visible</code> property.
      */
     public void testVisible() {

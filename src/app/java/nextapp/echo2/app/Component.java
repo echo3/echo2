@@ -68,10 +68,12 @@ public abstract class Component {
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String STYLE_CHANGED_PROPERTY = "style";
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
+    public static final String TAB_INDEX_CHANGED_PROPERTY = "tabIndex";
     public static final String VISIBLE_CHANGED_PROPERTY = "visible";
 
     private static final int FLAG_ENABLED = 0x1;
     private static final int FLAG_VISIBLE = 0x2;
+    private static final int FLAGS_TAB_INDEX = 0x7fff0000;
     
     /**
      * Boolean flags for this component, including enabled state, visibility, 
@@ -561,6 +563,15 @@ public abstract class Component {
     }
     
     /**
+     * Returns the tab index of the component.
+     * 
+     * @return the tab index
+     */
+    public int getTabIndex() {
+        return (flags & FLAGS_TAB_INDEX) >> 16;
+    }
+    
+    /**
      * Gets the nth immediate visible child component.
      *
      * @param n the index of the component to retrieve
@@ -982,6 +993,18 @@ public abstract class Component {
         firePropertyChange(STYLE_NAME_CHANGED_PROPERTY, oldValue, newValue);
     }
     
+    /**
+     * Sets the tab index of the component.
+     * 
+     * @param newValue the new tab index
+     */
+    public void setTabIndex(int newValue) {
+        int oldValue = getTabIndex();
+        newValue &= 0x7fff;
+        flags = flags & ((~FLAGS_TAB_INDEX)) | (newValue << 16);
+        firePropertyChange(TAB_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
+    }
+
     /**
      * Sets the visibility state of this <code>Component</code>.
      * 
