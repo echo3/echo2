@@ -153,6 +153,27 @@ public class UpdateManagerTest extends TestCase  {
         assertFalse(addedChildrenList.contains(labelB));
     }
     
+    /**
+     * Ensure updates to invisible hierarchy do not add entries.
+     */
+    public void testInvisibleHierarchyUpdate() {
+        ServerComponentUpdate[] componentUpdates;
+        columnApp.getColumn().setVisible(false);
+ 
+        manager.purge();
+        
+        Column column = new Column();
+        columnApp.getColumn().add(column);
+        Label label1 = new Label("Label1");
+        column.add(label1);
+        Label label2 = new Label("Label2");
+        label2.setVisible(false);
+        column.add(label2);
+        
+        componentUpdates = manager.getServerComponentUpdates();
+        assertEquals(0, componentUpdates.length);
+    }
+
     public void testLayoutDataUpdate() {
         ServerComponentUpdate[] componentUpdates;
         ColumnLayoutData columnLayoutData;
