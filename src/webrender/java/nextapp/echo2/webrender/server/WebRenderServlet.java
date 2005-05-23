@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class WebRenderServlet extends HttpServlet {
     
     //BUGBUG. Caching temporarily disabled on all services.
-    public static final boolean DISABLE_CACHING = true;
+    public static final boolean DISABLE_CACHING = false;
     
     public static final String SERVICE_ID_PARAMETER = "serviceId";
     

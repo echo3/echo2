@@ -64,7 +64,8 @@ implements Service {
      * @see nextapp.echo2.webrender.server.Service#getVersion()
      */
     public int getVersion() {
-        return 0;
+        //BUGBUG. for debugging purposes (though technically JS should *NEVER* be reloaded during a session anyway)
+        return DO_NOT_CACHE;
     }
     
     /**

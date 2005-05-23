@@ -61,7 +61,7 @@ public class StreamImageService extends AbstractImageService {
      * @see nextapp.echo2.webrender.server.Service#getVersion()
      */
     public int getVersion() {
-        return DO_NOT_CACHE;
+        return 0; // Enable caching.
     }
 
     /**
