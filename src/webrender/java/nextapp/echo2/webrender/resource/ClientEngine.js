@@ -777,6 +777,8 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
             var attribute = sourceNode.attributes[i];
             if ("style" == attribute.name) {
                 targetNode.style.cssText = attribute.value;
+            } else if ("tabindex" == attribute.name) {
+                targetNode.tabIndex = attribute.value;
             } else if ("colspan" == attribute.name) {
                 targetNode.colSpan = attribute.value;
             } else if ("rowspan" == attribute.name) {
@@ -905,8 +907,6 @@ EchoEventProcessor.getHandlerEventTypes = function() {
  */
 EchoEventProcessor.processEvent = function(e) {
     e = e ? e : window.event;
-    EchoDomUtil.preventEventDefault(e);
-    EchoDomUtil.stopPropogation(e);
     var eventType = e.type;
     if (!e.target && e.srcElement) {
         // The Internet Explorer event model stores the target element in the 'srcElement' property of an event.

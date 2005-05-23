@@ -333,22 +333,22 @@ public class ComponentTest extends TestCase {
     }
     
     /**
-     * Test <code>tabIndex</code> property.
+     * Test <code>focusTraversalIndex</code> property.
      */
-    public void testTabIndex() {
+    public void testFocusTraversalIndex() {
         Component c = new NullComponent();
         PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
         c.addPropertyChangeListener(pce);
-        assertEquals(0, c.getTabIndex());
-        c.setTabIndex(5);
-        assertEquals(Component.TAB_INDEX_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
-        assertEquals(5, c.getTabIndex());
+        assertEquals(0, c.getFocusTraversalIndex());
+        c.setFocusTraversalIndex(5);
+        assertEquals(Component.FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
+        assertEquals(5, c.getFocusTraversalIndex());
         c.setVisible(false);
         assertEquals(false, c.isVisible());
-        assertEquals(5, c.getTabIndex());
-        c.setTabIndex(70);
+        assertEquals(5, c.getFocusTraversalIndex());
+        c.setFocusTraversalIndex(70);
         assertEquals(false, c.isVisible());
-        assertEquals(70, c.getTabIndex());
+        assertEquals(70, c.getFocusTraversalIndex());
     }
     
     /**

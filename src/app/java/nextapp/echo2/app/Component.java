@@ -68,12 +68,14 @@ public abstract class Component {
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String STYLE_CHANGED_PROPERTY = "style";
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
-    public static final String TAB_INDEX_CHANGED_PROPERTY = "tabIndex";
+    public static final String FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY = "focusTraversalIndex";
+    public static final String FOCUS_TRAVERSAL_PARTICIPANT_CHANGED_PROPERTY = "focusTraversalParticipant";
     public static final String VISIBLE_CHANGED_PROPERTY = "visible";
 
     private static final int FLAG_ENABLED = 0x1;
     private static final int FLAG_VISIBLE = 0x2;
-    private static final int FLAGS_TAB_INDEX = 0x7fff0000;
+    private static final int FLAG_FOCUS_TRAVERSAL_PARTICIPANT= 0x4;
+    private static final int FLAGS_FOCUS_TRAVERSAL_INDEX = 0x7fff0000;
     
     /**
      * Boolean flags for this component, including enabled state, visibility, 
@@ -118,7 +120,7 @@ public abstract class Component {
      */
     public Component() {
         super();
-        flags = FLAG_ENABLED | FLAG_VISIBLE;
+        flags = FLAG_ENABLED | FLAG_VISIBLE | FLAG_FOCUS_TRAVERSAL_PARTICIPANT;
         listenerList = new EventListenerList();
         propertyChangeSupport = null;
         localStyle = new MutableStyle();
@@ -563,12 +565,12 @@ public abstract class Component {
     }
     
     /**
-     * Returns the tab index of the component.
+     * Returns the focus traversal (tab) index of the component.
      * 
-     * @return the tab index
+     * @return the focus traversalindex
      */
-    public int getTabIndex() {
-        return (flags & FLAGS_TAB_INDEX) >> 16;
+    public int getFocusTraversalIndex() {
+        return (flags & FLAGS_FOCUS_TRAVERSAL_INDEX) >> 16;
     }
     
     /**
@@ -681,6 +683,15 @@ public abstract class Component {
      */
     public boolean isEnabled() {
         return (flags & FLAG_ENABLED) != 0;
+    }
+    
+    /**
+     * Determines if the component participates in (tab) focus traversal.
+     * 
+     * @return true if the component participates in focus traversal
+     */
+    public boolean isFocusTraversalParticipant() {
+        return (flags & FLAG_FOCUS_TRAVERSAL_PARTICIPANT) != 0;
     }
     
     /**
@@ -994,15 +1005,30 @@ public abstract class Component {
     }
     
     /**
-     * Sets the tab index of the component.
+     * Sets the focus traversal (tab) index of the component.
      * 
-     * @param newValue the new tab index
+     * @param newValue the new focus traversal index
      */
-    public void setTabIndex(int newValue) {
-        int oldValue = getTabIndex();
+    public void setFocusTraversalIndex(int newValue) {
+        int oldValue = getFocusTraversalIndex();
         newValue &= 0x7fff;
-        flags = flags & ((~FLAGS_TAB_INDEX)) | (newValue << 16);
-        firePropertyChange(TAB_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
+        flags = flags & ((~FLAGS_FOCUS_TRAVERSAL_INDEX)) | (newValue << 16);
+        firePropertyChange(FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
+    }
+    
+    /**
+     * Sets whether the component participates in the focus traversal order 
+     * (tab order).
+     * 
+     * @param newValue true if the component participates in the focus 
+     *        traversal order
+     */
+    public void setFocusTraversalParticipant(boolean newValue) {
+        boolean oldValue = isFocusTraversalParticipant();
+        if (oldValue != newValue) {
+            flags ^= FLAG_FOCUS_TRAVERSAL_PARTICIPANT; // Toggle FLAG_FOCUS_TRAVERSAL_PARTICIPANT bit.
+            firePropertyChange(FOCUS_TRAVERSAL_PARTICIPANT_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
+        }
     }
 
     /**

@@ -301,6 +301,12 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element divElement = parentElement.getOwnerDocument().createElement("div");
         divElement.setAttribute("id", ContainerInstance.getElementId(button));
         
+        if (button.isFocusTraversalParticipant()) {
+            divElement.setAttribute("tabindex", Integer.toString(button.getFocusTraversalIndex()));
+        } else {
+            divElement.setAttribute("tabindex", "-1");
+        }
+        
         FillImage backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("cursor", "pointer");

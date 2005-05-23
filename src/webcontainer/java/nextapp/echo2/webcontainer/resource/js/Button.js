@@ -67,11 +67,12 @@ EchoButton.MessageProcessor.process = function(messagePartElement) {
 EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
+        EchoEventProcessor.removeHandler(elementId, "click");
+        EchoEventProcessor.removeHandler(elementId, "keypress");
+        EchoEventProcessor.removeHandler(elementId, "mousedown");
+        EchoEventProcessor.removeHandler(elementId, "mouseout");
 	    EchoEventProcessor.removeHandler(elementId, "mouseover");
-	    EchoEventProcessor.removeHandler(elementId, "mouseout");
-	    EchoEventProcessor.removeHandler(elementId, "mousedown");
 	    EchoEventProcessor.removeHandler(elementId, "mouseup");
-	    EchoEventProcessor.removeHandler(elementId, "click");
     }
 };
 
@@ -114,11 +115,12 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
             }
         }
 
-	    EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.doRolloverEnter");
-	    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.doRolloverExit");
-	    EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.doPressed");
-	    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.doReleased");
-	    EchoEventProcessor.addHandler(elementId, "click", "EchoButton.doAction");
+        EchoEventProcessor.addHandler(elementId, "click", "EchoButton.processClick");
+        EchoEventProcessor.addHandler(elementId, "keypress", "EchoButton.processKeyPressed");
+        EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.processPressed");
+	    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.processRolloverExit");
+        EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.processRolloverEnter");
+	    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.processReleased");
     }
 };
 
@@ -151,13 +153,7 @@ EchoButton.deselectRadioButton = function(groupId) {
     }
 };
 
-EchoButton.doAction = function(echoEvent) {
-    if (EchoServerTransaction.active) {
-        return;
-    }
-    
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-
+EchoButton.doAction = function(elementId) {
     if ("true" == EchoDomPropertyStore.getPropertyValue(elementId, "toggle")) {
         EchoButton.doToggle(echoEvent.registeredTarget);
     }
@@ -174,33 +170,7 @@ EchoButton.doAction = function(echoEvent) {
     EchoServerTransaction.connect();
 };
 
-EchoButton.doPressed = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    if (EchoServerTransaction.active) {
-        return;
-    }
-    var eventTarget = echoEvent.registeredTarget;
-    EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED);
-};
-
-EchoButton.doReleased = function(echoEvent) {
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
-};
-
-EchoButton.doRolloverEnter = function(echoEvent) {
-    if (EchoServerTransaction.active) {
-        return;
-    }
-    var eventTarget = echoEvent.registeredTarget;
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER);
-};
-
-EchoButton.doRolloverExit = function(echoEvent) {
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
-};
-
-EchoButton.doToggle = function(buttonElement) {
-    var elementId = buttonElement.getAttribute("id");
+EchoButton.doToggle = function(elementId) {
     var newState = !EchoButton.getSelectionState(elementId);
     
     var groupId = EchoButton.getButtonGroup(elementId);
@@ -221,6 +191,50 @@ EchoButton.getButtonGroup = function(elementId) {
 
 EchoButton.getSelectionState = function(elementId) {
     return "true" == EchoDomPropertyStore.getPropertyValue(elementId, "selected");
+};
+
+EchoButton.processClick = function(echoEvent) {
+    if (EchoServerTransaction.active) {
+        return;
+    }
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    EchoButton.doAction(elementId);
+};
+
+EchoButton.processKeyPressed = function(echoEvent) {
+    if (EchoServerTransaction.active) {
+        return;
+    }
+    if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
+        EchoButton.doAction(echoEvent);
+	    var elementId = echoEvent.registeredTarget.getAttribute("id");
+	    EchoButton.doAction(elementId);
+    }
+};
+
+EchoButton.processPressed = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
+    if (EchoServerTransaction.active) {
+        return;
+    }
+    var eventTarget = echoEvent.registeredTarget;
+    EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED);
+};
+
+EchoButton.processReleased = function(echoEvent) {
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
+};
+
+EchoButton.processRolloverEnter = function(echoEvent) {
+    if (EchoServerTransaction.active) {
+        return;
+    }
+    var eventTarget = echoEvent.registeredTarget;
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER);
+};
+
+EchoButton.processRolloverExit = function(echoEvent) {
+    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
 };
 
 EchoButton.setButtonGroup = function(elementId, groupId) {
