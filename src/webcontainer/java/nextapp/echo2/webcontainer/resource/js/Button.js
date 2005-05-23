@@ -206,7 +206,6 @@ EchoButton.processKeyPressed = function(echoEvent) {
         return;
     }
     if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
-        EchoButton.doAction(echoEvent);
 	    var elementId = echoEvent.registeredTarget.getAttribute("id");
 	    EchoButton.doAction(elementId);
     }
