@@ -155,7 +155,7 @@ EchoButton.deselectRadioButton = function(groupId) {
 
 EchoButton.doAction = function(elementId) {
     if ("true" == EchoDomPropertyStore.getPropertyValue(elementId, "toggle")) {
-        EchoButton.doToggle(echoEvent.registeredTarget);
+        EchoButton.doToggle(elementId);
     }
     
     if ("false" == EchoDomPropertyStore.getPropertyValue(elementId, "serverNotify")) {
@@ -191,6 +191,19 @@ EchoButton.getButtonGroup = function(elementId) {
 
 EchoButton.getSelectionState = function(elementId) {
     return "true" == EchoDomPropertyStore.getPropertyValue(elementId, "selected");
+};
+
+/**
+ * Forces quirky IE clients to repaint immediately for aesthetic 
+ * performance improvement.
+ */
+EchoButton.ieRepaint = function(buttonElement) {
+    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
+        var originalWidth = buttonElement.style.width;
+        var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
+        buttonElement.style.width = temporaryWidth + "px";
+        buttonElement.style.width = originalWidth;
+    }
 };
 
 EchoButton.processClick = function(echoEvent) {
@@ -284,17 +297,11 @@ EchoButton.setState = function(buttonElement, newState) {
         newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultStyle");
         newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultIcon");
     }
-    if (newStyle) {
-        EchoButton.applyStyle(buttonElement, newStyle);
-    }
     if (newIcon) {
         EchoButton.setIcon(buttonElement.id, newIcon);
     }
-
-    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
-	    var originalWidth = buttonElement.style.width;
-	    var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
-	    buttonElement.style.width = temporaryWidth + "px";
-	    buttonElement.style.width = originalWidth;
+    if (newStyle) {
+        EchoButton.applyStyle(buttonElement, newStyle);
     }
+    EchoButton.ieRepaint(buttonElement);
 };
