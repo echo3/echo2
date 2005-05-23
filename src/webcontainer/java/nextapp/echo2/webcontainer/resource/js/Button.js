@@ -93,7 +93,9 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
         if (pressedStyle) {
             EchoDomPropertyStore.setPropertyValue(elementId, "pressedStyle", pressedStyle);
         }
-        
+        if (item.getAttribute("servernotify")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("servernotify"));
+        }
         if (item.getAttribute("defaulticon")) {
             EchoDomPropertyStore.setPropertyValue(elementId, "defaultIcon", item.getAttribute("defaulticon"));
         }

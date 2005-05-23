@@ -647,7 +647,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             itemElement.setAttribute("pressedicon", pressedIconUri);
         }
         if (!button.hasActionListeners()) {
-            itemElement.setAttribute("serverNotify", "false");
+            itemElement.setAttribute("servernotify", "false");
         }
 
         if (button instanceof ToggleButton) {
