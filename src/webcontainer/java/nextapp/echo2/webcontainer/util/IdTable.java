@@ -51,6 +51,7 @@ import java.util.WeakHashMap;
 public class IdTable 
 implements Serializable {
     
+    //BUGBUG. Evaluate synchronization issues in this class (may be concurrent issue w/ iterator in purge).
     //BUGBUG. This object needs a fully custom serialization/deserialization strategy such that weak refs will be held.
 
     private transient Map objectToIdMap = new WeakHashMap();
@@ -108,6 +109,7 @@ implements Serializable {
             referenceSet.add(reference);
             reference = referenceQueue.poll();
         }
+        
         Iterator idIt = idToReferenceMap.keySet().iterator();
         while (idIt.hasNext()) {
             String id = (String) idIt.next();
