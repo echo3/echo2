@@ -112,7 +112,7 @@ implements Serializable {
         
         Iterator idIt = idToReferenceMap.keySet().iterator();
         while (idIt.hasNext()) {
-            String id = (String) idIt.next();
+            String id = (String) idIt.next(); //BUGBUG. concurr mod exception here.
             if (referenceSet.contains(idToReferenceMap.get(id))) {
                 idIt.remove();
             }

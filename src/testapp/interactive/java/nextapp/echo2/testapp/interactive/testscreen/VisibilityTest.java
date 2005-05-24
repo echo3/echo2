@@ -51,7 +51,7 @@ public class VisibilityTest extends SplitPane {
     
     public VisibilityTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
         
         ButtonColumn controlsColumn = new ButtonColumn();
         controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);

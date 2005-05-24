@@ -59,7 +59,7 @@ public class LabelTest extends SplitPane {
     
     public LabelTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
         

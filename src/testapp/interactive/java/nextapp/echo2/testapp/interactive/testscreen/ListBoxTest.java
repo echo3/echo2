@@ -55,7 +55,7 @@ public class ListBoxTest extends SplitPane {
 
     public ListBoxTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
 

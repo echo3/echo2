@@ -57,7 +57,7 @@ public class SplitPaneNestedTest extends SplitPane {
     
     public SplitPaneNestedTest() {
         super(SplitPane.ORIENTATION_VERTICAL, new Extent(80, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
         setFont(BIG_FONT);
         
         Label label;
@@ -71,7 +71,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label.setLayoutData(splitPaneLayoutData);
         add(label);
         SplitPane splitPaneAlpha = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(80));
-        splitPaneAlpha.setResizable(true);
+        splitPaneAlpha.setStyleName("defaultResizable");
         add(splitPaneAlpha);
         
         splitPaneLayoutData = new SplitPaneLayoutData();
@@ -82,7 +82,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label.setLayoutData(splitPaneLayoutData);
         splitPaneAlpha.add(label);
         SplitPane splitPaneBravo = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-80));
-        splitPaneBravo.setResizable(true);
+        splitPaneBravo.setStyleName("defaultResizable");
         splitPaneAlpha.add(splitPaneBravo);
         
         splitPaneLayoutData = new SplitPaneLayoutData();
@@ -92,7 +92,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label = new Label("C");
         label.setLayoutData(splitPaneLayoutData);
         SplitPane splitPaneCharlie = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(-80));
-        splitPaneCharlie.setResizable(true);
+        splitPaneCharlie.setStyleName("defaultResizable");
         splitPaneBravo.add(splitPaneCharlie);
         splitPaneBravo.add(label);
         
@@ -103,7 +103,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label = new Label("D");
         label.setLayoutData(splitPaneLayoutData);
         SplitPane splitPaneDelta = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(80));
-        splitPaneDelta.setResizable(true);
+        splitPaneDelta.setStyleName("defaultResizable");
         splitPaneCharlie.add(splitPaneDelta);
         splitPaneCharlie.add(label);
         
@@ -115,7 +115,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label.setLayoutData(splitPaneLayoutData);
         splitPaneDelta.add(label);
         SplitPane splitPaneEcho = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(80));
-        splitPaneEcho.setResizable(true);
+        splitPaneEcho.setStyleName("defaultResizable");
         splitPaneDelta.add(splitPaneEcho);
 
         splitPaneLayoutData = new SplitPaneLayoutData();
@@ -126,7 +126,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label.setLayoutData(splitPaneLayoutData);
         splitPaneEcho.add(label);
         SplitPane splitPaneFoxtrot = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-80));
-        splitPaneFoxtrot.setResizable(true);
+        splitPaneFoxtrot.setStyleName("defaultResizable");
         splitPaneEcho.add(splitPaneFoxtrot);
 
         splitPaneLayoutData = new SplitPaneLayoutData();
@@ -136,7 +136,7 @@ public class SplitPaneNestedTest extends SplitPane {
         label = new Label("G");
         label.setLayoutData(splitPaneLayoutData);
         SplitPane splitPaneGolf = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(-80));
-        splitPaneGolf.setResizable(true);
+        splitPaneGolf.setStyleName("defaultResizable");
         splitPaneFoxtrot.add(splitPaneGolf);
         splitPaneFoxtrot.add(label);
 

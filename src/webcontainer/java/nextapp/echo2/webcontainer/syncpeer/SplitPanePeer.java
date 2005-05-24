@@ -77,8 +77,10 @@ import org.w3c.dom.Element;
 public class SplitPanePeer 
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
 
+    private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
     private static final String IMAGE_ID_PANE_1_BACKGROUND = "pane1Background";
+    private static final String IMAGE_ID_VERTICAL_SEPARATOR = "verticalSeparator";
 
     /**
      * <code>RenderState</code> implementation.
@@ -191,6 +193,12 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
             return getPaneBackgroundImage(component);
         } else if (IMAGE_ID_PANE_1_BACKGROUND.equals(imageId)) {
             return getPaneBackgroundImage(component);
+        } else if (IMAGE_ID_HORIZONTAL_SEPARATOR.equals(imageId)) {
+            FillImage fillImage = (FillImage) component.getRenderProperty(SplitPane.PROPERTY_HORIZONTAL_SEPARATOR_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
+        } else if (IMAGE_ID_VERTICAL_SEPARATOR.equals(imageId)) {
+            FillImage fillImage = (FillImage) component.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
         } else {
             return null;
         }
@@ -512,6 +520,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
         int orientation = orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue();
         if (orientation == SplitPane.ORIENTATION_VERTICAL) {
+            FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_VERTICAL_SEPARATOR, 
+                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE), false);
             if (fixedPaneNumber == 0) {
                 separatorDivCssStyle.setAttribute("top", separatorPosition + "px");
             } else {
@@ -528,6 +538,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 separatorDivCssStyle.setAttribute("cursor", "s-resize");
             }
         } else {
+            FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_HORIZONTAL_SEPARATOR, 
+                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_HORIZONTAL_SEPARATOR_IMAGE), false);
             if (fixedPaneNumber == 0) {
                 separatorDivCssStyle.setAttribute("left", separatorPosition + "px");
             } else {

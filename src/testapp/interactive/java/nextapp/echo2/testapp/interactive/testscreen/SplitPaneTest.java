@@ -212,7 +212,7 @@ public class SplitPaneTest extends SplitPane {
     
     public SplitPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
         
         Column groupContainerColumn = new Column();
         groupContainerColumn.setCellSpacing(new Extent(5));
@@ -304,7 +304,7 @@ public class SplitPaneTest extends SplitPane {
         groupContainerColumn.add(new PaneControlsColumn(1));
 
         testPane = new SplitPane(ORIENTATION_VERTICAL, new Extent(200, Extent.PX));
-        testPane.setResizable(true);
+        testPane.setStyleName("defaultResizable");
         add(testPane);
     }
     

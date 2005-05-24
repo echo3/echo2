@@ -159,7 +159,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     
                     SplitPane splitPane1 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(100));
-                    splitPane1.setResizable(true);
+                    splitPane1.setStyleName("defaultResizable");
                     SplitPaneLayoutData splitPaneLayoutData;
                     
                     Label label;
@@ -172,14 +172,14 @@ public class WindowPaneTest extends SplitPane {
                     splitPane1.add(label);
 
                     SplitPane splitPane2 = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(120));
-                    splitPane2.setResizable(true);
+                    splitPane2.setStyleName("defaultResizable");
                     
                     SplitPane splitPane3 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(200));
-                    splitPane3.setResizable(true);
+                    splitPane3.setStyleName("defaultResizable");
                     splitPane2.add(splitPane3);
                     
                     SplitPane splitPane4 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(300));
-                    splitPane4.setResizable(true);
+                    splitPane4.setStyleName("defaultResizable");
                     splitPane2.add(splitPane4);
                     
                     label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
@@ -220,7 +220,7 @@ public class WindowPaneTest extends SplitPane {
     
     public WindowPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
         
         ButtonColumn controlsColumn = new ButtonColumn();
         controlsColumn.setCellSpacing(new Extent(5));

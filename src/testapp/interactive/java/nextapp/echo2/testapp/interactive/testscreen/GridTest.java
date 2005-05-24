@@ -62,7 +62,7 @@ public class GridTest extends SplitPane {
     
     public GridTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
         
         Column groupContainerColumn = new Column();
         groupContainerColumn.setCellSpacing(new Extent(5));

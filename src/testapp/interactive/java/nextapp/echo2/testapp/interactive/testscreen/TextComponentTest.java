@@ -50,7 +50,7 @@ public class TextComponentTest extends SplitPane {
     
     public TextComponentTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setResizable(true);
+        setStyleName("defaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
         
