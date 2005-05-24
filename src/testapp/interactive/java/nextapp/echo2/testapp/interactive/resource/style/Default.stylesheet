@@ -110,6 +110,13 @@
   <properties>
    <property name="titleInsets" value="10px 5px"/>
    <property name="titleBackground" value="#2f2f4f"/>
+   <property name="titleBackgroundImage">
+    <fillimage vertical="100%" repeat="horizontal">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/WindowPaneTitleBackground.png"/>
+     </image>
+    </fillimage>
+   </property>
    <property name="titleForeground" value="#ffffff"/>
    <property name="border">
     <fillimageborder contentinsets="8px 8px 14px 14px" borderinsets="17px 17px 23px 23px">

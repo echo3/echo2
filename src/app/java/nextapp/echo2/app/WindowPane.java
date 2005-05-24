@@ -470,7 +470,7 @@ implements ModalSupport {
      * 
      * @param newValue the new background image
      */
-    public void setTitleBackgroundImage(ImageReference newValue) {
+    public void setTitleBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_TITLE_BACKGROUND_IMAGE, newValue);
     }
     

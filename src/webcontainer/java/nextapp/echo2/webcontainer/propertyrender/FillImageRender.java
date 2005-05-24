@@ -69,9 +69,9 @@ public class FillImageRender {
         
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED)) {
+            cssStyle.setAttribute("background-image", "none");
             cssStyle.setAttribute("filter",
-                    "progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale src="
-                    + imageUri + "')");
+                    "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + imageUri + "', sizingMethod='scale')");
         } else {
             cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
         }
@@ -101,17 +101,18 @@ public class FillImageRender {
         }
         if (fillImage.getHorizontalOffset() != null || fillImage.getVerticalOffset() != null) {
             StringBuffer positionText = new StringBuffer();
-            if (fillImage.getHorizontalOffset() != null) {
+            if (fillImage.getHorizontalOffset() == null) {
                 positionText.append("0px");
             } else {
                 positionText.append(ExtentRender.renderCssAttributeValue(fillImage.getHorizontalOffset()));
             }
             positionText.append(" " );
-            if (fillImage.getVerticalOffset() != null) {
+            if (fillImage.getVerticalOffset() == null) {
                 positionText.append("0px");
             } else {
                 positionText.append(ExtentRender.renderCssAttributeValue(fillImage.getVerticalOffset()));
             }
+            cssStyle.setAttribute("background-position", positionText.toString());
         }
     }    
 }
