@@ -27,8 +27,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. Ensure we are calculating/setting separator size and not just using default (4px)
-
 // ____________________
 // Object EchoSplitPane
 
@@ -52,6 +50,7 @@ EchoSplitPane.activePane0MinimumSize = -1;
 EchoSplitPane.activePane1MinimumSize = -1;
 EchoSplitPane.activePane0MaximumSize = -1;
 EchoSplitPane.activePane1MaximumSize = -1;
+EchoSplitPane.separatorSize = 0;
 EchoSplitPane.activePaneSeparatorDiv = null;
 
 /**
@@ -96,7 +95,7 @@ EchoSplitPane.dispose = function() {
     EchoSplitPane.activePane0Div = null;
     EchoSplitPane.activePane1Div = null;
     EchoSplitPane.activePaneSeparatorDiv = null;
-
+    EchoSplitPane.separatorSize = 0;
     EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.mouseMove, true);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.mouseUp, true);
     EchoDomUtil.removeEventListener(document, "selectstart", EchoSplitPane.selectStart, true);
@@ -112,8 +111,12 @@ EchoSplitPane.mouseDown = function(echoEvent) {
     var mouseDownElement = echoEvent.target;
     if (mouseDownElement != EchoSplitPane.separatorElement) {
         EchoSplitPane.activePaneSeparatorDiv = mouseDownElement;
-
         EchoSplitPane.verticalDrag = EchoSplitPane.activePaneSeparatorDiv.style.cursor == "s-resize";
+        if (EchoSplitPane.verticalDrag) {
+            EchoSplitPane.separatorSize = parseInt(mouseDownElement.style.height);
+        } else {
+            EchoSplitPane.separatorSize = parseInt(mouseDownElement.style.width);
+        }
         EchoSplitPane.activePaneId = mouseDownElement.parentNode.getAttribute("id");
         EchoSplitPane.fixedPane = EchoDomPropertyStore.getPropertyValue(
                 EchoSplitPane.activePaneId, "fixedPane") == "1" ? 1 : 0;
@@ -183,7 +186,7 @@ EchoSplitPane.mouseMove = function(e) {
 	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
 	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
                     EchoSplitPane.activePaneDiv.clientHeight);
-	        newSeparatorEnd = newSeparatorBegin + 4;
+	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
             EchoSplitPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
             if (EchoSplitPane.activePane1Div) {
                 EchoSplitPane.activePane1Div.style.height = newSeparatorBegin + "px";
@@ -199,7 +202,7 @@ EchoSplitPane.mouseMove = function(e) {
 	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientY - EchoSplitPane.mouseOffset);
 	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
                     EchoSplitPane.activePaneDiv.clientHeight);
-	        newSeparatorEnd = newSeparatorBegin + 4;
+	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
 	        EchoSplitPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
 	        if (EchoSplitPane.activePane0Div) {
 	            EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
@@ -217,7 +220,7 @@ EchoSplitPane.mouseMove = function(e) {
 	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
 	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
 	                EchoSplitPane.activePaneDiv.clientWidth);
-	        newSeparatorEnd = newSeparatorBegin + 4;
+	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
             EchoSplitPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
             if (EchoSplitPane.activePane1Div) {
                 EchoSplitPane.activePane1Div.style.width = newSeparatorBegin + "px";
@@ -233,7 +236,7 @@ EchoSplitPane.mouseMove = function(e) {
 	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientX - EchoSplitPane.mouseOffset);
 	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
 	                EchoSplitPane.activePaneDiv.clientWidth);
-	        newSeparatorEnd = newSeparatorBegin + 4;
+	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
 	        EchoSplitPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
 	        if (EchoSplitPane.activePane0Div) {
 	            EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
