@@ -58,7 +58,6 @@ import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.ClientProperties;
@@ -78,33 +77,19 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
         SynchronizePeer {
 
     private static final FillImageBorder DEFAULT_BORDER = new FillImageBorder(new Color(0x00007f), new Insets(20), new Insets(3));
-
     private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
-
     private static final Extent DEFAULT_POSITION_Y = new Extent(64, Extent.PX);
-
     private static final String DEFAULT_WIDTH = "512px";
-
     private static final String DEFAULT_HEIGHT = "256px";
-
     private static final String IMAGE_ID_TITLE_BACKGROUND = "titleBackground";
-
     private static final String IMAGE_ID_CLOSE_ICON = "close";
-
     private static final String IMAGE_ID_BORDER_TOP_LEFT = "borderTopLeft";
-
     private static final String IMAGE_ID_BORDER_TOP = "borderTop";
-
     private static final String IMAGE_ID_BORDER_TOP_RIGHT = "borderTopRight";
-
     private static final String IMAGE_ID_BORDER_LEFT = "borderLeft";
-
     private static final String IMAGE_ID_BORDER_RIGHT = "borderRight";
-
     private static final String IMAGE_ID_BORDER_BOTTOM_LEFT = "borderBottomLeft";
-
     private static final String IMAGE_ID_BORDER_BOTTOM = "borderBottom";
-
     private static final String IMAGE_ID_BORDER_BOTTOM_RIGHT = "borderBottomRight";
 
     private static final ImageReference DEFAULT_CLOSE_ICON = new ResourceImageReference(
@@ -418,27 +403,6 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
                 .getFillImage(FillImageBorder.BOTTOM_RIGHT), false);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
-
-        ServerMessage serverMessage = rc.getServerMessage();
-
-        if (resizable) {
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_tl", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_t", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_tr", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_l", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_r", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_bl", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_b", 
-                    "EchoWindowPane.windowResizeMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_border_br", 
-                    "EchoWindowPane.windowResizeMouseDown");
-        }
     }
 
     /**
@@ -447,18 +411,24 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
      *      nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        String elementId = ContainerInstance.getElementId(component);
-        EventUpdate.createEventRemove(rc.getServerMessage(), "click", elementId + "_close");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_close");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_title");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_tl");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_t");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_tr");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_l");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_r");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_bl");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_b");
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_border_br");
+        renderDisposeDirective(rc, (WindowPane) component);
+    }
+    
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a window pane, performing tasks such as deregistering
+     * event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param windowPane the <code>WindowPane</code>
+     */
+    private void renderDisposeDirective(RenderContext rc, WindowPane windowPane) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoWindowPane.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(windowPane));
+        itemizedUpdateElement.appendChild(itemElement);
     }
 
     /**
@@ -647,13 +617,9 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
         contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
         outerContentDivElement.appendChild(contentDivElement);
 
-        // Add event listeners.
-        EventUpdate.createEventAdd(serverMessage, "click", elementId + "_close", "EchoWindowPane.userCloseClick");
-        if (movable) {
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_close", "EchoWindowPane.userCloseMouseDown");
-            EventUpdate.createEventAdd(serverMessage, "mousedown", elementId + "_title", "EchoWindowPane.windowMoveMouseDown");
-        }
-
+        // Render initialization directive.
+        renderInitDirective(rc, windowPane);
+        
         // Render child.
         if (windowPane.getComponentCount() != 0) {
             Component child = windowPane.getComponent(0);
@@ -664,6 +630,29 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
                 syncPeer.renderAdd(rc, update, elementId, child);
             }
         }
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a button, performing tasks such as registering
+     * event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param windowPane the <code>WindowPane</code>
+     */
+    private void renderInitDirective(RenderContext rc, WindowPane windowPane) {
+        String elementId = ContainerInstance.getElementId(windowPane);
+        ServerMessage serverMessage = rc.getServerMessage();
+        boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
+        boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
+        
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoWindowPane.MessageProcessor", "init", new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemElement.setAttribute("movable", movable ? "true" : "false");
+        itemElement.setAttribute("resizable", resizable ? "true" : "false");
+        itemizedUpdateElement.appendChild(itemElement);
     }
 
     /**

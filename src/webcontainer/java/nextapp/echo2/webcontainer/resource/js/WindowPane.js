@@ -37,6 +37,64 @@
  */
 EchoWindowPane = function() { };
 
+EchoWindowPane.MessageProcessor = function() { };
+
+EchoWindowPane.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                EchoWindowPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                EchoWindowPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement) {
+    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoEventProcessor.removeHandler(elementId + "_close", "click");
+        EchoEventProcessor.removeHandler(elementId + "_close", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_title", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_tl", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_t", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_tr", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_l", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_r", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_bl", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_b", "mousedown");
+        EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
+    }
+};
+
+EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
+    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        var movable = item.getAttribute("movable") == "true";
+        var resizable = item.getAttribute("resizable") == "true";
+        
+        EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.userCloseClick");
+        if (movable) {
+            EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.userCloseMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.windowMoveMouseDown");
+        }
+        if (resizable) {
+            EchoEventProcessor.addHandler(elementId + "_border_tl", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_t", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_tr", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_l", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_r", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_bl", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_b", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_br", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+        }
+    }
+};
+
 /** The initial horizontal position of the window. */
 EchoWindowPane.initialWindowX = -1;
 

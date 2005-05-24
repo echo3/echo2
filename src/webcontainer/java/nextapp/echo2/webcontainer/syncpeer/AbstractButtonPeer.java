@@ -512,9 +512,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        ServerMessage serverMessage = rc.getServerMessage();
-        String id = ContainerInstance.getElementId(component);
-        renderDisposeDirective(serverMessage, id);
+        renderDisposeDirective(rc, (AbstractButton) component);
     }
 
     /**
@@ -522,14 +520,15 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * dispose the state of a button, performing tasks such as deregistering
      * event listeners on the client.
      * 
-     * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the button
+     * @param rc the relevant <code>RenderContext</code>
+     * @param button the button
      */
-    private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
+    private void renderDisposeDirective(RenderContext rc, AbstractButton button) {
+        ServerMessage serverMessage = rc.getServerMessage();
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
                 "EchoButton.MessageProcessor", "dispose",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(button));
         itemizedUpdateElement.appendChild(itemElement);
     }
     
@@ -550,6 +549,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
      * initialize the state of a button, performing tasks such as registering
      * event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param button the button
      */
     private void renderInitDirective(RenderContext rc, AbstractButton button) {
         String elementId = ContainerInstance.getElementId(button);
