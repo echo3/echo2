@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
+ <style name="testPane" type="nextapp.echo2.app.SplitPane">
+  <properties>
+   <property name="separatorPosition" value="40px"/>
+   <property name="separatorHeight" value="1px"/>
+   <property name="separatorColor" value="#1d1d1d"/>
+  </properties>
+ </style> 
  <style name="default" type="nextapp.echo2.app.Table">
   <properties>
    <property name="insets" value="5px 2px"/>
@@ -98,7 +105,14 @@
       <property name="alignment">
        <alignment horizontal="center"/>
       </property>
-      <property name="background" value="#1f1f27"/>
+      <property name="background" value="#1b1b21"/>
+      <property name="backgroundImage">
+       <fillimage repeat="none">
+        <image type="nextapp.echo2.app.ResourceImageReference">
+         <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/HeaderBackground.png"/>
+        </image>
+       </fillimage>
+      </property>
       <property name="insets" value="8px"/>
       <property name="overflow" value="OVERFLOW_HIDDEN"/>
      </properties>

@@ -75,7 +75,6 @@ public class TestPane extends ContentPane {
             } catch (IllegalAccessException ex) {
                 throw new RuntimeException(ex.toString());
             }
-
         }
     };
     
@@ -84,8 +83,8 @@ public class TestPane extends ContentPane {
     public TestPane() {
         super();
         
-        SplitPane verticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(40));
-        verticalPane.setSeparatorHeight(new Extent(1));
+        SplitPane verticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
+        verticalPane.setStyleName("testPane");
         add(verticalPane);
 
         Label titleLabel = new Label("NextApp Echo2 Test Application [EARLY ACCESS/EXPERIMENTAL]");

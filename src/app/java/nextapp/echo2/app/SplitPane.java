@@ -71,6 +71,20 @@ public class SplitPane extends Component {
     
     //BUGBUG. update docs for new orientation values.
     /**
+     * Creates a new <code>SplitPane</code> with the specified orientation.
+     *
+     * @param orientation a constant representing the orientation, one of the 
+     *        following values:
+     *        <ul>
+     *         <li><code>ORIENTATION_HORIZONTAL</code></li>
+     *         <li><code>ORIENTATION_VERTICAL</code></li>
+     *        </ul>
+     */
+    public SplitPane(int orientation) {
+        this(orientation, null);
+    }
+    
+    /**
      * Creates a new <code>SplitPane</code> with the specified orientation and
      * separator position.
      *
@@ -236,15 +250,6 @@ public class SplitPane extends Component {
     }
     
     /**
-     * Sets the position of the pane separator.
-     * 
-     * @param newValue the new position
-     */
-    public void setSeparatorPosition(Extent newValue) {
-        setProperty(PROPERTY_SEPARATOR_POSITION, newValue);
-    }
-    
-    /**
      * Sets the height of the pane separator.  This value is only relevant
      * when the <code>SplitPane</code> has a vertical orientation.
      * 
@@ -252,6 +257,15 @@ public class SplitPane extends Component {
      */
     public void setSeparatorHeight(Extent newValue) {
         setProperty(PROPERTY_SEPARATOR_HEIGHT, newValue);
+    }
+    
+    /**
+     * Sets the position of the pane separator.
+     * 
+     * @param newValue the new position
+     */
+    public void setSeparatorPosition(Extent newValue) {
+        setProperty(PROPERTY_SEPARATOR_POSITION, newValue);
     }
     
     /**

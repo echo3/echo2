@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
+ <style name="testPane" type="nextapp.echo2.app.SplitPane">
+  <properties>
+   <property name="separatorPosition" value="40px"/>
+   <proeprty name="separatorHeight" value="1px"/>
+   <property name="separatorColor" value="#1d1d1d"/>
+  </properties>
+ </style> 
  <style name="default" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
    <property name="background" value="#4f7f4f"/>
