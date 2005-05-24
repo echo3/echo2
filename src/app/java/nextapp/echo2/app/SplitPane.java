@@ -56,8 +56,9 @@ public class SplitPane extends Component {
     public static final String PROPERTY_ORIENTATION = "orientation";
     public static final String PROPERTY_RESIZABLE = "resizable";
     public static final String PROPERTY_SEPARATOR_COLOR = "separatorColor";
+    public static final String PROPERTY_SEPARATOR_HEIGHT = "separatorHeight";
     public static final String PROPERTY_SEPARATOR_POSITION = "separatorPosition";
-    public static final String PROPERTY_SEPARATOR_SIZE = "separatorSize";
+    public static final String PROPERTY_SEPARATOR_WIDTH = "separatorWidth";
     public static final String PROPERTY_VERTICAL_SEPARATOR_IMAGE = "verticalSeparatorImage";
     
     /**
@@ -124,6 +125,16 @@ public class SplitPane extends Component {
     }
     
     /**
+     * Returns the height of the pane separator.  This value is relevant only 
+     * when the <code>SplitPane</code> has a vertical orientation.
+     * 
+     * @return the separator width
+     */
+    public Extent getSeparatorHeight() {
+        return (Extent) getProperty(PROPERTY_SEPARATOR_HEIGHT);
+    }
+    
+    /**
      * Returns the position of the pane separator.
      * 
      * @return the separator position
@@ -133,12 +144,13 @@ public class SplitPane extends Component {
     }
     
     /**
-     * Returns the size of the pane separator.
+     * Returns the width of the pane separator.  This value is relevant only 
+     * when the <code>SplitPane</code> has a horizontal orientation.
      * 
-     * @return the separator size
+     * @return the separator width
      */
-    public Extent getSeparatorSize() {
-        return (Extent) getProperty(PROPERTY_SEPARATOR_SIZE);
+    public Extent getSeparatorWidth() {
+        return (Extent) getProperty(PROPERTY_SEPARATOR_WIDTH);
     }
     
     /**
@@ -233,12 +245,13 @@ public class SplitPane extends Component {
     }
     
     /**
-     * Sets the size of the pane separator
+     * Sets the height of the pane separator.  This value is only relevant
+     * when the <code>SplitPane</code> has a vertical orientation.
      * 
-     * @param newValue the new size
+     * @param newValue the new height
      */
-    public void setSeparatorSize(Extent newValue) {
-        setProperty(PROPERTY_SEPARATOR_SIZE, newValue);
+    public void setSeparatorHeight(Extent newValue) {
+        setProperty(PROPERTY_SEPARATOR_HEIGHT, newValue);
     }
     
     /**
@@ -249,5 +262,15 @@ public class SplitPane extends Component {
      */
     public void setVerticalSeparatorImage(FillImage newValue) {
         setProperty(PROPERTY_VERTICAL_SEPARATOR_IMAGE, newValue);
+    }
+
+    /**
+     * Sets the width of the pane separator.  This value is only relevant
+     * when the <code>SplitPane</code> has a horizontal orientation.
+     * 
+     * @param newValue the new width
+     */
+    public void setSeparatorWidth(Extent newValue) {
+        setProperty(PROPERTY_SEPARATOR_WIDTH, newValue);
     }
 }

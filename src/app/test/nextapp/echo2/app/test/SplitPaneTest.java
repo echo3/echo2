@@ -102,8 +102,10 @@ public class SplitPaneTest extends TestCase {
         assertEquals(SplitPane.ORIENTATION_VERTICAL, splitPane.getOrienation());
         splitPane.setSeparatorPosition(TestConstants.EXTENT_200_PX);
         assertEquals(TestConstants.EXTENT_200_PX, splitPane.getSeparatorPosition());
-        splitPane.setSeparatorSize(TestConstants.EXTENT_30_PX);
-        assertEquals(TestConstants.EXTENT_30_PX, splitPane.getSeparatorSize());
+        splitPane.setSeparatorHeight(TestConstants.EXTENT_30_PX);
+        assertEquals(TestConstants.EXTENT_30_PX, splitPane.getSeparatorHeight());
+        splitPane.setSeparatorWidth(TestConstants.EXTENT_100_PX);
+        assertEquals(TestConstants.EXTENT_100_PX, splitPane.getSeparatorWidth());
         splitPane.setSeparatorColor(Color.RED);
         assertEquals(Color.RED, splitPane.getSeparatorColor());
         splitPane.setResizable(true);

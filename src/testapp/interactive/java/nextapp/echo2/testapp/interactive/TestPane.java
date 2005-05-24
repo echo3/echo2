@@ -85,7 +85,7 @@ public class TestPane extends ContentPane {
         super();
         
         SplitPane verticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(40));
-        verticalPane.setSeparatorSize(new Extent(1));
+        verticalPane.setSeparatorHeight(new Extent(1));
         add(verticalPane);
 
         Label titleLabel = new Label("NextApp Echo2 Test Application [EARLY ACCESS/EXPERIMENTAL]");

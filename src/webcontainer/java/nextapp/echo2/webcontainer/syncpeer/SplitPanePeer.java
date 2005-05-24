@@ -165,10 +165,13 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     private int calculateSeparatorSize(SplitPane splitPane) {
         Boolean booleanValue = (Boolean) splitPane.getRenderProperty(SplitPane.PROPERTY_RESIZABLE);
         boolean resizable = booleanValue == null ? false : booleanValue.booleanValue();
+        boolean verticalOrientation = isOrientationVertical(splitPane);
         if (resizable) {
-            return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_SIZE), 4);
+            return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(
+                    verticalOrientation ? SplitPane.PROPERTY_SEPARATOR_HEIGHT : SplitPane.PROPERTY_SEPARATOR_WIDTH), 4);
         } else {
-            return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_SIZE), 0);
+            return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(
+                    verticalOrientation ? SplitPane.PROPERTY_SEPARATOR_HEIGHT : SplitPane.PROPERTY_SEPARATOR_WIDTH), 0);
         }
     }
     
@@ -222,6 +225,19 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
             return null;
         }
         return backgroundImage.getImage();
+    }
+    
+    /**
+     * Determines if the orientation of a <code>SplitPane</code> is horizontal
+     * or vertical.
+     * 
+     * @return true if the orientation is vertical, false if it is horizontal
+     */
+    private boolean isOrientationVertical(SplitPane splitPane) {
+        Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
+        boolean orientationVertical = (orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue()) 
+                == SplitPane.ORIENTATION_VERTICAL;
+        return orientationVertical;
     }
 
     /**
@@ -379,11 +395,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
         String elementId = ContainerInstance.getElementId(splitPane);
-        Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
-        boolean orientationVertical = (orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue()) 
-                == SplitPane.ORIENTATION_VERTICAL;
 
-        if (orientationVertical) { // Vertical Orientation
+        if (isOrientationVertical(splitPane)) { // Vertical Orientation
             paneDivCssStyle.setAttribute("width", "100%");
             if (renderingFixedPane) {
                 paneDivCssStyle.setAttribute(paneNumber == 0 ? "top" : "bottom", "0px");
@@ -517,9 +530,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         separatorDivCssStyle.setAttribute("overflow", "none");
         ColorRender.renderToStyle(separatorDivCssStyle, null, 
                 (Color) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_COLOR, DEFAULT_SEPARATOR_COLOR));
-        Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
-        int orientation = orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue();
-        if (orientation == SplitPane.ORIENTATION_VERTICAL) {
+        
+        if (isOrientationVertical(splitPane)) {
             FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_VERTICAL_SEPARATOR, 
                     (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE), false);
             if (fixedPaneNumber == 0) {
