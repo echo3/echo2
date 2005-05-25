@@ -65,6 +65,8 @@ implements ModalSupport {
     public static final String PROPERTY_TITLE_HEIGHT = "titleHeight";
     public static final String PROPERTY_TITLE_INSETS = "titleInsets";
     public static final String PROPERTY_WIDTH = "width";
+    
+    public static final String Z_INDEX_CHANGED_PROPERTY = "zIndex";
 
     /**
      * A constant for the <code>defaultCloseOperation</code> property 
@@ -88,6 +90,7 @@ implements ModalSupport {
     public static final int DISPOSE_ON_CLOSE = 2;
     
     private boolean modal = false;
+    private int zIndex = 0;
     
     /**
      * Creates a  new <code>WindowPane</code>.
@@ -267,6 +270,17 @@ implements ModalSupport {
      */
     public Extent getWidth() {
         return (Extent) getProperty(PROPERTY_WIDTH);
+    }
+    
+    /**
+     * Returns the z-index of the window with respect to its parent
+     * <code>ContentPane</code>.  Windows with higher z-indices will
+     * visually obscure windows with lower z-indices.
+     * 
+     * @return the z-index 
+     */
+    public int getZIndex() {
+        return zIndex;
     }
     
     /**
@@ -508,6 +522,19 @@ implements ModalSupport {
      */
     public void setWidth(Extent newValue) {
         setProperty(PROPERTY_WIDTH, newValue);
+    }
+    
+    /**
+     * Sets the z-index of the window with respect to its parent
+     * <code>ContentPane</code>.  Windows with higher z-indices will
+     * visually obscure windows with lower z-indices.
+     * 
+     * @param newValue the new z-index 
+     */
+    public void setZIndex(int newValue) {
+        int oldValue = zIndex;
+        zIndex = newValue;
+        firePropertyChange(Z_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
     }
     
     /**

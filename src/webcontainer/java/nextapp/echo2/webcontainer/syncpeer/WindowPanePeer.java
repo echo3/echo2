@@ -652,6 +652,7 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
         itemElement.setAttribute("eid", elementId);
         itemElement.setAttribute("movable", movable ? "true" : "false");
         itemElement.setAttribute("resizable", resizable ? "true" : "false");
+        itemElement.setAttribute("containerid", windowPane.getParent().getId());  //BUGBUG. may want to move into keys.
         itemizedUpdateElement.appendChild(itemElement);
     }
 

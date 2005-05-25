@@ -76,24 +76,67 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
         var elementId = item.getAttribute("eid");
         var movable = item.getAttribute("movable") == "true";
         var resizable = item.getAttribute("resizable") == "true";
+        var containerId = item.getAttribute("containerid");
         
-        EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.userCloseClick");
+        EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
+        EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
+        
+        EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
         if (movable) {
-            EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.userCloseMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.windowMoveMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.processTitleMouseDown");
         }
         if (resizable) {
-            EchoEventProcessor.addHandler(elementId + "_border_tl", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_t", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_tr", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_l", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_r", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_bl", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_b", "mousedown", "EchoWindowPane.windowResizeMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_br", "mousedown", "EchoWindowPane.windowResizeMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_tl", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_t", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_tr", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_l", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_r", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_bl", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_b", "mousedown", "EchoWindowPane.processBorderMouseDown");
+            EchoEventProcessor.addHandler(elementId + "_border_br", "mousedown", "EchoWindowPane.processBorderMouseDown");
         }
     }
 };
+
+EchoWindowPane.ZIndexManager = function() { };
+
+/**
+ * Associative array mapping container ids to arrays of element ids.
+ */
+EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap = new Array();
+
+EchoWindowPane.ZIndexManager.addElement = function(containerId, elementId) {
+    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+    if (!elementIdArray) {
+        elementIdArray = new Array();
+        EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId] = elementIdArray;
+    }
+    var containsElement = false;
+    for (var i = 0; i < elementIdArray.length; ++i) {
+        if (elementIdArray[i] == elementId) {
+            // Already present, do nothing.
+            return;
+        }
+    }
+    elementIdArray.push(elementId);
+};
+
+EchoWindowPane.ZIndexManager.getMaximum = function(containerId) {
+    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+    if (!elementIdArray) {
+        throw "Invalid container id.";
+    }
+    var maximumZIndex = 0;
+    for (var i = 0; i < elementIdArray.length; ++i) {
+        var element = document.getElementById(elementIdArray[i]);
+        var zIndex = parseInt(element.style.zIndex);
+        if (!isNaN(zIndex) && zIndex > maximumZIndex) {
+            maximumZIndex = zIndex;
+        }
+    }
+    return maximumZIndex;
+}
 
 /** The initial horizontal position of the window. */
 EchoWindowPane.initialWindowX = -1;
@@ -204,7 +247,12 @@ EchoWindowPane.getBorderWidth = function(element) {
  * @param echoEvent the "MouseDown" event, preprocessed by the
  *        EchoEventProcessor
  */
-EchoWindowPane.windowMoveMouseDown = function(echoEvent) {
+EchoWindowPane.processTitleMouseDown = function(echoEvent) {
+    EchoWindowPane.processWindowRaise(echoEvent);
+    EchoWindowPane.processTitleInitDrag(echoEvent);
+};
+
+EchoWindowPane.processTitleInitDrag = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
     var windowPaneElement = document.getElementById(componentId);
@@ -237,8 +285,8 @@ EchoWindowPane.windowMoveMouseDown = function(echoEvent) {
             EchoWindowPane.maxY = 0;
         }
         
-        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.windowMoveMouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.windowMoveMouseUp, true);
+        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleMouseMove, true);
+        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleMouseUp, true);
         EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
     }
 };
@@ -248,7 +296,7 @@ EchoWindowPane.windowMoveMouseDown = function(echoEvent) {
  *
  * @param e The event (only provided when using DOM Level 2 Event Model)
  */
-EchoWindowPane.windowMoveMouseMove = function(e) {
+EchoWindowPane.processTitleMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
     var newX = (EchoWindowPane.initialWindowX + e.clientX - EchoWindowPane.mouseOffsetX);
     var newY = (EchoWindowPane.initialWindowY + e.clientY - EchoWindowPane.mouseOffsetY);
@@ -273,7 +321,7 @@ EchoWindowPane.windowMoveMouseMove = function(e) {
  *
  * @param e The event (only provided when using DOM Level 2 Event Model)
  */
-EchoWindowPane.windowMoveMouseUp = function(e) {
+EchoWindowPane.processTitleMouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
     
     var id = EchoWindowPane.activeElement.getAttribute("id");
@@ -281,12 +329,12 @@ EchoWindowPane.windowMoveMouseUp = function(e) {
     EchoClientMessage.setPropertyValue(id, "positionY",  EchoWindowPane.activeElement.style.top);
     
     EchoWindowPane.activeElement = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.windowMoveMouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.windowMoveMouseUp, true);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleMouseMove, true);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleMouseUp, true);
     EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
 };
 
-EchoWindowPane.windowResizeMouseDown = function(echoEvent) {
+EchoWindowPane.processBorderMouseDown = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     
@@ -321,13 +369,13 @@ EchoWindowPane.windowResizeMouseDown = function(echoEvent) {
         EchoWindowPane.initialWindowWidth = parseInt(EchoWindowPane.activeElement.style.width);
         EchoWindowPane.initialWindowHeight = parseInt(EchoWindowPane.activeElement.style.height);
 
-        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.windowResizeMouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.windowResizeMouseUp, true);
+        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove, true);
+        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp, true);
         EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
     }
 };
 
-EchoWindowPane.windowResizeMouseMove = function(e) {
+EchoWindowPane.processBorderMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
     if (EchoWindowPane.resizeModeHorizontal != 0) {
@@ -370,7 +418,7 @@ EchoWindowPane.windowResizeMouseMove = function(e) {
     }
 };
 
-EchoWindowPane.windowResizeMouseUp = function(e) {
+EchoWindowPane.processBorderMouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
     var id = EchoWindowPane.activeElement.getAttribute("id");
@@ -380,8 +428,8 @@ EchoWindowPane.windowResizeMouseUp = function(e) {
     EchoClientMessage.setPropertyValue(id, "height",  EchoWindowPane.activeElement.style.height);
 
     EchoWindowPane.activeElement = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.windowResizeMouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.windowResizeMouseUp, true);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove, true);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp, true);
     EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
 };
 
@@ -391,7 +439,7 @@ EchoWindowPane.windowResizeMouseUp = function(e) {
  *
  * @param echoEvent the event
  */
-EchoWindowPane.userCloseMouseDown = function(echoEvent) {
+EchoWindowPane.processCloseMouseDown = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
 };
 
@@ -401,7 +449,7 @@ EchoWindowPane.userCloseMouseDown = function(echoEvent) {
  *
  * @param echoEvent the event
  */
-EchoWindowPane.userCloseClick = function(echoEvent) {
+EchoWindowPane.processCloseClick = function(echoEvent) {
     if (EchoServerTransaction.active) {
         return;
     }
@@ -409,6 +457,16 @@ EchoWindowPane.userCloseClick = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(elementId);
     EchoClientMessage.setActionValue(componentId, "close");
     EchoServerTransaction.connect();
+};
+
+EchoWindowPane.processWindowRaise = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
+    var windowElement = document.getElementById(componentId);
+    var containerId = EchoDomPropertyStore.getPropertyValue(componentId, "containerId");
+    var maximumIndex = EchoWindowPane.ZIndexManager.getMaximum(containerId);
+    
+    //BUGBUG. only raise when required.
+    windowElement.style.zIndex = maximumIndex + 1;
 };
 
 /**
