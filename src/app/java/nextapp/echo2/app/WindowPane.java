@@ -342,6 +342,8 @@ implements ModalSupport {
             setWidth((Extent) inputValue);
         } else if (PROPERTY_HEIGHT.equals(inputName)) {
             setHeight((Extent) inputValue);
+        } else if (Z_INDEX_CHANGED_PROPERTY.equals(inputName)) {
+            setZIndex(((Integer) inputValue).intValue());
         }
     }
     

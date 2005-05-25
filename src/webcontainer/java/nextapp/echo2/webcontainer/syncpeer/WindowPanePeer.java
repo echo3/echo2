@@ -197,6 +197,9 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
                 ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_HEIGHT,
                         ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             }
+        } else if (WindowPane.Z_INDEX_CHANGED_PROPERTY.equals(propertyName)) {
+            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.Z_INDEX_CHANGED_PROPERTY,
+                    new Integer(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
         }
     }
 
@@ -459,8 +462,7 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
 
         // Create main window DIV element.
         CssStyle windowDivCssStyle = new CssStyle();
-        windowDivCssStyle.setAttribute("z-index", "2"); //BUGBUG. Hardcoded
-                                                        // z-index.
+        windowDivCssStyle.setAttribute("z-index", Integer.toString(windowPane.getZIndex()));
         windowDivCssStyle.setAttribute("padding", "0px");
         windowDivCssStyle.setAttribute("position", "absolute");
         windowDivCssStyle.setAttribute("top", ExtentRender.renderCssAttributeValue((Extent) windowPane.getRenderProperty(
