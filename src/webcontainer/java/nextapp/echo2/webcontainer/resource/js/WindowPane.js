@@ -68,6 +68,9 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement)
         EchoEventProcessor.removeHandler(elementId + "_border_bl", "mousedown");
         EchoEventProcessor.removeHandler(elementId + "_border_b", "mousedown");
         EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
+
+        var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
+        EchoWindowPane.ZIndexManager.removeElement(containerId, elementId);
     }
 };
 
@@ -115,7 +118,7 @@ EchoWindowPane.ZIndexManager.addElement = function(containerId, elementId) {
     var containsElement = false;
     for (var i = 0; i < elementIdArray.length; ++i) {
         if (elementIdArray[i] == elementId) {
-            // Already present, do nothing.
+            // Do nothing if re-rendering.
             return;
         }
     }
@@ -146,6 +149,28 @@ EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
 
     windowElement.style.zIndex = raiseIndex;
     return raiseIndex;
+};
+
+EchoWindowPane.ZIndexManager.removeElement = function(containerId, elementId) {
+    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+    if (!elementIdArray) {
+        throw "ZIndexManager.removeElement: no data for container with id \"" + containerId + "\".";
+    }
+    for (var i = 0; i < elementIdArray.length; ++i) {
+        if (elementIdArray[i] == elementId) {
+            if (elementIdArray.length == 1) {
+                delete EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+            } else {
+	            if (i < elementIdArray.length - 1) {
+	                elementIdArray[i] = elementIdArray[elementIdArray.length - 1];
+	            }
+	            --elementIdArray.length;
+            }
+            return;
+        }
+    }
+    throw "ZIndexManager.removeElement: Element with id \"" + elementId + 
+            "\" does not exist in container with id \"" + containerId + "\".";
 };
 
 /** The initial horizontal position of the window. */
