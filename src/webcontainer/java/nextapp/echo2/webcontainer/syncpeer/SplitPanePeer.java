@@ -428,7 +428,16 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         itemizedUpdateElement.appendChild(itemElement);
     }
 
-    private void renderPaneCssDimensions(RenderContext rc, SplitPane splitPane, int paneNumber, CssStyle paneDivCssStyle) {
+    /**
+     * Renders the CSS positioning information for a pane of a <code>SplitPane</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>SplitPane</code> instance
+     * @param paneNumber the pane number, either 0 or 1
+     * @param paneDivCssStyle the <code>CssStyle</code> in which the 
+     *        positioning data should be updated
+     */
+    private void renderPaneCssPositioning(RenderContext rc, SplitPane splitPane, int paneNumber, CssStyle paneDivCssStyle) {
         int separatorPosition = calculateSeparatorPosition(splitPane);
         int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
         boolean renderingFixedPane = paneNumber == fixedPaneNumber;
@@ -490,7 +499,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         paneDivCssStyle.setAttribute("position", "absolute");
         paneDivCssStyle.setAttribute("padding", "0px");
         
-        renderPaneCssDimensions(rc, splitPane, paneNumber, paneDivCssStyle);
+        renderPaneCssPositioning(rc, splitPane, paneNumber, paneDivCssStyle);
         
         Element paneContentDivElement = document.createElement("div");
         paneContentDivElement.setAttribute("id", elementId + "_panecontent_" + paneNumber);
@@ -662,6 +671,15 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         return fullReplace;
     }
     
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * update client-side information about a specific pane of a 
+     * <code>SplitPane</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>SplitPane</code>
+     * @param paneNumber the pane number, either 0 or 1
+     */
     private void renderUpdatePaneDirective(RenderContext rc, SplitPane splitPane, int paneNumber) {
         Component paneComponent = splitPane.getVisibleComponent(paneNumber);
         LayoutData layoutData = (LayoutData) paneComponent.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
