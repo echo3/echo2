@@ -208,22 +208,6 @@ EchoWindowPane.getClientHeight = function(element) {
 };
 
 /**
- * Calculates width of region in which window may be moved.
- *
- * @param element the container element within which the window may
- *        be moved
- * @return the width of the region
- */
-EchoWindowPane.getClientWidth = function(element) {
-    if (element.clientWidth && element.clientWidth > 0) {
-        return element.clientWidth;
-    } else if (element.parentNode) {
-        return EchoWindowPane.getClientWidth(element.parentNode);
-    }
-    return 0;
-};
-
-/**
  * Determines the height of the floating window's border.
  * This method currently only calculates the size correctly for
  * elements which have equal borders on every side.
@@ -252,99 +236,28 @@ EchoWindowPane.getBorderWidth = function(element) {
 };
 
 /**
- * Event handler for "MouseDown" events.  Permanently registered.
+ * Calculates width of region in which window may be moved.
  *
- * @param echoEvent the "MouseDown" event, preprocessed by the
- *        EchoEventProcessor
+ * @param element the container element within which the window may
+ *        be moved
+ * @return the width of the region
  */
-EchoWindowPane.processTitleMouseDown = function(echoEvent) {
-    EchoWindowPane.processWindowRaise(echoEvent);
-    EchoWindowPane.processTitleInitDrag(echoEvent);
-};
-
-EchoWindowPane.processTitleInitDrag = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
-    var windowPaneElement = document.getElementById(componentId);
-    
-    if (windowPaneElement != EchoWindowPane.activeElement) {
-        EchoWindowPane.activeElement = windowPaneElement;
-        EchoWindowPane.mouseOffsetX = echoEvent.clientX;
-        EchoWindowPane.mouseOffsetY = echoEvent.clientY;
-        EchoWindowPane.initialWindowX = parseInt(EchoWindowPane.activeElement.style.left);
-        EchoWindowPane.initialWindowY = parseInt(EchoWindowPane.activeElement.style.top);
-        
-        var borderWidth = 2 * EchoWindowPane.getBorderWidth(EchoWindowPane.activeElement);
-        var borderHeight = 2 * EchoWindowPane.getBorderHeight(EchoWindowPane.activeElement);
-        
-        var containerWidth = EchoWindowPane.getClientWidth(EchoWindowPane.activeElement.parentNode);
-        if (containerWidth === 0) {
-            containerWidth = 800;
-        }
-        EchoWindowPane.maxX = containerWidth - EchoWindowPane.activeElement.clientWidth - borderWidth;
-        if (EchoWindowPane.maxX < 0) {
-            EchoWindowPane.maxX = 0;
-        }
-
-        var containerHeight = EchoWindowPane.getClientHeight(EchoWindowPane.activeElement.parentNode);
-        if (containerHeight === 0) {
-            containerHeight = 600;
-        }
-        EchoWindowPane.maxY = containerHeight- EchoWindowPane.activeElement.clientHeight - borderHeight;
-        if (EchoWindowPane.maxY < 0) {
-            EchoWindowPane.maxY = 0;
-        }
-        
-        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleMouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleMouseUp, true);
-        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
+EchoWindowPane.getClientWidth = function(element) {
+    if (element.clientWidth && element.clientWidth > 0) {
+        return element.clientWidth;
+    } else if (element.parentNode) {
+        return EchoWindowPane.getClientWidth(element.parentNode);
     }
-};
-
-/**
- * Event handler for "MouseMove" events.  Registered when drag is initiated.
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.processTitleMouseMove = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-    var newX = (EchoWindowPane.initialWindowX + e.clientX - EchoWindowPane.mouseOffsetX);
-    var newY = (EchoWindowPane.initialWindowY + e.clientY - EchoWindowPane.mouseOffsetY);
-    
-    newX = newX >= 0 ? newX : 0;
-    newX = newX <= EchoWindowPane.maxX ? newX : EchoWindowPane.maxX;
-    newY = newY >= 0 ? newY : 0;
-    newY = newY <= EchoWindowPane.maxY ? newY : EchoWindowPane.maxY;
-    EchoWindowPane.activeElement.style.left = newX + "px";
-    EchoWindowPane.activeElement.style.top = newY + "px";
-
-    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
-        // Tickle width to force repaint for IE repaint, resulting in aesthetic performance increase.
-	    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
-	    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
-	    EchoWindowPane.activeElement.style.width = initialWidth + "px";
-    }
-};
-
-/**
- * Event handler for "MouseUp" events.  Registered when drag is initiated.
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.processTitleMouseUp = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-    
-    var id = EchoWindowPane.activeElement.getAttribute("id");
-    EchoClientMessage.setPropertyValue(id, "positionX",  EchoWindowPane.activeElement.style.left);
-    EchoClientMessage.setPropertyValue(id, "positionY",  EchoWindowPane.activeElement.style.top);
-    
-    EchoWindowPane.activeElement = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleMouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleMouseUp, true);
-    EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
+    return 0;
 };
 
 EchoWindowPane.processBorderMouseDown = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
+    EchoWindowPane.raise(componentId);
+    EchoWindowPane.processBorderDragMouseDown(echoEvent);
+};
+
+EchoWindowPane.processBorderDragMouseDown = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     
@@ -379,16 +292,16 @@ EchoWindowPane.processBorderMouseDown = function(echoEvent) {
         EchoWindowPane.initialWindowWidth = parseInt(EchoWindowPane.activeElement.style.width);
         EchoWindowPane.initialWindowHeight = parseInt(EchoWindowPane.activeElement.style.height);
 
-        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp, true);
+        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderDragMouseMove, true);
+        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderDragMouseUp, true);
         EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
     }
 };
 
-EchoWindowPane.processBorderMouseMove = function(e) {
+EchoWindowPane.processBorderDragMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
-    if (EchoWindowPane.resizeModeHorizontal != 0) {
+    if (EchoWindowPane.resizeModeHorizontal !== 0) {
         var newWidth = (EchoWindowPane.initialWindowWidth + 
                 (e.clientX - EchoWindowPane.mouseOffsetX) * EchoWindowPane.resizeModeHorizontal);
         if (newWidth < EchoWindowPane.minimumWidth) {
@@ -397,13 +310,13 @@ EchoWindowPane.processBorderMouseMove = function(e) {
             newWidth = EchoWindowPane.maximumWidth;
         }
         EchoWindowPane.activeElement.style.width = newWidth + "px";
-        if (EchoWindowPane.resizeModeHorizontal == -1) {
+        if (EchoWindowPane.resizeModeHorizontal === -1) {
             var newX = EchoWindowPane.initialWindowX + EchoWindowPane.initialWindowWidth - newWidth;
             EchoWindowPane.activeElement.style.left = newX + "px";
         }
     }
 
-    if (EchoWindowPane.resizeModeVertical != 0) {
+    if (EchoWindowPane.resizeModeVertical !== 0) {
         var newHeight = (EchoWindowPane.initialWindowHeight + 
                 (e.clientY - EchoWindowPane.mouseOffsetY) * EchoWindowPane.resizeModeVertical);
         if (newHeight < EchoWindowPane.minimumHeight) {
@@ -412,23 +325,23 @@ EchoWindowPane.processBorderMouseMove = function(e) {
             newHeight = EchoWindowPane.maximumHeight;
         }
         EchoWindowPane.activeElement.style.height = newHeight + "px";
-        if (EchoWindowPane.resizeModeVertical == -1) {
+        if (EchoWindowPane.resizeModeVertical === -1) {
             var newY = EchoWindowPane.initialWindowY + EchoWindowPane.initialWindowHeight - newHeight;
             EchoWindowPane.activeElement.style.top = newY + "px";
         }
 
-	    if ("true" == EchoDomPropertyStore.getPropertyValue(EchoWindowPane.activeElement.getAttribute("id"), "quirkResizeOnMove")) {
-	        // Tickle window width because Internet Explorer will only recompute size of hidden IFRAME
-	        // on *WIDTH* adjustments, not height adjustments (this is a bug in IE).
-	        // This only need be applied when vertical resizes can be performed.
-		    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
-		    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
-		    EchoWindowPane.activeElement.style.width = initialWidth + "px";
-	    }
+        if ("true" == EchoDomPropertyStore.getPropertyValue(EchoWindowPane.activeElement.getAttribute("id"), "quirkResizeOnMove")) {
+            // Tickle window width because Internet Explorer will only recompute size of hidden IFRAME
+            // on *WIDTH* adjustments, not height adjustments (this is a bug in IE).
+            // This only need be applied when vertical resizes can be performed.
+            var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
+            EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
+            EchoWindowPane.activeElement.style.width = initialWidth + "px";
+        }
     }
 };
 
-EchoWindowPane.processBorderMouseUp = function(e) {
+EchoWindowPane.processBorderDragMouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
     var id = EchoWindowPane.activeElement.getAttribute("id");
@@ -438,8 +351,8 @@ EchoWindowPane.processBorderMouseUp = function(e) {
     EchoClientMessage.setPropertyValue(id, "height",  EchoWindowPane.activeElement.style.height);
 
     EchoWindowPane.activeElement = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp, true);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderDragMouseMove, true);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderDragMouseUp, true);
     EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
 };
 
@@ -469,11 +382,104 @@ EchoWindowPane.processCloseClick = function(echoEvent) {
     EchoServerTransaction.connect();
 };
 
-EchoWindowPane.processWindowRaise = function(echoEvent) {
+EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
-    var containerId = EchoDomPropertyStore.getPropertyValue(componentId, "containerId");
-    var zIndex = EchoWindowPane.ZIndexManager.raise(containerId, componentId);
-    EchoClientMessage.setPropertyValue(componentId, "zIndex",  zIndex);
+    var windowPaneElement = document.getElementById(componentId);
+    
+    if (windowPaneElement != EchoWindowPane.activeElement) {
+        EchoWindowPane.activeElement = windowPaneElement;
+        EchoWindowPane.mouseOffsetX = echoEvent.clientX;
+        EchoWindowPane.mouseOffsetY = echoEvent.clientY;
+        EchoWindowPane.initialWindowX = parseInt(EchoWindowPane.activeElement.style.left);
+        EchoWindowPane.initialWindowY = parseInt(EchoWindowPane.activeElement.style.top);
+        
+        var borderWidth = 2 * EchoWindowPane.getBorderWidth(EchoWindowPane.activeElement);
+        var borderHeight = 2 * EchoWindowPane.getBorderHeight(EchoWindowPane.activeElement);
+        
+        var containerWidth = EchoWindowPane.getClientWidth(EchoWindowPane.activeElement.parentNode);
+        if (containerWidth === 0) {
+            containerWidth = 800;
+        }
+        EchoWindowPane.maxX = containerWidth - EchoWindowPane.activeElement.clientWidth - borderWidth;
+        if (EchoWindowPane.maxX < 0) {
+            EchoWindowPane.maxX = 0;
+        }
+
+        var containerHeight = EchoWindowPane.getClientHeight(EchoWindowPane.activeElement.parentNode);
+        if (containerHeight === 0) {
+            containerHeight = 600;
+        }
+        EchoWindowPane.maxY = containerHeight- EchoWindowPane.activeElement.clientHeight - borderHeight;
+        if (EchoWindowPane.maxY < 0) {
+            EchoWindowPane.maxY = 0;
+        }
+        
+        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleDragMouseMove, true);
+        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleDragMouseUp, true);
+        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
+    }
+};
+
+/**
+ * Event handler for "MouseMove" events.  Registered when drag is initiated.
+ *
+ * @param e The event (only provided when using DOM Level 2 Event Model)
+ */
+EchoWindowPane.processTitleDragMouseMove = function(e) {
+    e = (e) ? e : ((window.event) ? window.event : "");
+    var newX = (EchoWindowPane.initialWindowX + e.clientX - EchoWindowPane.mouseOffsetX);
+    var newY = (EchoWindowPane.initialWindowY + e.clientY - EchoWindowPane.mouseOffsetY);
+    
+    newX = newX >= 0 ? newX : 0;
+    newX = newX <= EchoWindowPane.maxX ? newX : EchoWindowPane.maxX;
+    newY = newY >= 0 ? newY : 0;
+    newY = newY <= EchoWindowPane.maxY ? newY : EchoWindowPane.maxY;
+    EchoWindowPane.activeElement.style.left = newX + "px";
+    EchoWindowPane.activeElement.style.top = newY + "px";
+
+    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
+        // Tickle width to force repaint for IE repaint, resulting in aesthetic performance increase.
+	    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
+	    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
+	    EchoWindowPane.activeElement.style.width = initialWidth + "px";
+    }
+};
+
+/**
+ * Event handler for "MouseUp" events.  Registered when drag is initiated.
+ *
+ * @param e The event (only provided when using DOM Level 2 Event Model)
+ */
+EchoWindowPane.processTitleDragMouseUp = function(e) {
+    e = (e) ? e : ((window.event) ? window.event : "");
+    
+    var id = EchoWindowPane.activeElement.getAttribute("id");
+    EchoClientMessage.setPropertyValue(id, "positionX",  EchoWindowPane.activeElement.style.left);
+    EchoClientMessage.setPropertyValue(id, "positionY",  EchoWindowPane.activeElement.style.top);
+    
+    EchoWindowPane.activeElement = null;
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleDragMouseMove, true);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleDragMouseUp, true);
+    EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
+};
+
+/**
+ * Event handler for "MouseDown" events.  Permanently registered.
+ *
+ * @param echoEvent the "MouseDown" event, preprocessed by the
+ *        EchoEventProcessor
+ */
+EchoWindowPane.processTitleMouseDown = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
+    EchoWindowPane.raise(componentId);
+    EchoWindowPane.processTitleDragMouseDown(echoEvent);
+};
+
+EchoWindowPane.raise = function(windowComponentId) {
+    var containerId = EchoDomPropertyStore.getPropertyValue(windowComponentId, "containerId");
+    var zIndex = EchoWindowPane.ZIndexManager.raise(containerId, windowComponentId);
+    EchoClientMessage.setPropertyValue(windowComponentId, "zIndex",  zIndex);
 };
 
 /**
