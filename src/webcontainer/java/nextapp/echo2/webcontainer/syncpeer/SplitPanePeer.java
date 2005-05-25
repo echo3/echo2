@@ -57,7 +57,6 @@ import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.server.ClientProperties;
@@ -316,7 +315,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         String elementId = ContainerInstance.getElementId(component);
-        EventUpdate.createEventRemove(rc.getServerMessage(), "mousedown", elementId + "_separator");
+        
+        renderDisposeDirective(rc, (SplitPane) component);
         if (rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY)) {
             // Performance Hack for Mozilla/Firefox Browsers:
@@ -325,6 +325,23 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 DomUpdate.createDomRemove(rc.getServerMessage(), elementId);
             }
         }
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a split pane, performing tasks such as deregistering
+     * event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>SplitPane</code>
+     */
+    private void renderDisposeDirective(RenderContext rc, SplitPane splitPane) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoSplitPane.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(splitPane));
+        itemizedUpdateElement.appendChild(itemElement);
     }
 
     /**
@@ -341,9 +358,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
             separatorPosition = new Extent(100, Extent.PX);
         }
 
-        DomPropertyStore.createDomPropertyStore(rc.getServerMessage(), elementId, "fixedPane", 
-                calculateNegativeSeparator(splitPane) ? "1" : "0");
-        
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId(), true);
 
@@ -371,10 +385,40 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         if (componentCount >= 2) {
             renderPane(rc, update, outerDivElement, splitPane, 1);
         }
+
+        // Render initialization directive.
+        renderInitDirective(rc, splitPane);
         
         updateRenderState(rc, component);
+        
     }
     
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a split pane, performing tasks such as 
+     * registering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>WindowPane</code>
+     */
+    private void renderInitDirective(RenderContext rc, SplitPane splitPane) {
+        String elementId = ContainerInstance.getElementId(splitPane);
+        ServerMessage serverMessage = rc.getServerMessage();
+        int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
+        Boolean booleanValue = (Boolean) splitPane.getRenderProperty(SplitPane.PROPERTY_RESIZABLE);
+        boolean resizable = booleanValue == null ? false : booleanValue.booleanValue();
+
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoSplitPane.MessageProcessor", "init", new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemElement.setAttribute("fixedpane", Integer.toString(fixedPaneNumber));
+        if (resizable) {
+            itemElement.setAttribute("resizable", resizable ? "true" : "false");
+        }
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+
     private void renderCssPositionExpression(CssStyle cssStyle, String parentElementId, int position, boolean vertical) {
         if (vertical) {
             cssStyle.setAttribute("height", 
@@ -511,10 +555,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         boolean resizable = booleanValue == null ? false : booleanValue.booleanValue();
         int separatorSize = calculateSeparatorSize(splitPane);
         String separatorElementId = ContainerInstance.getElementId(splitPane) + "_separator";
-        
-        if (resizable) {
-            EventUpdate.createEventAdd(rc.getServerMessage(), "mousedown", separatorElementId, "EchoSplitPane.mouseDown");
-        }
 
         Element separatorDivElement = document.createElement("div");
         separatorDivElement.setAttribute("id", separatorElementId);

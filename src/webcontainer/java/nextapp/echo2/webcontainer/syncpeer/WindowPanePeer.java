@@ -636,8 +636,8 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
 
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * initialize the state of a button, performing tasks such as registering
-     * event listeners on the client.
+     * initialize the state of a window pane, performing tasks such as 
+     * registering event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param windowPane the <code>WindowPane</code>

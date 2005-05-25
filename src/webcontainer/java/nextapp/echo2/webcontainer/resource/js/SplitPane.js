@@ -37,6 +37,43 @@
  */
 EchoSplitPane = function() { };
 
+
+EchoSplitPane.MessageProcessor = function() { };
+
+EchoSplitPane.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                EchoSplitPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                EchoSplitPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+EchoSplitPane.MessageProcessor.processDispose = function(disposeMessageElement) {
+    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoEventProcessor.removeHandler(elementId + "_separator", "mousedown");
+    }
+};
+
+EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
+    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        var resizable = item.getAttribute("resizable") == "true";
+        
+        EchoDomPropertyStore.setPropertyValue(elementId, "fixedPane", item.getAttribute("fixedpane"));
+        if (resizable) {
+	        EchoEventProcessor.addHandler(elementId + "_separator", "mousedown", "EchoSplitPane.mouseDown");
+        }
+    }
+};
+
 EchoSplitPane.DEFAULT_MINIMUM_SIZE = 80;
 EchoSplitPane.verticalDrag = false;
 EchoSplitPane.fixedPane = 0;
