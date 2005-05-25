@@ -122,21 +122,31 @@ EchoWindowPane.ZIndexManager.addElement = function(containerId, elementId) {
     elementIdArray.push(elementId);
 };
 
-EchoWindowPane.ZIndexManager.getMaximum = function(containerId) {
+EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
+    var windowElement = document.getElementById(elementId);
+
     var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
     if (!elementIdArray) {
         throw "Invalid container id.";
     }
-    var maximumZIndex = 0;
+
+    var raiseIndex = 0;
+    
     for (var i = 0; i < elementIdArray.length; ++i) {
-        var element = document.getElementById(elementIdArray[i]);
-        var zIndex = parseInt(element.style.zIndex);
-        if (!isNaN(zIndex) && zIndex > maximumZIndex) {
-            maximumZIndex = zIndex;
+        var testWindowElement = document.getElementById(elementIdArray[i]);
+        var zIndex = parseInt(testWindowElement.style.zIndex);
+        if (!isNaN(zIndex) && zIndex >= raiseIndex) {
+            if (elementIdArray[i] == elementId) {
+                raiseIndex = zIndex;
+            } else {
+                raiseIndex = zIndex + 1;
+            }
         }
     }
-    return maximumZIndex;
-}
+
+    windowElement.style.zIndex = raiseIndex;
+    return raiseIndex;
+};
 
 /** The initial horizontal position of the window. */
 EchoWindowPane.initialWindowX = -1;
@@ -461,12 +471,9 @@ EchoWindowPane.processCloseClick = function(echoEvent) {
 
 EchoWindowPane.processWindowRaise = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
-    var windowElement = document.getElementById(componentId);
     var containerId = EchoDomPropertyStore.getPropertyValue(componentId, "containerId");
-    var maximumIndex = EchoWindowPane.ZIndexManager.getMaximum(containerId);
-    
-    //BUGBUG. only raise when required.
-    windowElement.style.zIndex = maximumIndex + 1;
+    var zIndex = EchoWindowPane.ZIndexManager.raise(containerId, componentId);
+    EchoClientMessage.setPropertyValue(componentId, "zIndex",  zIndex);
 };
 
 /**
