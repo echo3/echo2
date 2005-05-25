@@ -123,7 +123,7 @@ EchoListComponentDhtml.createUpdates = function(elementId,propertyElement){
     var optionDivElements = element.getElementsByTagName("div");
 
     // add new values        
-    for (var i=0; i<optionDivElements.length; i++){
+    for (var i = 0; i < optionDivElements.length; ++i){
         if (optionDivElements[i].selectedState) {
             var optionId = optionDivElements[i].id;
             var optionElement = EchoClientMessage.messageDocument.createElement("option");
@@ -154,11 +154,8 @@ EchoListComponentDhtml.dispose = function(elementId) {
 EchoListComponentDhtml.doRolloverEnter = function(e) {
     EchoDomUtil.preventEventDefault(e);
     var target = EchoDomUtil.getEventTarget(e);
-    if (target.selectedState == null) {
-        EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
-    }
-
     if (!target.selectedState) {
+        EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
         var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "rolloverStyle");
         EchoListComponentDhtml.applyStyle(target,style);
     }
@@ -195,13 +192,12 @@ EchoListComponentDhtml.processSelection = function(e) {
 
     // check to see if it's the first time this control has been activated
     // by inspecting a custom attribute on the element.
-    if (target.selectedState == null){
+    if (!target.selectedState) {
         EchoListComponentDhtml.applySelectedIndices(target.parentNode.id);
     }
 
     if (target.selectedState) {
         EchoListComponentDhtml.deselectItem(target.id);
-
     } else {
         EchoListComponentDhtml.selectItem(target.id);
     }

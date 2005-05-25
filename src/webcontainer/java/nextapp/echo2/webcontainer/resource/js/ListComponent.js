@@ -100,7 +100,7 @@ EchoListComponent.createUpdates = function(elementId,propertyElement){
     var options = element.options;
 
     // add new values        
-    for (var i = 0; i < options.length; i++) {
+    for (var i = 0; i < options.length; ++i) {
         if (options[i].selected) {
             var optionId = options[i].id;
             var optionElement = EchoClientMessage.messageDocument.createElement("option");

@@ -956,7 +956,8 @@ public abstract class Component {
         firePropertyChange(LOCALE_CHANGED_PROPERTY, oldValue, newValue);
     }
     
-    //BUGBUG. Currently firing null, null in the event that oldValue = newValue,
+    //BUGBUG. Currently firing null, null in the event that oldValue = newValue
+    // and propname = layoutdata
     //due to PCS design....perhaps we want to use something other than PCS.
     //(case where we want prop event fired on equal items: setting attributes of
     // layout data.)
@@ -970,7 +971,7 @@ public abstract class Component {
     public void setProperty(String propertyName, Object newValue) {
         Object oldValue = localStyle.getProperty(propertyName);
         localStyle.setProperty(propertyName, newValue);
-        if (oldValue != null && newValue != null && oldValue.equals(newValue)) {
+        if (PROPERTY_LAYOUT_DATA.equals(propertyName) && oldValue != null && newValue != null && oldValue.equals(newValue)) {
             firePropertyChange(propertyName, null, null);
         } else {
             firePropertyChange(propertyName, oldValue, newValue);
