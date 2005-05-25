@@ -55,7 +55,6 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
 import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
@@ -309,6 +308,16 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         }
     }
 
+    private void renderCssPositionExpression(CssStyle cssStyle, String parentElementId, int position, boolean vertical) {
+        if (vertical) {
+            cssStyle.setAttribute("height", 
+                    "expression((document.getElementById('" + parentElementId + "').clientHeight-" + position + ")+'px')");
+        } else {
+            cssStyle.setAttribute("width", 
+                    "expression((document.getElementById('" + parentElementId + "').clientWidth-" + position + ")+'px')");
+        }
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
@@ -419,17 +428,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         itemizedUpdateElement.appendChild(itemElement);
     }
 
-    private void renderCssPositionExpression(CssStyle cssStyle, String parentElementId, int position, boolean vertical) {
-        if (vertical) {
-            cssStyle.setAttribute("height", 
-                    "expression((document.getElementById('" + parentElementId + "').clientHeight-" + position + ")+'px')");
-        } else {
-            cssStyle.setAttribute("width", 
-                    "expression((document.getElementById('" + parentElementId + "').clientWidth-" + position + ")+'px')");
-        }
-
-    }
-    
     private void renderPaneCssDimensions(RenderContext rc, SplitPane splitPane, int paneNumber, CssStyle paneDivCssStyle) {
         int separatorPosition = calculateSeparatorPosition(splitPane);
         int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
@@ -503,14 +501,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 ? (SplitPaneLayoutData) layoutData : null;
 
         if (splitPaneLayoutData != null) {
-            if (splitPaneLayoutData.getMinimumSize() != null) {
-                DomPropertyStore.createDomPropertyStore(rc.getServerMessage(), paneDivElementId, "minimumSize", 
-                        ExtentRender.renderCssAttributeValue(splitPaneLayoutData.getMinimumSize()));
-            }
-            if (splitPaneLayoutData.getMaximumSize() != null) {
-                DomPropertyStore.createDomPropertyStore(rc.getServerMessage(), paneDivElementId, "maximumSize", 
-                        ExtentRender.renderCssAttributeValue(splitPaneLayoutData.getMaximumSize()));
-            }
             AlignmentRender.renderToStyle(paneDivCssStyle, splitPaneLayoutData.getAlignment());
             if (splitPaneLayoutData.getBackground() != null) {
                 paneDivCssStyle.setAttribute("background-color", 
@@ -539,6 +529,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 paneContentDivElement.setAttribute("style", paneContentDivCssStyle.renderInline());
             }
         }
+        
+        renderUpdatePaneDirective(rc, splitPane, paneNumber);
 
         renderChild(rc, update, paneContentDivElement, paneComponent);
         
@@ -668,6 +660,33 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         
         updateRenderState(rc, update.getParent());
         return fullReplace;
+    }
+    
+    private void renderUpdatePaneDirective(RenderContext rc, SplitPane splitPane, int paneNumber) {
+        Component paneComponent = splitPane.getVisibleComponent(paneNumber);
+        LayoutData layoutData = (LayoutData) paneComponent.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
+        SplitPaneLayoutData splitPaneLayoutData = (layoutData instanceof SplitPaneLayoutData) 
+                ? (SplitPaneLayoutData) layoutData : null;
+        String elementId = ContainerInstance.getElementId(splitPane);
+        String paneDivElementId = elementId + "_pane_" + paneNumber;
+        ServerMessage serverMessage = rc.getServerMessage();
+
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoSplitPane.MessageProcessor", "updatepane", new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", paneDivElementId);
+        itemizedUpdateElement.appendChild(itemElement);
+
+        if (splitPaneLayoutData != null) {
+            if (splitPaneLayoutData.getMinimumSize() != null) {
+                itemElement.setAttribute("minimumsize", 
+                        ExtentRender.renderCssAttributeValue(splitPaneLayoutData.getMinimumSize())); 
+            }
+            if (splitPaneLayoutData.getMaximumSize() != null) {
+                itemElement.setAttribute("maximumsize", 
+                        ExtentRender.renderCssAttributeValue(splitPaneLayoutData.getMaximumSize())); 
+            }
+        }
     }
 
     /**

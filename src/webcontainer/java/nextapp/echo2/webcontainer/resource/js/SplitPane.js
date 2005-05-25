@@ -37,18 +37,20 @@
  */
 EchoSplitPane = function() { };
 
-
 EchoSplitPane.MessageProcessor = function() { };
 
 EchoSplitPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "dispose":
+                EchoSplitPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
             case "init":
                 EchoSplitPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
-            case "dispose":
-                EchoSplitPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+            case "updatepane":
+                EchoSplitPane.MessageProcessor.processUpdatePane(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -70,6 +72,18 @@ EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
         EchoDomPropertyStore.setPropertyValue(elementId, "fixedPane", item.getAttribute("fixedpane"));
         if (resizable) {
 	        EchoEventProcessor.addHandler(elementId + "_separator", "mousedown", "EchoSplitPane.mouseDown");
+        }
+    }
+};
+
+EchoSplitPane.MessageProcessor.processUpdatePane = function(updatePaneMessageElement) {
+    for (var item = updatePaneMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        if (item.getAttribute("minimumsize")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "minimumSize", item.getAttribute("minimumsize"));
+        }
+        if (item.getAttribute("maximumsize")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "maximumSize", item.getAttribute("maximumsize"));
         }
     }
 };
