@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer.propertyrender;
 
+import org.w3c.dom.Element;
+
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.webrender.output.CssStyle;
@@ -51,6 +53,22 @@ public class AlignmentRender {
     public static void renderToStyle(CssStyle cssStyle, Alignment alignment) {
         renderToStyle(cssStyle, null, alignment);
     }
+    
+    //BUGBUG. doc and test.
+    public static void renderToElement(Element element, Component component, Alignment alignment) {
+        if (alignment == null) {
+            return;
+        }
+        
+        String horizontal = getHorizontal(component, alignment);
+        if (horizontal != null) {
+            element.setAttribute("align", horizontal);
+        }
+        String vertical = getVertical(alignment);
+        if (vertical != null) {
+            element.setAttribute("valign", vertical);
+        }
+    }
 
     /**
      * Renders an <code>Alignment</code> property to the given CSS style.
@@ -69,34 +87,43 @@ public class AlignmentRender {
             return;
         }
         
-        // Note that 'alignment.getRenderedHorizontal()' will be returning translated values for leading/trailing
-        // in cases where a component is passed in.
-        switch (component == null ? alignment.getHorizontal() : alignment.getRenderedHorizontal(component)) {
-        case Alignment.LEADING:
-        case Alignment.LEFT:
-            cssStyle.setAttribute("text-align", "left");
-            break;
-        case Alignment.CENTER:
-            cssStyle.setAttribute("text-align", "center");
-            break;
-        case Alignment.TRAILING:
-        case Alignment.RIGHT:
-            cssStyle.setAttribute("text-align", "right");
-            break;
+        String horizontal = getHorizontal(component, alignment);
+        if (horizontal != null) {
+            cssStyle.setAttribute("text-align", horizontal);
         }
-        switch (alignment.getVertical()) {
-        case Alignment.TOP:
-            cssStyle.setAttribute("vertical-align", "top");
-            break;
-        case Alignment.CENTER:
-            cssStyle.setAttribute("vertical-align", "middle");
-            break;
-        case Alignment.BOTTOM:
-            cssStyle.setAttribute("vertical-align", "bottom");
-            break;
+        String vertical = getVertical(alignment);
+        if (vertical != null) {
+            cssStyle.setAttribute("vertical-align", vertical);
         }
     }
     
+    private static String getHorizontal(Component component, Alignment alignment) {
+        switch (component == null ? alignment.getHorizontal() : alignment.getRenderedHorizontal(component)) {
+        case Alignment.LEADING:
+        case Alignment.LEFT:
+            return "left";
+        case Alignment.CENTER:
+            return "center";
+        case Alignment.TRAILING:
+        case Alignment.RIGHT:
+            return "right";
+        default:
+            return null;
+        }
+    }
+    
+    private static String getVertical(Alignment alignment) {
+        switch (alignment.getVertical()) {
+        case Alignment.TOP:
+            return "top";
+        case Alignment.CENTER:
+            return "middle";
+        case Alignment.BOTTOM:
+            return "bottom";
+        default:
+            return null;
+        }
+    }
     
     /** Non-instantiable class. */
     private AlignmentRender() { }

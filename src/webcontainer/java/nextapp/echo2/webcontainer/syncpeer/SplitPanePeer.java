@@ -521,7 +521,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 ? (SplitPaneLayoutData) layoutData : null;
 
         if (splitPaneLayoutData != null) {
-            AlignmentRender.renderToStyle(paneDivCssStyle, splitPaneLayoutData.getAlignment());
+            //BUGBUG. sort whether we want to use renderToElement, i.e., using (transitional) div align attribute....
+            // and if so, apply this elsewhere as well.
+            AlignmentRender.renderToElement(paneContentDivElement, paneComponent, splitPaneLayoutData.getAlignment());
             if (splitPaneLayoutData.getBackground() != null) {
                 paneDivCssStyle.setAttribute("background-color", 
                         ColorRender.renderCssAttributeValue(splitPaneLayoutData.getBackground()));

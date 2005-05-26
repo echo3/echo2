@@ -29,6 +29,7 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
@@ -123,7 +124,6 @@ public class WindowPaneTest extends SplitPane {
                     contentLabel.setLayoutData(splitPaneLayoutData);
                     splitPane.add(contentLabel);
                     
-                    //BUGBUG. attempt to center this button failed.
                     Button okButton = new Button("Ok");
                     okButton.addActionListener(new ActionListener() {
                         /**
@@ -136,6 +136,7 @@ public class WindowPaneTest extends SplitPane {
                     splitPaneLayoutData = new SplitPaneLayoutData();
                     splitPaneLayoutData.setBackground(new Color(0x5f5f9f));
                     splitPaneLayoutData.setInsets(new Insets(8));
+                    splitPaneLayoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
                     splitPaneLayoutData.setOverflow(SplitPaneLayoutData.OVERFLOW_HIDDEN);
                     okButton.setLayoutData(splitPaneLayoutData);
                     okButton.setWidth(new Extent(100));
