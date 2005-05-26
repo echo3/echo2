@@ -108,6 +108,12 @@ public class DomUpdate {
         domRemoveElement.setAttribute("targetid", targetId);
     }
     
+    /**
+     * Configures all child elements of a "content" element to use the XHTML
+     * namespace. 
+     * 
+     * @param htmlFragment an HTML document fragment
+     */
     private static void setContentNamespace(DocumentFragment htmlFragment) {
         Node childNode = htmlFragment.getFirstChild();
         while (childNode != null) {
