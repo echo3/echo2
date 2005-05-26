@@ -75,7 +75,7 @@ public class DomUpdate {
         if (siblingId != null) {
             domAddElement.setAttribute("siblingid", siblingId);
         }
-        Element contentElement = domAddElement.getOwnerDocument().createElementNS(XHTML_NAMESPACE, "content");
+        Element contentElement = domAddElement.getOwnerDocument().createElement("content");
         contentElement.setAttribute("xmlns", XHTML_NAMESPACE);
         domAddElement.appendChild(contentElement);
         return contentElement;
