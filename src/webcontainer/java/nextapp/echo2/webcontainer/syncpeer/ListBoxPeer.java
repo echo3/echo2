@@ -53,6 +53,7 @@ import nextapp.echo2.webrender.server.WebRenderServlet;
 import nextapp.echo2.webrender.services.JavaScriptService;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.ListBox</code> components.
@@ -213,10 +214,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
-     * @param parentElement the HTML element which should contain the child
+     * @param parentNode the parent node to which HTML elements should be 
+     *        appended
      * @param component the child component to render
      */
-    protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ListBox listBox = (ListBox) component;
         String elementId = ContainerInstance.getElementId(component);
         
@@ -225,7 +227,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
         renderDhtmlInitDirective(serverMessage, elementId);
 
-        Element listBoxElement = parentElement.getOwnerDocument().createElement("div");
+        Element listBoxElement = parentNode.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
         
         CssStyle selectedCssStyle  = new CssStyle();
@@ -237,7 +239,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
             boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
 
-            Element optionElement = parentElement.getOwnerDocument().createElement("div");
+            Element optionElement = parentNode.getOwnerDocument().createElement("div");
             String optionId = getOptionId(elementId, i);
             optionElement.setAttribute("id", optionId);
             optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(model.get(i).toString()));
@@ -265,26 +267,18 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "singleSelect", "true");
         }
 
-        parentElement.appendChild(listBoxElement);
+        parentNode.appendChild(listBoxElement);
     }
 
     /**
-     * Renders the appropriate <code>ListBox</code> control based off of the
-     * detection of the <code>QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE quirk</code>.
-     * 
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
-     *      ServerComponentUpdate, Element, Component)
-     * @param rc the relevant <code>RenderContext</code>
-     * @param update the update
-     * @param parent the HTML element representing the parent of the given
-     *        component
-     * @param component the <code>ListBox</code> instance
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         if (isDhtmlComponentRequired(rc)) {
-            renderDynamicHtml(rc, update, parent, component);
+            renderDynamicHtml(rc, update, parentNode, component);
         } else {
-            renderStandardHtml(rc, update, parent, component);
+            renderStandardHtml(rc, update, parentNode, component);
         }
     }
 
@@ -294,14 +288,14 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
-     * @param parentElement the HTML element which should contain the child
+     * @param parentNode the parent node to which HTML elements should be 
+     *        appended
      * @param component the <code>ListBox</code> instance
      */
-    public void renderStandardHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    public void renderStandardHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ListBox listBox = (ListBox) component;
         boolean multiple = listBox.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION;
         int visibleRows = listBox.getVisibleRowCount() <= 1 ? DEFAULT_ROW_COUNT : listBox.getVisibleRowCount();
-
-        renderSelectElementHtml(rc, update, parentElement, listBox, multiple, visibleRows);
+        renderSelectElementHtml(rc, update, parentNode, listBox, multiple, visibleRows);
     }
 }

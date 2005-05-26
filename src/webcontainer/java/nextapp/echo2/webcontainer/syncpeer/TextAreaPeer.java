@@ -30,6 +30,7 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TextArea;
@@ -51,17 +52,16 @@ public class TextAreaPeer extends TextComponentPeer {
 
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate,
-            Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate, Node parentNode, Component component) {
         TextArea textArea = (TextArea) component;
         String elementId = ContainerInstance.getElementId(component);
         
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId(), true);
         
-        Element textAreaElement = parent.getOwnerDocument().createElement("textarea");
+        Element textAreaElement = parentNode.getOwnerDocument().createElement("textarea");
         textAreaElement.setAttribute("id", elementId);
         
         String value = textArea.getText();
@@ -82,7 +82,7 @@ public class TextAreaPeer extends TextComponentPeer {
             textAreaElement.setAttribute("style", cssStyle.renderInline());
         }
         
-        parent.appendChild(textAreaElement);
+        parentNode.appendChild(textAreaElement);
         EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
         EventUpdate.createEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");
     }

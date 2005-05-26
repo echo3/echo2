@@ -32,7 +32,7 @@ package nextapp.echo2.webcontainer;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * An optional interface which may be implemented by 
@@ -58,9 +58,9 @@ public interface DomUpdateSupport {
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> for which this
      *        rendering is being performed
-     * @param parentElement the parent DOM element to which this child should 
+     * @param node the parent DOM node to which this child should 
      *        add HTML code
      * @param component the <code>Component</code> to be rendered
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component);
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component);
 }

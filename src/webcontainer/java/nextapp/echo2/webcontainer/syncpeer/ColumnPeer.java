@@ -30,7 +30,9 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
@@ -147,8 +149,9 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
@@ -185,14 +188,15 @@ implements DomUpdateSupport, SynchronizePeer {
         for (int componentIndex = components.length - 1; componentIndex >= 0; --componentIndex) {
             for (int addedChildrenIndex = 0; addedChildrenIndex < addedChildren.length; ++addedChildrenIndex) {
                 if (addedChildren[addedChildrenIndex] == components[componentIndex]) {
-                    Element contentElement;
+                    DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                    renderChild(rc, update, htmlFragment, column, components[componentIndex]);
                     if (componentIndex == components.length - 1) {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId);
+                        DomUpdate.createDomAdd(rc.getServerMessage(), elementId, htmlFragment);
                     } else {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId, 
-                                elementId + "_cell_" + ContainerInstance.getElementId(components[componentIndex + 1]));
+                        DomUpdate.createDomAdd(rc.getServerMessage(), elementId, 
+                                elementId + "_cell_" + ContainerInstance.getElementId(components[componentIndex + 1]), 
+                                htmlFragment);
                     }
-                    renderChild(rc, update, contentElement, column, components[componentIndex]);
                     //BUGBUG. continue outside for loop...no reason to continue searching added children.
                 }
             }
@@ -206,10 +210,11 @@ implements DomUpdateSupport, SynchronizePeer {
             int previousLastChildIndex = column.visibleIndexOf(renderState.lastChild);
             if (previousLastChildIndex != -1 && previousLastChildIndex != column.getVisibleComponentCount() - 1) {
                 // Child which was previously last is present, but no longer last.
-                
-                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId,
-                        elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]));
-                renderCellSpacingRow(contentElement, column, renderState.lastChild);
+                DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                renderCellSpacingRow(htmlFragment, column, renderState.lastChild);
+                DomUpdate.createDomAdd(rc.getServerMessage(), elementId,
+                        elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
+                        htmlFragment);
             }
         }
     }
@@ -218,13 +223,14 @@ implements DomUpdateSupport, SynchronizePeer {
      * Renders an individual child component of the <code>Column</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param update the <code>ServerComponentUpdate</code> being performed.
-     * @param containerElement The containing &lt;div&gt; element of the column.
-     * @param child The child <code>Component</code> to be rendered.
+     * @param update the <code>ServerComponentUpdate</code> being performed
+     * @param parentNode the containing node to which the child should be 
+     *        appended
+     * @param child The child <code>Component</code> to be rendered
      */
-    private void renderChild(RenderContext rc, ServerComponentUpdate update, Element containerElement, 
+    private void renderChild(RenderContext rc, ServerComponentUpdate update, Node parentNode, 
             Component component, Component child) {
-        Document document = containerElement.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         String childId = ContainerInstance.getElementId(child);
         Element divElement = document.createElement("div");
         String cellId = ContainerInstance.getElementId(component) + "_cell_" + childId;
@@ -235,9 +241,9 @@ implements DomUpdateSupport, SynchronizePeer {
         CellLayoutDataRender.renderToStyle(cssStyle, getLayoutData(child), "0px");
         divElement.setAttribute("style", cssStyle.renderInline());
         
-        containerElement.appendChild(divElement);
+        parentNode.appendChild(divElement);
         
-        renderCellSpacingRow(containerElement, (Column) component, child);
+        renderCellSpacingRow(parentNode, (Column) component, child);
         
         renderAddChild(rc, update, divElement, child);
     }
@@ -246,14 +252,15 @@ implements DomUpdateSupport, SynchronizePeer {
      * Renders a "spacing row" beneath a column cell to provide
      * cell spacing.
      * 
-     * @param divElement the outer <code>div</code> element
+     * @param parentNode the containing node to which the child
+     *        should be appended
      * @param column the <code>Column</code> being updated
      * @param child the child preceeding the spacing column
      */
-    private void renderCellSpacingRow(Element divElement, Column column, Component child) {
+    private void renderCellSpacingRow(Node parentNode, Column column, Component child) {
         Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
         if (!ExtentRender.isZeroLength(cellSpacing) && column.visibleIndexOf(child) != column.getVisibleComponentCount() - 1) {
-            Element spacingElement = divElement.getOwnerDocument().createElement("div");
+            Element spacingElement = parentNode.getOwnerDocument().createElement("div");
             spacingElement.setAttribute("id", ContainerInstance.getElementId(column) + "_spacing_" 
                     + ContainerInstance.getElementId(child));
             CssStyle spacingCssStyle = new CssStyle();
@@ -261,7 +268,7 @@ implements DomUpdateSupport, SynchronizePeer {
             spacingCssStyle.setAttribute("font-size", "1px");
             spacingCssStyle.setAttribute("line-height", "0px");
             spacingElement.setAttribute("style", spacingCssStyle.renderInline());
-            divElement.appendChild(spacingElement);
+            parentNode.appendChild(spacingElement);
         }
     }
     
@@ -273,12 +280,12 @@ implements DomUpdateSupport, SynchronizePeer {
 
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         Column column = (Column) component;
         
-        Document document = parent.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         Element divElement = document.createElement("div");
         divElement.setAttribute("id", ContainerInstance.getElementId(column));
         
@@ -295,7 +302,7 @@ implements DomUpdateSupport, SynchronizePeer {
         }
         divElement.setAttribute("style", divCssStyle.renderInline());
         
-        parent.appendChild(divElement);
+        parentNode.appendChild(divElement);
         
         Component[] children = column.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {

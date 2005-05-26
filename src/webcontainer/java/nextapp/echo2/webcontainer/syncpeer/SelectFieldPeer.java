@@ -32,7 +32,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.RenderContext;
 
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.SelectList</code>
@@ -52,10 +52,9 @@ public class SelectFieldPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(RenderContext,
-     *      ServerComponentUpdate, Element, Component)
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
-        renderSelectElementHtml(rc, update, parent, component, false, 1);
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
+        renderSelectElementHtml(rc, update, parentNode, component, false, 1);
     }
 }

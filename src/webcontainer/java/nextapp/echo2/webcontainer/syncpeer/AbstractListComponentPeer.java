@@ -60,7 +60,9 @@ import nextapp.echo2.webrender.server.WebRenderServlet;
 import nextapp.echo2.webrender.services.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Abstract synchronization peer for the built-in
@@ -264,8 +266,9 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      *      nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -317,12 +320,12 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
-     * @param parent the HTML element representing the parent of the given 
-     *        component
+     * @param parentNode the parent node to which HTML elements should be 
+     *        appended
      * @param component the <code>nextapp.echo2.app.AbstractListComponent</code>
      *        instance
      */
-    protected void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component, 
+    protected void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component, 
             boolean multiple, int visibleRows) {
         renderInitDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
 
@@ -332,7 +335,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(LIST_COMPONENT_SERVICE.getId(), true);
 
-        Element listComponentElement = parent.getOwnerDocument().createElement(
+        Element listComponentElement = parentNode.getOwnerDocument().createElement(
                 "select");
         listComponentElement.setAttribute("id", elementId + "_select");
         listComponentElement.setAttribute("name", elementId + "_select");
@@ -348,7 +351,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         for (int i = 0; i < model.size(); i++) {
             boolean selected = selectionModel.isSelectedIndex(i);
             
-            Element optionElement = parent.getOwnerDocument().createElement("option");
+            Element optionElement = parentNode.getOwnerDocument().createElement("option");
             String optionId = getOptionId(elementId, i);
             optionElement.setAttribute("id", optionId);
             optionElement.setAttribute("value", optionId);
@@ -381,11 +384,11 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
         DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
 
-        Element containingDiv = parent.getOwnerDocument().createElement("div");
+        Element containingDiv = parentNode.getOwnerDocument().createElement("div");
         containingDiv.setAttribute("id", elementId);
         containingDiv.appendChild(listComponentElement);
 
-        parent.appendChild(containingDiv);
+        parentNode.appendChild(containingDiv);
     }
 
     /**

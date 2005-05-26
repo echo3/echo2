@@ -51,7 +51,9 @@ import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.util.DomUtil;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Label</code> components.
@@ -72,8 +74,9 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update,
             String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -106,19 +109,19 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         Label label = (Label) component;
         ImageReference icon = (ImageReference) label.getRenderProperty(Label.PROPERTY_ICON);
         String text = (String) label.getRenderProperty(Label.PROPERTY_TEXT);
         
         if (icon != null) {
             if (text != null) {
-                renderIconTextLabel(rc, parentElement, label);
+                renderIconTextLabel(rc, parentNode, label);
             } else {
-                renderIconLabel(rc, parentElement, label);
+                renderIconLabel(rc, parentNode, label);
             }
         } else if (text != null) {
-            renderTextLabel(rc, parentElement, label);
+            renderTextLabel(rc, parentNode, label);
         }
     }
     
@@ -126,24 +129,24 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
      * Renders a label containing only an icon.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param parentElement the parent HTML element
+     * @param parentNode the parent node
      * @param label the <code>Label</code>
      */
-    private void renderIconLabel(RenderContext rc, Element parentElement, Label label) {
+    private void renderIconLabel(RenderContext rc, Node parentNode, Label label) {
         Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, label, IMAGE_ID_ICON);
         imgElement.setAttribute("id", ContainerInstance.getElementId(label));
         imgElement.setAttribute("style", "border:0px none;");
-        parentElement.appendChild(imgElement);
+        parentNode.appendChild(imgElement);
     }
     
     /**
      * Renders a label containing both an icon and text.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param parentElement the parent HTML element
+     * @param parentNode the parent node
      * @param label the <code>Label</code>
      */
-    private void renderIconTextLabel(RenderContext rc, Element parentElement, Label label) {
+    private void renderIconTextLabel(RenderContext rc, Node parentNode, Label label) {
         // TriCellTable rendering note:
         // Cell 0 = Text
         // Cell 1 = Icon
@@ -195,17 +198,17 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
         cssStyle.setAttribute("border-collapse", "collapse");
         tableElement.setAttribute("style", cssStyle.renderInline());
         
-        parentElement.appendChild(tableElement);
+        parentNode.appendChild(tableElement);
     }
 
     /**
      * Renders a label containing only text
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param parentElement the parent HTML element
+     * @param parentNode the parent node
      * @param label the <code>Label</code>
      */
-    private void renderTextLabel(RenderContext rc, Element parentElement, Label label) {
+    private void renderTextLabel(RenderContext rc, Node parentNode, Label label) {
         Document document = rc.getServerMessage().getDocument();
         
         Element spanElement = document.createElement("span");
@@ -220,11 +223,12 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
             spanElement.setAttribute("style", cssStyle.renderInline());
         }
 
-        parentElement.appendChild(spanElement);
+        parentNode.appendChild(spanElement);
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
+     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
         DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));

@@ -29,7 +29,9 @@
 
 package nextapp.echo2.webrender.clientupdate;
 
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * A utility class to add <code>EchoDomUpdate</code> message parts to the 
@@ -48,11 +50,10 @@ public class DomUpdate {
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
      * @param parentId the id of the element the HTML code will be appended to
-     * @return a content element to which the server-generated HTML may be 
-     *         added
+     * @param htmlFragment the HTML fragment to add to the DOM
      */
-    public static Element createDomAdd(ServerMessage serverMessage, String parentId) {
-        return createDomAdd(serverMessage, parentId, null);
+    public static void createDomAdd(ServerMessage serverMessage, String parentId, DocumentFragment htmlFragment) {
+        createDomAdd(serverMessage, parentId, null, htmlFragment);
     }
 
     /**
@@ -65,10 +66,11 @@ public class DomUpdate {
      * @param siblingId The id of the element which the content will be inserted
      *        <strong>before</strong> (this element must be an immediate child
      *        of the element specified by <code>parentId</code>)
-     * @return a content element to which the server-generated HTML may be 
-     *         added.
+     * @param htmlFragment the HTML fragment to add to the DOM
      */
-    public static Element createDomAdd(ServerMessage serverMessage, String parentId, String siblingId) {
+    public static void createDomAdd(ServerMessage serverMessage, String parentId, String siblingId, 
+            DocumentFragment htmlFragment) {
+        setContentNamespace(htmlFragment);
         Element domAddElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 MESSAGE_PART_NAME, "domadd");
         domAddElement.setAttribute("parentid", parentId);
@@ -76,9 +78,8 @@ public class DomUpdate {
             domAddElement.setAttribute("siblingid", siblingId);
         }
         Element contentElement = domAddElement.getOwnerDocument().createElement("content");
-        contentElement.setAttribute("xmlns", XHTML_NAMESPACE);
         domAddElement.appendChild(contentElement);
-        return contentElement;
+        contentElement.appendChild(htmlFragment);
     }
     
     /**
@@ -105,6 +106,16 @@ public class DomUpdate {
         Element domRemoveElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
                 MESSAGE_PART_NAME, "domremovechildren");
         domRemoveElement.setAttribute("targetid", targetId);
+    }
+    
+    private static void setContentNamespace(DocumentFragment htmlFragment) {
+        Node childNode = htmlFragment.getFirstChild();
+        while (childNode != null) {
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                ((Element) childNode).setAttribute("xmlns", XHTML_NAMESPACE);
+            }
+            childNode = childNode.getNextSibling();
+        }
     }
 
     /**
@@ -142,8 +153,7 @@ public class DomUpdate {
     public static void updateStyle(ServerMessage serverMessage, String targetId, String attributeName, 
             String attributeValue) {
         //BUGUG. support nulls for deletion.
-        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                MESSAGE_PART_NAME, "styleupdate");
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "styleupdate");
         element.setAttribute("targetid", targetId);
         element.setAttribute("name", attributeName);
         element.setAttribute("value", attributeValue);

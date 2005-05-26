@@ -41,6 +41,7 @@ import nextapp.echo2.webrender.clientupdate.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.TextField</code> components.
@@ -53,16 +54,16 @@ implements DomUpdateSupport {
 
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate, Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate addUpdate, Node parentNode, Component component) {
         TextField textField = (TextField) component;
         String elementId = ContainerInstance.getElementId(textField);
 
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId(), true);
         
-        Element inputElement = parent.getOwnerDocument().createElement("input");
+        Element inputElement = parentNode.getOwnerDocument().createElement("input");
         inputElement.setAttribute("id", elementId);
         if (textField instanceof PasswordField) {
             inputElement.setAttribute("type", "password");
@@ -79,7 +80,7 @@ implements DomUpdateSupport {
             inputElement.setAttribute("style", cssStyle.renderInline());
         }
         
-        parent.appendChild(inputElement);
+        parentNode.appendChild(inputElement);
         //BUGBUG. Mozilla not responding to blurs correctly...using keyup as well.
         EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
         EventUpdate.createEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");

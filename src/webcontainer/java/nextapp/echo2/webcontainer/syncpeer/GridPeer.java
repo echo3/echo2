@@ -33,7 +33,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
@@ -98,8 +100,9 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
@@ -127,9 +130,9 @@ implements DomUpdateSupport, SynchronizePeer {
 
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         
 //BUGBUG. Eliminate fully spanned over rows/columns.
 //BUGBUG. Render in any direction.
@@ -141,7 +144,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         String elementId = ContainerInstance.getElementId(grid);
         
-        Document document = parentElement.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         Element tableElement = document.createElement("table");
         tableElement.setAttribute("id", elementId);
 
@@ -163,7 +166,7 @@ implements DomUpdateSupport, SynchronizePeer {
         }
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
-        parentElement.appendChild(tableElement);
+        parentNode.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");

@@ -30,7 +30,9 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Color;
@@ -73,8 +75,8 @@ import nextapp.echo2.webrender.util.DomUtil;
  * This class should not be extended or used by classes outside of the Echo
  * framework.
  */
-public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor,
-        SynchronizePeer {
+public class WindowPanePeer 
+implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
 
     private static final FillImageBorder DEFAULT_BORDER = new FillImageBorder(new Color(0x00007f), new Insets(20), new Insets(3));
     private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
@@ -209,8 +211,9 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
      *      nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -435,11 +438,10 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext,
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element,
-     *      nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         WindowPane windowPane = (WindowPane) component;
         String elementId = ContainerInstance.getElementId(windowPane);
         String bodyElementId = elementId + "_body";
@@ -480,7 +482,7 @@ public class WindowPanePeer implements ActionProcessor, DomUpdateSupport, ImageR
             windowDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
         }
         windowDivElement.setAttribute("style", windowDivCssStyle.renderInline());
-        parentElement.appendChild(windowDivElement);
+        parentNode.appendChild(windowDivElement);
 
         // Render window border.
         renderBorder(rc, windowDivElement, windowPane);

@@ -30,7 +30,9 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
@@ -77,8 +79,9 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -98,14 +101,15 @@ implements DomUpdateSupport, SynchronizePeer {
         for (int componentIndex = components.length - 1; componentIndex >= 0; --componentIndex) {
             for (int addedChildrenIndex = 0; addedChildrenIndex < addedChildren.length; ++addedChildrenIndex) {
                 if (addedChildren[addedChildrenIndex] == components[componentIndex]) {
-                    Element contentElement;
+                    DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                    renderChild(rc, update, htmlFragment, component, components[componentIndex]);
+                    
                     if (componentIndex == components.length - 1) {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId);
+                        DomUpdate.createDomAdd(rc.getServerMessage(), elementId, htmlFragment);
                     } else {
-                        contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), 
-                                elementId, getContainerId(components[componentIndex + 1]));
+                        DomUpdate.createDomAdd(rc.getServerMessage(), 
+                                elementId, getContainerId(components[componentIndex + 1]), htmlFragment);
                     }
-                    renderChild(rc, update, contentElement, component, components[componentIndex]);
 
                     //BUGBUG. ahem...this should be continuing the OUTER for loop, eh?
                     // set a flag or something, as this is beyond meaningless:
@@ -120,16 +124,16 @@ implements DomUpdateSupport, SynchronizePeer {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> being performed
-     * @param containerElement the outer &lt;div&gt; element of the 
+     * @param parentNode the outer &lt;div&gt; element of the 
      *        <code>ContentPane</code>
      * @param child the child <code>Component</code> to be rendered
      */
-    private void renderChild(RenderContext rc, ServerComponentUpdate update, Element containerElement, 
+    private void renderChild(RenderContext rc, ServerComponentUpdate update, Node parentNode, 
             Component component, Component child) {
-        Element containerDivElement = containerElement.getOwnerDocument().createElement("div");
+        Element containerDivElement = parentNode.getOwnerDocument().createElement("div");
         String containerId = getContainerId(child);
         containerDivElement.setAttribute("id", containerId);
-        containerElement.appendChild(containerDivElement);
+        parentNode.appendChild(containerDivElement);
         SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
         if (syncPeer instanceof DomUpdateSupport) {
             ((DomUpdateSupport) syncPeer).renderHtml(rc, update, containerDivElement, child);
@@ -148,12 +152,12 @@ implements DomUpdateSupport, SynchronizePeer {
     
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ContentPane contentPane = (ContentPane) component;
         
-        Document document = parent.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         Element divElement = document.createElement("div");
         divElement.setAttribute("id", ContainerInstance.getElementId(component));
         
@@ -166,7 +170,7 @@ implements DomUpdateSupport, SynchronizePeer {
         FontRender.renderToStyle(cssStyle, (Font) contentPane.getRenderProperty(ContentPane.PROPERTY_FONT));
         divElement.setAttribute("style", cssStyle.renderInline());
         
-        parent.appendChild(divElement);
+        parentNode.appendChild(divElement);
         
         Component[] children = contentPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {

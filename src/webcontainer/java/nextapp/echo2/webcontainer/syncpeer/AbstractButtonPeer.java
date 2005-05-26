@@ -69,6 +69,7 @@ import nextapp.echo2.webrender.server.WebRenderServlet;
 import nextapp.echo2.webrender.services.JavaScriptService;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -284,21 +285,22 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
      * Renders the containing DIV element of a button.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param parentElement the HTML element which will contain the button
+     * @param parentNode the parent node
      * @param button the <code>AbstractButton</code> being rendered
      * @return the rendered DIV element (note that this element will already 
      *         have been appended to the parent)
      */
-    private Element renderButtonContainer(RenderContext rc, Element parentElement, AbstractButton button) {
-        Element divElement = parentElement.getOwnerDocument().createElement("div");
+    private Element renderButtonContainer(RenderContext rc, Node parentNode, AbstractButton button) {
+        Element divElement = parentNode.getOwnerDocument().createElement("div");
         divElement.setAttribute("id", ContainerInstance.getElementId(button));
         
         if (button.isFocusTraversalParticipant()) {
@@ -326,7 +328,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, true);
         
         divElement.setAttribute("style", cssStyle.renderInline());
-        parentElement.appendChild(divElement);
+        parentNode.appendChild(divElement);
         return divElement;
     }
     
@@ -533,14 +535,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BUTTON_SERVICE.getId(), true);
         AbstractButton button = (AbstractButton) component;
-        Element containerDivElement = renderButtonContainer(rc, parentElement, button);
+        Element containerDivElement = renderButtonContainer(rc, parentNode, button);
         renderInitDirective(rc, button);
         renderButtonContent(rc, containerDivElement, button);
     }

@@ -55,7 +55,7 @@ public class EventUpdate {
      */
     public static void createEventAdd(ServerMessage serverMessage, String eventType,
             String elementId, String eventHandler) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoEventUpdate", "eventadd", EVENT_ADD_KEYS, new String[]{eventType, eventHandler});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
@@ -74,7 +74,7 @@ public class EventUpdate {
      */
     public static void createEventRemove(ServerMessage serverMessage, String eventType,
             String elementId) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_REMOVE, 
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE, 
                 "EchoEventUpdate", "eventremove", EVENT_REMOVE_KEYS, new String[]{eventType});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);

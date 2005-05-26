@@ -64,7 +64,9 @@ import nextapp.echo2.webrender.server.WebRenderServlet;
 import nextapp.echo2.webrender.services.JavaScriptService;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.SplitPane</code> components.
@@ -259,8 +261,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -279,14 +282,16 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         RenderStateImpl currentRenderState = new RenderStateImpl(splitPane);
         if (!equal(previousRenderState.pane0, currentRenderState.pane0)) {
             if (currentRenderState.pane0 != null) {
-                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId, elementId + "_separator");
-                renderPane(rc, update, contentElement, splitPane, 0);
+                DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                renderPane(rc, update, htmlFragment, splitPane, 0);
+                DomUpdate.createDomAdd(rc.getServerMessage(), elementId, elementId + "_separator", htmlFragment);
             }
         }
         if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
             if (currentRenderState.pane1 != null) {
-                Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), elementId);
-                renderPane(rc, update, contentElement, splitPane, 1);
+                DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                renderPane(rc, update, htmlFragment, splitPane, 1);
+                DomUpdate.createDomAdd(rc.getServerMessage(), elementId, htmlFragment);
             }
         }
     }
@@ -354,10 +359,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parent, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         SplitPane splitPane = (SplitPane) component;
         
         String elementId = ContainerInstance.getElementId(splitPane);
@@ -370,7 +374,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId(), true);
 
-        Document document = parent.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         Element outerDivElement = document.createElement("div");
         outerDivElement.setAttribute("id", elementId);
 
@@ -384,7 +388,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         FontRender.renderToStyle(outerDivStyle, (Font) splitPane.getRenderProperty(ContentPane.PROPERTY_FONT));
         outerDivElement.setAttribute("style", outerDivStyle.renderInline());
 
-        parent.appendChild(outerDivElement);
+        parentNode.appendChild(outerDivElement);
 
         int componentCount = splitPane.getVisibleComponentCount();
         if (componentCount >= 1) {
@@ -482,12 +486,19 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
 
     /**
      * Renders a single pane container.
-     * Precondition: Component must have a child at the specified 
-     * <code>paneNumber</code> index. 
+     * The component must have a child at the specified 
+     * <code>paneNumber</code> index.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code>
+     * @param parentNode the DOM node to which the rendered HTML should be
+     *        appended
+     * @param splitPane the <code>SplitPane</code> component
+     * @param paneNumber the pane number, either 0 or 1
      */
-    private void renderPane(RenderContext rc, ServerComponentUpdate update, Element parentElement, 
+    private void renderPane(RenderContext rc, ServerComponentUpdate update, Node parentNode, 
             SplitPane splitPane, int paneNumber) {
-        Document document = parentElement.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         Component paneComponent = splitPane.getVisibleComponent(paneNumber);
         String elementId = ContainerInstance.getElementId(splitPane);
         
@@ -544,7 +555,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         renderChild(rc, update, paneContentDivElement, paneComponent);
         
         paneDivElement.setAttribute("style", paneDivCssStyle.renderInline());
-        parentElement.appendChild(paneDivElement);
+        parentNode.appendChild(paneDivElement);
     }
     
     /**

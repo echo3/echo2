@@ -30,7 +30,9 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
@@ -98,8 +100,9 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
@@ -127,17 +130,16 @@ implements DomUpdateSupport, SynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Element, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component component) {
+    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         Table table = (Table) component;
         Border border = (Border) table.getRenderProperty(Table.PROPERTY_BORDER);
         Extent borderSize = border == null ? null : border.getSize();
 
         String elementId = ContainerInstance.getElementId(table);
         
-        Document document = parentElement.getOwnerDocument();
+        Document document = parentNode.getOwnerDocument();
         Element tableElement = document.createElement("table");
         tableElement.setAttribute("id", elementId);
 
@@ -159,7 +161,7 @@ implements DomUpdateSupport, SynchronizePeer {
         ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) table.getProperty(Table.PROPERTY_WIDTH));
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
-        parentElement.appendChild(tableElement);
+        parentNode.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");

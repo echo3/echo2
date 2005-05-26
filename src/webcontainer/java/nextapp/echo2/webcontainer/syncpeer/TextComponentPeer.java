@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.FillImage;
@@ -171,8 +172,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update,
             String targetId, Component component) {
-        Element contentElement = DomUpdate.createDomAdd(rc.getServerMessage(), targetId);
-        renderHtml(rc, update, contentElement, component);
+        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+        renderHtml(rc, update, htmlFragment, component);
+        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
