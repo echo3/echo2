@@ -42,19 +42,30 @@ import nextapp.echo2.webrender.output.CssStyle;
 public class AlignmentRender {
     
     /**
-     * Renders an <code>Alignment</code> property to the given CSS style.
-     * The 'text-align' and 'vertical-align' properties will be set if they
+     * Renders an <code>Alignment</code> property to the given element.
+     * The 'align' and 'valign' attributes will be set if they
      * can be derived from the provided <code>Alignment</code>.
      * Null property values are ignored.
      * 
      * @param cssStyle the target <code>CssStyle</code>
      * @param alignment the property value
      */
-    public static void renderToStyle(CssStyle cssStyle, Alignment alignment) {
-        renderToStyle(cssStyle, null, alignment);
+    public static void renderToElement(Element element, Alignment alignment) {
+        renderToElement(element, null, alignment);
     }
     
-    //BUGBUG. doc and test.
+    /**
+     * Renders an <code>Alignment</code> property to the given element.
+     * The 'align' and 'valign' attributes will be set if they
+     * can be derived from the provided <code>Alignment</code>.
+     * Null property values are ignored.
+     * 
+     * @param cssStyle the target <code>CssStyle</code>
+     * @param component The <code>Component</code> for which the style is being
+     *        rendered (necessary for property translation of leading/trailing
+     *        alignment settings).
+     * @param alignment the property value
+     */
     public static void renderToElement(Element element, Component component, Alignment alignment) {
         if (alignment == null) {
             return;
@@ -70,6 +81,19 @@ public class AlignmentRender {
         }
     }
 
+    /**
+     * Renders an <code>Alignment</code> property to the given CSS style.
+     * The 'text-align' and 'vertical-align' properties will be set if they
+     * can be derived from the provided <code>Alignment</code>.
+     * Null property values are ignored.
+     * 
+     * @param cssStyle the target <code>CssStyle</code>
+     * @param alignment the property value
+     */
+    public static void renderToStyle(CssStyle cssStyle, Alignment alignment) {
+        renderToStyle(cssStyle, null, alignment);
+    }
+    
     /**
      * Renders an <code>Alignment</code> property to the given CSS style.
      * The 'text-align' and 'vertical-align' properties will be set if they
