@@ -30,9 +30,9 @@
 package nextapp.echo2.webcontainer;
 
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.server.ServiceRegistry;
-import nextapp.echo2.webrender.server.WebRenderServlet;
-import nextapp.echo2.webrender.services.SessionExpiredService;
+import nextapp.echo2.webrender.ServiceRegistry;
+import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.service.SessionExpiredService;
 
 /**
  * Web container <code>HttpServlet</code> implementation.

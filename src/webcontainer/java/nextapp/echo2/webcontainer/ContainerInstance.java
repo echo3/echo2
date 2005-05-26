@@ -39,13 +39,13 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webcontainer.util.IdTable;
-import nextapp.echo2.webrender.RenderInstance;
-import nextapp.echo2.webrender.server.Connection;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.UserInstance;
 
 /**
  * Web application container user instance.
  */
-public class ContainerInstance extends RenderInstance {
+public class ContainerInstance extends UserInstance {
 
     /**
      * Default asynchronous monitor callback interval (in ms).

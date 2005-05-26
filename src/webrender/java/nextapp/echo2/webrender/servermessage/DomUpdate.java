@@ -27,7 +27,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.clientupdate;
+package nextapp.echo2.webrender.servermessage;
+
+import nextapp.echo2.webrender.ServerMessage;
 
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
@@ -43,6 +45,26 @@ public class DomUpdate {
     
     private static final String MESSAGE_PART_NAME = "EchoDomUpdate";
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
+    /**
+     * Creates a <code>attributeupdate</code> operation to update an 
+     * element attribute of the element identified by <code>targetId</code>
+     * in the client DOM.
+     * 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param targetId the id of the element whose attribute is to be updated
+     * @param attributeName the name of the attribute to update
+     * @param attributeValue the new value of the attribute
+     */
+    public static void renderAttributeUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
+            String attributeValue) {
+        //BUGUG. support nulls for deletion.
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                MESSAGE_PART_NAME, "attributeupdate");
+        element.setAttribute("targetid", targetId);
+        element.setAttribute("name", attributeName);
+        element.setAttribute("value", attributeValue);
+    }
     
     /**
      * Creates a <code>domadd</code> operation to append HTML content to the 
@@ -52,8 +74,8 @@ public class DomUpdate {
      * @param parentId the id of the element the HTML code will be appended to
      * @param htmlFragment the HTML fragment to add to the DOM
      */
-    public static void createDomAdd(ServerMessage serverMessage, String parentId, DocumentFragment htmlFragment) {
-        createDomAdd(serverMessage, parentId, null, htmlFragment);
+    public static void renderElementAdd(ServerMessage serverMessage, String parentId, DocumentFragment htmlFragment) {
+        renderElementAdd(serverMessage, parentId, null, htmlFragment);
     }
 
     /**
@@ -68,7 +90,7 @@ public class DomUpdate {
      *        of the element specified by <code>parentId</code>)
      * @param htmlFragment the HTML fragment to add to the DOM
      */
-    public static void createDomAdd(ServerMessage serverMessage, String parentId, String siblingId, 
+    public static void renderElementAdd(ServerMessage serverMessage, String parentId, String siblingId, 
             DocumentFragment htmlFragment) {
         setContentNamespace(htmlFragment);
         Element domAddElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
@@ -89,7 +111,7 @@ public class DomUpdate {
      * @param serverMessage the outgoing <code>ServerMessage</code>
      * @param targetId the id of the element to remove
      */
-    public static void createDomRemove(ServerMessage serverMessage, String targetId) {
+    public static void renderElementRemove(ServerMessage serverMessage, String targetId) {
         Element domRemoveElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
                 MESSAGE_PART_NAME, "domremove");
         domRemoveElement.setAttribute("targetid", targetId);
@@ -102,10 +124,31 @@ public class DomUpdate {
      * @param serverMessage the outgoing <code>ServerMessage</code>
      * @param targetId the id of the element whose children ware to be removed
      */
-    public static void createDomRemoveChildren(ServerMessage serverMessage, String targetId) {
+    public static void renderElementRemoveChildren(ServerMessage serverMessage, String targetId) {
         Element domRemoveElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
                 MESSAGE_PART_NAME, "domremovechildren");
         domRemoveElement.setAttribute("targetid", targetId);
+    }
+    
+    /**
+     * Creates a <code>styleupdate</code> operation to update a CSS style 
+     * attribute of the element identified by <code>targetId</code> in the
+     * client DOM.
+     * 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param targetId the id of the element whose <strong>style</strong> 
+     *        attribute is to be updated
+     * @param attributeName the name of the <strong>style</strong> attribute
+     * @param attributeValue the new value of the <strong>style</strong> 
+     *        attribute
+     */
+    public static void renderStyleUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
+            String attributeValue) {
+        //BUGUG. support nulls for deletion.
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "styleupdate");
+        element.setAttribute("targetid", targetId);
+        element.setAttribute("name", attributeName);
+        element.setAttribute("value", attributeValue);
     }
     
     /**
@@ -122,46 +165,5 @@ public class DomUpdate {
             }
             childNode = childNode.getNextSibling();
         }
-    }
-
-    /**
-     * Creates a <code>attributeupdate</code> operation to update an 
-     * element attribute of the element identified by <code>targetId</code>
-     * in the client DOM.
-     * 
-     * @param serverMessage the outgoing <code>ServerMessage</code>
-     * @param targetId the id of the element whose attribute is to be updated
-     * @param attributeName the name of the attribute to update
-     * @param attributeValue the new value of the attribute
-     */
-    public static void updateAttribute(ServerMessage serverMessage, String targetId, String attributeName, 
-            String attributeValue) {
-        //BUGUG. support nulls for deletion.
-        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                MESSAGE_PART_NAME, "attributeupdate");
-        element.setAttribute("targetid", targetId);
-        element.setAttribute("name", attributeName);
-        element.setAttribute("value", attributeValue);
-    }
-    
-    /**
-     * Creates a <code>styleupdate</code> operation to update a CSS style 
-     * attribute of the element identified by <code>targetId</code> in the
-     * client DOM.
-     * 
-     * @param serverMessage the outgoing <code>ServerMessage</code>
-     * @param targetId the id of the element whose <strong>style</strong> 
-     *        attribute is to be updated
-     * @param attributeName the name of the <strong>style</strong> attribute
-     * @param attributeValue the new value of the <strong>style</strong> 
-     *        attribute
-     */
-    public static void updateStyle(ServerMessage serverMessage, String targetId, String attributeName, 
-            String attributeValue) {
-        //BUGUG. support nulls for deletion.
-        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "styleupdate");
-        element.setAttribute("targetid", targetId);
-        element.setAttribute("name", attributeName);
-        element.setAttribute("value", attributeValue);
     }
 }

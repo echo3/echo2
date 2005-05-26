@@ -37,7 +37,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RootSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 //BUGBUG. does not currently support updates to window title.
 
@@ -81,7 +81,7 @@ implements RootSynchronizePeer {
     public void renderRefresh(RenderContext rc, ServerComponentUpdate update, Component component) {
         Window window = (Window) component;
         String elementId = ContainerInstance.getElementId(window);
-        DomUpdate.createDomRemoveChildren(rc.getServerMessage(), elementId);
+        DomUpdate.renderElementRemoveChildren(rc.getServerMessage(), elementId);
         Component[] addedChildren = window.getVisibleComponents();
         for (int i = 0; i < addedChildren.length; ++i) {
             SynchronizePeer childSyncPeer = SynchronizePeerFactory.getPeerForComponent(addedChildren[i].getClass());

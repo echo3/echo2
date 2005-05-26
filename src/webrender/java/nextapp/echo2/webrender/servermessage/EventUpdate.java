@@ -27,7 +27,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.clientupdate;
+package nextapp.echo2.webrender.servermessage;
+
+import nextapp.echo2.webrender.ServerMessage;
 
 import org.w3c.dom.Element;
 
@@ -53,7 +55,7 @@ public class EventUpdate {
      * @param eventHandler the name of the handler method to be invoked 
      *        when the event occurs, e.g., "EchoButton.processAction"
      */
-    public static void createEventAdd(ServerMessage serverMessage, String eventType,
+    public static void renderEventAdd(ServerMessage serverMessage, String eventType,
             String elementId, String eventHandler) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoEventUpdate", "eventadd", EVENT_ADD_KEYS, new String[]{eventType, eventHandler});
@@ -72,7 +74,7 @@ public class EventUpdate {
      *        "mousedown")
      * @param elementId the id of the listened-to DOM element
      */
-    public static void createEventRemove(ServerMessage serverMessage, String eventType,
+    public static void renderEventRemove(ServerMessage serverMessage, String eventType,
             String elementId) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE, 
                 "EchoEventUpdate", "eventremove", EVENT_REMOVE_KEYS, new String[]{eventType});

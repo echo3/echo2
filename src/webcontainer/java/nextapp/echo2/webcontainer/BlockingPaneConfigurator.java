@@ -32,9 +32,9 @@ package nextapp.echo2.webcontainer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import nextapp.echo2.webrender.clientupdate.BlockingPane;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.BlockingPane;
 
 /**
  * 
@@ -45,7 +45,7 @@ public class BlockingPaneConfigurator {
         ServerMessage serverMessage = rc.getServerMessage();
         Document document = serverMessage.getDocument();
         
-        Element setDelayMessageElement = BlockingPane.createSetDelayMessage(serverMessage);
+        Element setDelayMessageElement = BlockingPane.renderSetDelayMessage(serverMessage);
         
         Element tableElement = document.createElement("table");
         CssStyle tableCssStyle = new CssStyle();

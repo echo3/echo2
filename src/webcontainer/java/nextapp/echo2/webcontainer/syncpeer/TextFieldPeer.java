@@ -36,9 +36,9 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.EventUpdate;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -82,7 +82,7 @@ implements DomUpdateSupport {
         
         parentNode.appendChild(inputElement);
         //BUGBUG. Mozilla not responding to blurs correctly...using keyup as well.
-        EventUpdate.createEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
-        EventUpdate.createEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");
+        EventUpdate.renderEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
+        EventUpdate.renderEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");
     }
 }

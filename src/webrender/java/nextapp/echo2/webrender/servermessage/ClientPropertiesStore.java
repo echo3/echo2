@@ -27,12 +27,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.server;
+package nextapp.echo2.webrender.servermessage;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.ServerMessage;
 
 /**
  * Provides capability to push analyzed <code>ClientProperties</code>

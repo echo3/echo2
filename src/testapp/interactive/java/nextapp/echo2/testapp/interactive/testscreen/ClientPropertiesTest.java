@@ -40,7 +40,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
 import nextapp.echo2.webcontainer.ContainerContext;
-import nextapp.echo2.webrender.server.ClientProperties;
+import nextapp.echo2.webrender.ClientProperties;
 
 /**
  * A test which displays the contents of the <code>ClientProperties</code> 

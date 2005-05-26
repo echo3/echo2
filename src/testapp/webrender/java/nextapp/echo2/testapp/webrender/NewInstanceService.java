@@ -31,11 +31,11 @@ package nextapp.echo2.testapp.webrender;
 
 import java.io.IOException;
 
-import nextapp.echo2.webrender.output.BaseHtmlDocument;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.BaseHtmlDocument;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 
 /**
  * Service performed when the user first visits an application.
@@ -43,21 +43,21 @@ import nextapp.echo2.webrender.server.WebRenderServlet;
 public class NewInstanceService implements Service {
 
     /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
+     * @see nextapp.echo2.webrender.Service#getId()
      */
     public String getId() {
         return WebRenderServlet.SERVICE_ID_NEW_INSTANCE;
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
+     * @see nextapp.echo2.webrender.Service#getVersion()
      */
     public int getVersion() {
         return DO_NOT_CACHE;
     }
 
     /**
-     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
      */
     public void service(Connection conn) throws IOException {
         conn.setContentType(ContentType.TEXT_HTML);

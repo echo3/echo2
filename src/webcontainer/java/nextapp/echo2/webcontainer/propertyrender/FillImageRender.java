@@ -34,8 +34,8 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.image.ImageTools;
+import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.ClientProperties;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.FillImage</code>

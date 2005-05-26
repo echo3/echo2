@@ -55,13 +55,13 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.ClientProperties;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
-import nextapp.echo2.webrender.services.JavaScriptService;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.service.JavaScriptService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
@@ -263,7 +263,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -284,14 +284,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
             if (currentRenderState.pane0 != null) {
                 DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                 renderPane(rc, update, htmlFragment, splitPane, 0);
-                DomUpdate.createDomAdd(rc.getServerMessage(), elementId, elementId + "_separator", htmlFragment);
+                DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, elementId + "_separator", htmlFragment);
             }
         }
         if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
             if (currentRenderState.pane1 != null) {
                 DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                 renderPane(rc, update, htmlFragment, splitPane, 1);
-                DomUpdate.createDomAdd(rc.getServerMessage(), elementId, htmlFragment);
+                DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, htmlFragment);
             }
         }
     }
@@ -336,7 +336,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
             // Performance Hack for Mozilla/Firefox Browsers:
             // BUGBUG. this hack needs to get moved to client side.
             if (!update.hasRemovedChild(component)) {
-                DomUpdate.createDomRemove(rc.getServerMessage(), elementId);
+                DomUpdate.renderElementRemove(rc.getServerMessage(), elementId);
             }
         }
     }
@@ -642,12 +642,12 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         RenderStateImpl currentRenderState = new RenderStateImpl(parent);
         if (!equal(previousRenderState.pane0, currentRenderState.pane0)) {
             if (previousRenderState.pane0 != null) {
-                DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_pane_0");
+                DomUpdate.renderElementRemove(rc.getServerMessage(), parentId + "_pane_0");
             }
         }
         if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
             if (previousRenderState.pane1 != null) {
-                DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_pane_1");
+                DomUpdate.renderElementRemove(rc.getServerMessage(), parentId + "_pane_1");
             }
         }
     }
@@ -668,7 +668,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             propertyRenderRegistry.process(rc, update);

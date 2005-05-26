@@ -29,7 +29,7 @@
 
 package nextapp.echo2.webrender.test;
 
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ServerMessage;
 import junit.framework.TestCase;
 
 /**

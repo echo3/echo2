@@ -44,13 +44,13 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomPropertyStore;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.ClientProperties;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
-import nextapp.echo2.webrender.services.JavaScriptService;
+import nextapp.echo2.webrender.servermessage.DomPropertyStore;
+import nextapp.echo2.webrender.service.JavaScriptService;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -246,7 +246,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
             if (selected) {
                 optionElement.setAttribute("style", selectedCssStyle.renderInline());
-                DomPropertyStore.createDomPropertyStore(serverMessage, optionId, "selectedState", "selected");
+                DomPropertyStore.renderSetProperty(serverMessage, optionId, "selectedState", "selected");
             }
 
             listBoxElement.appendChild(optionElement);
@@ -256,15 +256,15 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         listBoxElement.setAttribute("style", cssStyle.renderInline());
 
         CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
+        DomPropertyStore.renderSetProperty(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
 
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
+        DomPropertyStore.renderSetProperty(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
 
         CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
-        DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
+        DomPropertyStore.renderSetProperty(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
 
         if (ListSelectionModel.SINGLE_SELECTION == listBox.getSelectionMode()) {
-            DomPropertyStore.createDomPropertyStore(serverMessage, elementId, "singleSelect", "true");
+            DomPropertyStore.renderSetProperty(serverMessage, elementId, "singleSelect", "true");
         }
 
         parentNode.appendChild(listBoxElement);

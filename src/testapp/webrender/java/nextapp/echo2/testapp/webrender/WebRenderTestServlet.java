@@ -29,7 +29,7 @@
 
 package nextapp.echo2.testapp.webrender;
 
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.WebRenderServlet;
 
 /**
  * WebRender Test Application Servlet Implementation.

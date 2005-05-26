@@ -35,13 +35,13 @@ import org.w3c.dom.Element;
 
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Window;
-import nextapp.echo2.webrender.output.BaseHtmlDocument;
+import nextapp.echo2.webrender.BaseHtmlDocument;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
-import nextapp.echo2.webrender.services.CoreServices;
+import nextapp.echo2.webrender.service.CoreServices;
 
 /**
  * Completely re-renders a browser window.
@@ -53,21 +53,21 @@ implements Service {
     public static final WindowHtmlService INSTANCE = new WindowHtmlService();
 
     /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
+     * @see nextapp.echo2.webrender.Service#getId()
      */
     public String getId() {
         return WebRenderServlet.SERVICE_ID_DEFAULT;
     }
 
     /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
+     * @see nextapp.echo2.webrender.Service#getVersion()
      */
     public int getVersion() {
         return DO_NOT_CACHE;
     }
 
     /**
-     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
      */
     public void service(Connection conn) throws IOException {
         ContainerInstance ci = (ContainerInstance) conn.getUserInstance();

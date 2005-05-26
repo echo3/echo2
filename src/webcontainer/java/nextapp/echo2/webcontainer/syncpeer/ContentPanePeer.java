@@ -46,8 +46,8 @@ import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.ContentPane</code> components.
@@ -81,7 +81,7 @@ implements DomUpdateSupport, SynchronizePeer {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -105,9 +105,9 @@ implements DomUpdateSupport, SynchronizePeer {
                     renderChild(rc, update, htmlFragment, component, components[componentIndex]);
                     
                     if (componentIndex == components.length - 1) {
-                        DomUpdate.createDomAdd(rc.getServerMessage(), elementId, htmlFragment);
+                        DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, htmlFragment);
                     } else {
-                        DomUpdate.createDomAdd(rc.getServerMessage(), 
+                        DomUpdate.renderElementAdd(rc.getServerMessage(), 
                                 elementId, getContainerId(components[componentIndex + 1]), htmlFragment);
                     }
 
@@ -189,7 +189,7 @@ implements DomUpdateSupport, SynchronizePeer {
     private void renderRemoveChildren(RenderContext rc, ServerComponentUpdate update) {
         Component[] removedChildren = update.getRemovedChildren();
         for (int i = 0; i < removedChildren.length; ++i) {
-            DomUpdate.createDomRemove(rc.getServerMessage(), 
+            DomUpdate.renderElementRemove(rc.getServerMessage(), 
                     ContainerInstance.getElementId(update.getParent()) + "_container_" +
                     ContainerInstance.getElementId(removedChildren[i]));
         }
@@ -208,7 +208,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), 
+            DomUpdate.renderElementRemove(rc.getServerMessage(), 
                     ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {

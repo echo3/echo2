@@ -33,9 +33,9 @@ import java.io.IOException;
 
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.StreamImageReference;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.WebRenderServlet;
 
 /**
  * Renders a <code>StreamImageReference</code> to the client.
@@ -51,14 +51,14 @@ public class StreamImageService extends AbstractImageService {
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
+     * @see nextapp.echo2.webrender.Service#getId()
      */
     public String getId() {
         return SERVICE_ID;
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
+     * @see nextapp.echo2.webrender.Service#getVersion()
      */
     public int getVersion() {
         return 0; // Enable caching.

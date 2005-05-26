@@ -27,9 +27,11 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.server;
+package nextapp.echo2.webrender;
 
 import java.io.Serializable;
+
+import nextapp.echo2.webrender.service.CoreServices;
 
 //BUGBUG. Javadocs.
 
@@ -48,6 +50,7 @@ implements Serializable {
     public UserInstance() {
         super();
         services = new ServiceRegistry();
+        CoreServices.install(services);
     }
     
     public String getApplicationUri() {

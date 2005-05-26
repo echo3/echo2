@@ -27,7 +27,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.services;
+package nextapp.echo2.webrender.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,13 +45,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
-import nextapp.echo2.webrender.server.ClientPropertiesLoader;
-import nextapp.echo2.webrender.server.ClientPropertiesStore;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.UserInstance;
+import nextapp.echo2.webrender.ClientPropertiesLoader;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.UserInstance;
+import nextapp.echo2.webrender.servermessage.ClientPropertiesStore;
 import nextapp.echo2.webrender.util.DomUtil;
 
 /**
@@ -87,14 +87,14 @@ implements Service {
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
+     * @see nextapp.echo2.webrender.Service#getId()
      */
     public String getId() {
         return SERVICE_ID;
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
+     * @see nextapp.echo2.webrender.Service#getVersion()
      */
     public int getVersion() {
         return DO_NOT_CACHE;
@@ -178,7 +178,7 @@ implements Service {
     protected abstract ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument);
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
      */
     public void service(Connection conn) throws IOException {
         Document clientMessageDocument = parseRequestDocument(conn);

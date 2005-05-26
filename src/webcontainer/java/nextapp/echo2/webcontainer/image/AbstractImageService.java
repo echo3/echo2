@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.webcontainer.ContainerInstance;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.Service;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.Service;
 
 /**
  * Abstract base service for rendering images sourced from the application
@@ -75,7 +75,7 @@ implements Service {
     throws IOException;
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
      */
     public void service(Connection conn)
     throws IOException {

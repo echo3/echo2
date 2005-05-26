@@ -30,7 +30,7 @@
 package nextapp.echo2.webcontainer;
 
 import nextapp.echo2.app.TaskQueue;
-import nextapp.echo2.webrender.server.ClientProperties;
+import nextapp.echo2.webrender.ClientProperties;
 
 /**
  * Contextual information about the application container provided to an

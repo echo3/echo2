@@ -31,9 +31,9 @@ package nextapp.echo2.webcontainer.propertyrender;
 
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.app.Insets</code>
@@ -107,9 +107,9 @@ public class InsetsRender {
      */
     public static void renderServerMessageUpdate(ServerMessage serverMessage, String targetId, String cssAttribute, Insets insets) {
         if (insets == null) {
-            DomUpdate.updateStyle(serverMessage, targetId, cssAttribute, "0px");
+            DomUpdate.renderStyleUpdate(serverMessage, targetId, cssAttribute, "0px");
         } else {
-            DomUpdate.updateStyle(serverMessage, targetId, cssAttribute, renderCssAttributeValue(insets));
+            DomUpdate.renderStyleUpdate(serverMessage, targetId, cssAttribute, renderCssAttributeValue(insets));
         }
     }
     

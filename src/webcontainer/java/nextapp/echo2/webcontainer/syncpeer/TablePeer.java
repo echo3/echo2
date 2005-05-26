@@ -54,9 +54,9 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
+import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.ClientProperties;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 //BUGBUG. sort component visiblity with regard to rendered components
 // (may simply want to require returned components be visible (at Table level) and validate this)
@@ -102,7 +102,7 @@ implements DomUpdateSupport, SynchronizePeer {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
@@ -217,7 +217,7 @@ implements DomUpdateSupport, SynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+        DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
         renderAdd(rc, update, targetId, update.getParent());
         return true;
     }

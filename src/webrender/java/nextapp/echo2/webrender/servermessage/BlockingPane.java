@@ -27,7 +27,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.clientupdate;
+package nextapp.echo2.webrender.servermessage;
+
+import nextapp.echo2.webrender.ServerMessage;
 
 import org.w3c.dom.Element;
 
@@ -52,7 +54,7 @@ public class BlockingPane {
      * @param serverMessage the relevant <code>ServerMessage</code>
      * @return the created directive element
      */
-    public static Element createSetDelayMessage(ServerMessage serverMessage) {
+    public static Element renderSetDelayMessage(ServerMessage serverMessage) {
         Element setDelayMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "EchoBlockingPane",
                 "setdelaymessage");
         setDelayMessageElement.setAttribute("xmlns", XHTML_NAMESPACE);

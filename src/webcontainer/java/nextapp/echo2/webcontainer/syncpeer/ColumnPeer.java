@@ -57,8 +57,8 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Column</code> components.
@@ -151,7 +151,7 @@ implements DomUpdateSupport, SynchronizePeer {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
@@ -191,9 +191,9 @@ implements DomUpdateSupport, SynchronizePeer {
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                     renderChild(rc, update, htmlFragment, column, components[componentIndex]);
                     if (componentIndex == components.length - 1) {
-                        DomUpdate.createDomAdd(rc.getServerMessage(), elementId, htmlFragment);
+                        DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, htmlFragment);
                     } else {
-                        DomUpdate.createDomAdd(rc.getServerMessage(), elementId, 
+                        DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, 
                                 elementId + "_cell_" + ContainerInstance.getElementId(components[componentIndex + 1]), 
                                 htmlFragment);
                     }
@@ -212,7 +212,7 @@ implements DomUpdateSupport, SynchronizePeer {
                 // Child which was previously last is present, but no longer last.
                 DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                 renderCellSpacingRow(htmlFragment, column, renderState.lastChild);
-                DomUpdate.createDomAdd(rc.getServerMessage(), elementId,
+                DomUpdate.renderElementAdd(rc.getServerMessage(), elementId,
                         elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
                         htmlFragment);
             }
@@ -326,15 +326,15 @@ implements DomUpdateSupport, SynchronizePeer {
         String parentId = ContainerInstance.getElementId(parent);
         for (int i = 0; i < removedChildren.length; ++i) {
             String childId = ContainerInstance.getElementId(removedChildren[i]);
-            DomUpdate.createDomRemove(rc.getServerMessage(), 
+            DomUpdate.renderElementRemove(rc.getServerMessage(), 
                     parentId + "_cell_" + childId);
-            DomUpdate.createDomRemove(rc.getServerMessage(), 
+            DomUpdate.renderElementRemove(rc.getServerMessage(), 
                     parentId + "_spacing_" + childId);
         }
 
         int componentCount = parent.getVisibleComponentCount();
         if (componentCount > 0) {
-            DomUpdate.createDomRemove(rc.getServerMessage(), parentId + "_spacing_" 
+            DomUpdate.renderElementRemove(rc.getServerMessage(), parentId + "_spacing_" 
                     + ContainerInstance.getElementId(parent.getVisibleComponent(componentCount - 1)));
         }
     }
@@ -357,7 +357,7 @@ implements DomUpdateSupport, SynchronizePeer {
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             // Perform incremental updates.

@@ -27,52 +27,50 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.services;
+package nextapp.echo2.webrender.service;
 
 import java.io.IOException;
 
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.util.Resource;
+import javax.servlet.http.HttpServletResponse;
 
-public class StaticTextService 
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
+
+/**
+ * A <code>Service</code> which renders a 400 (Bad Request) with the message
+ * "Session Expired". 
+ */
+public class SessionExpiredService 
 implements Service {
-    
-    public static StaticTextService forResource(String id, String contentType, String resourceName) {
-        String content = Resource.getResourceAsString(resourceName);
-        return new StaticTextService(id, contentType, content);
-    }
 
-    private String id;
-    private String content;
-    private String contentType;
-    
-    public StaticTextService(String id, String contentType, String content) {
-        super();
-        this.id = id;
-        this.contentType = contentType;
-        this.content = content;
-    }
+    /**
+     * Singleton instance.
+     */
+    public static final Service INSTANCE = new SessionExpiredService();
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
+     * @see nextapp.echo2.webrender.Service#getId()
      */
     public String getId() {
-        return id;
+        return WebRenderServlet.SERVICE_ID_SESSION_EXPIRED;
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
+     * @see nextapp.echo2.webrender.Service#getVersion()
      */
     public int getVersion() {
-        return 0;
+        return DO_NOT_CACHE;
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
      */
-    public void service(Connection conn) throws IOException {
-        conn.getResponse().setContentType(contentType);
-        conn.getWriter().print(content);
+    public void service(Connection conn) 
+    throws IOException {
+        conn.setContentType(ContentType.TEXT_HTML);
+        conn.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        conn.getWriter().write("Session Expired");
     }
 }

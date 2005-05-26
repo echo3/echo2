@@ -42,7 +42,7 @@
 //        in setting such a property containing the text of 'textarea' elements
 //        due to IE obliterating newlines.
 
-package nextapp.echo2.webrender.clientupdate;
+package nextapp.echo2.webrender;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -27,7 +27,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.server;
+package nextapp.echo2.webrender;
 
 import java.util.HashMap;
 import java.util.Map;

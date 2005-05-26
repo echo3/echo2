@@ -31,18 +31,16 @@ package nextapp.echo2.webrender.output;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import nextapp.echo2.webrender.server.WebRenderServletException;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -55,8 +53,7 @@ import org.w3c.dom.DocumentType;
 public class XmlDocument {
     
     private Document document;
-    private String systemId;
-    private String publicId;
+    private Properties outputProperties;
     
     /**
      * Creates a new <code>XmlDocument</code>.
@@ -69,8 +66,6 @@ public class XmlDocument {
      */
     public XmlDocument(String qualifiedName, String publicId, String systemId, String namespaceUri) {
         super();
-        this.systemId = systemId;
-        this.publicId = publicId;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -79,7 +74,7 @@ public class XmlDocument {
             DocumentType docType = dom.createDocumentType(qualifiedName, publicId, systemId);
             document = dom.createDocument(namespaceUri, qualifiedName, docType);
         } catch (ParserConfigurationException ex) {
-            throw new WebRenderServletException("Cannot create XmlService", ex);
+            throw new RuntimeException("Cannot create XmlService", ex);
         }
         document.getDocumentElement().setAttribute("xmlns", namespaceUri);
     }
@@ -92,7 +87,7 @@ public class XmlDocument {
     public Document getDocument() {
         return document;
     }
-
+    
     /**
      * Renders the document to a <code>PrintWriter</code>.
      * 
@@ -103,14 +98,8 @@ public class XmlDocument {
         try {
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
-            
-            //BUGBUG. all this output property stuff is only relevant for HtmlDocument...make generic and move to HtmlDoc.
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            if (publicId != null) {
-                transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, publicId);
-            }
-            if (systemId != null) {
-                transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, systemId);
+            if (outputProperties != null) {
+                transformer.setOutputProperties(outputProperties);
             }
             DOMSource source = new DOMSource(document);
             StreamResult result = new StreamResult(pw);
@@ -118,5 +107,15 @@ public class XmlDocument {
         } catch (TransformerException ex) {
             throw new IOException("Unable to write document to OutputStream: " + ex.toString());
         }
+    }
+
+    /**
+     * Sets the output properties which will be used by the rendering
+     * <code>javax.xml.transform.Transformer</code>.
+     * 
+     * @param newValue the new output properties
+     */
+    public void setOutputProperties(Properties newValue) {
+        outputProperties = newValue;
     }
 }

@@ -55,12 +55,12 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.EventUpdate;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
-import nextapp.echo2.webrender.services.JavaScriptService;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.servermessage.EventUpdate;
+import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
 /**
@@ -174,7 +174,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
             String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
@@ -182,8 +182,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        EventUpdate.createEventRemove(rc.getServerMessage(), "blur", ContainerInstance.getElementId(component));
-        EventUpdate.createEventRemove(rc.getServerMessage(), "keyup", ContainerInstance.getElementId(component));
+        EventUpdate.renderEventRemove(rc.getServerMessage(), "blur", ContainerInstance.getElementId(component));
+        EventUpdate.renderEventRemove(rc.getServerMessage(), "keyup", ContainerInstance.getElementId(component));
     }
     
     /**
@@ -200,7 +200,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         
         if (fullReplace) {
             // Perform full update.
-            DomUpdate.createDomRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             propertyRenderRegistry.process(rc, update);

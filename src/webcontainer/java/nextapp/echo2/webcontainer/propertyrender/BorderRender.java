@@ -30,9 +30,9 @@
 package nextapp.echo2.webcontainer.propertyrender;
 
 import nextapp.echo2.app.Border;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.app.Border</code>
@@ -103,9 +103,9 @@ public class BorderRender {
      */
     public static void renderServerMessageUpdate(ServerMessage serverMessage, String targetId, Border border) {
         if (border == null) {
-            DomUpdate.updateStyle(serverMessage, targetId, "border", "none");
+            DomUpdate.renderStyleUpdate(serverMessage, targetId, "border", "none");
         } else {
-            DomUpdate.updateStyle(serverMessage, targetId, "border", renderCssAttributeValue(border));
+            DomUpdate.renderStyleUpdate(serverMessage, targetId, "border", renderCssAttributeValue(border));
         }
     }
 

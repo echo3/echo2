@@ -29,8 +29,8 @@
 
 package nextapp.echo2.webrender.test;
 
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.ServiceRegistry;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.ServiceRegistry;
 import junit.framework.TestCase;
 
 public class ServiceRegistryTest extends TestCase {

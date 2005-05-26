@@ -27,7 +27,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.server;
+package nextapp.echo2.webrender;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,9 +58,9 @@ public class Connection {
      * request and response.  The InstancePeer will be pulled from the session 
      * if one exists.  A session will NOT be created if one does not exist.
      *
-     * @param servlet The <code>WebRenderServlet</code> generating the connection.
-     * @param request The HTTP request object that was passed to the servlet.
-     * @param response The HTTP response object that was passed to the servlet.
+     * @param servlet the <code>WebRenderServlet</code> generating the connection
+     * @param request the HTTP request object that was passed to the servlet
+     * @param response the HTTP response object that was passed to the servlet
      */
     Connection(WebRenderServlet servlet, HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException {
@@ -95,7 +95,7 @@ public class Connection {
      * <code>OutputStream</code> will be closed by the servlet container.
      *
      * @return the <code>OutputStream</code> object that may be used to 
-     *         generate a response to the client.
+     *         generate a response to the client
      */
     public OutputStream getOutputStream() {
         try {
@@ -109,8 +109,8 @@ public class Connection {
      * Returns the <code>HttpServletRequest</code> wrapped by this 
      * <code>Connection</code>.
      *
-     * @return The <code>HttpServletRequest</code> wrapped by this 
-     *         <code>Connection</code>.
+     * @return the <code>HttpServletRequest</code> wrapped by this 
+     *         <code>Connection</code>
      */
     public HttpServletRequest getRequest() {
         return request;
@@ -120,8 +120,8 @@ public class Connection {
      * Returns the <code>HttpServletResponse</code> wrapped by this 
      * <code>Connection</code>.
      *
-     * @return The <code>HttpServletResponse</code> wrapped by this 
-     *         <code>Connection</code>.
+     * @return the <code>HttpServletResponse</code> wrapped by this 
+     *         <code>Connection</code>
      */
     public HttpServletResponse getResponse() {
         return response;
@@ -131,8 +131,8 @@ public class Connection {
      * Returns the <code>WebRenderServlet</code> wrapped by this 
      * <code>Connection</code>.
      *
-     * @return The <code>WebRenderServlet</code> wrapped by this 
-     *         <code>Connection</code>.
+     * @return the <code>WebRenderServlet</code> wrapped by this 
+     *         <code>Connection</code>
      */
     public WebRenderServlet getServlet() {
         return servlet;
@@ -143,8 +143,8 @@ public class Connection {
      * this connection.  If the session has not been initialized, null is 
      * returned.
      *
-     * @return The <code>UserInstance</code> associated with  
-     *         this connection.
+     * @return the <code>UserInstance</code> associated with  
+     *         this connection
      */
     public UserInstance getUserInstance() {
         return userInstance;
@@ -158,7 +158,7 @@ public class Connection {
      * <code>PrintWriter</code> will be closed by the servlet container.
      *
      * @return the <code>PrintWriter</code> object that may be used to 
-     *         generate a response to the client.
+     *         generate a response to the client
      */
     public PrintWriter getWriter() {
         try {
@@ -180,7 +180,7 @@ public class Connection {
      * This method will automatically append a character encoding to
      * non-binary content types.
      * 
-     * @param contentType The content type of the response.
+     * @param contentType the content type of the response
      */
     public void setContentType(ContentType contentType) {
         UserInstance userInstance = getUserInstance();
@@ -191,7 +191,7 @@ public class Connection {
         }
     }
     
-    //BUGBUG. doc.
+    //BUGBUG. may not want these here.
     public void setUserInstance(UserInstance userInstance) {
         this.userInstance = userInstance;
         userInstance.setApplicationUri(request.getRequestURI());

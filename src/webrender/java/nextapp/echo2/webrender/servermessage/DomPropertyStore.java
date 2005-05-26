@@ -27,51 +27,39 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.webrender.servermessage;
 
-import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.ServerMessage;
 
-/**
- * Default <code>RenderContext</code> implementation.
- */
-class RenderContextImpl 
-implements RenderContext {
+import org.w3c.dom.Element;
 
-    Connection conn;
-    ServerMessage serverMessage;
-    
+/**
+ * A utility class to add <code>EchoDomPropertyStore</code> message parts to 
+ * the <code>ServerMessage</code>.  <code>EchoDomPropertyStore</code> message
+ * parts are used to store non-rendered information in the client DOM.
+ */
+public class DomPropertyStore {
+
+    private static final String[] PROPERTY_STORE_KEYS= new String[]{"name", "value"};
+
+    private static final String MESSAGE_PART_NAME = "EchoDomPropertyStore";
+
     /**
-     * Creates a new <code>RenderContextImpl</code> wrapping the specified
-     * <code>Connection</code> and <code>ServerMessage</code>.
+     * Creates a <code>storeproperty</code> operation to store a non-rendered
+     * named property in an HTMLElement of the client DOM.
      * 
-     * @param conn the <code>Connection</code>
-     * @param serverMessage the <code>ServerMessage</code> 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param elementId the id of the element on which to set the non-rendered
+     *        property
+     * @param propertyName the name of the property
+     * @param propertyValue the value of the property
      */
-    RenderContextImpl(Connection conn, ServerMessage serverMessage) {
-        super();
-        this.conn = conn;
-        this.serverMessage = serverMessage;
-    }
-    
-    /**
-     * @see nextapp.echo2.webcontainer.RenderContext#getConnection()
-     */
-    public Connection getConnection() {
-        return conn;
-    }
-    
-    /**
-     * @see nextapp.echo2.webcontainer.RenderContext#getContainerInstance()
-     */
-    public ContainerInstance getContainerInstance() {
-        return (ContainerInstance) conn.getUserInstance();
-    }
-    
-    /**
-     * @see nextapp.echo2.webcontainer.RenderContext#getServerMessage()
-     */
-    public ServerMessage getServerMessage() {
-        return serverMessage;
+    public static void renderSetProperty(ServerMessage serverMessage, String elementId, String propertyName, 
+            String propertyValue) {
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
+                MESSAGE_PART_NAME, "storeproperty", PROPERTY_STORE_KEYS, new String[]{propertyName, propertyValue});
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
     }
 }

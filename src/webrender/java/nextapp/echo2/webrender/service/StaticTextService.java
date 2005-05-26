@@ -27,37 +27,52 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.clientupdate;
+package nextapp.echo2.webrender.service;
 
-import org.w3c.dom.Element;
+import java.io.IOException;
 
-/**
- * A utility class to add <code>EchoDomPropertyStore</code> message parts to 
- * the <code>ServerMessage</code>.  <code>EchoDomPropertyStore</code> message
- * parts are used to store non-rendered information in the client DOM.
- */
-public class DomPropertyStore {
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.util.Resource;
 
-    private static final String[] PROPERTY_STORE_KEYS= new String[]{"name", "value"};
+public class StaticTextService 
+implements Service {
+    
+    public static StaticTextService forResource(String id, String contentType, String resourceName) {
+        String content = Resource.getResourceAsString(resourceName);
+        return new StaticTextService(id, contentType, content);
+    }
 
-    private static final String MESSAGE_PART_NAME = "EchoDomPropertyStore";
-
+    private String id;
+    private String content;
+    private String contentType;
+    
+    public StaticTextService(String id, String contentType, String content) {
+        super();
+        this.id = id;
+        this.contentType = contentType;
+        this.content = content;
+    }
+    
     /**
-     * Creates a <code>storeproperty</code> operation to store a non-rendered
-     * named property in an HTMLElement of the client DOM.
-     * 
-     * @param serverMessage the outgoing <code>ServerMessage</code>
-     * @param elementId the id of the element on which to set the non-rendered
-     *        property
-     * @param propertyName the name of the property
-     * @param propertyValue the value of the property
+     * @see nextapp.echo2.webrender.Service#getId()
      */
-    public static void createDomPropertyStore(ServerMessage serverMessage, String elementId, String propertyName, 
-            String propertyValue) {
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE, 
-                MESSAGE_PART_NAME, "storeproperty", PROPERTY_STORE_KEYS, new String[]{propertyName, propertyValue});
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemizedUpdateElement.appendChild(itemElement);
+    public String getId() {
+        return id;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.Service#getVersion()
+     */
+    public int getVersion() {
+        return 0;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
+     */
+    public void service(Connection conn) throws IOException {
+        conn.getResponse().setContentType(contentType);
+        conn.getWriter().print(content);
     }
 }

@@ -27,20 +27,52 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender;
+package nextapp.echo2.webrender.service;
 
-import nextapp.echo2.webrender.server.UserInstance;
-import nextapp.echo2.webrender.services.CoreServices;
+import java.io.IOException;
 
-//BUGBUG. The existance of this class/package are debatable.
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.util.JavaScriptCompressor;
+import nextapp.echo2.webrender.util.Resource;
 
-/**
- * 
- */
-public class RenderInstance extends UserInstance {
+public class JavaScriptService 
+implements Service {
+    
+    public static JavaScriptService forResource(String id, String resourceName) {
+        String content = Resource.getResourceAsString(resourceName);
+        return new JavaScriptService(id, content);
+    }
 
-    public RenderInstance() {
+    private String id;
+    private String content;
+    
+    public JavaScriptService(String id, String content) {
         super();
-        CoreServices.install(getServiceRegistry());
+        this.id = id;
+        this.content = JavaScriptCompressor.compress(content);
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.Service#getId()
+     */
+    public String getId() {
+        return id;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.Service#getVersion()
+     */
+    public int getVersion() {
+        //BUGBUG. for debugging purposes (though technically JS should *NEVER* be reloaded during a session anyway)
+        return DO_NOT_CACHE;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
+     */
+    public void service(Connection conn) throws IOException {
+        conn.getResponse().setContentType("text/plain");
+        conn.getWriter().print(content);
     }
 }

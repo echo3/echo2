@@ -27,8 +27,15 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.output;
+package nextapp.echo2.webrender;
 
+
+import java.util.Properties;
+
+import javax.xml.transform.OutputKeys;
+
+import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.output.HtmlDocument;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,6 +45,13 @@ import org.w3c.dom.Element;
  */
 public class BaseHtmlDocument extends HtmlDocument {
 
+    private static final Properties outputProperties = new Properties();
+    static {
+        outputProperties.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC, XHTML_1_0_TRANSITIONAL_PUBLIC_ID);
+        outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID);
+    }
+    
     private String contentId;
     
     /**
@@ -47,7 +61,8 @@ public class BaseHtmlDocument extends HtmlDocument {
      *        which content should be added, i.e., the FORM element.
      */
     public BaseHtmlDocument(String contentId) {
-	    super();
+	    super(XHTML_1_0_TRANSITIONAL_PUBLIC_ID, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID, XHTML_1_0_NAMESPACE_URI);
+        setOutputProperties(outputProperties);
         this.contentId = contentId;
 	    Document document = getDocument();
         

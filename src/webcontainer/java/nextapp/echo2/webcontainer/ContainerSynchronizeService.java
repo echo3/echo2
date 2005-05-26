@@ -42,10 +42,10 @@ import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.UserInstance;
-import nextapp.echo2.webrender.services.SynchronizeService;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.UserInstance;
+import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
 
 //BUGBUG. Potentially move real work out of the service, notably processServerUpdates()
@@ -99,7 +99,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
     private ClientMessagePartProcessor propertyUpdateProcessor = new ClientMessagePartProcessor() {
         
         /**
-         * @see nextapp.echo2.webrender.services.SynchronizeService.ClientMessagePartProcessor#process(
+         * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#process(
          *      nextapp.echo2.webrender.server.UserInstance, org.w3c.dom.Element)
          */
         public void process(UserInstance userInstance, Element messagePartElement) {
@@ -131,7 +131,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
     private ClientMessagePartProcessor actionProcessor = new ClientMessagePartProcessor() {
         
         /**
-         * @see nextapp.echo2.webrender.services.SynchronizeService.ClientMessagePartProcessor#process(
+         * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#process(
          *      nextapp.echo2.webrender.server.UserInstance, org.w3c.dom.Element)
          */
         public void process(UserInstance userInstance, Element messagePartElement) {
@@ -248,7 +248,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
-     * @see nextapp.echo2.webrender.services.SynchronizeService#renderInit(nextapp.echo2.webrender.server.Connection, 
+     * @see nextapp.echo2.webrender.service.SynchronizeService#renderInit(nextapp.echo2.webrender.server.Connection, 
      *      nextapp.echo2.webrender.clientupdate.ServerMessage, org.w3c.dom.Document)
      */
     protected ServerMessage renderInit(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
@@ -276,7 +276,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
-     * @see nextapp.echo2.webrender.services.SynchronizeService#renderUpdate(nextapp.echo2.webrender.server.Connection, 
+     * @see nextapp.echo2.webrender.service.SynchronizeService#renderUpdate(nextapp.echo2.webrender.server.Connection, 
      *      nextapp.echo2.webrender.clientupdate.ServerMessage, org.w3c.dom.Document)
      */
     protected ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {

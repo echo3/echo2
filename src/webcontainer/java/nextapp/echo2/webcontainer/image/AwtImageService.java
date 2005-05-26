@@ -32,9 +32,9 @@ package nextapp.echo2.webcontainer.image;
 import java.io.IOException;
 import nextapp.echo2.app.AwtImageReference;
 import nextapp.echo2.app.ImageReference;
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
+import nextapp.echo2.webrender.WebRenderServlet;
 
 /**
  * Renders an <code>AwtImageReference</code> to the client.
@@ -50,14 +50,14 @@ public class AwtImageService extends AbstractImageService {
     }
 
     /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
+     * @see nextapp.echo2.webrender.Service#getId()
      */
     public String getId() {
         return SERVICE_ID;
     }
     
     /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
+     * @see nextapp.echo2.webrender.Service#getVersion()
      */
     public int getVersion() {
         return 0; // Enable caching.

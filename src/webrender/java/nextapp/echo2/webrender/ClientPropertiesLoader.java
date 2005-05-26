@@ -27,13 +27,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.server;
+package nextapp.echo2.webrender;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import nextapp.echo2.webrender.services.SynchronizeService;
+import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
 
 import org.w3c.dom.Element;
@@ -128,7 +128,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
     }
     
     /**
-     * @see nextapp.echo2.webrender.services.SynchronizeService.ClientMessagePartProcessor#process(
+     * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#process(
      *      nextapp.echo2.webrender.server.UserInstance, org.w3c.dom.Element)
      */
     public void process(UserInstance userInstance, Element messagePartElement) {

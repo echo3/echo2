@@ -37,16 +37,20 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 /**
- * A mutable XHTML document.
+ * A simple wrapper around JAXP/W3C DOM APIs to generate and render an 
+ * XHTML 1.0 Transitional document.
  */
 public class HtmlDocument extends XmlDocument {
+    
+    public static final String XHTML_1_0_TRANSITIONAL_PUBLIC_ID = "-//W3C//DTD XHTML 1.0 Transitional//EN";
+    public static final String XHTML_1_0_TRANSITIONAL_SYSTSEM_ID = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd";
+    public static final String XHTML_1_0_NAMESPACE_URI = "http://www.w3.org/1999/xhtml";
     
     /**
      * Creates a new <code>HtmlDocument</code>.
      */
-    public HtmlDocument() {
-	    super("html", "-//W3C//DTD XHTML 1.0 Strict//EN", 
-	            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd", "http://www.w3.org/1999/xhtml");
+    public HtmlDocument(String publicId, String systemId, String namespaceUri) {
+	    super("html", publicId, systemId, namespaceUri);
         Document document = getDocument();
 	    Element htmlElement = document.getDocumentElement();
 	    Element headElement = document.createElement("head");

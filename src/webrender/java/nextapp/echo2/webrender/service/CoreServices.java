@@ -27,50 +27,29 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.services;
+package nextapp.echo2.webrender.service;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletResponse;
-
-import nextapp.echo2.webrender.server.Connection;
-import nextapp.echo2.webrender.server.ContentType;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.ServiceRegistry;
 
 /**
- * A <code>Service</code> which renders a 400 (Bad Request) with the message
- * "Session Expired". 
+ * 
  */
-public class SessionExpiredService 
-implements Service {
+public class CoreServices {
 
-    /**
-     * Singleton instance.
-     */
-    public static final Service INSTANCE = new SessionExpiredService();
+    private static final String RESOURCE_PATH = "/nextapp/echo2/webrender/resource/";
     
-    /**
-     * @see nextapp.echo2.webrender.server.Service#getId()
-     */
-    public String getId() {
-        return WebRenderServlet.SERVICE_ID_SESSION_EXPIRED;
+    public static final Service CLIENT_ENGINE
+            = JavaScriptService.forResource("Echo.ClientEngine", RESOURCE_PATH + "ClientEngine.js");
+    public static final Service DEBUG 
+            = StaticTextService.forResource("Echo.Debug", "text/html", RESOURCE_PATH + "Debug.html");
+
+    
+    public static void install(ServiceRegistry services) {
+        services.add(CLIENT_ENGINE);
+        services.add(DEBUG);
     }
     
-    /**
-     * @see nextapp.echo2.webrender.server.Service#getVersion()
-     */
-    public int getVersion() {
-        return DO_NOT_CACHE;
-    }
-    
-    /**
-     * @see nextapp.echo2.webrender.server.Service#service(nextapp.echo2.webrender.server.Connection)
-     */
-    public void service(Connection conn) 
-    throws IOException {
-        conn.setContentType(ContentType.TEXT_HTML);
-        conn.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        conn.getWriter().write("Session Expired");
-    }
+    /** Non-instantiable class. */
+    private CoreServices() { }
 }

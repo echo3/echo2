@@ -61,12 +61,12 @@ import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.clientupdate.DomUpdate;
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.server.Service;
-import nextapp.echo2.webrender.server.WebRenderServlet;
-import nextapp.echo2.webrender.services.JavaScriptService;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.service.JavaScriptService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
@@ -287,7 +287,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.createDomAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
     
     /**
@@ -677,7 +677,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
         String parentId = ContainerInstance.getElementId(update.getParent());
-        DomUpdate.createDomRemove(rc.getServerMessage(), parentId);
+        DomUpdate.renderElementRemove(rc.getServerMessage(), parentId);
         renderAdd(rc, update, targetId, update.getParent());
         return false;
     }

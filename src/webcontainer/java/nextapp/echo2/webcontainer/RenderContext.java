@@ -29,8 +29,8 @@
 
 package nextapp.echo2.webcontainer;
 
-import nextapp.echo2.webrender.clientupdate.ServerMessage;
-import nextapp.echo2.webrender.server.Connection;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ServerMessage;
 
 /**
  * Contextual information relevant for rendering <code>ServerMessage</code>s.
