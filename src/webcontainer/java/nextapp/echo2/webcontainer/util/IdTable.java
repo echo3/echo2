@@ -72,7 +72,10 @@ implements Serializable {
         if (id == null) {
             id = Uid.generateUidString();
             objectToIdMap.put(object, id);
-            WeakReference weakReference = new WeakReference(object, referenceQueue);
+            WeakReference weakReference;
+            synchronized(idToReferenceMap) {
+                weakReference = new WeakReference(object, referenceQueue);
+            }
             idToReferenceMap.put(id, weakReference);
         }
         return id;
@@ -87,7 +90,10 @@ implements Serializable {
      */
     public Object getObject(String id) {
         purge();
-        WeakReference weakReference = (WeakReference) idToReferenceMap.get(id);
+        WeakReference weakReference;
+        synchronized(idToReferenceMap) {
+            weakReference = (WeakReference) idToReferenceMap.get(id);
+        }
         if (weakReference == null) {
             return null;
         }
@@ -110,11 +116,13 @@ implements Serializable {
             reference = referenceQueue.poll();
         }
         
-        Iterator idIt = idToReferenceMap.keySet().iterator();
-        while (idIt.hasNext()) {
-            String id = (String) idIt.next(); //BUGBUG. concurr mod exception here.
-            if (referenceSet.contains(idToReferenceMap.get(id))) {
-                idIt.remove();
+        synchronized(idToReferenceMap) {
+            Iterator idIt = idToReferenceMap.keySet().iterator();
+            while (idIt.hasNext()) {
+                String id = (String) idIt.next();
+                if (referenceSet.contains(idToReferenceMap.get(id))) {
+                    idIt.remove();
+                }
             }
         }
     }
