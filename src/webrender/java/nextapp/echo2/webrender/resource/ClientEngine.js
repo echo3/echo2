@@ -1349,6 +1349,27 @@ EchoServerTransaction.responseHandler = function(conn) {
     EchoServerMessage.process();
 };
 
+// _______________________
+// Object EchoWindowUpdate
+
+function EchoWindowUpdate() { }
+
+EchoWindowUpdate.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "settitle":
+                EchoWindowUpdate.processSetTitle(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+EchoWindowUpdate.processSetTitle = function(setTitleElement) {
+    document.title = setTitleElement.getAttribute("title");
+};
+
 // _____________________
 // Static Initialization
 

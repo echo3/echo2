@@ -33,13 +33,13 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
+import nextapp.echo2.webcontainer.PropertyRenderRegistry;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RootSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
-
-//BUGBUG. does not currently support updates to window title.
+import nextapp.echo2.webrender.servermessage.WindowUpdate;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Window</code> components.
@@ -50,6 +50,28 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 public class WindowPeer 
 implements RootSynchronizePeer {
 
+    private PropertyRenderRegistry propertyRenderRegistry;
+
+    /**
+     * Default contructor.
+     */
+    public WindowPeer() {
+        super();
+        propertyRenderRegistry = new PropertyRenderRegistry();
+        propertyRenderRegistry.add(Window.PROPERTY_TITLE, new PropertyRenderRegistry.PropertyRenderAdapter() {
+            
+            /**
+             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
+             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+             */
+            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+                Window window = (Window) update.getParent();
+                String title = (String) window.getProperty(Window.PROPERTY_TITLE);
+                WindowUpdate.renderSetWindowTitle(rc.getServerMessage(), title);
+            }
+        });
+    }
+       
     /**
      * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
@@ -94,7 +116,21 @@ implements RootSynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        renderRefresh(rc, update, update.getParent());
-        return true;
+        boolean fullRefresh;
+        if (update.hasAddedChildren() || update.hasRemovedChildren() || update.hasUpdatedLayoutDataChildren()) {
+            fullRefresh = true;
+        } else if (update.hasUpdatedProperties() && propertyRenderRegistry.canProcess(rc, update)) {
+            fullRefresh = false;
+        } else {
+            fullRefresh = true;
+        }
+        
+        if (fullRefresh) {
+            renderRefresh(rc, update, update.getParent());
+        } else {
+            propertyRenderRegistry.process(rc, update);
+        }
+        
+        return fullRefresh;
     }
 }
