@@ -51,19 +51,9 @@ public class ExtentRender {
     }
     
     /**
-     * Renders an <code>Extent</code> property value to a CSS dimensioned
-     * attribute value.
-     * 
-     * @param extent the property value
-     * @return the CSS attribute value
-     */
-    public static final String renderCssAttributeValue(Extent extent) {
-        return extent.getValue() + renderUnits(extent.getUnits());
-    }
-    
-    /**
-     * Renders an <code>Extent</code> property value to a CSS dimensioned
-     * attribute value in pixels
+     * Attempts to render a given <code>Extent</code> to a pixel CSS attribute 
+     * value.  Returns null if the the extent can not be represented by a pixel
+     * value. 
      * 
      * @param extent the property value
      * @return the CSS attribute value
@@ -74,6 +64,17 @@ public class ExtentRender {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Renders an <code>Extent</code> property value to a CSS dimensioned
+     * attribute value.
+     * 
+     * @param extent the property value
+     * @return the CSS attribute value
+     */
+    public static final String renderCssAttributeValue(Extent extent) {
+        return extent.getValue() + renderUnits(extent.getUnits());
     }
     
     /**

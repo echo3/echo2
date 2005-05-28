@@ -467,19 +467,19 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         windowDivCssStyle.setAttribute("z-index", Integer.toString(windowPane.getZIndex()));
         windowDivCssStyle.setAttribute("padding", "0px");
         windowDivCssStyle.setAttribute("position", "absolute");
-        windowDivCssStyle.setAttribute("top", ExtentRender.renderCssAttributeValue((Extent) windowPane.getRenderProperty(
+        windowDivCssStyle.setAttribute("top", ExtentRender.renderCssAttributePixelValue((Extent) windowPane.getRenderProperty(
                 WindowPane.PROPERTY_POSITION_Y, DEFAULT_POSITION_Y)));
-        windowDivCssStyle.setAttribute("left", ExtentRender.renderCssAttributeValue((Extent) windowPane.getRenderProperty(
+        windowDivCssStyle.setAttribute("left", ExtentRender.renderCssAttributePixelValue((Extent) windowPane.getRenderProperty(
                 WindowPane.PROPERTY_POSITION_X, DEFAULT_POSITION_X)));
         if (width == null) {
             windowDivCssStyle.setAttribute("width", DEFAULT_WIDTH);
         } else {
-            windowDivCssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
+            windowDivCssStyle.setAttribute("width", ExtentRender.renderCssAttributePixelValue(width));
         }
         if (height == null) {
             windowDivCssStyle.setAttribute("height", DEFAULT_HEIGHT);
         } else {
-            windowDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+            windowDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributePixelValue(height));
         }
         windowDivElement.setAttribute("style", windowDivCssStyle.renderInline());
         parentNode.appendChild(windowDivElement);

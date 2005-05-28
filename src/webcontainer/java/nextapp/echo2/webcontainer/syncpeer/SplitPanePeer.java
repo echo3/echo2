@@ -711,11 +711,11 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         if (splitPaneLayoutData != null) {
             if (splitPaneLayoutData.getMinimumSize() != null) {
                 itemElement.setAttribute("minimumsize", 
-                        ExtentRender.renderCssAttributeValue(splitPaneLayoutData.getMinimumSize())); 
+                        ExtentRender.renderCssAttributePixelValue(splitPaneLayoutData.getMinimumSize())); 
             }
             if (splitPaneLayoutData.getMaximumSize() != null) {
                 itemElement.setAttribute("maximumsize", 
-                        ExtentRender.renderCssAttributeValue(splitPaneLayoutData.getMaximumSize())); 
+                        ExtentRender.renderCssAttributePixelValue(splitPaneLayoutData.getMaximumSize())); 
             }
         }
     }
