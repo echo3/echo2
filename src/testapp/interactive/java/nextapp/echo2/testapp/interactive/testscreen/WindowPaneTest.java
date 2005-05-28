@@ -73,6 +73,22 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
+            addButton("Add Modal Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final WindowPane windowPane = new WindowPane();
+                    positionWindowPane(windowPane);
+                    windowPane.setTitle("Modal Window #" + windowNumber++);
+                    windowPane.setTitleInsets(new Insets(10, 5));
+                    windowPane.setTitleBackground(new Color(0x2f2f4f));
+                    windowPane.setInsets(new Insets(10));
+                    windowPane.setWidth(new Extent(500));
+                    windowPane.setHeight(new Extent(280));
+                    targetContentPane.add(windowPane);
+                    windowPane.setStyleName("default");
+                    windowPane.setModal(true);
+                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                }
+            });
             addButton("Add Constrained Size Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();

@@ -279,6 +279,22 @@ EchoClientEngine.init = function(baseServerUri) {
     EchoServerTransaction.connect();
 };
 
+/**
+ * Verifies that the given element is eligible to receive input at this time.
+ * This method should be invoked before procsesing any user input.
+ * This method will ensure that no server transaction is active and the element
+ * is within the current modal context.
+ */
+EchoClientEngine.verifyInput = function(elementId) {
+    if (EchoServerTransaction.active) {
+        return false;
+    }
+    if (!EchoModalManager.isElementInModalContext(elementId)) {
+        return false;
+    }
+    return true;
+};
+
 // ________________________
 // Object EchoClientMessage
 
@@ -1071,6 +1087,56 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
                 throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
             }
         }
+    }
+};
+
+// _______________________
+// Object EchoModalManager
+
+/**
+ * Manages active modal objects.
+ */
+function EchoModalManager() { }
+
+EchoModalManager.modalElementMap = new Array();
+
+EchoModalManager.isAncestorOf = function(ancestorElement, descendantElement) {
+    var testNode = descendantElement;
+    while (testNode != null) {
+        if (testNode == ancestorElement) {
+            return true;
+        }
+        testNode = testNode.parentNode;
+    }
+    return false;
+};
+
+EchoModalManager.isElementInModalContext = function(elementId) {
+    var element = document.getElementById(elementId);
+    for (modalElementId in EchoModalManager.modalElementMap) {
+        var modalElement = document.getElementById(modalElementId);
+        if (!EchoModalManager.isAncestorOf(modalElement, element)) {
+            return false;
+        }
+    }
+    return true;
+};
+
+EchoModalManager.isModal = function(elementId) {
+    return EchoModalManager.modalElementMap[elementId] === true;
+};
+
+/**
+ * Sets the modal state of an element.
+ *
+ * @param elementId the id of the element
+ * @param newState the new modal state
+ */
+EchoModalManager.setModal = function(elementId, newState) {
+    if (newState) {
+        EchoModalManager.modalElementMap[elementId] = true;
+    } else {
+        delete EchoModalManager.modalElementMap[elementId];
     }
 };
 

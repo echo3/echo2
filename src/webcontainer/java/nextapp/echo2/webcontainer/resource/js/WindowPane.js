@@ -71,6 +71,7 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement)
 
         var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
         EchoWindowPane.ZIndexManager.removeElement(containerId, elementId);
+        EchoModalManager.setModal(elementId, false);
     }
 };
 
@@ -80,6 +81,7 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
         var movable = item.getAttribute("movable") == "true";
         var resizable = item.getAttribute("resizable") == "true";
         var containerId = item.getAttribute("containerid");
+        var modal = item.getAttribute("modal") == "true";
         
         if (item.getAttribute("minimumwidth")) {
             EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", item.getAttribute("minimumwidth"));
@@ -94,6 +96,9 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
             EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", item.getAttribute("maximumheight"));
         }
         
+        if (modal) {
+            EchoModalManager.setModal(elementId, true);
+        }
         EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
         EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
         EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
@@ -289,7 +294,11 @@ EchoWindowPane.getClientWidth = function(element) {
 };
 
 EchoWindowPane.processBorderMouseDown = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
+    var componentId = EchoDomUtil.getComponentId(elementId);
     EchoWindowPane.raise(componentId);
     EchoWindowPane.processBorderDragMouseDown(echoEvent);
 };
@@ -410,10 +419,10 @@ EchoWindowPane.processBorderDragMouseUp = function(e) {
  * @param echoEvent the event
  */
 EchoWindowPane.processCloseClick = function(echoEvent) {
-    if (EchoServerTransaction.active) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
     var componentId = EchoDomUtil.getComponentId(elementId);
     EchoClientMessage.setActionValue(componentId, "close");
     EchoServerTransaction.connect();
@@ -430,8 +439,8 @@ EchoWindowPane.processCloseMouseDown = function(echoEvent) {
 };
 
 EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
+    EchoDomUtil.preventEventDefault(echoEvent);
     var windowPaneElement = document.getElementById(componentId);
     
     if (windowPaneElement != EchoWindowPane.activeElement) {
@@ -518,6 +527,10 @@ EchoWindowPane.processTitleDragMouseUp = function(e) {
  *        EchoEventProcessor
  */
 EchoWindowPane.processTitleMouseDown = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
     EchoWindowPane.raise(componentId);
     EchoWindowPane.processTitleDragMouseDown(echoEvent);

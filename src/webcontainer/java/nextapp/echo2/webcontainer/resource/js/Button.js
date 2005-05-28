@@ -209,26 +209,27 @@ EchoButton.ieRepaint = function(buttonElement) {
 };
 
 EchoButton.processClick = function(echoEvent) {
-    if (EchoServerTransaction.active) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
     EchoButton.doAction(elementId);
 };
 
 EchoButton.processKeyPressed = function(echoEvent) {
-    if (EchoServerTransaction.active) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
     if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
-	    var elementId = echoEvent.registeredTarget.getAttribute("id");
 	    EchoButton.doAction(elementId);
     }
 };
 
 EchoButton.processPressed = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
-    if (EchoServerTransaction.active) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
     var eventTarget = echoEvent.registeredTarget;
@@ -240,7 +241,8 @@ EchoButton.processReleased = function(echoEvent) {
 };
 
 EchoButton.processRolloverEnter = function(echoEvent) {
-    if (EchoServerTransaction.active) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
     var eventTarget = echoEvent.registeredTarget;
