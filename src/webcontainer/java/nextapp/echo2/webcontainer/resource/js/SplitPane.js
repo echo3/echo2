@@ -159,6 +159,10 @@ EchoSplitPane.dispose = function() {
  *        EchoEventProcessor
  */
 EchoSplitPane.mouseDown = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
     var mouseDownElement = echoEvent.target;
     if (mouseDownElement != EchoSplitPane.separatorElement) {
         EchoSplitPane.activePaneSeparatorDiv = mouseDownElement;
