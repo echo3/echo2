@@ -49,19 +49,28 @@ EchoTextComponent.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
-EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement) {
+EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.removeHandler(elementId, "blur");
+        EchoEventProcessor.removeHandler(elementId, "keydown");
         EchoEventProcessor.removeHandler(elementId, "keyup");
     }
 };
 
-EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
+EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processUpdate");
+        EchoEventProcessor.addHandler(elementId, "keydown", "EchoTextComponent.processKeyDown");
         EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processUpdate");
+    }
+};
+
+EchoTextComponent.processKeyDown = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        EchoDomUtil.preventEventDefault(elementId);
     }
 };
 

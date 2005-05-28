@@ -197,7 +197,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         String elementId = ContainerInstance.getElementId(textComponent);
         ServerMessage serverMessage = rc.getServerMessage();
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoWindowPane.MessageProcessor", "dispose", new String[0], new String[0]);
+                "EchoTextComponent.MessageProcessor", "dispose", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
@@ -215,7 +215,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         String elementId = ContainerInstance.getElementId(textComponent);
         ServerMessage serverMessage = rc.getServerMessage();
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoWindowPane.MessageProcessor", "init", new String[0], new String[0]);
+                "EchoTextComponent.MessageProcessor", "init", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
