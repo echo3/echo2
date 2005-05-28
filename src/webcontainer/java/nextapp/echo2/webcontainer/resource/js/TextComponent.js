@@ -54,7 +54,7 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.removeHandler(elementId, "blur");
         EchoEventProcessor.removeHandler(elementId, "keydown");
-        EchoEventProcessor.removeHandler(elementId, "keyup");
+        EchoEventProcessor.removeHandler(elementId, "keypress");
     }
 };
 
@@ -62,21 +62,24 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processUpdate");
+        EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processUpdate");
         EchoEventProcessor.addHandler(elementId, "keydown", "EchoTextComponent.processKeyDown");
-        EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processUpdate");
     }
 };
 
 EchoTextComponent.processKeyDown = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
-        EchoDomUtil.preventEventDefault(elementId);
+        EchoDomUtil.preventEventDefault(echoEvent);
     }
 };
 
-EchoTextComponent.processUpdate = function(e) {
-    var textComponent = e.target;
+EchoTextComponent.processUpdate = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
     var elementId = textComponent.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        EchoDomUtil.preventEventDefault(echoEvent);
+    }
 
     var propertyElement = EchoClientMessage.createPropertyElement(elementId, "text");
 
