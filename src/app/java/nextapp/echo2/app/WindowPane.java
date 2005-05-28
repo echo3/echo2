@@ -36,7 +36,7 @@ package nextapp.echo2.app;
  * <strong>NOTE:</strong> A <code>WindowPane</code> may only be added to 
  * a <code>ContentPane</code>.
  * <p>
- * <strong>Child LayoutData</code>: Children of this component may provide
+ * <strong>Child LayoutData</strong>: Children of this component may provide
  * layout information using the 
  * <code>nextapp.echo2.app.layout.WindowPaneLayoutData</code> layout data object.
  * 
@@ -53,9 +53,13 @@ implements ModalSupport {
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_MAXIMUM_HEIGHT = "maximumHeight";
+    public static final String PROPERTY_MAXIMUM_WIDTH = "maximumWidth";
+    public static final String PROPERTY_MINIMUM_HEIGHT = "minimumHeight";
+    public static final String PROPERTY_MINIMUM_WIDTH = "minimumWidth";
+    public static final String PROPERTY_MOVABLE = "movable";
     public static final String PROPERTY_POSITION_X = "positionX";
     public static final String PROPERTY_POSITION_Y = "positionY";
-    public static final String PROPERTY_MOVABLE = "movable";
     public static final String PROPERTY_RESIZABLE = "resizable";
     public static final String PROPERTY_TITLE = "title";
     public static final String PROPERTY_TITLE_BACKGROUND = "titleBackground";
@@ -178,6 +182,46 @@ implements ModalSupport {
      */
     public Insets getInsets() {
         return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
+    /**
+     * Returns the maximum height of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @return the maximum height
+     */
+    public Extent getMaximumHeight() {
+        return (Extent) getProperty(PROPERTY_MAXIMUM_HEIGHT);
+    }
+    
+    /**
+     * Returns the maximum width of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @return the maximum width
+     */
+    public Extent getMaximumWidth() {
+        return (Extent) getProperty(PROPERTY_MAXIMUM_WIDTH);
+    }
+    
+    /**
+     * Returns the minimum height of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @return the minimum height
+     */
+    public Extent getMinimumHeight() {
+        return (Extent) getProperty(PROPERTY_MINIMUM_HEIGHT);
+    }
+    
+    /**
+     * Returns the minimum width of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @return the minimum width
+     */
+    public Extent getMinimumWidth() {
+        return (Extent) getProperty(PROPERTY_MINIMUM_WIDTH);
     }
     
     /**
@@ -405,6 +449,46 @@ implements ModalSupport {
      */
     public void setInsets(Insets newValue) {
         setProperty(PROPERTY_INSETS, newValue);
+    }
+    
+    /**
+     * Sets the maximum height of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @param newValue the new maximum height
+     */
+    public void setMaximumHeight(Extent newValue) {
+        setProperty(PROPERTY_MAXIMUM_HEIGHT, newValue);
+    }
+    
+    /**
+     * Sets the maximum width of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @param newValue the new maximum width
+     */
+    public void setMaximumWidth(Extent newValue) {
+        setProperty(PROPERTY_MAXIMUM_WIDTH, newValue);
+    }
+    
+    /**
+     * Sets the minimum height of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @param newValue the new minimum height
+     */
+    public void setMinimumHeight(Extent newValue) {
+        setProperty(PROPERTY_MINIMUM_HEIGHT, newValue);
+    }
+    
+    /**
+     * Sets the minimum width of the content region of the 
+     * <code>WindowPane</code>.
+     * 
+     * @param newValue the new minimum width
+     */
+    public void setMinimumWidth(Extent newValue) {
+        setProperty(PROPERTY_MINIMUM_WIDTH, newValue);
     }
     
     /**

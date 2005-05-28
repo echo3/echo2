@@ -649,6 +649,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         ServerMessage serverMessage = rc.getServerMessage();
         boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
         boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
+        String minimumWidth = ExtentRender.renderCssAttributePixelValue(
+                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MINIMUM_WIDTH));
+        String minimumHeight = ExtentRender.renderCssAttributePixelValue(
+                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MINIMUM_HEIGHT));
+        String maximumWidth = ExtentRender.renderCssAttributePixelValue(
+                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MAXIMUM_WIDTH));
+        String maximumHeight = ExtentRender.renderCssAttributePixelValue(
+                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MAXIMUM_HEIGHT));
         
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoWindowPane.MessageProcessor", "init", new String[0], new String[0]);
@@ -657,6 +665,19 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         itemElement.setAttribute("movable", movable ? "true" : "false");
         itemElement.setAttribute("resizable", resizable ? "true" : "false");
         itemElement.setAttribute("containerid", windowPane.getParent().getId());  //BUGBUG. may want to move into keys.
+        if (minimumWidth != null) {
+            itemElement.setAttribute("minimumwidth", minimumWidth);
+        }
+        if (minimumHeight != null) {
+            itemElement.setAttribute("minimumheight", minimumHeight);
+        }
+        if (maximumWidth != null) {
+            itemElement.setAttribute("maximumwidth", maximumWidth);
+        }
+        if (maximumHeight != null) {
+            itemElement.setAttribute("maximumheight", maximumHeight);
+        }
+        
         itemizedUpdateElement.appendChild(itemElement);
     }
 

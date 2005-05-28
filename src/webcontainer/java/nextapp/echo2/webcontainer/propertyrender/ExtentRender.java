@@ -62,6 +62,21 @@ public class ExtentRender {
     }
     
     /**
+     * Renders an <code>Extent</code> property value to a CSS dimensioned
+     * attribute value in pixels
+     * 
+     * @param extent the property value
+     * @return the CSS attribute value
+     */
+    public static final String renderCssAttributePixelValue(Extent extent) {
+        if (extent != null && extent.getUnits() == Extent.PX) {
+            return extent.getValue() + "px";
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Renders 1/2 the distance specified by an <code>Extent</code> property 
      * value to a CSS dimensioned attribute.
      * For example, an extent that would normally render as "3px" would be

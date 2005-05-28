@@ -81,9 +81,21 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
         var resizable = item.getAttribute("resizable") == "true";
         var containerId = item.getAttribute("containerid");
         
+        if (item.getAttribute("minimumwidth")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", item.getAttribute("minimumwidth"));
+        }
+        if (item.getAttribute("maximumwidth")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "maximumWidth", item.getAttribute("maximumwidth"));
+        }
+        if (item.getAttribute("minimumheight")) {             
+            EchoDomPropertyStore.setPropertyValue(elementId, "minimumHeight", item.getAttribute("minimumheight"));
+        }
+        if (item.getAttribute("maximumheight")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", item.getAttribute("maximumheight"));
+        }
+        
         EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
         EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
-        
         EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
         if (movable) {
             EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
@@ -198,11 +210,10 @@ EchoWindowPane.resizeModeHorizontal = 0;
 
 EchoWindowPane.resizeModeVertical = 0;
 
-//BUGBUG. hardcoded.
-EchoWindowPane.minimumWidth = 100;
-EchoWindowPane.minimumHeight = 100;
-EchoWindowPane.maximumWidth= 800;
-EchoWindowPane.maximumHeight = 600;
+EchoWindowPane.minimumWidth = -1;
+EchoWindowPane.minimumHeight = -1;
+EchoWindowPane.maximumWidth= -1;
+EchoWindowPane.maximumHeight = -1;
 
 /** 
  * The maximum allowed horizontal position of the upper-left corner of 
@@ -304,10 +315,19 @@ EchoWindowPane.processBorderDragMouseDown = function(echoEvent) {
     case "br": EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical =  1; break;
     default: throw "Invalid direction name: " + directionName;
     }
-    
+
     var componentId = EchoDomUtil.getComponentId(elementId);
+    var minimumWidth = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "minimumWidth"));
+    var minimumHeight = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "minimumHeight"));
+    var maximumWidth = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "maximumWidth"));
+    var maximumHeight = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "maximumHeight"));
     var windowPaneElement = document.getElementById(componentId);
+
     if (windowPaneElement != EchoWindowPane.activeElement) {
+	    EchoWindowPane.minimumWidth = isNaN(minimumWidth) ? 100 : minimumWidth;
+	    EchoWindowPane.minimumHeight = isNaN(minimumHeight) ? 100 : minimumHeight;
+	    EchoWindowPane.maximumWidth = isNaN(maximumWidth) ? 800 : maximumWidth;
+	    EchoWindowPane.maximumHeight = isNaN(maximumHeight) ? 600 : maximumHeight;
 
         EchoWindowPane.activeElement = windowPaneElement;
         EchoWindowPane.mouseOffsetX = echoEvent.clientX;
@@ -383,16 +403,6 @@ EchoWindowPane.processBorderDragMouseUp = function(e) {
 };
 
 /**
- * Event handler for "MouseDown" events on the close button.
- * Avoids close button mouse-down clicks from being processed by drag initiation handler.
- *
- * @param echoEvent the event
- */
-EchoWindowPane.processCloseMouseDown = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-};
-
-/**
  * Event handler for "Click" events on the close button.
  * Notifies server of user action.
  *
@@ -406,6 +416,16 @@ EchoWindowPane.processCloseClick = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(elementId);
     EchoClientMessage.setActionValue(componentId, "close");
     EchoServerTransaction.connect();
+};
+
+/**
+ * Event handler for "MouseDown" events on the close button.
+ * Avoids close button mouse-down clicks from being processed by drag initiation handler.
+ *
+ * @param echoEvent the event
+ */
+EchoWindowPane.processCloseMouseDown = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
 };
 
 EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {

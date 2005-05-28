@@ -73,6 +73,25 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
+            addButton("Add Constrained Size Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final WindowPane windowPane = new WindowPane();
+                    positionWindowPane(windowPane);
+                    windowPane.setTitle("Constrained Size Window #" + windowNumber++);
+                    windowPane.setTitleInsets(new Insets(10, 5));
+                    windowPane.setTitleBackground(new Color(0x2f2f4f));
+                    windowPane.setInsets(new Insets(10));
+                    windowPane.setWidth(new Extent(500));
+                    windowPane.setHeight(new Extent(280));
+                    windowPane.setMinimumWidth(new Extent(400));
+                    windowPane.setMaximumWidth(new Extent(500));
+                    windowPane.setMinimumHeight(new Extent(200));
+                    windowPane.setMaximumHeight(new Extent(280));
+                    targetContentPane.add(windowPane);
+                    windowPane.setStyleName("default");
+                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                }
+            });
             addButton("Add Default-Border Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();
