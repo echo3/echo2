@@ -55,11 +55,11 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
-import nextapp.echo2.webrender.servermessage.EventUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
@@ -182,8 +182,43 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        EventUpdate.renderEventRemove(rc.getServerMessage(), "blur", ContainerInstance.getElementId(component));
-        EventUpdate.renderEventRemove(rc.getServerMessage(), "keyup", ContainerInstance.getElementId(component));
+        renderDisposeDirective(rc, (TextComponent) component);
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a text component, performing tasks such as 
+     * registering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param textComponent the <code>TextComponent<code>
+     */
+    public void renderDisposeDirective(RenderContext rc, TextComponent textComponent) {
+        String elementId = ContainerInstance.getElementId(textComponent);
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoWindowPane.MessageProcessor", "dispose", new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a text component, performing tasks such as 
+     * registering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param textComponent the <code>TextComponent<code>
+     */
+    public void renderInitDirective(RenderContext rc, TextComponent textComponent) {
+        String elementId = ContainerInstance.getElementId(textComponent);
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoWindowPane.MessageProcessor", "init", new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        itemizedUpdateElement.appendChild(itemElement);
     }
     
     /**

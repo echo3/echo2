@@ -40,7 +40,6 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.EventUpdate;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.TextArea</code> components.
@@ -83,7 +82,7 @@ public class TextAreaPeer extends TextComponentPeer {
         }
         
         parentNode.appendChild(textAreaElement);
-        EventUpdate.renderEventAdd(rc.getServerMessage(), "keyup", elementId, "EchoTextComponent.processUpdate");
-        EventUpdate.renderEventAdd(rc.getServerMessage(), "blur", elementId, "EchoTextComponent.processUpdate");
+
+        renderInitDirective(rc, textArea);
     }
 }

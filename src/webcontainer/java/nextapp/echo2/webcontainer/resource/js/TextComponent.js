@@ -32,9 +32,43 @@
 
 EchoTextComponent = function() { };
 
+EchoTextComponent.MessageProcessor = function() { };
+
+EchoTextComponent.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                EchoTextComponent.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                EchoTextComponent.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement) {
+    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoEventProcessor.removeHandler(elementId, "blur");
+        EchoEventProcessor.removeHandler(elementId, "keyup");
+    }
+};
+
+EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
+    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processUpdate");
+        EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processUpdate");
+    }
+};
+
 EchoTextComponent.processUpdate = function(e) {
     var textComponent = e.target;
     var elementId = textComponent.getAttribute("id");
+
     var propertyElement = EchoClientMessage.createPropertyElement(elementId, "text");
 
     if (propertyElement.firstChild) {
