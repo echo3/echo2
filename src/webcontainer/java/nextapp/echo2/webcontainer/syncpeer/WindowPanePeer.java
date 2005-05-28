@@ -78,7 +78,9 @@ import nextapp.echo2.webrender.util.DomUtil;
 public class WindowPanePeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, SynchronizePeer {
 
-    private static final FillImageBorder DEFAULT_BORDER = new FillImageBorder(new Color(0x00007f), new Insets(20), new Insets(3));
+    private static final Insets DEFAULT_CONTENT_INSETS = new Insets(3);
+    private static final FillImageBorder DEFAULT_BORDER 
+            = new FillImageBorder(new Color(0x00007f), new Insets(20), DEFAULT_CONTENT_INSETS);
     private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
     private static final Extent DEFAULT_POSITION_Y = new Extent(64, Extent.PX);
     private static final String DEFAULT_WIDTH = "512px";
@@ -677,7 +679,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (maximumHeight != null) {
             itemElement.setAttribute("maximumheight", maximumHeight);
         }
-        
         itemizedUpdateElement.appendChild(itemElement);
     }
 

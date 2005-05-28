@@ -207,7 +207,6 @@ EchoWindowPane.mouseOffsetY = -1;
 EchoWindowPane.activeElement = null;
 
 EchoWindowPane.resizeModeHorizontal = 0;
-
 EchoWindowPane.resizeModeVertical = 0;
 
 EchoWindowPane.minimumWidth = -1;
@@ -242,6 +241,8 @@ EchoWindowPane.getClientHeight = function(element) {
     }
     return 0;
 };
+
+//BUGBUG. getBorderHeight/Width need to be redone.
 
 /**
  * Determines the height of the floating window's border.
@@ -456,7 +457,7 @@ EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {
         if (containerHeight === 0) {
             containerHeight = 600;
         }
-        EchoWindowPane.maxY = containerHeight- EchoWindowPane.activeElement.clientHeight - borderHeight;
+        EchoWindowPane.maxY = containerHeight - EchoWindowPane.activeElement.clientHeight - borderHeight;
         if (EchoWindowPane.maxY < 0) {
             EchoWindowPane.maxY = 0;
         }
@@ -522,6 +523,11 @@ EchoWindowPane.processTitleMouseDown = function(echoEvent) {
     EchoWindowPane.processTitleDragMouseDown(echoEvent);
 };
 
+/**
+ * Raises the specified WindowPane to the top.
+ *
+ * @param windowComponentId the id of the window pane
+ */
 EchoWindowPane.raise = function(windowComponentId) {
     var containerId = EchoDomPropertyStore.getPropertyValue(windowComponentId, "containerId");
     var zIndex = EchoWindowPane.ZIndexManager.raise(containerId, windowComponentId);

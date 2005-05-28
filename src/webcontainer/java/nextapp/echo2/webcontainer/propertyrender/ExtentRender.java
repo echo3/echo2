@@ -37,7 +37,7 @@ import nextapp.echo2.webrender.output.CssStyle;
  * properties to CSS.
  */
 public class ExtentRender {
-
+    
     /**
      * Determines if the given <code>Extent</code> is of zero length.
      * This method interprets null <code>Extent</code>s to be of zero 
@@ -135,7 +135,6 @@ public class ExtentRender {
     /**
      * Creates an <code>Extent</code> from the given CSS dimensioned attribute 
      * value.
-     * <p>
      * 
      * @param extentString the CSS dimensioned attribute value
      * @return an equivalent <code>Extent</code>, or null if the input 
