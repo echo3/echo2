@@ -53,6 +53,7 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.removeHandler(elementId, "blur");
+        EchoEventProcessor.removeHandler(elementId, "focus");
         EchoEventProcessor.removeHandler(elementId, "keydown");
         EchoEventProcessor.removeHandler(elementId, "keypress");
     }
@@ -61,26 +62,15 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
 EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processUpdate");
-        EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processUpdate");
+        EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
+        EchoEventProcessor.addHandler(elementId, "focus", "EchoTextComponent.processFocus");
+        EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processKeyPress");
         EchoEventProcessor.addHandler(elementId, "keydown", "EchoTextComponent.processKeyDown");
     }
 };
 
-EchoTextComponent.processKeyDown = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        EchoDomUtil.preventEventDefault(echoEvent);
-    }
-};
-
-EchoTextComponent.processUpdate = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
+EchoTextComponent.doUpdate = function(textComponent) {
     var elementId = textComponent.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        EchoDomUtil.preventEventDefault(echoEvent);
-    }
-
     var propertyElement = EchoClientMessage.createPropertyElement(elementId, "text");
 
     if (propertyElement.firstChild) {
@@ -89,4 +79,39 @@ EchoTextComponent.processUpdate = function(echoEvent) {
         propertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(textComponent.value));
     }
     EchoDebugManager.updateClientMessage();
+};
+
+EchoTextComponent.processBlur = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    var elementId = textComponent.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
+    EchoTextComponent.doUpdate(textComponent);
+};
+
+EchoTextComponent.processFocus = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    var elementId = textComponent.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
+};
+
+EchoTextComponent.processKeyDown = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    var elementId = textComponent.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        EchoDomUtil.preventEventDefault(echoEvent);
+    }
+};
+
+EchoTextComponent.processKeyPress = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    var elementId = textComponent.getAttribute("id");
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        EchoDomUtil.preventEventDefault(echoEvent);
+        return;
+    }
+    EchoTextComponent.doUpdate(textComponent);
 };
