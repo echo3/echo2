@@ -107,6 +107,30 @@ EchoListComponent.applyStyle = function(element, cssText) {
     }
 };
 
+EchoListComponent.doChange = function(elementId) {
+    var element = document.getElementById(elementId);
+    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
+
+    // remove previous values
+    while(propertyElement.hasChildNodes()){
+        propertyElement.removeChild(propertyElement.firstChild);
+    }
+
+    var options = element.options;
+
+    // add new values        
+    for (var i = 0; i < options.length; ++i) {
+        if (options[i].selected) {
+            var optionId = options[i].id;
+            var optionElement = EchoClientMessage.messageDocument.createElement("option");
+            optionElement.setAttribute("id", optionId);
+            propertyElement.appendChild(optionElement);
+        }
+    }
+
+    EchoDebugManager.updateClientMessage();
+};
+
 EchoListComponent.processRolloverEnter = function(echoEvent) {
     var optionElement = echoEvent.registeredTarget;
     var elementId = optionElement.id;
@@ -137,28 +161,4 @@ EchoListComponent.processSelection = function(echoEvent) {
         return;
     }
     EchoListComponent.doChange(elementId);
-};
-
-EchoListComponent.doChange = function(elementId) {
-    var element = document.getElementById(elementId);
-    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
-
-    // remove previous values
-    while(propertyElement.hasChildNodes()){
-        propertyElement.removeChild(propertyElement.firstChild);
-    }
-
-    var options = element.options;
-
-    // add new values        
-    for (var i = 0; i < options.length; ++i) {
-        if (options[i].selected) {
-            var optionId = options[i].id;
-            var optionElement = EchoClientMessage.messageDocument.createElement("option");
-            optionElement.setAttribute("id", optionId);
-            propertyElement.appendChild(optionElement);
-        }
-    }
-
-    EchoDebugManager.updateClientMessage();
 };
