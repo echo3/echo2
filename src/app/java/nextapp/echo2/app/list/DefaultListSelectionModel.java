@@ -148,7 +148,6 @@ implements ListSelectionModel, Serializable {
                     }
                 }
             }
-            
             fireValueChanged();
         }
     }
@@ -164,7 +163,7 @@ implements ListSelectionModel, Serializable {
                 setSelectedIndex(i, false);
             }
         }
-    
         this.selectionMode = selectionMode;
+        fireValueChanged();
     }
 }

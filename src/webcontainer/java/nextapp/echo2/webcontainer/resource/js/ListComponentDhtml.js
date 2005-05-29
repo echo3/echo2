@@ -91,6 +91,7 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
             EchoDomPropertyStore.setPropertyValue(optionId, "selectedState", true);
         }
         
+        EchoDomPropertyStore.setPropertyValue(elementId, "multiple", multiple);
         EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
         EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
         EchoDomPropertyStore.setPropertyValue(elementId, "selectedStyle", selectedStyle);
