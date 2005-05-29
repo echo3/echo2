@@ -49,7 +49,6 @@ import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.DomPropertyStore;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
 import org.w3c.dom.Element;
@@ -64,6 +63,15 @@ import org.w3c.dom.Node;
 public class ListBoxPeer extends AbstractListComponentPeer {
     
     public static final int DEFAULT_ROW_COUNT = 5;
+    
+    private static final Color SELECTED_BACKGROUND = new Color(10, 36, 106);
+    private static final Color SELECTED_FOREGROUND = Color.WHITE;
+    private static final String SELECTED_CSS_STYLE_TEXT;
+    static {
+        CssStyle style = new CssStyle();
+        ColorRender.renderToStyle(style, SELECTED_FOREGROUND, SELECTED_BACKGROUND);
+        SELECTED_CSS_STYLE_TEXT = style.renderInline();
+    }
 
     /**
      * Service to provide supporting JavaScript library.
@@ -148,8 +156,9 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      *         target client
      */
     private boolean isDhtmlComponentRequired(RenderContext rc) {
-        ClientProperties clientProperties = rc.getContainerInstance().getClientProperties();
-        return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE);
+        return true;
+//        ClientProperties clientProperties = rc.getContainerInstance().getClientProperties();
+//        return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE);
     }
 
     /**
@@ -185,13 +194,36 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * registering event listeners on the client.
      * 
      * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the list component
+     * @param listBox the <code>ListBox</code>
      */
-    private void renderDhtmlInitDirective(ServerMessage serverMessage, String elementId) {
+    private void renderDhtmlInitDirective(ServerMessage serverMessage, ListBox listBox) {
+        String elementId = ContainerInstance.getElementId(listBox);
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoListComponentDhtml.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
+        
+        CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
+        itemElement.setAttribute("defaultstyle", defaultCssStyle.renderInline());
+        CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
+        itemElement.setAttribute("rolloverstyle", rolloverCssStyle.renderInline());
+        itemElement.setAttribute("selectedstyle", SELECTED_CSS_STYLE_TEXT);
+        itemElement.setAttribute("multiple", 
+                ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "true" : "false");
+
+        Element selectionElement = serverMessage.getDocument().createElement("selection");
+        ListModel model = listBox.getModel();
+        for (int i = 0; i < model.size(); i++) {
+            boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
+            if (selected) {
+                Element selectionItemElement = serverMessage.getDocument().createElement("selectionitem");
+                selectionItemElement.setAttribute("optionid", getOptionId(elementId, i));
+                selectionElement.appendChild(selectionItemElement);
+            }
+        }
+        if (selectionElement.hasChildNodes()) {
+            itemElement.appendChild(selectionElement);
+        }
         itemizedUpdateElement.appendChild(itemElement);
     }
 
@@ -225,13 +257,10 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(LIST_COMPONENT_DHTML_SERVICE.getId(), true);
 
-        renderDhtmlInitDirective(serverMessage, elementId);
+        renderDhtmlInitDirective(serverMessage, listBox);
 
         Element listBoxElement = parentNode.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
-        
-        CssStyle selectedCssStyle  = new CssStyle();
-        ColorRender.renderToStyle(selectedCssStyle, DEFAULT_SELECTED_FOREGROUND, DEFAULT_SELECTED_BACKGROUND);
 
         ListModel model = listBox.getModel();
 
@@ -245,8 +274,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(model.get(i).toString()));
 
             if (selected) {
-                optionElement.setAttribute("style", selectedCssStyle.renderInline());
-                DomPropertyStore.renderSetProperty(serverMessage, optionId, "selectedState", "selected");
+                optionElement.setAttribute("style", SELECTED_CSS_STYLE_TEXT);
             }
 
             listBoxElement.appendChild(optionElement);
@@ -254,18 +282,6 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
         CssStyle cssStyle = createListBoxCssStyle(rc, listBox);
         listBoxElement.setAttribute("style", cssStyle.renderInline());
-
-        CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
-        DomPropertyStore.renderSetProperty(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
-
-        DomPropertyStore.renderSetProperty(serverMessage, elementId, "selectedStyle", selectedCssStyle.renderInline());
-
-        CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
-        DomPropertyStore.renderSetProperty(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
-
-        if (ListSelectionModel.SINGLE_SELECTION == listBox.getSelectionMode()) {
-            DomPropertyStore.renderSetProperty(serverMessage, elementId, "singleSelect", "true");
-        }
 
         parentNode.appendChild(listBoxElement);
     }

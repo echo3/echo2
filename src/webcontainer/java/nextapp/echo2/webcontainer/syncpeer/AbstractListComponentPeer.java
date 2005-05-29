@@ -78,8 +78,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     protected static final Color DEFAULT_FOREGROUND = Color.BLACK;
     protected static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 150);
     protected static final Color DEFAULT_ROLLOVER_FOREGROUND = Color.BLACK;
-    protected static final Color DEFAULT_SELECTED_BACKGROUND = new Color(10, 36, 106);
-    protected static final Color DEFAULT_SELECTED_FOREGROUND = Color.WHITE;
 
     // Default Sizes
     protected static final Extent DEFAULT_WIDTH = new Extent(5, Extent.EM);
