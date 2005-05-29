@@ -581,7 +581,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         separatorDivCssStyle.setAttribute("line-height", "0px");
         separatorDivCssStyle.setAttribute("position", "absolute");
         separatorDivCssStyle.setAttribute("padding", "0px");
-        separatorDivCssStyle.setAttribute("overflow", "none");
+        separatorDivCssStyle.setAttribute("overflow", "hidden");
         ColorRender.renderToStyle(separatorDivCssStyle, null, 
                 (Color) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_COLOR, DEFAULT_SEPARATOR_COLOR));
         

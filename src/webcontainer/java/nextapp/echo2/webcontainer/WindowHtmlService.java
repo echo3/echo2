@@ -92,7 +92,7 @@ implements Service {
         cssStyle.setAttribute("width", "100%");
         cssStyle.setAttribute("padding", "0px");
         cssStyle.setAttribute("margin", "0px");
-        cssStyle.setAttribute("overflow", "none");
+        cssStyle.setAttribute("overflow", "hidden");
         baseDoc.getBodyElement().setAttribute("style", cssStyle.renderInline());
         Element debugElement = baseDoc.getDocument().createElement("a");
         debugElement.setAttribute("accesskey", "d");
