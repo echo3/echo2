@@ -281,7 +281,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             renderStandardHtml(rc, update, parentNode, component);
         }
     }
-
+    
     /**
      * Renders a standard select-based ListBox using the parent class's
      * implementation.

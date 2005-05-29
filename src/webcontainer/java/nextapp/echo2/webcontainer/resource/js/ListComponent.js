@@ -71,6 +71,12 @@ EchoListComponent.MessageProcessor.processDispose = function(disposeMessageEleme
 EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
+        var defaultStyle = item.getAttribute("defaultstyle");
+        var rolloverStyle = item.getAttribute("rolloverstyle");
+
+        EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
+        EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
+
 	    var selectElement = document.getElementById(elementId + "_select");
 	    var optionElements = selectElement.options;
 	    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
@@ -101,12 +107,45 @@ EchoListComponent.applyStyle = function(element, cssText) {
     }
 };
 
-EchoListComponent.createUpdates = function(elementId,propertyElement){
+EchoListComponent.processRolloverEnter = function(echoEvent) {
+    var optionElement = echoEvent.registeredTarget;
+    var elementId = optionElement.id;
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
+    if (!optionElement.selected) {
+        var style = EchoDomPropertyStore.getPropertyValue(EchoDomUtil.getComponentId(optionElement.id), "rolloverStyle");
+        EchoListComponent.applyStyle(optionElement, style);
+    }
+};
+
+EchoListComponent.processRolloverExit = function(echoEvent) {
+    var optionElement = echoEvent.registeredTarget;
+    var elementId = optionElement.id;
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        return;
+    }
+    var style = EchoDomPropertyStore.getPropertyValue(EchoDomUtil.getComponentId(optionElement.id), "defaultStyle");
+    EchoListComponent.applyStyle(optionElement, style);
+};
+
+EchoListComponent.processSelection = function(echoEvent) {
+    var optionElement = echoEvent.registeredTarget;
+    var elementId = optionElement.id;
+    if (!EchoClientEngine.verifyInput(elementId)) {
+        EchoDomUtil.preventEventDefault(echoEvent);
+        return;
+    }
+    EchoListComponent.doChange(elementId);
+};
+
+EchoListComponent.doChange = function(elementId) {
     var element = document.getElementById(elementId);
+    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
-        var removed = propertyElement.removeChild(propertyElement.firstChild);
+        propertyElement.removeChild(propertyElement.firstChild);
     }
 
     var options = element.options;
@@ -117,37 +156,9 @@ EchoListComponent.createUpdates = function(elementId,propertyElement){
             var optionId = options[i].id;
             var optionElement = EchoClientMessage.messageDocument.createElement("option");
             optionElement.setAttribute("id", optionId);
-            // EchoDebugManager.consoleWrite("added " + optionId);
             propertyElement.appendChild(optionElement);
         }
     }
-};
-
-EchoListComponent.processRolloverEnter = function(echoEvent) {
-    var optionElement = echoEvent.registeredTarget;
-
-    if (!optionElement.selected){
-        var style = EchoDomPropertyStore.getPropertyValue(optionElement.parentNode.id, "rolloverStyle");
-        EchoListComponent.applyStyle(optionElement, style);
-    }
-};
-
-EchoListComponent.processRolloverExit = function(echoEvent) {
-    var optionElement = echoEvent.registeredTarget;
-    var style = EchoDomPropertyStore.getPropertyValue(optionElement.parentNode.parentNode.id, "defaultStyle");
-    EchoListComponent.applyStyle(optionElement, style);
-};
-
-EchoListComponent.processSelection = function(echoEvent) {
-    var optionElement = echoEvent.registeredTarget;
-    EchoListComponent.processUpdates(echoEvent.registeredTarget.id);
-};
-
-EchoListComponent.processUpdates = function(elementId) {
-    var element = document.getElementById(elementId);
-    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
-
-    EchoListComponent.createUpdates(element.id,propertyElement);
 
     EchoDebugManager.updateClientMessage();
 };

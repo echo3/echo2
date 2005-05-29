@@ -55,7 +55,6 @@ import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.DomPropertyStore;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
@@ -161,7 +160,8 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
         Extent width = (Extent) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_WIDTH), DEFAULT_WIDTH);
         Extent height = (Extent) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_HEIGHT),
                 getDefaultHeight());
-        Insets insets = (Insets) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS), DEFAULT_INSETS);
+        Insets insets = (Insets) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS), 
+                DEFAULT_INSETS);
 
         appendDefaultCssStyle(style, listComponent);
         FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT));
@@ -279,11 +279,11 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * @param serverMessage the <code>serverMessage</code>
      * @param elementId the HTML element id of the list component
      */
-    private void renderDisposeDirective(ServerMessage serverMessage, String elementId) {
+    private void renderDisposeDirective(ServerMessage serverMessage, AbstractListComponent listComponent) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
                 "EchoListComponent.MessageProcessor", "dispose",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(listComponent));
         itemizedUpdateElement.appendChild(itemElement);
     }
 
@@ -295,11 +295,17 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * @param serverMessage the <code>serverMessage</code>
      * @param elementId the HTML element id of the list component
      */
-    private void renderInitDirective(ServerMessage serverMessage, String elementId) {
+    private void renderInitDirective(ServerMessage serverMessage, AbstractListComponent listComponent) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoListComponent.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(listComponent));
+        
+        CssStyle defaultCssStyle = createDefaultCssStyle(listComponent);
+        itemElement.setAttribute("defaultstyle", defaultCssStyle.renderInline());
+        CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
+        itemElement.setAttribute("rolloverstyle", rolloverCssStyle.renderInline());
+        
         itemizedUpdateElement.appendChild(itemElement);
     }
 
@@ -311,7 +317,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * @param component the <code>AbstractListComponent</code> being disposed
      */
     protected void renderSelectElementDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        renderDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
+        renderDisposeDirective(rc.getServerMessage(), (AbstractListComponent) component);
     }
     
     /**
@@ -327,7 +333,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      */
     protected void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component, 
             boolean multiple, int visibleRows) {
-        renderInitDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
+        renderInitDirective(rc.getServerMessage(), (AbstractListComponent) component);
 
         AbstractListComponent listComponent = (AbstractListComponent) component;
         String elementId = ContainerInstance.getElementId(component);
@@ -377,12 +383,6 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
 
         CssStyle cssStyle = createListComponentCssStyle(rc, listComponent);
         listComponentElement.setAttribute("style", cssStyle.renderInline());
-
-        CssStyle defaultCssStyle = createDefaultCssStyle(listComponent);
-        DomPropertyStore.renderSetProperty(serverMessage, elementId, "defaultStyle", defaultCssStyle.renderInline());
-
-        CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
-        DomPropertyStore.renderSetProperty(serverMessage, elementId, "rolloverStyle", rolloverCssStyle.renderInline());
 
         Element containingDiv = parentNode.getOwnerDocument().createElement("div");
         containingDiv.setAttribute("id", elementId);
