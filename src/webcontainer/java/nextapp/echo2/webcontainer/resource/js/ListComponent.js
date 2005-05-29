@@ -58,14 +58,26 @@ EchoListComponent.MessageProcessor.process = function(messagePartElement) {
 EchoListComponent.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoListComponent.dispose(elementId);
+	    var selectElement = document.getElementById(elementId + "_select");
+	    var optionElements = selectElement.options;
+	    EchoEventProcessor.removeHandler(selectElement.id, "change");
+	    for (var i = 0; i < optionElements.length; ++i) {
+	        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseout");
+	        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseover");
+	    }
     }
 };
 
 EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoListComponent.init(elementId);
+	    var selectElement = document.getElementById(elementId + "_select");
+	    var optionElements = selectElement.options;
+	    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
+	    for (var i = 0; i < optionElements.length; ++i) {
+	        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListComponent.processRolloverExit");
+	        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListComponent.processRolloverEnter");
+	    }
     }
 };
 
@@ -111,53 +123,29 @@ EchoListComponent.createUpdates = function(elementId,propertyElement){
     }
 };
 
-EchoListComponent.dispose = function(elementId) {
-    var selectElement = document.getElementById(elementId + "_select");
-    var optionElements = selectElement.options;
-    EchoEventProcessor.removeHandler(selectElement.id, "change");
-    for (var i = 0; i < optionElements.length; ++i) {
-        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseout");
-        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseover");
+EchoListComponent.processRolloverEnter = function(echoEvent) {
+    var optionElement = echoEvent.registeredTarget;
+
+    if (!optionElement.selected){
+        var style = EchoDomPropertyStore.getPropertyValue(optionElement.parentNode.id, "rolloverStyle");
+        EchoListComponent.applyStyle(optionElement, style);
     }
 };
 
-EchoListComponent.doRolloverEnter = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-    var target = EchoDomUtil.getEventTarget(e);
-
-    if (!target.selected){
-        var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id, "rolloverStyle");
-        EchoListComponent.applyStyle(target,style);
-    }
+EchoListComponent.processRolloverExit = function(echoEvent) {
+    var optionElement = echoEvent.registeredTarget;
+    var style = EchoDomPropertyStore.getPropertyValue(optionElement.parentNode.parentNode.id, "defaultStyle");
+    EchoListComponent.applyStyle(optionElement, style);
 };
 
-EchoListComponent.doRolloverExit = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-    var target = EchoDomUtil.getEventTarget(e);
-
-    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.parentNode.id , "defaultStyle");
-    EchoListComponent.applyStyle(target,style);
-};
-
-EchoListComponent.init = function(elementId) {
-    var selectElement = document.getElementById(elementId + "_select");
-    var optionElements = selectElement.options;
-    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
-    for (var i = 0; i < optionElements.length; ++i) {
-        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListComponent.doRolloverExit");
-        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListComponent.doRolloverEnter");
-    }
-};
-
-EchoListComponent.processSelection = function(e) {
-    EchoDomUtil.preventEventDefault(e);
-    var target = EchoDomUtil.getEventTarget(e);
-    EchoListComponent.processUpdates(target.id);
+EchoListComponent.processSelection = function(echoEvent) {
+    var optionElement = echoEvent.registeredTarget;
+    EchoListComponent.processUpdates(echoEvent.registeredTarget.id);
 };
 
 EchoListComponent.processUpdates = function(elementId) {
     var element = document.getElementById(elementId);
-    var propertyElement  = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
+    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
 
     EchoListComponent.createUpdates(element.id,propertyElement);
 
