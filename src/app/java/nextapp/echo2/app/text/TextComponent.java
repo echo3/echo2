@@ -48,7 +48,9 @@ extends Component {
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_HEIGHT = "height";
+    public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
     public static final String PROPERTY_WIDTH = "width";
     
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
@@ -126,6 +128,15 @@ extends Component {
     }
     
     /**
+     * Returns the horizontal scroll bar position.
+     * 
+     * @return the scroll bar position
+     */
+    public Extent getHorizontalScroll() {
+        return (Extent) getProperty(PROPERTY_HORIZONTAL_SCROLL);
+    }
+    
+    /**
      * Returns the insets of the text component.
      * 
      * @return the insets
@@ -142,6 +153,15 @@ extends Component {
      */
     public String getText() {
         return document.getText();
+    }
+    
+    /**
+     * Returns the vertical scroll bar position.
+     * 
+     * @return the scroll bar position
+     */
+    public Extent getVerticalScroll() {
+        return (Extent) getProperty(PROPERTY_VERTICAL_SCROLL);
     }
     
     /**
@@ -170,6 +190,10 @@ extends Component {
         
         if (TEXT_CHANGED_PROPERTY.equals(inputName)) {
             setText((String) inputValue);
+        } else if (PROPERTY_HORIZONTAL_SCROLL.equals(inputName)) {
+            setHorizontalScroll((Extent) inputValue);
+        } else if (PROPERTY_VERTICAL_SCROLL.equals(inputName)) {
+            setVerticalScroll((Extent) inputValue);
         }
     }
     
@@ -227,6 +251,15 @@ extends Component {
     }
     
     /**
+     * Sets the horizontal scroll bar position.
+     * 
+     * @param newValue the new scroll bar position
+     */
+    public void setHorizontalScroll(Extent newValue) {
+        setProperty(PROPERTY_HORIZONTAL_SCROLL, newValue);
+    }
+    
+    /**
      * Sets the insets of the text component.
      * 
      * @param newValue the new insets
@@ -242,6 +275,15 @@ extends Component {
      */
     public void setText(String newValue) {
         getDocument().setText(newValue);
+    }
+    
+    /**
+     * Sets the vertical scroll bar position.
+     * 
+     * @param newValue the new scroll bar position
+     */
+    public void setVerticalScroll(Extent newValue) {
+        setProperty(PROPERTY_VERTICAL_SCROLL, newValue);
     }
     
     /**

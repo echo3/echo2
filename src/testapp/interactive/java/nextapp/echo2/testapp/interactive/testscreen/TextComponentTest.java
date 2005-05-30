@@ -105,6 +105,38 @@ public class TextComponentTest extends SplitPane {
             }
         });
         
+        controlsColumn.addButton("Horizontal Scroll = 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setHorizontalScroll(new Extent(0));
+                passwordField.setHorizontalScroll(new Extent(0));
+                textArea.setHorizontalScroll(new Extent(0));
+            }
+        });
+        
+        controlsColumn.addButton("Horizontal Scroll = 100px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setHorizontalScroll(new Extent(100));
+                passwordField.setHorizontalScroll(new Extent(100));
+                textArea.setHorizontalScroll(new Extent(100));
+            }
+        });
+        
+        controlsColumn.addButton("Vertical Scroll = 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setVerticalScroll(new Extent(0));
+                passwordField.setVerticalScroll(new Extent(0));
+                textArea.setVerticalScroll(new Extent(0));
+            }
+        });
+        
+        controlsColumn.addButton("Vertical Scroll = 100px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setVerticalScroll(new Extent(100));
+                passwordField.setVerticalScroll(new Extent(100));
+                textArea.setVerticalScroll(new Extent(100));
+            }
+        });
+        
         controlsColumn.addButton("Change Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.randomBorder();

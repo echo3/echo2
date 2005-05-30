@@ -163,6 +163,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         if (TextComponent.TEXT_CHANGED_PROPERTY.equals(propertyName)) {
             String propertyValue = DomUtil.getElementText(propertyElement);
             ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.TEXT_CHANGED_PROPERTY, propertyValue);
+        } else if (TextComponent.PROPERTY_HORIZONTAL_SCROLL.equals(propertyName)) {
+            Extent propertyValue = new Extent(Integer.parseInt(
+                    propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.PROPERTY_HORIZONTAL_SCROLL, propertyValue);
+        } else if (TextComponent.PROPERTY_VERTICAL_SCROLL.equals(propertyName)) {
+            Extent propertyValue = new Extent(Integer.parseInt(
+                    propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.PROPERTY_VERTICAL_SCROLL, propertyValue);
         }
     }
 
@@ -212,12 +220,22 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
      * @param textComponent the <code>TextComponent<code>
      */
     public void renderInitDirective(RenderContext rc, TextComponent textComponent) {
+        Extent horizontalScroll = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HORIZONTAL_SCROLL); 
+        Extent verticalScroll = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_VERTICAL_SCROLL);
         String elementId = ContainerInstance.getElementId(textComponent);
         ServerMessage serverMessage = rc.getServerMessage();
+        
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoTextComponent.MessageProcessor", "init", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
+        if (horizontalScroll != null && horizontalScroll.getValue() != 0) {
+            itemElement.setAttribute("horizontalscroll", ExtentRender.renderCssAttributePixelValue(horizontalScroll));
+        }
+        if (verticalScroll != null && verticalScroll.getValue() != 0) {
+            itemElement.setAttribute("verticalscroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
+        }
+
         itemizedUpdateElement.appendChild(itemElement);
     }
     

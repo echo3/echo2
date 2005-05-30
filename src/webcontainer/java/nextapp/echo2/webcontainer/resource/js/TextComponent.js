@@ -61,6 +61,13 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
 EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
+        var textComponent = document.getElementById(elementId);
+        if (item.getAttribute("horizontalscroll")) {
+            textComponent.scrollLeft = parseInt(item.getAttribute("horizontalscroll"));
+        }
+        if (item.getAttribute("verticalscroll")) {
+            textComponent.scrollTop = parseInt(item.getAttribute("verticalscroll"));
+        }
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processKeyUp");
         EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processKeyPress");
@@ -69,14 +76,16 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
 
 EchoTextComponent.doUpdate = function(textComponent) {
     var elementId = textComponent.getAttribute("id");
-    var propertyElement = EchoClientMessage.createPropertyElement(elementId, "text");
 
-    if (propertyElement.firstChild) {
-        propertyElement.firstChild.nodeValue = textComponent.value;
+    var textPropertyElement = EchoClientMessage.createPropertyElement(elementId, "text");
+    if (textPropertyElement.firstChild) {
+        textPropertyElement.firstChild.nodeValue = textComponent.value;
     } else {
-        propertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(textComponent.value));
+        textPropertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(textComponent.value));
     }
-    EchoDebugManager.updateClientMessage();
+    
+    EchoClientMessage.setPropertyValue(elementId, "horizontalScroll", textComponent.scrollLeft);
+    EchoClientMessage.setPropertyValue(elementId, "verticalScroll", textComponent.scrollTop);
 };
 
 EchoTextComponent.processBlur = function(echoEvent) {
