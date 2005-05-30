@@ -186,6 +186,10 @@ EchoListComponentDhtml.processRolloverExit = function(echoEvent) {
 EchoListComponentDhtml.processSelection = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var elementId = echoEvent.registeredTarget.id;
+  
+//BUGBUG. implement ctrl-key based selection.    
+//    alert(echoEvent.ctrlKey);
+    
     if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
