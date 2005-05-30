@@ -65,13 +65,8 @@ public class TextAreaPeer extends TextComponentPeer {
         
         String value = textArea.getText();
         if (value != null) {
-            if (rc.getContainerInstance().getClientProperties().getBoolean(
+            if (!rc.getContainerInstance().getClientProperties().getBoolean(
                     ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
-                // This implementation relies on the fact that our IE-specific 
-                // document.importNode implementation will assign HTML attributes
-                // using JavaScript.
-                textAreaElement.setAttribute("value", value);
-            } else {
                 textAreaElement.appendChild(rc.getServerMessage().getDocument().createTextNode(value));
             }
         }

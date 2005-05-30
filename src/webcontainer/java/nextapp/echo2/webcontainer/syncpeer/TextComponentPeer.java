@@ -40,6 +40,7 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.text.TextComponent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -55,6 +56,7 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -234,6 +236,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         }
         if (verticalScroll != null && verticalScroll.getValue() != 0) {
             itemElement.setAttribute("verticalscroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
+        }
+        
+        if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
+            String value = textComponent.getText();
+            if (value != null) {
+                itemElement.setAttribute("text", value);
+            }
         }
 
         itemizedUpdateElement.appendChild(itemElement);

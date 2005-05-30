@@ -62,6 +62,10 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         var textComponent = document.getElementById(elementId);
+        
+	    if (item.getAttribute("text")) {
+            textComponent.value = item.getAttribute("text");
+	    }
         if (item.getAttribute("horizontalscroll")) {
             textComponent.scrollLeft = parseInt(item.getAttribute("horizontalscroll"));
         }
