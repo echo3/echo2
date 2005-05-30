@@ -53,9 +53,8 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.removeHandler(elementId, "blur");
-        EchoEventProcessor.removeHandler(elementId, "focus");
-        EchoEventProcessor.removeHandler(elementId, "keydown");
         EchoEventProcessor.removeHandler(elementId, "keypress");
+        EchoEventProcessor.removeHandler(elementId, "keyup");
     }
 };
 
@@ -63,9 +62,8 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
-        EchoEventProcessor.addHandler(elementId, "focus", "EchoTextComponent.processFocus");
+        EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processKeyUp");
         EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processKeyPress");
-        EchoEventProcessor.addHandler(elementId, "keydown", "EchoTextComponent.processKeyDown");
     }
 };
 
@@ -90,15 +88,7 @@ EchoTextComponent.processBlur = function(echoEvent) {
     EchoTextComponent.doUpdate(textComponent);
 };
 
-EchoTextComponent.processFocus = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
-    var elementId = textComponent.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-};
-
-EchoTextComponent.processKeyDown = function(echoEvent) {
+EchoTextComponent.processKeyPress = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
     var elementId = textComponent.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
@@ -106,7 +96,7 @@ EchoTextComponent.processKeyDown = function(echoEvent) {
     }
 };
 
-EchoTextComponent.processKeyPress = function(echoEvent) {
+EchoTextComponent.processKeyUp = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
     var elementId = textComponent.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
