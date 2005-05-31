@@ -764,9 +764,6 @@ EchoDomUtil.getEventTarget = function(e) {
     return e.target ? e.target : e.srcElement;
 };
 
-//BUGBUG. EchoDomUtil.importNode() needs to be updated with a translation table between XHTML attribute
-// names and properties.
-
 EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
     if (targetDocument.importNode) {
         // DOM Level 2 Browsers
@@ -776,6 +773,9 @@ EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
         return EchoDomUtil.importNodeImpl(targetDocument, sourceNode, importChildren);
     }
 };
+
+//BUGBUG. EchoDomUtil.importNodeImpl() needs to be updated with a translation table between XHTML attribute
+// names and properties.
 
 /**
  * Manual implementation of DOMImplementation.importNode() for clients that do
@@ -813,6 +813,17 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
         }
     }
     return targetNode;
+};
+
+EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
+    var testNode = descendantNode;
+    while (testNode != null) {
+        if (testNode == ancestorNode) {
+            return true;
+        }
+        testNode = testNode.parentNode;
+    }
+    return false;
 };
 
 /**
@@ -1097,22 +1108,11 @@ function EchoModalManager() { }
 
 EchoModalManager.modalElementId = null;
 
-EchoModalManager.isAncestorOf = function(ancestorElement, descendantElement) {
-    var testNode = descendantElement;
-    while (testNode != null) {
-        if (testNode == ancestorElement) {
-            return true;
-        }
-        testNode = testNode.parentNode;
-    }
-    return false;
-};
-
 EchoModalManager.isElementInModalContext = function(elementId) {
     var element = document.getElementById(elementId);
     if (EchoModalManager.modalElementId) {
         var modalElement = document.getElementById(EchoModalManager.modalElementId);
-        return EchoModalManager.isAncestorOf(modalElement, element);
+        return EchoDomUtil.isAncestorOf(modalElement, element);
     } else {
         return true;
     }
