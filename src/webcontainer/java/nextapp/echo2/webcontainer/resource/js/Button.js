@@ -200,7 +200,7 @@ EchoButton.getSelectionState = function(elementId) {
  * performance improvement.
  */
 EchoButton.ieRepaint = function(buttonElement) {
-    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
+    if (EchoClientProperties.get("quirkIERepaint")) {
         var originalWidth = buttonElement.style.width;
         var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
         buttonElement.style.width = temporaryWidth + "px";

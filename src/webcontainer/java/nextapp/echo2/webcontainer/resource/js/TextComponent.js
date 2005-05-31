@@ -70,6 +70,12 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
             textComponent.scrollLeft = parseInt(item.getAttribute("horizontalscroll"));
         }
         if (item.getAttribute("verticalscroll")) {
+            if (EchoClientProperties.get("quirkIERepaint")) {
+	            var originalWidth = textComponent.style.width;
+	            var temporaryWidth = parseInt(textComponent.clientWidth) - 1;
+	            textComponent.style.width = temporaryWidth + "px";
+	            textComponent.style.width = originalWidth;
+            }
             textComponent.scrollTop = parseInt(item.getAttribute("verticalscroll"));
         }
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");

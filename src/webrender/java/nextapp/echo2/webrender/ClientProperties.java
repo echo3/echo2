@@ -90,7 +90,7 @@ public class ClientProperties {
      *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
      */
-    public static final String QUIRK_DOM_PERFORMANCE_IE_REPAINT = "quirkDomPerformanceIERepaint";
+    public static final String QUIRK_IE_REPAINT = "quirkIERepaint";
     
     /**
      * A quirk flag indicating the only means of acheiving 0 padding in table cells is to use 0px padding.

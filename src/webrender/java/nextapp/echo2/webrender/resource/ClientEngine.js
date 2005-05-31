@@ -27,9 +27,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. may want to create repaint() function to force IE repaint to solve performance quirk...
-// currently Button and WindowPane use their own repaint-force schemes.
-
 // _____________________________
 // Object EchoAsyncMonitor
 
