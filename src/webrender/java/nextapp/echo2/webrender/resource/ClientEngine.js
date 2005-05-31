@@ -1114,6 +1114,8 @@ EchoModalManager.isElementInModalContext = function(elementId) {
         var modalElement = document.getElementById(modalElementId);
         if (!EchoModalManager.isAncestorOf(modalElement, element)) {
             return false;
+        } else {
+            return true;
         }
     }
     return true;
