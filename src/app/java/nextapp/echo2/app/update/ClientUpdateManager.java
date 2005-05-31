@@ -61,14 +61,17 @@ public class ClientUpdateManager {
      * @param inputValue the value of the input property
      */
     void addPropertyUpdate(Component component, String inputName, Object inputValue) {
-        if (component.verifyInput(inputName, inputValue)) {
-            ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientUpdates.get(component);
-            if (clientUpdate == null) {
-                clientUpdate = new ClientComponentUpdate(component);
-                clientUpdates.put(component, clientUpdate);
-            }
-            clientUpdate.addInput(inputName, inputValue);
+        if (!component.verifyInput(inputName, inputValue)) {
+            // Invalid input.
+            return;
         }
+        
+        ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientUpdates.get(component);
+        if (clientUpdate == null) {
+            clientUpdate = new ClientComponentUpdate(component);
+            clientUpdates.put(component, clientUpdate);
+        }
+        clientUpdate.addInput(inputName, inputValue);
     }
     
     /**
@@ -128,6 +131,11 @@ public class ClientUpdateManager {
      * @param actionValue the value of the action
      */
     void setAction(Component actionComponent, String actionName, Object actionValue) {
+        if (!actionComponent.verifyInput(actionName, actionValue)) {
+            // Invalid input.
+            return;
+        }
+
         this.actionComponent = actionComponent;
         this.actionName = actionName;
         this.actionValue = actionValue;

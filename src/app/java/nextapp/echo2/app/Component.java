@@ -1071,10 +1071,12 @@ public abstract class Component {
      *         in its current state
      */
     public boolean verifyInput(String inputName, Object inputValue) {
-        //BUGBUG. Block if another component is modal and this is not a child.
         //BUGBUG. what if the enabled state changes on the client and then it receives input--or do we
         //        just want to make such practice illegal...or does the component simply need to handle 
         //        (mind the fact that ordering of inputs cannot be guaranteed).
+        if (applicationInstance != null && !applicationInstance.verifyModalContext(this)) {
+            return false;
+        }
         return isVisible() && isEnabled();
     }
 

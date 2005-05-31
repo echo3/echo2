@@ -595,4 +595,20 @@ implements Serializable {
             setModal(component, false);
         }
     }
+    
+    /**
+     * Verifies that a component is within the modal context, i.e., that if a
+     * modal component is present, that it either is or is a child of that 
+     * component.
+     * 
+     * @param component the component to evaluate
+     * @return true if the component is within the current modal context
+     */
+    boolean verifyModalContext(Component component) {
+        if (modalComponents == null || modalComponents.size() == 0) {
+            return true;
+        } else {
+            return ((Component) modalComponents.get(modalComponents.size() - 1)).isAncestorOf(component);
+        }
+    }
 }
