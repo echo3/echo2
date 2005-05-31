@@ -817,7 +817,7 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
 
 EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
     var testNode = descendantNode;
-    while (testNode != null) {
+    while (testNode !== null) {
         if (testNode == ancestorNode) {
             return true;
         }
