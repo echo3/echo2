@@ -140,6 +140,7 @@ EchoWindowPane.ZIndexManager.addElement = function(containerId, elementId) {
         }
     }
     elementIdArray.push(elementId);
+    EchoWindowPane.ZIndexManager.raise(containerId, elementId);
 };
 
 EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
