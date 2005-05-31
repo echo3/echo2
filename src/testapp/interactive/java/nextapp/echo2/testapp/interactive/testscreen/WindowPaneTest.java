@@ -60,52 +60,33 @@ public class WindowPaneTest extends SplitPane {
             add(new Label(targetName));
             addButton("Add Label Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    positionWindowPane(windowPane);
-                    windowPane.setTitle("Label Window #" + windowNumber++);
-                    windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setInsets(new Insets(10));
-                    windowPane.setWidth(new Extent(500));
-                    windowPane.setHeight(new Extent(280));
-                    targetContentPane.add(windowPane);
-                    windowPane.setStyleName("default");
-                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                    targetContentPane.add(createSimpleWindow("Simple"));
                 }
             });
             addButton("Add Modal Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    positionWindowPane(windowPane);
-                    windowPane.setTitle("Modal Window #" + windowNumber++);
-                    windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setInsets(new Insets(10));
-                    windowPane.setWidth(new Extent(500));
-                    windowPane.setHeight(new Extent(280));
-                    targetContentPane.add(windowPane);
-                    windowPane.setStyleName("default");
+                    WindowPane windowPane = createSimpleWindow("Modal");
                     windowPane.setModal(true);
-                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                    targetContentPane.add(windowPane);
+                }
+            });
+            addButton("Add Two Modal Windows", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    for (int i = 0; i < 2; ++i) {
+                        WindowPane windowPane = createSimpleWindow("Modal");
+                        windowPane.setModal(true);
+                        targetContentPane.add(windowPane);
+                    }
                 }
             });
             addButton("Add Constrained Size Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    positionWindowPane(windowPane);
-                    windowPane.setTitle("Constrained Size Window #" + windowNumber++);
-                    windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setInsets(new Insets(10));
-                    windowPane.setWidth(new Extent(500));
-                    windowPane.setHeight(new Extent(280));
+                    WindowPane windowPane = createSimpleWindow("Constrained");
                     windowPane.setMinimumWidth(new Extent(400));
                     windowPane.setMaximumWidth(new Extent(500));
                     windowPane.setMinimumHeight(new Extent(200));
                     windowPane.setMaximumHeight(new Extent(280));
                     targetContentPane.add(windowPane);
-                    windowPane.setStyleName("default");
-                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 }
             });
             addButton("Add Default-Border Window", new ActionListener() {
@@ -125,18 +106,24 @@ public class WindowPaneTest extends SplitPane {
             });
             addButton("Add Immovable Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    positionWindowPane(windowPane);
+                    WindowPane windowPane = createSimpleWindow("Immovable");
                     windowPane.setMovable(false);
-                    windowPane.setTitle("Immovable Window #" + windowNumber++);
-                    windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setInsets(new Insets(10));
-                    windowPane.setWidth(new Extent(500));
-                    windowPane.setHeight(new Extent(280));
                     targetContentPane.add(windowPane);
-                    windowPane.setStyleName("default");
-                    windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                }
+            });
+            addButton("Add Fixed Size Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    WindowPane windowPane = createSimpleWindow("Fixed Size");
+                    windowPane.setResizable(false);
+                    targetContentPane.add(windowPane);
+                }
+            });
+            addButton("Add Immovable Fixed Size Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    WindowPane windowPane = createSimpleWindow("Immovable Fixed Size");
+                    windowPane.setMovable(false);
+                    windowPane.setResizable(false);
+                    targetContentPane.add(windowPane);
                 }
             });
             addButton("Add SplitPane Window", new ActionListener() {
@@ -271,6 +258,20 @@ public class WindowPaneTest extends SplitPane {
         controlsColumn.add(windowTestControls);
         windowTestControls = new WindowTestControls("Embedded", contentPane);
         controlsColumn.add(windowTestControls);
+    }
+    
+    private WindowPane createSimpleWindow(String name) {
+        WindowPane windowPane = new WindowPane();
+        positionWindowPane(windowPane);
+        windowPane.setTitle(name + " Window #" + windowNumber++);
+        windowPane.setTitleInsets(new Insets(10, 5));
+        windowPane.setTitleBackground(new Color(0x2f2f4f));
+        windowPane.setInsets(new Insets(10));
+        windowPane.setWidth(new Extent(500));
+        windowPane.setHeight(new Extent(280));
+        windowPane.setStyleName("default");
+        windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+        return windowPane;
     }
     
     private void positionWindowPane(WindowPane windowPane) {
