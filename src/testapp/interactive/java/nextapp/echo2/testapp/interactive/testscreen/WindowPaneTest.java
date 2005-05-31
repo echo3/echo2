@@ -65,15 +65,15 @@ public class WindowPaneTest extends SplitPane {
             });
             addButton("Add Modal Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createSimpleWindow("Modal");
+                    WindowPane windowPane = createTestWindow("Modal");
                     windowPane.setModal(true);
                     targetContentPane.add(windowPane);
                 }
             });
-            addButton("Add Two Modal Windows", new ActionListener() {
+            addButton("Add Three Modal Windows", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    for (int i = 0; i < 2; ++i) {
-                        WindowPane windowPane = createSimpleWindow("Modal");
+                    for (int i = 0; i < 3; ++i) {
+                        WindowPane windowPane = createTestWindow("3Modal");
                         windowPane.setModal(true);
                         targetContentPane.add(windowPane);
                     }
@@ -271,6 +271,30 @@ public class WindowPaneTest extends SplitPane {
         windowPane.setHeight(new Extent(280));
         windowPane.setStyleName("default");
         windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+        return windowPane;
+    }
+    
+    private WindowPane createTestWindow(String name) {
+        final WindowPane windowPane = new WindowPane();
+        positionWindowPane(windowPane);
+        windowPane.setTitle(name + " Window #" + windowNumber++);
+        windowPane.setTitleInsets(new Insets(10, 5));
+        windowPane.setTitleBackground(new Color(0x2f2f4f));
+        windowPane.setInsets(new Insets(10));
+        windowPane.setWidth(new Extent(500));
+        windowPane.setHeight(new Extent(280));
+        windowPane.setStyleName("default");
+        
+        ButtonColumn column = new ButtonColumn();
+        column.addButton("Add Modal Window", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ContentPane contentPane = (ContentPane) windowPane.getParent();
+                WindowPane newWindowPane = createTestWindow("YetAnotherModal");
+                newWindowPane.setModal(true);
+                contentPane.add(newWindowPane);
+            }
+        });
+        windowPane.add(column);
         return windowPane;
     }
     

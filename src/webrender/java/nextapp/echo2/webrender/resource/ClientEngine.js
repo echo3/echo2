@@ -1095,7 +1095,7 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
  */
 function EchoModalManager() { }
 
-EchoModalManager.modalElementMap = new Array();
+EchoModalManager.modalElementIds = new Array();
 
 EchoModalManager.isAncestorOf = function(ancestorElement, descendantElement) {
     var testNode = descendantElement;
@@ -1110,19 +1110,25 @@ EchoModalManager.isAncestorOf = function(ancestorElement, descendantElement) {
 
 EchoModalManager.isElementInModalContext = function(elementId) {
     var element = document.getElementById(elementId);
-    for (modalElementId in EchoModalManager.modalElementMap) {
-        var modalElement = document.getElementById(modalElementId);
+    if (EchoModalManager.modalElementIds.length == 0) {
+        return true;
+    } else {
+        var modalElement = document.getElementById(EchoModalManager.modalElementIds[EchoModalManager.modalElementIds.length - 1]);
         if (!EchoModalManager.isAncestorOf(modalElement, element)) {
             return false;
         } else {
             return true;
         }
     }
-    return true;
 };
 
 EchoModalManager.isModal = function(elementId) {
-    return EchoModalManager.modalElementMap[elementId] === true;
+    for (var i = 0; i < EchoModalManager.modalElementIds.length; ++i) {
+        if (EchoModalManager.modalElementIds[i] == elementId) {
+            return true;
+        }
+    }
+    return false;
 };
 
 /**
@@ -1133,9 +1139,21 @@ EchoModalManager.isModal = function(elementId) {
  */
 EchoModalManager.setModal = function(elementId, newState) {
     if (newState) {
-        EchoModalManager.modalElementMap[elementId] = true;
+        if (EchoModalManager.isModal(elementId)) {
+            // Already modal: do nothing.
+            return;
+        }
+        EchoModalManager.modalElementIds[EchoModalManager.modalElementIds.length] = elementId;
     } else {
-        delete EchoModalManager.modalElementMap[elementId];
+        for (var i = EchoModalManager.modalElementIds.length - 1; i >= 0; --i) {
+            if (EchoModalManager.modalElementIds[i] == elementId) {
+                for (var j = i; j < EchoModalManager.modalElementIds.length - 1; ++j) {
+                    EchoModalManager.modalElementIds[j] = EchoModalManager.modalElements[j + 1];
+                }
+                --EchoModalManager.modalElementIds.length;
+                return;
+            }
+        }
     }
 };
 
