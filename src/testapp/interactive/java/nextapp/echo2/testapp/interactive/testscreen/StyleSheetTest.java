@@ -135,7 +135,7 @@ public class StyleSheetTest extends Column {
         styleSheetEntryTextArea = new TextArea();
         styleSheetEntryTextArea.getDocument().setText(DEFAULT_STYLE_SHEET_TEXT);
         styleSheetEntryTextArea.setStyleName(Styles.DEFAULT_STYLE_NAME);
-        styleSheetEntryTextArea.setWidth(new Extent(98, Extent.PERCENT));
+        styleSheetEntryTextArea.setWidth(new Extent(600));
         styleSheetEntryTextArea.setHeight(new Extent(300));
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(10));

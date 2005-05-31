@@ -126,6 +126,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
         if (width != null) {
             cssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
+
         if (height != null) {
             cssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
         }
@@ -245,7 +246,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Synchr
                 itemElement.setAttribute("text", value);
             }
         }
-
+        
         itemizedUpdateElement.appendChild(itemElement);
     }
     
