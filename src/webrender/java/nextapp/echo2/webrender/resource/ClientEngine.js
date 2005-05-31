@@ -1095,7 +1095,7 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
  */
 function EchoModalManager() { }
 
-EchoModalManager.modalElementIds = new Array();
+EchoModalManager.modalElementId = null;
 
 EchoModalManager.isAncestorOf = function(ancestorElement, descendantElement) {
     var testNode = descendantElement;
@@ -1110,50 +1110,11 @@ EchoModalManager.isAncestorOf = function(ancestorElement, descendantElement) {
 
 EchoModalManager.isElementInModalContext = function(elementId) {
     var element = document.getElementById(elementId);
-    if (EchoModalManager.modalElementIds.length == 0) {
+    if (EchoModalManager.modalElementId) {
+        var modalElement = document.getElementById(EchoModalManager.modalElementId);
+        return EchoModalManager.isAncestorOf(modalElement, element);
+    } else {
         return true;
-    } else {
-        var modalElement = document.getElementById(EchoModalManager.modalElementIds[EchoModalManager.modalElementIds.length - 1]);
-        if (!EchoModalManager.isAncestorOf(modalElement, element)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-};
-
-EchoModalManager.isModal = function(elementId) {
-    for (var i = 0; i < EchoModalManager.modalElementIds.length; ++i) {
-        if (EchoModalManager.modalElementIds[i] == elementId) {
-            return true;
-        }
-    }
-    return false;
-};
-
-/**
- * Sets the modal state of an element.
- *
- * @param elementId the id of the element
- * @param newState the new modal state
- */
-EchoModalManager.setModal = function(elementId, newState) {
-    if (newState) {
-        if (EchoModalManager.isModal(elementId)) {
-            // Already modal: do nothing.
-            return;
-        }
-        EchoModalManager.modalElementIds[EchoModalManager.modalElementIds.length] = elementId;
-    } else {
-        for (var i = EchoModalManager.modalElementIds.length - 1; i >= 0; --i) {
-            if (EchoModalManager.modalElementIds[i] == elementId) {
-                for (var j = i; j < EchoModalManager.modalElementIds.length - 1; ++j) {
-                    EchoModalManager.modalElementIds[j] = EchoModalManager.modalElementIds[j + 1];
-                }
-                --EchoModalManager.modalElementIds.length;
-                return;
-            }
-        }
     }
 };
 
@@ -1314,6 +1275,10 @@ EchoServerMessage.processAsyncConfig = function() {
     }
 };
 
+EchoServerMessage.processModalState = function() {
+    EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modalid");
+};
+
 /**
  * Processes all of the 'messagepart' directives contained in the server message.
  */
@@ -1336,9 +1301,6 @@ EchoServerMessage.processMessageParts = function() {
         EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
                 : EchoServerMessage.STATUS_PROCESSING_FAILED;
     }
-    if (EchoServerMessage.processingCompleteListener) {
-        EchoServerMessage.processingCompleteListener();
-    }
 };
 
 EchoServerMessage.processPhase1 = function() {
@@ -1353,6 +1315,10 @@ EchoServerMessage.processPhase1 = function() {
 
 EchoServerMessage.processPhase2 = function() {
     EchoServerMessage.processMessageParts();
+    EchoServerMessage.processModalState();
+    if (EchoServerMessage.processingCompleteListener) {
+        EchoServerMessage.processingCompleteListener();
+    }
     EchoServerMessage.processAsyncConfig();
 };
 

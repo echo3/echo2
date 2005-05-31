@@ -30,7 +30,7 @@
 //BUGBUG. This class needs a bit of performance analysis and tweaking.
 //        It won't necessarily yield and visible benefit, but it'd certainly
 //        be nice to know that the ItemizedDirectiveLookupKey hash code
-//        generation is not being done in vein.
+//        generation is not being done in vein.  AND IT NEEDS DOCS!
 
 //BUGBUG. Ensure that the following scenario can be handled:
 //        "A syncpeer is rendering HTML content, and needs to set a
@@ -367,6 +367,14 @@ public class ServerMessage extends XmlDocument {
     
     public void setApplicationUri(String applicationUri) {
         serverMessageElement.setAttribute("applicationuri", applicationUri);
+    }
+    
+    public void setModalContextRootId(String id) {
+        if (id == null) {
+            serverMessageElement.setAttribute("modalid", ""); 
+        } else {
+            serverMessageElement.setAttribute("modalid", id); 
+        }
     }
     
     /**

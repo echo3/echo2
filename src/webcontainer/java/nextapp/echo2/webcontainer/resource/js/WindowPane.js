@@ -71,7 +71,6 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement)
 
         var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
         EchoWindowPane.ZIndexManager.removeElement(containerId, elementId);
-        EchoModalManager.setModal(elementId, false);
     }
 };
 
@@ -81,7 +80,6 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
         var movable = item.getAttribute("movable") == "true";
         var resizable = item.getAttribute("resizable") == "true";
         var containerId = item.getAttribute("containerid");
-        var modal = item.getAttribute("modal") == "true";
         
         if (item.getAttribute("minimumwidth")) {
             EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", item.getAttribute("minimumwidth"));
@@ -96,9 +94,6 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
             EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", item.getAttribute("maximumheight"));
         }
         
-        if (modal) {
-            EchoModalManager.setModal(elementId, true);
-        }
         EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
         EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
         EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");

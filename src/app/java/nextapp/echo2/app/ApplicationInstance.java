@@ -316,6 +316,22 @@ implements Serializable {
     }
     
     /**
+     * Retrieves the root component of the current modal context, or null
+     * if no modal context exists.  Components which are not within the 
+     * descendant hierarchy of the modal context are barred from receiving
+     * user input.
+     * 
+     * @return the root component of the modal context
+     */
+    public Component getModalContextRoot() {
+        if (modalComponents == null || modalComponents.size() == 0) {
+            return null;
+        } else {
+            return (Component) modalComponents.get(modalComponents.size() - 1);
+        }
+    }
+    
+    /**
      * Retrieves the style for the specified specified class of 
      * component / style name.
      * 
@@ -605,10 +621,7 @@ implements Serializable {
      * @return true if the component is within the current modal context
      */
     boolean verifyModalContext(Component component) {
-        if (modalComponents == null || modalComponents.size() == 0) {
-            return true;
-        } else {
-            return ((Component) modalComponents.get(modalComponents.size() - 1)).isAncestorOf(component);
-        }
+        Component modalContextRoot = getModalContextRoot();
+        return modalContextRoot == null || modalContextRoot.isAncestorOf(component);
     }
 }

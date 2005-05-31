@@ -300,6 +300,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
 
             setAsynchronousMonitorInterval(rc);
 
+            setModalContextRootId(rc);
+            
             updateManager.purge();
             
             // Return generated ServerMessage.
@@ -322,6 +324,22 @@ public class ContainerSynchronizeService extends SynchronizeService {
             rc.getServerMessage().setAsynchronousMonitorInterval(interval);
         } else {
             rc.getServerMessage().setAsynchronousMonitorInterval(-1);
+        }
+    }
+    
+    /**
+     * Update the <code>ServerMessage</code> to describe the current root
+     * element of the modal context.
+     * 
+     * @param rc the relevant <code>RenderContext</code>.
+     */
+    private void setModalContextRootId(RenderContext rc) {
+        ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+        Component modalContextRoot = applicationInstance.getModalContextRoot();
+        if (modalContextRoot == null) {
+            rc.getServerMessage().setModalContextRootId(null);
+        } else {
+            rc.getServerMessage().setModalContextRootId(ContainerInstance.getElementId(modalContextRoot));
         }
     }
 }

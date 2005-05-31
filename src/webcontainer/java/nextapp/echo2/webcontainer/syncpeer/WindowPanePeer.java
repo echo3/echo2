@@ -664,7 +664,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 "EchoWindowPane.MessageProcessor", "init", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
-        itemElement.setAttribute("modal", windowPane.isModal() ? "true" : "false");
         itemElement.setAttribute("movable", movable ? "true" : "false");
         itemElement.setAttribute("resizable", resizable ? "true" : "false");
         itemElement.setAttribute("containerid", windowPane.getParent().getId());  //BUGBUG. may want to move into keys.
