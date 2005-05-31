@@ -178,7 +178,7 @@ implements Service {
     protected abstract ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument);
     
     /**
-     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
      */
     public void service(Connection conn) throws IOException {
         Document clientMessageDocument = parseRequestDocument(conn);

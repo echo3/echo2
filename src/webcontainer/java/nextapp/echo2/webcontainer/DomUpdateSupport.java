@@ -58,7 +58,7 @@ public interface DomUpdateSupport {
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> for which this
      *        rendering is being performed
-     * @param node the parent DOM node to which this child should 
+     * @param parentNode the parent DOM node to which this child should 
      *        add HTML code
      * @param component the <code>Component</code> to be rendered
      */

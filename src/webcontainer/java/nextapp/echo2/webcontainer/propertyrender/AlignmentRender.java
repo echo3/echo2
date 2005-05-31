@@ -47,7 +47,7 @@ public class AlignmentRender {
      * can be derived from the provided <code>Alignment</code>.
      * Null property values are ignored.
      * 
-     * @param cssStyle the target <code>CssStyle</code>
+     * @param element the target <code>Element</code>
      * @param alignment the property value
      */
     public static void renderToElement(Element element, Alignment alignment) {
@@ -60,7 +60,7 @@ public class AlignmentRender {
      * can be derived from the provided <code>Alignment</code>.
      * Null property values are ignored.
      * 
-     * @param cssStyle the target <code>CssStyle</code>
+     * @param element the target <code>Element</code>
      * @param component The <code>Component</code> for which the style is being
      *        rendered (necessary for property translation of leading/trailing
      *        alignment settings).

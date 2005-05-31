@@ -129,7 +129,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
     
     /**
      * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#process(
-     *      nextapp.echo2.webrender.server.UserInstance, org.w3c.dom.Element)
+     *      nextapp.echo2.webrender.UserInstance, org.w3c.dom.Element)
      */
     public void process(UserInstance userInstance, Element messagePartElement) {
         ClientProperties clientProperties = new ClientProperties();

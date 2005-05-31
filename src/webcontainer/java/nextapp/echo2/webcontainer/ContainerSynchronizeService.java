@@ -248,8 +248,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
-     * @see nextapp.echo2.webrender.service.SynchronizeService#renderInit(nextapp.echo2.webrender.server.Connection, 
-     *      nextapp.echo2.webrender.clientupdate.ServerMessage, org.w3c.dom.Document)
+     * @see nextapp.echo2.webrender.service.SynchronizeService#renderInit(nextapp.echo2.webrender.Connection, 
+     *      nextapp.echo2.webrender.ServerMessage, org.w3c.dom.Document)
      */
     protected ServerMessage renderInit(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
@@ -276,8 +276,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
-     * @see nextapp.echo2.webrender.service.SynchronizeService#renderUpdate(nextapp.echo2.webrender.server.Connection, 
-     *      nextapp.echo2.webrender.clientupdate.ServerMessage, org.w3c.dom.Document)
+     * @see nextapp.echo2.webrender.service.SynchronizeService#renderUpdate(nextapp.echo2.webrender.Connection, 
+     *      nextapp.echo2.webrender.ServerMessage, org.w3c.dom.Document)
      */
     protected ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
         RenderContext rc = new RenderContextImpl(conn, serverMessage);

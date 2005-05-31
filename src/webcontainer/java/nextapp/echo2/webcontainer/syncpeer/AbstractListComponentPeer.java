@@ -275,7 +275,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * deregistering event listeners on the client.
      * 
      * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the list component
+     * @param listComponent the list component
      */
     private void renderDisposeDirective(ServerMessage serverMessage, AbstractListComponent listComponent) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
@@ -291,7 +291,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
      * registering event listeners on the client.
      * 
      * @param serverMessage the <code>serverMessage</code>
-     * @param elementId the HTML element id of the list component
+     * @param listComponent the list component
      */
     private void renderInitDirective(ServerMessage serverMessage, AbstractListComponent listComponent) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,

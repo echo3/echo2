@@ -80,7 +80,7 @@ public class ContainerInstance extends UserInstance {
     /**
      * Default constructor for serialization use only.
      * 
-     * @see #newInstance(nextapp.echo2.webrender.server.Connection)
+     * @see #newInstance(nextapp.echo2.webrender.Connection)
      */
     public ContainerInstance() {
         super();
@@ -89,7 +89,7 @@ public class ContainerInstance extends UserInstance {
     /**
      * Creates a new <code>ContainerInstance</code>.
      * 
-     * @see #newInstance(nextapp.echo2.webrender.server.Connection)
+     * @see #newInstance(nextapp.echo2.webrender.Connection)
      */
     private ContainerInstance(Connection conn) {
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();

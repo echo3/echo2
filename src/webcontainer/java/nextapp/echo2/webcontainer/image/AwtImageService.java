@@ -65,7 +65,7 @@ public class AwtImageService extends AbstractImageService {
 
     /**
      * @see nextapp.echo2.webcontainer.image.AbstractImageService#renderImage(
-     *      nextapp.echo2.webrender.server.Connection, nextapp.echo2.app.ImageReference)
+     *      nextapp.echo2.webrender.Connection, nextapp.echo2.app.ImageReference)
      */
     public void renderImage(Connection conn, ImageReference imageReference) 
     throws IOException {

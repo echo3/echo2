@@ -66,7 +66,7 @@ implements Service {
     }
     
     /**
-     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.server.Connection)
+     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
      */
     public void service(Connection conn) throws IOException {
         ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
