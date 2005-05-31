@@ -1148,7 +1148,7 @@ EchoModalManager.setModal = function(elementId, newState) {
         for (var i = EchoModalManager.modalElementIds.length - 1; i >= 0; --i) {
             if (EchoModalManager.modalElementIds[i] == elementId) {
                 for (var j = i; j < EchoModalManager.modalElementIds.length - 1; ++j) {
-                    EchoModalManager.modalElementIds[j] = EchoModalManager.modalElements[j + 1];
+                    EchoModalManager.modalElementIds[j] = EchoModalManager.modalElementIds[j + 1];
                 }
                 --EchoModalManager.modalElementIds.length;
                 return;

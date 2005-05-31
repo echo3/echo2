@@ -35,12 +35,10 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
@@ -133,7 +131,7 @@ implements Serializable {
      */
     private StyleSheet styleSheet;
 
-    private Set modalComponents;
+    private List modalComponents;
     
     private long nextId;
     
@@ -551,9 +549,11 @@ implements Serializable {
         boolean oldValue = isModal(component);
         if (newValue) {
             if (modalComponents == null) {
-                modalComponents = new HashSet();
+                modalComponents = new ArrayList();
             }
-            modalComponents.add(component);
+            if (!modalComponents.contains(component)) {
+                modalComponents.add(component);
+            }
         } else {
             if (modalComponents != null) {
                 modalComponents.remove(component);
