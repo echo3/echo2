@@ -43,7 +43,7 @@ public interface PropertyXmlPeer {
      * @param classLoader the <code>ClassLoader</code> to use for 
      *        analyzing component/property data
      * @param objectClass the <code>Class</code> of the object on which the
-     *        property is bieng set
+     *        property is being set
      * @param propertyElement the &lt;property&gt; <code>Element</code>
      * @return the property value
      */
