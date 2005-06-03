@@ -41,6 +41,7 @@ public class AwtImageReference
 implements ImageReference {
 
     private Image image;
+    private String id;
     
     /**
      * Default constructor for use only in serialization and cases
@@ -48,7 +49,7 @@ implements ImageReference {
      * <code>getImage()</code> method is overridden.
      */
     public AwtImageReference() {
-        super();
+        this(null);
     }
     
     /**
@@ -63,6 +64,7 @@ implements ImageReference {
     public AwtImageReference(Image image) {
         super();
         this.image = image;
+        id = ApplicationInstance.generateGlobalId();
     }
     
     /**
@@ -94,6 +96,13 @@ implements ImageReference {
         }
     }
     
+    /**
+     * @see nextapp.echo2.app.IdSupport#getId()
+     */
+    public String getId() {
+        return id;
+    }
+
     /**
      * Retrieves the image.  Calls to this method will be minimized such that
      * applications may extend this class and override this method such that

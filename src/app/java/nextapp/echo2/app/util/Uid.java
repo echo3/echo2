@@ -27,7 +27,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer.util;
+package nextapp.echo2.app.util;
 
 /**
  * A universally unique identifier.
@@ -62,6 +62,6 @@ public class Uid {
         String timeString = Long.toHexString(time);
         String countString = Integer.toHexString(count);
         
-        return machineIdString + "-" + timeString + "-" + countString;
+        return machineIdString + "_" + timeString + "_" + countString;
     }
 }

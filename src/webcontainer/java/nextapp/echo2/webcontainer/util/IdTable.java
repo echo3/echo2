@@ -38,47 +38,39 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
+
+import nextapp.echo2.app.IdSupport;
 
 /**
- * Provides the capability to transparently assign generated unique string 
- * identifiers to arbitrary objects.  The identifier to object mapping is 
- * stored using <code>WeakReference</code>s such that the identified objects
- * may be garbage collected without regard for this object's references to 
- * them.  The identifiers themselves are also destroyed when the underlying 
- * objects are garbage collected. 
+ * A table which provides an identifier-to-object mapping, with the objects 
+ * being weakly referenced (i.e., the fact that they are held within this table
+ * will not prevent them from being garbage collected).
  */
 public class IdTable 
 implements Serializable {
     
+    // Both of these bugs may be dead, ensure and remove if possible:
     //BUGBUG. Evaluate synchronization issues in this class (may be concurrent issue w/ iterator in purge).
     //BUGBUG. This object needs a fully custom serialization/deserialization strategy such that weak refs will be held.
 
-    private transient Map objectToIdMap = new WeakHashMap();
-    private transient HashMap idToReferenceMap = new HashMap();
+    private transient Map idToReferenceMap = new HashMap();
     private transient ReferenceQueue referenceQueue = new ReferenceQueue();
     
     /**
-     * Creates or retrieves a unique identifier for the specified object.
-     * Future invocations of this method with the same object will result
-     * in the same identifier being returned.
+     * Registers an object with the <code>IdTable</code>
      * 
      * @param object the object to identify
-     * @return a unique identifier
      */
-    public String getId(Object object) {
+    public void register(IdSupport object) {
         purge();
-        String id = (String) objectToIdMap.get(object);
-        if (id == null) {
-            id = Uid.generateUidString();
-            objectToIdMap.put(object, id);
-            WeakReference weakReference;
-            synchronized(idToReferenceMap) {
+        String id = object.getId();
+        WeakReference weakReference;
+        synchronized(idToReferenceMap) {
+            if (!idToReferenceMap.containsKey(id)) {
                 weakReference = new WeakReference(object, referenceQueue);
+                idToReferenceMap.put(id, weakReference);
             }
-            idToReferenceMap.put(id, weakReference);
         }
-        return id;
     }
     
     /**

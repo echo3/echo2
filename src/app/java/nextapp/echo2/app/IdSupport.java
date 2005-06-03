@@ -27,51 +27,22 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer.test;
-
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.IdSupport;
-import nextapp.echo2.webcontainer.util.IdTable;
-import junit.framework.TestCase;
+package nextapp.echo2.app;
 
 /**
- * 
+ * Interface for objects which are identifiable via unique String 
+ * identifiers.   Identifiers must be unique within a given
+ * <code>ApplicationInstance</code>.  If an object will only be associated
+ * with a single <code>ApplicationInstance</code>, the 
+ * <code>ApplicationInstance.generateId()</code> method may be used to generate
+ * an application unique identifier.
+ * An identifier string may only letters, digits and underscores 
+ * [A-Z,a-z,0-9,_]
  */
-public class IdTableTest extends TestCase {
-
-    private static class TestObject 
-    implements IdSupport {
-        
-        public String id = ApplicationInstance.generateGlobalId();
-        
-        /**
-         * @see nextapp.echo2.app.IdSupport#getId()
-         */
-        public String getId() {
-            return id;
-        }
-    }
+public interface IdSupport {
     
     /**
-     * Tests to ensure references are released.  This test relies on
-     * <code>System.gc()</code> acutally causing weak references to
-     * be collected.  It is not technically safe to rely on this,
-     * thus this test may randomly fail. 
+     * Returns an <code>ApplicationInstance</code> unique identifier.
      */
-    public void testReferenceRelease() {
-        IdTable idManager = new IdTable();
-        TestObject testObject = new TestObject();
-        String id = testObject.getId();
-        idManager.register(testObject);
-        assertNotNull(idManager.getObject(id));
-        testObject = null;
-        System.gc();
-        System.gc();
-        System.gc();
-        System.gc();
-        System.gc();
-        System.gc();
-        assertNull(idManager.getObject(id));
-        assertNull(idManager.getObject(id));
-    }
+    public String getId();
 }

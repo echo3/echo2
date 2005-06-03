@@ -42,6 +42,7 @@ import java.util.Map;
 
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
+import nextapp.echo2.app.util.Uid;
 
 /**
  * A single user-instance of an Echo application.
@@ -62,6 +63,15 @@ implements Serializable {
     public static final String MODAL_COMPONENTS_CHANGED_PROPERTY = "modalComponents";
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String WINDOWS_CHANGED_PROPERTY = "windows";
+    
+    /**
+     * Generates a globally unique identifier.
+     * 
+     * @return the generated identifier
+     */
+    public static final String generateGlobalId() {
+        return Uid.generateUidString();
+    }
     
     /**
      * Returns a reference to the <code>ApplicationInstance</code> that is 

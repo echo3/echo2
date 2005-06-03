@@ -37,6 +37,7 @@ implements ImageReference {
 
     private String uri;
     private Extent width, height;
+    private String id;
     
     /**
      * Creates a reference to an image at the specified URI of unknown size.
@@ -47,6 +48,23 @@ implements ImageReference {
         this(uri, null,  null);
     }
     
+    /**
+     * Creates a reference to an image at the specified URI of the given width
+     * and height.  If the image is not of the given width and height, it will
+     * be scaled to the given width and height.
+     *
+     * @param uri a URI from which the image data may be obtained
+     * @param width The width at which to render the image
+     * @param height The height at which to render the image
+     */
+    public HttpImageReference(String uri, Extent width, Extent height) {
+        super();
+        this.uri = uri;
+        this.width = width;
+        this.height = height;
+        id = ApplicationInstance.generateGlobalId();
+    }
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -68,28 +86,19 @@ implements ImageReference {
     }
 
     /**
-     * Creates a reference to an image at the specified URI of the given width
-     * and height.  If the image is not of the given width and height, it will
-     * be scaled to the given width and height.
-     *
-     * @param uri a URI from which the image data may be obtained
-     * @param width The width at which to render the image
-     * @param height The height at which to render the image
-     */
-    public HttpImageReference(String uri, Extent width, Extent height) {
-        super();
-        this.uri = uri;
-        this.width = width;
-        this.height = height;
-    }
-
-    /**
      * @see nextapp.echo2.app.ImageReference#getHeight()
      */
     public Extent getHeight() {
         return height;
     }
     
+    /**
+     * @see nextapp.echo2.app.IdSupport#getId()
+     */
+    public String getId() {
+        return id;
+    }
+
     /**
      * Returns the URI from which the image may be obtained.
      *

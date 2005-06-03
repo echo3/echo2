@@ -53,7 +53,8 @@ import nextapp.echo2.app.event.EventListenerList;
  * A representation of an Echo component.
  * This is an abstact base class from which all Echo components are derived.
  */
-public abstract class Component {
+public abstract class Component 
+implements IdSupport {
     
     private static final int CHILD_LIST_CAPACITY = 3;
     private static final Component[] EMPTY_COMPONENT_ARRAY = new Component[0];

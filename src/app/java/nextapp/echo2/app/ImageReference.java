@@ -32,7 +32,8 @@ package nextapp.echo2.app;
 /**
  * A representation of an image / picture.
  */
-public interface ImageReference {
+public interface ImageReference 
+extends IdSupport{
     
     /**
      * Returns the height of the image, or null if the size is unknown.

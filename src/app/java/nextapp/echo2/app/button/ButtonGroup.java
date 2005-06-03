@@ -33,6 +33,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.IdSupport;
 import nextapp.echo2.app.RadioButton;
 
 /**
@@ -40,10 +42,11 @@ import nextapp.echo2.app.RadioButton;
  * radio button at a time.
  */
 public class ButtonGroup 
-implements Serializable {
+implements IdSupport, Serializable {
     
     private static final RadioButton[] EMPTY = new RadioButton[0];
     
+    private String id = ApplicationInstance.generateGlobalId();
     private Set buttons;
     
     /**
@@ -71,6 +74,13 @@ implements Serializable {
         }
     }
     
+    /**
+     * @see nextapp.echo2.app.IdSupport#getId()
+     */
+    public String getId() {
+        return id;
+    }
+
     /**
      * Removes a <code>RadioButton</code> from the group.
      * 

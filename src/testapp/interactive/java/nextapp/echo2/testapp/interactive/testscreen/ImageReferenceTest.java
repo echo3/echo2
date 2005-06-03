@@ -38,6 +38,7 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.AwtImageReference;
 import nextapp.echo2.app.HttpImageReference;
 import nextapp.echo2.app.Label;
@@ -70,11 +71,20 @@ public class ImageReferenceTest extends TestGrid {
     
     private StreamImageReference streamImageReference = new StreamImageReference() {
 
+        private String id = ApplicationInstance.generateGlobalId();
+        
         /**
          * @see nextapp.echo2.app.StreamImageReference#getContentType()
          */
         public String getContentType() {
             return "image/jpeg";
+        }
+        
+        /**
+         * @see nextapp.echo2.app.IdSupport#getId()
+         */
+        public String getId() {
+            return id;
         }
 
         /**

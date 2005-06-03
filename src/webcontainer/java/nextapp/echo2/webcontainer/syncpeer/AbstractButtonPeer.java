@@ -663,8 +663,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             if (button instanceof RadioButton) {
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {
-                    String groupId = rc.getContainerInstance().getIdTable().getId(buttonGroup);
-                    itemElement.setAttribute("group", groupId);
+                    rc.getContainerInstance().getIdTable().register(buttonGroup);
+                    itemElement.setAttribute("group", buttonGroup.getId());
                 }
             }
         }

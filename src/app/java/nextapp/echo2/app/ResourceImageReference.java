@@ -92,6 +92,7 @@ extends StreamImageReference {
     private Extent width, height;
     private String contentType;
     private String resource;
+    private String id;
     
     /**
      * Creates a <code>ResourceImageReference</code>.
@@ -144,6 +145,7 @@ extends StreamImageReference {
         this.contentType = contentType == null ? getContentType(resource) : contentType;
         this.width = width;
         this.height = height;
+        id = ApplicationInstance.generateGlobalId();
     }
     
     /**
@@ -181,6 +183,13 @@ extends StreamImageReference {
      */
     public Extent getHeight() {
         return height;
+    }
+
+    /**
+     * @see nextapp.echo2.app.IdSupport#getId()
+     */
+    public String getId() {
+        return id;
     }
     
     /**
