@@ -235,6 +235,14 @@ implements Serializable {
     }
 
     /**
+     * Queues the given <code>Command</code> for execution on the next server
+     * update. 
+     */
+    public void enqueueCommand(Command command) {
+        updateManager.getServerUpdateManager().enqueueCommand(command);
+    }
+    
+    /**
      * Enqueues a task to be run on during the next client/server 
      * synchronization.  The task will be run 
      * <b>synchronously</b> in the UI processing thread.
@@ -256,7 +264,6 @@ implements Serializable {
             taskList.add(task);
         }
     }
-    
     
     /**
      * Reports a bound property change.

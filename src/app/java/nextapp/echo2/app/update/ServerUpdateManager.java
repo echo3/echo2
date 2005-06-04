@@ -30,6 +30,7 @@
 package nextapp.echo2.app.update;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,13 +38,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import nextapp.echo2.app.Command;
 import nextapp.echo2.app.Component;
 
 /**
  * Monitors updates to component hierarchy and records deltas between 
  * server state of application and client state of application.
  */
-public class ServerUpdateManager 
+public class ServerUpdateManager
 implements Serializable {
 
     /**
@@ -83,6 +85,7 @@ implements Serializable {
     };
 
     private Map componentUpdateMap = new HashMap();
+    private ArrayList commands = new ArrayList();
     private ServerComponentUpdate fullRefreshUpdate = null;
     private ClientUpdateManager clientUpdateManager;
     
@@ -118,6 +121,25 @@ implements Serializable {
             componentUpdateMap.put(parent, update);
         }
         return update;
+    }
+    
+    /**
+     * Enqueues a <code>Command</code> for processing.
+     * 
+     * @param the command
+     */
+    public void enqueueCommand(Command command) {
+        commands.add(command);
+    }
+    
+    /**
+     * Returns the stored <code>Command</code>s.  The commands
+     * are NOT removed or modified by this call.  
+     * 
+     * @return the comamnds
+     */
+    public Command[] getCommands() {
+        return (Command[])commands.toArray(new Command[commands.size()]);
     }
     
     /**
@@ -351,6 +373,7 @@ implements Serializable {
      */
     public void purge() {
         componentUpdateMap.clear();
+        commands.clear();
         fullRefreshUpdate = null;
     }
 }
