@@ -58,22 +58,8 @@ import nextapp.echo2.webrender.UserInstance;
 
 public class SerialApp extends ApplicationInstance {
     
-    public static SerialApp getApp() {
-        return (SerialApp) ApplicationInstance.getActive();
-    }
-
     private ListBox listBox;
     private Window mainWindow;
-    
-    private void showDialog(boolean error, String message) {
-         WindowPane windowPane = new WindowPane();
-         windowPane.setModal(true);
-         windowPane.setTitle(error ? "Error" : "Status");
-         windowPane.setTitleBackground(error ? Color.RED : Color.GREEN);
-         windowPane.setInsets(new Insets(20));
-         windowPane.add(new Label(message));
-         mainWindow.getContent().add(windowPane);
-    }
     
     private void doLoad() {
         try {
@@ -100,7 +86,8 @@ public class SerialApp extends ApplicationInstance {
         listModel.removeAll();
         Enumeration enumeration = getSession().getAttributeNames();
         while (enumeration.hasMoreElements()) {
-            listModel.add(enumeration.nextElement());
+            String sessionKey = (String) enumeration.nextElement();
+            listModel.add(sessionKey);
         }
     }
 
@@ -197,5 +184,15 @@ public class SerialApp extends ApplicationInstance {
         mainColumn.add(button);
         
         return mainWindow;
+    }
+
+    private void showDialog(boolean error, String message) {
+         WindowPane windowPane = new WindowPane();
+         windowPane.setModal(true);
+         windowPane.setTitle(error ? "Error" : "Status");
+         windowPane.setTitleBackground(error ? Color.RED : Color.GREEN);
+         windowPane.setInsets(new Insets(20));
+         windowPane.add(new Label(message));
+         mainWindow.getContent().add(windowPane);
     }
 }
