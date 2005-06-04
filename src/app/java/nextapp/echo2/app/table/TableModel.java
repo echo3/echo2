@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app.table;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.event.TableModelListener;
 
 /**
  * A model which represents data in a table format.
  */
-public interface TableModel {
+public interface TableModel
+extends Serializable {
     
     /**
      * Adds a listener that will be notified of changes/

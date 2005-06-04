@@ -29,7 +29,6 @@
 
 package nextapp.echo2.webcontainer.util;
 
-import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -46,15 +45,14 @@ import nextapp.echo2.app.IdSupport;
  * being weakly referenced (i.e., the fact that they are held within this table
  * will not prevent them from being garbage collected).
  */
-public class IdTable 
-implements Serializable {
+public class IdTable {
     
     // Both of these bugs may be dead, ensure and remove if possible:
     //BUGBUG. Evaluate synchronization issues in this class (may be concurrent issue w/ iterator in purge).
     //BUGBUG. This object needs a fully custom serialization/deserialization strategy such that weak refs will be held.
 
-    private transient Map idToReferenceMap = new HashMap();
-    private transient ReferenceQueue referenceQueue = new ReferenceQueue();
+    private Map idToReferenceMap = new HashMap();
+    private ReferenceQueue referenceQueue = new ReferenceQueue();
     
     /**
      * Registers an object with the <code>IdTable</code>

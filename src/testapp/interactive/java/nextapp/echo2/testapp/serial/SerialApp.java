@@ -29,8 +29,10 @@
 
 package nextapp.echo2.testapp.serial;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 
@@ -74,6 +76,23 @@ public class SerialApp extends ApplicationInstance {
     }
     
     private void doLoad() {
+        try {
+            String fileName = "session.data";
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            String sessionKey = (String) ois.readObject();
+            UserInstance userInstance = (UserInstance) ois.readObject();
+            getSession().setAttribute(sessionKey, userInstance);
+            ois.close();
+            fis.close();
+            showDialog(false, sessionKey + " loaded successfully.");
+        } catch (ClassNotFoundException ex) {
+            showDialog(true, "Exception occurred: " + ex);
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            showDialog(true, "Exception occurred: " + ex);
+            ex.printStackTrace();
+        }
     }
 
     private void doRefresh() {

@@ -29,13 +29,15 @@
 
 package nextapp.echo2.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
  * The listener interface for receiving notifications of changes to a 
  * <code>TableModel</code>.
  */
-public interface TableModelListener extends EventListener {
+public interface TableModelListener 
+extends EventListener, Serializable {
     
     /**
      * Invoked when a table is changed.

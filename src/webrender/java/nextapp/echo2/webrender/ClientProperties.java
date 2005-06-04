@@ -29,13 +29,15 @@
 
 package nextapp.echo2.webrender;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * A description of the client browser environment.
  */
-public class ClientProperties {
+public class ClientProperties
+implements Serializable {
     
     //BUGBUG. Standardize quirk/proprietary names.
     //BUGBUG. Ensure all properties are beign set, i.e., OS stuff and version stuff, otherwise discard unnecessary code.

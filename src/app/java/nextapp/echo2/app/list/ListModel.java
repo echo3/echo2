@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app.list;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.event.ListDataListener;
 
 /**
  * A data model for list type components (SelectFields and ListBoxes).
  */
-public interface ListModel {
+public interface ListModel
+extends Serializable {
 
     /**
      * Adds a <code>ListDataListener</code> to the model.

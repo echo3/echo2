@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueue;
@@ -38,7 +40,7 @@ import nextapp.echo2.webrender.ClientProperties;
  * <code>ContainerContext</code> implementation.
  */
 class ContainerContextImpl 
-implements ContainerContext {
+implements ContainerContext, Serializable {
     
     private ContainerInstance containerInstance;
     

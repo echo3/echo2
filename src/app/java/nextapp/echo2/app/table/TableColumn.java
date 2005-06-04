@@ -57,14 +57,6 @@ implements Serializable {
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     /**
-     * This constructor is necessary for serialization and should otherwise not
-     * be used.
-     */
-    public TableColumn() {
-        this(0, null, null, null);
-    }
-    
-    /**
      * Creates a <code>TableColumn</code> with the specified model index, 
      * undefined width, and undefined cell and header renderers.
      *

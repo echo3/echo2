@@ -29,6 +29,8 @@
 
 package nextapp.echo2.app.table;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Table;
 
@@ -36,7 +38,8 @@ import nextapp.echo2.app.Table;
  * Renders an <code>Object</code> contained at a specific coordinate in 
  * a <code>TableModel</code> into a <code>Component</code> instance.
  */
-public interface TableCellRenderer {
+public interface TableCellRenderer
+extends Serializable {
     
     /**
      * Returns a component that will be displayed at the specified coordinate

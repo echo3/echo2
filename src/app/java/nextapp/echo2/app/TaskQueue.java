@@ -29,6 +29,8 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
+
 //BUGBUG? rename TaskQueueHandle?
 
 /**
@@ -38,4 +40,5 @@ package nextapp.echo2.app;
  * This interface should not be implemented outside of the
  * framework itself. 
  */
-public interface TaskQueue { }
+public interface TaskQueue 
+extends Serializable { }

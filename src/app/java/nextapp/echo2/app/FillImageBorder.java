@@ -30,11 +30,14 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
+
 /**
  * A represntation of a graphical border drawn using a series of 
  * eight <code>FillImage</code>s.
  */
-public class FillImageBorder {
+public class FillImageBorder 
+implements Serializable {
 
     public static final int TOP_LEFT = 0;
     public static final int TOP = 1;

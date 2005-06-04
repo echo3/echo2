@@ -46,7 +46,7 @@ import nextapp.echo2.webrender.UserInstance;
  * Web application container user instance.
  */
 public class ContainerInstance extends UserInstance {
-
+    
     /**
      * Default asynchronous monitor callback interval (in ms).
      */
@@ -75,16 +75,7 @@ public class ContainerInstance extends UserInstance {
     private Map componentToRenderStateMap = new HashMap();
     private ApplicationInstance applicationInstance;
     private Map taskQueueToCallbackIntervalMap;
-    private IdTable idTable = new IdTable();
-    
-    /**
-     * Default constructor for serialization use only.
-     * 
-     * @see #newInstance(nextapp.echo2.webrender.Connection)
-     */
-    public ContainerInstance() {
-        super();
-    }
+    private transient IdTable idTable;
     
     /**
      * Creates a new <code>ContainerInstance</code>.
@@ -95,8 +86,6 @@ public class ContainerInstance extends UserInstance {
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
         applicationInstance = servlet.newApplicationInstance();
         
-        getServiceRegistry().add(WindowHtmlService.INSTANCE);
-
         conn.setUserInstance(this);
         
         applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
@@ -172,6 +161,9 @@ public class ContainerInstance extends UserInstance {
      * @return the <code>IdTable</code>
      */
     public IdTable getIdTable() {
+        if (idTable == null) {
+            idTable = new IdTable();
+        }
         return idTable;
     }
     

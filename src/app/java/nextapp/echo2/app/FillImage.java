@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
+
 /**
  * Describes how an image should 'fill' a particular component or region of
  * the user interface.  Includes information about the image itself, its
  * positioning, repitition, and scrolling.
  */
-public class FillImage {
+public class FillImage 
+implements Serializable {
     
     //BUGBUG. Remove all "BackgroundImage" references in this class and all clasess that use it
     //        there are still some test classes that refer to these as background images.

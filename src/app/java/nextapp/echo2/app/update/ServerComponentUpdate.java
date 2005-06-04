@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.update;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,7 +47,8 @@ import nextapp.echo2.app.Component;
  * Describes modiifcations to the <code>LayoutData</code> states of
  * children of the component.
  */
-public class ServerComponentUpdate {
+public class ServerComponentUpdate 
+implements Serializable {
 
     private static final Component[] EMPTY_COMPONENT_ARRAY = new Component[0];
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -54,7 +56,8 @@ public class ServerComponentUpdate {
     /**
      * A description of an update to a single property of the <code>parent</code> <code>Component</code>.
      */
-    public class PropertyUpdate {
+    public class PropertyUpdate 
+    implements Serializable {
         
         private Object newValue;
         private Object oldValue;

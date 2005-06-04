@@ -31,6 +31,7 @@ package nextapp.echo2.app;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +55,7 @@ import nextapp.echo2.app.event.EventListenerList;
  * This is an abstact base class from which all Echo components are derived.
  */
 public abstract class Component 
-implements IdSupport {
+implements IdSupport, Serializable {
     
     private static final int CHILD_LIST_CAPACITY = 3;
     private static final Component[] EMPTY_COMPONENT_ARRAY = new Component[0];

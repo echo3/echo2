@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app.text;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.event.DocumentListener;
 
 /**
  * A model for text components.
  */
-public interface Document {
+public interface Document 
+extends Serializable {
 
     /**
      * Adds a listener which will be notified of changes to the document.

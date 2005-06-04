@@ -29,7 +29,6 @@
 
 package nextapp.echo2.app.button;
 
-import java.io.Serializable;
 import java.util.EventListener;
 
 import nextapp.echo2.app.event.ActionEvent;
@@ -40,7 +39,7 @@ import nextapp.echo2.app.event.EventListenerList;
  * Default <code>ButtonModel</code> implementation.
  */
 public class DefaultButtonModel 
-implements ButtonModel, Serializable {
+implements ButtonModel {
     
     private EventListenerList listenerList = new EventListenerList();
     private String actionCommand;

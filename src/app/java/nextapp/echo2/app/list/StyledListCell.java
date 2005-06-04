@@ -29,6 +29,8 @@
 
 package nextapp.echo2.app.list;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Font;
 
@@ -40,7 +42,8 @@ import nextapp.echo2.app.Font;
  * The <code>toString()</code> method will be invoked on the implementing
  * object to determine the text of the list cell.
  */
-public interface StyledListCell {
+public interface StyledListCell 
+extends Serializable {
     
     /**
      * Returns the background of the list item.

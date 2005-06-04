@@ -29,13 +29,16 @@
 
 package nextapp.echo2.app.update;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 
 /**
  * Primary interface to update management architecture.
  */
-public class UpdateManager {
+public class UpdateManager 
+implements Serializable {
 
     private ClientUpdateManager clientUpdateManager;
     private ServerUpdateManager serverUpdateManager;
@@ -54,7 +57,6 @@ public class UpdateManager {
         this.applicationInstance = applicationInstance;
         clientUpdateManager = new ClientUpdateManager();
         serverUpdateManager = new ServerUpdateManager();
-        
         serverUpdateManager.init(clientUpdateManager);
     }
     

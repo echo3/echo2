@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.update;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,7 +41,8 @@ import nextapp.echo2.app.Component;
  * A representation of all updates made on the client to an individual
  * component.
  */
-public class ClientComponentUpdate {
+public class ClientComponentUpdate 
+implements Serializable {
         
     private Component component;
     private Map inputs;

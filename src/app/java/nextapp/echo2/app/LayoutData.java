@@ -29,6 +29,8 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
+
 /**
  * Describes the interface between a child <code>Component</code> and its 
  * parent <code>Component</code>.  A <code>LayoutData</code> object may 
@@ -49,4 +51,5 @@ package nextapp.echo2.app;
  * Use of incorrect or incompatible <code>LayoutData</code> implementations 
  * will be ignored.  
  */
-public interface LayoutData { }
+public interface LayoutData 
+extends Serializable { }

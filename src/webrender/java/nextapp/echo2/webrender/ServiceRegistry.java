@@ -29,8 +29,6 @@
 
 package nextapp.echo2.webrender;
 
-import java.io.Serializable;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,8 +39,7 @@ import java.util.Set;
  * A registry of <code>Service</code> objects that may be recalled based
  * on <code>Id</code> values.
  */
-public class ServiceRegistry 
-implements Serializable {
+public class ServiceRegistry {
 
     /** Maps service Ids to services */
     private final Map serviceMap = new HashMap();

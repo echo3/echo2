@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.update;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,7 +42,8 @@ import nextapp.echo2.app.Component;
  * 
  * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
  */
-public class ClientUpdateManager {
+public class ClientUpdateManager 
+implements Serializable {
      
     private Map clientUpdates = new HashMap();
     private Component actionComponent;

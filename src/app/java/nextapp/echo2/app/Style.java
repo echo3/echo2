@@ -36,7 +36,8 @@ import java.util.Iterator;
  * A representation of stylistic property information about a single instance 
  * or type of component.
  */
-public interface Style extends Serializable {
+public interface Style 
+extends Serializable {
     
     /**
      * Retrieves the value of the specified indexed property.

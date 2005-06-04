@@ -29,11 +29,14 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
+
 /**
  * A property object which describes the alignment or positioning of a 
  * particular item relative to others.
  */
-public class Alignment {
+public class Alignment
+implements Serializable {
     
     /**
      * Specifies default alignment.

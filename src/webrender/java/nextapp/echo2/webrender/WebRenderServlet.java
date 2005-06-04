@@ -36,12 +36,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nextapp.echo2.webrender.service.CoreServices;
+
 /**
  * Echo <code>HttpServlet</code> implementation.
  */
 public abstract class WebRenderServlet extends HttpServlet {
     
-    //BUGBUG. Caching temporarily disabled on all services.
+    /**
+     * A flag indicating whether caching should be disabled for all services.
+     * This flag is for testing purposes only, and should be disabled for
+     * production use.
+     */
     public static final boolean DISABLE_CACHING = false;
     
     public static final String SERVICE_ID_PARAMETER = "serviceId";
@@ -59,7 +65,12 @@ public abstract class WebRenderServlet extends HttpServlet {
     private static final String CACHE_MAX_AGE = "max-age=" + CACHED_SERVICE_TIMEOUT;
 
     private static MultipartRequestWrapper multipartRequestWrapper;
+    private static final ServiceRegistry services = new ServiceRegistry();
 
+    static {
+        CoreServices.install(services);
+    }
+    
     /**
      * An interface implemented by a supporting object that will handle 
      * multipart/form-data encoded HTTP requests.  This type of request is
@@ -117,8 +128,6 @@ public abstract class WebRenderServlet extends HttpServlet {
             }
         }
     }
-
-    private static final ServiceRegistry services = new ServiceRegistry();
     
     /**
      * Handles a GET request.

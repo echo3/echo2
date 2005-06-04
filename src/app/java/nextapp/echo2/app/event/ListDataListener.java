@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
@@ -36,7 +37,8 @@ import java.util.EventListener;
  *
  * @see nextapp.echo2.app.event.ListDataEvent
  */
-public interface ListDataListener extends EventListener {
+public interface ListDataListener 
+extends EventListener, Serializable {
 
     /** 
      * Indicates that the contents of the list have change.

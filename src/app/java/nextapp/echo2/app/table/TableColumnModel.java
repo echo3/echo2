@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.table;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import nextapp.echo2.app.event.TableColumnModelListener;
@@ -37,7 +38,8 @@ import nextapp.echo2.app.event.TableColumnModelListener;
  * A representation of the collection of <code>TableColumn</code>s of a
  * <code>Table</code>.
  */
-public interface TableColumnModel {
+public interface TableColumnModel
+extends Serializable {
     
     /**
      * Adds a table column to the end of the model.

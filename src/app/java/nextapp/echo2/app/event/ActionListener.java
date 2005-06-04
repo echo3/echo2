@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
@@ -36,7 +37,8 @@ import java.util.EventListener;
  *
  * @see nextapp.echo2.app.event.ActionEvent
  */
-public interface ActionListener extends EventListener {
+public interface ActionListener 
+extends EventListener, Serializable {
     
     /**
      * Invoked when an action occurs.

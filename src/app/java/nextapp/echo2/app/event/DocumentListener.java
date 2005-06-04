@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
@@ -37,7 +38,8 @@ import java.util.EventListener;
  * @see nextapp.echo2.app.text.Document
  * @see nextapp.echo2.app.event.DocumentEvent
  */
-public interface DocumentListener extends EventListener {
+public interface DocumentListener 
+extends EventListener, Serializable {
     
     /**
      * Invoked when an document update occurs.

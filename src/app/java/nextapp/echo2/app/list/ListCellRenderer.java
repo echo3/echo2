@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app.list;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.Component;
 
 /**
  * Renders an item in a list.
  */
-public interface ListCellRenderer {
+public interface ListCellRenderer 
+extends Serializable {
     
     /**
      * Renders an item in a list.

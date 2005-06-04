@@ -29,13 +29,15 @@
 
 package nextapp.echo2.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
  * A listener interface for receiving notification of state changes
  * via <code>ChangeEvent</code>s. 
  */
-public interface ChangeListener extends EventListener  {
+public interface ChangeListener 
+extends EventListener, Serializable  {
     
     /**
      * Invoked when a state change occurs.

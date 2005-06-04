@@ -35,23 +35,19 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import nextapp.echo2.webrender.service.CoreServices;
-
 //BUGBUG. Javadocs.
 
 public abstract class UserInstance
 implements HttpSessionBindingListener, Serializable {
     
-    private ServiceRegistry services;
+    private transient ServiceRegistry services = new ServiceRegistry();
     private String applicationUri;
     private String characterEncoding = "UTF-8";
     private ClientProperties clientProperties;
-    private HttpSession session;
+    private transient HttpSession session;
 
     public UserInstance() {
         super();
-        services = new ServiceRegistry();
-        CoreServices.install(services);
     }
     
     public String getApplicationUri() {

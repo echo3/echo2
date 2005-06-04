@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app.button;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.event.ActionListener;
 
 /**
  * Model for button components.
  */
-public interface ButtonModel {
+public interface ButtonModel
+extends Serializable {
 
     /**
      * Adds an <code>ActionListener</code> to receive notification of user 

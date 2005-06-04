@@ -55,6 +55,7 @@ public abstract class WebContainerServlet extends WebRenderServlet {
         serviceRegistry.add(AsyncMonitorService.INSTANCE);
         serviceRegistry.add(SessionExpiredService.INSTANCE);
         serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
+        serviceRegistry.add(WindowHtmlService.INSTANCE);
     }
     
     /**

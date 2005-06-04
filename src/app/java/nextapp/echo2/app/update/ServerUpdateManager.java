@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.update;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -42,7 +43,8 @@ import nextapp.echo2.app.Component;
  * Monitors updates to component hierarchy and records deltas between 
  * server state of application and client state of application.
  */
-public class ServerUpdateManager {
+public class ServerUpdateManager 
+implements Serializable {
 
     /**
      * <code>Comparator</code> to sort components by their depth in the 

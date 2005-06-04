@@ -29,10 +29,13 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
+
 /**
  * A collection of component-specific named styles. 
  */
-public interface StyleSheet {
+public interface StyleSheet
+extends Serializable {
 
     /**
      * Retrieves the appropriate style for the specified component class 

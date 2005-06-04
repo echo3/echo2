@@ -30,6 +30,14 @@
 package nextapp.echo2.app;
 
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.ColorModel;
+import java.awt.image.ImageObserver;
+import java.awt.image.MemoryImageSource;
+import java.awt.image.PixelGrabber;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * An ImageReference describing an image which may be rendered from
@@ -40,12 +48,12 @@ import java.awt.Image;
 public class AwtImageReference 
 implements ImageReference {
 
-    private Image image;
+    private transient Image image;
     private String id;
     
     /**
-     * Default constructor for use only in serialization and cases
-     * where a class is derived from AwtImageReference and the 
+     * Default constructor for use only when a class is derived from 
+     * <code>AwtImageReference</code> and the 
      * <code>getImage()</code> method is overridden.
      */
     public AwtImageReference() {
@@ -127,6 +135,54 @@ implements ImageReference {
             return new Extent(width, Extent.PX);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * @see java.io.Serializable
+     */
+    private void readObject(ObjectInputStream in)
+    throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
+        int width = in.readInt();
+        int height = in.readInt();
+        int[] pixels = (int[]) in.readObject();
+        
+        if (pixels != null) {
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            ColorModel colorModel = ColorModel.getRGBdefault();
+            image = toolkit.createImage(new MemoryImageSource(width, height, colorModel, pixels, 0, width));
+        }
+    }
+
+    /**
+     * @see java.io.Serializable
+     */
+    private void writeObject(ObjectOutputStream out) 
+    throws IOException {
+        out.defaultWriteObject();
+        
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+        
+        out.writeInt(width);
+        out.writeInt(height);
+        
+        if (image == null) {
+            out.writeObject(null);
+        } else {
+            int[] pixels = new int[width * height];
+            try {
+                PixelGrabber pg = new PixelGrabber(image, 0, 0, width, height, pixels, 0, width);
+                pg.grabPixels();
+                if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
+                    throw new IOException("Unable to serialize java.awt.image: PixelGrabber aborted.");
+                }
+            } catch (InterruptedException ex) {
+                throw new IOException("Unable to serialize java.awt.Image: PixelGrabber interrupted.");
+            }
+            out.writeObject(pixels);
         }
     }
 }

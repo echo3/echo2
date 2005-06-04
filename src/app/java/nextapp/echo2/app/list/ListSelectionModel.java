@@ -29,12 +29,15 @@
 
 package nextapp.echo2.app.list;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.event.ChangeListener;
 
 /**
  * A representation of the selected items in a list component.
  */
-public interface ListSelectionModel {
+public interface ListSelectionModel 
+extends Serializable {
 
     public static final int SINGLE_SELECTION = 0;
     public static final int MULTIPLE_SELECTION = 2;

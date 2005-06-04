@@ -29,9 +29,12 @@
 
 package nextapp.echo2.webcontainer;
 
+import java.io.Serializable;
+
 /**
  * Describes the last rendered state of a component on the client browser.
  * A <code>RenderState</code> is set when rendering is complete.
  * This is a marker interface.
  */
-public interface RenderState { }
+public interface RenderState 
+extends Serializable { }
