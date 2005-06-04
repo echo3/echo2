@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Component;
 
 /**
- * An optional interface for <code>SynchronizePeer</code>s that provides
+ * An optional interface for <code>ComponentSynchronizePeer</code>s that provides
  * the capability to receive <strong>IMMEDIATE</strong> notification of
  * state updates from the client. 
  * This interface must be implemented by any component that creates
@@ -59,7 +59,7 @@ public interface ActionProcessor {
     public static final String ACTION_VALUE = "value";
 
     /**
-     * Notifies the <code>SynchronizePeer</code> that a client action 
+     * Notifies the <code>ComponentSynchronizePeer</code> that a client action 
      * has occurred.
      * 
      * @param ci the relevant <code>ContainerInstance</code>

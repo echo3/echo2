@@ -115,7 +115,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
                     // is registered.
                     continue;
                 }
-                SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
+                ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
                 if (!(syncPeer instanceof PropertyUpdateProcessor)) {
                     throw new IllegalStateException("Target peer is not an PropertyUpdateProcessor.");
                 }
@@ -146,7 +146,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 // is registered.
                 return;
             }
-            SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
+            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(component.getClass());
             if (!(syncPeer instanceof ActionProcessor)) {
                 throw new IllegalStateException("Target peer is not an ActionProcessor.");
             }
@@ -168,7 +168,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
      * Performs disposal operations on components which have been removed from
      * the hierarchy.  Removes any <code>RenderState</code> objects being 
      * stored in the <code>ContainerInstance</code> for the disposed 
-     * components.  Invokes <code>SynchronizePeer.renderDispose()</code> such
+     * components.  Invokes <code>ComponentSynchronizePeer.renderDispose()</code> such
      * that the peers of the components can dispose of resources on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -179,7 +179,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
     private void disposeComponents(RenderContext rc, ServerComponentUpdate componentUpdate, Component[] disposedComponents) {
         ContainerInstance ci = rc.getContainerInstance();
         for (int i = 0; i < disposedComponents.length; ++i) {
-            SynchronizePeer disposedSyncPeer = SynchronizePeerFactory.getPeerForComponent(disposedComponents[i].getClass());
+            ComponentSynchronizePeer disposedSyncPeer = SynchronizePeerFactory.getPeerForComponent(disposedComponents[i].getClass());
             disposedSyncPeer.renderDispose(rc, componentUpdate, disposedComponents[i]);
             ci.removeRenderState(disposedComponents[i]);
         }
@@ -229,12 +229,12 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 if (!isAncestor(fullyReplacedHierarchies, parentComponent)) {
                     // Only perform update if ancestor of updated component is NOT contained in
                     // the set of components whose descenants were fully replaced.
-                    SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(parentComponent.getClass());
+                    ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(parentComponent.getClass());
                     String targetId;
                     if (parentComponent.getParent() == null) {
                         targetId = null;
                     } else {
-                        SynchronizePeer parentSyncPeer 
+                        ComponentSynchronizePeer parentSyncPeer 
                                 = SynchronizePeerFactory.getPeerForComponent(parentComponent.getParent().getClass());
                         targetId = parentSyncPeer.getContainerId(parentComponent);
                     }
@@ -263,8 +263,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
             ContentPane content = window.getContent();
             
             ServerComponentUpdate componentUpdate = new ServerComponentUpdate(content);
-            SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(content.getClass());
-            SynchronizePeer parentSyncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
+            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(content.getClass());
+            ComponentSynchronizePeer parentSyncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);

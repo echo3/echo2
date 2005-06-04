@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
 
 /**
  * An optional interface which may be implemented by 
- * <code>SynchronizePeer</code>s that wish to support rending directly
+ * <code>ComponentSynchronizePeer</code>s that wish to support rending directly
  * to HTML.
  */
 public interface DomUpdateSupport {
@@ -47,11 +47,11 @@ public interface DomUpdateSupport {
      * render any child components, either by invoking their 
      * <code>renderHtml()</code> methods if their peers also implement
      * <code>DomUpdateSupport</code> or by invoking their 
-     * <code>SynchronizePeer.renderAdd()</code> methods if they do
+     * <code>ComponentSynchronizePeer.renderAdd()</code> methods if they do
      * not.
      * <p>
      * The implementation must also perform any non-HTML-rendering operations
-     * which are performed in the <code>SynchronizePeer.renderAdd()</code>
+     * which are performed in the <code>ComponentSynchronizePeer.renderAdd()</code>
      * method, e.g., adding messageparts that register event listeners on
      * the client.
      * 

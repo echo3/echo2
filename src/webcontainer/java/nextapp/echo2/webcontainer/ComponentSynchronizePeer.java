@@ -36,14 +36,14 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
  * A stateless peer object used to synchronize the state of a given type of 
  * <code>nextapp.echo2.app.Component</code> between the server and client.
  * <p>
- * A <code>SynchronizePeer</code> may implement optional interfaces such as
+ * A <code>ComponentSynchronizePeer</code> may implement optional interfaces such as
  * <code>DomUpdateSupport</code> which enables rendering hierarchies of
  * components directly to (X)HTML code.  The optional 
  * <code>ActionProcessor</code> and <code>InputProcessor</code> interfaces
  * may be used when the client-side rendering of the component may send back
  * information to the server in response to user input.
  * <p>
- * A <strong>single</strong> instance of a given <code>SynchronizePeer</code> 
+ * A <strong>single</strong> instance of a given <code>ComponentSynchronizePeer</code> 
  * will be created to synchronize the state of <strong>ALL</strong> instances of 
  * a particular class of <code>Component</code>.  Thus, it is not possible to
  * store information about a component's state in this object (in contrast
@@ -52,7 +52,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
  * <code>ContainerInstance</code>, see the
  * <code>ContainerInstance.setRenderState()</code> method for details.
  */
-public interface SynchronizePeer {
+public interface ComponentSynchronizePeer {
     
     /**
      * Returns the id of the HTML element in which the specified 
@@ -113,9 +113,9 @@ public interface SynchronizePeer {
      * children, and children with updated <code>LayoutData</code> states.
      * <p>
      * The implementation is responsible for rendering added children by 
-     * obtaining their <code>SynchronizePeer</code>s and invoking their
+     * obtaining their <code>ComponentSynchronizePeer</code>s and invoking their
      * <code>renderAdd()</code> methods.  Alternatively, if a child's 
-     * <code>SynchronizePeer</code> implements the 
+     * <code>ComponentSynchronizePeer</code> implements the 
      * <code>DomUpdateSupport</code> interface, the implementation may invoke
      * the child peer's <code>renderHtml()</code> method instead.
      * <p>

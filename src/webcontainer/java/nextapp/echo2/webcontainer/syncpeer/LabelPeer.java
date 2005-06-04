@@ -40,7 +40,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
-import nextapp.echo2.webcontainer.SynchronizePeer;
+import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -62,14 +62,14 @@ import org.w3c.dom.Node;
  * Echo framework.
  */
 public class LabelPeer
-implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
+implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
     
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Extent DEFAULT_ICON_TEXT_MARGIN = new Extent(3);
     private static final String IMAGE_ID_ICON = "icon";
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update,
@@ -80,7 +80,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         throw new UnsupportedOperationException("Component does not support children.");
@@ -98,7 +98,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
@@ -227,7 +227,7 @@ implements DomUpdateSupport, ImageRenderSupport, SynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      * nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {

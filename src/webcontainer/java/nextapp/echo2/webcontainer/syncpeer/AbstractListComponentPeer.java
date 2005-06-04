@@ -46,7 +46,7 @@ import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
-import nextapp.echo2.webcontainer.SynchronizePeer;
+import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -71,7 +71,7 @@ import org.w3c.dom.Node;
  * Echo framework.
  */
 public abstract class AbstractListComponentPeer 
-implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
+implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
     // Default Colors
     protected static final Color DEFAULT_BACKGROUND = Color.WHITE;
@@ -198,7 +198,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         throw new UnsupportedOperationException("Component does not support children.");
@@ -259,7 +259,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String,
      *      nextapp.echo2.app.Component)
      */
@@ -390,7 +390,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, SynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {

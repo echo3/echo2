@@ -42,7 +42,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
-import nextapp.echo2.webcontainer.SynchronizePeer;
+import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -56,7 +56,7 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  * Echo framework.
  */
 public class ContentPanePeer 
-implements DomUpdateSupport, SynchronizePeer {
+implements DomUpdateSupport, ComponentSynchronizePeer {
     
     /**
      * Default constructor.
@@ -67,7 +67,7 @@ implements DomUpdateSupport, SynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#getContainerId(nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         String parentId = ContainerInstance.getElementId(child.getParent());
@@ -75,7 +75,7 @@ implements DomUpdateSupport, SynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
@@ -134,7 +134,7 @@ implements DomUpdateSupport, SynchronizePeer {
         String containerId = getContainerId(child);
         containerDivElement.setAttribute("id", containerId);
         parentNode.appendChild(containerDivElement);
-        SynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
+        ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
         if (syncPeer instanceof DomUpdateSupport) {
             ((DomUpdateSupport) syncPeer).renderHtml(rc, update, containerDivElement, child);
         } else {
@@ -143,7 +143,7 @@ implements DomUpdateSupport, SynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
@@ -195,7 +195,7 @@ implements DomUpdateSupport, SynchronizePeer {
         }
     }
     /**
-     * @see nextapp.echo2.webcontainer.SynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {

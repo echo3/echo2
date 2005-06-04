@@ -34,7 +34,7 @@ import nextapp.echo2.app.ImageReference;
 
 /**
  * An optional interface which may be implemented by 
- * <code>SynchronizePeer</code>s to render images via the
+ * <code>ComponentSynchronizePeer</code>s to render images via the
  * <code>ImageRenderService</code>.
  */
 public interface ImageRenderSupport {

@@ -51,7 +51,7 @@ public class FillImageRender {
      * 
      * @param cssStyle the CSS style to be updated
      * @param rc the relevant <code>RenderContext</code>
-     * @param irs a <code>SynchronizePeer</code> providing 
+     * @param irs a <code>ComponentSynchronizePeer</code> providing 
      *        <code>ImageRenderSupport</code>
      * @param component the relevant <code>Component</code>
      * @param imageId the image id of the background image

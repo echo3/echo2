@@ -46,7 +46,7 @@ public class ImageTools {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param irs the <code>ImageRenderSupport</code>-implementing 
-     *        <code>SynchronizePeer</code>.
+     *        <code>ComponentSynchronizePeer</code>.
      * @param component the component for which the image is being rendered
      * @param imageId the component-specific id of the image
      * @return the URI

@@ -32,7 +32,7 @@ package nextapp.echo2.webcontainer;
 import nextapp.echo2.app.util.PeerFactory;
 
 /**
- * Factory for obtaining <code>SynchronizePeer</code> implementations.
+ * Factory for obtaining <code>ComponentSynchronizePeer</code> implementations.
  */
 public class SynchronizePeerFactory {
 
@@ -41,13 +41,13 @@ public class SynchronizePeerFactory {
             = new PeerFactory(RESOURCE_NAME, SynchronizePeerFactory.class.getClassLoader());
     
     /**
-     * Retrieves the appropriate <code>SynchronizePeer</code> for a given 
+     * Retrieves the appropriate <code>ComponentSynchronizePeer</code> for a given 
      * <code>Component</code> class.
      * 
      * @param componentClass the component class
-     * @return the appropriate <code>SynchronizePeer</code>
+     * @return the appropriate <code>ComponentSynchronizePeer</code>
      */
-    public static SynchronizePeer getPeerForComponent(Class componentClass) {
-        return (SynchronizePeer) peerFactory.getPeerForObject(componentClass, true);
+    public static ComponentSynchronizePeer getPeerForComponent(Class componentClass) {
+        return (ComponentSynchronizePeer) peerFactory.getPeerForObject(componentClass, true);
     }
 }

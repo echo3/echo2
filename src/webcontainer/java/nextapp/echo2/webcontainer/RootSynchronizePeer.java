@@ -33,12 +33,12 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 
 /**
- * An extension of <code>SynchronizePeer</code> functionality for
+ * An extension of <code>ComponentSynchronizePeer</code> functionality for
  * top-level (root) components, i.e., <code>Window</code>s, that require
  * additional capabilities, such as refreshing the entire state of the 
  * client.
  */
-public interface RootSynchronizePeer extends SynchronizePeer {
+public interface RootSynchronizePeer extends ComponentSynchronizePeer {
 
     /**
      * Renders a complete refresh of the client state.

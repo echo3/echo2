@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Component;
 
 /**
- * An optional interface for <code>SynchronizePeer</code>s that provides
+ * An optional interface for <code>ComponentSynchronizePeer</code>s that provides
  * the capability to receive <strong>DELAYED</strong> notification of
  * state updates from the client.   The delayed state notifications will
  * be provided to the server when a state change occurs to a component
@@ -63,7 +63,7 @@ public interface PropertyUpdateProcessor {
     public String PROPERTY_VALUE = "value";
     
     /**
-     * Notifies the <code>SynchronizePeer</code> that a client property 
+     * Notifies the <code>ComponentSynchronizePeer</code> that a client property 
      * update has occurred.
      * 
      * @param ci the relevant <code>ContainerInstance</code>
