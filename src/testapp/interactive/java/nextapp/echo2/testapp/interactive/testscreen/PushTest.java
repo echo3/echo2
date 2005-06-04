@@ -86,7 +86,7 @@ public class PushTest extends Column {
         }
         
         /**
-         * @see nextapp.echo2.app.event.MessageListener#messageReceived(nextapp.echo2.app.event.MessageEvent)
+         * @see java.lang.Runnable#run()
          */
         public void run() {
             if (percentComplete < 100) {

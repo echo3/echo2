@@ -411,7 +411,7 @@ public class Table extends Component {
      * Sets the <code>TableColumnModel</code> describing this table's 
      * columns.
      *
-     * @return the new column model
+     * @param newValue the new column model
      */
     public void setColumnModel(TableColumnModel newValue) {
         invalidate();

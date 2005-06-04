@@ -126,7 +126,7 @@ implements Serializable {
     /**
      * Enqueues a <code>Command</code> for processing.
      * 
-     * @param the command
+     * @param command the command
      */
     public void enqueueCommand(Command command) {
         commands.add(command);

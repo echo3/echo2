@@ -147,8 +147,6 @@ implements IdSupport, Serializable {
      * @param c the child component to add
      * @param n the index at which to add the child component, or -1 to add the
      *          component at the end
-     * @throws DuplicateIdException if the id of the child conflicts with the
-     *         id of an existing component in the hierarchy
      * @throws IllegalChildException if the child is not allowed to be added
      *         to this component, either because it is not valid for the 
      *         component's state or is of an invalid type.

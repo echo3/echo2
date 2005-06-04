@@ -63,7 +63,7 @@ public class CssStyle {
      * Sets a style attribute value.
      * 
      * @param attributeName the name of the attribute.
-     * @return the value of the attribute.
+     * @param attributeValue the value of the attribute.
      */
     public void setAttribute(String attributeName, String attributeValue) {
         styleData.put(attributeName, attributeValue);

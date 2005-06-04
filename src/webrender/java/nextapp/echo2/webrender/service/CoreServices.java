@@ -43,7 +43,6 @@ public class CoreServices {
             = JavaScriptService.forResource("Echo.ClientEngine", RESOURCE_PATH + "ClientEngine.js");
     public static final Service DEBUG 
             = StaticTextService.forResource("Echo.Debug", "text/html", RESOURCE_PATH + "Debug.html");
-
     
     public static void install(ServiceRegistry services) {
         services.add(CLIENT_ENGINE);

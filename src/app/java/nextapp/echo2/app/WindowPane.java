@@ -35,12 +35,6 @@ package nextapp.echo2.app;
  * <p>
  * <strong>NOTE:</strong> A <code>WindowPane</code> may only be added to 
  * a <code>ContentPane</code>.
- * <p>
- * <strong>Child LayoutData</strong>: Children of this component may provide
- * layout information using the 
- * <code>nextapp.echo2.app.layout.WindowPaneLayoutData</code> layout data object.
- * 
- * @see nextapp.echo2.app.layout.WindowPaneLayoutData
  */
 public class WindowPane extends Component 
 implements ModalSupport {

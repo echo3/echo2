@@ -87,7 +87,7 @@ implements Serializable {
      * Returns a reference to the <code>ApplicationInstance</code> that is 
      * relevant to the current thread.
      * 
-     * @return The relevant <code>ApplicationInstance</code>.
+     * @param applicationInstance The relevant <code>ApplicationInstance</code>.
      */
     public static final void setActive(ApplicationInstance applicationInstance) {
         activeInstance.set(applicationInstance);

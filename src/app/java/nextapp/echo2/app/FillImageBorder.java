@@ -181,7 +181,7 @@ implements Serializable {
      * the alpha channel of any <code>FillImage</code>s to be rendered against
      * this color.
      * 
-     * @return the color
+     * @param color the color
      */
     public void setColor(Color color) {
         this.color = color;

@@ -103,7 +103,7 @@ implements LayoutData {
     /**
      * Sets the inset margins of the cell.
      * 
-     * @return the inset margins
+     * @param newValue the inset margins
      */
     public void setInsets(Insets newValue) {
         insets = newValue;
