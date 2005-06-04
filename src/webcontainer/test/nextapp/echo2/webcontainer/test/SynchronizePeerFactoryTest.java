@@ -43,7 +43,7 @@ import junit.framework.TestCase;
  * 
  */
 public class SynchronizePeerFactoryTest extends TestCase {
-
+    
     public static final class PeerlessComponent extends Component { }
     
     public static final class LabelDerivative extends Label { }
