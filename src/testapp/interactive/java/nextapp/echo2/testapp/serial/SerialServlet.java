@@ -27,49 +27,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.testapp.serial;
+import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.webcontainer.WebContainerServlet;
 
-import javax.servlet.http.HttpSession;
-
-import nextapp.echo2.app.TaskQueue;
-import nextapp.echo2.webrender.ClientProperties;
-
-/**
- * <code>ContainerContext</code> implementation.
- */
-class ContainerContextImpl 
-implements ContainerContext {
-    
-    private ContainerInstance containerInstance;
-    
-    /**
-     * Creates a new <code>ContainerContextImpl</code>
-     * 
-     * @param containerInstance the relevant <code>ContainerInstance</code>
-     */
-    ContainerContextImpl(ContainerInstance containerInstance) {
-        super();
-        this.containerInstance = containerInstance;
-    }
+public class SerialServlet extends WebContainerServlet {
 
     /**
-     * @see nextapp.echo2.webcontainer.ContainerContext#getClientProperties()
+     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
      */
-    public ClientProperties getClientProperties() {
-        return containerInstance.getClientProperties();
-    }
-    
-    /**
-     * @see nextapp.echo2.webcontainer.ContainerContext#getSession()
-     */
-    public HttpSession getSession() {
-        return containerInstance.getSession();
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueue, int)
-     */
-    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms) {
-        containerInstance.setTaskQueueCallbackInterval(taskQueue, ms);
+    public ApplicationInstance newApplicationInstance() {
+        return new SerialApp();
     }
 }

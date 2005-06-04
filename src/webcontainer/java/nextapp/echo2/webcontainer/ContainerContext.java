@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer;
 
+import javax.servlet.http.HttpSession;
+
 import nextapp.echo2.app.TaskQueue;
 import nextapp.echo2.webrender.ClientProperties;
 
@@ -52,9 +54,18 @@ public interface ContainerContext {
      * Returns the <code>ClientProperties</code> describing the user's
      * client web browser environment.
      * 
-     * @return the <code>ClientProperties</code> object
+     * @return the <code>ClientProperties</code>
      */
     public ClientProperties getClientProperties();
+    
+
+    /**
+     * Returns the <code>HttpSession</code> in which the application is 
+     * being stored.
+     * 
+     * @return the <code>HttpSession</code>
+     */
+    public HttpSession getSession();
     
     /**
      * Sets the interval between asynchronous callbacks from the client to check

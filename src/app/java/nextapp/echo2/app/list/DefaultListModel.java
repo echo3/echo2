@@ -123,6 +123,17 @@ public class DefaultListModel extends AbstractListModel {
         items.remove(item);
         fireIntervalRemoved(index, index); 
     }
+    
+    /**
+     * Removes all items from the model.
+     */
+    public void removeAll() {
+        int size = items.size();
+        if (size > 0) {
+            items.clear();
+            fireIntervalRemoved(0, size - 1);
+        }
+    }
 
     /**
      * Returns the length of the list.

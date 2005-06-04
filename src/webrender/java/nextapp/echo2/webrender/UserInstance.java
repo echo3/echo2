@@ -31,21 +31,22 @@ package nextapp.echo2.webrender;
 
 import java.io.Serializable;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import nextapp.echo2.webrender.service.CoreServices;
 
 //BUGBUG. Javadocs.
 
-/**
- * A peer object for an user instance of an Echo application.  Like 
- * EchoInstance, one instance of this class is created for each user.
- */
 public abstract class UserInstance
-implements Serializable {
+implements HttpSessionBindingListener, Serializable {
     
     private ServiceRegistry services;
     private String applicationUri;
     private String characterEncoding = "UTF-8";
     private ClientProperties clientProperties;
+    private HttpSession session;
 
     public UserInstance() {
         super();
@@ -99,6 +100,15 @@ implements Serializable {
         return services;
     }
     
+    /**
+     * Returns the <code>HttpSession</code> containing this <code>UserInstance</code>.
+     * 
+     * @return the <code>HttpSession</code>
+     */
+    public HttpSession getSession() {
+        return session;
+    }
+    
     public void setApplicationUri(String applicationUri) {
         this.applicationUri = applicationUri;
     }
@@ -111,5 +121,25 @@ implements Serializable {
      */
     public void setClientProperties(ClientProperties clientProperties) {
         this.clientProperties = clientProperties;
+    }
+    
+    /**
+     * Listener implementation of <code>HttpSessionBindingListener</code>.
+     * Stores reference to session when invoked.
+     *
+     * @see javax.servlet.http.HttpSessionBindingListener#valueBound(HttpSessionBindingEvent)
+     */
+    public void valueBound(HttpSessionBindingEvent e) {
+        session = (HttpSession) e.getSource();
+    }
+    
+    /**
+     * Listener implementation of <code>HttpSessionBindingListener</code>.
+     * Removes reference to session when invoked.
+     *
+     * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(HttpSessionBindingEvent)
+     */
+    public void valueUnbound(HttpSessionBindingEvent e) {
+        session = null;
     }
 }

@@ -14,9 +14,19 @@
       <servlet-class>nextapp.echo2.testapp.interactive.InteractiveServlet</servlet-class>
     </servlet>
 
+    <servlet>
+      <servlet-name>Echo2SerialServlet</servlet-name>
+      <servlet-class>nextapp.echo2.testapp.serial.SerialServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
       <servlet-name>Echo2InteractiveServlet</servlet-name>
       <url-pattern>/ia</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+      <servlet-name>Echo2SerialServlet</servlet-name>
+      <url-pattern>/serial</url-pattern>
     </servlet-mapping>
     
 </web-app>

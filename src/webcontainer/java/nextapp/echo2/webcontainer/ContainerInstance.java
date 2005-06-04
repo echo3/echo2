@@ -210,6 +210,17 @@ public class ContainerInstance extends UserInstance {
     }
     
     /**
+     * Sets the <code>RenderState</code> of the specified 
+     * <code>Component</code>.
+     * 
+     * @param component the component
+     * @param renderState the render state
+     */
+    public void setRenderState(Component component, RenderState renderState) {
+        componentToRenderStateMap.put(component, renderState);
+    }
+    
+    /**
      * Sets the interval between asynchronous callbacks from the client to check
      * for queued tasks for a given <code>TaskQueue</code>.  If multiple 
      * <code>TaskQueue</code>s are active, the smallest specified interval should
@@ -227,16 +238,5 @@ public class ContainerInstance extends UserInstance {
             taskQueueToCallbackIntervalMap = new WeakHashMap();
         }
         taskQueueToCallbackIntervalMap.put(taskQueue, new Integer(ms));
-    }
-    
-    /**
-     * Sets the <code>RenderState</code> of the specified 
-     * <code>Component</code>.
-     * 
-     * @param component the component
-     * @param renderState the render state
-     */
-    public void setRenderState(Component component, RenderState renderState) {
-        componentToRenderStateMap.put(component, renderState);
     }
 }

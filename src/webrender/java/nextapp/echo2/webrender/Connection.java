@@ -83,7 +83,7 @@ public class Connection {
 
         HttpSession session = request.getSession(false);
         if (session != null) {
-            userInstance = (UserInstance) session.getAttribute(USER_INSTANCE_SESSION_KEY);
+            userInstance = (UserInstance) session.getAttribute(USER_INSTANCE_SESSION_KEY + ":" + servlet.getServletName());
         }
     }
     
@@ -171,7 +171,7 @@ public class Connection {
     public void removeUserInstance() {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.removeAttribute(USER_INSTANCE_SESSION_KEY);
+            session.removeAttribute(USER_INSTANCE_SESSION_KEY + ":" + servlet.getServletName());
         }
     }
     
@@ -196,6 +196,6 @@ public class Connection {
         this.userInstance = userInstance;
         userInstance.setApplicationUri(request.getRequestURI());
         HttpSession session = request.getSession(true);
-        session.setAttribute(USER_INSTANCE_SESSION_KEY, userInstance);
+        session.setAttribute(USER_INSTANCE_SESSION_KEY + ":" + servlet.getServletName(), userInstance);
     }
 }
