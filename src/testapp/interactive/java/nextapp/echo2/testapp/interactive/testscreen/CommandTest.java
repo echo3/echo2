@@ -27,38 +27,38 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.testapp.interactive.testscreen;
 
-import nextapp.echo2.app.util.PeerFactory;
+import nextapp.echo2.app.Button;
+import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.testapp.interactive.Styles;
+import nextapp.echo2.webcontainer.command.BrowserRedirectCommand;
 
 /**
- * Factory for obtaining <code>ComponentSynchronizePeer</code> implementations.
+ * A test for the command infrastructures and browser control commands.
  */
-public class SynchronizePeerFactory {
-
-    private static final String RESOURCE_NAME = "META-INF/nextapp/echo2/SynchronizePeerBindings.properties";
-    private static final PeerFactory peerFactory 
-            = new PeerFactory(RESOURCE_NAME, SynchronizePeerFactory.class.getClassLoader());
+public class CommandTest  extends Column {
     
-    /**
-     * Retrieves the appropriate <code>CommandSynchronizePeer</code> for a given 
-     * <code>Command</code> class.
-     * 
-     * @param commandClass the command class
-     * @return the appropriate <code>CommandSynchronizePeer</code>
-     */
-    public static CommandSynchronizePeer getPeerForCommand(Class commandClass) {
-        return (CommandSynchronizePeer) peerFactory.getPeerForObject(commandClass, true);
-    }
-    
-    /**
-     * Retrieves the appropriate <code>ComponentSynchronizePeer</code> for a given 
-     * <code>Component</code> class.
-     * 
-     * @param componentClass the component class
-     * @return the appropriate <code>ComponentSynchronizePeer</code>
-     */
-    public static ComponentSynchronizePeer getPeerForComponent(Class componentClass) {
-        return (ComponentSynchronizePeer) peerFactory.getPeerForObject(componentClass, true);
+    public CommandTest() {
+        super();
+        
+        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
+        splitPaneLayoutData.setInsets(new Insets(10));
+        setLayoutData(splitPaneLayoutData);
+        
+        Button button;
+        
+        button = new Button("Enqueue Redirect Command");
+        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().enqueueCommand(new BrowserRedirectCommand("http://www.nextapp.com/products/echo2"));
+            }
+        });
+        add(button);
     }
 }

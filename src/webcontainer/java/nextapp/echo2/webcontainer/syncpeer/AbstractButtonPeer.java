@@ -109,6 +109,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String IMAGE_ID_STATE_ICON = "stateIcon";
     private static final String IMAGE_ID_SELECTED_STATE_ICON = "selectedStateIcon";
     
+    //BUGBUG. shouldn't be public.
     /**
      * Service to provide supporting JavaScript library.
      */

@@ -27,38 +27,38 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+//__________________________
+// Object EchoBrowserCommand
 
-import nextapp.echo2.app.util.PeerFactory;
+EchoBrowserCommand = function() { };
 
 /**
- * Factory for obtaining <code>ComponentSynchronizePeer</code> implementations.
+ * ServerMessage process() implementation.
  */
-public class SynchronizePeerFactory {
+EchoBrowserCommand.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "redirect":
+                EchoBrowserCommand.processRedirect(messagePartElement.childNodes[i]);
+                break;
+            case "openwindow":
+                EchoBrowserCommand.processOpenWindow(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
 
-    private static final String RESOURCE_NAME = "META-INF/nextapp/echo2/SynchronizePeerBindings.properties";
-    private static final PeerFactory peerFactory 
-            = new PeerFactory(RESOURCE_NAME, SynchronizePeerFactory.class.getClassLoader());
-    
-    /**
-     * Retrieves the appropriate <code>CommandSynchronizePeer</code> for a given 
-     * <code>Command</code> class.
-     * 
-     * @param commandClass the command class
-     * @return the appropriate <code>CommandSynchronizePeer</code>
-     */
-    public static CommandSynchronizePeer getPeerForCommand(Class commandClass) {
-        return (CommandSynchronizePeer) peerFactory.getPeerForObject(commandClass, true);
-    }
-    
-    /**
-     * Retrieves the appropriate <code>ComponentSynchronizePeer</code> for a given 
-     * <code>Component</code> class.
-     * 
-     * @param componentClass the component class
-     * @return the appropriate <code>ComponentSynchronizePeer</code>
-     */
-    public static ComponentSynchronizePeer getPeerForComponent(Class componentClass) {
-        return (ComponentSynchronizePeer) peerFactory.getPeerForObject(componentClass, true);
-    }
-}
+EchoBrowserCommand.processOpenWindow = function(disposeMessageElement) {
+    var uri = redirectElement.getAttribute("uri");
+    var name = redirectElement.getAttribute("name");
+    var features = redirectElement.getAttribute("features");
+    var replace = redirectElement.getAttribute("replace");
+    window.open(uri, name, features, replace);
+};
+
+EchoBrowserCommand.processRedirect = function(redirectElement) {
+    var uri = redirectElement.getAttribute("uri");
+    window.location = uri;
+};

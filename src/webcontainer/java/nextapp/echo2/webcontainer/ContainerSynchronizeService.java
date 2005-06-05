@@ -36,6 +36,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.Command;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Window;
@@ -244,6 +245,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
                     }
                 }
             }
+        }
+
+        // Execute queued commands.
+        Command[] commands = serverUpdateManager.getCommands();
+        for (int i = 0; i < commands.length; i++) {
+            CommandSynchronizePeer peer = SynchronizePeerFactory.getPeerForCommand(commands[i].getClass()); 
+            peer.render(rc,commands[i]);
         }
     }
     

@@ -27,38 +27,48 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
-
-import nextapp.echo2.app.util.PeerFactory;
+package nextapp.echo2.webcontainer.command;
 
 /**
- * Factory for obtaining <code>ComponentSynchronizePeer</code> implementations.
- */
-public class SynchronizePeerFactory {
-
-    private static final String RESOURCE_NAME = "META-INF/nextapp/echo2/SynchronizePeerBindings.properties";
-    private static final PeerFactory peerFactory 
-            = new PeerFactory(RESOURCE_NAME, SynchronizePeerFactory.class.getClassLoader());
+ * A Web Application Container-specific <code>Command</code> to 
+ * open a new browser window displaying a specific URI.
+ * This action may not be performed on a client if the client has 
+ * pop-up blocking enabled.
+ */  
+public class BrowserOpenWindowCommand {
+    
+    private String uri;
+    private String options;
     
     /**
-     * Retrieves the appropriate <code>CommandSynchronizePeer</code> for a given 
-     * <code>Command</code> class.
+     * Creates a new <code>BrowserOpenWindowCommand</code>.
      * 
-     * @param commandClass the command class
-     * @return the appropriate <code>CommandSynchronizePeer</code>
+     * @param uri the target URI
+     * @param options the 'options' string which will be used to configure the
+     *        new browser window
      */
-    public static CommandSynchronizePeer getPeerForCommand(Class commandClass) {
-        return (CommandSynchronizePeer) peerFactory.getPeerForObject(commandClass, true);
+    public BrowserOpenWindowCommand(String uri, String options) {
+        super();
+        this.uri = uri;
+        this.options = options;
+    }
+
+    /**
+     * Returns the target URI.
+     * 
+     * @return the target URI
+     */
+    public String getUri() {
+        return uri;
     }
     
     /**
-     * Retrieves the appropriate <code>ComponentSynchronizePeer</code> for a given 
-     * <code>Component</code> class.
+     * Returns the 'options' string which will be used to configure the
+     * new browser window.
      * 
-     * @param componentClass the component class
-     * @return the appropriate <code>ComponentSynchronizePeer</code>
+     * @return options the 'options' string
      */
-    public static ComponentSynchronizePeer getPeerForComponent(Class componentClass) {
-        return (ComponentSynchronizePeer) peerFactory.getPeerForObject(componentClass, true);
+    public String getOptions() {
+        return options;
     }
 }

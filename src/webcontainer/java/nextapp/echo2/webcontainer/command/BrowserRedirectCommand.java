@@ -27,38 +27,37 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webcontainer;
+package nextapp.echo2.webcontainer.command;
 
-import nextapp.echo2.app.util.PeerFactory;
+import nextapp.echo2.app.Command;
 
 /**
- * Factory for obtaining <code>ComponentSynchronizePeer</code> implementations.
+ * A Web Application Container-specific <code>Command</code> to 
+ * redirect the current browser window to a new URI.  
+ * Enqueueing any command after a redirect command will result in 
+ * indeterminite behavior.
  */
-public class SynchronizePeerFactory {
-
-    private static final String RESOURCE_NAME = "META-INF/nextapp/echo2/SynchronizePeerBindings.properties";
-    private static final PeerFactory peerFactory 
-            = new PeerFactory(RESOURCE_NAME, SynchronizePeerFactory.class.getClassLoader());
+public class BrowserRedirectCommand 
+implements Command {
+    
+    private String uri;
     
     /**
-     * Retrieves the appropriate <code>CommandSynchronizePeer</code> for a given 
-     * <code>Command</code> class.
+     * Creates a new <code>BrowserRedirectCommand</code>.
      * 
-     * @param commandClass the command class
-     * @return the appropriate <code>CommandSynchronizePeer</code>
+     * @param uri the target URI
      */
-    public static CommandSynchronizePeer getPeerForCommand(Class commandClass) {
-        return (CommandSynchronizePeer) peerFactory.getPeerForObject(commandClass, true);
+    public BrowserRedirectCommand(String uri) {
+        super();
+        this.uri = uri;
     }
     
     /**
-     * Retrieves the appropriate <code>ComponentSynchronizePeer</code> for a given 
-     * <code>Component</code> class.
+     * Returns the target URI.
      * 
-     * @param componentClass the component class
-     * @return the appropriate <code>ComponentSynchronizePeer</code>
+     * @return the target URI
      */
-    public static ComponentSynchronizePeer getPeerForComponent(Class componentClass) {
-        return (ComponentSynchronizePeer) peerFactory.getPeerForObject(componentClass, true);
+    public String getUri() {
+        return uri;
     }
 }
