@@ -84,6 +84,13 @@ implements CommandSynchronizePeer {
         Element openWindowElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoBrowserCommand", "openwindow");
         openWindowElement.setAttribute("uri", command.getUri());
+        if (command.getName() != null) {
+            openWindowElement.setAttribute("name", command.getName());
+        }
+        if (command.getFeatures() != null) {
+            openWindowElement.setAttribute("features", command.getFeatures());
+        }
+        openWindowElement.setAttribute("replace", command.isReplace() ? "true" : "false");
     }
 
     /**

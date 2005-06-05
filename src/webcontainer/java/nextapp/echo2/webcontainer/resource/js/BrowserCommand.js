@@ -50,11 +50,11 @@ EchoBrowserCommand.process = function(messagePartElement) {
     }
 };
 
-EchoBrowserCommand.processOpenWindow = function(disposeMessageElement) {
-    var uri = redirectElement.getAttribute("uri");
-    var name = redirectElement.getAttribute("name");
-    var features = redirectElement.getAttribute("features");
-    var replace = redirectElement.getAttribute("replace");
+EchoBrowserCommand.processOpenWindow = function(openWindowElement) {
+    var uri = openWindowElement.getAttribute("uri");
+    var name = openWindowElement.getAttribute("name");
+    var features = openWindowElement.getAttribute("features");
+    var replace = openWindowElement.getAttribute("replace") == "true";
     window.open(uri, name, features, replace);
 };
 

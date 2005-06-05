@@ -36,6 +36,7 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.Styles;
+import nextapp.echo2.webcontainer.command.BrowserOpenWindowCommand;
 import nextapp.echo2.webcontainer.command.BrowserRedirectCommand;
 
 /**
@@ -57,6 +58,16 @@ public class CommandTest  extends Column {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().enqueueCommand(new BrowserRedirectCommand("http://www.nextapp.com/products/echo2"));
+            }
+        });
+        add(button);
+        
+        button = new Button("Enqueue Simple Window Open Command");
+        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().enqueueCommand(
+                        new BrowserOpenWindowCommand("http://www.nextapp.com/products/echo2", null, null));
             }
         });
         add(button);
