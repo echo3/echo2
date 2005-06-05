@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueueHandle;
@@ -58,7 +60,14 @@ public interface ContainerContext {
      */
     public ClientProperties getClientProperties();
     
-
+    /**
+     * Returns an immutable <code>Map</code> containing the HTTP form 
+     * parameters sent on the initial request to the application.
+     * 
+     * @return the initial request parameter map
+     */
+    public Map getInitialParameterMap();
+    
     /**
      * Returns the <code>HttpSession</code> in which the application is 
      * being stored.

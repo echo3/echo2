@@ -30,9 +30,13 @@
 package nextapp.echo2.testapp.interactive.testscreen;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Table;
@@ -49,7 +53,7 @@ import nextapp.echo2.webrender.ClientProperties;
  * Note that this object has a dependency on the Web Application Container 
  * and Web Renderer.
  */
-public class ClientPropertiesTest extends Table {
+public class ContainerContextTest extends Column {
     
     private class PropertyTableCellRenderer 
     implements TableCellRenderer {
@@ -59,16 +63,31 @@ public class ClientPropertiesTest extends Table {
          *      java.lang.Object, int, int)
          */
         public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
-            Label label = new Label(value.toString());
+            String labelValue;
+            if (value instanceof String[]) {
+                String[] stringArray = (String[]) value;
+                StringBuffer out = new StringBuffer();
+                for (int i = 0; i < stringArray.length; ++i) {
+                    out.append(stringArray[i]);
+                    if (i < stringArray.length - 1) {
+                        out.append(",");
+                    }
+                }
+                labelValue = out.toString();
+            } else {
+                labelValue = value.toString();
+            }
+            
+            Label label = new Label(labelValue);
             label.setStyleName(row % 2 == 0 ? "evenCellLabel" : "oddCellLabel");
             return label;
         }
     }
 
-    public ClientPropertiesTest() {
+    public ContainerContextTest() {
         super();
         
-        setStyleName("default");
+        setCellSpacing(new Extent(10));
         
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(10));
@@ -77,19 +96,59 @@ public class ClientPropertiesTest extends Table {
         ApplicationInstance app = ApplicationInstance.getActive();
         ContainerContext containerContext 
                 = (ContainerContext) app.getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        
+        Column clientPropertiesColumn = new Column();
+        add(clientPropertiesColumn);
+        clientPropertiesColumn.add(new Label("Client Properties"));
+        clientPropertiesColumn.add(createClientPropertiesTable(containerContext));
+        
+        Column initialParametersColumn = new Column();
+        add(initialParametersColumn);
+        initialParametersColumn.add(new Label("Initial Parameters"));
+        initialParametersColumn.add(createInitialParametersTable(containerContext));
+    }
+    
+    public Table createClientPropertiesTable(ContainerContext containerContext) {
         ClientProperties clientProperties = containerContext.getClientProperties();
         String[] propertyNames = clientProperties.getPropertyNames();
         Arrays.sort(propertyNames);
         
-        DefaultTableModel model = (DefaultTableModel) getModel();
+        Table table = new Table();
+        table.setStyleName("default");
+        
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);
         for (int i = 0; i < propertyNames.length; ++i) {
             model.insertRow(0, new Object[]{propertyNames[i], clientProperties.getString(propertyNames[i])});
         }
         
-        setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
+        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
         
-        getColumnModel().getColumn(0).setHeaderValue("Property");
-        getColumnModel().getColumn(1).setHeaderValue("Value");
+        table.getColumnModel().getColumn(0).setHeaderValue("Property");
+        table.getColumnModel().getColumn(1).setHeaderValue("Value");
+        
+        return table;
+    }
+    
+    public Table createInitialParametersTable(ContainerContext containerContext) {
+        Map initialParameterMap = containerContext.getInitialParameterMap();
+        
+        Table table = new Table();
+        table.setStyleName("default");
+        
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setColumnCount(2);
+        Iterator it = initialParameterMap.keySet().iterator();
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            model.insertRow(0, new Object[]{key, initialParameterMap.get(key)});
+        }
+        
+        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
+        
+        table.getColumnModel().getColumn(0).setHeaderValue("Property");
+        table.getColumnModel().getColumn(1).setHeaderValue("Value");
+        
+        return table;
     }
 }

@@ -72,8 +72,9 @@ public class ContainerInstance extends UserInstance {
         new ContainerInstance(conn);
     }
     
-    private Map componentToRenderStateMap = new HashMap();
     private ApplicationInstance applicationInstance;
+    private Map componentToRenderStateMap = new HashMap();
+    private Map initialParameterMap;
     private Map taskQueueToCallbackIntervalMap;
     private transient IdTable idTable;
     
@@ -85,6 +86,8 @@ public class ContainerInstance extends UserInstance {
     private ContainerInstance(Connection conn) {
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
         applicationInstance = servlet.newApplicationInstance();
+        
+        initialParameterMap = conn.getRequest().getParameterMap();
         
         conn.setUserInstance(this);
         
@@ -165,6 +168,16 @@ public class ContainerInstance extends UserInstance {
             idTable = new IdTable();
         }
         return idTable;
+    }
+    
+    /**
+     * Returns an immutable <code>Map</code> containing the HTTP form 
+     * parameters sent on the initial request to the application.
+     * 
+     * @return the initial request parameter map
+     */
+    public Map getInitialParameterMap() {
+        return initialParameterMap;
     }
     
     /**

@@ -105,9 +105,9 @@ public class TestPane extends ContentPane {
         controlsColumn.add(testLaunchButtonsColumn);
 
         addTest("Button", "ButtonTest");
-        addTest("Client Properties", "ClientPropertiesTest");
         addTest("Column", "ColumnTest");
         addTest("Command", "CommandTest");
+        addTest("Container Context", "ContainerContextTest");
         addTest("ContentPane", "ContentPaneTest");
         addTest("Delay", "DelayTest");
         addTest("Grid", "GridTest");

@@ -30,6 +30,7 @@
 package nextapp.echo2.webcontainer;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -59,6 +60,13 @@ implements ContainerContext, Serializable {
      */
     public ClientProperties getClientProperties() {
         return containerInstance.getClientProperties();
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#getInitialParameterMap()
+     */
+    public Map getInitialParameterMap() {
+        return containerInstance.getInitialParameterMap();
     }
     
     /**
