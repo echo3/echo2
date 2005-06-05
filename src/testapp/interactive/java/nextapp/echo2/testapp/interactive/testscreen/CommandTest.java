@@ -71,5 +71,16 @@ public class CommandTest  extends Column {
             }
         });
         add(button);
+        
+        button = new Button("Enqueue 640x240 Named Window Open Command");
+        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().enqueueCommand(
+                        new BrowserOpenWindowCommand("http://www.nextapp.com/products/echo2", 
+                        "auxwindow", "width=640,height=240"));
+            }
+        });
+        add(button);
     }
 }
