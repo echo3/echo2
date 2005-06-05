@@ -25,16 +25,23 @@
  * terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. Doc more, expalin how these are used.
-//BUGBUG. needs a unit test.
-
 package nextapp.echo2.app;
 
 import java.io.Serializable;
 
 /**
- * A represntation of a graphical border drawn using a series of 
- * eight <code>FillImage</code>s.
+ * A representation of a graphical border drawn using a series of 
+ * eight <code>FillImage</code>s.  The eight images are used to describe
+ * the four corners and four sides of the border.
+ * The <code>BorderInsets</code> property is used to describe the width and 
+ * height of the border images, i.e. the inset to which the border images
+ * extend inward from the outer edges of the box.
+ * The <code>ContentInsets</code> property is used to describe the inset of
+ * the content displayed within the border.  If the content inset is less
+ * than the border inset, the content will be drawn above the border.
+ * The <code>Color</code> property may be used in addition to or in lieu of
+ * setting <code>FillImage</code>s.  The color will be drawn <em>behind</em>
+ * the <code>FillImage</code>s in the case where both are used.
  */
 public class FillImageBorder 
 implements Serializable {
