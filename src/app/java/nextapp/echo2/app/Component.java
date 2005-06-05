@@ -39,7 +39,6 @@ import java.util.Locale;
 
 import nextapp.echo2.app.event.EventListenerList;
 
-//BUGBUG. Removal of custom id assigment idea needs to be reviewed.
 //BUGBUG. Add documentation to discuss local style/shared style/application style relationship.
 
 //BUGBUG. Component ids are now being assigned on registration...
