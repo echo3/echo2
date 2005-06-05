@@ -71,7 +71,7 @@ public class ImageReferenceTest extends TestGrid {
     
     private StreamImageReference streamImageReference = new StreamImageReference() {
 
-        private String id = ApplicationInstance.generateGlobalId();
+        private String id = ApplicationInstance.generateSystemId();
         
         /**
          * @see nextapp.echo2.app.StreamImageReference#getContentType()

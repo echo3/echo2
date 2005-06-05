@@ -62,7 +62,7 @@ implements ImageReference {
         this.uri = uri;
         this.width = width;
         this.height = height;
-        id = ApplicationInstance.generateGlobalId();
+        id = ApplicationInstance.generateSystemId();
     }
 
     /**

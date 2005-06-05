@@ -145,7 +145,7 @@ extends StreamImageReference {
         this.contentType = contentType == null ? getContentType(resource) : contentType;
         this.width = width;
         this.height = height;
-        id = ApplicationInstance.generateGlobalId();
+        id = ApplicationInstance.generateSystemId();
     }
     
     /**

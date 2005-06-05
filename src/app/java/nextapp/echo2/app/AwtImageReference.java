@@ -72,7 +72,7 @@ implements ImageReference {
     public AwtImageReference(Image image) {
         super();
         this.image = image;
-        id = ApplicationInstance.generateGlobalId();
+        id = ApplicationInstance.generateSystemId();
     }
     
     /**

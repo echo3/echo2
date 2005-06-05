@@ -42,7 +42,7 @@ public class IdTableTest extends TestCase {
     private static class TestObject 
     implements IdSupport {
         
-        public String id = ApplicationInstance.generateGlobalId();
+        public String id = ApplicationInstance.generateSystemId();
         
         /**
          * @see nextapp.echo2.app.IdSupport#getId()

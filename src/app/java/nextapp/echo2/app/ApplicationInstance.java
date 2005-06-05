@@ -65,11 +65,12 @@ implements Serializable {
     public static final String WINDOWS_CHANGED_PROPERTY = "windows";
     
     /**
-     * Generates a globally unique identifier.
+     * Generates a system-level identifier (an identifier which is not simply unique to
+     * a single <code>ApplicationInstance</code>).
      * 
      * @return the generated identifier
      */
-    public static final String generateGlobalId() {
+    public static final String generateSystemId() {
         return Uid.generateUidString();
     }
     

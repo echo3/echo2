@@ -30,7 +30,7 @@
 package nextapp.echo2.app.util;
 
 /**
- * A universally unique identifier.
+ * A unique identifier.
  */
 public class Uid {
 

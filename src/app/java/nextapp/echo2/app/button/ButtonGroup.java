@@ -46,7 +46,7 @@ implements IdSupport, Serializable {
     
     private static final RadioButton[] EMPTY = new RadioButton[0];
     
-    private String id = ApplicationInstance.generateGlobalId();
+    private String id = ApplicationInstance.generateSystemId();
     private Set buttons;
     
     /**
