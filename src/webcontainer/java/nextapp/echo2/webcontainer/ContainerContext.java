@@ -31,7 +31,7 @@ package nextapp.echo2.webcontainer;
 
 import javax.servlet.http.HttpSession;
 
-import nextapp.echo2.app.TaskQueue;
+import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.webrender.ClientProperties;
 
 /**
@@ -77,5 +77,5 @@ public interface ContainerContext {
      * @param ms the number of milleseconds between asynchronous client 
      *        callbacks
      */
-    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms);
+    public void setTaskQueueCallbackInterval(TaskQueueHandle taskQueue, int ms);
 }

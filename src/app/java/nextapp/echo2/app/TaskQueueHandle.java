@@ -40,5 +40,5 @@ import java.io.Serializable;
  * This interface should not be implemented outside of the
  * framework itself. 
  */
-public interface TaskQueue 
+public interface TaskQueueHandle 
 extends Serializable { }

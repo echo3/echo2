@@ -40,7 +40,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.TaskQueue;
+import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.event.ActionEvent;
@@ -119,7 +119,7 @@ public class PushGhostTest extends Column {
         }
     }
     
-    private TaskQueue taskQueue;
+    private TaskQueueHandle taskQueue;
     
     public PushGhostTest() {
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();

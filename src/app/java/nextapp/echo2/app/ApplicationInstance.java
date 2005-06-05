@@ -191,8 +191,8 @@ implements Serializable {
      * 
      * @return the new task queue handle
      */
-    public TaskQueue createTaskQueue() {
-        TaskQueue taskQueue = new TaskQueue() { };
+    public TaskQueueHandle createTaskQueue() {
+        TaskQueueHandle taskQueue = new TaskQueueHandle() { };
         synchronized (taskQueueMap) {
             taskQueueMap.put(taskQueue, null);
         }
@@ -255,7 +255,7 @@ implements Serializable {
      * @param task the task to run when on client/server synchronization
      *        
      */
-    public void enqueueTask(TaskQueue taskQueue, Runnable task) {
+    public void enqueueTask(TaskQueueHandle taskQueue, Runnable task) {
         synchronized (taskQueueMap) {
             List taskList = (List) taskQueueMap.get(taskQueue);
             if (taskList == null) {
@@ -532,7 +532,7 @@ implements Serializable {
      * @param taskQueue the handle specifying the <code>TaskQueue</code> to
      *        remove.
      */
-    public void removeTaskQueue(TaskQueue taskQueue) {
+    public void removeTaskQueue(TaskQueueHandle taskQueue) {
         synchronized(taskQueueMap) {
             taskQueueMap.remove(taskQueue);
         }

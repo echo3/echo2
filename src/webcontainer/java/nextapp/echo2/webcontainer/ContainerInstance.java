@@ -36,7 +36,7 @@ import java.util.WeakHashMap;
 
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.TaskQueue;
+import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webcontainer.util.IdTable;
 import nextapp.echo2.webrender.Connection;
@@ -223,9 +223,9 @@ public class ContainerInstance extends UserInstance {
      * @param taskQueue the <code>TaskQueue</code>
      * @param ms the number of milleseconds between asynchronous client 
      *        callbacks
-     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueue, int)
+     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueueHandle, int)
      */
-    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms) {
+    public void setTaskQueueCallbackInterval(TaskQueueHandle taskQueue, int ms) {
         if (taskQueueToCallbackIntervalMap == null) {
             taskQueueToCallbackIntervalMap = new WeakHashMap();
         }

@@ -33,7 +33,7 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpSession;
 
-import nextapp.echo2.app.TaskQueue;
+import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.webrender.ClientProperties;
 
 /**
@@ -69,9 +69,9 @@ implements ContainerContext, Serializable {
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueue, int)
+     * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueueHandle, int)
      */
-    public void setTaskQueueCallbackInterval(TaskQueue taskQueue, int ms) {
+    public void setTaskQueueCallbackInterval(TaskQueueHandle taskQueue, int ms) {
         containerInstance.setTaskQueueCallbackInterval(taskQueue, ms);
     }
 }

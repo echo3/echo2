@@ -34,7 +34,7 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.TaskQueue;
+import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -100,7 +100,7 @@ public class PushTest extends Column {
         }
     }
     
-    private TaskQueue taskQueue;
+    private TaskQueueHandle taskQueue;
     private Label statusLabel;
     
     public PushTest() {
