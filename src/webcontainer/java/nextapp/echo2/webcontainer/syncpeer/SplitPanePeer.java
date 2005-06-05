@@ -126,7 +126,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service SPLIT_PANE_SERVICE = JavaScriptService.forResource("Echo.SplitPane",
+    private static final Service SPLIT_PANE_SERVICE = JavaScriptService.forResource("Echo.SplitPane",
             "/nextapp/echo2/webcontainer/resource/js/SplitPane.js");
 
     static {

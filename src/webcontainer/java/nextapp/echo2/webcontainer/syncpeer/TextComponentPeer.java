@@ -80,7 +80,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service TEXT_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.TextComponent", 
+    static final Service TEXT_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.TextComponent", 
             "/nextapp/echo2/webcontainer/resource/js/TextComponent.js");
     
     static {

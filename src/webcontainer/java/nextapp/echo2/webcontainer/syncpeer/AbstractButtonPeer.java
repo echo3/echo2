@@ -109,11 +109,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String IMAGE_ID_STATE_ICON = "stateIcon";
     private static final String IMAGE_ID_SELECTED_STATE_ICON = "selectedStateIcon";
     
-    //BUGBUG. shouldn't be public.
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service BUTTON_SERVICE = JavaScriptService.forResource("Echo.Button", 
+    private static final Service BUTTON_SERVICE = JavaScriptService.forResource("Echo.Button", 
             "/nextapp/echo2/webcontainer/resource/js/Button.js");
 
     static {

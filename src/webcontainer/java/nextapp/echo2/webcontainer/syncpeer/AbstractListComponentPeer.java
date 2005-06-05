@@ -86,7 +86,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service LIST_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.ListComponent",
+    private static final Service LIST_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.ListComponent",
             "/nextapp/echo2/webcontainer/resource/js/ListComponent.js");
 
     static {
