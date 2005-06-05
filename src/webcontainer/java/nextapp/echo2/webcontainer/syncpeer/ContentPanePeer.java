@@ -99,7 +99,8 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         Component[] addedChildren = update.getAddedChildren();
         
         for (int componentIndex = components.length - 1; componentIndex >= 0; --componentIndex) {
-            for (int addedChildrenIndex = 0; addedChildrenIndex < addedChildren.length; ++addedChildrenIndex) {
+            boolean childFound = false;
+            for (int addedChildrenIndex = 0; !childFound && addedChildrenIndex < addedChildren.length; ++addedChildrenIndex) {
                 if (addedChildren[addedChildrenIndex] == components[componentIndex]) {
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                     renderChild(rc, update, htmlFragment, component, components[componentIndex]);
@@ -111,9 +112,7 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
                                 elementId, getContainerId(components[componentIndex + 1]), htmlFragment);
                     }
 
-                    //BUGBUG. ahem...this should be continuing the OUTER for loop, eh?
-                    // set a flag or something, as this is beyond meaningless:
-                    continue;
+                    childFound = true;
                 }
             }
         }
