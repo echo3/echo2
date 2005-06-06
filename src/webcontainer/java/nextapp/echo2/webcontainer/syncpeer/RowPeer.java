@@ -39,6 +39,7 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
+import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.LayoutData;
@@ -60,6 +61,7 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 
@@ -270,6 +272,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         Row row = (Row) component;
+        Border border = (Border) row.getRenderProperty(Grid.PROPERTY_BORDER);
         
         String elementId = ContainerInstance.getElementId(row);
         
@@ -278,18 +281,28 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         tableElement.setAttribute("id", elementId);
         parentNode.appendChild(tableElement);
         
-        CssStyle divCssStyle = new CssStyle();
-        BorderRender.renderToStyle(divCssStyle, (Border) row.getRenderProperty(Row.PROPERTY_BORDER));
-        ColorRender.renderToStyle(divCssStyle, (Color) row.getRenderProperty(Row.PROPERTY_FOREGROUND), 
+        CssStyle tableCssStyle = new CssStyle();
+        
+        BorderRender.renderToStyle(tableCssStyle, border);
+        ColorRender.renderToStyle(tableCssStyle, (Color) row.getRenderProperty(Row.PROPERTY_FOREGROUND), 
                 (Color) row.getRenderProperty(Row.PROPERTY_BACKGROUND));
-        FontRender.renderToStyle(divCssStyle, (Font) row.getRenderProperty(Row.PROPERTY_FONT));
+        FontRender.renderToStyle(tableCssStyle, (Font) row.getRenderProperty(Row.PROPERTY_FONT));
         Insets insets = (Insets) row.getRenderProperty(Row.PROPERTY_INSETS);
         if (insets == null) {
-            divCssStyle.setAttribute("padding", "0px");
+            tableCssStyle.setAttribute("padding", "0px");
         } else {
-            InsetsRender.renderToStyle(divCssStyle, "padding", insets);
+            InsetsRender.renderToStyle(tableCssStyle, "padding", insets);
         }
-        tableElement.setAttribute("style", divCssStyle.renderInline());
+
+        tableCssStyle.setAttribute("border-collapse", "collapse");
+        Extent borderSize = border == null ? null : border.getSize();
+        if (borderSize != null) {
+            if (!rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN)) {
+                tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
+            }
+        }
+        
+        tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");

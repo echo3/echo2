@@ -140,7 +140,6 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         
         Grid grid = (Grid) component;
         Border border = (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER);
-        Extent borderSize = border == null ? null : border.getSize();
         
         String elementId = ContainerInstance.getElementId(grid);
         
@@ -158,12 +157,14 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         ColorRender.renderToStyle(tableCssStyle, component);
         FontRender.renderToStyle(tableCssStyle, component);
         BorderRender.renderToStyle(tableCssStyle, border);
+        
+        Extent borderSize = border == null ? null : border.getSize();
         if (borderSize != null) {
-            if (!rc.getContainerInstance().getClientProperties().getBoolean(
-                    ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN)) {
+            if (!rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN)) {
                 tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
             }
         }
+        
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         parentNode.appendChild(tableElement);

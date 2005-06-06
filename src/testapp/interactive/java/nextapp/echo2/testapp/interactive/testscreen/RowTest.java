@@ -40,6 +40,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.RowLayoutData;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
@@ -47,6 +48,12 @@ import nextapp.echo2.testapp.interactive.Styles;
 public class RowTest extends SplitPane {
     
     private int nextValue = 0;
+    
+    private static final SplitPaneLayoutData insetLayoutData;
+    static {
+        insetLayoutData = new SplitPaneLayoutData();
+        insetLayoutData.setInsets(new Insets(10));
+    }
     
     public RowTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250));
@@ -58,6 +65,7 @@ public class RowTest extends SplitPane {
 
         final Row testRow = new Row();
         testRow.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
+        testRow.setLayoutData(insetLayoutData);
         add(testRow);
         
         controlsColumn.addButton("Add Item (at beginning)", new ActionListener() {
@@ -206,6 +214,15 @@ public class RowTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 testRow.add(new Label("Added item [" + nextValue++ + "]"));
                 testRow.setInsets(new Insets((int) (Math.random() * 50)));
+            }
+        });
+        controlsColumn.addButton("Toggle Test Inset", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (testRow.getLayoutData() == null) {
+                    testRow.setLayoutData(insetLayoutData);
+                } else {
+                    testRow.setLayoutData(null);
+                }
             }
         });
     }
