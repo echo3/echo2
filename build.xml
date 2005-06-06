@@ -379,7 +379,7 @@
         <ant dir="${dir.src.tutorialapp.numberguess}" target="clean"/>
     </target>
     
-    <target name="dist.tutorialapp" depends="dist">
+    <target name="dist.tutorialapp">
         <ant dir="${dir.src.tutorialapp.numberguess}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
             <property name="echo2.webcontainer.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
@@ -387,7 +387,7 @@
         </ant>
     </target>
     
-    <target name="release" depends="clean, dist, dist.testapp.ia, doc.public, dist.tutorialapp">
+    <target name="release" depends="clean, dist, dist.testapp.ia, doc.public">
         <mkdir dir="${dir.build.release.root}"/>
         <mkdir dir="${dir.build.release.root}/SourceCode"/>
         <mkdir dir="${dir.build.release.root}/Documentation"/>
@@ -417,12 +417,18 @@
             <fileset dir="${dir.dist.lib}"/>
         </copy>
         
-        <!-- Binary Web Applications -->
+        <!-- Binary Web Applications: Interactive Test Application -->
         <copy todir="${dir.build.release.root}/BinaryApplications">
             <fileset dir="${dir.dist.testapp.ia}"/>
+        </copy>
+
+        <!-- Binary Web Applications: Tutorial Application -->
+    	<antcall target="dist.tutorialapp"/>
+        <copy todir="${dir.build.release.root}/BinaryApplications">
             <fileset dir="${dir.src.tutorialapp.numberguess}/war"/>
         </copy>
-        
+    	<antcall target="clean.tutorialapp"/>
+    	
         <!-- Documentation -->
         <copy todir="${dir.build.release.root}/Documentation/api/public">
             <fileset dir="${dir.javadoc.public}"/>
