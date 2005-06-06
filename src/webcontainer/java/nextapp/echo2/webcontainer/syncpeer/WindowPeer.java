@@ -75,7 +75,7 @@ implements RootSynchronizePeer {
              */
             public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
                 Window window = (Window) update.getParent();
-                String title = (String) window.getProperty(Window.PROPERTY_TITLE);
+                String title = (String) window.getRenderProperty(Window.PROPERTY_TITLE);
                 WindowUpdate.renderSetWindowTitle(rc.getServerMessage(), title);
             }
         });

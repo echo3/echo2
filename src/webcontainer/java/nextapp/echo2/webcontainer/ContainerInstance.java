@@ -87,7 +87,7 @@ public class ContainerInstance extends UserInstance {
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
         applicationInstance = servlet.newApplicationInstance();
         
-        initialParameterMap = conn.getRequest().getParameterMap();
+        initialParameterMap = new HashMap(conn.getRequest().getParameterMap());
         
         conn.setUserInstance(this);
         

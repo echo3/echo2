@@ -159,7 +159,7 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
                 tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
             }
         }
-        ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) table.getProperty(Table.PROPERTY_WIDTH));
+        ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) table.getRenderProperty(Table.PROPERTY_WIDTH));
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         parentNode.appendChild(tableElement);

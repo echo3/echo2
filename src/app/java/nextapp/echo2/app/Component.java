@@ -40,7 +40,7 @@ import java.util.Locale;
 import nextapp.echo2.app.event.EventListenerList;
 
 //BUGBUG. Add documentation to discuss local style/shared style/application style relationship.
-
+//BUGBUG. Add good documentation to getProperty/setProperty/getPropertyRender
 //BUGBUG. Component ids are now being assigned on registration...
 //  While this guarantees a component has a unique identifier within the application,
 //  it does not permit components to be placed into a pool and reused by multiple applications
