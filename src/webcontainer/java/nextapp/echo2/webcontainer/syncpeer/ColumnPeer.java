@@ -67,17 +67,17 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  * Echo framework.
  */
 public class ColumnPeer 
-implements DomUpdateSupport, ComponentSynchronizePeer {
+implements ComponentSynchronizePeer, DomUpdateSupport  {
 
     /**
-     * Rendering state.
+     * <code>RenderState</code> implementation.
      */
     private static class ColumnPeerRenderState 
     implements RenderState {
         
         /**
-         * The child <code>Component</code> with the highest index during the
-         * last rendering.  This information is necessary when rendering 
+         * The child <code>Component</code> which had the highest index during 
+         * the last rendering.  This information is necessary when rendering 
          * cell spacing, as the last component will not have a "spacing" row
          * beneath it.  Thus, if it is no longer the last component due to an
          * add, one will need to be added beneath it. 
@@ -117,8 +117,30 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
                         "padding", insets);
             }
         });
-        
-        //BUGBUG. add registry property renderers for color, font.
+        propertyRenderRegistry.add(Column.PROPERTY_BACKGROUND, new PropertyRenderRegistry.PropertyRenderAdapter() {
+
+            /**
+             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
+             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+             */
+            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+                Color background = (Color) update.getParent().getRenderProperty(Component.PROPERTY_BACKGROUND);
+                ColorRender.renderServerMessageUpdate(rc.getServerMessage(), 
+                        ContainerInstance.getElementId(update.getParent()), background, true);
+            }
+        });
+        propertyRenderRegistry.add(Column.PROPERTY_FOREGROUND, new PropertyRenderRegistry.PropertyRenderAdapter() {
+
+            /**
+             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
+             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+             */
+            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+                Color foreground = (Color) update.getParent().getRenderProperty(Component.PROPERTY_FOREGROUND);
+                ColorRender.renderServerMessageUpdate(rc.getServerMessage(), 
+                        ContainerInstance.getElementId(update.getParent()), foreground, false);
+            }
+        });
     }
     
     /**

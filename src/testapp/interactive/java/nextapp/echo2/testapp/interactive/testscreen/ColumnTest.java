@@ -105,25 +105,53 @@ public class ColumnTest extends SplitPane {
                 testColumn.add(item, (int) (Math.random() * (itemCount - 1)));
             }
         }); 
-        controlsColumn.addButton("Change Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Set Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testColumn.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testColumn.setForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testColumn.setBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testColumn.setBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testColumn.setBorder(StyleUtil.randomBorder());
             }
         });
-        controlsColumn.addButton("Change Border Color", new ActionListener() {
+        controlsColumn.addButton("Set Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = testColumn.getBorder();
+                if (border == null) {
+                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
+                }
                 testColumn.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsColumn.addButton("Change Border Size", new ActionListener() {
+        controlsColumn.addButton("Set Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testColumn.setBorder(StyleUtil.nextBorderSize(testColumn.getBorder()));
             }
         });
-        controlsColumn.addButton("Change Border Style", new ActionListener() {
+        controlsColumn.addButton("Set Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testColumn.setBorder(StyleUtil.nextBorderStyle(testColumn.getBorder()));
+            }
+        });
+        controlsColumn.addButton("Remove Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testColumn.setBorder(null);
             }
         });
         controlsColumn.addButton("Cell Spacing -> 0px", new ActionListener() {
@@ -156,7 +184,7 @@ public class ColumnTest extends SplitPane {
                 testColumn.setInsets(new Insets(10, 20, 30, 40));
             }
         });
-        controlsColumn.addButton("Change Layout Data (of random item)", new ActionListener() {
+        controlsColumn.addButton("Set Layout Data (of random item)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int componentCount = testColumn.getComponentCount();
                 if (componentCount == 0) {

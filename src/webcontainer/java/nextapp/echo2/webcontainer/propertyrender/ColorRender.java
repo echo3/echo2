@@ -31,7 +31,9 @@ package nextapp.echo2.webcontainer.propertyrender;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.app.Color</code>
@@ -41,6 +43,25 @@ public class ColorRender {
 
     private static final String COLOR_MASK = "#000000";
     
+    /**
+     * Renders a <code>Color</code> property directly to a 
+     * <code>ServerMessage</code> as a DOM update.
+     * 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param targetId the id of the HTML element to update
+     * @param color the property value
+     * @param background true if the updated property is the background color,
+     *        false if it is the foreground color
+     */
+    public static void renderServerMessageUpdate(ServerMessage serverMessage, String targetId, Color color, boolean background) {
+        if (color == null) {
+            DomUpdate.renderStyleUpdate(serverMessage, targetId, background ? "backgroundColor" : "color", "none");
+        } else {
+            DomUpdate.renderStyleUpdate(serverMessage, targetId, background ? "backgroundColor" : "color", 
+                    renderCssAttributeValue(color));
+        }
+    }
+
     /**
      * Renders foreground and background <code>Color</code> properties 
      * to the given CSS style.  Null property values are ignored.
