@@ -31,7 +31,10 @@ package nextapp.echo2.testapp.interactive;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
@@ -48,6 +51,22 @@ import nextapp.echo2.webcontainer.ContainerContext;
  */
 public class GhostTask 
 implements Runnable {
+    
+    private static final Set BUTTON_BLACKLIST;
+    static {
+        Set blacklist = new HashSet();
+        
+        // Ghost test is also protected using other means, but no reason to bother with it.
+        blacklist.add("Push (Ghost Test)");
+        
+        // Command test might do a redirect, killing the ghost test.
+        blacklist.add("Command");
+        
+        // Demo visitors might think the app broke if the style sheet gets set to null.
+        blacklist.add("No Style Sheet");
+        
+        BUTTON_BLACKLIST = Collections.unmodifiableSet(blacklist);
+    }
     
     static void start(InteractiveApp app, int taskQueueInterval, long runTime) {
         TaskQueueHandle taskQueue = app.createTaskQueue();
@@ -82,7 +101,7 @@ implements Runnable {
     }
     
     public void findButtons(Collection foundButtons, Component component) {
-        if (component instanceof AbstractButton) {
+        if (component instanceof AbstractButton && !BUTTON_BLACKLIST.contains(((AbstractButton) component).getText())) {
             foundButtons.add(component);
         }
         Component[] children = component.getComponents();
