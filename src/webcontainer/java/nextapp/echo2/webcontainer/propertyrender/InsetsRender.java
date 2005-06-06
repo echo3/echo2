@@ -31,9 +31,7 @@ package nextapp.echo2.webcontainer.propertyrender;
 
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.app.Insets</code>
@@ -93,23 +91,6 @@ public class InsetsRender {
                 out.append(ExtentRender.renderCssAttributeValue(insets.getLeft()));
             }
             return out.toString();
-        }
-    }
-    
-    /**
-     * Renders an <code>Insets</code> property directly to a 
-     * <code>ServerMessage</code> as a DOM update.
-     * 
-     * @param serverMessage the outgoing <code>ServerMessage</code>
-     * @param targetId the id of the HTML element to update
-     * @param cssAttribute the CSS attribute name, e.g., "margin" or "padding".
-     * @param insets the property value
-     */
-    public static void renderServerMessageUpdate(ServerMessage serverMessage, String targetId, String cssAttribute, Insets insets) {
-        if (insets == null) {
-            DomUpdate.renderStyleUpdate(serverMessage, targetId, cssAttribute, "0px");
-        } else {
-            DomUpdate.renderStyleUpdate(serverMessage, targetId, cssAttribute, renderCssAttributeValue(insets));
         }
     }
     

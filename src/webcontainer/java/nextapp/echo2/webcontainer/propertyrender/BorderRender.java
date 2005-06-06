@@ -30,9 +30,7 @@
 package nextapp.echo2.webcontainer.propertyrender;
 
 import nextapp.echo2.app.Border;
-import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
  * Utility class for rendering <code>nextapp.echo2.app.Border</code>
@@ -91,22 +89,6 @@ public class BorderRender {
             out.append(ColorRender.renderCssAttributeValue(border.getColor()));
         }
         return out.toString();
-    }
-    
-    /**
-     * Renders a <code>Border</code> property directly to a 
-     * <code>ServerMessage</code> as a DOM update.
-     * 
-     * @param serverMessage the outgoing <code>ServerMessage</code>
-     * @param targetId the id of the HTML element to update
-     * @param border the property value
-     */
-    public static void renderServerMessageUpdate(ServerMessage serverMessage, String targetId, Border border) {
-        if (border == null) {
-            DomUpdate.renderStyleUpdate(serverMessage, targetId, "border", "none");
-        } else {
-            DomUpdate.renderStyleUpdate(serverMessage, targetId, "border", renderCssAttributeValue(border));
-        }
     }
 
     /**

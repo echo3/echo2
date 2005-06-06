@@ -92,55 +92,18 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
      */
     public ColumnPeer() {
         propertyRenderRegistry = new PropertyRenderRegistry();
-        propertyRenderRegistry.add(Column.PROPERTY_BORDER, new PropertyRenderRegistry.PropertyRenderAdapter() {
-            
-            /**
-             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
-             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
-             */
-            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-                Column column = (Column) update.getParent();
-                Border border = (Border) column.getRenderProperty(Column.PROPERTY_BORDER);
-                BorderRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(column), border);
-            }
-        });
-        propertyRenderRegistry.add(Column.PROPERTY_INSETS, new PropertyRenderRegistry.PropertyRenderAdapter() {
-
-            /**
-             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
-             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
-             */
-            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-                Column column = (Column) update.getParent();
-                Insets insets = (Insets) column.getRenderProperty(Column.PROPERTY_INSETS);
-                InsetsRender.renderServerMessageUpdate(rc.getServerMessage(), ContainerInstance.getElementId(column), 
-                        "padding", insets);
-            }
-        });
-        propertyRenderRegistry.add(Column.PROPERTY_BACKGROUND, new PropertyRenderRegistry.PropertyRenderAdapter() {
-
-            /**
-             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
-             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
-             */
-            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-                Color background = (Color) update.getParent().getRenderProperty(Component.PROPERTY_BACKGROUND);
-                ColorRender.renderServerMessageUpdate(rc.getServerMessage(), 
-                        ContainerInstance.getElementId(update.getParent()), background, true);
-            }
-        });
-        propertyRenderRegistry.add(Column.PROPERTY_FOREGROUND, new PropertyRenderRegistry.PropertyRenderAdapter() {
-
-            /**
-             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
-             *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
-             */
-            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-                Color foreground = (Color) update.getParent().getRenderProperty(Component.PROPERTY_FOREGROUND);
-                ColorRender.renderServerMessageUpdate(rc.getServerMessage(), 
-                        ContainerInstance.getElementId(update.getParent()), foreground, false);
-            }
-        });
+        propertyRenderRegistry.add(Column.PROPERTY_BORDER,
+                new PropertyAdapters.BorderPropertyAdapter(Column.PROPERTY_BORDER, null,
+                PropertyAdapters.BorderPropertyAdapter.CSS_BORDER));
+        propertyRenderRegistry.add(Column.PROPERTY_FOREGROUND,
+                new PropertyAdapters.ColorPropertyAdapter(Column.PROPERTY_FOREGROUND, null, 
+                PropertyAdapters.ColorPropertyAdapter.CSS_COLOR));
+        propertyRenderRegistry.add(Column.PROPERTY_BACKGROUND,
+                new PropertyAdapters.ColorPropertyAdapter(Column.PROPERTY_BACKGROUND, null, 
+                PropertyAdapters.ColorPropertyAdapter.CSS_BACKGROUND_COLOR));
+        propertyRenderRegistry.add(Column.PROPERTY_INSETS,
+                new PropertyAdapters.InsetsPropertyAdapter(Column.PROPERTY_INSETS, null, 
+                PropertyAdapters.InsetsPropertyAdapter.CSS_PADDING));
     }
     
     /**
