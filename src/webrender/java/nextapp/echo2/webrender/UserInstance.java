@@ -46,6 +46,9 @@ implements HttpSessionBindingListener, Serializable {
     private ClientProperties clientProperties;
     private transient HttpSession session;
 
+    /**
+     * Creates a new <code>UserInstance</code>.
+     */
     public UserInstance() {
         super();
     }
@@ -68,20 +71,45 @@ implements HttpSessionBindingListener, Serializable {
         return clientProperties;
     }
     
+    /**
+     * Returns the URI to invoke the specified <code>Service</code>
+     * 
+     * @param service the <code>Service</code>
+     * @return the URI
+     */
     public String getServiceUri(Service service) {
         return applicationUri + "?serviceId=" + service.getId();
     }
     
+    /**
+     * Returns the URI to invoke the specified <code>Service</code> with
+     * additional parameters.  
+     * The additional parameters are provided by way of the 
+     * <code>parameterNames</code> and <code>parameterValues</code> arrays.
+     * The value of a parameter at a specific index in the 
+     * <code>parameterNames</code> array is provided in the
+     * <code>parameterValues</code> array at the same index.  The arrays
+     * must be of equal length.
+     * Null values are allowed in the <code>parameterValues</code> array,
+     * and in such cases only the paramter name will be rendered in the
+     * returned URI.
+     * 
+     * @param service the <code>Service</code>
+     * @param parameterNames the names of the additional URI parameters
+     * @param parameterValues the values of the additional URI parameters
+     * @return the URI
+     */
     public String getServiceUri(Service service, String[] parameterNames, String[] parameterValues) {
         StringBuffer out = new StringBuffer(applicationUri);
         out.append("?serviceId=");
         out.append(service.getId());
         for (int i = 0; i < parameterNames.length; ++i) {
-            //BUGBUG. Need to URL encode parameters.
             out.append("&");
             out.append(parameterNames[i]);
-            out.append("=");
-            out.append(parameterValues[i]);
+            if (parameterValues[i] != null) {
+                out.append("=");
+                out.append(parameterValues[i]);
+            }
         }
         return out.toString();
     }
