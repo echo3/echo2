@@ -29,97 +29,21 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
-import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.TaskQueueHandle;
-import nextapp.echo2.app.Window;
-import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.Styles;
-import nextapp.echo2.webcontainer.ContainerContext;
 
 /**
  * 
  */
 public class PushGhostTest extends Column {
-    
-    private static final boolean LIVE_DEMO_SERVER;
-    static {
-        boolean liveDemoServer;
-        try {
-            if ("true".equals(System.getProperties().getProperty("nextapp.echo2.demoserver"))) {
-                liveDemoServer = true;
-            } else {
-                liveDemoServer = false;
-            }
-        } catch (SecurityException ex) {
-            liveDemoServer = false;
-        }
-        LIVE_DEMO_SERVER = liveDemoServer;
-    }
-    
-
-    private class RandomClickTask 
-    implements Runnable {
-        
-        private boolean indefinite;
-        private long stopTime;
-        
-        public RandomClickTask() {
-            indefinite = true;
-        }
-        
-        public RandomClickTask(long runTime) {
-            stopTime = System.currentTimeMillis() + runTime;
-        }
-        
-        public void clickRandomButton() {
-            Window window = ApplicationInstance.getActive().getWindows()[0];
-            List buttonList = new ArrayList();
-            findButtons(buttonList, window);
-            AbstractButton button = (AbstractButton) buttonList.get((int) (buttonList.size() * Math.random()));
-            button.doAction();
-        }
-        
-        public void findButtons(Collection foundButtons, Component component) {
-            if (component instanceof AbstractButton) {
-                foundButtons.add(component);
-            }
-            Component[] children = component.getComponents();
-            for (int i = 0; i < children.length; ++i) {
-                findButtons(foundButtons, children[i]);
-            }
-        }
-        
-        /**
-         * @see java.lang.Runnable#run()
-         */
-        public void run() {
-            clickRandomButton();
-            InteractiveApp app = (InteractiveApp) ApplicationInstance.getActive(); 
-            if (indefinite || System.currentTimeMillis() < stopTime) {
-                app.enqueueTask(taskQueue, RandomClickTask.this);
-            } else {
-                // Test complete.
-                app.ghostTestRunning = false;
-                app.removeTaskQueue(taskQueue);
-            }
-        }
-    }
-    
-    private TaskQueueHandle taskQueue;
     
     public PushGhostTest() {
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
@@ -135,7 +59,7 @@ public class PushGhostTest extends Column {
                 + "manually clearing the session cookie.");
         add(label);
         
-        if (LIVE_DEMO_SERVER) {
+        if (InteractiveApp.LIVE_DEMO_SERVER) {
             label = new Label("Because you are visiting this application on the nextapp.com server, we have disabled "
                     + "the options to run this test indefinitely and/or with a 0ms callback interval.  If you install this "
                     + "application on your own server, you will be given the option of running the more extreme version "
@@ -149,32 +73,18 @@ public class PushGhostTest extends Column {
         oneMinuteStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                if (!app.ghostTestRunning) {
-                    app.ghostTestRunning = true;
-                    taskQueue = app.createTaskQueue();
-                    ContainerContext containerContext = 
-                            (ContainerContext) app.getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-                    containerContext.setTaskQueueCallbackInterval(taskQueue, 100);
-                    app.enqueueTask(taskQueue, new RandomClickTask(20000));
-                }
+                app.startGhostTask(500, 20000);
             }
         });
         add(oneMinuteStartButton);
         
-        if (!LIVE_DEMO_SERVER) {
+        if (!InteractiveApp.LIVE_DEMO_SERVER) {
             Button oneMinuteFastStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 0ms)");
             oneMinuteFastStartButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
             oneMinuteFastStartButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                    if (!app.ghostTestRunning) {
-                        app.ghostTestRunning = true;
-                        taskQueue = app.createTaskQueue();
-                        ContainerContext containerContext = 
-                                (ContainerContext) app.getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-                        containerContext.setTaskQueueCallbackInterval(taskQueue, 0);
-                        app.enqueueTask(taskQueue, new RandomClickTask(20000));
-                    }
+                    app.startGhostTask(0, 20000);
                 }
             });
             add(oneMinuteFastStartButton);
@@ -184,14 +94,7 @@ public class PushGhostTest extends Column {
             indefiniteStartButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                    if (!app.ghostTestRunning) {
-                        app.ghostTestRunning = true;
-                        taskQueue = app.createTaskQueue();
-                        ContainerContext containerContext = 
-                                (ContainerContext) app.getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-                        containerContext.setTaskQueueCallbackInterval(taskQueue, 0);
-                        app.enqueueTask(taskQueue, new RandomClickTask());
-                    }
+                    app.startGhostTask(0, 0);
                 }
             });
             add(indefiniteStartButton);

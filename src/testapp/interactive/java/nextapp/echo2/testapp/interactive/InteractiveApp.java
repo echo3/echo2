@@ -34,9 +34,24 @@ import nextapp.echo2.app.Window;
 import nextapp.echo2.app.WindowPane;
 
 public class InteractiveApp extends ApplicationInstance {
+
+    public static final boolean LIVE_DEMO_SERVER;
+    static {
+        boolean liveDemoServer;
+        try {
+            if ("true".equals(System.getProperties().getProperty("nextapp.echo2.demoserver"))) {
+                liveDemoServer = true;
+            } else {
+                liveDemoServer = false;
+            }
+        } catch (SecurityException ex) {
+            liveDemoServer = false;
+        }
+        LIVE_DEMO_SERVER = liveDemoServer;
+    }
     
     // BUGBUG. This needs to be done more cleanly...e.g., have the app itself start/stop/manage the ghost test.
-    public boolean ghostTestRunning = false;
+    boolean ghostTestRunning = false;
     
     public static final String ACTION_WINDOW_PANE_TEST = "windowPaneTest";
     
@@ -75,5 +90,12 @@ public class InteractiveApp extends ApplicationInstance {
 
     public void removeDialogWindowPane(WindowPane windowPane) {
         mainWindow.getContent().remove(windowPane);
+    }
+    
+    public void startGhostTask(int interval, long runTime) {
+        if (ghostTestRunning) {
+            return;
+        }
+        GhostTask.start(this, interval, runTime);
     }
 }
