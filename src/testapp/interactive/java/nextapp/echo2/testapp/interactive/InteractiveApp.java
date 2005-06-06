@@ -32,6 +32,7 @@ package nextapp.echo2.testapp.interactive;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.WindowPane;
+import nextapp.echo2.webcontainer.ContainerContext;
 
 public class InteractiveApp extends ApplicationInstance {
 
@@ -81,6 +82,12 @@ public class InteractiveApp extends ApplicationInstance {
         mainWindow = new Window();
         mainWindow.setTitle("NextApp Echo2 Test Application [EARLY ACCESS/EXPERIMENTAL]");
         mainWindow.setContent(new WelcomePane());
+        
+        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        if (!LIVE_DEMO_SERVER && cc.getInitialParameterMap().containsKey("ghost")) {
+            startGhostTask(0, 0);
+        }
+        
         return mainWindow;
     }
 

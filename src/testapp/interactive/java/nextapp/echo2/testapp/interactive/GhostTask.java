@@ -66,7 +66,7 @@ implements Runnable {
     private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
         this.taskQueue = taskQueue;
         this.app = app;
-        if (runTime > 0) {
+        if (InteractiveApp.LIVE_DEMO_SERVER || runTime > 0) {
             stopTime = System.currentTimeMillis() + runTime;
         } else {
             indefinite = true;
