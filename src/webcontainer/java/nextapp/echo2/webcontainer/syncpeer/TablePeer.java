@@ -44,7 +44,7 @@ import nextapp.echo2.app.layout.TableCellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
-import nextapp.echo2.webcontainer.PropertyRenderRegistry;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
@@ -70,7 +70,7 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 public class TablePeer 
 implements DomUpdateSupport, ComponentSynchronizePeer {
 
-    protected PropertyRenderRegistry propertyRenderRegistry;
+    protected PartialUpdateManager propertyRenderRegistry;
     
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)

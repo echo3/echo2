@@ -38,54 +38,21 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
  * A utility class for rendering a collection of property updates to an
  * existing HTML representation of a component on the client browser.
  */
-public class PropertyRenderRegistry {
+public class PartialUpdateManager {
     
     //BUGBUG? May wish to add ConditionalPropertyRender objects that report back
     //whether a specific property update is possible based on prop. name &value
     //instead of simply assuming the update is possible based on name alone.
     
-    /**
-     * A renderer to update a specific property.
-     * Implementations should update the provided <code>ServerMessage</code> to
-     * update the state of their target property on the client.
-     */
-    public static interface PropertyRender {
-        
-        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update);
-        
-        /**
-         * @param rc the relevant <code>RenderContext</code>
-         * @param update the <code>ServerComponentUpdate</code> to be 
-         *        processed.
-         */
-        public void renderProperty(RenderContext rc, ServerComponentUpdate update);
-    }
-    
-    /**
-     * Base implementation of a <code>PropertyRender</code> which provides a
-     * default implementation of <code>canRenderProperty()</code> which always 
-     * returns true.
-     */
-    public static abstract class PropertyRenderAdapter 
-    implements PropertyRender {
-        
-        /**
-         * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
-         */
-        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
-            return true;
-        }
-    }
-    
     private Map registry = null;
 
     /**
-     * Adds a <code>PropertyRender</code> to handle a given property.
+     * Adds a <code>PartialUpdateParticipant</code> to handle a given property.
      * 
      * @param propertyName the name of the property
      * @param propertyRender the renderer
      */
-    public void add(String propertyName, PropertyRender propertyRender) {
+    public void add(String propertyName, PartialUpdateParticipant propertyRender) {
         if (registry == null) {
             registry = new HashMap();
         }
@@ -93,7 +60,7 @@ public class PropertyRenderRegistry {
     }
     
     /**
-     * Determines if this <code>PropertyRenderRegistry</code> has renderers
+     * Determines if this <code>PartialUpdateManager</code> has renderers
      * to update all changed properties specified in <code>update</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -107,7 +74,7 @@ public class PropertyRenderRegistry {
         }
         String[] propertyNames = update.getUpdatedPropertyNames();
         for (int i = 0; i < propertyNames.length; ++i) {
-            PropertyRender propertyRender = (PropertyRender) registry.get(propertyNames[i]);
+            PartialUpdateParticipant propertyRender = (PartialUpdateParticipant) registry.get(propertyNames[i]);
             if (propertyRender == null) {
                 return false;
             } else if (!propertyRender.canRenderProperty(rc, update)) {
@@ -128,7 +95,7 @@ public class PropertyRenderRegistry {
     public void process(RenderContext rc, ServerComponentUpdate update) {
         String[] propertyNames = update.getUpdatedPropertyNames();
         for (int i = 0; i < propertyNames.length; ++i) {
-            PropertyRender propertyRender = (PropertyRender) registry.get(propertyNames[i]);
+            PartialUpdateParticipant propertyRender = (PartialUpdateParticipant) registry.get(propertyNames[i]);
             if (propertyRender == null) {
                 // If no renderer exists, discard the property update.
                 continue;

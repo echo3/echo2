@@ -45,7 +45,7 @@ import nextapp.echo2.app.text.TextComponent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
-import nextapp.echo2.webcontainer.PropertyRenderRegistry;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
@@ -87,13 +87,13 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         WebRenderServlet.getServiceRegistry().add(TEXT_COMPONENT_SERVICE);
     }
     
-    private PropertyRenderRegistry propertyRenderRegistry;
+    private PartialUpdateManager partialUpdateManager;
     
     /**
      * Default constructor.
      */
     public TextComponentPeer() {
-        propertyRenderRegistry = new PropertyRenderRegistry();
+        partialUpdateManager = new PartialUpdateManager();
         //BUGBUG. add property renderers to registry.
     }
     
@@ -257,7 +257,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
         boolean fullReplace = false;
         if (update.hasUpdatedProperties()) {
-            if (!propertyRenderRegistry.canProcess(rc, update)) {
+            if (!partialUpdateManager.canProcess(rc, update)) {
                 fullReplace = true;
             }
         }
@@ -267,7 +267,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
-            propertyRenderRegistry.process(rc, update);
+            partialUpdateManager.process(rc, update);
         }
         
         return false;

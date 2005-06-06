@@ -46,11 +46,14 @@ import nextapp.echo2.app.layout.CellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
-import nextapp.echo2.webcontainer.PropertyRenderRegistry;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.partialupdate.BorderUpdate;
+import nextapp.echo2.webcontainer.partialupdate.ColorUpdate;
+import nextapp.echo2.webcontainer.partialupdate.InsetsUpdate;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -85,25 +88,21 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         public Component lastChild;
     }
     
-    protected PropertyRenderRegistry propertyRenderRegistry;
+    protected PartialUpdateManager partialUpdateManager;
     
     /**
      * Default constructor.
      */
     public ColumnPeer() {
-        propertyRenderRegistry = new PropertyRenderRegistry();
-        propertyRenderRegistry.add(Column.PROPERTY_BORDER,
-                new PropertyAdapters.BorderPropertyAdapter(Column.PROPERTY_BORDER, null,
-                PropertyAdapters.BorderPropertyAdapter.CSS_BORDER));
-        propertyRenderRegistry.add(Column.PROPERTY_FOREGROUND,
-                new PropertyAdapters.ColorPropertyAdapter(Column.PROPERTY_FOREGROUND, null, 
-                PropertyAdapters.ColorPropertyAdapter.CSS_COLOR));
-        propertyRenderRegistry.add(Column.PROPERTY_BACKGROUND,
-                new PropertyAdapters.ColorPropertyAdapter(Column.PROPERTY_BACKGROUND, null, 
-                PropertyAdapters.ColorPropertyAdapter.CSS_BACKGROUND_COLOR));
-        propertyRenderRegistry.add(Column.PROPERTY_INSETS,
-                new PropertyAdapters.InsetsPropertyAdapter(Column.PROPERTY_INSETS, null, 
-                PropertyAdapters.InsetsPropertyAdapter.CSS_PADDING));
+        partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(Column.PROPERTY_BORDER, new BorderUpdate(Column.PROPERTY_BORDER, null,
+                BorderUpdate.CSS_BORDER));
+        partialUpdateManager.add(Column.PROPERTY_FOREGROUND, new ColorUpdate(Column.PROPERTY_FOREGROUND, null, 
+                ColorUpdate.CSS_COLOR));
+        partialUpdateManager.add(Column.PROPERTY_BACKGROUND, new ColorUpdate(Column.PROPERTY_BACKGROUND, null, 
+                ColorUpdate.CSS_BACKGROUND_COLOR));
+        partialUpdateManager.add(Column.PROPERTY_INSETS, new InsetsUpdate(Column.PROPERTY_INSETS, null, 
+                InsetsUpdate.CSS_PADDING));
     }
     
     /**
@@ -336,7 +335,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
             // BUGBUG. performing unnecessary full replace on layout changes.
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
-            if (!propertyRenderRegistry.canProcess(rc, update)) {
+            if (!partialUpdateManager.canProcess(rc, update)) {
                 fullReplace = true;
             }
         }
@@ -351,7 +350,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
                 renderRemoveChildren(rc, update);
             }
             if (update.hasUpdatedProperties()) {
-                propertyRenderRegistry.process(rc, update);
+                partialUpdateManager.process(rc, update);
             }
             if (update.hasAddedChildren()) {
                 renderAddChildren(rc, update);

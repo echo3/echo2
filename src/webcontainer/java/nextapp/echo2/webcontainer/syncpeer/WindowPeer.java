@@ -33,7 +33,8 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
-import nextapp.echo2.webcontainer.PropertyRenderRegistry;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RootSynchronizePeer;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
@@ -50,18 +51,26 @@ import nextapp.echo2.webrender.servermessage.WindowUpdate;
 public class WindowPeer 
 implements RootSynchronizePeer {
 
-    private PropertyRenderRegistry propertyRenderRegistry;
+    private PartialUpdateManager partialUpdateManager;
 
     /**
      * Default contructor.
      */
     public WindowPeer() {
         super();
-        propertyRenderRegistry = new PropertyRenderRegistry();
-        propertyRenderRegistry.add(Window.PROPERTY_TITLE, new PropertyRenderRegistry.PropertyRenderAdapter() {
+        partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(Window.PROPERTY_TITLE, new PartialUpdateParticipant() {
             
             /**
-             * @see nextapp.echo2.webcontainer.PropertyRenderRegistry.PropertyRender#renderProperty(
+             * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, 
+             *      nextapp.echo2.app.update.ServerComponentUpdate)
+             */
+            public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+                return true;
+            }
+
+            /**
+             * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(
              *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
              */
             public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
@@ -119,7 +128,7 @@ implements RootSynchronizePeer {
         boolean fullRefresh;
         if (update.hasAddedChildren() || update.hasRemovedChildren() || update.hasUpdatedLayoutDataChildren()) {
             fullRefresh = true;
-        } else if (update.hasUpdatedProperties() && propertyRenderRegistry.canProcess(rc, update)) {
+        } else if (update.hasUpdatedProperties() && partialUpdateManager.canProcess(rc, update)) {
             fullRefresh = false;
         } else {
             fullRefresh = true;
@@ -128,7 +137,7 @@ implements RootSynchronizePeer {
         if (fullRefresh) {
             renderRefresh(rc, update, update.getParent());
         } else {
-            propertyRenderRegistry.process(rc, update);
+            partialUpdateManager.process(rc, update);
         }
         
         return fullRefresh;
