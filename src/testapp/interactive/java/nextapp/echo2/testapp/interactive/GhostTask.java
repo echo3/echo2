@@ -59,11 +59,21 @@ implements Runnable {
         // Ghost test is also protected using other means, but no reason to bother with it.
         blacklist.add("Push (Ghost Test)");
         
+        // Delay test skews ghost-test based performance test results.
+        blacklist.add("Delay");
+        
         // Command test might do a redirect, killing the ghost test.
         blacklist.add("Command");
         
         // Demo visitors might think the app broke if the style sheet gets set to null.
         blacklist.add("No Style Sheet");
+        
+        // Image test skews ghost-test based performance test results (AWTImageReference).
+        blacklist.add("Image");
+        
+        // Do not add modal windows.
+        blacklist.add("Add Modal Window");
+        blacklist.add("Add Three Modal Windows");
         
         BUTTON_BLACKLIST = Collections.unmodifiableSet(blacklist);
     }
