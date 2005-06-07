@@ -51,16 +51,18 @@ public class MessageDialog extends WindowPane {
     
     public MessageDialog(String title, String message, int type, int controlConfiguration) {
         super(title, new Extent(320), new Extent(240));
+        setStyleName("Default");
         setModal(true);
 
         SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-32));
         add(splitPane);
         
         Label contentLabel = new Label(message);
+        contentLabel.setStyleName("MessageDialog.ContentLabel");
         splitPane.add(contentLabel);
         
         Row controlsRow = new Row();
-        controlsRow.setCellSpacing(new Extent(10));
+        controlsRow.setStyleName("MessageDialog.ControlsRow");
         splitPane.add(controlsRow);
 
         Button button;

@@ -1,4 +1,78 @@
 <stylesheet>
+ <style name="Default" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <property name="titleInsets" value="10px 5px"/>
+   <property name="titleBackground" value="#2f2f4f"/>
+   <property name="titleBackgroundImage">
+    <fillimage vertical="100%" repeat="horizontal">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resourceimagereference resource="/echo2example/email/resource/image/WindowPaneTitleBackground.png"/>
+     </image>
+    </fillimage>
+   </property>
+   <property name="titleForeground" value="#ffffff"/>
+   <property name="border">
+    <fillimageborder contentinsets="8px 8px 14px 14px" borderinsets="17px 17px 23px 23px">
+     <borderpart position="topleft">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderTopLeft.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="top">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderTop.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="topright">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderTopRight.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="left">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderLeft.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="right">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderRight.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="bottomleft">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderBottomLeft.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="bottom">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderBottom.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+     <borderpart position="bottomright">
+      <fillimage>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resourceimagereference resource="/echo2example/email/resource/image/BorderBottomRight.png"/>
+       </image>
+      </fillimage>
+     </borderpart>
+    </fillimageborder>
+   </property>
+  </properties>
+ </style>
  <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
   <properties>
   </properties>  
@@ -41,6 +115,30 @@
      <properties>
       <property name="columnSpan" value="2"/>
       <property name="background" value="#afafff"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="MessageDialog.ContentLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="insets" value="10px"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="MessageDialog.ControlsRow" type="nextapp.echo2.app.Row">
+  <properties>
+   <property name="cellSpacing" value="10px"/>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="background" value="#afcfef"/>
+      <property name="insets" value="5px"/>
      </properties>
     </layoutdata>
    </property>
