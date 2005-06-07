@@ -50,7 +50,7 @@ public class LoginScreen extends ContentPane {
         super();
         setStyleName("LoginScreen.ContentPane");
 
-        Grid layoutGrid = new Grid(2);
+        Grid layoutGrid = new Grid();
         layoutGrid.setStyleName("LoginScreen.LayoutGrid");
         add(layoutGrid);
         

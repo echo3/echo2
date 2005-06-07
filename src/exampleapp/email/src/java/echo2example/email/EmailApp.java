@@ -29,6 +29,14 @@
 
 package echo2example.email;
 
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Window;
 
@@ -37,16 +45,97 @@ import nextapp.echo2.app.Window;
  */
 public class EmailApp extends ApplicationInstance {
 
+    public static final String MAIL_DOMAIN, RECEIVE_MAIL_SERVER, RECEIVE_PROTOCOL, SEND_MAIL_SERVER, SEND_MAIL_PORT;
+    public static final int MESSAGES_PER_PAGE;
+
+    static {
+        // Static initializer to retrieve information from configuration properties file.
+        ResourceBundle config = ResourceBundle.getBundle("/echo2example/email/Configuration");
+        MAIL_DOMAIN = config.getString("MailDomain");
+        RECEIVE_MAIL_SERVER = config.getString("ReceiveMailServer");
+        RECEIVE_PROTOCOL = config.getString("ReceiveProtocol");
+        SEND_MAIL_SERVER = config.getString("SendMailServer");
+        SEND_MAIL_PORT = config.getString("SendMailPort");
+        MESSAGES_PER_PAGE = Integer.parseInt(config.getString("MessagesPerPage"));
+    }
+
+    
+    /**
+     * The user name of the currently logged in user.  This property
+     * will be null when no user is logged in.
+     */
+    private String emailAddress;
+    
+    /**
+     * The <code>javax.mail.Store</code> used to retrieve messages from the mail server.
+     * See the Sun JavaMail API Specification for details.
+     */
+    private Store store;
+    
+    /**
+     * The <code>javax.mail.Session</code> used to connect ot he mail server.
+     * See the Sun JavaMail API Specification for details.
+     */
+    private Session mailSession;
+
     private Window mainWindow;
     
     public static EmailApp getApp() {
         return (EmailApp) getActive();
     }
     
+    /**
+     * Connects to the mail server with the given e-mail address and
+     * password.   Displays the <code>MailScreen</code> on success.
+     *
+     * @param emailAddress e-mail address 
+     * @param password the password
+     * @return true if the application was able to connect to the
+     *         server using the specified information, false if not.
+     */
     public boolean connect(String emailAddress, String password) {
-        return false;
+        Properties properties = System.getProperties();
+        properties.put("mail.smtp.host", SEND_MAIL_SERVER);
+        properties.put("mail.smtp.port", SEND_MAIL_PORT);
+        try {
+            mailSession = Session.getDefaultInstance(properties, null);
+            store = mailSession.getStore(RECEIVE_PROTOCOL);
+            store.connect(RECEIVE_MAIL_SERVER, emailAddress, password);
+
+            // Store user name.
+            this.emailAddress = emailAddress;
+            
+            // Display MailScreen.
+            getWindows()[0].setContent(new MailScreen());
+        } catch (AuthenticationFailedException ex) {
+            // Return false to indicate the user was not successfully authenticated.
+            return false;
+        } catch (MessagingException ex) {
+            processFatalException(ex);
+        }
+        
+        // Return indicating that the user was successfully authenticated.
+        return true;
     }
     
+    /**
+     * Disconnects the session with the mail server and displays
+     * the authentication screen.
+     */
+    public void disconnect() {
+        if (store != null) {
+            try {
+                store.close();
+            } catch (MessagingException ex) {
+                // Do nothing.
+            }
+            store = null;
+        }
+        
+        emailAddress = null;
+        getWindows()[0].setContent(new LoginScreen());
+    }
+
     /**
      * @see nextapp.echo2.app.ApplicationInstance#init()
      */
@@ -56,5 +145,21 @@ public class EmailApp extends ApplicationInstance {
         mainWindow.setTitle("E-Mail Application");
         mainWindow.setContent(new LoginScreen());
         return mainWindow;
+    }
+
+    /**
+     * Handles a fatal exception.
+     * This method is invoked when a component of the application 
+     * encounters a fatal error that can not be resolved.  This
+     * method will log off any currently logged in user and 
+     * display an error dialog screen.
+     *
+     * @param ex the fatal exception
+     */
+    public void processFatalException(Exception ex) {
+        disconnect();
+        MessageDialog messageDialog = new MessageDialog(Messages.getString("FatalException.Title"), ex.toString(), 
+                MessageDialog.TYPE_ERROR, MessageDialog.CONTROLS_OK);
+        getWindows()[0].getContent().add(messageDialog);
     }
 }

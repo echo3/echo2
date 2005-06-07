@@ -83,6 +83,7 @@
     <border color="#00005f" size="2px" style="groove"/>
    </property>
    <property name="insets" value="5px"/>
+   <property name="size" value="2"/>
   </properties>  
  </style>
  <style name="LoginScreen.Prompt" type="nextapp.echo2.app.Label">

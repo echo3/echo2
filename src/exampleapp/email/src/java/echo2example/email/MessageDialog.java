@@ -35,9 +35,11 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 
 /**
- * A generic message dialog.
+ * A generic modal dialog that displays a message.
  */
 public class MessageDialog extends WindowPane {
 
@@ -48,6 +50,16 @@ public class MessageDialog extends WindowPane {
     
     public static final String COMMAND_OK = "ok";
     public static final String COMMAND_CANCEL = "cancel";
+    
+    private ActionListener actionProcessor = new ActionListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            getParent().remove(MessageDialog.this);
+        }
+    };
     
     public MessageDialog(String title, String message, int type, int controlConfiguration) {
         super(title, new Extent(320), new Extent(240));
@@ -69,12 +81,15 @@ public class MessageDialog extends WindowPane {
         switch (controlConfiguration) {
         case CONTROLS_OK:
             button = new Button(Messages.getString("Generic.Ok"));
+            button.addActionListener(actionProcessor);
             controlsRow.add(button);
             break;
         case CONTROLS_OK_CANCEL:
             button = new Button(Messages.getString("Generic.Ok"));
+            button.addActionListener(actionProcessor);
             controlsRow.add(button);
             button = new Button(Messages.getString("Generic.Cancel"));
+            button.addActionListener(actionProcessor);
             controlsRow.add(button);
             break;
         }
