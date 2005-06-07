@@ -27,13 +27,20 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app;
+package echo2example.email;
+
+import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.webcontainer.WebContainerServlet;
 
 /**
- * A content pane is a high-level container/layout object which provides
- * layout for a content region, floating <code>WindowPane</code>s.
+ * E-mail Application Servlet Implementation.
  */
-public class ContentPane 
-extends Component {
-    
+public class EmailServlet extends WebContainerServlet {
+
+    /**
+     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
+     */
+    public ApplicationInstance newApplicationInstance() {
+        return new EmailApp();
+    }
 }

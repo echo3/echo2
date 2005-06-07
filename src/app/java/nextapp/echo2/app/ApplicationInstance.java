@@ -102,7 +102,7 @@ implements Serializable {
     /** 
      * The default locale of the component. 
      */
-    Locale locale;
+    Locale locale = Locale.getDefault();
 
     /** 
      * Contextual data 

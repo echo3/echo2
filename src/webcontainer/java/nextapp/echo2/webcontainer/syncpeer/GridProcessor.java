@@ -57,7 +57,7 @@ public class GridProcessor {
         ySpans = new int[children.length];
         
         for (int i = 0; i < children.length; ++i) {
-            LayoutData layoutData = children[i].getLayoutData();
+            LayoutData layoutData = (LayoutData) children[i].getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
             if (layoutData instanceof GridCellLayoutData) {
                 GridCellLayoutData gcLayoutData = (GridCellLayoutData) layoutData;
                 xSpans[i] = horizontalOrientation ? gcLayoutData.getColumnSpan() : gcLayoutData.getRowSpan();

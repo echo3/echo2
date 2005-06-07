@@ -1,0 +1,49 @@
+<stylesheet>
+ <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
+  <properties>
+  </properties>  
+ </style>
+ <style name="LoginScreen.LayoutGrid" type="nextapp.echo2.app.Grid">
+  <properties>
+   <property name="border">
+    <border color="#00005f" size="2px" style="groove"/>
+   </property>
+   <property name="insets" value="5px"/>
+  </properties>  
+ </style>
+ <style name="LoginScreen.Prompt" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.GridCellLayoutData">
+     <properties>
+      <property name="background" value="#afafef"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="LoginScreen.Continue" type="nextapp.echo2.app.Button">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.GridCellLayoutData">
+     <properties>
+      <property name="columnSpan" value="2"/>
+      <property name="background" value="#afafff"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="LoginScreen.WelcomeLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.GridCellLayoutData">
+     <properties>
+      <property name="columnSpan" value="2"/>
+      <property name="background" value="#afafff"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+</stylesheet>

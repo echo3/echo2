@@ -27,13 +27,39 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app;
+package echo2example.email;
+
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.ResourceImageReference;
+import nextapp.echo2.app.StyleSheet;
+import nextapp.echo2.app.componentxml.ComponentXmlException;
+import nextapp.echo2.app.componentxml.StyleSheetLoader;
 
 /**
- * A content pane is a high-level container/layout object which provides
- * layout for a content region, floating <code>WindowPane</code>s.
+ * 
  */
-public class ContentPane 
-extends Component {
+public class Styles {
     
+    public static final String IMAGE_PATH = "/echo2example/email/resource/image/";
+    public static final String STYLE_PATH = "/echo2example/email/resource/style/";
+
+    public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
+            FillImage.ATTACHMENT_FIXED);
+
+    public static final String APPLICATION_CONTROLS_COLUMN_STYLE_NAME = "applicationControlsColumn";
+    public static final String DEFAULT_STYLE_NAME = "default";
+    public static final String SELECTED_BUTTON_STYLE_NAME = "selectedButton";
+    public static final String TEST_CONTROLS_COLUMN_STYLE_NAME = "testControlsColumn";
+    public static final String TITLE_LABEL_STYLE_NAME = "titleLabel";
+
+    public static final StyleSheet DEFAULT_STYLE_SHEET;
+    static {
+        try {
+            DEFAULT_STYLE_SHEET = StyleSheetLoader.load(STYLE_PATH + "Default.stylesheet", 
+                    Thread.currentThread().getContextClassLoader());
+        } catch (ComponentXmlException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }

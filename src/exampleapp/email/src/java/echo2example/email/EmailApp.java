@@ -27,13 +27,34 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.app;
+package echo2example.email;
+
+import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.Window;
 
 /**
- * A content pane is a high-level container/layout object which provides
- * layout for a content region, floating <code>WindowPane</code>s.
+ * Email Application Instance.
  */
-public class ContentPane 
-extends Component {
+public class EmailApp extends ApplicationInstance {
+
+    private Window mainWindow;
     
+    public static EmailApp getApp() {
+        return (EmailApp) getActive();
+    }
+    
+    public boolean connect(String emailAddress, String password) {
+        return false;
+    }
+    
+    /**
+     * @see nextapp.echo2.app.ApplicationInstance#init()
+     */
+    public Window init() {
+        setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
+        mainWindow = new Window();
+        mainWindow.setTitle("E-Mail Application");
+        mainWindow.setContent(new LoginScreen());
+        return mainWindow;
+    }
 }

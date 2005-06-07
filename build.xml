@@ -387,6 +387,18 @@
         </ant>
     </target>
     
+    <target name="clean.exampleapp.email">
+        <ant dir="${dir.src.exampleapp.email}" target="clean"/>
+    </target>
+    
+    <target name="dist.exampleapp.email">
+        <ant dir="${dir.src.exampleapp.email}" target="war" inheritAll="false">
+            <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
+            <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+        </ant>
+    </target>
+    
     <target name="release" depends="clean, dist, dist.testapp.ia, doc.public">
         <mkdir dir="${dir.build.release.root}"/>
         <mkdir dir="${dir.build.release.root}/SourceCode"/>
