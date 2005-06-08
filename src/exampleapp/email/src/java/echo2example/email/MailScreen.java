@@ -95,21 +95,21 @@ public class MailScreen extends ContentPane {
         Column optionsColumn = new Column();
         menuColumn.add(optionsColumn);
         
-        button = new Button(Messages.getString("MailScreen.ButtonNewMessage"));
+        button = new Button(Messages.getString("MailScreen.ButtonNewMessage"), Styles.ICON_24_MAIL_COMPOSE);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             }
         });
         optionsColumn.add(button);
         
-        button = new Button(Messages.getString("MailScreen.ButtonReplyTo"));
+        button = new Button(Messages.getString("MailScreen.ButtonReplyTo"), Styles.ICON_24_MAIL_REPLY);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             }
         });
         optionsColumn.add(button);
         
-        button = new Button(Messages.getString("MailScreen.ButtonLogOut"));
+        button = new Button(Messages.getString("MailScreen.ButtonLogOut"), Styles.ICON_24_EXIT);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ((EmailApp) getApplicationInstance()).disconnect();
