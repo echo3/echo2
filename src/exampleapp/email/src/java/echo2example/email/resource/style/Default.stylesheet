@@ -190,7 +190,7 @@
    <property name="background" value="#f2f3b3"/>
   </properties>
  </style>
- <style name="PageNavigator" type="echo2example.email.PageNavigator">
+ <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
@@ -198,7 +198,7 @@
       <property name="backgroundImage">
        <fillimage>
         <image type="nextapp.echo2.app.ResourceImageReference">
-         <resourceimagereference resource="/echo2example/email/resource/image/PageNavigatorFill.png"/>
+         <resourceimagereference resource="/echo2example/email/resource/image/ControlPaneFill.png"/>
         </image>
        </fillimage>
       </property>

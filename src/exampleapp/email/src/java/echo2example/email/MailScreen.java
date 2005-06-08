@@ -43,6 +43,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
@@ -96,8 +97,11 @@ public class MailScreen extends ContentPane {
         messageListSplitPane.setSeparatorHeight(new Extent(1, Extent.PX));
         mailSplitPane.add(messageListSplitPane);
         
+        Row controlPane = new Row();
+        controlPane.setStyleName("ControlPane");
+        messageListSplitPane.add(controlPane);
+        
         pageNavigator = new PageNavigator();
-        pageNavigator.setStyleName("PageNavigator");
         pageNavigator.addPageIndexChangeListener(new PageNavigator.PageIndexChangeListener() {
             public void pageIndexChanged(PageIndexChangeEvent e) {
                 try {
@@ -108,7 +112,7 @@ public class MailScreen extends ContentPane {
                 }
             }
         });
-        messageListSplitPane.add(pageNavigator);
+        controlPane.add(pageNavigator);
         
         messageListTable = new MessageListTable();
         messageListTable.addMessageSelectionListener(new MessageListTable.MessageSelectionListener() {

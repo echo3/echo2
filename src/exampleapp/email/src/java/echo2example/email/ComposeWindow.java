@@ -98,8 +98,9 @@ public class ComposeWindow extends WindowPane {
         SplitPane mainPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(32));
         add(mainPane);
         
-        Row controlsRow = new Row();
-        mainPane.add(controlsRow);
+        Row controlPane = new Row();
+        controlPane.setStyleName("ControlPane");
+        mainPane.add(controlPane);
         
         Button sendButton = new Button(Messages.getString("ComposeWindow.SendButton"));
         sendButton.addActionListener(new ActionListener() {
@@ -109,10 +110,10 @@ public class ComposeWindow extends WindowPane {
                 }
             }
         });
-        controlsRow.add(sendButton);
+        controlPane.add(sendButton);
 
         Button cancelButton = new Button(Messages.getString("ComposeWindow.CancelButton"));
-        controlsRow.add(cancelButton);
+        controlPane.add(cancelButton);
 
         Column layoutColumn = new Column();
         layoutColumn.setCellSpacing(new Extent(20));
