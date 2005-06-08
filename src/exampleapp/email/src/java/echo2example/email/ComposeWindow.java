@@ -52,7 +52,7 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
 /**
- * 
+ * The message composition window.
  */
 public class ComposeWindow extends WindowPane {
     

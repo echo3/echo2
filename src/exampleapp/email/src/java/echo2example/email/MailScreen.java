@@ -51,7 +51,9 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.list.AbstractListModel;
 
 /**
- * 
+ * The multi-paned main mail-viewing screen of the application.
+ * This component contains the page navigator, message list, and message
+ * preview panes.
  */
 public class MailScreen extends ContentPane {
     
@@ -63,6 +65,9 @@ public class MailScreen extends ContentPane {
     private SelectField folderSelect;
     private Message selectedMessage;
     
+    /**
+     * Creates a new <code>MailScreen</code>.
+     */
     public MailScreen() {
         super();
         
@@ -131,6 +136,11 @@ public class MailScreen extends ContentPane {
         mailSplitPane.add(messagePane);
     }
     
+    /**
+     * Creates the menu.
+     * 
+     * @return the menu <code>Component</code>
+     */
     private Component createMenu() {
         Button button;
         Label label;
@@ -203,6 +213,8 @@ public class MailScreen extends ContentPane {
 
     /**
      * Sets the mail <code>Store</code>.
+     * This method is invoked by the <code>EmailApp</code> instance to 
+     * initialize the <code>MailScreen</code>.
      * 
      * @param store the <code>Store</code>
      */
