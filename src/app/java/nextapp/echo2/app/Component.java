@@ -275,15 +275,16 @@ implements IdSupport, Serializable {
         if (id.equals(this.id)) {
             return this;
         }
-        if (children != null) {
-	        Iterator it = children.iterator();
-	        while (it.hasNext()) {
-	            Component testComponent = (Component) it.next();
-	            Component targetComponent = testComponent.getComponent(id);
-	            if (targetComponent != null) {
-	                return targetComponent;
-	            }
-	        }
+        if (children == null) {
+            return null;
+        }
+        Iterator it = children.iterator();
+        while (it.hasNext()) {
+            Component testComponent = (Component) it.next();
+            Component targetComponent = testComponent.getComponent(id);
+            if (targetComponent != null) {
+                return targetComponent;
+            }
         }
         return null;
     }
