@@ -106,7 +106,9 @@ public class EmailApp extends ApplicationInstance {
             this.emailAddress = emailAddress;
             
             // Display MailScreen.
-            getWindows()[0].setContent(new MailScreen());
+            MailScreen mailScreen = new MailScreen();
+            mailScreen.setStore(store);
+            getWindows()[0].setContent(mailScreen);
         } catch (AuthenticationFailedException ex) {
             // Return false to indicate the user was not successfully authenticated.
             return false;

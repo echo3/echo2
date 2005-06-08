@@ -29,6 +29,10 @@
 
 package echo2example.email;
 
+import javax.mail.Folder;
+import javax.mail.MessagingException;
+import javax.mail.Store;
+
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
@@ -39,11 +43,18 @@ import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.list.AbstractListModel;
 
 /**
  * 
  */
 public class MailScreen extends ContentPane {
+    
+    private Folder[] folders;
+    
+    private MessageListTable messageListTable;
+    private PageNavigator pageNavigator;
+    private SelectField folderSelect;
     
     public MailScreen() {
         super();
@@ -79,9 +90,12 @@ public class MailScreen extends ContentPane {
         messageListSplitPane.setSeparatorHeight(new Extent(1, Extent.PX));
         mailSplitPane.add(messageListSplitPane);
         
-        PageNavigator pageNavigator = new PageNavigator();
+        pageNavigator = new PageNavigator();
         pageNavigator.setStyleName("PageNavigator");
         messageListSplitPane.add(pageNavigator);
+        
+        messageListTable = new MessageListTable();
+        messageListSplitPane.add(messageListTable);
     }
     
     private Component createMenu() {
@@ -97,7 +111,7 @@ public class MailScreen extends ContentPane {
         label = new Label(Messages.getString("MailScreen.PromptFolderSelect"));
         folderSelectColumn.add(label);
         
-        SelectField folderSelect = new SelectField();
+        folderSelect = new SelectField();
         folderSelectColumn.add(folderSelect);
         
         Column optionsColumn = new Column();
@@ -126,5 +140,54 @@ public class MailScreen extends ContentPane {
         menuColumn.add(button);
         
         return menuColumn;
+    }
+
+    /**
+     * Sets the active folder.
+     * 
+     * @param folder the <code>Folder</code>
+     */
+    private void setFolder(Folder folder) {
+        try {
+            messageListTable.setFolder(null);
+            int messageCount = folder.getMessageCount();
+            int totalPages = folder.getMessageCount() / EmailApp.MESSAGES_PER_PAGE;
+            if (messageCount % EmailApp.MESSAGES_PER_PAGE > 0) {
+                ++totalPages;
+            }
+            pageNavigator.setTotalPages(totalPages);
+            pageNavigator.setPageIndex(totalPages - 1);
+            messageListTable.setFolder(folder);
+//            messagePane.setMessage(null);
+        } catch (MessagingException ex) {
+            EmailApp.getApp().processFatalException(ex);
+        }
+    }
+
+    /**
+     * Sets the mail <code>Store</code>.
+     * 
+     * @param store the <code>Store</code>
+     */
+    public void setStore(Store store) 
+    throws MessagingException {
+        folders = store.getDefaultFolder().list("*");
+        folderSelect.setModel(new AbstractListModel() {
+        
+            public Object get(int index) {
+                return folders[index].getName();
+            }
+    
+            public int size() {
+                return folders.length;
+            }
+        });
+        for (int i = 0; i < folders.length; ++i) {
+            if ("INBOX".equals(folders[i].getName())) {
+                folderSelect.setSelectedIndex(i);
+                setFolder(folders[i]);
+                break;
+            }
+        }
     }
 }
