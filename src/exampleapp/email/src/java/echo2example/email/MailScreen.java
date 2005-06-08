@@ -49,9 +49,11 @@ public class MailScreen extends ContentPane {
         super();
         
         SplitPane mainSplitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(175));
+        mainSplitPane.setSeparatorWidth(new Extent(1, Extent.PX));
         add(mainSplitPane);
         
         SplitPane titleMenuSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(70));
+        titleMenuSplitPane.setSeparatorHeight(new Extent(1, Extent.PX));
         mainSplitPane.add(titleMenuSplitPane);
         
         Column titleColumn = new Column();
@@ -60,20 +62,26 @@ public class MailScreen extends ContentPane {
         Label label;
         
         label = new Label(Messages.getString("Title.Main"));
+        label.setStyleName("Title.Main");
         titleColumn.add(label);
         
         label = new Label(Messages.getString("Title.Sub"));
+        label.setStyleName("Title.Sub");
         titleColumn.add(label);
         
         titleMenuSplitPane.add(createMenu());
         
         SplitPane mailSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(320));
+        mailSplitPane.setResizable(true);
         mainSplitPane.add(mailSplitPane);
         
-        SplitPane messageListSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(30));
+        SplitPane messageListSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(32));
+        messageListSplitPane.setSeparatorHeight(new Extent(1, Extent.PX));
         mailSplitPane.add(messageListSplitPane);
         
-        messageListSplitPane.add(new PageNavigator());
+        PageNavigator pageNavigator = new PageNavigator();
+        pageNavigator.setStyleName("PageNavigator");
+        messageListSplitPane.add(pageNavigator);
     }
     
     private Component createMenu() {

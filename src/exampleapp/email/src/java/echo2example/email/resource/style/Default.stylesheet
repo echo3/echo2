@@ -172,4 +172,48 @@
    </property>
   </properties>
  </style>
+ <style name="PageNavigator" type="echo2example.email.PageNavigator">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="backgroundImage">
+       <fillimage>
+        <image type="nextapp.echo2.app.ResourceImageReference">
+         <resourceimagereference resource="/echo2example/email/resource/image/PageNavigatorFill.png"/>
+        </image>
+       </fillimage>
+      </property>
+      <property name="insets" value="3px"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="Title.Main" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="font">
+    <font size="14px" bold="true" underline="true"/>
+   </property>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.ColumnLayoutData">
+     <properties>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="Title.Sub" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="font">
+    <font italic="true"/>
+   </property>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.ColumnLayoutData">
+     <properties>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
 </stylesheet>

@@ -77,8 +77,11 @@ implements PropertyXmlPeer {
     public Object getValue(ClassLoader classLoader, Class objectClass, Element propertyElement)
     throws InvalidPropertyException {
         Element fontElement = DomUtil.getChildElementByTagName(propertyElement, "font");
-        String sizeString = fontElement.getAttribute("size");
-        Extent size = ExtentPeer.toExtent(sizeString);
+        Extent size = null;
+        if (fontElement.hasAttribute("size")) {
+            String sizeString = fontElement.getAttribute("size");
+            size = ExtentPeer.toExtent(sizeString);
+        }
         int style = 0;
         if ("true".equals(fontElement.getAttribute("bold"))) {
             style |= Font.BOLD;
