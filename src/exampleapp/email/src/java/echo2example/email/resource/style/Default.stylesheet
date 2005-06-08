@@ -172,6 +172,24 @@
    </property>
   </properties>
  </style>
+ <style name="MessageListTable.EvenRowButton" type="nextapp.echo2.app.Button">
+  <properties>
+   <property name="insets" value="8px 1px"/>
+   <property name="background" value="#e1e1e1"/>
+  </properties>
+ </style>
+ <style name="MessageListTable.OddRowButton" type="nextapp.echo2.app.Button">
+  <properties>
+   <property name="insets" value="8px 1px"/>
+   <property name="background" value="#ffffff"/>
+  </properties>
+ </style>
+ <style name="MessageListTable.SelectedRowButton" type="nextapp.echo2.app.Button">
+  <properties>
+   <property name="insets" value="8px 1px"/>
+   <property name="background" value="#f2f3b3"/>
+  </properties>
+ </style>
  <style name="PageNavigator" type="echo2example.email.PageNavigator">
   <properties>
    <property name="layoutData">
