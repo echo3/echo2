@@ -58,6 +58,9 @@ public class MessagePane extends Column {
     private Label subjectFieldValueLabel;
     private Column messageColumn;
     
+    /**
+     * Creates a new <code>MessagePane</code>.
+     */
     public MessagePane() {
         super();
         setVisible(false);
@@ -66,32 +69,32 @@ public class MessagePane extends Column {
         setInsets(new Insets(3));
         
         Grid headerGrid = new Grid();
-        headerGrid.setStyleName("MessagePane.HeaderGrid");
+        headerGrid.setStyleName("Message.HeaderGrid");
         add(headerGrid);
 
         toFieldPromptLabel = new Label(Messages.getString("Message.PromptLabel.To"));
-        toFieldPromptLabel.setStyleName("MessagePane.HeaderGridPrompt");
+        toFieldPromptLabel.setStyleName("Message.HeaderGridPrompt");
         headerGrid.add(toFieldPromptLabel);
         
         toFieldValueLabel = new Label();
         headerGrid.add(toFieldValueLabel);
         
         ccFieldPromptLabel = new Label(Messages.getString("Message.PromptLabel.Cc"));
-        ccFieldPromptLabel.setStyleName("MessagePane.HeaderGridPrompt");
+        ccFieldPromptLabel.setStyleName("Message.HeaderGridPrompt");
         headerGrid.add(ccFieldPromptLabel);
         
         ccFieldValueLabel = new Label();
         headerGrid.add(ccFieldValueLabel);
         
         bccFieldPromptLabel = new Label(Messages.getString("Message.PromptLabel.Bcc"));
-        bccFieldPromptLabel.setStyleName("MessagePane.HeaderGridPrompt");
+        bccFieldPromptLabel.setStyleName("Message.HeaderGridPrompt");
         headerGrid.add(bccFieldPromptLabel);
         
         bccFieldValueLabel = new Label();
         headerGrid.add(bccFieldValueLabel);
         
         Label subjectFieldPromptLabel = new Label(Messages.getString("Message.PromptLabel.Subject"));
-        subjectFieldPromptLabel.setStyleName("MessagePane.HeaderGridPrompt");
+        subjectFieldPromptLabel.setStyleName("Message.HeaderGridPrompt");
         headerGrid.add(subjectFieldPromptLabel);
         
         subjectFieldValueLabel = new Label();

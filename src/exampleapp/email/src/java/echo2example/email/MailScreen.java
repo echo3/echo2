@@ -149,6 +149,8 @@ public class MailScreen extends ContentPane {
         button = new Button(Messages.getString("MailScreen.ButtonNewMessage"), Styles.ICON_24_MAIL_COMPOSE);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                ComposeWindow composeWindow = new ComposeWindow(null);
+                getApplicationInstance().getWindows()[0].getContent().add(composeWindow);
             }
         });
         optionsColumn.add(button);
@@ -156,6 +158,8 @@ public class MailScreen extends ContentPane {
         button = new Button(Messages.getString("MailScreen.ButtonReplyTo"), Styles.ICON_24_MAIL_REPLY);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                ComposeWindow composeWindow = new ComposeWindow(selectedMessage);
+                getApplicationInstance().getWindows()[0].getContent().add(composeWindow);
             }
         });
         optionsColumn.add(button);
