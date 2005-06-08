@@ -29,8 +29,6 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
-import java.util.BitSet;
-
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -73,6 +71,8 @@ import org.w3c.dom.Node;
 public abstract class AbstractListComponentPeer 
 implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
+    protected static final String PROPERTY_SELECTED_OPTIONS = "selectedOptions";
+    
     // Default Colors
     protected static final Color DEFAULT_BACKGROUND = Color.WHITE;
     protected static final Color DEFAULT_FOREGROUND = Color.BLACK;
@@ -231,30 +231,17 @@ implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
      *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
-        AbstractListComponent listComponent = (AbstractListComponent) component;
-        ListModel model = listComponent.getModel();
-        ListSelectionModel selectionModel = listComponent.getSelectionModel();
-
-        if (selectionModel.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION) {
-            BitSet selectedIndices = new BitSet();
+        String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
+        if (PROPERTY_SELECTED_OPTIONS.equals(propertyName)) {
             Element[] optionElements = DomUtil.getChildElementsByTagName(propertyElement, "option");
+            int[] selectedIndices = new int[optionElements.length];
             for (int i = 0; i < optionElements.length; ++i) {
                 String id = optionElements[i].getAttribute("id");
-                int index = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
-                selectedIndices.set(index, true);
+                int selectedIndex = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
+                selectedIndices[i] = selectedIndex;
             }
-            
-            int modelSize = model.size();
-            for (int i = 0; i < modelSize; ++i) {
-                selectionModel.setSelectedIndex(i, selectedIndices.get(i));
-            }
-        } else {
-            Element[] optionElements = DomUtil.getChildElementsByTagName(propertyElement, "option");
-            if (optionElements.length > 0) {
-                String id = optionElements[0].getAttribute("id");
-                int index = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
-                selectionModel.setSelectedIndex(index, true);
-            }
+            ci.getUpdateManager().addClientPropertyUpdate(component, AbstractListComponent.SELECTION_CHANGED_PROPERTY, 
+                    selectedIndices);
         }
     }
 

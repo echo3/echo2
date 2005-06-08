@@ -137,7 +137,7 @@ EchoListComponentDhtml.deselectItem = function(elementId) {
 
 EchoListComponentDhtml.doChange = function(elementId) {
     var element = document.getElementById(elementId).parentNode;
-    var propertyElement  = EchoClientMessage.createPropertyElement(element.id, "selectedObjects");
+    var propertyElement  = EchoClientMessage.createPropertyElement(element.id, "selectedOptions");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){

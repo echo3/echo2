@@ -109,7 +109,7 @@ EchoListComponent.applyStyle = function(element, cssText) {
 
 EchoListComponent.doChange = function(elementId) {
     var element = document.getElementById(elementId);
-    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedObjects");
+    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedOptions");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){

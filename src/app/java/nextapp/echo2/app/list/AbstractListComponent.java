@@ -256,7 +256,14 @@ public class AbstractListComponent extends Component {
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
         
-        if (INPUT_ENTER.equals(inputName)) {
+        if (SELECTION_CHANGED_PROPERTY.equals(inputName)) {
+            int[] selectedIndices = (int[]) inputValue;
+            ListSelectionModel selectionModel = getSelectionModel();
+            selectionModel.clearSelection();
+            for (int i = 0; i < selectedIndices.length; ++i) {
+                selectionModel.setSelectedIndex(selectedIndices[i], true);
+            }
+        } else if (INPUT_ENTER.equals(inputName)) {
             fireActionEvent();
         }
     }
