@@ -508,7 +508,7 @@ implements Serializable {
      */
     void registerComponent(Component component) {
         if (component.getRenderId() == null) {
-            component.setId(generateId());
+            component.setRenderId(generateId());
         }
         idToComponentMap.put(component.getRenderId(), component); 
         if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {

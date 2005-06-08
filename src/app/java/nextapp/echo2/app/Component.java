@@ -89,8 +89,11 @@ implements RenderIdSupport, Serializable {
     /** A collection of references to child components. */
     private List children;
     
-    /** A application-wide unique identifier for this component. */
+    /** A  user-defined identifier for this component. */
     private String id;
+    
+    /** A application-wide unique identifier for this component. */
+    private String renderId;
 
     /** The locale of the component. */
     private Locale locale;
@@ -347,6 +350,15 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
+     * Returns the user-defined identifier of the component.
+     * 
+     * @return the user-defined identifier
+     */
+    public String getId() {
+        return id;
+    }
+    
+    /**
      * Returns the <code>LayoutData</code> object used to describe how this
      * component should be layed out within its parent container.
      * 
@@ -422,7 +434,7 @@ implements RenderIdSupport, Serializable {
      * @see nextapp.echo2.app.RenderIdSupport#getRenderId()
      */
     public String getRenderId() {
-        return id;
+        return renderId;
     }
     
     /**
@@ -883,14 +895,23 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Sets the unique identifier of this <code>Component</code>.
-     * This method is invoked by the <code>ApplicationInstance</code>
-     * when the component is registered or deregistered.
+     * Setes a user-defined identifier for this <code>Component</code>.
      * 
      * @param id the new identifier
      */
-    void setId(String id) {
+    public void setId(String id) {
         this.id = id;
+    }
+    
+    /**
+     * Sets the render identifier of this <code>Component</code>.
+     * This method is invoked by the <code>ApplicationInstance</code>
+     * when the component is registered or deregistered.
+     * 
+     * @param renderId the new identifier
+     */
+    void setRenderId(String renderId) {
+        this.renderId = renderId;
     }
     
     /**
