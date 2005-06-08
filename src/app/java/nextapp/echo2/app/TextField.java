@@ -98,7 +98,7 @@ public class TextField extends TextComponent {
     
     /**
      * Returns the action command which will be provided in 
-     * <code>ActionEvent</code> fired by this <code>TextField</code>.
+     * <code>ActionEvent</code>s fired by this <code>TextField</code>.
      * 
      * @return the action command
      */
@@ -128,7 +128,7 @@ public class TextField extends TextComponent {
     
     /**
      * Sets the action command which will be provided in
-     * <code>ActionEvent</code> fired by this <code>TextField</code>.
+     * <code>ActionEvent</code>s fired by this <code>TextField</code>.
      * 
      * @param newValue the new action command
      */

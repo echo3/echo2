@@ -30,11 +30,14 @@
 package nextapp.echo2.app.list;
 
 import java.io.Serializable;
+import java.util.EventListener;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.event.ListDataEvent;
@@ -46,6 +49,10 @@ import nextapp.echo2.app.event.ListDataListener;
  * An abstract base class for list components.
  */
 public class AbstractListComponent extends Component {
+
+    public static final String INPUT_ENTER = "input_enter";
+
+    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     
 	public static final String LIST_DATA_CHANGED_PROPERTY = "listData";
 	public static final String LIST_MODEL_CHANGED_PROPERTY = "listModel";
@@ -136,6 +143,42 @@ public class AbstractListComponent extends Component {
     }
     
     /**
+     * Adds an <code>ActionListener</code> to the list component.
+     * The <code>ActionListener</code> will be invoked when the user
+     * selects an item.
+     * 
+     * @param l the <code>ActionListener</code> to add
+     */
+    public void addActionListener(ActionListener l) {
+        getEventListenerList().addListener(ActionListener.class, l);
+    }
+
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireActionEvent() {
+        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
+        ActionEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
+            } 
+            ((ActionListener) listeners[i]).actionPerformed(e);
+        }
+    }
+    
+    /**
+     * Returns the action command which will be provided in 
+     * <code>ActionEvent</code>s fired by this 
+     * <code>AbstractListComponent</code>.
+     * 
+     * @return the action command
+     */
+    public String getActionCommand() {
+        return (String) getProperty(PROPERTY_ACTION_COMMAND);
+    }
+    
+    /**
      * Returns the <code>ListCellRenderer</code> used to render items.
      * 
      * @return the renderer
@@ -207,6 +250,37 @@ public class AbstractListComponent extends Component {
         return (Extent) getProperty(PROPERTY_WIDTH);
     }
 	
+    /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String inputName, Object inputValue) {
+        super.processInput(inputName, inputValue);
+        
+        if (INPUT_ENTER.equals(inputName)) {
+            fireActionEvent();
+        }
+    }
+    
+    /**
+     * Removes an <code>ActionListener</code> from the list component.
+     * 
+     * @param l the <code>ActionListener</code> to remove
+     */
+    public void removeActionListener(ActionListener l) {
+        getEventListenerList().removeListener(ActionListener.class, l);
+    }
+    
+    /**
+     * Sets the action command which will be provided in
+     * <code>ActionEvent</code>s fired by this 
+     * <code>AbstractListComponent</code>.
+     * 
+     * @param newValue the new action command
+     */
+    public void setActionCommand(String newValue) {
+        setProperty(PROPERTY_ACTION_COMMAND, newValue);
+    }
+    
     /**
      * Sets the renderer for items.
      * 
