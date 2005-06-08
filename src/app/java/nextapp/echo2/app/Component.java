@@ -211,34 +211,6 @@ implements IdSupport, Serializable {
     public void dispose() { }
     
     /**
-     * Returns the component with the specified id.  The search is performed
-     * on this component and its children only (ancestors of this component
-     * will not be searched).
-     * 
-     * @param searchId the id of the <code>Component</code> to find
-     * @return the <code>Component</code> with the given id, or null if none
-     *         is found
-     */
-    public Component findComponent(String searchId) {
-        if (id.equals(searchId)) {
-            return this;
-        }
-        
-        if (children == null) {
-            return null;
-        }
-
-        Iterator it = children.iterator();
-        while (it.hasNext()) {
-            Component component = ((Component) it.next()).findComponent(searchId);
-            if (component != null) {
-                return component;
-            }
-        }
-        return null;
-    }
-    
-    /**
      * Reports a bound property change.
      *
      * @param propertyName the name of the changed property
