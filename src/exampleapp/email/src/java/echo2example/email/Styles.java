@@ -30,6 +30,7 @@
 package echo2example.email;
 
 import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.ComponentXmlException;
@@ -46,12 +47,19 @@ public class Styles {
     public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
             FillImage.ATTACHMENT_FIXED);
-
-    public static final String APPLICATION_CONTROLS_COLUMN_STYLE_NAME = "applicationControlsColumn";
-    public static final String DEFAULT_STYLE_NAME = "default";
-    public static final String SELECTED_BUTTON_STYLE_NAME = "selectedButton";
-    public static final String TEST_CONTROLS_COLUMN_STYLE_NAME = "testControlsColumn";
-    public static final String TITLE_LABEL_STYLE_NAME = "titleLabel";
+    
+    public static final ImageReference ICON_24_LEFT_ARROW 
+            = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowCyanLeft.gif"); 
+    public static final ImageReference ICON_24_RIGHT_ARROW 
+            = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowCyanRight.gif"); 
+    public static final ImageReference ICON_24_LEFT_ARROW_DISABLED 
+            = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowGrayLeft.gif"); 
+    public static final ImageReference ICON_24_RIGHT_ARROW_DISABLED 
+            = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowGrayRight.gif"); 
+    public static final ImageReference ICON_24_LEFT_ARROW_ROLLOVER 
+            = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowLightCyanLeft.gif"); 
+    public static final ImageReference ICON_24_RIGHT_ARROW_ROLLOVER 
+            = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowLightCyanRight.gif"); 
 
     public static final StyleSheet DEFAULT_STYLE_SHEET;
     static {
