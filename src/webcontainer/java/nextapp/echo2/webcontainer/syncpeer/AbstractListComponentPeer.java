@@ -80,7 +80,7 @@ implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
     protected static final Color DEFAULT_ROLLOVER_FOREGROUND = Color.BLACK;
 
     // Default Sizes
-    protected static final Extent DEFAULT_WIDTH = new Extent(5, Extent.EM);
+    protected static final Extent DEFAULT_WIDTH = new Extent(100, Extent.PERCENT);
     protected static final Insets DEFAULT_INSETS = new Insets(new Extent(0), new Extent(0));
 
     /**
