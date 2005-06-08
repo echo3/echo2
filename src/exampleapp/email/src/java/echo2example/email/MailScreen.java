@@ -35,6 +35,7 @@ import javax.mail.MessagingException;
 import javax.mail.Store;
 
 import echo2example.email.MessageListTable.MessageSelectionEvent;
+import echo2example.email.PageNavigator.PageIndexChangeEvent;
 
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
@@ -97,6 +98,16 @@ public class MailScreen extends ContentPane {
         
         pageNavigator = new PageNavigator();
         pageNavigator.setStyleName("PageNavigator");
+        pageNavigator.addPageIndexChangeListener(new PageNavigator.PageIndexChangeListener() {
+            public void pageIndexChanged(PageIndexChangeEvent e) {
+                try {
+                    messageListTable.setPageIndex(e.getNewPageIndex());
+                    messagePane.setMessage(null);
+                } catch (MessagingException ex) {
+                    EmailApp.getApp().processFatalException(ex);
+                }
+            }
+        });
         messageListSplitPane.add(pageNavigator);
         
         messageListTable = new MessageListTable();
