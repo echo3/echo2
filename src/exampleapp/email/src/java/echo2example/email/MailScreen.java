@@ -30,8 +30,11 @@
 package echo2example.email;
 
 import javax.mail.Folder;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
+
+import echo2example.email.MessageListTable.MessageSelectionEvent;
 
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
@@ -54,7 +57,9 @@ public class MailScreen extends ContentPane {
     
     private MessageListTable messageListTable;
     private PageNavigator pageNavigator;
+    private MessagePane messagePane;
     private SelectField folderSelect;
+    private Message selectedMessage;
     
     public MailScreen() {
         super();
@@ -95,7 +100,20 @@ public class MailScreen extends ContentPane {
         messageListSplitPane.add(pageNavigator);
         
         messageListTable = new MessageListTable();
+        messageListTable.addMessageSelectionListener(new MessageListTable.MessageSelectionListener() {
+            public void messageSelected(MessageSelectionEvent e) {
+                try {
+                    selectedMessage = e.getMessage();
+                    messagePane.setMessage(selectedMessage);
+                } catch (MessagingException ex) {
+                    EmailApp.getApp().processFatalException(ex);
+                }
+            }
+        });
         messageListSplitPane.add(messageListTable);
+        
+        messagePane = new MessagePane();
+        mailSplitPane.add(messagePane);
     }
     
     private Component createMenu() {
@@ -158,7 +176,7 @@ public class MailScreen extends ContentPane {
             pageNavigator.setTotalPages(totalPages);
             pageNavigator.setPageIndex(totalPages - 1);
             messageListTable.setFolder(folder);
-//            messagePane.setMessage(null);
+            messagePane.setMessage(null);
         } catch (MessagingException ex) {
             EmailApp.getApp().processFatalException(ex);
         }
