@@ -666,7 +666,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         itemElement.setAttribute("eid", elementId);
         itemElement.setAttribute("movable", movable ? "true" : "false");
         itemElement.setAttribute("resizable", resizable ? "true" : "false");
-        itemElement.setAttribute("containerid", windowPane.getParent().getId());  //BUGBUG. may want to move into keys.
+        itemElement.setAttribute("containerid", windowPane.getParent().getRenderId());  //BUGBUG. may want to move into keys.
         if (minimumWidth != null) {
             itemElement.setAttribute("minimumwidth", minimumWidth);
         }

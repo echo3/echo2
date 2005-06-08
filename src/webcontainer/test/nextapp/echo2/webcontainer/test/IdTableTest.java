@@ -30,7 +30,7 @@
 package nextapp.echo2.webcontainer.test;
 
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.IdSupport;
+import nextapp.echo2.app.RenderIdSupport;
 import nextapp.echo2.webcontainer.util.IdTable;
 import junit.framework.TestCase;
 
@@ -40,14 +40,14 @@ import junit.framework.TestCase;
 public class IdTableTest extends TestCase {
 
     private static class TestObject 
-    implements IdSupport {
+    implements RenderIdSupport {
         
         public String id = ApplicationInstance.generateSystemId();
         
         /**
-         * @see nextapp.echo2.app.IdSupport#getId()
+         * @see nextapp.echo2.app.RenderIdSupport#getRenderId()
          */
-        public String getId() {
+        public String getRenderId() {
             return id;
         }
     }
@@ -61,7 +61,7 @@ public class IdTableTest extends TestCase {
     public void testReferenceRelease() {
         IdTable idManager = new IdTable();
         TestObject testObject = new TestObject();
-        String id = testObject.getId();
+        String id = testObject.getRenderId();
         idManager.register(testObject);
         assertNotNull(idManager.getObject(id));
         testObject = null;

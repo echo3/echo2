@@ -38,7 +38,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import nextapp.echo2.app.IdSupport;
+import nextapp.echo2.app.RenderIdSupport;
 
 /**
  * A table which provides an identifier-to-object mapping, with the objects 
@@ -59,9 +59,9 @@ public class IdTable {
      * 
      * @param object the object to identify
      */
-    public void register(IdSupport object) {
+    public void register(RenderIdSupport object) {
         purge();
-        String id = object.getId();
+        String id = object.getRenderId();
         WeakReference weakReference;
         synchronized(idToReferenceMap) {
             if (!idToReferenceMap.containsKey(id)) {

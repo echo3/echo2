@@ -55,12 +55,12 @@ public class ImageTools {
         ImageReference imageReference = irs.getImage(component, imageId);
         if (imageReference instanceof StreamImageReference) {
             rc.getContainerInstance().getIdTable().register(imageReference);
-            return StreamImageService.INSTANCE.createUri(rc.getContainerInstance(), imageReference.getId());
+            return StreamImageService.INSTANCE.createUri(rc.getContainerInstance(), imageReference.getRenderId());
         } else if (imageReference instanceof HttpImageReference) {
             return ((HttpImageReference) imageReference).getUri();
         } else if (imageReference instanceof AwtImageReference) {
             rc.getContainerInstance().getIdTable().register(imageReference);
-            return AwtImageService.INSTANCE.createUri(rc.getContainerInstance(), imageReference.getId());
+            return AwtImageService.INSTANCE.createUri(rc.getContainerInstance(), imageReference.getRenderId());
         } else {
             throw new IllegalArgumentException("Unsupported image type.");
         }

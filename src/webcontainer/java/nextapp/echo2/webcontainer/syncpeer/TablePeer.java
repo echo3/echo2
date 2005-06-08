@@ -201,7 +201,7 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
             Component childComponent = table.getCellComponent(columnIndex, rowIndex);
             Element tdElement = document.createElement("td");
-            tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getId());
+            tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getRenderId());
             
             CssStyle tdCssStyle = new CssStyle();
             BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));

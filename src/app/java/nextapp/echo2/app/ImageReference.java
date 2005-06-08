@@ -35,7 +35,7 @@ import java.io.Serializable;
  * A representation of an image / picture.
  */
 public interface ImageReference 
-extends IdSupport, Serializable {
+extends RenderIdSupport, Serializable {
     
     /**
      * Returns the height of the image, or null if the size is unknown.

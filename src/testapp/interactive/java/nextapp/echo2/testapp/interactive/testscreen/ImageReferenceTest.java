@@ -81,9 +81,9 @@ public class ImageReferenceTest extends TestGrid {
         }
         
         /**
-         * @see nextapp.echo2.app.IdSupport#getId()
+         * @see nextapp.echo2.app.RenderIdSupport#getRenderId()
          */
-        public String getId() {
+        public String getRenderId() {
             return id;
         }
 

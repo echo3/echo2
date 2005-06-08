@@ -60,7 +60,7 @@ public class ContainerInstance extends UserInstance {
      * @return the base HTML element id
      */
     public static String getElementId(Component component) {
-        return "c_" + component.getId();
+        return "c_" + component.getRenderId();
     }
     
     /**

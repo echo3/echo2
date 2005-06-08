@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.IdSupport;
+import nextapp.echo2.app.RenderIdSupport;
 import nextapp.echo2.app.RadioButton;
 
 /**
@@ -42,7 +42,7 @@ import nextapp.echo2.app.RadioButton;
  * radio button at a time.
  */
 public class ButtonGroup 
-implements IdSupport, Serializable {
+implements RenderIdSupport, Serializable {
     
     private static final RadioButton[] EMPTY = new RadioButton[0];
     
@@ -75,9 +75,9 @@ implements IdSupport, Serializable {
     }
     
     /**
-     * @see nextapp.echo2.app.IdSupport#getId()
+     * @see nextapp.echo2.app.RenderIdSupport#getRenderId()
      */
-    public String getId() {
+    public String getRenderId() {
         return id;
     }
 

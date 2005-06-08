@@ -54,7 +54,7 @@ import nextapp.echo2.app.event.EventListenerList;
  * This is an abstact base class from which all Echo components are derived.
  */
 public abstract class Component 
-implements IdSupport, Serializable {
+implements RenderIdSupport, Serializable {
     
     private static final int CHILD_LIST_CAPACITY = 3;
     private static final Component[] EMPTY_COMPONENT_ARRAY = new Component[0];
@@ -347,19 +347,6 @@ implements IdSupport, Serializable {
     }
     
     /**
-     * Returns the application-wide unique id of this component.
-     * This id is only guaranteed to be unique within the application
-     * to which this component is registered.  This method returns
-     * null in the event that the component is not registered to an
-     * application.
-     * 
-     * @return the application-wide unique id of this component
-     */
-    public String getId() {
-        return id;
-    }
-    
-    /**
      * Returns the <code>LayoutData</code> object used to describe how this
      * component should be layed out within its parent container.
      * 
@@ -424,6 +411,20 @@ implements IdSupport, Serializable {
         return localStyle.getIndexedProperty(propertyName, propertyIndex);
     }
 
+    /**
+     * Returns the application-wide unique id of this component.
+     * This id is only guaranteed to be unique within the application
+     * to which this component is registered.  This method returns
+     * null in the event that the component is not registered to an
+     * application.
+     * 
+     * @return the application-wide unique id of this component
+     * @see nextapp.echo2.app.RenderIdSupport#getRenderId()
+     */
+    public String getRenderId() {
+        return id;
+    }
+    
     /**
      * Determines the &quot;rendered state&quot; of a property by querying
      * the state of a property in both local and shared <code>Style</code>

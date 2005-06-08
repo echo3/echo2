@@ -30,19 +30,27 @@
 package nextapp.echo2.app;
 
 /**
- * Interface for objects which are identifiable via unique String 
- * identifiers.   Identifiers must be unique within a given
- * <code>ApplicationInstance</code>.  If an object will only be associated
+ * Interface for objects which may be identified for rendering purposes via
+ * via unique String identifiers.   Identifiers must be unique within a given
+ * <code>ApplicationInstance</code>.  
+ * <p>If an object will only be associated
  * with a single <code>ApplicationInstance</code>, the 
  * <code>ApplicationInstance.generateId()</code> method may be used to generate
  * an application unique identifier.
+ * If an object may be associated with multiple 
+ * <code>ApplicationInstance</code>s, the 
+ * <code>ApplicationInstance.generateSystemId()</code> method should instead
+ * be used.
+ * <p>
  * An identifier string may only letters, digits and underscores 
  * [A-Z,a-z,0-9,_]
  */
-public interface IdSupport {
+public interface RenderIdSupport {
     
     /**
-     * Returns an <code>ApplicationInstance</code> unique identifier.
+     * Returns an identifier that is unique within the 
+     * <code>ApplicationInstance</code> with which the implementor will be 
+     * used.
      */
-    public String getId();
+    public String getRenderId();
 }

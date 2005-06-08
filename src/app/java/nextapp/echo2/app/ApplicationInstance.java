@@ -507,10 +507,10 @@ implements Serializable {
      * @param component the component to unregister
      */
     void registerComponent(Component component) {
-        if (component.getId() == null) {
+        if (component.getRenderId() == null) {
             component.setId(generateId());
         }
-        idToComponentMap.put(component.getId(), component); 
+        idToComponentMap.put(component.getRenderId(), component); 
         if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
             setModal(component, true);
         }
@@ -624,7 +624,7 @@ implements Serializable {
      * @param component the component to unregister
      */
     void unregisterComponent(Component component) {
-        idToComponentMap.remove(component.getId());
+        idToComponentMap.remove(component.getRenderId());
         if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
             setModal(component, false);
         }

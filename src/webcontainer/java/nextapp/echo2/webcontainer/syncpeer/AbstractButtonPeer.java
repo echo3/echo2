@@ -664,7 +664,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {
                     rc.getContainerInstance().getIdTable().register(buttonGroup);
-                    itemElement.setAttribute("group", buttonGroup.getId());
+                    itemElement.setAttribute("group", buttonGroup.getRenderId());
                 }
             }
         }
