@@ -29,8 +29,16 @@
 
 package echo2example.email;
 
+import nextapp.echo2.app.Button;
+import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Label;
+import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 
 /**
  * 
@@ -40,8 +48,75 @@ public class MailScreen extends ContentPane {
     public MailScreen() {
         super();
         
-        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL);
-        add(splitPane);
+        SplitPane mainSplitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(175));
+        add(mainSplitPane);
+        
+        SplitPane titleMenuSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(70));
+        mainSplitPane.add(titleMenuSplitPane);
+        
+        Column titleColumn = new Column();
+        titleColumn.setStyleName("MailScreen.TitleColumn");
+        titleMenuSplitPane.add(titleColumn);
+        Label label;
+        
+        label = new Label(Messages.getString("Title.Main"));
+        titleColumn.add(label);
+        
+        label = new Label(Messages.getString("Title.Sub"));
+        titleColumn.add(label);
+        
+        titleMenuSplitPane.add(createMenu());
+        
+        SplitPane mailSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(320));
+        mainSplitPane.add(mailSplitPane);
+        
+        SplitPane messageListSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(30));
+        mailSplitPane.add(messageListSplitPane);
+        
+        messageListSplitPane.add(new PageNavigator());
     }
+    
+    private Component createMenu() {
+        Button button;
+        Label label;
 
+        Column menuColumn = new Column();
+        menuColumn.setStyleName("MailScreen.MenuColumn");
+        
+        Column folderSelectColumn = new Column();
+        menuColumn.add(folderSelectColumn);
+        
+        label = new Label(Messages.getString("MailScreen.PromptFolderSelect"));
+        folderSelectColumn.add(label);
+        
+        SelectField folderSelect = new SelectField();
+        folderSelectColumn.add(folderSelect);
+        
+        Column optionsColumn = new Column();
+        menuColumn.add(optionsColumn);
+        
+        button = new Button(Messages.getString("MailScreen.ButtonNewMessage"));
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        optionsColumn.add(button);
+        
+        button = new Button(Messages.getString("MailScreen.ButtonReplyTo"));
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        optionsColumn.add(button);
+        
+        button = new Button(Messages.getString("MailScreen.ButtonLogOut"));
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((EmailApp) getApplicationInstance()).disconnect();
+            }
+        });
+        menuColumn.add(button);
+        
+        return menuColumn;
+    }
 }

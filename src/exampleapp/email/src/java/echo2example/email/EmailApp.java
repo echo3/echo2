@@ -137,6 +137,24 @@ public class EmailApp extends ApplicationInstance {
     }
 
     /**
+     * Returns the email address of the active user, or null if none.
+     * 
+     * @return the email address
+     */
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+    
+    /**
+     * Returns the active JavaMail <code>Session</code> object.
+     * 
+     * @return the <code>Session</code>
+     */
+    public Session getMailSession() {
+        return mailSession;
+    }
+
+    /**
      * @see nextapp.echo2.app.ApplicationInstance#init()
      */
     public Window init() {

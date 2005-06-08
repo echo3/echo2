@@ -121,6 +121,33 @@
    </property>
   </properties>
  </style>
+ <style name="MailScreen.TitleColumn" type="nextapp.echo2.app.Column">
+  <properties>
+   <property name="foreground" value="#ffffff"/>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="background" value="#514c60"/>
+      <property name="insets" value="10px"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="MailScreen.MenuColumn" type="nextapp.echo2.app.Column">
+  <properties>
+   <property name="cellSpacing" value="15px"/>
+   <property name="foreground" value="#ffffff"/>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="background" value="#6f7094"/>
+      <property name="insets" value="10px"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
  <style name="MessageDialog.ContentLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
