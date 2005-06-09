@@ -302,36 +302,33 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         boolean selectionEnabled = ((Boolean) table.getRenderProperty(Table.PROPERTY_SELECTION_ENABLED, 
                 Boolean.FALSE)).booleanValue();
         
-        String selectionStyle = "";
         String rolloverStyle = "";
-
-        if (rolloverEnabled || selectionEnabled) {
-            if (rolloverEnabled) {
-                CssStyle rolloverCssStyle = new CssStyle();
-                ColorRender.renderToStyle(rolloverCssStyle, 
-                        (Color) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FOREGROUND),
-                        (Color) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND));
-                FontRender.renderToStyle(rolloverCssStyle, 
-                        (Font) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FONT));
-                FillImageRender.renderToStyle(rolloverCssStyle, rc, this, table, IMAGE_ID_ROLLOVER_BACKGROUND,
-                        (FillImage) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
-                if (rolloverCssStyle.hasAttributes()) {
-                    rolloverStyle = rolloverCssStyle.renderInline();
-                }
+        if (rolloverEnabled) {
+            CssStyle rolloverCssStyle = new CssStyle();
+            ColorRender.renderToStyle(rolloverCssStyle, 
+                    (Color) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FOREGROUND),
+                    (Color) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND));
+            FontRender.renderToStyle(rolloverCssStyle, 
+                    (Font) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FONT));
+            FillImageRender.renderToStyle(rolloverCssStyle, rc, this, table, IMAGE_ID_ROLLOVER_BACKGROUND,
+                    (FillImage) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
+            if (rolloverCssStyle.hasAttributes()) {
+                rolloverStyle = rolloverCssStyle.renderInline();
             }
-            
-            if (selectionEnabled) {
-                CssStyle selectionCssStyle = new CssStyle();
-                ColorRender.renderToStyle(selectionCssStyle, 
-                        (Color) table.getRenderProperty(Table.PROPERTY_SELECTION_FOREGROUND),
-                        (Color) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND));
-                FontRender.renderToStyle(selectionCssStyle, 
-                        (Font) table.getRenderProperty(Table.PROPERTY_SELECTION_FONT));
-                FillImageRender.renderToStyle(selectionCssStyle, rc, this, table, IMAGE_ID_SELECTION_BACKGROUND,
-                        (FillImage) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND_IMAGE), true);
-                if (selectionCssStyle.hasAttributes()) {
-                    selectionStyle = selectionCssStyle.renderInline();
-                }
+        }
+        
+        String selectionStyle = "";
+        if (selectionEnabled) {
+            CssStyle selectionCssStyle = new CssStyle();
+            ColorRender.renderToStyle(selectionCssStyle, 
+                    (Color) table.getRenderProperty(Table.PROPERTY_SELECTION_FOREGROUND),
+                    (Color) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND));
+            FontRender.renderToStyle(selectionCssStyle, 
+                    (Font) table.getRenderProperty(Table.PROPERTY_SELECTION_FONT));
+            FillImageRender.renderToStyle(selectionCssStyle, rc, this, table, IMAGE_ID_SELECTION_BACKGROUND,
+                    (FillImage) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND_IMAGE), true);
+            if (selectionCssStyle.hasAttributes()) {
+                selectionStyle = selectionCssStyle.renderInline();
             }
         }
         
@@ -344,19 +341,25 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             itemElement.setAttribute("servernotify", "true");
         }
         
-        ListSelectionModel selectionModel = table.getSelectionModel();
-        if (selectionModel.getMinSelectedIndex() != -1) {
-            Element selectionElement = document.createElement("selection");
-            int minimumIndex = selectionModel.getMinSelectedIndex();
-            int maximumIndex = selectionModel.getMaxSelectedIndex();
-            for (int i = minimumIndex; i <= maximumIndex; ++i) {
-                if (selectionModel.isSelectedIndex(i)) {
-                    Element rowElement = document.createElement("row");
-                    rowElement.setAttribute("index", Integer.toString(i));
-                    selectionElement.appendChild(rowElement);
-                }
+        if (selectionEnabled) {
+            itemElement.setAttribute("selectionenabled", "true");
+            ListSelectionModel selectionModel = table.getSelectionModel();
+            if (selectionModel.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION) {
+                itemElement.setAttribute("selectionmode", "multiple");
             }
-            itemElement.appendChild(selectionElement);
+            if (selectionModel.getMinSelectedIndex() != -1) {
+                Element selectionElement = document.createElement("selection");
+                int minimumIndex = selectionModel.getMinSelectedIndex();
+                int maximumIndex = selectionModel.getMaxSelectedIndex();
+                for (int i = minimumIndex; i <= maximumIndex; ++i) {
+                    if (selectionModel.isSelectedIndex(i)) {
+                        Element rowElement = document.createElement("row");
+                        rowElement.setAttribute("index", Integer.toString(i));
+                        selectionElement.appendChild(rowElement);
+                    }
+                }
+                itemElement.appendChild(selectionElement);
+            }
         }
 
         itemizedUpdateElement.appendChild(itemElement);

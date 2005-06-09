@@ -69,17 +69,19 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-        
-        EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selectionMode"));
-        
+        var selectionEnabled = item.getAttribute("selectionenabled") == "true";
+
+        if (selectionEnabled) {
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionEnabled", "true");
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selectionmode"));
+	        if (item.getAttribute("servernotify")) {
+	            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("servernotify"));
+	        }
+        }
+
         if (rolloverStyle) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "rolloverStyle", rolloverStyle);
-        }
-        if (selectionStyle) {
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
-        }
-        if (item.getAttribute("servernotify")) {
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("servernotify"));
         }
         
         var rowElements = item.getElementsByTagName("row");
@@ -173,6 +175,12 @@ EchoTable.processClick = function(echoEvent) {
     }
 
     var tableElement = document.getElementById(EchoDomUtil.getComponentId(trElement.id));
+    
+    if (EchoDomPropertyStore.getPropertyValue(tableElement.id, "selectionEnabled") != "true") {
+        return;
+    }
+    
+    EchoDomUtil.preventEventDefault(echoEvent);
 
     if (EchoDomPropertyStore.getPropertyValue(tableElement.id, "selectionMode") != "multiple") {
         EchoTable.clearSelected(tableElement);
