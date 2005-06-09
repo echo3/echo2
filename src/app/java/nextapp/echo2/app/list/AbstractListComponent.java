@@ -54,6 +54,7 @@ public class AbstractListComponent extends Component {
 
     public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
 	public static final String LIST_DATA_CHANGED_PROPERTY = "listData";
 	public static final String LIST_MODEL_CHANGED_PROPERTY = "listModel";
     public static final String LIST_CELL_RENDERER_CHANGED_PROPERTY = "listCellRenderer";
@@ -151,6 +152,9 @@ public class AbstractListComponent extends Component {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
     /**
@@ -284,6 +288,9 @@ public class AbstractListComponent extends Component {
      */
     public void removeActionListener(ActionListener l) {
         getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
     
     /**

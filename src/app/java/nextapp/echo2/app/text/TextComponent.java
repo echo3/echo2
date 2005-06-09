@@ -60,6 +60,7 @@ extends Component {
     public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
     public static final String PROPERTY_WIDTH = "width";
     
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
     public static final String TEXT_CHANGED_PROPERTY = "text";
     
@@ -98,6 +99,9 @@ extends Component {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
     /**
@@ -257,6 +261,9 @@ extends Component {
      */
     public void removeActionListener(ActionListener l) {
         getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
     
     /**

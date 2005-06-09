@@ -299,6 +299,9 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         itemElement.setAttribute("defaultstyle", defaultCssStyle.renderInline());
         CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
         itemElement.setAttribute("rolloverstyle", rolloverCssStyle.renderInline());
+        if (listComponent.hasActionListeners()) {
+            itemElement.setAttribute("serverNotify", "true");
+        }
         
         itemizedUpdateElement.appendChild(itemElement);
     }

@@ -209,6 +209,9 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         itemElement.setAttribute("selectedstyle", SELECTED_CSS_STYLE_TEXT);
         itemElement.setAttribute("multiple", 
                 ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "true" : "false");
+        if (listBox.hasActionListeners()) {
+            itemElement.setAttribute("serverNotify", "true");
+        }
 
         Element selectionElement = serverMessage.getDocument().createElement("selection");
         ListModel model = listBox.getModel();

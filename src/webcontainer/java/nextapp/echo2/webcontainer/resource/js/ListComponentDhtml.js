@@ -27,6 +27,8 @@
 * the terms of any one of the MPL, the GPL or the LGPL.
 */
 
+//BUGBUG. rename all element/elementid with listElement/listElementId, optionElement/optionElementId
+
 //______________________________
 // Object EchoListComponentDhtml
 
@@ -76,6 +78,10 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
         var selectedStyle = item.getAttribute("selectedstyle");
         var multiple = item.getAttribute("multiple") == "true";
         var i;
+
+        if (item.getAttribute("serverNotify")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("serverNotify"));
+        }
 
 	    var selectElement = document.getElementById(elementId);
 	    var optionElements = selectElement.getElementsByTagName("div");
@@ -128,32 +134,37 @@ EchoListComponentDhtml.clearSelectedValues = function(elementId) {
     }
 };
 
-EchoListComponentDhtml.deselectItem = function(elementId) {
-    var target = document.getElementById(elementId);
-    EchoDomPropertyStore.setPropertyValue(target.id, "selectedState", false);
+EchoListComponentDhtml.deselectItem = function(optionElementId) {
+    var target = document.getElementById(optionElementId);
+    EchoDomPropertyStore.setPropertyValue(optionElementId, "selectedState", false);
     var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
     EchoListComponentDhtml.applyStyle(target,style);
 };
 
-EchoListComponentDhtml.doChange = function(elementId) {
-    var element = document.getElementById(elementId).parentNode;
-    var propertyElement  = EchoClientMessage.createPropertyElement(element.id, "selectedOptions");
+EchoListComponentDhtml.doChange = function(optionElementId) {
+    var listElement = document.getElementById(optionElementId).parentNode;
+    var propertyElement  = EchoClientMessage.createPropertyElement(listElement.id, "selectedOptions");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
         var removed = propertyElement.removeChild(propertyElement.firstChild);
     }
 
-    var optionDivElements = element.getElementsByTagName("div");
+    var optionDivElements = listElement.getElementsByTagName("div");
 
     // add new values        
     for (var i = 0; i < optionDivElements.length; ++i){
         if (EchoDomPropertyStore.getPropertyValue(optionDivElements[i].id, "selectedState")) {
             var optionId = optionDivElements[i].id;
             var optionElement = EchoClientMessage.messageDocument.createElement("option");
-            optionElement.setAttribute("id",optionId);
+            optionElement.setAttribute("id", optionId);
             propertyElement.appendChild(optionElement);
         }
+    }
+
+    if ("true" == EchoDomPropertyStore.getPropertyValue(listElement.id, "serverNotify")) {
+        EchoClientMessage.setActionValue(listElement.id, "action");
+        EchoServerTransaction.connect();
     }
 
     EchoDebugManager.updateClientMessage();

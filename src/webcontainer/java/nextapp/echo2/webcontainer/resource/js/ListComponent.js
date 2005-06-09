@@ -76,6 +76,9 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
 
         EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
         EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
+        if (item.getAttribute("serverNotify")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("serverNotify"));
+        }
 
 	    var selectElement = document.getElementById(elementId + "_select");
 	    var optionElements = selectElement.options;
@@ -109,7 +112,8 @@ EchoListComponent.applyStyle = function(element, cssText) {
 
 EchoListComponent.doChange = function(elementId) {
     var element = document.getElementById(elementId);
-    var propertyElement = EchoClientMessage.createPropertyElement(element.parentNode.id, "selectedOptions");
+    var listElementId = element.parentNode.id;
+    var propertyElement = EchoClientMessage.createPropertyElement(listElementId, "selectedOptions");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
@@ -129,6 +133,11 @@ EchoListComponent.doChange = function(elementId) {
     }
 
     EchoDebugManager.updateClientMessage();
+    
+    if ("true" == EchoDomPropertyStore.getPropertyValue(listElementId, "serverNotify")) {
+	    EchoClientMessage.setActionValue(listElementId, "action");
+	    EchoServerTransaction.connect();
+    }
 };
 
 EchoListComponent.processRolloverEnter = function(echoEvent) {
