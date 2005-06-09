@@ -104,6 +104,14 @@ EchoTable.applyTemporaryStyle = function(element, cssStyle) {
     EchoDomUtil.applyStyle(element, cssStyle);
 };
 
+EchoTable.clearSelected = function(tableElement) {
+    for (var i = 0; i < tableElement.rows.length; ++i) {
+        if (EchoTable.isSelected(tableElement.rows[i])) {
+            EchoTable.setSelected(tableElement.rows[i], false);
+        }
+    }
+};
+
 EchoTable.disposeCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
@@ -165,6 +173,10 @@ EchoTable.processClick = function(echoEvent) {
     }
 
     var tableElement = document.getElementById(EchoDomUtil.getComponentId(trElement.id));
+
+    if (EchoDomPropertyStore.getPropertyValue(tableElement.id, "selectionMode") != "multiple") {
+        EchoTable.clearSelected(tableElement);
+    }
 
     EchoTable.setSelected(trElement, !EchoTable.isSelected(trElement));
     

@@ -42,6 +42,7 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
@@ -305,6 +306,16 @@ public class TableTest extends SplitPane {
         controlsColumn.addButton("Disable Selection", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testTable.setSelectionEnabled(false);
+            }
+        });
+        controlsColumn.addButton("Set SelectionMode = Single", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            }
+        });
+        controlsColumn.addButton("Set SelectionMode = Multiple", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_SELECTION);
             }
         });
         controlsColumn.addButton("Set Selection Foreground", new ActionListener() {
