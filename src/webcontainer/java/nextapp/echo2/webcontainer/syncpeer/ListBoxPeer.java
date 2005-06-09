@@ -117,8 +117,12 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
         InsetsRender.renderToStyle(style, "padding", insets);
 
-        style.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         style.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+        if (!width.equals(DEFAULT_WIDTH) || !isDhtmlComponentRequired(rc)) {
+            // For components using DHTML listbox implementation, there is no reason to set width to 100%.
+            // This also conveniently avoids another IE bug.
+            style.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
+        }
 
         style.setAttribute("position", "relative");
         style.setAttribute("border", "2px inset");
