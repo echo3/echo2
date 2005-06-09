@@ -172,16 +172,35 @@
    </property>
   </properties>
  </style>
- <style name="MessageListTable.EvenRowButton" type="nextapp.echo2.app.Button">
+ <style name="MessageListTable.Table" type="nextapp.echo2.app.Table">
   <properties>
-   <property name="insets" value="8px 1px"/>
-   <property name="background" value="#e1e1e1"/>
+   <property name="rolloverBackground" value="#85c1ff"/>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="width" value="100%"/>
   </properties>
  </style>
- <style name="MessageListTable.OddRowButton" type="nextapp.echo2.app.Button">
+ <style name="MessageListTable.EvenRowButton" type="nextapp.echo2.app.Label">
   <properties>
-   <property name="insets" value="8px 1px"/>
-   <property name="background" value="#ffffff"/>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
+     <properties>
+      <property name="insets" value="8px 1px"/>
+      <property name="background" value="#e1e1e1"/>
+     </properties>
+    </layoutdata>
+   </property>
+  </properties>
+ </style>
+ <style name="MessageListTable.OddRowButton" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
+     <properties>
+      <property name="insets" value="8px 1px"/>
+      <property name="background" value="#ffffff"/>
+     </properties>
+    </layoutdata>
+   </property>
   </properties>
  </style>
  <style name="MessageListTable.SelectedRowButton" type="nextapp.echo2.app.Button">

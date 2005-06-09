@@ -40,11 +40,9 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
-import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Table;
-import nextapp.echo2.app.event.ActionEvent;
-import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
 
@@ -172,38 +170,39 @@ public class MessageListTable extends Table {
          *      nextapp.echo2.app.Table, java.lang.Object, int, int)
          */
         public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
-            Button button;
+            Label label;
             if (column == COLUMN_DATE) {
-                button = new Button(Messages.formatDateTimeMedium((Date) value));
+                label = new Label(Messages.formatDateTimeMedium((Date) value));
             } else {
-                button = new Button(value == null ? (String) null : value.toString());
+                label = new Label(value == null ? (String) null : value.toString());
             }
             if (row == selectedRow) {
-                button.setStyleName("MessageListTable.SelectedRowButton");
+                label.setStyleName("MessageListTable.SelectedRowButton");
             } else {
                 if (row % 2 == 0) {
-                    button.setStyleName("MessageListTable.EvenRowButton");
+                    label.setStyleName("MessageListTable.EvenRowButton");
                 } else {
-                    button.setStyleName("MessageListTable.OddRowButton");
+                    label.setStyleName("MessageListTable.OddRowButton");
                 }
             }
-            button.setActionCommand(Integer.toString(row));
-            button.addActionListener(cellSelectionListener);
-            return button;
+//BUGBUG. in progress button-> label         
+//            label.setActionCommand(Integer.toString(row));
+//            label.addActionListener(cellSelectionListener);
+            return label;
         }
     };
 
-    private ActionListener cellSelectionListener = new ActionListener() {
-        
-        /**
-         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
-         */
-        public void actionPerformed(ActionEvent e) {
-            int newValue = Integer.parseInt(e.getActionCommand());
-            setSelectedRow(newValue);
-        }
-    };
-    
+//    private ActionListener cellSelectionListener = new ActionListener() {
+//        
+//        /**
+//         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+//         */
+//        public void actionPerformed(ActionEvent e) {
+//            int newValue = Integer.parseInt(e.getActionCommand());
+//            setSelectedRow(newValue);
+//        }
+//    };
+//    
     private Message[] displayedMessages;
     private Folder folder;
     private int totalMessages; 
@@ -214,6 +213,8 @@ public class MessageListTable extends Table {
      * Creates a new <code>MessageListTable</code>.
      */
     public MessageListTable() {
+        super();
+        setStyleName("MessageListTable.Table");
         setModel(messageTableModel);
         setDefaultRenderer(Object.class, messageTableCellRenderer);
     }
