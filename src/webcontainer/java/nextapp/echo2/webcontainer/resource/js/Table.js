@@ -27,8 +27,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
   
-//__________________
-// Object EchoButton
+//_________________
+// Object EchoTable
 
 EchoTable = function() { };
 
@@ -57,16 +57,63 @@ EchoTable.MessageProcessor.process = function(messagePartElement) {
 
 EchoTable.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
+        var tableElementId = item.getAttribute("eid");
+        
+        EchoTable.disposeCellListeners(tableElementId);
     }
 };
 
 EchoTable.MessageProcessor.processInit = function(initMessageElement) {
     var defaultStyle = initMessageElement.getAttribute("defaultstyle");
     var rolloverStyle = initMessageElement.getAttribute("rolloverstyle");
-    var pressedStyle = initMessageElement.getAttribute("pressedstyle");
+    var selectionStyle = initMessageElement.getAttribute("selectionstyle");
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
+        var tableElementId = item.getAttribute("eid");
+
+        if (defaultStyle) {
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "defaultStyle", defaultStyle);
+        }
+        if (rolloverStyle) {
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "rolloverStyle", rolloverStyle);
+        }
+        if (selectionStyle) {
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
+        }
+        if (item.getAttribute("servernotify")) {
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("servernotify"));
+        }
+        
+        EchoTable.initCellListeners(tableElementId);
     }
+};
+
+EchoTable.disposeCellListeners = function(tableElementId) {
+    var tableElement = document.getElementById(tableElementId);
+    for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
+        for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
+            var cell = tableElement.rows[rowIndex].cells[cellIndex];
+            EchoEventProcessor.removeHandler(cell.id, "mouseover");
+            EchoEventProcessor.removeHandler(cell.id, "mouseout");
+        }
+    }
+};
+
+EchoTable.initCellListeners = function(tableElementId) {
+    var tableElement = document.getElementById(tableElementId);
+    for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
+        for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
+            var cell = tableElement.rows[rowIndex].cells[cellIndex];
+            EchoEventProcessor.addHandler(cell.id, "mouseover", "EchoTable.processRolloverEnter");
+            EchoEventProcessor.addHandler(cell.id, "mouseout", "EchoTable.processRolloverExit");
+        }
+    }
+};
+
+EchoTable.processRolloverEnter = function(echoEvent) {
+    EchoDebugManager.consoleWrite("rolloverEnter:" + echoEvent.registeredTarget.id);
+};
+
+EchoTable.processRolloverExit = function(echoEvent) {
+    EchoDebugManager.consoleWrite("rolloverExit:" + echoEvent.registeredTarget.id);
 };

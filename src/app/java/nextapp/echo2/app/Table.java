@@ -479,6 +479,15 @@ public class Table extends Component {
     }
     
     /**
+     * Determines the any <code>ActionListener</code>s are registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActionListeners() {
+        return getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
+
+    /**
      * Marks the table as needing to be re-rendered.
      */
     protected void invalidate() {

@@ -35,8 +35,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.Font;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.Table;
@@ -48,10 +52,12 @@ import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.ClientProperties;
@@ -72,8 +78,13 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * Echo framework.
  */
 public class TablePeer 
-implements DomUpdateSupport, ComponentSynchronizePeer {
+implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
 
+    private static final String[] TABLE_INIT_KEYS = new String[]{"defaultstyle", "rolloverstyle", "selectionstyle"};
+    
+    private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
+    private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
+ 
     /**
      * Service to provide supporting JavaScript library.
      */
@@ -93,6 +104,14 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         return ContainerInstance.getElementId(child.getParent()) + "_cell_" + child.getParent().indexOf(child);
     }
     
+    /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * Returns the <code>TableCellLayoutData</code> of the given child,
      * or null if it does not provide <code>TableCellLayoutData</code>.
@@ -141,8 +160,26 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        renderDisposeDirective(rc, (Table) component);
     }
     
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a table, performing tasks such as deregistering
+     * event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param table the table
+     */
+    private void renderDisposeDirective(RenderContext rc, Table table) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoTable.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(table));
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+
     /**
      * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
@@ -150,8 +187,10 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(TABLE_SERVICE.getId(), true);
-        
         Table table = (Table) component;
+        
+        renderInitDirective(rc, table);
+        
         Border border = (Border) table.getRenderProperty(Table.PROPERTY_BORDER);
         Extent borderSize = border == null ? null : border.getSize();
 
@@ -196,6 +235,75 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
     }
     
     /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a <code>Table</code>, performing tasks such as 
+     * registering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param table the table
+     */
+    private void renderInitDirective(RenderContext rc, Table table) {
+        String elementId = ContainerInstance.getElementId(table);
+        ServerMessage serverMessage = rc.getServerMessage();
+        
+        boolean rolloverEnabled = ((Boolean) table.getRenderProperty(Table.PROPERTY_ROLLOVER_ENABLED, 
+                Boolean.FALSE)).booleanValue();
+        boolean selectionEnabled = ((Boolean) table.getRenderProperty(Table.PROPERTY_SELECTION_ENABLED, 
+                Boolean.FALSE)).booleanValue();
+        
+        String selectionStyle = "";
+        String defaultStyle = "";
+        String rolloverStyle = "";
+
+        if (rolloverEnabled || selectionEnabled) {
+            CssStyle defaultCssStyle = new CssStyle();
+            ColorRender.renderToStyle(defaultCssStyle, (Color) table.getRenderProperty(Table.PROPERTY_FOREGROUND), 
+                    (Color) table.getRenderProperty(Table.PROPERTY_BACKGROUND));
+            FontRender.renderToStyle(defaultCssStyle, (Font) table.getRenderProperty(Table.PROPERTY_FONT));
+            defaultStyle = defaultCssStyle.renderInline();
+            
+            if (rolloverEnabled) {
+                CssStyle rolloverCssStyle = new CssStyle();
+                ColorRender.renderToStyle(rolloverCssStyle, 
+                        (Color) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FOREGROUND),
+                        (Color) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND));
+                FontRender.renderToStyle(rolloverCssStyle, 
+                        (Font) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FONT));
+                FillImageRender.renderToStyle(rolloverCssStyle, rc, this, table, IMAGE_ID_ROLLOVER_BACKGROUND,
+                        (FillImage) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
+                if (rolloverCssStyle.hasAttributes()) {
+                    rolloverStyle = rolloverCssStyle.renderInline();
+                }
+            }
+            
+            if (selectionEnabled) {
+                CssStyle selectionCssStyle = new CssStyle();
+                ColorRender.renderToStyle(selectionCssStyle, 
+                        (Color) table.getRenderProperty(Table.PROPERTY_SELECTION_FOREGROUND),
+                        (Color) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND));
+                FontRender.renderToStyle(selectionCssStyle, 
+                        (Font) table.getRenderProperty(Table.PROPERTY_SELECTION_FONT));
+                FillImageRender.renderToStyle(selectionCssStyle, rc, this, table, IMAGE_ID_SELECTION_BACKGROUND,
+                        (FillImage) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND_IMAGE), true);
+                if (selectionCssStyle.hasAttributes()) {
+                    selectionStyle = selectionCssStyle.renderInline();
+                }
+            }
+        }
+        
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoTable.MessageProcessor", "init",  TABLE_INIT_KEYS, 
+                new String[]{defaultStyle, rolloverStyle, selectionStyle});
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        if (table.hasActionListeners()) {
+            itemElement.setAttribute("servernotify", "true");
+        }
+
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    /**
      * Renders a single row of a table.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -209,10 +317,11 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
     private void renderRow(RenderContext rc, ServerComponentUpdate update, Element tbodyElement, Table table, int rowIndex,
             String defaultInsetsAttributeValue) {
         Document document = tbodyElement.getOwnerDocument();
+        String elementId = ContainerInstance.getElementId(table);
         
         Element trElement = document.createElement("tr");
+        trElement.setAttribute("id", elementId + "_tr_" + rowIndex); // BUGBUG. may not be suitable id (changing row index)
         tbodyElement.appendChild(trElement);
-        String elementId = ContainerInstance.getElementId(table);
         
         int columns = table.getColumnModel().getColumnCount();
         for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
