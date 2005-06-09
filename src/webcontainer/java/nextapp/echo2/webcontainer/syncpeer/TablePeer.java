@@ -108,8 +108,25 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
      */
     public ImageReference getImage(Component component, String imageId) {
-        // TODO Auto-generated method stub
-        return null;
+        if (IMAGE_ID_ROLLOVER_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage 
+                    = (FillImage) component.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
+            if (backgroundImage == null) {
+                return null;
+            } else {
+                return backgroundImage.getImage();
+            }
+        } else if (IMAGE_ID_SELECTION_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage 
+                    = (FillImage) component.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND_IMAGE);
+            if (backgroundImage == null) {
+                return null;
+            } else {
+                return backgroundImage.getImage();
+            }
+        } else {
+            return null;
+        }
     }
 
     /**

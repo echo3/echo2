@@ -252,12 +252,70 @@ public class TableTest extends SplitPane {
         });
         controlsColumn.addButton("Set Rollover Background Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testTable.setRolloverBackgroundImage(Styles.BUTTON_ROLLOVER_BACKGROUND_IMAGE);
+                testTable.setRolloverBackgroundImage(Styles.BG_NW_SHADOW);
             }
         });
         controlsColumn.addButton("Clear Rollover Background Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testTable.setRolloverBackgroundImage(null);
+            }
+        });
+        
+        // Rollover Effect Settings
+
+        controlsColumn = new ButtonColumn();
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Selection"));
+
+        controlsColumn.addButton("Enable Selection", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionEnabled(true);
+            }
+        });
+        controlsColumn.addButton("Disable Selection", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionEnabled(false);
+            }
+        });
+        controlsColumn.addButton("Set Selection Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Selection Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Selection Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                 testTable.setSelectionBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Selection Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Selection Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionFont(StyleUtil.randomFont());
+            }
+        });
+        controlsColumn.addButton("Clear Selection Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionFont(null);
+            }
+        });
+        controlsColumn.addButton("Set Selection Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionBackgroundImage(Styles.BUTTON_PRESSED_BACKGROUND_IMAGE);
+            }
+        });
+        controlsColumn.addButton("Clear Selection Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionBackgroundImage(null);
             }
         });
     }

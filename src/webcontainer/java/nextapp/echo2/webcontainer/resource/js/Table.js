@@ -27,6 +27,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
   
+//BUGBUG. remove all defaultStyle stuff, no longer used.  
+  
 //_________________
 // Object EchoTable
 
@@ -70,7 +72,9 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-
+        
+        EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selectionMode"));
+        
         if (defaultStyle) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "defaultStyle", defaultStyle);
         }
@@ -100,19 +104,12 @@ EchoTable.applyTemporaryStyle = function(element, cssStyle) {
     EchoDomUtil.applyStyle(element, cssStyle);
 };
 
-EchoTable.restoreOriginalStyle = function(element) {
-    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle");
-    if (!originalStyle) {
-        return;
-    }
-    element.style.cssText = originalStyle == "-" ? "" : originalStyle;
-};
-
 EchoTable.disposeCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
             var tdElement = tableElement.rows[rowIndex].cells[cellIndex];
+            EchoEventProcessor.removeHandler(tdElement.id, "click");
             EchoEventProcessor.removeHandler(tdElement.id, "mouseover");
             EchoEventProcessor.removeHandler(tdElement.id, "mouseout");
         }
@@ -124,10 +121,27 @@ EchoTable.initCellListeners = function(tableElementId) {
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
             var tdElement = tableElement.rows[rowIndex].cells[cellIndex];
+            EchoEventProcessor.addHandler(tdElement.id, "click", "EchoTable.processClick");
             EchoEventProcessor.addHandler(tdElement.id, "mouseover", "EchoTable.processRolloverEnter");
             EchoEventProcessor.addHandler(tdElement.id, "mouseout", "EchoTable.processRolloverExit");
         }
     }
+};
+
+/**
+ * Determines the selection state of a table row.
+ *
+ * @param trElement the row TR element
+ * @return the selection state (as a boolean value)
+ */
+EchoTable.isSelected = function(trElement) {
+    return EchoDomPropertyStore.getPropertyValue(trElement.id, "selected") == "true";
+};
+
+EchoTable.processClick = function(echoEvent) {
+    var sourceTdElement = echoEvent.registeredTarget;
+    var trElement = sourceTdElement.parentNode;
+    EchoTable.setSelected(trElement, EchoTable.isSelected(trElement));
 };
 
 EchoTable.processRolloverEnter = function(echoEvent) {
@@ -138,10 +152,8 @@ EchoTable.processRolloverEnter = function(echoEvent) {
     if (rolloverStyle) {
         for (var i = 0; i < trElement.cells.length; ++i) {
             EchoTable.applyTemporaryStyle(trElement.cells[i], rolloverStyle);
-//            EchoDomUtil.applyStyle(trElement.cells[i], rolloverStyle);
         }
     }
-    EchoDebugManager.consoleWrite("rolloverEnter:" + trElement.id);
 };
 
 EchoTable.processRolloverExit = function(echoEvent) {
@@ -152,8 +164,39 @@ EchoTable.processRolloverExit = function(echoEvent) {
     if (defaultStyle) {
         for (var i = 0; i < trElement.cells.length; ++i) {
             EchoTable.restoreOriginalStyle(trElement.cells[i]);
-//            EchoDomUtil.applyStyle(trElement.cells[i], defaultStyle);
         }
     }
-    EchoDebugManager.consoleWrite("rolloverExit:" + trElement.id);
 };
+
+EchoTable.restoreOriginalStyle = function(element) {
+    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle");
+    if (!originalStyle) {
+        return;
+    }
+    element.style.cssText = originalStyle == "-" ? "" : originalStyle;
+};
+
+/**
+ * Sets the selection state of a table row.
+ *
+ * @param trElement the row TR element
+ * @param newValue the new selection state (a boolean value)
+ */
+EchoTable.setSelected = function(trElement, newValue) {
+    // Set state flag.
+    EchoDomPropertyStore.setPropertyValue(trElement.id, "selected", newValue ? "true" : "false");
+
+    // Highlight row.
+    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
+    var selectionStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionStyle");
+    if (selectionStyle) {
+        for (var i = 0; i < trElement.cells.length; ++i) {
+            if (newValue) {
+                EchoTable.applyTemporaryStyle(trElement.cells[i], selectionStyle);
+            } else {
+                EchoTable.restoreOriginalStyle(trElement.cells[i]);
+            }
+        }
+    }
+};
+
