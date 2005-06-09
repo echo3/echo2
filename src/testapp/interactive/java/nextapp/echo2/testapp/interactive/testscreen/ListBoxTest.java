@@ -40,9 +40,14 @@ import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
+import nextapp.echo2.app.event.ListDataEvent;
+import nextapp.echo2.app.event.ListDataListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
+import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -51,6 +56,59 @@ import nextapp.echo2.testapp.interactive.Styles;
  */
 public class ListBoxTest extends SplitPane {
 
+    /**
+     * Writes <code>ActionEvent</code>s to console.
+     */
+    private ActionListener actionListener = new ActionListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
+    
+    /**
+     * Writes <code>ChangeEvent</code>s to console.
+     */
+    private ChangeListener changeListener = new ChangeListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
+         */
+        public void stateChanged(ChangeEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
+    
+    /**
+     * Writes <code>ListDataListener</code>s to console.
+     */
+    private ListDataListener listDataListener = new ListDataListener() {
+        
+        /**
+         * @see nextapp.echo2.app.event.ListDataListener#contentsChanged(nextapp.echo2.app.event.ListDataEvent)
+         */
+        public void contentsChanged(ListDataEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+
+        /**
+         * @see nextapp.echo2.app.event.ListDataListener#intervalAdded(nextapp.echo2.app.event.ListDataEvent)
+         */
+        public void intervalAdded(ListDataEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+
+        /**
+         * @see nextapp.echo2.app.event.ListDataListener#intervalRemoved(nextapp.echo2.app.event.ListDataEvent)
+         */
+        public void intervalRemoved(ListDataEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
+    
     private Column testColumn;
 
     public ListBoxTest() {
@@ -70,110 +128,147 @@ public class ListBoxTest extends SplitPane {
         testColumn.setLayoutData(splitPaneLayoutData);
         add(testColumn);
 
-        final ListBox listbox = new ListBox(new String[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+        final ListBox listBox = new ListBox(new String[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
                 "Nine", "Ten" });
-        listbox.setHeight(new Extent(75));
-        testColumn.add(listbox);
+        listBox.setHeight(new Extent(75));
+        testColumn.add(listBox);
 
-        final SelectField select = new SelectField(new String[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven",
+        final SelectField selectField = new SelectField(new String[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven",
                 "Eight", "Nine", "Ten" });
-        testColumn.add(select);
+        testColumn.add(selectField);
 
-        testColumn.add(new Label(" "));
+        controlsColumn.add(new Label("Global"));
 
+        controlsColumn.addButton("Add ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox.addActionListener(actionListener);
+                selectField.addActionListener(actionListener);
+            }
+        });
+        controlsColumn.addButton("Remove ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox.removeActionListener(actionListener);
+                selectField.removeActionListener(actionListener);
+            }
+        });
+        controlsColumn.addButton("Add ChangeListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox.getSelectionModel().addChangeListener(changeListener);
+                selectField.getSelectionModel().addChangeListener(changeListener);
+            }
+        });
+        controlsColumn.addButton("Remove ChangeListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox.getSelectionModel().removeChangeListener(changeListener);
+                selectField.getSelectionModel().removeChangeListener(changeListener);
+            }
+        });
+        controlsColumn.addButton("Add ListDataListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox.getModel().addListDataListener(listDataListener);
+                selectField.getModel().addListDataListener(listDataListener);
+            }
+        });
+        controlsColumn.addButton("Remove ListDataListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox.getModel().removeListDataListener(listDataListener);
+                selectField.getModel().removeListDataListener(listDataListener);
+            }
+        });
+        
         controlsColumn.add(new Label("List Box"));
 
         controlsColumn.addButton("Toggle Multiple Select", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (ListSelectionModel.MULTIPLE_SELECTION == listbox.getSelectionMode()) {
-                    listbox.setSelectedIndices(new int[] {});
-                    listbox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                if (ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode()) {
+                    listBox.setSelectedIndices(new int[] {});
+                    listBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 } else {
-                    listbox.setSelectionMode(ListSelectionModel.MULTIPLE_SELECTION);
+                    listBox.setSelectionMode(ListSelectionModel.MULTIPLE_SELECTION);
                 }
             }
         });
         controlsColumn.addButton("Set Default Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                listbox.setForeground(color);
+                listBox.setForeground(color);
             }
         });
         controlsColumn.addButton("Set Default Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                listbox.setBackground(color);
+                listBox.setBackground(color);
             }
         });
         controlsColumn.addButton("Set Rollover Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                listbox.setRolloverForeground(color);
+                listBox.setRolloverForeground(color);
             }
         });
         controlsColumn.addButton("Set Rollover Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                listbox.setRolloverBackground(color);
+                listBox.setRolloverBackground(color);
             }
         });
         controlsColumn.addButton("Clear Selections", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                listbox.setSelectedIndices(new int[] {});
+                listBox.setSelectedIndices(new int[] {});
             }
         });
         controlsColumn.addButton("Select Even Indices", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                listbox.setSelectedIndices(new int[] { 0, 2, 4, 6, 8 });
+                listBox.setSelectedIndices(new int[] { 0, 2, 4, 6, 8 });
             }
         });
         controlsColumn.addButton("Select Odd Indices", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                listbox.setSelectedIndices(new int[] { 1, 3, 5, 7, 9 });
+                listBox.setSelectedIndices(new int[] { 1, 3, 5, 7, 9 });
             }
         });
         controlsColumn.addButton("Increase Width (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (listbox.getWidth() == null) {
-                    listbox.setWidth(new Extent(75));
+                if (listBox.getWidth() == null) {
+                    listBox.setWidth(new Extent(75));
                 }
-                listbox.setWidth(new Extent(listbox.getWidth().getValue() + 15));
+                listBox.setWidth(new Extent(listBox.getWidth().getValue() + 15));
             }
         });
         controlsColumn.addButton("Decrease Width (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (listbox.getWidth() == null) {
-                    listbox.setWidth(new Extent(75));
+                if (listBox.getWidth() == null) {
+                    listBox.setWidth(new Extent(75));
                 }
-                listbox.setWidth(new Extent(listbox.getWidth().getValue() - 15));
+                listBox.setWidth(new Extent(listBox.getWidth().getValue() - 15));
             }
         });
         controlsColumn.addButton("Increase Height (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (listbox.getHeight() == null) {
-                    listbox.setHeight(new Extent(75));
+                if (listBox.getHeight() == null) {
+                    listBox.setHeight(new Extent(75));
                 }
-                listbox.setHeight(new Extent(listbox.getHeight().getValue() + 15));
+                listBox.setHeight(new Extent(listBox.getHeight().getValue() + 15));
             }
         });
         controlsColumn.addButton("Decrease Height (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (listbox.getHeight() == null) {
-                    listbox.setHeight(new Extent(75));
+                if (listBox.getHeight() == null) {
+                    listBox.setHeight(new Extent(75));
                 }
-                listbox.setHeight(new Extent(listbox.getHeight().getValue() - 15));
+                listBox.setHeight(new Extent(listBox.getHeight().getValue() - 15));
             }
         });
 
         controlsColumn.addButton("Set Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Font font = StyleUtil.randomFont();
-                listbox.setFont(font);
+                listBox.setFont(font);
             }
         });
         controlsColumn.addButton("Clear Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                listbox.setFont(null);
+                listBox.setFont(null);
             }
         });
 
@@ -182,30 +277,30 @@ public class ListBoxTest extends SplitPane {
         controlsColumn.addButton("Set Default Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                select.setForeground(color);
+                selectField.setForeground(color);
             }
         });
         controlsColumn.addButton("Set Default Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                select.setBackground(color);
+                selectField.setBackground(color);
             }
         });
         controlsColumn.addButton("Set Rollover Foreground ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                select.setRolloverForeground(color);
+                selectField.setRolloverForeground(color);
             }
         });
         controlsColumn.addButton("Set Rollover Background ", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                select.setRolloverBackground(color);
+                selectField.setRolloverBackground(color);
             }
         });
         controlsColumn.addButton("Clear Selections", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                select.setSelectedIndex(0);
+                selectField.setSelectedIndex(0);
             }
         });
 //BUGBUG. these are broken when clicked without selection.        
@@ -237,46 +332,46 @@ public class ListBoxTest extends SplitPane {
 */        
         controlsColumn.addButton("Increase Width (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (select.getWidth() == null) {
-                    select.setWidth(new Extent(75));
+                if (selectField.getWidth() == null) {
+                    selectField.setWidth(new Extent(75));
                 }
-                select.setWidth(new Extent(select.getWidth().getValue() + 15));
+                selectField.setWidth(new Extent(selectField.getWidth().getValue() + 15));
             }
         });
         controlsColumn.addButton("Decrease Width (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (select.getWidth() == null) {
-                    select.setWidth(new Extent(75));
+                if (selectField.getWidth() == null) {
+                    selectField.setWidth(new Extent(75));
                 }
-                select.setWidth(new Extent(select.getWidth().getValue() - 15));
+                selectField.setWidth(new Extent(selectField.getWidth().getValue() - 15));
             }
         });
         controlsColumn.addButton("Increase Height (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (select.getHeight() == null) {
-                    select.setHeight(new Extent(75));
+                if (selectField.getHeight() == null) {
+                    selectField.setHeight(new Extent(75));
                 }
-                select.setHeight(new Extent(select.getHeight().getValue() + 15));
+                selectField.setHeight(new Extent(selectField.getHeight().getValue() + 15));
             }
         });
         controlsColumn.addButton("Decrease Height (15 px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (select.getHeight() == null) {
-                    select.setHeight(new Extent(75));
+                if (selectField.getHeight() == null) {
+                    selectField.setHeight(new Extent(75));
                 }
-                select.setHeight(new Extent(select.getHeight().getValue() - 15));
+                selectField.setHeight(new Extent(selectField.getHeight().getValue() - 15));
             }
         });
 
         controlsColumn.addButton("Set Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Font font = StyleUtil.randomFont();
-                select.setFont(font);
+                selectField.setFont(font);
             }
         });
         controlsColumn.addButton("Clear Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                select.setFont(null);
+                selectField.setFont(null);
             }
         });
     }

@@ -41,12 +41,41 @@ import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.event.DocumentEvent;
+import nextapp.echo2.app.event.DocumentListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
+import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
 public class TextComponentTest extends SplitPane {
+    
+    /**
+     * Writes <code>ActionEvent</code>s to console.
+     */
+    private ActionListener actionListener = new ActionListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
+    
+    /**
+     * Writes <code>ActionEvent</code>s to console.
+     */
+    private DocumentListener documentListener = new DocumentListener() {
+        
+        /**
+         * @see nextapp.echo2.app.event.DocumentListener#documentUpdate(nextapp.echo2.app.event.DocumentEvent)
+         */
+        public void documentUpdate(DocumentEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
     
     public TextComponentTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
@@ -105,6 +134,35 @@ public class TextComponentTest extends SplitPane {
             }
         });
         
+        controlsColumn.addButton("Add ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.addActionListener(actionListener);
+                passwordField.addActionListener(actionListener);
+                textArea.addActionListener(actionListener);
+            }
+        });
+        controlsColumn.addButton("Remove ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.removeActionListener(actionListener);
+                passwordField.removeActionListener(actionListener);
+                textArea.removeActionListener(actionListener);
+            }
+        });
+        controlsColumn.addButton("Add DocumentListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.getDocument().addDocumentListener(documentListener);
+                passwordField.getDocument().addDocumentListener(documentListener);
+                textArea.getDocument().addDocumentListener(documentListener);
+            }
+        });
+        controlsColumn.addButton("Remove DocumentListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.getDocument().removeDocumentListener(documentListener);
+                passwordField.getDocument().removeDocumentListener(documentListener);
+                textArea.getDocument().removeDocumentListener(documentListener);
+            }
+        });
+
         controlsColumn.addButton("Horizontal Scroll = 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setHorizontalScroll(new Extent(0));

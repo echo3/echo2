@@ -61,9 +61,21 @@ public class InteractiveApp extends ApplicationInstance {
     }
 
     private Window mainWindow;
+    private ConsoleWindowPane console;
     
     public void addDialogWindowPane(WindowPane windowPane) {
         mainWindow.getContent().add(windowPane);
+    }
+    
+    public void consoleWrite(String message) {
+        //BUGBUG. clean this up.
+        if (console == null) {
+            console = new ConsoleWindowPane();
+            getWindows()[0].getContent().add(console);
+        } else if (console.getParent() == null) {
+            getWindows()[0].getContent().add(console);
+        }
+        console.writeMessage(message);
     }
     
     public void displayTestPane() {

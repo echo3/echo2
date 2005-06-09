@@ -44,7 +44,6 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.SplitPane;
-import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.button.ToggleButton;
@@ -54,6 +53,8 @@ import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
+import nextapp.echo2.testapp.interactive.ConsoleWindowPane;
+import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 import nextapp.echo2.testapp.interactive.TestGrid;
@@ -64,20 +65,6 @@ import nextapp.echo2.testapp.interactive.TestGrid;
 public class ButtonTest 
 extends SplitPane {
 
-    private class ConsoleWindowPane extends WindowPane {
-        
-        private Column column;
-        
-        public ConsoleWindowPane() {
-            column = new Column();
-            add(column);
-        }
-        
-        public void printMessage(String message) {
-            column.add(new Label(message));
-        }
-    }
-    
     private interface Applicator {
         
         public void apply(AbstractButton button);
@@ -86,34 +73,29 @@ extends SplitPane {
     private List buttonList;
     private ConsoleWindowPane console;
     
+    /**
+     * Writes <code>ActionEvent</code>s to console.
+     */
     private ActionListener actionListener = new ActionListener() {
 
+        /**
+         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+         */
         public void actionPerformed(ActionEvent e) {
-            //BUGBUG...this should be done better, even for test app.
-            if (console == null) {
-                console = new ConsoleWindowPane();
-                getApplicationInstance().getWindows()[0].getContent().add(console);
-            } else if (console.getParent() == null) {
-                getApplicationInstance().getWindows()[0].getContent().add(console);
-            }
-            console.printMessage(e.toString());
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
         }
     };
     
+    /**
+     * Writes <code>ChangeEvent</code>s to console.
+     */
     private ChangeListener changeListener = new ChangeListener() {
 
         /**
          * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
          */
         public void stateChanged(ChangeEvent e) {
-            //BUGBUG...this should be done better, even for test app.
-            if (console == null) {
-                console = new ConsoleWindowPane();
-                getApplicationInstance().getWindows()[0].getContent().add(console);
-            } else if (console.getParent() == null) {
-                getApplicationInstance().getWindows()[0].getContent().add(console);
-            }
-            console.printMessage(e.toString());
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
         }
     };
     
