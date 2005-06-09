@@ -43,6 +43,8 @@ import javax.mail.internet.InternetAddress;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Table;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
 
@@ -176,44 +178,36 @@ public class MessageListTable extends Table {
             } else {
                 label = new Label(value == null ? (String) null : value.toString());
             }
-            if (row == selectedRow) {
-                label.setStyleName("MessageListTable.SelectedRowButton");
+            if (row % 2 == 0) {
+                label.setStyleName("MessageListTable.EvenRowLabel");
             } else {
-                if (row % 2 == 0) {
-                    label.setStyleName("MessageListTable.EvenRowButton");
-                } else {
-                    label.setStyleName("MessageListTable.OddRowButton");
-                }
+                label.setStyleName("MessageListTable.OddRowLabel");
             }
-//BUGBUG. in progress button-> label         
-//            label.setActionCommand(Integer.toString(row));
-//            label.addActionListener(cellSelectionListener);
             return label;
         }
     };
 
-//    private ActionListener cellSelectionListener = new ActionListener() {
-//        
-//        /**
-//         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
-//         */
-//        public void actionPerformed(ActionEvent e) {
-//            int newValue = Integer.parseInt(e.getActionCommand());
-//            setSelectedRow(newValue);
-//        }
-//    };
-//    
+    private ActionListener tableActionListener = new ActionListener() {
+        
+        /**
+         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            fireMessageSelection();
+        }
+    };
+    
     private Message[] displayedMessages;
     private Folder folder;
     private int totalMessages; 
     private int pageIndex;
-    private int selectedRow = -1;
      
     /**
      * Creates a new <code>MessageListTable</code>.
      */
     public MessageListTable() {
         super();
+        addActionListener(tableActionListener);
         setStyleName("MessageListTable.Table");
         setModel(messageTableModel);
         setDefaultRenderer(Object.class, messageTableCellRenderer);
@@ -234,6 +228,7 @@ public class MessageListTable extends Table {
      */
     private void fireMessageSelection() {
         Message message;
+        int selectedRow = getSelectionModel().getMinSelectedIndex();
         if (selectedRow == -1) {
             message = null;
         } else {
@@ -299,7 +294,7 @@ public class MessageListTable extends Table {
         } catch (MessagingException ex) {
             ((EmailApp) getApplicationInstance()).processFatalException(ex);
         }
-        this.selectedRow = -1;
+        getSelectionModel().clearSelection();
         refresh();
         fireMessageSelection();
     }
@@ -309,18 +304,7 @@ public class MessageListTable extends Table {
      */
     public void setPageIndex(int pageIndex) {
         this.pageIndex = pageIndex;
-        this.selectedRow = -1;
-        refresh();
-        fireMessageSelection();
-    }
-
-    /**
-     * Sets the selected row.
-     * 
-     * @param newValue the new selected row
-     */
-    public void setSelectedRow(int newValue) {
-        this.selectedRow = newValue;
+        getSelectionModel().clearSelection();
         refresh();
         fireMessageSelection();
     }
