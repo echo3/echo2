@@ -63,10 +63,17 @@ public class Table extends Component {
 
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";
-    public static final String PROPERTY_WIDTH = "width";
+    public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
+    public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
+    public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
+    public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
+    public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
+    public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_ENABLED = "selectionEnabled";
+    public static final String PROPERTY_SELECTION_FONT = "selectionFont";
     public static final String PROPERTY_SELECTION_FOREGROUND= "selectionForeground";
+    public static final String PROPERTY_WIDTH = "width";
 
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
@@ -378,12 +385,70 @@ public class Table extends Component {
     }
     
     /**
+     * Return the rollover background color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the color
+     */
+    public Color getRolloverBackground() {
+        return (Color) getProperty(PROPERTY_ROLLOVER_BACKGROUND);
+    }
+
+    /**
+     * Return the rollover background image displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the background image
+     */
+    public FillImage getRolloverBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Return the rollover font displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the font
+     */
+    public Font getRolloverFont() {
+        return (Font) getProperty(PROPERTY_ROLLOVER_FONT);
+    }
+
+    /**
+     * Return the rollover foreground color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the color
+     */
+    public Color getRolloverForeground() {
+        return (Color) getProperty(PROPERTY_ROLLOVER_FOREGROUND);
+    }
+
+    /**
      * Returns the row selection background color.
      * 
      * @return the background color
      */
     public Color getSelectionBackground() {
         return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+    }
+
+    /**
+     * Returns the row selection background image.
+     * 
+     * @return the background image
+     */
+    public FillImage getSelectionBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the row selection font.
+     * 
+     * @return the font
+     */
+    public Font getSelectionFont() {
+        return (Font) getProperty(PROPERTY_SELECTION_FONT);
     }
     
     /**
@@ -444,6 +509,17 @@ public class Table extends Component {
         return headerVisible;
     }
     
+    /**
+     * Determines if rollover effects are enabled.
+     * 
+     * @return true if rollover effects are enabled
+     * @see #setRolloverEnabled(boolean)
+     */
+    public boolean isRolloverEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_ROLLOVER_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
+
     /**
      * Determines if selection is enabled.
      * 
@@ -600,12 +676,72 @@ public class Table extends Component {
     }
     
     /**
+     * Sets the rollover background color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setRolloverBackground(Color newValue) {
+        setProperty(PROPERTY_ROLLOVER_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the rollover background image displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new background image
+     */
+    public void setRolloverBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets whether rollover effects are enabled when the mouse cursor is 
+     * within the bounds of a row. Rollover properties have no effect unless 
+     * this property is set to true. The default value is false.
+     * 
+     * @param newValue true if rollover effects should be enabled
+     */
+    public void setRolloverEnabled(boolean newValue) {
+        setProperty(PROPERTY_ROLLOVER_ENABLED, new Boolean(newValue));
+    }
+
+    /**
+     * Sets the rollover font displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new <code>Font</code>
+     */
+    public void setRolloverFont(Font newValue) {
+        setProperty(PROPERTY_ROLLOVER_FONT, newValue);
+    }
+
+    /**
+     * Sets the rollover foreground color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setRolloverForeground(Color newValue) {
+        setProperty(PROPERTY_ROLLOVER_FOREGROUND, newValue);
+    }
+
+    /**
      * Sets the row selection background color.
      * 
      * @param newValue the new background color
      */
     public void setSelectionBackground(Color newValue) {
         setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the row selection background image.
+     * 
+     * @param newValue the new background image
+     */
+    public void setSelectionBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -624,6 +760,15 @@ public class Table extends Component {
      */
     public void setSelectionForeground(Color newValue) {
         setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the row selection font.
+     * 
+     * @param newValue the new font
+     */
+    public void setSelectionFont(Font newValue) {
+        setProperty(PROPERTY_SELECTION_FONT, newValue);
     }
     
     /**

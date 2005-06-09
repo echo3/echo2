@@ -272,7 +272,7 @@ public abstract class AbstractButton extends Component {
      * @return the background image
      */
     public FillImage getRolloverBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_PRESSED_BACKGROUND_IMAGE);
+        return (FillImage) getProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
     }
 
     /**
