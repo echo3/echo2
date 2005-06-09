@@ -116,6 +116,23 @@ EchoTable.disposeCellListeners = function(tableElementId) {
     }
 };
 
+EchoTable.drawRowStyle = function(trElement) {
+    // Highlight row.
+    var selected = EchoTable.isSelected(trElement);
+    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
+    var selectionStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionStyle");
+    if (selectionStyle) {
+        for (var i = 0; i < trElement.cells.length; ++i) {
+            if (selected) {
+                EchoTable.restoreOriginalStyle(trElement.cells[i]);
+                EchoTable.applyTemporaryStyle(trElement.cells[i], selectionStyle);
+            } else {
+                EchoTable.restoreOriginalStyle(trElement.cells[i]);
+            }
+        }
+    }
+};
+
 EchoTable.initCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
@@ -141,7 +158,7 @@ EchoTable.isSelected = function(trElement) {
 EchoTable.processClick = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
     var trElement = sourceTdElement.parentNode;
-    EchoTable.setSelected(trElement, EchoTable.isSelected(trElement));
+    EchoTable.setSelected(trElement, !EchoTable.isSelected(trElement));
 };
 
 EchoTable.processRolloverEnter = function(echoEvent) {
@@ -159,13 +176,7 @@ EchoTable.processRolloverEnter = function(echoEvent) {
 EchoTable.processRolloverExit = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
     var trElement = sourceTdElement.parentNode;
-    var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
-    var defaultStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "defaultStyle");
-    if (defaultStyle) {
-        for (var i = 0; i < trElement.cells.length; ++i) {
-            EchoTable.restoreOriginalStyle(trElement.cells[i]);
-        }
-    }
+    EchoTable.drawRowStyle(trElement);
 };
 
 EchoTable.restoreOriginalStyle = function(element) {
@@ -185,18 +196,5 @@ EchoTable.restoreOriginalStyle = function(element) {
 EchoTable.setSelected = function(trElement, newValue) {
     // Set state flag.
     EchoDomPropertyStore.setPropertyValue(trElement.id, "selected", newValue ? "true" : "false");
-
-    // Highlight row.
-    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
-    var selectionStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionStyle");
-    if (selectionStyle) {
-        for (var i = 0; i < trElement.cells.length; ++i) {
-            if (newValue) {
-                EchoTable.applyTemporaryStyle(trElement.cells[i], selectionStyle);
-            } else {
-                EchoTable.restoreOriginalStyle(trElement.cells[i]);
-            }
-        }
-    }
+    EchoTable.drawRowStyle(trElement);
 };
-
