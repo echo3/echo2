@@ -55,8 +55,12 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.service.JavaScriptService;
 
 //BUGBUG. sort component visiblity with regard to rendered components
 // (may simply want to require returned components be visible (at Table level) and validate this)
@@ -69,6 +73,16 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  */
 public class TablePeer 
 implements DomUpdateSupport, ComponentSynchronizePeer {
+
+    /**
+     * Service to provide supporting JavaScript library.
+     */
+    private static final Service TABLE_SERVICE = JavaScriptService.forResource("Echo.Table", 
+            "/nextapp/echo2/webcontainer/resource/js/Table.js");
+
+    static {
+        WebRenderServlet.getServiceRegistry().add(TABLE_SERVICE);
+    }
 
     protected PartialUpdateManager propertyRenderRegistry;
     
@@ -134,6 +148,9 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        serverMessage.addLibrary(TABLE_SERVICE.getId(), true);
+        
         Table table = (Table) component;
         Border border = (Border) table.getRenderProperty(Table.PROPERTY_BORDER);
         Extent borderSize = border == null ? null : border.getSize();
