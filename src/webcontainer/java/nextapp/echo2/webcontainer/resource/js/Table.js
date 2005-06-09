@@ -82,6 +82,12 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("servernotify"));
         }
         
+        var rowElements = item.getElementsByTagName("row");
+        for (var rowIndex = 0; rowIndex < rowElements.length; ++rowIndex) {
+            var trElement = document.getElementById(tableElementId + "_tr_" + rowElements[rowIndex].getAttribute("index"));
+            EchoTable.setSelected(trElement, true);
+        }
+        
         EchoTable.initCellListeners(tableElementId);
     }
 };
@@ -158,7 +164,18 @@ EchoTable.processClick = function(echoEvent) {
         return;
     }
 
+    var tableElement = document.getElementById(EchoDomUtil.getComponentId(trElement.id));
+
     EchoTable.setSelected(trElement, !EchoTable.isSelected(trElement));
+    
+    // Update ClientMessage.
+    EchoTable.updateClientMessage(tableElement);
+    
+    // Notify server if required.
+    if ("true" == EchoDomPropertyStore.getPropertyValue(tableElement.id, "serverNotify")) {
+        EchoClientMessage.setActionValue(tableElement.id, "action");
+        EchoServerTransaction.connect();
+    }
 };
 
 EchoTable.processRolloverEnter = function(echoEvent) {
@@ -210,22 +227,11 @@ EchoTable.restoreOriginalStyle = function(element) {
  * @param newValue the new selection state (a boolean value)
  */
 EchoTable.setSelected = function(trElement, newValue) {
-    var tableElement = document.getElementById(EchoDomUtil.getComponentId(trElement.id));
-
     // Set state flag.
     EchoDomPropertyStore.setPropertyValue(trElement.id, "selected", newValue ? "true" : "false");
     
     // Redraw.
     EchoTable.drawRowStyle(trElement);
-    
-    // Update ClientMessage.
-    EchoTable.updateClientMessage(tableElement);
-    
-    // Notify server if required.
-    if ("true" == EchoDomPropertyStore.getPropertyValue(tableElement.id, "serverNotify")) {
-        EchoClientMessage.setActionValue(tableElement.id, "action");
-        EchoServerTransaction.connect();
-    }
 };
 
 EchoTable.updateClientMessage = function(tableElement) {
