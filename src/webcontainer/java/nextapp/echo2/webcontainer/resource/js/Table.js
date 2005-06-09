@@ -155,12 +155,20 @@ EchoTable.isSelected = function(trElement) {
 
 EchoTable.processClick = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(sourceTdElement)) {
+        return;
+    }
+
     var trElement = sourceTdElement.parentNode;
     EchoTable.setSelected(trElement, !EchoTable.isSelected(trElement));
 };
 
 EchoTable.processRolloverEnter = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(sourceTdElement)) {
+        return;
+    }
+
     var trElement = sourceTdElement.parentNode;
     var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
     var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
@@ -173,6 +181,10 @@ EchoTable.processRolloverEnter = function(echoEvent) {
 
 EchoTable.processRolloverExit = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(sourceTdElement)) {
+        return;
+    }
+
     var trElement = sourceTdElement.parentNode;
     EchoTable.drawRowStyle(trElement);
 };
