@@ -261,7 +261,7 @@ public class TableTest extends SplitPane {
             }
         });
         
-        // Rollover Effect Settings
+        // Selection Settings
 
         controlsColumn = new ButtonColumn();
         groupContainerColumn.add(controlsColumn);

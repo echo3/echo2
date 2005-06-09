@@ -194,7 +194,39 @@ EchoTable.restoreOriginalStyle = function(element) {
  * @param newValue the new selection state (a boolean value)
  */
 EchoTable.setSelected = function(trElement, newValue) {
+    var tableElement = document.getElementById(EchoDomUtil.getComponentId(trElement.id));
+
     // Set state flag.
     EchoDomPropertyStore.setPropertyValue(trElement.id, "selected", newValue ? "true" : "false");
+    
+    // Redraw.
     EchoTable.drawRowStyle(trElement);
+    
+    // Update ClientMessage.
+    EchoTable.updateClientMessage(tableElement);
+    
+    // Notify server if required.
+    if ("true" == EchoDomPropertyStore.getPropertyValue(tableElement.id, "serverNotify")) {
+        EchoClientMessage.setActionValue(tableElement.id, "action");
+        EchoServerTransaction.connect();
+    }
+};
+
+EchoTable.updateClientMessage = function(tableElement) {
+    var propertyElement = EchoClientMessage.createPropertyElement(tableElement.id, "selections");
+
+    // remove previous values
+    while(propertyElement.hasChildNodes()){
+        propertyElement.removeChild(propertyElement.firstChild);
+    }
+    
+    for (var i = 0; i < tableElement.rows.length; ++i) {
+        if (EchoTable.isSelected(tableElement.rows[i])) {
+            var rowElement = EchoClientMessage.messageDocument.createElement("row");
+            rowElement.setAttribute("id", tableElement.rows[i].id);
+            propertyElement.appendChild(rowElement);
+        }
+    }
+
+    EchoDebugManager.updateClientMessage();
 };
