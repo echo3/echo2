@@ -29,10 +29,6 @@
 
 package nextapp.echo2.app;
 
-import java.util.EventListener;
-
-import nextapp.echo2.app.event.ActionEvent;
-import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.text.Document;
 import nextapp.echo2.app.text.StringDocument;
 import nextapp.echo2.app.text.TextComponent;
@@ -42,10 +38,6 @@ import nextapp.echo2.app.text.TextComponent;
  */
 public class TextField extends TextComponent {
 
-    public static final String INPUT_ENTER = "input_enter";
-
-    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
-    
     /**
      * Creates a new <code>TextField</code> with an empty 
      * <code>StringDocument</code> as its model, and default width
@@ -69,70 +61,5 @@ public class TextField extends TextComponent {
             document.setText(text);
         }
         setWidth(new Extent(columns, Extent.EX));
-    }
-    
-    /**
-     * Adds an <code>ActionListener</code> to the <code>TextField</code>.
-     * The <code>ActionListener</code> will be invoked when the user
-     * presses the ENTER key in the field.
-     * 
-     * @param l the <code>ActionListener</code> to add
-     */
-    public void addActionListener(ActionListener l) {
-        getEventListenerList().addListener(ActionListener.class, l);
-    }
-
-    /**
-     * Fires an action event to all listeners.
-     */
-    private void fireActionEvent() {
-        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
-        ActionEvent e = null;
-        for (int i = 0; i < listeners.length; ++i) {
-            if (e == null) {
-                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
-            } 
-            ((ActionListener) listeners[i]).actionPerformed(e);
-        }
-    }
-    
-    /**
-     * Returns the action command which will be provided in 
-     * <code>ActionEvent</code>s fired by this <code>TextField</code>.
-     * 
-     * @return the action command
-     */
-    public String getActionCommand() {
-        return (String) getProperty(PROPERTY_ACTION_COMMAND);
-    }
-    
-    /**
-     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
-     */
-    public void processInput(String inputName, Object inputValue) {
-        super.processInput(inputName, inputValue);
-        
-        if (INPUT_ENTER.equals(inputName)) {
-            fireActionEvent();
-        }
-    }
-    
-    /**
-     * Removes an <code>ActionListener</code> from the <code>TextField</code>.
-     * 
-     * @param l the <code>ActionListener</code> to remove
-     */
-    public void removeActionListener(ActionListener l) {
-        getEventListenerList().removeListener(ActionListener.class, l);
-    }
-    
-    /**
-     * Sets the action command which will be provided in
-     * <code>ActionEvent</code>s fired by this <code>TextField</code>.
-     * 
-     * @param newValue the new action command
-     */
-    public void setActionCommand(String newValue) {
-        setProperty(PROPERTY_ACTION_COMMAND, newValue);
     }
 }

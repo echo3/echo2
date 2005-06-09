@@ -66,6 +66,9 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
 	    if (item.getAttribute("text")) {
             textComponent.value = item.getAttribute("text");
 	    }
+        if (item.getAttribute("serverNotify")) {
+            EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", item.getAttribute("serverNotify"));
+        }
         if (item.getAttribute("horizontalscroll")) {
             textComponent.scrollLeft = parseInt(item.getAttribute("horizontalscroll"));
         }
@@ -82,6 +85,14 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processKeyUp");
         EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processKeyPress");
     }
+};
+
+EchoTextComponent.doAction = function(textComponent) {
+    if ("true" != EchoDomPropertyStore.getPropertyValue(textComponent.id, "serverNotify")) {
+        return;
+    }
+    EchoClientMessage.setActionValue(textComponent.id, "action");
+    EchoServerTransaction.connect();
 };
 
 EchoTextComponent.doUpdate = function(textComponent) {
@@ -112,6 +123,9 @@ EchoTextComponent.processKeyPress = function(echoEvent) {
     var elementId = textComponent.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
         EchoDomUtil.preventEventDefault(echoEvent);
+    }
+    if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
+        EchoTextComponent.doAction(textComponent);
     }
 };
 

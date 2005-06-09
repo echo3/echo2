@@ -43,6 +43,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.text.TextComponent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
@@ -67,28 +68,28 @@ import nextapp.echo2.webrender.util.DomUtil;
 
 /**
  * Abstract base synchronization peer for the built-in
- * <code>nextapp.echo2.app.text.TextComponent</code>-derived components.
+ * <code>nextapp.echo2.app.text.TextComponent</code> -derived components.
  * <p>
- * This class should not be extended or used by classes outside of the
- * Echo framework.
+ * This class should not be extended or used by classes outside of the Echo
+ * framework.
  */
-public abstract class TextComponentPeer
-implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
-    
+public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor,
+        ComponentSynchronizePeer {
+
     private static final String IMAGE_ID_BACKGROUND = "background";
-    
+
     /**
      * Service to provide supporting JavaScript library.
      */
-    static final Service TEXT_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.TextComponent", 
+    static final Service TEXT_COMPONENT_SERVICE = JavaScriptService.forResource("Echo.TextComponent",
             "/nextapp/echo2/webcontainer/resource/js/TextComponent.js");
-    
+
     static {
         WebRenderServlet.getServiceRegistry().add(TEXT_COMPONENT_SERVICE);
     }
-    
+
     private PartialUpdateManager partialUpdateManager;
-    
+
     /**
      * Default constructor.
      */
@@ -96,9 +97,9 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         partialUpdateManager = new PartialUpdateManager();
         //BUGBUG. add property renderers to registry.
     }
-    
+
     /**
-     * Creates a base <code>CssStyle</code> for properties common to text 
+     * Creates a base <code>CssStyle</code> for properties common to text
      * components.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -108,21 +109,18 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     protected CssStyle createBaseCssStyle(RenderContext rc, TextComponent textComponent) {
         Extent width = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_WIDTH);
         Extent height = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HEIGHT);
-        FillImage backgroundImage = (FillImage) textComponent.getRenderProperty(
-                TextComponent.PROPERTY_BACKGROUND_IMAGE);
+        FillImage backgroundImage = (FillImage) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
 
         CssStyle cssStyle = new CssStyle();
-        
+
         BorderRender.renderToStyle(cssStyle, (Border) textComponent.getRenderProperty(TextComponent.PROPERTY_BORDER));
-        ColorRender.renderToStyle(cssStyle, (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_FOREGROUND), 
+        ColorRender.renderToStyle(cssStyle, (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_FOREGROUND),
                 (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT));
         if (backgroundImage != null) {
-            FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, 
-                    backgroundImage, true);
+            FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, backgroundImage, true);
         }
-        InsetsRender.renderToStyle(cssStyle, "padding", 
-                (Insets) textComponent.getRenderProperty(TextComponent.PROPERTY_INSETS));
+        InsetsRender.renderToStyle(cssStyle, "padding", (Insets) textComponent.getRenderProperty(TextComponent.PROPERTY_INSETS));
         if (width != null) {
             cssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
@@ -132,21 +130,21 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         }
         return cssStyle;
     }
-    
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         throw new UnsupportedOperationException("Component does not support children.");
     }
-    
+
     /**
-     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component,
+     *      java.lang.String)
      */
     public ImageReference getImage(Component component, String imageId) {
         if (IMAGE_ID_BACKGROUND.equals(imageId)) {
-            FillImage backgroundImage = (FillImage) component.getRenderProperty(
-                    TextComponent.PROPERTY_BACKGROUND_IMAGE);
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
             if (backgroundImage == null) {
                 return null;
             } else {
@@ -156,10 +154,19 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             return null;
         }
     }
-    
+
+    /**
+     * @see nextapp.echo2.webcontainer.ActionProcessor#processAction(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processAction(ContainerInstance ci, Component component, Element actionElement) {
+        ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.INPUT_ACTION, null);
+    }
+
     /**
      * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
-     *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
+     *      nextapp.echo2.webcontainer.ContainerInstance,
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
@@ -167,38 +174,39 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             String propertyValue = DomUtil.getElementText(propertyElement);
             ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.TEXT_CHANGED_PROPERTY, propertyValue);
         } else if (TextComponent.PROPERTY_HORIZONTAL_SCROLL.equals(propertyName)) {
-            Extent propertyValue = new Extent(Integer.parseInt(
-                    propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            Extent propertyValue = new Extent(Integer
+                    .parseInt(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.PROPERTY_HORIZONTAL_SCROLL, propertyValue);
         } else if (TextComponent.PROPERTY_VERTICAL_SCROLL.equals(propertyName)) {
-            Extent propertyValue = new Extent(Integer.parseInt(
-                    propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            Extent propertyValue = new Extent(Integer
+                    .parseInt(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.PROPERTY_VERTICAL_SCROLL, propertyValue);
         }
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
+     *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String,
+     *      nextapp.echo2.app.Component)
      */
-    public void renderAdd(RenderContext rc, ServerComponentUpdate update,
-            String targetId, Component component) {
+    public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
         DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
     }
 
     /**
-     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext,
+     *      nextapp.echo2.app.update.ServerComponentUpdate,
+     *      nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         renderDisposeDirective(rc, (TextComponent) component);
     }
 
     /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a text component, performing tasks such as 
+     * Renders a directive to the outgoing <code>ServerMessage</code> to
+     * dispose the state of a text component, performing tasks such as
      * registering event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -213,21 +221,21 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
     }
-    
+
     /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * initialize the state of a text component, performing tasks such as 
+     * Renders a directive to the outgoing <code>ServerMessage</code> to
+     * initialize the state of a text component, performing tasks such as
      * registering event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param textComponent the <code>TextComponent<code>
      */
     public void renderInitDirective(RenderContext rc, TextComponent textComponent) {
-        Extent horizontalScroll = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HORIZONTAL_SCROLL); 
+        Extent horizontalScroll = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HORIZONTAL_SCROLL);
         Extent verticalScroll = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_VERTICAL_SCROLL);
         String elementId = ContainerInstance.getElementId(textComponent);
         ServerMessage serverMessage = rc.getServerMessage();
-        
+
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoTextComponent.MessageProcessor", "init", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
@@ -238,20 +246,24 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         if (verticalScroll != null && verticalScroll.getValue() != 0) {
             itemElement.setAttribute("verticalscroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
         }
-        
-        if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
+
+        if (textComponent instanceof TextArea
+                && rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
             String value = textComponent.getText();
             if (value != null) {
                 itemElement.setAttribute("text", value);
             }
         }
-        
+
+        if (textComponent.hasActionListeners()) {
+            itemElement.setAttribute("serverNotify", "true");
+        }
+
         itemizedUpdateElement.appendChild(itemElement);
     }
-    
+
     /**
-     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
+     * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
@@ -261,7 +273,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
                 fullReplace = true;
             }
         }
-        
+
         if (fullReplace) {
             // Perform full update.
             DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
@@ -269,7 +281,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         } else {
             partialUpdateManager.process(rc, update);
         }
-        
+
         return false;
     }
 }

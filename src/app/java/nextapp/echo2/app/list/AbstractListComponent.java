@@ -50,7 +50,7 @@ import nextapp.echo2.app.event.ListDataListener;
  */
 public class AbstractListComponent extends Component {
 
-    public static final String INPUT_ENTER = "input_enter";
+    public static final String INPUT_ACTION = "action";
 
     public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     
@@ -251,6 +251,15 @@ public class AbstractListComponent extends Component {
     }
 	
     /**
+     * Determines the any <code>ActionListener</code>s are registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActionListeners() {
+        return getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
+
+    /**
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
@@ -263,7 +272,7 @@ public class AbstractListComponent extends Component {
             for (int i = 0; i < selectedIndices.length; ++i) {
                 selectionModel.setSelectedIndex(selectedIndices[i], true);
             }
-        } else if (INPUT_ENTER.equals(inputName)) {
+        } else if (INPUT_ACTION.equals(inputName)) {
             fireActionEvent();
         }
     }

@@ -40,6 +40,7 @@ import nextapp.echo2.app.list.ListModel;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.list.StyledListCell;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
@@ -69,7 +70,7 @@ import org.w3c.dom.Node;
  * Echo framework.
  */
 public abstract class AbstractListComponentPeer 
-implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
+implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
     protected static final String PROPERTY_SELECTED_OPTIONS = "selectedOptions";
     
@@ -224,6 +225,14 @@ implements DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
      */
     protected String getOptionId(String elementId, int index) {
         return elementId + "_" + index;
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ActionProcessor#processAction(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processAction(ContainerInstance ci, Component component, Element actionElement) {
+        ci.getUpdateManager().addClientPropertyUpdate(component, AbstractListComponent.INPUT_ACTION, null);
     }
 
     /**

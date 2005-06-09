@@ -29,12 +29,16 @@
 
 package nextapp.echo2.app.text;
 
+import java.util.EventListener;
+
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.DocumentEvent;
 import nextapp.echo2.app.event.DocumentListener;
 
@@ -44,6 +48,9 @@ import nextapp.echo2.app.event.DocumentListener;
 public class TextComponent 
 extends Component {
     
+    public static final String INPUT_ACTION = "action";
+
+    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_ALIGNMENT = "alignment";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
@@ -80,6 +87,41 @@ extends Component {
     public TextComponent(Document document) {
         super();
         setDocument(document);
+    }
+    
+    /**
+     * Adds an <code>ActionListener</code> to the <code>TextField</code>.
+     * The <code>ActionListener</code> will be invoked when the user
+     * presses the ENTER key in the field.
+     * 
+     * @param l the <code>ActionListener</code> to add
+     */
+    public void addActionListener(ActionListener l) {
+        getEventListenerList().addListener(ActionListener.class, l);
+    }
+
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireActionEvent() {
+        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
+        ActionEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
+            } 
+            ((ActionListener) listeners[i]).actionPerformed(e);
+        }
+    }
+    
+    /**
+     * Returns the action command which will be provided in 
+     * <code>ActionEvent</code>s fired by this <code>TextField</code>.
+     * 
+     * @return the action command
+     */
+    public String getActionCommand() {
+        return (String) getProperty(PROPERTY_ACTION_COMMAND);
     }
     
     /**
@@ -174,6 +216,15 @@ extends Component {
     }
     
     /**
+     * Determines the any <code>ActionListener</code>s are registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActionListeners() {
+        return getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
+
+    /**
      * This component does not support children.
      * 
      * @see nextapp.echo2.app.Component#isValidChild(nextapp.echo2.app.Component)
@@ -194,9 +245,30 @@ extends Component {
             setHorizontalScroll((Extent) inputValue);
         } else if (PROPERTY_VERTICAL_SCROLL.equals(inputName)) {
             setVerticalScroll((Extent) inputValue);
+        } else if (INPUT_ACTION.equals(inputName)) {
+            fireActionEvent();
         }
     }
     
+    /**
+     * Removes an <code>ActionListener</code> from the <code>TextField</code>.
+     * 
+     * @param l the <code>ActionListener</code> to remove
+     */
+    public void removeActionListener(ActionListener l) {
+        getEventListenerList().removeListener(ActionListener.class, l);
+    }
+    
+    /**
+     * Sets the action command which will be provided in
+     * <code>ActionEvent</code>s fired by this <code>TextField</code>.
+     * 
+     * @param newValue the new action command
+     */
+    public void setActionCommand(String newValue) {
+        setProperty(PROPERTY_ACTION_COMMAND, newValue);
+    }
+
     /**
      * Sets the alignment of the text component.
      * 
