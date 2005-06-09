@@ -213,7 +213,7 @@ EchoTable.setSelected = function(trElement, newValue) {
 };
 
 EchoTable.updateClientMessage = function(tableElement) {
-    var propertyElement = EchoClientMessage.createPropertyElement(tableElement.id, "selections");
+    var propertyElement = EchoClientMessage.createPropertyElement(tableElement.id, "selection");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){

@@ -46,9 +46,11 @@ import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.Table;
 import nextapp.echo2.app.layout.TableCellLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
+import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
@@ -78,7 +80,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * Echo framework.
  */
 public class TablePeer 
-implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
+implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor  {
 
     private static final String[] TABLE_INIT_KEYS = new String[]{"defaultstyle", "rolloverstyle", "selectionstyle"};
     
@@ -143,6 +145,22 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ActionProcessor#processAction(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processAction(ContainerInstance ci, Component component, Element actionElement) {
+        // TODO Auto-generated method stub
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
+     *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
+        // TODO Auto-generated method stub
     }
     
     /**
