@@ -34,6 +34,19 @@ import nextapp.echo2.app.Window;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.webcontainer.ContainerContext;
 
+/**
+ * Interactive Test Application Instance.
+ * <p>
+ * <b>WARNING TO DEVELOPERS:</b>
+ * <p>
+ * Beware that the Interactive Test Application is not a good example of an
+ * Echo application.  The intent of this application is to serve as a running
+ * testbed for the Echo framework.  As such, the requirements of this 
+ * application are dramatically different from a production internet 
+ * application.  There is stuff in this code that is downright absurd.  
+ * Please do not look to this application to see good design
+ * practices for building your own Echo apps--you will not find them here.
+ */
 public class InteractiveApp extends ApplicationInstance {
 
     public static final boolean LIVE_DEMO_SERVER;
