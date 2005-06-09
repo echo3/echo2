@@ -92,9 +92,9 @@ EchoTable.disposeCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
-            var cell = tableElement.rows[rowIndex].cells[cellIndex];
-            EchoEventProcessor.removeHandler(cell.id, "mouseover");
-            EchoEventProcessor.removeHandler(cell.id, "mouseout");
+            var tdElement = tableElement.rows[rowIndex].cells[cellIndex];
+            EchoEventProcessor.removeHandler(tdElement.id, "mouseover");
+            EchoEventProcessor.removeHandler(tdElement.id, "mouseout");
         }
     }
 };
@@ -103,17 +103,21 @@ EchoTable.initCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
-            var cell = tableElement.rows[rowIndex].cells[cellIndex];
-            EchoEventProcessor.addHandler(cell.id, "mouseover", "EchoTable.processRolloverEnter");
-            EchoEventProcessor.addHandler(cell.id, "mouseout", "EchoTable.processRolloverExit");
+            var tdElement = tableElement.rows[rowIndex].cells[cellIndex];
+            EchoEventProcessor.addHandler(tdElement.id, "mouseover", "EchoTable.processRolloverEnter");
+            EchoEventProcessor.addHandler(tdElement.id, "mouseout", "EchoTable.processRolloverExit");
         }
     }
 };
 
 EchoTable.processRolloverEnter = function(echoEvent) {
-    EchoDebugManager.consoleWrite("rolloverEnter:" + echoEvent.registeredTarget.id);
+    var tdElement = echoEvent.registeredTarget;
+    var trElement = tdElement.parentNode;
+    EchoDebugManager.consoleWrite("rolloverEnter:" + trElement.id);
 };
 
 EchoTable.processRolloverExit = function(echoEvent) {
-    EchoDebugManager.consoleWrite("rolloverExit:" + echoEvent.registeredTarget.id);
+    var tdElement = echoEvent.registeredTarget;
+    var trElement = tdElement.parentNode;
+    EchoDebugManager.consoleWrite("rolloverExit:" + trElement.id);
 };
