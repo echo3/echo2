@@ -117,18 +117,16 @@ EchoTable.disposeCellListeners = function(tableElementId) {
 };
 
 EchoTable.drawRowStyle = function(trElement) {
-    // Highlight row.
     var selected = EchoTable.isSelected(trElement);
     var tableElementId = EchoDomUtil.getComponentId(trElement.id);
     var selectionStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionStyle");
-    if (selectionStyle) {
-        for (var i = 0; i < trElement.cells.length; ++i) {
-            if (selected) {
-                EchoTable.restoreOriginalStyle(trElement.cells[i]);
-                EchoTable.applyTemporaryStyle(trElement.cells[i], selectionStyle);
-            } else {
-                EchoTable.restoreOriginalStyle(trElement.cells[i]);
-            }
+
+    for (var i = 0; i < trElement.cells.length; ++i) {
+        if (selected) {
+            EchoTable.restoreOriginalStyle(trElement.cells[i]);
+            EchoTable.applyTemporaryStyle(trElement.cells[i], selectionStyle);
+        } else {
+            EchoTable.restoreOriginalStyle(trElement.cells[i]);
         }
     }
 };
