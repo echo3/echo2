@@ -88,6 +88,26 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
+EchoTable.applyTemporaryStyle = function(element, cssStyle) {
+    // Set original style if not already set.
+    if (!EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle")) {
+        if (element.style.cssText) {
+            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", element.style.cssText);
+        } else {
+            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", "-");
+        }
+    }
+    EchoDomUtil.applyStyle(element, cssStyle);
+};
+
+EchoTable.restoreOriginalStyle = function(element) {
+    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle");
+    if (!originalStyle) {
+        return;
+    }
+    element.style.cssText = originalStyle == "-" ? "" : originalStyle;
+};
+
 EchoTable.disposeCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
@@ -117,7 +137,8 @@ EchoTable.processRolloverEnter = function(echoEvent) {
     var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
     if (rolloverStyle) {
         for (var i = 0; i < trElement.cells.length; ++i) {
-            EchoDomUtil.applyStyle(trElement.cells[i], rolloverStyle);
+            EchoTable.applyTemporaryStyle(trElement.cells[i], rolloverStyle);
+//            EchoDomUtil.applyStyle(trElement.cells[i], rolloverStyle);
         }
     }
     EchoDebugManager.consoleWrite("rolloverEnter:" + trElement.id);
@@ -130,7 +151,8 @@ EchoTable.processRolloverExit = function(echoEvent) {
     var defaultStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "defaultStyle");
     if (defaultStyle) {
         for (var i = 0; i < trElement.cells.length; ++i) {
-            EchoDomUtil.applyStyle(trElement.cells[i], defaultStyle);
+            EchoTable.restoreOriginalStyle(trElement.cells[i]);
+//            EchoDomUtil.applyStyle(trElement.cells[i], defaultStyle);
         }
     }
     EchoDebugManager.consoleWrite("rolloverExit:" + trElement.id);

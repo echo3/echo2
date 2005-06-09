@@ -578,7 +578,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             CssStyle defaultCssStyle = new CssStyle();
             BorderRender.renderToStyle(defaultCssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
             ColorRender.renderToStyle(defaultCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
-                    (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
+                    (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND), true);
             FontRender.renderToStyle(defaultCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
             FillImageRender.renderToStyle(defaultCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
                     (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), true);

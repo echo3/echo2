@@ -258,7 +258,7 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         if (rolloverEnabled || selectionEnabled) {
             CssStyle defaultCssStyle = new CssStyle();
             ColorRender.renderToStyle(defaultCssStyle, (Color) table.getRenderProperty(Table.PROPERTY_FOREGROUND), 
-                    (Color) table.getRenderProperty(Table.PROPERTY_BACKGROUND));
+                    (Color) table.getRenderProperty(Table.PROPERTY_BACKGROUND), true);
             FontRender.renderToStyle(defaultCssStyle, (Font) table.getRenderProperty(Table.PROPERTY_FONT));
             defaultStyle = defaultCssStyle.renderInline();
             
