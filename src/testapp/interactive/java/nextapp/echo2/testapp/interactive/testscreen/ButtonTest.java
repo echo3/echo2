@@ -53,7 +53,6 @@ import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
-import nextapp.echo2.testapp.interactive.ConsoleWindowPane;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
@@ -71,7 +70,6 @@ extends SplitPane {
     }
     
     private List buttonList;
-    private ConsoleWindowPane console;
     
     /**
      * Writes <code>ActionEvent</code>s to console.
@@ -952,12 +950,6 @@ extends SplitPane {
         AbstractButton[] buttons = (AbstractButton[]) buttonList.toArray(new AbstractButton[buttonList.size()]);
         for (int i = 0; i < buttons.length; ++i) {
             applicator.apply(buttons[i]);
-        }
-    }
-    
-    public void dispose() {
-        if (console != null && console.getParent() != null) {
-            console.getParent().remove(console);
         }
     }
 }

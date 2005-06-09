@@ -39,10 +39,13 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.Table;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
+import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -76,6 +79,32 @@ public class TableTest extends SplitPane {
             return new Integer((column + 1) * (row + 1));
         }
     }
+    
+    /**
+     * Writes <code>ActionEvent</code>s to console.
+     */
+    private ActionListener actionListener = new ActionListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
+    
+    /**
+     * Writes <code>ChangeEvent</code>s to console.
+     */
+    private ChangeListener changeListener = new ChangeListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
+         */
+        public void stateChanged(ChangeEvent e) {
+            ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
     
     public TableTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
@@ -318,5 +347,34 @@ public class TableTest extends SplitPane {
                 testTable.setSelectionBackgroundImage(null);
             }
         });
+        
+        // Listener Settings
+
+        controlsColumn = new ButtonColumn();
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Listeners"));
+
+        controlsColumn.addButton("Add ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.addActionListener(actionListener);
+            }
+        });
+        controlsColumn.addButton("Remove ActionListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.removeActionListener(actionListener);
+            }
+        });
+        controlsColumn.addButton("Add ChangeListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.getSelectionModel().addChangeListener(changeListener);
+            }
+        });
+        controlsColumn.addButton("Remove ChangeListener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.getSelectionModel().removeChangeListener(changeListener);
+            }
+        });
+        
     }
 }

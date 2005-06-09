@@ -45,6 +45,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.Table;
 import nextapp.echo2.app.layout.TableCellLayoutData;
+import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -69,6 +70,7 @@ import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
+import nextapp.echo2.webrender.util.DomUtil;
 
 //BUGBUG. sort component visiblity with regard to rendered components
 // (may simply want to require returned components be visible (at Table level) and validate this)
@@ -84,7 +86,9 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 public class TablePeer 
 implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor  {
 
-    private static final String[] TABLE_INIT_KEYS = new String[]{"defaultstyle", "rolloverstyle", "selectionstyle"};
+    private static final String[] TABLE_INIT_KEYS = new String[]{"rolloverstyle", "selectionstyle"};
+    
+    private static final String PROPERTY_SELECTION = "selection";
     
     private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
     private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
@@ -154,7 +158,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        // TODO Auto-generated method stub
+        ci.getUpdateManager().addClientPropertyUpdate(component, Table.INPUT_ACTION, null);
     }
     
     /**
@@ -162,7 +166,16 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
-        // TODO Auto-generated method stub
+        String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
+        if (PROPERTY_SELECTION.equals(propertyName)) {
+            Element[] optionElements = DomUtil.getChildElementsByTagName(propertyElement, "row");
+            int[] selectedIndices = new int[optionElements.length];
+            for (int i = 0; i < optionElements.length; ++i) {
+                selectedIndices[i] = Integer.parseInt(optionElements[i].getAttribute("index"));
+            }
+            ci.getUpdateManager().addClientPropertyUpdate(component, Table.SELECTION_CHANGED_PROPERTY, selectedIndices);
+        }
+        
     }
     
     /**
@@ -282,6 +295,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
     private void renderInitDirective(RenderContext rc, Table table) {
         String elementId = ContainerInstance.getElementId(table);
         ServerMessage serverMessage = rc.getServerMessage();
+        Document document = serverMessage.getDocument();
         
         boolean rolloverEnabled = ((Boolean) table.getRenderProperty(Table.PROPERTY_ROLLOVER_ENABLED, 
                 Boolean.FALSE)).booleanValue();
@@ -289,16 +303,9 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 Boolean.FALSE)).booleanValue();
         
         String selectionStyle = "";
-        String defaultStyle = "";
         String rolloverStyle = "";
 
         if (rolloverEnabled || selectionEnabled) {
-            CssStyle defaultCssStyle = new CssStyle();
-            ColorRender.renderToStyle(defaultCssStyle, (Color) table.getRenderProperty(Table.PROPERTY_FOREGROUND), 
-                    (Color) table.getRenderProperty(Table.PROPERTY_BACKGROUND), true);
-            FontRender.renderToStyle(defaultCssStyle, (Font) table.getRenderProperty(Table.PROPERTY_FONT));
-            defaultStyle = defaultCssStyle.renderInline();
-            
             if (rolloverEnabled) {
                 CssStyle rolloverCssStyle = new CssStyle();
                 ColorRender.renderToStyle(rolloverCssStyle, 
@@ -330,11 +337,26 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                 "EchoTable.MessageProcessor", "init",  TABLE_INIT_KEYS, 
-                new String[]{defaultStyle, rolloverStyle, selectionStyle});
-        Element itemElement = serverMessage.getDocument().createElement("item");
+                new String[]{rolloverStyle, selectionStyle});
+        Element itemElement = document.createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (table.hasActionListeners()) {
             itemElement.setAttribute("servernotify", "true");
+        }
+        
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        if (selectionModel.getMinSelectedIndex() != -1) {
+            Element selectionElement = document.createElement("selection");
+            int minimumIndex = selectionModel.getMinSelectedIndex();
+            int maximumIndex = selectionModel.getMaxSelectedIndex();
+            for (int i = minimumIndex; i <= maximumIndex; ++i) {
+                if (selectionModel.isSelectedIndex(i)) {
+                    Element rowElement = document.createElement("row");
+                    rowElement.setAttribute("index", Integer.toString(i));
+                    selectionElement.appendChild(rowElement);
+                }
+            }
+            itemElement.appendChild(selectionElement);
         }
 
         itemizedUpdateElement.appendChild(itemElement);
@@ -357,7 +379,11 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         String elementId = ContainerInstance.getElementId(table);
         
         Element trElement = document.createElement("tr");
-        trElement.setAttribute("id", elementId + "_tr_" + rowIndex); // BUGBUG. may not be suitable id (changing row index)
+        if (rowIndex == Table.HEADER_ROW) {
+            trElement.setAttribute("id", elementId + "_tr_header");
+        } else {
+            trElement.setAttribute("id", elementId + "_tr_" + rowIndex); // BUGBUG. may not be suitable id (changing row index)
+        }
         tbodyElement.appendChild(trElement);
         
         int columns = table.getColumnModel().getColumnCount();

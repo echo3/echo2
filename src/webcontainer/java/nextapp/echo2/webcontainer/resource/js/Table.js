@@ -27,8 +27,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
   
-//BUGBUG. remove all defaultStyle stuff, no longer used.  
-  
 //_________________
 // Object EchoTable
 
@@ -66,7 +64,6 @@ EchoTable.MessageProcessor.processDispose = function(disposeMessageElement) {
 };
 
 EchoTable.MessageProcessor.processInit = function(initMessageElement) {
-    var defaultStyle = initMessageElement.getAttribute("defaultstyle");
     var rolloverStyle = initMessageElement.getAttribute("rolloverstyle");
     var selectionStyle = initMessageElement.getAttribute("selectionstyle");
 
@@ -75,9 +72,6 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
         
         EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selectionMode"));
         
-        if (defaultStyle) {
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "defaultStyle", defaultStyle);
-        }
         if (rolloverStyle) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "rolloverStyle", rolloverStyle);
         }
@@ -160,6 +154,10 @@ EchoTable.processClick = function(echoEvent) {
     }
 
     var trElement = sourceTdElement.parentNode;
+    if (trElement.id.indexOf("_header") != -1) {
+        return;
+    }
+
     EchoTable.setSelected(trElement, !EchoTable.isSelected(trElement));
 };
 
@@ -168,8 +166,12 @@ EchoTable.processRolloverEnter = function(echoEvent) {
     if (!EchoClientEngine.verifyInput(sourceTdElement)) {
         return;
     }
-
+    
     var trElement = sourceTdElement.parentNode;
+    if (trElement.id.indexOf("_header") != -1) {
+        return;
+    }
+    
     var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
     var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
     if (rolloverStyle) {
@@ -186,6 +188,10 @@ EchoTable.processRolloverExit = function(echoEvent) {
     }
 
     var trElement = sourceTdElement.parentNode;
+    if (trElement.id.indexOf("_header") != -1) {
+        return;
+    }
+
     EchoTable.drawRowStyle(trElement);
 };
 
@@ -233,7 +239,7 @@ EchoTable.updateClientMessage = function(tableElement) {
     for (var i = 0; i < tableElement.rows.length; ++i) {
         if (EchoTable.isSelected(tableElement.rows[i])) {
             var rowElement = EchoClientMessage.messageDocument.createElement("row");
-            rowElement.setAttribute("id", tableElement.rows[i].id);
+            rowElement.setAttribute("index", i - 1);
             propertyElement.appendChild(rowElement);
         }
     }

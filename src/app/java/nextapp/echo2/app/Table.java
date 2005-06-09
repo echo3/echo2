@@ -29,9 +29,11 @@
 
 package nextapp.echo2.app;
 
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
@@ -61,6 +63,7 @@ public class Table extends Component {
      */
     public static final TableCellRenderer DEFAULT_TABLE_CELL_RENDERER = new DefaultTableCellRenderer();
 
+    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
@@ -74,6 +77,8 @@ public class Table extends Component {
     public static final String PROPERTY_SELECTION_FONT = "selectionFont";
     public static final String PROPERTY_SELECTION_FOREGROUND= "selectionForeground";
     public static final String PROPERTY_WIDTH = "width";
+    
+    public static final String INPUT_ACTION = "action";
 
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
@@ -202,6 +207,17 @@ public class Table extends Component {
     }
     
     /**
+     * Returns the action command which will be provided in 
+     * <code>ActionEvent</code>s fired by this 
+     * <code>Table</code>.
+     * 
+     * @return the action command
+     */
+    public String getActionCommand() {
+        return (String) getProperty(PROPERTY_ACTION_COMMAND);
+    }
+    
+    /**
      * Adds an <code>ActionListener</code> to the <code>Tabble</code>.
      * <code>ActionListener</code>s will be invoked when the user
      * selects a row.
@@ -296,6 +312,20 @@ public class Table extends Component {
                 }
                 add(renderedComponent);
             }
+        }
+    }
+    
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireActionEvent() {
+        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
+        ActionEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
+            } 
+            ((ActionListener) listeners[i]).actionPerformed(e);
         }
     }
     
@@ -540,6 +570,23 @@ public class Table extends Component {
     }
     
     /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String inputName, Object inputValue) {
+        super.processInput(inputName, inputValue);
+        if (inputName.equals(SELECTION_CHANGED_PROPERTY)) {
+            int[] selectedIndices = (int[]) inputValue;
+            ListSelectionModel selectionModel = getSelectionModel();
+            selectionModel.clearSelection();
+            for (int i = 0; i < selectedIndices.length; ++i) {
+                selectionModel.setSelectedIndex(selectedIndices[i], true);
+            }
+        } else if (INPUT_ACTION.equals(inputName)) {
+            fireActionEvent();
+        }
+    }
+
+    /**
      * Removes an <code>ActionListener</code> from the <code>Tabble</code>.
      * <code>ActionListener</code>s will be invoked when the user
      * selects a row.
@@ -552,7 +599,18 @@ public class Table extends Component {
         // existance of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
-
+    
+    /**
+     * Sets the action command which will be provided in
+     * <code>ActionEvent</code>s fired by this 
+     * <code>Table</code>.
+     * 
+     * @param newValue the new action command
+     */
+    public void setActionCommand(String newValue) {
+        setProperty(PROPERTY_ACTION_COMMAND, newValue);
+    }
+    
     /**
      * Sets whether the <code>TableColumnModel</code> will be created
      * automatically from the <code>TableModel</code>.
