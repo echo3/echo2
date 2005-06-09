@@ -32,10 +32,15 @@ package nextapp.echo2.app;
 import java.util.HashMap;
 import java.util.Map;
 
+import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.event.TableColumnModelEvent;
 import nextapp.echo2.app.event.TableColumnModelListener;
 import nextapp.echo2.app.event.TableModelEvent;
 import nextapp.echo2.app.event.TableModelListener;
+import nextapp.echo2.app.list.DefaultListSelectionModel;
+import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.DefaultTableCellRenderer;
 import nextapp.echo2.app.table.DefaultTableColumnModel;
 import nextapp.echo2.app.table.DefaultTableModel;
@@ -59,13 +64,19 @@ public class Table extends Component {
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_WIDTH = "width";
+    public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
+    public static final String PROPERTY_SELECTION_ENABLED = "selectionEnabled";
+    public static final String PROPERTY_SELECTION_FOREGROUND= "selectionForeground";
 
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
     public static final String COLUMN_MODEL_CHANGED_PROPERTY = "columnModel";
     public static final String DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY = "defaultHeaderRenderer";
     public static final String DEFAULT_RENDERER_CHANGED_PROPERTY = "defaultRenderer";
     public static final String HEADER_VISIBLE_CHANGED_PROPERTY = "headerVisible";
     public static final String MODEL_CHANGED_PROPERTY = "model";
+    public static final String SELECTION_CHANGED_PROPERTY = "selection";
+    public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
     
     public static final int HEADER_ROW = -1;
     
@@ -76,6 +87,7 @@ public class Table extends Component {
     private boolean valid;
     private Map defaultRendererMap = new HashMap();
     private TableCellRenderer defaultHeaderRenderer;
+    private ListSelectionModel selectionModel;
     
     /**
      * Listener to monitor changes to model.
@@ -121,6 +133,19 @@ public class Table extends Component {
     };
 
     /**
+     * Local handler for list selection events.
+     */
+    private ChangeListener changeHandler = new ChangeListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
+         */
+        public void stateChanged(ChangeEvent e) {
+            firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
+        }
+    };
+    
+    /**
      * Creates a new <code>Table</code> with an empty
      * <code>DefaultTableModel</code>.
      */
@@ -165,10 +190,24 @@ public class Table extends Component {
         } else {
             setColumnModel(columnModel);
         }
-
+        setSelectionModel(new DefaultListSelectionModel());
         setModel(model);
     }
     
+    /**
+     * Adds an <code>ActionListener</code> to the <code>Tabble</code>.
+     * <code>ActionListener</code>s will be invoked when the user
+     * selects a row.
+     * 
+     * @param l the <code>ActionListener</code> to add
+     */
+    public void addActionListener(ActionListener l) {
+        getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+    }
+
     /**
      * Creates a <code>TableColumnModel</code> based on the 
      * <code>TableModel</code>.  This method is invoked automatically when the 
@@ -339,6 +378,33 @@ public class Table extends Component {
     }
     
     /**
+     * Returns the row selection background color.
+     * 
+     * @return the background color
+     */
+    public Color getSelectionBackground() {
+        return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+    }
+    
+    /**
+     * Returns the row selection foreground color.
+     * 
+     * @return the foreground color
+     */
+    public Color getSelectionForeground() {
+        return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
+    }
+    
+    /**
+     * Returns the row selection model.
+     * 
+     * @return the selection model
+     */
+    public ListSelectionModel getSelectionModel() {
+        return selectionModel;
+    }
+    
+    /**
      * Returns the overall width of the grid.
      * 
      * @return the width
@@ -355,15 +421,6 @@ public class Table extends Component {
     }
     
     /**
-     * Determines if the table header is visible.
-     * 
-     * @return the header visibility state
-     */
-    public boolean isHeaderVisible() {
-        return headerVisible;
-    }
-    
-    /**
      * Determines whether the <code>TableColumnModel</code> will be created
      * automatically from the <code>TableModel</code>.  If this flag is set,
      * changes to the <code>TableModel</code> will automatically cause the
@@ -377,7 +434,40 @@ public class Table extends Component {
     public boolean isAutoCreateColumnsFromModel() {
         return autoCreateColumnsFromModel;
     }
-        
+
+    /**
+     * Determines if the table header is visible.
+     * 
+     * @return the header visibility state
+     */
+    public boolean isHeaderVisible() {
+        return headerVisible;
+    }
+    
+    /**
+     * Determines if selection is enabled.
+     * 
+     * @return true if selection is enabled
+     */
+    public boolean isSelectionEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_SELECTION_ENABLED); 
+        return value == null ? false : value.booleanValue();
+    }
+    
+    /**
+     * Removes an <code>ActionListener</code> from the <code>Tabble</code>.
+     * <code>ActionListener</code>s will be invoked when the user
+     * selects a row.
+     * 
+     * @param l the <code>ActionListener</code> to remove
+     */
+    public void removeActionListener(ActionListener l) {
+        getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existance of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
+    }
+
     /**
      * Sets whether the <code>TableColumnModel</code> will be created
      * automatically from the <code>TableModel</code>.
@@ -507,6 +597,52 @@ public class Table extends Component {
         }
         
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the row selection background color.
+     * 
+     * @param newValue the new background color
+     */
+    public void setSelectionBackground(Color newValue) {
+        setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets whether selection is enabled.
+     * 
+     * @param newValue true to enable selection
+     */
+    public void setSelectionEnabled(boolean newValue) {
+        setProperty(PROPERTY_SELECTION_ENABLED, Boolean.valueOf(newValue));
+    }
+
+    /**
+     * Sets the row selection foreground color.
+     * 
+     * @param newValue the new foreground color
+     */
+    public void setSelectionForeground(Color newValue) {
+        setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the row selection model.
+     * The selection model may not be null.
+     * 
+     * @param newValue the new selection model
+     */
+    public void setSelectionModel(ListSelectionModel newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("Selection model may not be null.");
+        }
+        ListSelectionModel oldValue = selectionModel;
+        if (oldValue != null) {
+            oldValue.removeChangeListener(changeHandler);
+        }
+        newValue.addChangeListener(changeHandler);
+        selectionModel = newValue;
+        firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
     
     /**

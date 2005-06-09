@@ -263,7 +263,7 @@ extends Component {
         getEventListenerList().removeListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
         // existance of hasActionListeners() method. 
-        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
     
     /**

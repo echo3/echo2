@@ -69,6 +69,7 @@ public class AbstractListComponent extends Component {
 
     public static final DefaultListCellRenderer DEFAULT_LIST_CELL_RENDERER = new DefaultListCellRenderer();
 
+    //BUGBUG. listeners can be single-instnace now that interfaces extend Serializable.    
     /**
      * Local handler for list selection events.
      */
@@ -290,7 +291,7 @@ public class AbstractListComponent extends Component {
         getEventListenerList().removeListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
         // existance of hasActionListeners() method. 
-        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
     
     /**
