@@ -201,5 +201,64 @@ public class TableTest extends SplitPane {
                 testTable.setWidth(new Extent(100, Extent.PERCENT));
             }
         });
+        
+        
+        // Rollover Effect Settings
+
+        controlsColumn = new ButtonColumn();
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Rollover Effects"));
+
+        controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverEnabled(true);
+            }
+        });
+        controlsColumn.addButton("Disable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverEnabled(false);
+            }
+        });
+        controlsColumn.addButton("Set Rollover Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Rollover Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                 testTable.setRolloverBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Rollover Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverFont(StyleUtil.randomFont());
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverFont(null);
+            }
+        });
+        controlsColumn.addButton("Set Rollover Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverBackgroundImage(Styles.BUTTON_ROLLOVER_BACKGROUND_IMAGE);
+            }
+        });
+        controlsColumn.addButton("Clear Rollover Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverBackgroundImage(null);
+            }
+        });
     }
 }

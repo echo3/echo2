@@ -126,21 +126,6 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
-EchoButton.applyStyle = function(element, cssText) {
-    var styleProperties = cssText.split(";");
-    var styleData = new Array();
-    for (var i = 0; i < styleProperties.length; ++i) {
-        var separatorIndex = styleProperties[i].indexOf(":");
-        if (separatorIndex == -1) {
-            continue;
-        }
-        var attributeName = styleProperties[i].substring(0, separatorIndex);
-        var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
-        var propertyValue = styleProperties[i].substring(separatorIndex + 1);
-        element.style[propertyName] = propertyValue;
-    }
-};
-
 EchoButton.deselectRadioButton = function(groupId) {
     var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
     if (!buttonArray) {
@@ -305,7 +290,7 @@ EchoButton.setState = function(buttonElement, newState) {
         EchoButton.setIcon(buttonElement.id, newIcon);
     }
     if (newStyle) {
-        EchoButton.applyStyle(buttonElement, newStyle);
+        EchoDomUtil.applyStyle(buttonElement, newStyle);
     }
     EchoButton.ieRepaint(buttonElement);
 };

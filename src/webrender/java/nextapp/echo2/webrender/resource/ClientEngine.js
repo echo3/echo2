@@ -704,6 +704,21 @@ EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, u
     }
 };
 
+EchoDomUtil.applyStyle = function(element, cssText) {
+    var styleProperties = cssText.split(";");
+    var styleData = new Array();
+    for (var i = 0; i < styleProperties.length; ++i) {
+        var separatorIndex = styleProperties[i].indexOf(":");
+        if (separatorIndex == -1) {
+            continue;
+        }
+        var attributeName = styleProperties[i].substring(0, separatorIndex);
+        var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
+        var propertyValue = styleProperties[i].substring(separatorIndex + 1);
+        element.style[propertyName] = propertyValue;
+    }
+};
+
 EchoDomUtil.createDocument = function(namespaceUri, qualifiedName) {
     if (document.implementation && document.implementation.createDocument) {
         // DOM Level 2 Browsers

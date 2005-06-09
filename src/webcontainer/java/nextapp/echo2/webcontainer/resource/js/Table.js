@@ -111,13 +111,27 @@ EchoTable.initCellListeners = function(tableElementId) {
 };
 
 EchoTable.processRolloverEnter = function(echoEvent) {
-    var tdElement = echoEvent.registeredTarget;
-    var trElement = tdElement.parentNode;
+    var sourceTdElement = echoEvent.registeredTarget;
+    var trElement = sourceTdElement.parentNode;
+    var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
+    var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
+    if (rolloverStyle) {
+        for (var i = 0; i < trElement.cells.length; ++i) {
+            EchoDomUtil.applyStyle(trElement.cells[i], rolloverStyle);
+        }
+    }
     EchoDebugManager.consoleWrite("rolloverEnter:" + trElement.id);
 };
 
 EchoTable.processRolloverExit = function(echoEvent) {
-    var tdElement = echoEvent.registeredTarget;
-    var trElement = tdElement.parentNode;
+    var sourceTdElement = echoEvent.registeredTarget;
+    var trElement = sourceTdElement.parentNode;
+    var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
+    var defaultStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "defaultStyle");
+    if (defaultStyle) {
+        for (var i = 0; i < trElement.cells.length; ++i) {
+            EchoDomUtil.applyStyle(trElement.cells[i], defaultStyle);
+        }
+    }
     EchoDebugManager.consoleWrite("rolloverExit:" + trElement.id);
 };

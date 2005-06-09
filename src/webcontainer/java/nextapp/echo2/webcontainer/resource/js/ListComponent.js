@@ -90,7 +90,7 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
-// BUGBUG Copied verbatim from Button.js
+// BUGBUG use DomUtil.
 EchoListComponent.applyStyle = function(element, cssText) {
     if (!cssText) {
         //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.
