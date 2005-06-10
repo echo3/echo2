@@ -461,6 +461,43 @@ EchoClientProperties.get = function(name) {
     return EchoClientProperties.propertyMap[name];
 };
 
+function EchoCssUtil() { }
+
+EchoCssUtil.applyStyle = function(element, cssText) {
+    var styleProperties = cssText.split(";");
+    var styleData = new Array();
+    for (var i = 0; i < styleProperties.length; ++i) {
+        var separatorIndex = styleProperties[i].indexOf(":");
+        if (separatorIndex == -1) {
+            continue;
+        }
+        var attributeName = styleProperties[i].substring(0, separatorIndex);
+        var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
+        var propertyValue = styleProperties[i].substring(separatorIndex + 1);
+        element.style[propertyName] = propertyValue;
+    }
+};
+
+EchoCssUtil.applyTemporaryStyle = function(element, cssStyle) {
+    // Set original style if not already set.
+    if (!EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle")) {
+        if (element.style.cssText) {
+            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", element.style.cssText);
+        } else {
+            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", "-");
+        }
+    }
+    EchoCssUtil.applyStyle(element, cssStyle);
+};
+
+EchoCssUtil.restoreOriginalStyle = function(element) {
+    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle");
+    if (!originalStyle) {
+        return;
+    }
+    element.style.cssText = originalStyle == "-" ? "" : originalStyle;
+};
+
 // _______________________
 // Object EchoDebugManager
 
@@ -701,21 +738,6 @@ EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, u
         eventSource.addEventListener(eventType, eventListener, useCapture);
     } else if (eventSource.attachEvent) {
         eventSource.attachEvent("on" + eventType, eventListener);
-    }
-};
-
-EchoDomUtil.applyStyle = function(element, cssText) {
-    var styleProperties = cssText.split(";");
-    var styleData = new Array();
-    for (var i = 0; i < styleProperties.length; ++i) {
-        var separatorIndex = styleProperties[i].indexOf(":");
-        if (separatorIndex == -1) {
-            continue;
-        }
-        var attributeName = styleProperties[i].substring(0, separatorIndex);
-        var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
-        var propertyValue = styleProperties[i].substring(separatorIndex + 1);
-        element.style[propertyName] = propertyValue;
     }
 };
 

@@ -104,7 +104,7 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
     }
 };
 
-// BUGBUG Copied verbatim from Button.js
+// BUGBUG. Use EchoCssUtil
 EchoListComponentDhtml.applyStyle = function(element, cssText) {
     if (!cssText) {
         //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.

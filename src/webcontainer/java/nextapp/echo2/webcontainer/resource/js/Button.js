@@ -290,7 +290,7 @@ EchoButton.setState = function(buttonElement, newState) {
         EchoButton.setIcon(buttonElement.id, newIcon);
     }
     if (newStyle) {
-        EchoDomUtil.applyStyle(buttonElement, newStyle);
+        EchoCssUtil.applyStyle(buttonElement, newStyle);
     }
     EchoButton.ieRepaint(buttonElement);
 };

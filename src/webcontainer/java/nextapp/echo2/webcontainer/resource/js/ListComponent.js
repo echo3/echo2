@@ -90,7 +90,7 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
-// BUGBUG use DomUtil.
+// BUGBUG use EchoCssUtil.
 EchoListComponent.applyStyle = function(element, cssText) {
     if (!cssText) {
         //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.

@@ -94,18 +94,6 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
-EchoTable.applyTemporaryStyle = function(element, cssStyle) {
-    // Set original style if not already set.
-    if (!EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle")) {
-        if (element.style.cssText) {
-            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", element.style.cssText);
-        } else {
-            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", "-");
-        }
-    }
-    EchoDomUtil.applyStyle(element, cssStyle);
-};
-
 EchoTable.clearSelected = function(tableElement) {
     for (var i = 0; i < tableElement.rows.length; ++i) {
         if (EchoTable.isSelected(tableElement.rows[i])) {
@@ -133,10 +121,10 @@ EchoTable.drawRowStyle = function(trElement) {
 
     for (var i = 0; i < trElement.cells.length; ++i) {
         if (selected) {
-            EchoTable.restoreOriginalStyle(trElement.cells[i]);
-            EchoTable.applyTemporaryStyle(trElement.cells[i], selectionStyle);
+            EchoCssUtil.restoreOriginalStyle(trElement.cells[i]);
+            EchoCssUtil.applyTemporaryStyle(trElement.cells[i], selectionStyle);
         } else {
-            EchoTable.restoreOriginalStyle(trElement.cells[i]);
+            EchoCssUtil.restoreOriginalStyle(trElement.cells[i]);
         }
     }
 };
@@ -213,7 +201,7 @@ EchoTable.processRolloverEnter = function(echoEvent) {
     var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
     if (rolloverStyle) {
         for (var i = 0; i < trElement.cells.length; ++i) {
-            EchoTable.applyTemporaryStyle(trElement.cells[i], rolloverStyle);
+            EchoCssUtil.applyTemporaryStyle(trElement.cells[i], rolloverStyle);
         }
     }
 };
@@ -230,14 +218,6 @@ EchoTable.processRolloverExit = function(echoEvent) {
     }
 
     EchoTable.drawRowStyle(trElement);
-};
-
-EchoTable.restoreOriginalStyle = function(element) {
-    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle");
-    if (!originalStyle) {
-        return;
-    }
-    element.style.cssText = originalStyle == "-" ? "" : originalStyle;
 };
 
 /**
