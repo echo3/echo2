@@ -58,7 +58,6 @@ public class EmailApp extends ApplicationInstance {
         SEND_MAIL_PORT = config.getString("SendMailPort");
         MESSAGES_PER_PAGE = Integer.parseInt(config.getString("MessagesPerPage"));
     }
-
     
     /**
      * The user name of the currently logged in user.  This property
@@ -177,6 +176,7 @@ public class EmailApp extends ApplicationInstance {
      * @param ex the fatal exception
      */
     public void processFatalException(Exception ex) {
+        ex.printStackTrace();        
         disconnect();
         MessageDialog messageDialog = new MessageDialog(Messages.getString("FatalException.Title"), ex.toString(), 
                 MessageDialog.TYPE_ERROR, MessageDialog.CONTROLS_OK);

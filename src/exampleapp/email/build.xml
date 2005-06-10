@@ -37,11 +37,13 @@
     <patternset id="fileset.resources">
         <include name="**/*properties"/>
         <include name="**/*html"/>
+        <include name="**/*txt"/>
         <include name="**/*js"/>
         <include name="**/*gif"/>
         <include name="**/*jpg"/>
         <include name="**/*png"/>
         <include name="**/*stylesheet"/>
+        <include name="**/*providers"/>
     </patternset>
 
     <target name="clean" 

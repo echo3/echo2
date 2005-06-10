@@ -139,7 +139,7 @@ public class MessageListTable extends Table {
                     }
                     return subject;
                 case COLUMN_DATE:
-                    return displayedMessages[row].getReceivedDate();
+                    return displayedMessages[row].getSentDate();
                 default: 
                     throw new IllegalArgumentException("Invalid column.");
                 }

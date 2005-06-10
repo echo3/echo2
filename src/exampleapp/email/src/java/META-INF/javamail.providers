@@ -1,0 +1,1 @@
+protocol=pop3; type=store; class=echo2example.email.faux.FauxStore; vendor=NextApp, Inc.
