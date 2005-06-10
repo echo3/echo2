@@ -264,7 +264,16 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
             }
         }
-        ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) table.getRenderProperty(Table.PROPERTY_WIDTH));
+        
+        Extent width = (Extent) table.getRenderProperty(Table.PROPERTY_WIDTH);
+        if (rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
+            if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() > 95) {
+                width = new Extent(95, Extent.PERCENT);
+            }
+        }
+        ExtentRender.renderToStyle(tableCssStyle, "width", width);
+
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         parentNode.appendChild(tableElement);
@@ -384,7 +393,9 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         if (rowIndex == Table.HEADER_ROW) {
             trElement.setAttribute("id", elementId + "_tr_header");
         } else {
-            trElement.setAttribute("id", elementId + "_tr_" + rowIndex); // BUGBUG. may not be suitable id (changing row index)
+            // BUGBUG. using rowIndex for table id may not be adequate, as rows might be added or removed once if
+            // support full table partial table row updates.
+            trElement.setAttribute("id", elementId + "_tr_" + rowIndex); 
         }
         tbodyElement.appendChild(trElement);
         
