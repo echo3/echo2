@@ -232,7 +232,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().addClientPropertyUpdate(component, AbstractListComponent.INPUT_ACTION, null);
+        ci.getUpdateManager().setClientAction(component, AbstractListComponent.INPUT_ACTION, null);
     }
 
     /**
