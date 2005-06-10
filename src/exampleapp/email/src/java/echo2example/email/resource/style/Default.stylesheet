@@ -205,6 +205,18 @@
    </property>
   </properties>
  </style>
+ <style name="Default" type="nextapp.echo2.app.text.TextComponent">
+  <properties>
+   <property name="background" value="#cfdfff"/>
+   <property name="border">
+    <border size="2px" style="groove" color="#cfdfff"/>
+   </property>
+   <property name="foreground" value="#000000"/>
+   <property name="font">
+    <font typeface="sans-serif"/>
+   </property>
+  </properties>
+ </style>
  <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
    <property name="layoutData">

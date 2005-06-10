@@ -42,6 +42,7 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SplitPane;
@@ -55,6 +56,8 @@ import nextapp.echo2.app.event.ActionListener;
  * The message composition window.
  */
 public class ComposeWindow extends WindowPane {
+    
+    private static final Extent TEXT_100_PERCENT = new Extent(98, Extent.PERCENT);
     
     /**
      * Adds recipient e-mail addresses contained in a comma-delimited string 
@@ -116,11 +119,13 @@ public class ComposeWindow extends WindowPane {
         controlPane.add(cancelButton);
 
         Column layoutColumn = new Column();
-        layoutColumn.setCellSpacing(new Extent(20));
+        layoutColumn.setCellSpacing(new Extent(10));
+        layoutColumn.setInsets(new Insets(10));
         mainPane.add(layoutColumn);
         
         Grid headerGrid = new Grid();
         headerGrid.setStyleName("Message.HeaderGrid");
+        headerGrid.setWidth(new Extent(100, Extent.PERCENT));
         layoutColumn.add(headerGrid);
         
         Label label;
@@ -130,6 +135,7 @@ public class ComposeWindow extends WindowPane {
         
         toField = new TextField();
         toField.setStyleName("Default");
+        toField.setWidth(TEXT_100_PERCENT);
         headerGrid.add(toField);
         
         label = new Label(Messages.getString("Message.PromptLabel.Cc"));
@@ -137,6 +143,7 @@ public class ComposeWindow extends WindowPane {
         
         ccField = new TextField();
         ccField.setStyleName("Default");
+        ccField.setWidth(TEXT_100_PERCENT);
         headerGrid.add(ccField);
         
         label = new Label(Messages.getString("Message.PromptLabel.Bcc"));
@@ -144,6 +151,7 @@ public class ComposeWindow extends WindowPane {
         
         bccField = new TextField();
         bccField.setStyleName("Default");
+        bccField.setWidth(TEXT_100_PERCENT);
         headerGrid.add(bccField);
         
         label = new Label(Messages.getString("Message.PromptLabel.Subject"));
@@ -151,10 +159,13 @@ public class ComposeWindow extends WindowPane {
         
         subjectField = new TextField();
         subjectField.setStyleName("Default");
+        subjectField.setWidth(TEXT_100_PERCENT);
         headerGrid.add(subjectField);
         
         messageField = new TextArea();
         messageField.setStyleName("Default");
+        messageField.setWidth(TEXT_100_PERCENT);
+        messageField.setHeight(new Extent(15, Extent.EM));
         layoutColumn.add(messageField);
         
         if (replyMessage != null) {

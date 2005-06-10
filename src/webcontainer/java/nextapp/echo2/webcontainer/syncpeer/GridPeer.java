@@ -157,6 +157,8 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         ColorRender.renderToStyle(tableCssStyle, component);
         FontRender.renderToStyle(tableCssStyle, component);
         BorderRender.renderToStyle(tableCssStyle, border);
+        ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) grid.getRenderProperty(Grid.PROPERTY_WIDTH));
+        ExtentRender.renderToStyle(tableCssStyle, "height", (Extent) grid.getRenderProperty(Grid.PROPERTY_HEIGHT));
         
         Extent borderSize = border == null ? null : border.getSize();
         if (borderSize != null) {
