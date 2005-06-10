@@ -252,6 +252,10 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         CssStyle tableCssStyle = new CssStyle();
         tableCssStyle.setAttribute("border-collapse", "collapse");
         
+        if (((Boolean) table.getRenderProperty(Table.PROPERTY_SELECTION_ENABLED, Boolean.FALSE)).booleanValue()) {
+            tableCssStyle.setAttribute("cursor", "pointer");
+        }
+        
         Insets tableInsets = (Insets) table.getRenderProperty(Table.PROPERTY_INSETS);
         String defaultInsetsAttributeValue = tableInsets == null ? "0px" : InsetsRender.renderCssAttributeValue(tableInsets);
         
