@@ -75,7 +75,7 @@ import nextapp.echo2.webrender.util.DomUtil;
 //BUGBUG. sort component visiblity with regard to rendered components
 // (may simply want to require returned components be visible (at Table level) and validate this)
 
-//BUGBUG. need option to limit IE to 95% width in case >95% is specified due to browser bugs.
+//BUGBUG. prevent refreshes on selection events.
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Table</code> components.

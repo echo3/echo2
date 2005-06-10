@@ -100,6 +100,7 @@ public class Table extends Component {
     private Map defaultRendererMap = new HashMap();
     private TableCellRenderer defaultHeaderRenderer;
     private ListSelectionModel selectionModel;
+    private boolean suppressChangeNotifications;
     
     /**
      * Listener to monitor changes to model.
@@ -148,12 +149,14 @@ public class Table extends Component {
      * Local handler for list selection events.
      */
     private ChangeListener changeHandler = new ChangeListener() {
-
+        
         /**
          * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
          */
         public void stateChanged(ChangeEvent e) {
-            firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
+            if (!suppressChangeNotifications) {
+                firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
+            }
         }
     };
     
@@ -575,17 +578,12 @@ public class Table extends Component {
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
         if (inputName.equals(SELECTION_CHANGED_PROPERTY)) {
-            int[] selectedIndices = (int[]) inputValue;
-            ListSelectionModel selectionModel = getSelectionModel();
-            selectionModel.clearSelection();
-            for (int i = 0; i < selectedIndices.length; ++i) {
-                selectionModel.setSelectedIndex(selectedIndices[i], true);
-            }
+            setSelectedIndices((int[]) inputValue);
         } else if (INPUT_ACTION.equals(inputName)) {
             fireActionEvent();
         }
     }
-
+    
     /**
      * Removes an <code>ActionListener</code> from the <code>Tabble</code>.
      * <code>ActionListener</code>s will be invoked when the user
@@ -791,6 +789,25 @@ public class Table extends Component {
      */
     public void setRolloverForeground(Color newValue) {
         setProperty(PROPERTY_ROLLOVER_FOREGROUND, newValue);
+    }
+
+    /**
+     * Selects only the specified row indices.
+     * 
+     * @param selectedIndices the indices to select
+     */
+    private void setSelectedIndices(int[] selectedIndices) {
+        //BUGBUG. may want to add this method to model.
+        // Temporarily suppress the Tables selection event notifier.
+        suppressChangeNotifications = true;
+        ListSelectionModel selectionModel = getSelectionModel();
+        selectionModel.clearSelection();
+        for (int i = 0; i < selectedIndices.length; ++i) {
+            selectionModel.setSelectedIndex(selectedIndices[i], true);
+        }
+        // End temporary suppression.
+        suppressChangeNotifications = false;
+        firePropertyChange(SELECTION_CHANGED_PROPERTY, null, selectedIndices);
     }
 
     /**
