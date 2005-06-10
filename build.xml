@@ -51,7 +51,7 @@
     </target>
     
     <!-- Clean -->
-    <target name="clean" depends="clean.tutorialapp" 
+    <target name="clean" depends="clean.tutorialapp, clean.exampleapp.email" 
             description="Clears all generated files, including build directories, distributables, and documentation">
         <delete dir="${dir.build}"/>
         <delete dir="${dir.dist}"/>
@@ -433,6 +433,8 @@
         <copy todir="${dir.build.release.root}/BinaryApplications">
             <fileset dir="${dir.dist.testapp.ia}"/>
         </copy>
+
+        <!-- Binary Web Applications: E-Mail Client -->
 
         <!-- Binary Web Applications: Tutorial Application -->
     	<antcall target="dist.tutorialapp"/>
