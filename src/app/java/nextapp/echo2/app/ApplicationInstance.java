@@ -51,11 +51,11 @@ public abstract class ApplicationInstance
 implements Serializable {
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0alpha16";
+    public static final String ID_STRING = "NextApp Echo v2.0alpha16+";
 
     /** 
-     * Holds a thread local reference to the active ApplicationInstance for
-     * easy retrieval.
+     * A <code>ThreadLocal</code> reference to the 
+     * <code>ApplicationInstance</code> relevant to the current thread.
      */ 
     private static final ThreadLocal activeInstance = new InheritableThreadLocal();
 
@@ -65,10 +65,11 @@ implements Serializable {
     public static final String WINDOWS_CHANGED_PROPERTY = "windows";
     
     /**
-     * Generates a system-level identifier (an identifier which is not simply unique to
-     * a single <code>ApplicationInstance</code>).
+     * Generates a system-level identifier (an identifier which unique to all
+     * <code>ApplicationInstance</code>s).
      * 
      * @return the generated identifier
+     * @see #generateId()
      */
     public static final String generateSystemId() {
         return Uid.generateUidString();
@@ -76,19 +77,23 @@ implements Serializable {
     
     /**
      * Returns a reference to the <code>ApplicationInstance</code> that is 
-     * relevant to the current thread.
+     * relevant to the current thread, or null if no instance is relevant.
      * 
-     * @return The relevant <code>ApplicationInstance</code>.
+     * @return the relevant <code>ApplicationInstance</code>
      */
     public static final ApplicationInstance getActive() {
         return (ApplicationInstance) activeInstance.get();
     }
 
     /**
-     * Returns a reference to the <code>ApplicationInstance</code> that is 
-     * relevant to the current thread.
+     * Sets the <code>ApplicationInstance</code> that is relevant to the 
+     * current thread.  This method should be invoked with a null
+     * argument when the previously set <code>ApplicationInstance</code> is 
+     * no longer relevant.
+     * <p>
+     * <b>This method should only be invoked by the application container.</b>  
      * 
-     * @param applicationInstance The relevant <code>ApplicationInstance</code>.
+     * @param applicationInstance the relevant <code>ApplicationInstance</code>
      */
     public static final void setActive(ApplicationInstance applicationInstance) {
         activeInstance.set(applicationInstance);
@@ -100,20 +105,21 @@ implements Serializable {
     private WeakReference focusedComponent;
 
     /** 
-     * The default locale of the component. 
+     * The locale of the application. 
      */
     Locale locale = Locale.getDefault();
 
     /** 
-     * Contextual data 
+     * Contextual data.
+     * @see #getContextProperty(java.lang.String)
      */
     private Map context;
     
     /**
-     * Mapping between the ids of all registered components and the components
-     * themselves.
+     * Mapping between the render ids of all registered components and the 
+     * components themselves.
      */
-    private Map idToComponentMap;
+    private Map renderIdToComponentMap;
     
     /**
      * Mapping between <code>TaskQueue</code> handles and <code>List</code>s
@@ -142,8 +148,16 @@ implements Serializable {
      */
     private StyleSheet styleSheet;
 
+    /**
+     * Collection of modal components.
+     */
     private List modalComponents;
     
+    /**
+     * The next available sequentially generated 
+     * <code>ApplicationInstance</code>-unique identifier value.
+     * @see #generateId()
+     */
     private long nextId;
     
     /** 
@@ -153,7 +167,7 @@ implements Serializable {
         super();
         propertyChangeSupport = new PropertyChangeSupport(this);
         updateManager = new UpdateManager(this);
-        idToComponentMap = new HashMap();
+        renderIdToComponentMap = new HashMap();
         windows = new ArrayList();
         taskQueueMap = new HashMap();
     }
@@ -278,19 +292,21 @@ implements Serializable {
     }
     
     /**
-     * Generates an application-wide unique identifier.
+     * Generates a unique identifier that will be unique only within this
+     * <code>ApplicationInstance</code>.
      * 
      * @return the unique identifer
+     * @see #generateSystemId()
      */
     public String generateId() {
         return Long.toString(nextId++);
     }
     
     /**
-     * Returns a contextual property object.
-     * Contextual properties can be used to provide an interface
-     * to an application container (without creating a dependency
-     * to it from the component framework).
+     * Returns the value of a contextual property.
+     * Contextual properties are typically set by an application
+     * container, e.g., the Web Container, in order to provide
+     * container-specific information.
      * 
      * @param propertyName the name of the object
      * @return the object
@@ -303,12 +319,12 @@ implements Serializable {
      * Retrieves the component currently registered with the application 
      * with the specified <code>id</code>.
      * 
-     * @param id the id of the component
+     * @param renderId the id of the component
      * @return the component (or null if no component with the specified
      *         <code>id</code> is registered)
      */
-    public Component getComponent(String id) {
-        return (Component) idToComponentMap.get(id);
+    public Component getComponentByRenderId(String renderId) {
+        return (Component) renderIdToComponentMap.get(renderId);
     }
     
     /**
@@ -388,6 +404,19 @@ implements Serializable {
     }
     
     /**
+     * Returns the default window of the application.
+     * 
+     * @return the default <code>Window</code>
+     */
+    public Window getDefaultWindow() {
+        if (windows.size() > 0) {
+            return (Window) windows.get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Determines if this application instance currently has any active
      * tasks queues, which might be monitoring external events.
      * 
@@ -429,10 +458,10 @@ implements Serializable {
     }
     
     /**
-     * Invoked to initialize the application, returning the primary window.
+     * Invoked to initialize the application, returning the default window.
      * The returned window must be visible.
      *
-     * @return the primary window of the application
+     * @return the default window of the application
      */
     public abstract Window init();
     
@@ -510,7 +539,7 @@ implements Serializable {
         if (component.getRenderId() == null) {
             component.setRenderId(generateId());
         }
-        idToComponentMap.put(component.getRenderId(), component); 
+        renderIdToComponentMap.put(component.getRenderId(), component); 
         if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
             setModal(component, true);
         }
@@ -573,8 +602,8 @@ implements Serializable {
     }
     
     /**
-     * Sets the modal state of a component (i.e, whether only components below
-     * it in the hierarchy should be enabled.
+     * Sets the modal state of a component (i.e, whether only it and 
+     * components below it in the hierarchy should be enabled.
      * 
      * @param component the <code>Component</code>
      * @param newValue the new modal state
@@ -619,12 +648,12 @@ implements Serializable {
     /**
      * Unregisters a component with from the <code>ApplicationInstance</code>.
      * <p>
-     * This method is invoked by <code>Component.setApplicationInstance()</code>
+     * This method is invoked by <code>Component.setApplicationInstance()</code>.
      * 
      * @param component the component to unregister
      */
     void unregisterComponent(Component component) {
-        idToComponentMap.remove(component.getRenderId());
+        renderIdToComponentMap.remove(component.getRenderId());
         if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
             setModal(component, false);
         }

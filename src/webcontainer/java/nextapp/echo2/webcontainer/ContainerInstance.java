@@ -149,7 +149,7 @@ public class ContainerInstance extends UserInstance {
      */
     public Component getComponentByElementId(String elementId) {
         try {
-            return applicationInstance.getComponent(elementId.substring(2));
+            return applicationInstance.getComponentByRenderId(elementId.substring(2));
         } catch (IndexOutOfBoundsException ex) {
             throw new IllegalArgumentException("Invalid component element id: " + elementId);
         }
