@@ -74,7 +74,7 @@ implements Service {
         ApplicationInstance app = ci.getApplicationInstance();
         
         //BUGBUG. Currently grabs default window.
-        Window window = app.getWindows()[0];
+        Window window = app.getDefaultWindow();
         conn.setContentType(ContentType.TEXT_HTML);
         BaseHtmlDocument baseDoc = new BaseHtmlDocument(ContainerInstance.getElementId(window));
         baseDoc.setTitle(window.getTitle());

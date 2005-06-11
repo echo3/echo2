@@ -90,7 +90,7 @@ public class LoginScreen extends ContentPane {
         if (!EmailApp.getApp().connect(emailAddressField.getText(), passwordField.getText())) {
             MessageDialog messageDialog = new MessageDialog(Messages.getString("LoginScreen.InvalidLogin.Title"),
                     Messages.getString("LoginScreen.InvalidLogin.Message"), MessageDialog.TYPE_ERROR, MessageDialog.CONTROLS_OK);
-            getApplicationInstance().getWindows()[0].getContent().add(messageDialog);
+            getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
         }
     }
 }

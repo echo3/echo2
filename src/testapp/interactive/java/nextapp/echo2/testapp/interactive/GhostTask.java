@@ -103,7 +103,7 @@ implements Runnable {
     }
     
     public void clickRandomButton() {
-        Window window = ApplicationInstance.getActive().getWindows()[0];
+        Window window = ApplicationInstance.getActive().getDefaultWindow();
         List buttonList = new ArrayList();
         findButtons(buttonList, window);
         AbstractButton button = (AbstractButton) buttonList.get((int) (buttonList.size() * Math.random()));

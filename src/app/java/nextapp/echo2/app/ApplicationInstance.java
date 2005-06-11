@@ -139,9 +139,10 @@ implements Serializable {
     private UpdateManager updateManager;
     
     /**
-     * The set of all windows registered with the application.
+     * The top-level <code>Window</code>.
+     * Current versions of Echo support only a single top-level window.
      */
-    private List windows;
+    private Window defaultWindow;
     
     /**
      * The <code>StyleSheet</code> used by the application.
@@ -168,7 +169,6 @@ implements Serializable {
         propertyChangeSupport = new PropertyChangeSupport(this);
         updateManager = new UpdateManager(this);
         renderIdToComponentMap = new HashMap();
-        windows = new ArrayList();
         taskQueueMap = new HashMap();
     }
     
@@ -180,23 +180,6 @@ implements Serializable {
      */
     public void addPropertyChangeListener(PropertyChangeListener l) {
         propertyChangeSupport.addPropertyChangeListener(l);
-    }
-    
-    /**
-     * Adds a top-level window.
-     * 
-     * <strong>Current support is limited to a single top-level window.</strong>
-     */
-    private void addWindow(Window window) {
-        if (windows.size() > 0) {
-            throw new UnsupportedOperationException("Current support is limited to a single top-level window.");
-        }
-
-        if (!windows.contains(window)) {
-            windows.add(window);
-            window.setApplicationInstance(this);
-            firePropertyChange(WINDOWS_CHANGED_PROPERTY, null, window);
-        }
     }
     
     /**
@@ -215,24 +198,22 @@ implements Serializable {
     
     /**
      * Initializes the <code>ApplicationInstance</code>.
-     * This method should be invoked from the application container.
+     * This method is invoked from the application container.
      * 
-     * @return the initial <code>Window</code> of the application
+     * @return the default <code>Window</code> of the application
      */
     public Window doInit() {
-        Window mainWindow = init();
-        addWindow(mainWindow);
+        Window window = init();
+        setDefaultWindow(window);
         doValidation();
-        return mainWindow;
+        return window;
     }
     
     /**
      * Validates all components registered with the application.
      */
     public final void doValidation() {
-        for (Iterator it = windows.iterator(); it.hasNext();) {
-            doValidation((Window) it.next());
-        }
+        doValidation(defaultWindow);
     }
     
     /**
@@ -328,6 +309,15 @@ implements Serializable {
     }
     
     /**
+     * Returns the default window of the application.
+     * 
+     * @return the default <code>Window</code>
+     */
+    public Window getDefaultWindow() {
+        return defaultWindow;
+    }
+    
+    /**
      * Returns the presently focused component, if known.
      * 
      * @return the focused component
@@ -390,30 +380,6 @@ implements Serializable {
      */
     public UpdateManager getUpdateManager() {
         return updateManager;
-    }
-    
-    /**
-     * Returns an array of all windows registered with the application 
-     * instance.
-     *
-     * @return an array of all windows registered with the application 
-     * instance
-     */
-    public Window[] getWindows() {
-        return (Window[]) windows.toArray(new Window[windows.size()]);
-    }
-    
-    /**
-     * Returns the default window of the application.
-     * 
-     * @return the default <code>Window</code>
-     */
-    public Window getDefaultWindow() {
-        if (windows.size() > 0) {
-            return (Window) windows.get(0);
-        } else {
-            return null;
-        }
     }
     
     /**
@@ -584,6 +550,19 @@ implements Serializable {
         } else {
             context.put(propertyName, propertyValue);
         }
+    }
+    
+    /**
+     * Sets the default top-level window.
+     */
+    private void setDefaultWindow(Window window) {
+        if (defaultWindow != null) {
+            throw new UnsupportedOperationException("Default window already set.");
+        }
+
+        defaultWindow = window;
+        window.setApplicationInstance(this);
+        firePropertyChange(WINDOWS_CHANGED_PROPERTY, null, window);
     }
     
     /**

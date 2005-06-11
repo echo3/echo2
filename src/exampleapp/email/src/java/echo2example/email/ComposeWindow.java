@@ -108,7 +108,7 @@ public class ComposeWindow extends WindowPane {
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (sendMessage()) {
-                    ((EmailApp) getApplicationInstance()).getWindows()[0].getContent().remove(ComposeWindow.this);
+                    ((EmailApp) getApplicationInstance()).getDefaultWindow().getContent().remove(ComposeWindow.this);
                 }
             }
         });
@@ -191,7 +191,7 @@ public class ComposeWindow extends WindowPane {
                 MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.NoSubjectError.Title"),
                         Messages.getString("ComposeWindow.NoSubjectError.Message"), MessageDialog.TYPE_ERROR, 
                         MessageDialog.CONTROLS_OK);
-                getApplicationInstance().getWindows()[0].getContent().add(messageDialog);
+                getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
                 return false;
             }
             
@@ -200,7 +200,7 @@ public class ComposeWindow extends WindowPane {
                 MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.NoMessageError.Title"),
                         Messages.getString("ComposeWindow.NoMessageError.Message"), MessageDialog.TYPE_ERROR, 
                         MessageDialog.CONTROLS_OK);
-                getApplicationInstance().getWindows()[0].getContent().add(messageDialog);
+                getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
                 return false;
             }
             
@@ -224,7 +224,7 @@ public class ComposeWindow extends WindowPane {
             MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.InvalidAddressError.Title"),
                     Messages.getString("ComposeWindow.InvalidAddressError.Message"), MessageDialog.TYPE_ERROR, 
                     MessageDialog.CONTROLS_OK);
-            getApplicationInstance().getWindows()[0].getContent().add(messageDialog);
+            getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
             return false;
         } catch (MessagingException ex) {
             // Handle a fatal exception.

@@ -198,8 +198,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
         ServerComponentUpdate[] componentUpdates = updateManager.getServerComponentUpdates();
         
         if (serverUpdateManager.isFullRefreshRequired()) {
-            //BUGBUG. hardcoded to window 0.
-            Window window = rc.getContainerInstance().getApplicationInstance().getWindows()[0];
+            //BUGBUG. hardcoded to default window.
+            Window window = rc.getContainerInstance().getApplicationInstance().getDefaultWindow();
             ServerComponentUpdate fullRefreshUpdate = componentUpdates[0];
             
             // Dispose of removed descendants.
@@ -267,7 +267,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             processClientMessage(conn, clientMessageDocument);
             applicationInstance.getUpdateManager().purge();
 
-            Window window = applicationInstance.getWindows()[0];
+            Window window = applicationInstance.getDefaultWindow();
             ContentPane content = window.getContent();
             
             ServerComponentUpdate componentUpdate = new ServerComponentUpdate(content);

@@ -164,7 +164,7 @@ public class MailScreen extends ContentPane {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ComposeWindow composeWindow = new ComposeWindow(null);
-                getApplicationInstance().getWindows()[0].getContent().add(composeWindow);
+                getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
             }
         });
         optionsColumn.add(button);
@@ -173,7 +173,7 @@ public class MailScreen extends ContentPane {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ComposeWindow composeWindow = new ComposeWindow(selectedMessage);
-                getApplicationInstance().getWindows()[0].getContent().add(composeWindow);
+                getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
             }
         });
         optionsColumn.add(button);

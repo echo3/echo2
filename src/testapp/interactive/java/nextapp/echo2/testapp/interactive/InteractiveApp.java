@@ -84,9 +84,9 @@ public class InteractiveApp extends ApplicationInstance {
         //BUGBUG. clean this up.
         if (console == null) {
             console = new ConsoleWindowPane();
-            getWindows()[0].getContent().add(console);
+            getDefaultWindow().getContent().add(console);
         } else if (console.getParent() == null) {
-            getWindows()[0].getContent().add(console);
+            getDefaultWindow().getContent().add(console);
         }
         console.writeMessage(message);
     }

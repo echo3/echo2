@@ -107,7 +107,7 @@ public class EmailApp extends ApplicationInstance {
             // Display MailScreen.
             MailScreen mailScreen = new MailScreen();
             mailScreen.setStore(store);
-            getWindows()[0].setContent(mailScreen);
+            getDefaultWindow().setContent(mailScreen);
         } catch (AuthenticationFailedException ex) {
             // Return false to indicate the user was not successfully authenticated.
             return false;
@@ -134,7 +134,7 @@ public class EmailApp extends ApplicationInstance {
         }
         
         emailAddress = null;
-        getWindows()[0].setContent(new LoginScreen());
+        getDefaultWindow().setContent(new LoginScreen());
     }
 
     /**
@@ -180,6 +180,6 @@ public class EmailApp extends ApplicationInstance {
         disconnect();
         MessageDialog messageDialog = new MessageDialog(Messages.getString("FatalException.Title"), ex.toString(), 
                 MessageDialog.TYPE_ERROR, MessageDialog.CONTROLS_OK);
-        getWindows()[0].getContent().add(messageDialog);
+        getDefaultWindow().getContent().add(messageDialog);
     }
 }
