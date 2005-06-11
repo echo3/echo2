@@ -224,6 +224,7 @@
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
+      <property name="overflow" value="OVERFLOW_HIDDEN"/>
       <property name="background" value="#efefef"/>
       <!--
       <property name="backgroundImage">
