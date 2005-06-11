@@ -51,6 +51,8 @@ import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.event.WindowPaneEvent;
+import nextapp.echo2.app.event.WindowPaneListener;
 
 /**
  * The message composition window.
@@ -97,6 +99,12 @@ public class ComposeWindow extends WindowPane {
         setResizable(false);
         setDefaultCloseOperation(WindowPane.DO_NOTHING_ON_CLOSE);
         setStyleName("Default");
+        
+        addWindowPaneListener(new WindowPaneListener() {
+            public void windowPaneClosing(WindowPaneEvent e) {
+                processDiscard();
+            }
+        });
         
         SplitPane mainPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(32));
         add(mainPane);

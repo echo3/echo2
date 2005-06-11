@@ -29,6 +29,11 @@
 
 package nextapp.echo2.app;
 
+import java.util.EventListener;
+
+import nextapp.echo2.app.event.WindowPaneEvent;
+import nextapp.echo2.app.event.WindowPaneListener;
+
 /**
  * A <code>Component</code> which renders its contents in a floating, 
  * movable window.
@@ -115,6 +120,30 @@ implements ModalSupport {
         }
         if (height != null) {
             setHeight(height);
+        }
+    }
+    
+    /**
+     * Adds a <code>WindowPaneListener</code> to receive event notifications.
+     * 
+     * @param l the <code>WindowPaneListener</code> to add
+     */
+    public void addWindowPaneListener(WindowPaneListener l) {
+        getEventListenerList().addListener(WindowPaneListener.class, l);
+    }
+    
+    /**
+     * Notifies <code>WindowPaneListener</code>s that the user has requested 
+     * to close this <code>WindowPane</code>. 
+     */
+    protected void fireWindowClosing() {
+        EventListener[] listeners = getEventListenerList().getListeners(WindowPaneListener.class);
+        if (listeners.length == 0) {
+            return;
+        }
+        WindowPaneEvent e = new WindowPaneEvent(this);
+        for (int i = 0; i < listeners.length; ++i) {
+            ((WindowPaneListener) listeners[i]).windowPaneClosing(e);
         }
     }
     
@@ -618,10 +647,19 @@ implements ModalSupport {
     }
     
     /**
+     * Removes a <code>WindowPaneListener</code> from receiving event notifications.
+     * 
+     * @param l the <code>WindowPaneListener</code> to remove
+     */
+    public void removeWindowPaneListener(WindowPaneListener l) {
+        getEventListenerList().removeListener(WindowPaneListener.class, l);
+    }
+    
+    /**
      * Proceses a user request to close the window (via the close button).
      */
     public void userClose() {
-        //BUGBUG. invoke listeners to perform notification window (waiting on api development of windowlisteners).
+        fireWindowClosing();
         Integer defaultCloseOperationValue = (Integer) getRenderProperty(PROPERTY_DEFAULT_CLOSE_OPERATION);
         int defaultCloseOperation = defaultCloseOperationValue == null 
                 ? DISPOSE_ON_CLOSE : defaultCloseOperationValue.intValue();
