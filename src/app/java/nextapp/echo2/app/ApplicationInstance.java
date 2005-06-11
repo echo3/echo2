@@ -53,19 +53,19 @@ implements Serializable {
     /** The name and version of the Echo API in use. */
     public static final String ID_STRING = "NextApp Echo v2.0alpha16+";
 
+    public static final String FOCUSED_COMPONENT_CHANGED_PROPERTY = "focusedComponent";
+    public static final String LOCALE_CHANGED_PROPERTY = "locale";
+    public static final String MODAL_COMPONENTS_CHANGED_PROPERTY = "modalComponents";
+    public static final String WINDOWS_CHANGED_PROPERTY = "windows";
+
     /** 
      * A <code>ThreadLocal</code> reference to the 
      * <code>ApplicationInstance</code> relevant to the current thread.
      */ 
     private static final ThreadLocal activeInstance = new InheritableThreadLocal();
-
-    public static final String FOCUSED_COMPONENT_CHANGED_PROPERTY = "focusedComponent";
-    public static final String MODAL_COMPONENTS_CHANGED_PROPERTY = "modalComponents";
-    public static final String LOCALE_CHANGED_PROPERTY = "locale";
-    public static final String WINDOWS_CHANGED_PROPERTY = "windows";
     
     /**
-     * Generates a system-level identifier (an identifier which unique to all
+     * Generates a system-level identifier (an identifier which is unique to all
      * <code>ApplicationInstance</code>s).
      * 
      * @return the generated identifier
@@ -105,9 +105,10 @@ implements Serializable {
     private WeakReference focusedComponent;
 
     /** 
-     * The locale of the application. 
+     * The default <code>Locale</code> of the application.
+     * This <code>Locale</code> will be inherited by <code>Component</code>s. 
      */
-    Locale locale = Locale.getDefault();
+    private Locale locale = Locale.getDefault();
 
     /** 
      * Contextual data.
@@ -116,15 +117,15 @@ implements Serializable {
     private Map context;
     
     /**
-     * Mapping between the render ids of all registered components and the 
-     * components themselves.
+     * Mapping from the render ids of all registered components to the 
+     * component instances themselves.
      */
     private Map renderIdToComponentMap;
     
     /**
-     * Mapping between <code>TaskQueue</code> handles and <code>List</code>s
-     * of tasks.  Values may be null if a particular <code>TaskQueue</code>
-     * does not contain any tasks. 
+     * Mapping between <code>TaskQueueHandle</code>s and <code>List</code>s
+     * of <code>Runnable</code> tasks.  Values may be null if a particular 
+     * <code>TaskQueue</code> does not contain any tasks. 
      */
     private HashMap taskQueueMap;
     
@@ -134,7 +135,7 @@ implements Serializable {
     private PropertyChangeSupport propertyChangeSupport;
 
     /**
-     * The <code>UpdateManager</code> handling updates from this application.
+     * The <code>UpdateManager</code> handling updates to/from this application.
      */
     private UpdateManager updateManager;
     
@@ -184,9 +185,14 @@ implements Serializable {
     
     /**
      * Creates a new task queue.  A handle object representing the created task
-     * queue is returned.
+     * queue is returned.  The created task queue will remain active until it is
+     * provided to the <code>removeTaskQueue()</code> method.  Developers must
+     * take care to invoke <code>removeTaskQueue()</code> on any created
+     * task queues.
      * 
-     * @return the new task queue handle
+     * @return a <code>TaskQueueHandler</code> representing the created task 
+     *         queue
+     * @see #removeTaskQueue(TaskQueueHandle)
      */
     public TaskQueueHandle createTaskQueue() {
         TaskQueueHandle taskQueue = new TaskQueueHandle() { };
@@ -218,9 +224,11 @@ implements Serializable {
     
     /**
      * Validates a single component and then recursively validates its 
-     * children.
+     * children.  This is the recursive support method for
+     * the parameterless <code>doValidation()</code> method.
      *
      * @param c The component to be validated.
+     * @see #doValidation()
      */
     private void doValidation(Component c) {
         c.validate();
@@ -231,23 +239,25 @@ implements Serializable {
     }
 
     /**
-     * Queues the given <code>Command</code> for execution on the next server
-     * update. 
+     * Queues the given stateless <code>Command</code> for execution on the 
+     * current client/server interaction.
+     * 
+     * @param command the <code>Command</code> to execute
      */
     public void enqueueCommand(Command command) {
         updateManager.getServerUpdateManager().enqueueCommand(command);
     }
     
     /**
-     * Enqueues a task to be run on during the next client/server 
+     * Enqueues a task to be run during the next client/server 
      * synchronization.  The task will be run 
      * <b>synchronously</b> in the UI processing thread.
      * Enqueuing a task in response to an external event will result 
      * in changes being pushed to the client.
      * 
-     * @param taskQueue the <code>TaskQueue</code> handle representing the
+     * @param taskQueue the <code>TaskQueueHandle</code> representing the
      *        queue into which this task should be placed
-     * @param task the task to run when on client/server synchronization
+     * @param task the task to run on client/server synchronization
      *        
      */
     public void enqueueTask(TaskQueueHandle taskQueue, Runnable task) {
@@ -273,8 +283,9 @@ implements Serializable {
     }
     
     /**
-     * Generates a unique identifier that will be unique only within this
-     * <code>ApplicationInstance</code>.
+     * Generates an identifier which is unique within this 
+     * <code>ApplicationInstance</code>.  This identifier should not be
+     * used outside of the context of this  <code>ApplicationInstance</code>.
      * 
      * @return the unique identifer
      * @see #generateSystemId()
@@ -287,7 +298,9 @@ implements Serializable {
      * Returns the value of a contextual property.
      * Contextual properties are typically set by an application
      * container, e.g., the Web Container, in order to provide
-     * container-specific information.
+     * container-specific information.  The property names of contextual
+     * properties are provided within the application container
+     * documentation when their use is required.
      * 
      * @param propertyName the name of the object
      * @return the object
@@ -298,11 +311,11 @@ implements Serializable {
 
     /**
      * Retrieves the component currently registered with the application 
-     * with the specified <code>id</code>.
+     * with the specified render id.
      * 
-     * @param renderId the id of the component
+     * @param renderId the render id of the component
      * @return the component (or null if no component with the specified
-     *         <code>id</code> is registered)
+     *         render id is registered)
      */
     public Component getComponentByRenderId(String renderId) {
         return (Component) renderIdToComponentMap.get(renderId);
@@ -331,9 +344,9 @@ implements Serializable {
     }
     
     /**
-     * Returns the application instance's default locale.
+     * Returns the application instance's default <code>Locale</code>.
      *
-     * @return the locale
+     * @return the <code>Locale</code>
      */
     public Locale getLocale() {
         return locale;
@@ -373,8 +386,8 @@ implements Serializable {
     }
 
     /**
-     * Retrieves the <code>UpdateManager</code> monitoring updates to the state
-     * of this application instance for client/server synchronization.
+     * Retrieves the <code>UpdateManager</code> being used to manage the
+     * client/server synchronization of this <code>ApplicationInstance</code>
      * 
      * @return the <code>UpdateManager</code>
      */
@@ -383,8 +396,8 @@ implements Serializable {
     }
     
     /**
-     * Determines if this application instance currently has any active
-     * tasks queues, which might be monitoring external events.
+     * Determines if this <code>ApplicationInstance</code> currently has any 
+     * active tasks queues, which might be monitoring external events.
      * 
      * @return true if the instance has any task queues
      */
@@ -394,7 +407,7 @@ implements Serializable {
     
     /**
      * Determines if there are any queued tasks in any of the task
-     * queues associated with this application instance.
+     * queues associated with this <code>ApplicationInstance</code>.
      * 
      * @return true if any tasks are queued
      */
@@ -470,7 +483,8 @@ implements Serializable {
 
     /**
      * Processes all queued tasks.  This method may only be invoked
-     * from within a UI thread.
+     * from within a UI thread.  Tasks are removed from queues once
+     * they have been processed.
      */
     public void processQueuedTasks() {
         if (taskQueueMap.size() == 0) {
@@ -496,13 +510,19 @@ implements Serializable {
     
     /**
      * Registers a component with the <code>ApplicationInstance</code>.
+     * The component will be assigned a unique render in the event that
+     * it does not currently have one.
      * <p>
      * This method is invoked by <code>Component.setApplicationInstance()</code>
      * 
-     * @param component the component to unregister
+     * @param component the component to register
+     * @see Component#setApplicationInstance(ApplicationInstance)
      */
     void registerComponent(Component component) {
-        if (component.getRenderId() == null) {
+        String renderId = component.getRenderId();
+        if (renderId == null || renderIdToComponentMap.containsKey(renderId)) {
+            // Note that the render id is reassigned if it currently exists renderIdToComponentMap.  This could be the case
+            // in the event a Component was being used in a pool.
             component.setRenderId(generateId());
         }
         renderIdToComponentMap.put(component.getRenderId(), component); 
@@ -522,14 +542,15 @@ implements Serializable {
     }
     
     /**
-     * Removes the <code>TaskQueue</code> referenced by the specified handle.
+     * Removes the task queue described the specified 
+     * <code>TaskQueueHandle</code>.
      * 
-     * @param taskQueue the handle specifying the <code>TaskQueue</code> to
-     *        remove.
+     * @param taskQueueHandle the <code>TaskQueueHandle</code> specifying the
+     *        task queue to remove
      */
-    public void removeTaskQueue(TaskQueueHandle taskQueue) {
+    public void removeTaskQueue(TaskQueueHandle taskQueueHandle) {
         synchronized(taskQueueMap) {
-            taskQueueMap.remove(taskQueue);
+            taskQueueMap.remove(taskQueueHandle);
         }
     }
     
@@ -554,6 +575,8 @@ implements Serializable {
     
     /**
      * Sets the default top-level window.
+     * 
+     * @param window the default top-level window
      */
     private void setDefaultWindow(Window window) {
         if (defaultWindow != null) {
@@ -582,7 +605,7 @@ implements Serializable {
     
     /**
      * Sets the modal state of a component (i.e, whether only it and 
-     * components below it in the hierarchy should be enabled.
+     * components below it in the hierarchy should be enabled).
      * 
      * @param component the <code>Component</code>
      * @param newValue the new modal state
@@ -605,15 +628,16 @@ implements Serializable {
     }
 
     /**
-     * Sets the <code>StyleSheet</code> of this instance.
-     * Components that belong to this instance will retrieve
-     * properties from <code>StyleSheet</code>.
+     * Sets the <code>StyleSheet</code> of this 
+     * <code>ApplicationInstance</code>.  <code>Component</code>s 
+     * registered with this instance will retrieve
+     * properties from the <code>StyleSheet</code>
      * when property values are not specified directly
-     * in a Component or in its <code>Style</code>.
+     * in a <code>Component</code> or in its specified <code>Style</code>.
      * <p>
      * Note that setting the style sheet should be
-     * done sparingly, given that doing so causes the entire
-     * client state must be updated.  Generally style sheets should
+     * done sparingly, given that doing so forces the entire
+     * client state to be updated.  Generally style sheets should
      * only be reconfigured at application initialization and/or when
      * the user changes the visual theme of a themeable application.
      * 
@@ -625,11 +649,12 @@ implements Serializable {
     }
 
     /**
-     * Unregisters a component with from the <code>ApplicationInstance</code>.
+     * Unregisters a component from the <code>ApplicationInstance</code>.
      * <p>
      * This method is invoked by <code>Component.setApplicationInstance()</code>.
      * 
      * @param component the component to unregister
+     * @see Component#setApplicationInstance(ApplicationInstance)
      */
     void unregisterComponent(Component component) {
         renderIdToComponentMap.remove(component.getRenderId());
@@ -639,12 +664,14 @@ implements Serializable {
     }
     
     /**
-     * Verifies that a component is within the modal context, i.e., that if a
-     * modal component is present, that it either is or is a child of that 
-     * component.
+     * Verifies that a <code>Component</code> is within the modal context, 
+     * i.e., that if a modal <code>Component</code> is present, that it either 
+     * is or is a child of that <code>Component</code>.
      * 
-     * @param component the component to evaluate
-     * @return true if the component is within the current modal context
+     * @param component the <code>Component</code> to evaluate
+     * @return true if the <code>Component</code> is within the current 
+     *         modal context
+     * @see Component#verifyInput(java.lang.String, java.lang.Object)
      */
     boolean verifyModalContext(Component component) {
         Component modalContextRoot = getModalContextRoot();
