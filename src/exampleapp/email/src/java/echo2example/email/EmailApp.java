@@ -83,9 +83,13 @@ public class EmailApp extends ApplicationInstance {
      * See the Sun JavaMail API Specification for details.
      */
     private Session mailSession;
-
-    private Window mainWindow;
     
+    /**
+     * Convenience method to return the active email application as a
+     * <code>EmailApp</code>.
+     * 
+     * @return the active <code>EmailApp</code>
+     */
     public static EmailApp getApp() {
         return (EmailApp) getActive();
     }
@@ -167,10 +171,10 @@ public class EmailApp extends ApplicationInstance {
      */
     public Window init() {
         setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
-        mainWindow = new Window();
-        mainWindow.setTitle(Messages.getString("Application.Title.Window"));
-        mainWindow.setContent(new LoginScreen());
-        return mainWindow;
+        Window window = new Window();
+        window.setTitle(Messages.getString("Application.Title.Window"));
+        window.setContent(new LoginScreen());
+        return window;
     }
 
     /**
