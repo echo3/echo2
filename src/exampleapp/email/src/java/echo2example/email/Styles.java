@@ -61,12 +61,16 @@ public class Styles {
     public static final ImageReference ICON_24_RIGHT_ARROW_ROLLOVER 
             = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowLightCyanRight.gif");
     
+    public static final ImageReference ICON_24_EXIT
+            = new ResourceImageReference(IMAGE_PATH + "Icon24Exit.gif");
     public static final ImageReference ICON_24_MAIL_REPLY 
             = new ResourceImageReference(IMAGE_PATH + "Icon24MailReply.gif");
     public static final ImageReference ICON_24_MAIL_COMPOSE 
             = new ResourceImageReference(IMAGE_PATH + "Icon24MailCompose.gif");
-    public static final ImageReference ICON_24_EXIT
-            = new ResourceImageReference(IMAGE_PATH + "Icon24Exit.gif");
+    public static final ImageReference ICON_24_NO
+            = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif");
+    public static final ImageReference ICON_24_YES
+            = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");
 
     public static final StyleSheet DEFAULT_STYLE_SHEET;
     static {

@@ -104,7 +104,8 @@ public class ComposeWindow extends WindowPane {
         controlPane.setStyleName("ControlPane");
         mainPane.add(controlPane);
         
-        Button sendButton = new Button(Messages.getString("ComposeWindow.SendButton"));
+        Button sendButton = new Button(Messages.getString("ComposeWindow.SendButton"),
+                Styles.ICON_24_YES);
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (sendMessage()) {
@@ -114,7 +115,8 @@ public class ComposeWindow extends WindowPane {
         });
         controlPane.add(sendButton);
 
-        Button cancelButton = new Button(Messages.getString("ComposeWindow.CancelButton"));
+        Button cancelButton = new Button(Messages.getString("ComposeWindow.DiscardButton"),
+                Styles.ICON_24_NO);
         controlPane.add(cancelButton);
 
         Column layoutColumn = new Column();
