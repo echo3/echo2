@@ -53,7 +53,7 @@ public class StringDocument extends AbstractDocument {
      * @see nextapp.echo2.app.text.Document#getText()
      */
     public String getText() {
-        return text;
+        return text == null ? "" : text;
     }
 
     /**

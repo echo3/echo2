@@ -48,6 +48,8 @@ extends Serializable {
     
     /**
      * Returns the text of the document.
+     * This method should return ab empty string in the event the document
+     * contains no text.  Null may not be returned.
      *
      * @return The text of the document.
      */

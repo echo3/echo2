@@ -95,6 +95,7 @@ public class ComposeWindow extends WindowPane {
     public ComposeWindow(Message replyMessage) {
         super(Messages.getString("ComposeWindow.Title"), new Extent(500), new Extent(480));
         setResizable(false);
+        setDefaultCloseOperation(WindowPane.DO_NOTHING_ON_CLOSE);
         setStyleName("Default");
         
         SplitPane mainPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(32));
@@ -117,6 +118,11 @@ public class ComposeWindow extends WindowPane {
 
         Button cancelButton = new Button(Messages.getString("ComposeWindow.DiscardButton"),
                 Styles.ICON_24_NO);
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                processDiscard();
+            }
+        });
         controlPane.add(cancelButton);
 
         Column layoutColumn = new Column();
@@ -175,6 +181,27 @@ public class ComposeWindow extends WindowPane {
             } catch (MessagingException ex) {
                 EmailApp.getApp().processFatalException(ex);
             }
+        }
+    }
+    
+    /**
+     * Handles a user request to discard the message being composed.
+     */
+    private void processDiscard() {
+        if (messageField.getText().trim().length() > 0) {
+            MessageDialog confirmDialog = new MessageDialog(Messages.getString("ComposeWindow.ConfirmDiscard.Title"),
+                    Messages.getString("ComposeWindow.ConfirmDiscard.Message"), MessageDialog.TYPE_CONFIRM,
+                    MessageDialog.CONTROLS_YES_NO);
+            confirmDialog.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (MessageDialog.COMMAND_OK.equals(e.getActionCommand())) {
+                        getParent().remove(ComposeWindow.this);
+                    }
+                }
+            });
+            getApplicationInstance().getDefaultWindow().getContent().add(confirmDialog);
+        } else {
+            getParent().remove(this);
         }
     }
 

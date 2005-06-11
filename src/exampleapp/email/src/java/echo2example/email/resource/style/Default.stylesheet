@@ -159,19 +159,6 @@
    </property>
   </properties>
  </style>
- <style name="MessageDialog.ControlsRow" type="nextapp.echo2.app.Row">
-  <properties>
-   <property name="cellSpacing" value="10px"/>
-   <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
-     <properties>
-      <property name="background" value="#afcfef"/>
-      <property name="insets" value="5px"/>
-     </properties>
-    </layoutdata>
-   </property>
-  </properties>
- </style>
  <style name="MessageListTable.Table" type="nextapp.echo2.app.Table">
   <properties>
    <property name="rolloverBackground" value="#85c1ff"/>
@@ -225,7 +212,7 @@
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="overflow" value="OVERFLOW_HIDDEN"/>
-      <property name="background" value="#efefef"/>
+      <property name="background" value="#cfcfdf"/>
       <!--
       <property name="backgroundImage">
        <fillimage>
