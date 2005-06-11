@@ -45,12 +45,19 @@ import nextapp.echo2.app.Window;
  */
 public class EmailApp extends ApplicationInstance {
 
+    /**
+     * Flag indicating whether we should use fake e-mail data.  Enabling this 
+     * flag will cause the <code>FauxStore</code> e-mail store to be used and
+     * will disable sending of messages. 
+     */
+    public static final boolean FAUX_MODE;
     public static final String MAIL_DOMAIN, RECEIVE_MAIL_SERVER, RECEIVE_PROTOCOL, SEND_MAIL_SERVER, SEND_MAIL_PORT;
     public static final int MESSAGES_PER_PAGE;
 
     static {
         // Static initializer to retrieve information from configuration properties file.
         ResourceBundle config = ResourceBundle.getBundle("/echo2example/email/Configuration");
+        FAUX_MODE = "true".equals(config.getString("FauxMode"));
         MAIL_DOMAIN = config.getString("MailDomain");
         RECEIVE_MAIL_SERVER = config.getString("ReceiveMailServer");
         RECEIVE_PROTOCOL = config.getString("ReceiveProtocol");
