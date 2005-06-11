@@ -252,7 +252,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
             spacingElement.setAttribute("id", ContainerInstance.getElementId(row) + "_spacing_" 
                     + ContainerInstance.getElementId(child));
             CssStyle spacingCssStyle = new CssStyle();
-            spacingCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(cellSpacing));
+            spacingCssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(cellSpacing));
             spacingCssStyle.setAttribute("font-size", "1px");
             spacingCssStyle.setAttribute("line-height", "0px");
             spacingElement.setAttribute("style", spacingCssStyle.renderInline());
