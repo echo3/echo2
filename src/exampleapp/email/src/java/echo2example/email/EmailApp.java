@@ -105,8 +105,10 @@ public class EmailApp extends ApplicationInstance {
      */
     public boolean connect(String emailAddress, String password) {
         Properties properties = System.getProperties();
-        properties.put("mail.smtp.host", SEND_MAIL_SERVER);
-        properties.put("mail.smtp.port", SEND_MAIL_PORT);
+        if (!FAUX_MODE) {
+            properties.put("mail.smtp.host", SEND_MAIL_SERVER);
+            properties.put("mail.smtp.port", SEND_MAIL_PORT);
+        }
         try {
             mailSession = Session.getDefaultInstance(properties, null);
             store = mailSession.getStore(RECEIVE_PROTOCOL);

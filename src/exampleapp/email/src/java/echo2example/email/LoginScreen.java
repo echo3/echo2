@@ -39,7 +39,7 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
 /**
- * Login screen component.
+ * Login screen <code>ContentPane</code>.
  */
 public class LoginScreen extends ContentPane {
 
@@ -84,6 +84,11 @@ public class LoginScreen extends ContentPane {
             }
         });
         layoutGrid.add(button);
+
+        if (EmailApp.FAUX_MODE) {
+            emailAddressField.setText("joe.smith@test.nextapp.com");
+            passwordField.setText("Joshua");
+        }
     }
     
     private void doLogin() {

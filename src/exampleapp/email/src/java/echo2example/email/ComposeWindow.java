@@ -254,7 +254,9 @@ public class ComposeWindow extends WindowPane {
             message.setText(messageField.getText());
             
             // Attempt to send the message.
-            Transport.send(message);
+            if (!EmailApp.FAUX_MODE) {
+                Transport.send(message);
+            }
             return true;
         } catch (AddressException ex) {
             // Process an exception pertaining to an invalid recipient e-mail address: Raise an error.
