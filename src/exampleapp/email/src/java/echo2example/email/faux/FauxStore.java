@@ -59,7 +59,7 @@ public class FauxStore extends Store {
             rootFolder = FauxFolder.createRoot(this);
             inboxFolder = FauxFolder.createInbox(this);
             MessageGenerator generator = new MessageGenerator(session);
-            for (int i = 0; i < 500; ++i) {
+            for (int i = 0; i < 140; ++i) {
                 inboxFolder.appendMessages(new Message[]{generator.generateMessage()});
             }
         } catch (Exception ex) {

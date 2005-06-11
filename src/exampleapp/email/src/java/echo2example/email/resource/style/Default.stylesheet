@@ -219,6 +219,8 @@
  </style>
  <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
+   <property name="insets" value="10px 0px"/>
+   <property name="cellSpacing" value="10px"/>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
@@ -238,6 +240,15 @@
    </property>
   </properties>
  </style>
+ <style name="Message.HeaderGrid" type="nextapp.echo2.app.Grid">
+  <properties>
+   <property name="border">
+    <border size="1px" color="#4f4f5f" style="inset"/>
+   </property>
+   <property name="insets" value="5px 1px"/>
+  </properties>
+ </style>
+ 
  <style name="Title.Main" type="nextapp.echo2.app.Label">
   <properties>
    <property name="font">
