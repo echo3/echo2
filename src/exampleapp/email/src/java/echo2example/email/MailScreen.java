@@ -84,11 +84,11 @@ public class MailScreen extends ContentPane {
         titleMenuSplitPane.add(titleColumn);
         Label label;
         
-        label = new Label(Messages.getString("Title.Main"));
+        label = new Label(Messages.getString("Application.Title.Main"));
         label.setStyleName("Title.Main");
         titleColumn.add(label);
         
-        label = new Label(Messages.getString("Title.Sub"));
+        label = new Label(Messages.getString("Application.Title.Sub"));
         label.setStyleName("Title.Sub");
         titleColumn.add(label);
         

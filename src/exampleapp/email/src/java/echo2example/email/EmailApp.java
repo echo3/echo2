@@ -168,7 +168,7 @@ public class EmailApp extends ApplicationInstance {
     public Window init() {
         setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
         mainWindow = new Window();
-        mainWindow.setTitle("E-Mail Application");
+        mainWindow.setTitle(Messages.getString("Application.Title.Window"));
         mainWindow.setContent(new LoginScreen());
         return mainWindow;
     }
