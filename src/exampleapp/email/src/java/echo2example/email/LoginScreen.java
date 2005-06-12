@@ -30,8 +30,11 @@
 package echo2example.email;
 
 import nextapp.echo2.app.Button;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.PasswordField;
 import nextapp.echo2.app.TextField;
@@ -43,6 +46,9 @@ import nextapp.echo2.app.event.ActionListener;
  */
 public class LoginScreen extends ContentPane {
 
+    private static final Extent PX_300 = new Extent(300, Extent.PX);
+    private static final Insets PLACEMENT_INSETS = new Insets(240,270,0,0);
+
     private TextField emailAddressField;
     private PasswordField passwordField;
     
@@ -53,21 +59,26 @@ public class LoginScreen extends ContentPane {
         super();
         setStyleName("LoginScreen.ContentPane");
 
+        Column column = new Column();
+        column.setInsets(PLACEMENT_INSETS);
+        add(column);
+        
         Grid layoutGrid = new Grid();
         layoutGrid.setStyleName("LoginScreen.LayoutGrid");
-        add(layoutGrid);
+        column.add(layoutGrid);
         
         Label label;
         
-        label = new Label(Messages.getString("LoginScreen.WelcomeLabel"));
-        label.setStyleName("LoginScreen.WelcomeLabel");
-        layoutGrid.add(label);
+//        label = new Label(Messages.getString("LoginScreen.WelcomeLabel"));
+//        label.setStyleName("LoginScreen.WelcomeLabel");
+//        layoutGrid.add(label);
         
         label = new Label(Messages.getString("LoginScreen.PromptEmailAddress"));
         label.setStyleName("LoginScreen.Prompt");
         layoutGrid.add(label);
         
         emailAddressField = new TextField();
+        emailAddressField.setWidth(PX_300);
         emailAddressField.setStyleName("Default");
         layoutGrid.add(emailAddressField);
         
@@ -76,6 +87,7 @@ public class LoginScreen extends ContentPane {
         layoutGrid.add(label);
         
         passwordField = new PasswordField();
+        passwordField.setWidth(PX_300);
         passwordField.setStyleName("Default");
         layoutGrid.add(passwordField);
         
