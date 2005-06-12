@@ -57,6 +57,11 @@ import nextapp.echo2.app.list.AbstractListModel;
  */
 public class MailScreen extends ContentPane {
     
+    // Constants for new dialog positioning algorithm.
+    private static final int DIALOG_POSITION_INITIAL = 80;
+    private static final int DIALOG_POSITION_INCREMENT = 20;
+    private static final int DIALOG_POSITION_MAXIMUM = 200;
+    
     private Folder[] folders;
     
     private MessageListTable messageListTable;
@@ -64,6 +69,7 @@ public class MailScreen extends ContentPane {
     private MessagePane messagePane;
     private SelectField folderSelect;
     private Message selectedMessage;
+    private int dialogPosition = DIALOG_POSITION_INITIAL;
     
     /**
      * Creates a new <code>MailScreen</code>.
@@ -165,8 +171,7 @@ public class MailScreen extends ContentPane {
         button.setStyleName("MailScreen.OptionButton");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ComposeWindow composeWindow = new ComposeWindow(null);
-                getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
+                processCompose(null);
             }
         });
         actionsColumn.add(button);
@@ -175,8 +180,9 @@ public class MailScreen extends ContentPane {
         button.setStyleName("MailScreen.OptionButton");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ComposeWindow composeWindow = new ComposeWindow(selectedMessage);
-                getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
+                if (selectedMessage != null) {
+                    processCompose(selectedMessage);
+                }
             }
         });
         actionsColumn.add(button);
@@ -191,6 +197,19 @@ public class MailScreen extends ContentPane {
         optionColumn.add(button);
         
         return optionColumn;
+    }
+    
+    private void processCompose(Message message) {
+        ComposeWindow composeWindow = new ComposeWindow(message);
+        Extent dialogPositionExtent = new Extent(dialogPosition);
+        composeWindow.setPositionX(dialogPositionExtent);
+        composeWindow.setPositionY(dialogPositionExtent);
+        dialogPosition += DIALOG_POSITION_INCREMENT;
+        if (dialogPosition > DIALOG_POSITION_MAXIMUM) {
+            dialogPosition = DIALOG_POSITION_INITIAL;
+        }
+        
+        getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
     }
 
     /**

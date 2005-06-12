@@ -43,6 +43,12 @@ implements Comparable, Serializable {
      * incompatible units. 
      */
     public static Extent add(Extent a, Extent b) {
+        if (a == null) {
+            return b;
+        }
+        if (b == null) {
+            return a;
+        }
         if (a.getUnits() == b.getUnits()) {
             return new Extent(a.getValue() + b.getValue(), a.getUnits());
         }

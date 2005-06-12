@@ -59,6 +59,9 @@ import nextapp.echo2.app.event.WindowPaneListener;
  */
 public class ComposeWindow extends WindowPane {
     
+    private static final Extent DIALOG_OFFSET_X = new Extent(80);
+    private static final Extent DIALOG_OFFSET_Y = new Extent(26);
+    
     /**
      * Adds recipient e-mail addresses contained in a comma-delimited string 
      * to an outgoing e-mail <code>Message</code>.
@@ -202,6 +205,8 @@ public class ComposeWindow extends WindowPane {
             MessageDialog confirmDialog = new MessageDialog(Messages.getString("ComposeWindow.ConfirmDiscard.Title"),
                     Messages.getString("ComposeWindow.ConfirmDiscard.Message"), MessageDialog.TYPE_CONFIRM,
                     MessageDialog.CONTROLS_YES_NO);
+            confirmDialog.setPositionX(Extent.add(getPositionX(), DIALOG_OFFSET_X));
+            confirmDialog.setPositionY(Extent.add(getPositionY(), DIALOG_OFFSET_Y));
             confirmDialog.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     if (MessageDialog.COMMAND_OK.equals(e.getActionCommand())) {
@@ -225,20 +230,20 @@ public class ComposeWindow extends WindowPane {
     private boolean sendMessage() {
         MimeMessage message = new MimeMessage(((EmailApp) getApplicationInstance()).getMailSession());
         try {
-            // Ensure message has a subject.  If it does not, raise an error and do not send.
-            if (subjectField.getText() == null || subjectField.getText().length() == 0) {
-                MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.NoSubjectError.Title"),
-                        Messages.getString("ComposeWindow.NoSubjectError.Message"), MessageDialog.TYPE_ERROR, 
-                        MessageDialog.CONTROLS_OK);
-                getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
-                return false;
+            // Validate.
+            String errorMessage = null;
+            if (toField.getText().length() == 0) {
+                errorMessage = Messages.getString("ComposeWindow.SendError.NoToField");
+            } else if (subjectField.getText().length() == 0) {
+                errorMessage = Messages.getString("ComposeWindow.SendError.NoSubjectField");
+            } else if (messageField.getText().length() == 0) {
+                errorMessage = Messages.getString("ComposeWindow.SendError.NoMessageContent");
             }
-            
-            // Ensure message has a body.  If it does not, raise an error and do not send.
-            if (messageField.getText() == null || messageField.getText().length() == 0) {
-                MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.NoMessageError.Title"),
-                        Messages.getString("ComposeWindow.NoMessageError.Message"), MessageDialog.TYPE_ERROR, 
-                        MessageDialog.CONTROLS_OK);
+            if (errorMessage != null) {
+                MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.SendError.Title"),
+                        errorMessage, MessageDialog.TYPE_ERROR, MessageDialog.CONTROLS_OK);
+                messageDialog.setPositionX(Extent.add(getPositionX(), DIALOG_OFFSET_X));
+                messageDialog.setPositionY(Extent.add(getPositionY(), DIALOG_OFFSET_Y));
                 getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
                 return false;
             }
@@ -262,9 +267,11 @@ public class ComposeWindow extends WindowPane {
             return true;
         } catch (AddressException ex) {
             // Process an exception pertaining to an invalid recipient e-mail address: Raise an error.
-            MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.InvalidAddressError.Title"),
-                    Messages.getString("ComposeWindow.InvalidAddressError.Message"), MessageDialog.TYPE_ERROR, 
+            MessageDialog messageDialog = new MessageDialog(Messages.getString("ComposeWindow.SendError.Title"),
+                    Messages.getString("ComposeWindow.SendError.InvalidAddress"), MessageDialog.TYPE_ERROR, 
                     MessageDialog.CONTROLS_OK);
+            messageDialog.setPositionX(Extent.add(getPositionX(), DIALOG_OFFSET_X));
+            messageDialog.setPositionY(Extent.add(getPositionY(), DIALOG_OFFSET_Y));
             getApplicationInstance().getDefaultWindow().getContent().add(messageDialog);
             return false;
         } catch (MessagingException ex) {
