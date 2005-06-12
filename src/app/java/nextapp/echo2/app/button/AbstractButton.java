@@ -57,6 +57,7 @@ public abstract class AbstractButton extends Component {
     public static final String PROPERTY_ICON = "icon";
     public static final String PROPERTY_ICON_TEXT_MARGIN = "iconTextMargin";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_LINE_WRAP = "lineWrap";
     public static final String PROPERTY_MODEL = "model";
     public static final String PROPERTY_PRESSED_BACKGROUND = "pressedBackground";
     public static final String PROPERTY_PRESSED_BACKGROUND_IMAGE = "pressedBackgroundImage";
@@ -362,6 +363,17 @@ public abstract class AbstractButton extends Component {
     }
     
     /**
+     * Determines if the text of the button should wrap in the event that 
+     * horizontal space is limited.  Default value is true.
+     * 
+     * @return the line wrap state
+     */
+    public boolean isLineWrap() {
+        Boolean value = (Boolean) getProperty(PROPERTY_LINE_WRAP);
+        return value == null ? true : value.booleanValue();
+    }
+    
+    /**
      * Determines if pressed effects are enabled.
      * 
      * @return true if pressed effects are enabled
@@ -480,6 +492,17 @@ public abstract class AbstractButton extends Component {
     public void setInsets(Insets newValue) {
         setProperty(PROPERTY_INSETS, newValue);
     }
+
+    /**
+     * Sets whether the text of the button should wrap in the event that 
+     * horizontal space is limited.  Default value is true.
+     * 
+     * @param newValue the new line wrap state
+     */
+    public void setLineWrap(boolean newValue) {
+        setProperty(PROPERTY_LINE_WRAP, new Boolean(newValue));
+    }
+    
 
     /**
      * Sets the model that this button represents. The model may not be null.

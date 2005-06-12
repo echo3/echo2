@@ -148,6 +148,7 @@
  <style name="MailScreen.OptionButton" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
    <property name="height" value="31px"/>
+   <property name="lineWrap" value="false"/>
    <property name="rolloverEnabled" value="true"/>
    <property name="pressedEnabled" value="true"/>
    <property name="backgroundImage">
@@ -264,6 +265,7 @@
  </style>
  <style name="ControlPane.Button" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
+   <property name="lineWrap" value="false"/>
    <property name="insets" value="8px 0px"/>
    <property name="foreground" value="#000000"/>
    <property name="rolloverEnabled" value="true"/>

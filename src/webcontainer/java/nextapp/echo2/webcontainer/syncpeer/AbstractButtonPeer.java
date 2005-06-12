@@ -503,6 +503,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private void renderCellText(TriCellTable tct, Text textNode, AbstractButton button) {
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
+        if (Boolean.FALSE.equals(button.getRenderProperty(AbstractButton.PROPERTY_LINE_WRAP))) {
+            textTdCssStyle.setAttribute("white-space", "nowrap");
+        }
         textTdCssStyle.setAttribute("padding", "0px");
         AlignmentRender.renderToStyle(textTdCssStyle, button, 
                 (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT));
