@@ -44,6 +44,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.layout.CellLayoutData;
+import nextapp.echo2.app.layout.RowLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
@@ -226,7 +227,11 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         
         // Configure cell style.
         CssStyle cssStyle = new CssStyle();
-        CellLayoutDataRender.renderToStyle(cssStyle, getLayoutData(child), "0px");
+        RowLayoutData layoutData = (RowLayoutData) getLayoutData(child);
+        CellLayoutDataRender.renderToStyle(cssStyle, layoutData, "0px");
+        if (layoutData != null) {
+            ExtentRender.renderToStyle(cssStyle, "width", layoutData.getWidth());
+        }
         tdElement.setAttribute("style", cssStyle.renderInline());
         
         parentNode.appendChild(tdElement);
