@@ -140,15 +140,55 @@
    </property>
   </properties>
  </style>
- <style name="MailScreen.MenuColumn" type="nextapp.echo2.app.Column">
+ <style name="MailScreen.FolderSelectColumn" type="nextapp.echo2.app.Column">
   <properties>
-   <property name="cellSpacing" value="15px"/>
+   <property name="insets" value="10px 25px 10px 0px"/>
+  </properties>
+ </style>
+ <style name="MailScreen.OptionButton" type="nextapp.echo2.app.button.AbstractButton">
+  <properties>
+   <property name="height" value="31px"/>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="pressedEnabled" value="true"/>
+   <property name="backgroundImage">
+    <fillimage repeat="none">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resourceimagereference resource="/echo2example/email/resource/image/OptionButtonDefaultBackground.png"/>
+     </image>
+    </fillimage>
+   </property>
+   <property name="rolloverBackgroundImage">
+    <fillimage repeat="none">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resourceimagereference resource="/echo2example/email/resource/image/OptionButtonRolloverBackground.png"/>
+     </image>
+    </fillimage>
+   </property>
+   <property name="pressedBackgroundImage">
+    <fillimage repeat="none">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resourceimagereference resource="/echo2example/email/resource/image/OptionButtonPressedBackground.png"/>
+     </image>
+    </fillimage>
+   </property>
+  </properties>
+ </style>
+ <style name="MailScreen.OptionColumn" type="nextapp.echo2.app.Column">
+  <properties>
+   <property name="cellSpacing" value="50px"/>
    <property name="foreground" value="#ffffff"/>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
+      <property name="backgroundImage">
+       <fillimage repeat="vertical">
+        <image type="nextapp.echo2.app.ResourceImageReference">
+         <resourceimagereference resource="/echo2example/email/resource/image/OptionPaneBackground.png"/>
+        </image>
+       </fillimage>
+      </property>
       <property name="background" value="#6f7094"/>
-      <property name="insets" value="10px"/>
+      <property name="insets" value="0px"/>
      </properties>
     </layoutdata>
    </property>

@@ -75,13 +75,13 @@ public class MailScreen extends ContentPane {
         mainSplitPane.setSeparatorWidth(new Extent(1, Extent.PX));
         add(mainSplitPane);
         
-        SplitPane titleMenuSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(70));
-        titleMenuSplitPane.setSeparatorHeight(new Extent(1, Extent.PX));
-        mainSplitPane.add(titleMenuSplitPane);
+        SplitPane titleOptionSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(70));
+        titleOptionSplitPane.setSeparatorHeight(new Extent(1, Extent.PX));
+        mainSplitPane.add(titleOptionSplitPane);
         
         Column titleColumn = new Column();
         titleColumn.setStyleName("MailScreen.TitleColumn");
-        titleMenuSplitPane.add(titleColumn);
+        titleOptionSplitPane.add(titleColumn);
         Label label;
         
         label = new Label(Messages.getString("Application.Title.Main"));
@@ -92,7 +92,7 @@ public class MailScreen extends ContentPane {
         label.setStyleName("Title.Sub");
         titleColumn.add(label);
         
-        titleMenuSplitPane.add(createMenu());
+        titleOptionSplitPane.add(createOptionPane());
         
         SplitPane mailSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(320));
         mailSplitPane.setResizable(true);
@@ -141,15 +141,16 @@ public class MailScreen extends ContentPane {
      * 
      * @return the menu <code>Component</code>
      */
-    private Component createMenu() {
+    private Component createOptionPane() {
         Button button;
         Label label;
 
-        Column menuColumn = new Column();
-        menuColumn.setStyleName("MailScreen.MenuColumn");
+        Column optionColumn = new Column();
+        optionColumn.setStyleName("MailScreen.OptionColumn");
         
         Column folderSelectColumn = new Column();
-        menuColumn.add(folderSelectColumn);
+        folderSelectColumn.setStyleName("MailScreen.FolderSelectColumn");
+        optionColumn.add(folderSelectColumn);
         
         label = new Label(Messages.getString("MailScreen.PromptFolderSelect"));
         folderSelectColumn.add(label);
@@ -157,36 +158,39 @@ public class MailScreen extends ContentPane {
         folderSelect = new SelectField();
         folderSelectColumn.add(folderSelect);
         
-        Column optionsColumn = new Column();
-        menuColumn.add(optionsColumn);
+        Column actionsColumn = new Column();
+        optionColumn.add(actionsColumn);
         
         button = new Button(Messages.getString("MailScreen.ButtonNewMessage"), Styles.ICON_24_MAIL_COMPOSE);
+        button.setStyleName("MailScreen.OptionButton");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ComposeWindow composeWindow = new ComposeWindow(null);
                 getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
             }
         });
-        optionsColumn.add(button);
+        actionsColumn.add(button);
         
         button = new Button(Messages.getString("MailScreen.ButtonReplyTo"), Styles.ICON_24_MAIL_REPLY);
+        button.setStyleName("MailScreen.OptionButton");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ComposeWindow composeWindow = new ComposeWindow(selectedMessage);
                 getApplicationInstance().getDefaultWindow().getContent().add(composeWindow);
             }
         });
-        optionsColumn.add(button);
+        actionsColumn.add(button);
         
         button = new Button(Messages.getString("MailScreen.ButtonLogOut"), Styles.ICON_24_EXIT);
+        button.setStyleName("MailScreen.OptionButton");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ((EmailApp) getApplicationInstance()).disconnect();
             }
         });
-        menuColumn.add(button);
+        optionColumn.add(button);
         
-        return menuColumn;
+        return optionColumn;
     }
 
     /**
