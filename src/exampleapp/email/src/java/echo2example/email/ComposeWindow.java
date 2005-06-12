@@ -98,7 +98,7 @@ public class ComposeWindow extends WindowPane {
      *        a new message.
      */
     public ComposeWindow(Message replyMessage) {
-        super(Messages.getString("ComposeWindow.Title"), new Extent(500), new Extent(480));
+        super(Messages.getString("ComposeWindow.Title"), new Extent(600), new Extent(480));
         setResizable(false);
         setDefaultCloseOperation(WindowPane.DO_NOTHING_ON_CLOSE);
         setStyleName("Default");
@@ -154,7 +154,7 @@ public class ComposeWindow extends WindowPane {
         
         toField = new TextField();
         toField.setStyleName("Default");
-        toField.setWidth(new Extent(350));
+        toField.setWidth(new Extent(450));
         headerGrid.add(toField);
         
         label = new Label(Messages.getString("Message.PromptLabel.Cc"));
@@ -162,7 +162,7 @@ public class ComposeWindow extends WindowPane {
         
         ccField = new TextField();
         ccField.setStyleName("Default");
-        ccField.setWidth(new Extent(350));
+        ccField.setWidth(new Extent(450));
         headerGrid.add(ccField);
         
         label = new Label(Messages.getString("Message.PromptLabel.Bcc"));
@@ -170,7 +170,7 @@ public class ComposeWindow extends WindowPane {
         
         bccField = new TextField();
         bccField.setStyleName("Default");
-        bccField.setWidth(new Extent(350));
+        bccField.setWidth(new Extent(450));
         headerGrid.add(bccField);
         
         label = new Label(Messages.getString("Message.PromptLabel.Subject"));
@@ -178,13 +178,13 @@ public class ComposeWindow extends WindowPane {
         
         subjectField = new TextField();
         subjectField.setStyleName("Default");
-        subjectField.setWidth(new Extent(350));
+        subjectField.setWidth(new Extent(450));
         headerGrid.add(subjectField);
         
         messageField = new TextArea();
         messageField.setStyleName("Default");
-        messageField.setWidth(new Extent(420));
-        messageField.setHeight(new Extent(15, Extent.EM));
+        messageField.setWidth(new Extent(520));
+        messageField.setHeight(new Extent(18, Extent.EM));
         layoutColumn.add(messageField);
         
         if (replyMessage != null) {

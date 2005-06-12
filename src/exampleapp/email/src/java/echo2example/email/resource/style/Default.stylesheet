@@ -247,9 +247,16 @@
    </property>
    <property name="foreground" value="#000000"/>
    <property name="font">
-    <font typeface="sans-serif"/>
+    <font typeface="sans-serif" size="10pt"/>
    </property>
   </properties>
+ </style>
+ <style name="ComposeWindow.MessageField" basename="Default" type="nextapp.echo2.app.text.TextComponent">
+  <properties>
+   <property name="font">
+    <font typeface="monospace" size="10pt"/>
+   </property>
+  </properties> 
  </style>
  <style name="PageNavigator.PageField" type="nextapp.echo2.app.text.TextComponent">
   <properties>
