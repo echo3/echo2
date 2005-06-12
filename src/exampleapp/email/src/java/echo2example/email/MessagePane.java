@@ -30,6 +30,11 @@
 package echo2example.email;
 
 import java.io.IOException;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
@@ -45,7 +50,7 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 
 /**
- * 
+ * A <code>Component</code> which displays a single <code>Message</code>.
  */
 public class MessagePane extends Column {
     
@@ -140,7 +145,7 @@ public class MessagePane extends Column {
             Object content = message.getContent();
             if (content instanceof String) {
                 // Content is a string, return it enclosed in a Label.
-                return new Component[]{new Label((String) content)};
+                return new Component[]{renderMessageText((String) content)};
             } else if (content instanceof Multipart) {
                 // Content is multi-part, parse each part.
                 Multipart multipart = (Multipart) content;
@@ -151,7 +156,7 @@ public class MessagePane extends Column {
                     Object partContent = part.getContent();
                     if (partContent instanceof String) {
                         // Part content is a string, add it to returned array of Components as a Label.
-                        data[index] = new Label((String) partContent);
+                        data[index] = renderMessageText((String) partContent);
                     } else {
                         // Part content is not a string, add it to returned array as a Label containing its content type.
                         data[index] = new Label(part.getContentType());
@@ -165,6 +170,45 @@ public class MessagePane extends Column {
         } catch (IOException ex) {
             // Generally should not occur.
             return new Component[]{new Label(Messages.getString("Messages.UnableToParseError"))};
+        }
+    }
+    
+    /**
+     * Renders a portion of message text into a <code>Component</code>s.
+     * If the text contains newlines, the returned <code>Component is 
+     * a <code>Column</code> containing <code>Label</code>s.  If the text
+     * does not contain newlines, a single <code>Label</code> is returned.
+     * 
+     * @param text the text to render
+     * @return a <code>Component</code> representation of the text
+     */
+    private Component renderMessageText(String text) {
+        List componentList = new ArrayList();
+        StringBuffer out = new StringBuffer();
+        CharacterIterator ci = new StringCharacterIterator(text);
+        char ch = ci.next();
+        while (ch != CharacterIterator.DONE) {
+            if (ch == '\n' || ch == '\r') {
+                Label label = new Label(out.toString());
+                componentList.add(label);
+                out = new StringBuffer();
+            } else {
+                out.append(ch);
+            }
+            ch  = ci.next();
+        }
+        Label label = new Label(out.toString());
+        componentList.add(label);
+        
+        if (componentList.size() == 1) {
+            return label;
+        } else {
+            Column column = new Column();
+            Iterator it = componentList.iterator();
+            while (it.hasNext()) {
+                column.add((Component) it.next());
+            }
+            return column;
         }
     }
 
@@ -193,7 +237,6 @@ public class MessagePane extends Column {
             }
         }
     }
-
 
     /**
      * Updates the visual presentation of recipient information,
