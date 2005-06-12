@@ -116,6 +116,7 @@ public class PageNavigator extends Row {
         entryRow.add(itemLabel);
         
         pageField = new TextField();
+        pageField.setStyleName("PageNavigator.PageField");
         pageField.setWidth(new Extent(4, Extent.EX));
         pageField.setText("1");
         pageField.addActionListener(new ActionListener() {

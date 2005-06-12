@@ -72,11 +72,8 @@ implements PropertyXmlPeer {
     throws InvalidPropertyException {
         Element borderElement = DomUtil.getChildElementByTagName(propertyElement, "border");
         
-        String colorString = borderElement.getAttribute("color");
-        Color color = colorString == null ? null : ColorPeer.toColor(colorString);
-        
-        String sizeString = borderElement.getAttribute("size");
-        Extent size = sizeString == null ? null : ExtentPeer.toExtent(sizeString);
+        Color color = borderElement.hasAttribute("color") ? ColorPeer.toColor(borderElement.getAttribute("color")) : null;
+        Extent size = borderElement.hasAttribute("size") ? ExtentPeer.toExtent(borderElement.getAttribute("size")) : null;
         
         String styleString = borderElement.getAttribute("style");
         int style;

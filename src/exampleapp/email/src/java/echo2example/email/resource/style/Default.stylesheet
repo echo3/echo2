@@ -210,10 +210,30 @@
    </property>
   </properties>
  </style>
+ <style name="PageNavigator.PageField" type="nextapp.echo2.app.text.TextComponent">
+  <properties>
+   <property name="background" value="#efefef"/>
+   <property name="border">
+    <border size="2px" style="groove" color="#efefef"/>
+   </property>
+   <property name="foreground" value="#000000"/>
+   <property name="font">
+    <font typeface="sans-serif"/>
+   </property>
+  </properties>
+ </style>
+ <style name="ControlPane.Button" type="nextapp.echo2.app.button.AbstractButton">
+  <properties>
+   <property name="insets" value="8px 0px"/>
+   <property name="foreground" value="#000000"/>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="rolloverForeground" value="#6f0f0f"/>
+  </properties>
+ </style>
  <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
    <property name="insets" value="10px 0px"/>
-   <property name="cellSpacing" value="10px"/>
+   <property name="cellSpacing" value="3px"/>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
@@ -226,7 +246,7 @@
         </image>
        </fillimage>
       </property>
-      <property name="insets" value="3px"/>
+      <property name="insets" value="2px"/>
      </properties>
     </layoutdata>
    </property>
@@ -240,7 +260,6 @@
    <property name="insets" value="5px 1px"/>
   </properties>
  </style>
- 
  <style name="Title.Main" type="nextapp.echo2.app.Label">
   <properties>
    <property name="font">

@@ -89,16 +89,19 @@ public class MessageDialog extends WindowPane {
         switch (controlConfiguration) {
         case CONTROLS_OK:
             button = new Button(Messages.getString("Generic.Ok"), Styles.ICON_24_YES);
+            button.setStyleName("ControlPane.Button");
             button.setActionCommand(COMMAND_OK);
             button.addActionListener(actionProcessor);
             controlsRow.add(button);
             break;
         case CONTROLS_YES_NO:
             button = new Button(Messages.getString("Generic.Yes"), Styles.ICON_24_YES);
+            button.setStyleName("ControlPane.Button");
             button.setActionCommand(COMMAND_OK);
             button.addActionListener(actionProcessor);
             controlsRow.add(button);
             button = new Button(Messages.getString("Generic.No"), Styles.ICON_24_NO);
+            button.setStyleName("ControlPane.Button");
             button.setActionCommand(COMMAND_CANCEL);
             button.addActionListener(actionProcessor);
             controlsRow.add(button);
