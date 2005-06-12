@@ -36,7 +36,6 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * 
@@ -65,7 +64,6 @@ public class SplitPaneNestedTest extends SplitPane {
         
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_A);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("A");
         label.setLayoutData(splitPaneLayoutData);
@@ -76,7 +74,6 @@ public class SplitPaneNestedTest extends SplitPane {
         
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_B);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("B");
         label.setLayoutData(splitPaneLayoutData);
@@ -87,7 +84,6 @@ public class SplitPaneNestedTest extends SplitPane {
         
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_C);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("C");
         label.setLayoutData(splitPaneLayoutData);
@@ -98,7 +94,6 @@ public class SplitPaneNestedTest extends SplitPane {
         
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_D);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("D");
         label.setLayoutData(splitPaneLayoutData);
@@ -109,7 +104,6 @@ public class SplitPaneNestedTest extends SplitPane {
         
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_E);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("E");
         label.setLayoutData(splitPaneLayoutData);
@@ -120,7 +114,6 @@ public class SplitPaneNestedTest extends SplitPane {
 
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_F);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("F");
         label.setLayoutData(splitPaneLayoutData);
@@ -131,7 +124,6 @@ public class SplitPaneNestedTest extends SplitPane {
 
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_G);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("G");
         label.setLayoutData(splitPaneLayoutData);
@@ -142,14 +134,12 @@ public class SplitPaneNestedTest extends SplitPane {
 
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_I);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("I");
         label.setLayoutData(splitPaneLayoutData);
         splitPaneGolf.add(label);
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(COLOR_H);
-        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
         splitPaneLayoutData.setInsets(INSETS_10);
         label = new Label("H");
         label.setLayoutData(splitPaneLayoutData);

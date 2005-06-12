@@ -122,6 +122,8 @@
  </style>
  <style name="default" type="nextapp.echo2.app.WindowPane">
   <properties>
+   <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
+   <property type="java.lang.Boolean" name="nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder" value="true"/>
    <property name="titleInsets" value="10px 5px"/>
    <property name="titleBackground" value="#2f2f4f"/>
    <property name="titleBackgroundImage">
@@ -203,7 +205,7 @@
       <property name="backgroundImage">
        <fillimage repeat="none">
         <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackground.png"/>
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackgroundDarkBlue.png"/>
         </image>
        </fillimage>
       </property>
@@ -224,7 +226,7 @@
       <property name="backgroundImage">
        <fillimage repeat="none">
         <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackground.png"/>
+        <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackgroundLightBlue.png"/>
         </image>
        </fillimage>
       </property>

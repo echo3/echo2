@@ -43,8 +43,11 @@ public class Styles {
     public static final String IMAGE_PATH = "/nextapp/echo2/testapp/interactive/resource/image/";
     public static final String STYLE_PATH = "/nextapp/echo2/testapp/interactive/resource/style/";
 
-    public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
-            IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
+    public static final FillImage BG_SHADOW_DARK_BLUE = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ShadowBackgroundDarkBlue.png"), null, null, FillImage.NO_REPEAT, 
+            FillImage.ATTACHMENT_FIXED);
+    public static final FillImage BG_SHADOW_LIGHT_BLUE = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ShadowBackgroundLightBlue.png"), null, null, FillImage.NO_REPEAT, 
             FillImage.ATTACHMENT_FIXED);
     
     public static final FillImage BUTTON_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(

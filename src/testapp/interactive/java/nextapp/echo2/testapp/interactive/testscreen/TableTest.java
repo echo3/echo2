@@ -282,7 +282,7 @@ public class TableTest extends SplitPane {
         });
         controlsColumn.addButton("Set Rollover Background Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testTable.setRolloverBackgroundImage(Styles.BG_NW_SHADOW);
+                testTable.setRolloverBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
             }
         });
         controlsColumn.addButton("Clear Rollover Background Image", new ActionListener() {

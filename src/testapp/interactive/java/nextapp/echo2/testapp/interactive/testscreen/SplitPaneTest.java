@@ -120,7 +120,7 @@ public class SplitPaneTest extends SplitPane {
                     SplitPaneLayoutData splitPaneLayoutData = getLayoutData(paneNumber);
                     FillImage backgroundImage = splitPaneLayoutData.getBackgroundImage();
                     if (backgroundImage == null) {
-                        splitPaneLayoutData.setBackgroundImage(Styles.BG_NW_SHADOW);
+                        splitPaneLayoutData.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
                     } else {
                         splitPaneLayoutData.setBackgroundImage(null);
                     }

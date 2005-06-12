@@ -232,9 +232,9 @@ public class TextComponentTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 FillImage backgroundImage = textField.getBackgroundImage();
                 if (backgroundImage == null) {
-                    textField.setBackgroundImage(Styles.BG_NW_SHADOW);
-                    passwordField.setBackgroundImage(Styles.BG_NW_SHADOW);
-                    textArea.setBackgroundImage(Styles.BG_NW_SHADOW);
+                    textField.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                    passwordField.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                    textArea.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
                 } else {
                     textField.setBackgroundImage(null);
                     passwordField.setBackgroundImage(null);
