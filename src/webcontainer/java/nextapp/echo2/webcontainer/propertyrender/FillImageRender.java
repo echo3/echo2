@@ -47,6 +47,27 @@ public class FillImageRender {
     private FillImageRender() { }
     
     /**
+     * A flag indicating that the 'fixed' property of the <code>FillImage</code>
+     * should be ignored.
+     */
+    public static final int FLAG_DISABLE_FIXED_MODE = 0x1;
+    
+    /**
+     * A flag indicating that the Internet Explorer 6.0 PNG AlphaImageLoader 
+     * filter should be enabled for Internet Explorer clients that might 
+     * "benefit" from it.  Enabling this flag can however have serious   
+     * unacceptable side-effects for Internet Explorer clients:
+     * If the flag is enabled, Images will be <strong>SCALED</strong> to span 
+     * the entire region.  IE will ignore any positioning/repeat information
+     * if this flag is enabled.  Further, the browser may in fact not allow
+     * the user to click on any content within the region.
+     * Use of this flag is thus strongly discouraged in most all situations.
+     * <p>
+     * This flag has no effect for clients other than Internet Explorer 6.0.
+     */
+    public static final int FLAG_ENABLE_IE_PNG_ALPHA_FILTER = 0x2;
+    
+    /**
      * Renders a <code>FillImage</code> to a CSS style.
      * 
      * @param cssStyle the CSS style to be updated
@@ -56,18 +77,18 @@ public class FillImageRender {
      * @param component the relevant <code>Component</code>
      * @param imageId the image id of the background image
      * @param fillImage the <code>FillImage</code> property value
-     * @param disableFixedMode a flag indicating that the 'fixed' property of 
-     *        the <code>FillImage</code> should be ignored
+     * @param flags optional image rendering flags (see <code>FLAG_XXX</code> 
+     *        constants)
      */
     public static void renderToStyle(CssStyle cssStyle, RenderContext rc, ImageRenderSupport irs, 
-            Component component, String imageId, FillImage fillImage, boolean disableFixedMode) {
+            Component component, String imageId, FillImage fillImage, int flags) {
         
         if (fillImage == null) {
             return;
         }
         String imageUri = ImageTools.getUri(rc, irs, component, imageId);
         
-        if (rc.getContainerInstance().getClientProperties().getBoolean(
+        if ((flags & FLAG_ENABLE_IE_PNG_ALPHA_FILTER) != 0 && rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED)) {
             cssStyle.setAttribute("background-image", "none");
             cssStyle.setAttribute("filter",
@@ -76,7 +97,7 @@ public class FillImageRender {
             cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
         }
         
-//BUGBUG. actually, this is still necessary for IE text field backgrounds.        
+//BUGBUG. actually, this is still necessary for IE text field backgrounds.
 //        if (!disableFixedMode && fillImage.getAttachment() == FillImage.ATTACHMENT_FIXED) {
 //            cssStyle.setAttribute("background-attachment", "fixed");
 //        }

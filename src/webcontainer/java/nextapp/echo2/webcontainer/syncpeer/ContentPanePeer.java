@@ -192,7 +192,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) contentPane.getRenderProperty(ContentPane.PROPERTY_FONT));
         FillImageRender.renderToStyle(cssStyle, rc, this, contentPane, IMAGE_ID_BACKGROUND, 
-                (FillImage) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND_IMAGE), false);
+                (FillImage) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND_IMAGE), 0);
         divElement.setAttribute("style", cssStyle.renderInline());
         
         parentNode.appendChild(divElement);

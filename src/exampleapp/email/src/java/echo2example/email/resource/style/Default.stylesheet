@@ -1,6 +1,8 @@
 <stylesheet>
  <style name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
+   <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
+   <property type="java.lang.Boolean" name="nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder" value="true"/>
    <property name="titleInsets" value="10px 5px"/>
    <property name="titleBackground" value="#2f2f4f"/>
    <property name="titleBackgroundImage">
@@ -217,7 +219,6 @@
      <properties>
       <property name="overflow" value="OVERFLOW_HIDDEN"/>
       <property name="background" value="#cfcfdf"/>
-      <!--
       <property name="backgroundImage">
        <fillimage>
         <image type="nextapp.echo2.app.ResourceImageReference">
@@ -225,7 +226,6 @@
         </image>
        </fillimage>
       </property>
-      -->
       <property name="insets" value="3px"/>
      </properties>
     </layoutdata>

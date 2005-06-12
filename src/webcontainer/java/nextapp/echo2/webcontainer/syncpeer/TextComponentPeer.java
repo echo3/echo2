@@ -118,7 +118,8 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
                 (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT));
         if (backgroundImage != null) {
-            FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, backgroundImage, true);
+            FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, backgroundImage, 
+                    FillImageRender.FLAG_DISABLE_FIXED_MODE);
         }
         InsetsRender.renderToStyle(cssStyle, "padding", (Insets) textComponent.getRenderProperty(TextComponent.PROPERTY_INSETS));
         if (width != null) {

@@ -137,7 +137,6 @@ public class PropertyLoader {
                 } catch (NumberFormatException ex) {
                     throw new ComponentXmlException("Index not set.", ex);
                 }
-                
             } else {
                 propertyStyle.setProperty(propertyName, propertyValue);
             }

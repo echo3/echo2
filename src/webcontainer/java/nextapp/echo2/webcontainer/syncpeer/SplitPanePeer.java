@@ -532,7 +532,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             if (splitPaneLayoutData.getBackgroundImage() != null) {
                 FillImageRender.renderToStyle(paneDivCssStyle, rc, this, paneComponent, 
                         paneNumber == 0 ? IMAGE_ID_PANE_0_BACKGROUND : IMAGE_ID_PANE_1_BACKGROUND, 
-                        splitPaneLayoutData.getBackgroundImage(), false);
+                        splitPaneLayoutData.getBackgroundImage(), 0);
             }
             switch (splitPaneLayoutData.getOverflow()) {
             case SplitPaneLayoutData.OVERFLOW_AUTO:
@@ -588,7 +588,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         
         if (isOrientationVertical(splitPane)) {
             FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_VERTICAL_SEPARATOR, 
-                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE), false);
+                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE), 0);
             if (fixedPaneNumber == 0) {
                 separatorDivCssStyle.setAttribute("top", separatorPosition + "px");
             } else {
@@ -606,7 +606,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             }
         } else {
             FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_HORIZONTAL_SEPARATOR, 
-                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_HORIZONTAL_SEPARATOR_IMAGE), false);
+                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_HORIZONTAL_SEPARATOR_IMAGE), 0);
             if (fixedPaneNumber == 0) {
                 separatorDivCssStyle.setAttribute("left", separatorPosition + "px");
             } else {

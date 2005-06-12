@@ -323,7 +323,8 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             FontRender.renderToStyle(rolloverCssStyle, 
                     (Font) table.getRenderProperty(Table.PROPERTY_ROLLOVER_FONT));
             FillImageRender.renderToStyle(rolloverCssStyle, rc, this, table, IMAGE_ID_ROLLOVER_BACKGROUND,
-                    (FillImage) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
+                    (FillImage) table.getRenderProperty(Table.PROPERTY_ROLLOVER_BACKGROUND_IMAGE),
+                    FillImageRender.FLAG_DISABLE_FIXED_MODE);
             if (rolloverCssStyle.hasAttributes()) {
                 rolloverStyle = rolloverCssStyle.renderInline();
             }
@@ -338,7 +339,8 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             FontRender.renderToStyle(selectionCssStyle, 
                     (Font) table.getRenderProperty(Table.PROPERTY_SELECTION_FONT));
             FillImageRender.renderToStyle(selectionCssStyle, rc, this, table, IMAGE_ID_SELECTION_BACKGROUND,
-                    (FillImage) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND_IMAGE), true);
+                    (FillImage) table.getRenderProperty(Table.PROPERTY_SELECTION_BACKGROUND_IMAGE), 
+                    FillImageRender.FLAG_DISABLE_FIXED_MODE);
             if (selectionCssStyle.hasAttributes()) {
                 selectionStyle = selectionCssStyle.renderInline();
             }

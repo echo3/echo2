@@ -325,7 +325,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));
         InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
         FontRender.renderToStyle(cssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
-        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, true);
+        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, 
+                FillImageRender.FLAG_DISABLE_FIXED_MODE);
         
         divElement.setAttribute("style", cssStyle.renderInline());
         parentNode.appendChild(divElement);
@@ -581,7 +582,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND), true);
             FontRender.renderToStyle(defaultCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
             FillImageRender.renderToStyle(defaultCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
-                    (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), true);
+                    (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), 
+                    FillImageRender.FLAG_DISABLE_FIXED_MODE);
             defaultStyle = defaultCssStyle.renderInline();
 
             if (hasIcon) {
@@ -599,7 +601,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                         (Font) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_FONT));
                 if (backgroundImage != null) {
                     FillImageRender.renderToStyle(rolloverCssStyle, rc, this, button, IMAGE_ID_ROLLOVER_BACKGROUND,
-                            (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), true);
+                            (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_ROLLOVER_BACKGROUND_IMAGE), 
+                            FillImageRender.FLAG_DISABLE_FIXED_MODE);
                 }
                 if (rolloverCssStyle.hasAttributes()) {
                     rolloverStyle = rolloverCssStyle.renderInline();
@@ -623,7 +626,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                         (Font) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_FONT));
                 if (backgroundImage != null) {
                     FillImageRender.renderToStyle(pressedCssStyle, rc, this, button, IMAGE_ID_PRESSED_BACKGROUND,
-                            (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND_IMAGE), true);
+                            (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_PRESSED_BACKGROUND_IMAGE), 
+                            FillImageRender.FLAG_DISABLE_FIXED_MODE);
                 }
                 if (pressedCssStyle.hasAttributes()) {
                     pressedStyle = pressedCssStyle.renderInline();

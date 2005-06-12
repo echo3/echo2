@@ -78,6 +78,15 @@ import nextapp.echo2.webrender.util.DomUtil;
 public class WindowPanePeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
+    /**
+     * A boolean property which may be assigned to <code>WindowPane</code>s
+     * in order to enable the proprietary Internet Explorer transparent PNG
+     * alpha renderer for rendering the <code>border</code> property of the
+     * window pane.
+     */
+    public static final String PROPERTY_IE_ALPHA_RENDER_BORDER
+            = "nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder";
+    
     private static final Insets DEFAULT_CONTENT_INSETS = new Insets(3);
     private static final FillImageBorder DEFAULT_BORDER 
             = new FillImageBorder(new Color(0x00007f), new Insets(20), DEFAULT_CONTENT_INSETS);
@@ -244,6 +253,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
         int borderVerticalPixels = borderTopPixels + borderBottomPixels;
         int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
+        
+        int fillImageRenderFlags = ((Boolean) windowPane.getRenderProperty(PROPERTY_IE_ALPHA_RENDER_BORDER, 
+                Boolean.FALSE)).booleanValue() ? FillImageRender.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
 
         // Top Left Corner
         Element borderDivElement = document.createElement("div");
@@ -259,7 +271,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "nw-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP_LEFT, border
-                .getFillImage(FillImageBorder.TOP_LEFT), false);
+                .getFillImage(FillImageBorder.TOP_LEFT), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -282,7 +294,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "n-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP, border
-                .getFillImage(FillImageBorder.TOP), false);
+                .getFillImage(FillImageBorder.TOP), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -300,7 +312,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "ne-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP_RIGHT, border
-                .getFillImage(FillImageBorder.TOP_RIGHT), false);
+                .getFillImage(FillImageBorder.TOP_RIGHT), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -324,7 +336,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "w-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_LEFT, border
-                .getFillImage(FillImageBorder.LEFT), false);
+                .getFillImage(FillImageBorder.LEFT), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -348,7 +360,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "e-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_RIGHT, border
-                .getFillImage(FillImageBorder.RIGHT), false);
+                .getFillImage(FillImageBorder.RIGHT), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -366,7 +378,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "sw-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM_LEFT, border
-                .getFillImage(FillImageBorder.BOTTOM_LEFT), false);
+                .getFillImage(FillImageBorder.BOTTOM_LEFT), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -390,7 +402,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "s-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM, border
-                .getFillImage(FillImageBorder.BOTTOM), false);
+                .getFillImage(FillImageBorder.BOTTOM), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
 
@@ -408,7 +420,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             borderCssStyle.setAttribute("cursor", "se-resize");
         }
         FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM_RIGHT, border
-                .getFillImage(FillImageBorder.BOTTOM_RIGHT), false);
+                .getFillImage(FillImageBorder.BOTTOM_RIGHT), fillImageRenderFlags);
         borderDivElement.setAttribute("style", borderCssStyle.renderInline());
         windowDivElement.appendChild(borderDivElement);
     }
@@ -546,7 +558,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 Color.WHITE), (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
         FontRender.renderToStyle(outerTitleDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
         FillImageRender.renderToStyle(outerTitleDivCssStyle, rc, this, component, IMAGE_ID_TITLE_BACKGROUND,
-                (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE), false);
+                (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE), 0);
         outerTitleDivCssStyle.setAttribute("position", "absolute");
         outerTitleDivCssStyle.setAttribute("top", "0px");
         outerTitleDivCssStyle.setAttribute("height", titleHeightPixels + "px");
