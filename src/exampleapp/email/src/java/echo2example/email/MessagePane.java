@@ -45,14 +45,22 @@ import javax.mail.Multipart;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.layout.ColumnLayoutData;
 
 /**
  * A <code>Component</code> which displays a single <code>Message</code>.
  */
 public class MessagePane extends Column {
+    
+    private static final ColumnLayoutData SPACER_COLUMN_LAYOUT_DATA;
+    static {
+        SPACER_COLUMN_LAYOUT_DATA = new ColumnLayoutData();
+        SPACER_COLUMN_LAYOUT_DATA.setHeight(new Extent(15));
+    }
     
     private Label toFieldPromptLabel;
     private Label toFieldValueLabel;
@@ -106,6 +114,7 @@ public class MessagePane extends Column {
         headerGrid.add(subjectFieldValueLabel);
         
         messageColumn = new Column();
+        messageColumn.setFont(new Font(Font.MONOSPACE, Font.PLAIN, null));
         add(messageColumn);
     }
 
@@ -189,7 +198,11 @@ public class MessagePane extends Column {
         char ch = ci.next();
         while (ch != CharacterIterator.DONE) {
             if (ch == '\n' || ch == '\r') {
-                Label label = new Label(out.toString());
+                String labelText = out.toString();
+                Label label = new Label(labelText);
+                if (labelText.trim().length() == 0) {
+                    label.setLayoutData(SPACER_COLUMN_LAYOUT_DATA);
+                }
                 componentList.add(label);
                 out = new StringBuffer();
             } else {
