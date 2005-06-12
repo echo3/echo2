@@ -172,45 +172,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
     
     /**
-     * Determines the selected state icon of the specified
-     * <code>ToggleButton</code>.
-     * 
-     * @param toggleButton the <code>ToggleButton</code>
-     * @return the selected state icon
-     */
-    private ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
-        ImageReference selectedStateIcon 
-                = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_SELECTED_STATE_ICON);
-        if (selectedStateIcon == null) {
-            if (toggleButton instanceof CheckBox) {
-                selectedStateIcon = DEFAULT_SELECTED_CHECKBOX_ICON;
-            } else if (toggleButton instanceof RadioButton) {
-                selectedStateIcon = DEFAULT_SELECTED_RADIOBUTTON_ICON;
-            }
-        }
-        return selectedStateIcon;
-    }
-    
-    /**
-     * Determines the default (non-selected) state icon of the specified
-     * <code>ToggleButton</code>.
-     * 
-     * @param toggleButton the <code>ToggleButton</code>
-     * @return the state icon
-     */
-    private ImageReference getStateIcon(ToggleButton toggleButton) {
-        ImageReference stateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_STATE_ICON);
-        if (stateIcon == null) {
-            if (toggleButton instanceof CheckBox) {
-                stateIcon = DEFAULT_CHECKBOX_ICON;
-            } else if (toggleButton instanceof RadioButton) {
-                stateIcon = DEFAULT_RADIOBUTTON_ICON;
-            }
-        }
-        return stateIcon;
-    }
-    
-    /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
@@ -261,6 +222,45 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
     }
 
+    /**
+     * Determines the selected state icon of the specified
+     * <code>ToggleButton</code>.
+     * 
+     * @param toggleButton the <code>ToggleButton</code>
+     * @return the selected state icon
+     */
+    private ImageReference getSelectedStateIcon(ToggleButton toggleButton) {
+        ImageReference selectedStateIcon 
+                = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_SELECTED_STATE_ICON);
+        if (selectedStateIcon == null) {
+            if (toggleButton instanceof CheckBox) {
+                selectedStateIcon = DEFAULT_SELECTED_CHECKBOX_ICON;
+            } else if (toggleButton instanceof RadioButton) {
+                selectedStateIcon = DEFAULT_SELECTED_RADIOBUTTON_ICON;
+            }
+        }
+        return selectedStateIcon;
+    }
+    
+    /**
+     * Determines the default (non-selected) state icon of the specified
+     * <code>ToggleButton</code>.
+     * 
+     * @param toggleButton the <code>ToggleButton</code>
+     * @return the state icon
+     */
+    private ImageReference getStateIcon(ToggleButton toggleButton) {
+        ImageReference stateIcon = (ImageReference) toggleButton.getRenderProperty(ToggleButton.PROPERTY_STATE_ICON);
+        if (stateIcon == null) {
+            if (toggleButton instanceof CheckBox) {
+                stateIcon = DEFAULT_CHECKBOX_ICON;
+            } else if (toggleButton instanceof RadioButton) {
+                stateIcon = DEFAULT_RADIOBUTTON_ICON;
+            }
+        }
+        return stateIcon;
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.ActionProcessor#processAction(nextapp.echo2.webcontainer.ContainerInstance, 
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)

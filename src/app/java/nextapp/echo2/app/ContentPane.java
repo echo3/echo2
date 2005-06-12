@@ -31,9 +31,28 @@ package nextapp.echo2.app;
 
 /**
  * A content pane is a high-level container/layout object which provides
- * layout for a content region, floating <code>WindowPane</code>s.
+ * layout for a content region and floating <code>WindowPane</code>s.
  */
 public class ContentPane 
 extends Component {
     
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
+    
+    /**
+     * Returns the background image.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Sets the background image.
+     * 
+     * @param newValue the new background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
+    }
 }

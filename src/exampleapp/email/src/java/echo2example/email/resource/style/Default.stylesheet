@@ -75,13 +75,17 @@
  </style>
  <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
   <properties>
+   <property name="backgroundImage">
+    <fillimage repeat="none">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resourceimagereference resource="/echo2example/email/resource/image/LoginBackground.png"/>
+     </image>
+    </fillimage>
+   </property>
   </properties>  
  </style>
  <style name="LoginScreen.LayoutGrid" type="nextapp.echo2.app.Grid">
   <properties>
-   <property name="border">
-    <border color="#00005f" size="2px" style="groove"/>
-   </property>
    <property name="insets" value="5px"/>
    <property name="size" value="2"/>
   </properties>  
@@ -91,7 +95,9 @@
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.GridCellLayoutData">
      <properties>
-      <property name="background" value="#afafef"/>
+      <property name="alignment">
+       <alignment horizontal="right"/>
+      </property>
      </properties>
     </layoutdata>
    </property>
@@ -103,7 +109,6 @@
     <layoutdata type="nextapp.echo2.app.layout.GridCellLayoutData">
      <properties>
       <property name="columnSpan" value="2"/>
-      <property name="background" value="#afafff"/>
      </properties>
     </layoutdata>
    </property>
@@ -115,7 +120,6 @@
     <layoutdata type="nextapp.echo2.app.layout.GridCellLayoutData">
      <properties>
       <property name="columnSpan" value="2"/>
-      <property name="background" value="#afafff"/>
      </properties>
     </layoutdata>
    </property>

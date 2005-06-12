@@ -46,6 +46,9 @@ public class LoginScreen extends ContentPane {
     private TextField emailAddressField;
     private PasswordField passwordField;
     
+    /**
+     * Creates a new <code>LoginScreen</cdoe>.
+     */
     public LoginScreen() {
         super();
         setStyleName("LoginScreen.ContentPane");
@@ -80,7 +83,7 @@ public class LoginScreen extends ContentPane {
         button.setStyleName("LoginScreen.Continue");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doLogin();
+                processLogin();
             }
         });
         layoutGrid.add(button);
@@ -91,7 +94,10 @@ public class LoginScreen extends ContentPane {
         }
     }
     
-    private void doLogin() {
+    /**
+     * Processes a user log-in request.
+     */
+    private void processLogin() {
         if (!EmailApp.getApp().connect(emailAddressField.getText(), passwordField.getText())) {
             MessageDialog messageDialog = new MessageDialog(Messages.getString("LoginScreen.InvalidLogin.Title"),
                     Messages.getString("LoginScreen.InvalidLogin.Message"), MessageDialog.TYPE_ERROR, MessageDialog.CONTROLS_OK);

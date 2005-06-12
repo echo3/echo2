@@ -37,14 +37,19 @@ import org.w3c.dom.Node;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
+import nextapp.echo2.app.ImageReference;
+import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
@@ -56,8 +61,10 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  * Echo framework.
  */
 public class ContentPanePeer 
-implements DomUpdateSupport, ComponentSynchronizePeer {
+implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     
+    private static final String IMAGE_ID_BACKGROUND = "background";
+
     /**
      * Default constructor.
      */
@@ -74,6 +81,23 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         return parentId + "_container_" + ContainerInstance.getElementId(child);
     }
     
+    /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage 
+                    = (FillImage) component.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
+            if (backgroundImage == null) {
+                return null;
+            } else {
+                return backgroundImage.getImage();
+            }
+        } else {
+            return null;
+        }
+    }
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
@@ -167,6 +191,8 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
         ColorRender.renderToStyle(cssStyle, (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_FOREGROUND),
                 (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) contentPane.getRenderProperty(ContentPane.PROPERTY_FONT));
+        FillImageRender.renderToStyle(cssStyle, rc, this, contentPane, IMAGE_ID_BACKGROUND, 
+                (FillImage) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND_IMAGE), false);
         divElement.setAttribute("style", cssStyle.renderInline());
         
         parentNode.appendChild(divElement);
