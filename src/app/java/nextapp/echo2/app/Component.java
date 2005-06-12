@@ -39,19 +39,56 @@ import java.util.Locale;
 
 import nextapp.echo2.app.event.EventListenerList;
 
-//BUGBUG. Add documentation to discuss local style/shared style/application style relationship.
-//BUGBUG. Add good documentation to getProperty/setProperty/getPropertyRender
-//BUGBUG. Component ids are now being assigned on registration...
-//  While this guarantees a component has a unique identifier within the application,
-//  it does not permit components to be placed into a pool and reused by multiple applications
-//  (the first app would assign an id, later apps would retain the old app's id, which is not
-//  guaranteed to be unique in the app.
-// Solution idea 1: hold weakref to application....if it's ever null, reset id.
-// Solution idea 2: provide lifecycle method which must be called when adding component to application.
+//BUGBUG. Add general documentation for how models work.
+//BUGBUG. Add general documentation for how event/listeners work.
 
 /**
- * A representation of an Echo component.
- * This is an abstact base class from which all Echo components are derived.
+ * A representation of an Echo component. This is an abstact base class from
+ * which all Echo components are derived.
+ * <p>
+ * A hierarchy of <code>Component</code> objects is used to represent the
+ * state of an application's user interface. A <code>Component</code> may have
+ * a single parent <code>Component</code> and may contain zero or more child
+ * <code>Component</code>s. Certain <code>Component</code> s may limit the
+ * number or type(s) of children which may be added to them, and may even
+ * establish requirements for what type(s) of parent <code>Component</code> s
+ * they may be added to. In the event that an application attempts to add a
+ * child <code>Component</code> to a parent <code>Component</code> in spite
+ * of these requirements, an <code>IllegalChildException</code> is thrown.
+ * <p>
+ * The state of a single <code>Component</code> is represented by its
+ * properties. Properties can be categorized into two types: "style" and
+ * "non-style". Style properties are generally used to represent the
+ * "look-and-feel" of a Component--information such as colors, fonts, location,
+ * and borders. "Non-style" properties are generally used to represent
+ * non-stylistic information such as data models, seleciton models, and locale.
+ * <p>
+ * "Style Properties" have a special definition because they may be stored in
+ * <code>Style</code> or <code>StyleSheet</code> objects instead of within
+ * each component. Property values contained in a relevant <code>Style</code>
+ * or <code>StyleSheet</code> will be used for rendering when the property
+ * values are not specified by a <code>Component</code> itself. Style
+ * properties are identified by the presence of a public static constant name in
+ * a <code>Component</code> implementation with the prefix
+ * <code>PROPERTY_</code>. In the base <code>Component</code> class itself
+ * there are several examples of style properties, such as
+ * <code>PROPERTY_BACKGROUND</code>,<code>PROPERTY_FONT</code> and
+ * <code>PROPERTY_LAYOUT_DATA</code>. The rendering application container
+ * will use the <code>Component.getRenderProperty()</code> and
+ * <code>Component.getRenderIndexedProperty()</code> to retrieve the values of
+ * stylistic properties, in order that that their values might be obtained from
+ * the a <code>Compoennt</code>'s shared <code>Style</code> or the
+ * <code>ApplicationInstance</code>'s<code>StyleSheet</code> in the event
+ * they are not directly set in the <code>Component</code>.
+ * <p>
+ * A <code>Component</code> implementation should not store the values of
+ * style properties as instance variables. Rather, the values of style
+ * properties should be stored in the local <code>Style</code> instance, by
+ * way of the <code>setProperty()</code> method. The
+ * <code>getProperty()</code> method may be used to obtain the value of such
+ * properties. Only style properties should be stored using these methods;
+ * properties such as models should never be stored using the
+ * <code>getProperty()</code>/<code>setProperty()</code> interface.
  */
 public abstract class Component 
 implements RenderIdSupport, Serializable {
@@ -80,22 +117,37 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Boolean flags for this component, including enabled state, visibility, 
-     * and registration.  Multiple booleans are wrapped in a single integer
+     * focus traversal participation, and focus traversal index.
+     * Multiple booleans are wrapped in a single integer
      * to save memory, since many <code>Component</code>instances will be 
      * created.
      */
     private int flags;
     
-    /** A collection of references to child components. */
+    /** 
+     * An ordered collection of references to child components.
+     * This object is lazily instantiated. 
+     */
     private List children;
     
-    /** A  user-defined identifier for this component. */
+    /** 
+     * A  user-defined identifier for this component.
+     * This identifier is not related in any way to <code>renderId</code>. 
+     */
     private String id;
     
-    /** A application-wide unique identifier for this component. */
+    /** 
+     * A application-wide unique identifier for this component. 
+     * This identifier is not related in any way to <code>id</code>. 
+     */
     private String renderId;
 
-    /** The locale of the component. */
+    /** 
+     * The locale of the component.
+     * This property is generally unset, as locale information is normally
+     * inherited from the <code>ApplicationInstance</code> or from an ancestor
+     * <code>Component</code> in the hierarchy. 
+     */
     private Locale locale;
     
     /** Listener storage. */
@@ -107,10 +159,13 @@ implements RenderIdSupport, Serializable {
     /** The <code>ApplicationInstance</code> to which the component is registered. */
     private ApplicationInstance applicationInstance;
     
-    /** The parent of the component. */
+    /** The parent component. */
     private Component parent;
     
-    /** The propery change event dispatcher. */
+    /** 
+     * The propery change event dispatcher.
+     * This object is lazily instantiated. 
+     */
     private PropertyChangeSupport propertyChangeSupport;
     
     /** Shared style. */
@@ -126,52 +181,56 @@ implements RenderIdSupport, Serializable {
         super();
         flags = FLAG_ENABLED | FLAG_VISIBLE | FLAG_FOCUS_TRAVERSAL_PARTICIPANT;
         listenerList = new EventListenerList();
-        propertyChangeSupport = null;
         localStyle = new MutableStyle();
     }
     
     /**
-     * Adds the specified Component at the end of this Component's children.
+     * Adds the specified <code>Component</code> as a child of this 
+     * <code>Component</code>.  The child will be added at the greatest
+     * index.
      *
-     * @param c The child component to add.
+     * @param c the child <code>Component</code> to add
      */ 
     public void add(Component c) {
         add(c, -1);
     }
 
     /**
-     * Adds the specified Component as the nth child
-     * All component add operations use this method to add components.
-     * Components that require notification of all child additions should 
-     * override this method (making sure to call the superclass' 
+     * Adds the specified <code>Component</code> as the <code>n</code>th 
+     * child of this component.
+     * All component-add operations use this method to add components.
+     * <code>Component</code>s that require notification of all child additions
+     * should override this method (making sure to call the superclass' 
      * implementation).
      *
      * @param c the child component to add
      * @param n the index at which to add the child component, or -1 to add the
      *          component at the end
      * @throws IllegalChildException if the child is not allowed to be added
-     *         to this component, either because it is not valid for the 
-     *         component's state or is of an invalid type.
+     *         to this component, because it is either not valid for the 
+     *         component's state or is of an invalid type
      */
     public void add(Component c, int n) 
     throws IllegalChildException {
         
+        // Ensure child is acceptable to this component.
         if (!isValidChild(c)) {
             throw new IllegalChildException(this, c);
         }
         
+        // Ensure child component finds this component acceptable as a parent.
         if (!c.isValidParent(this)) {
             throw new IllegalChildException(this, c);
         }
 
+        // Remove child from it's current parent if required.
+        if (c.parent != null) {
+            c.parent.remove(c);
+        }
+        
         // Flag child as registered.
         if (applicationInstance != null) {
             c.setApplicationInstance(applicationInstance);
-        }
-        
-        if (c.parent != null) {
-            // Request component's current parent remove component.
-            c.parent.remove(c);
         }
         
         // Lazy-create child collection if necessary.
@@ -214,27 +273,33 @@ implements RenderIdSupport, Serializable {
     public void dispose() { }
     
     /**
-     * Reports a bound property change.
+     * Reports a bound property change to <code>PropertyChangeListener</code>s
+     * and to the <code>ApplicationInstance</code>'s update management system.
      *
      * @param propertyName the name of the changed property
      * @param oldValue the previous value of the property
      * @param newValue the present value of the property
      */
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        // Report to PropertyChangeListeners.
         if (propertyChangeSupport != null) {
-            // Report to property change listeners.
             propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
         }
         
-        // Report to application.
+        // Report to ApplicationInstance.
+        // The ApplicationInstance is notified directly in order to reduce
+        // per-Component-instance memory requirements, i.e., it enables the 
+        // PropertyChangeSupport object to only be instantiated on Components 
+        // that have ProperyChangeListeners registered by a third party.
         if (applicationInstance != null) {
             applicationInstance.notifyComponentPropertyChange(this, propertyName, oldValue, newValue);
         }
     }
     
     /**
-     * Returns the <code>ApplicationInstance</code> to which this component 
-     * is registered.
+     * Returns the <code>ApplicationInstance</code> to which this 
+     * <code>Component</code> is registered, or null if it is not currently 
+     * registered.
      * 
      * @return the application instance
      */
@@ -243,19 +308,22 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the background color of the component.
+     * Returns the default/base background color of the <code>Component</code>.
+     * This property may not be relevant to certain components, though
+     * even in such cases may be useful for setting a default for
+     * children.
      *
-     * @return the background color of the component
+     * @return the background color
      */
     public Color getBackground() {
         return (Color) localStyle.getProperty(PROPERTY_BACKGROUND);
     }
     
     /**
-     * Gets the nth immediate child component.
+     * Returns the <code>n</code>th immediate child component.
      *
-     * @param n the index of the component to retrieve
-     * @return the component at index n
+     * @param n the index of the <code>Component</code> to retrieve
+     * @return the <code>Component</code> at index <code>n</code>
      * @throws IndexOutOfBoundsException when the index is invalid
      */
     public Component getComponent(int n) {
@@ -266,12 +334,16 @@ implements RenderIdSupport, Serializable {
         return (Component) children.get(n);
     }
     
+    //BUGBUG. needs test.
     /**
      * Recursively searches for the component with the specified id
      * by querying this component and its descendants.
+     * The id value is that retrieved and set via the <code>getId()</code>
+     * and <code>setId()</code> methods.  This method is in no way
+     * related to <code>renderId</code>s.
      * 
-     * @param id the id of the component to be retrieved
-     * @return the component with the specified id if it either is this
+     * @param id the user-defined id of the component to be retrieved
+     * @return the component with the specified id, if it either is this
      *         component or is a descendant of it, or null otherwise
      */
     public Component getComponent(String id) {
@@ -293,9 +365,9 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the number of immediate child components.
+     * Returns the number of immediate child <code>Component</code>s.
      *
-     * @return the number of immediate child components
+     * @return the number of immediate child <code>Component</code>s
      */
     public int getComponentCount() {
         if (children == null) {
@@ -306,9 +378,9 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns an array of all immediate child components.
+     * Returns an array of all immediate child <code>Component</code>s.
      *
-     * @return an array of all immediate child components
+     * @return an array of all immediate child <code>Component</code>s
      */
     public Component[] getComponents() {
         if (children == null) {
@@ -318,9 +390,11 @@ implements RenderIdSupport, Serializable {
         }
     }
     
+    //BUGBUG. potentially add hasEventListenerList() to avoid lazy-creation?
     /**
      * Returns the local <code>EventListenerList</code>.
-     * The listener list is lazily created.
+     * The listener list is lazily created; invoking this method will 
+     * create the <code>EventListenerList</code> if required.
      * 
      * @return the listener list
      */
@@ -332,25 +406,33 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the font of the component.
+     * Returns the default/base font of the component.
+     * This property may not be relevant to certain components, though
+     * even in such cases may be useful for setting a default for
+     * children.
      *
-     * @return the font of the component
+     * @return the font
      */
     public Font getFont() {
         return (Font) localStyle.getProperty(PROPERTY_FONT);
     }
     
     /**
-     * Returns the foreground color of the component.
+     * Returns the default/base foreground color of the <code>Component</code>.
+     * This property may not be relevant to certain components, though
+     * even in such cases may be useful for setting a default for 
+     * children.
      *
-     * @return the foreground color of the component
+     * @return the foreground color
      */
     public Color getForeground() {
         return (Color) localStyle.getProperty(PROPERTY_FOREGROUND);
     }
     
     /**
-     * Returns the user-defined identifier of the component.
+     * Returns the user-defined identifier of the <code>Component</code>.
+     * Note that the user defined identifier has no relation to the
+     * <code>renderId</code>.
      * 
      * @return the user-defined identifier
      */
@@ -360,20 +442,24 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Returns the <code>LayoutData</code> object used to describe how this
-     * component should be layed out within its parent container.
+     * <code>Component</code> should be layed out within its parent container.
      * 
      * @return the layout data, or null if unset
+     * @see LayoutData
      */
     public LayoutData getLayoutData() {
         return (LayoutData) localStyle.getProperty(PROPERTY_LAYOUT_DATA);
     }
     
     /**
-     * Returns the locale of the component.  If the component does not have a
-     * locale, its ancestors will be queried for a locale.  If no ancestors
-     * have locales set, the application instance's locale will be returned.
-     * If the component is not registered, the active application instance's
-     * will be returned.
+     * Returns the <code>Locale</code> of the <code>Component</code>.  If this 
+     * <code>Component</code> does not itself specify a locale, its ancestors 
+     * will be queried recursively until a <code>Component</code> providing
+     * a <code>Locale</code> is found.  If no ancestors have 
+     * <code>Locale</code>s set, the <code>ApplicationInstance</code>'s locale 
+     * will be returned. In the event that no locale information is 
+     * available from the ancestral hierarchy of <code>Component</code>s and no 
+     * <code>ApplicationInstance</code> is registered, null is returned.
      *
      * @return the locale for this component
      */
@@ -403,60 +489,93 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the state of the specified property.
+     * Returns the value of the specified property.
+     * This method is generally used only internally by a 
+     * <code>Component</code>, however there are exceptions.
+     * The more specific <code>getXXX()</code> methods to retrieve 
+     * property values from a <code>Component</code> whenever
+     * possible.
+     * See the class-level documentation for a more detailed 
+     * explanation of the use of this method.
      * 
-     * @param propertyName the name of the proeprty
-     * @return the state of the specified property
+     * @param propertyName the property name
+     * @return the property value
      */
     public Object getProperty(String propertyName) {
         return localStyle.getProperty(propertyName);
     }
     
     /**
-     * Returns the state of the specified indexed property
+     * Returns the value of the specified indexed property.
+     * This method is generally used only internally by a 
+     * <code>Component</code>, however there are exceptions.
+     * The more specific <code>getXXX()</code> methods to retrieve 
+     * property values from a <code>Component</code> whenever
+     * possible.
+     * See the class-level documentation for a more detailed 
+     * explanation of the use of this method.
      * 
-     * @param propertyName the name of the property
-     * @param propertyIndex the index of the property
-     * @return the state of the specified indexed property
+     * @param propertyName the property name
+     * @param propertyIndex the property index
+     * @return the property value
      */
     public Object getIndexedProperty(String propertyName, int propertyIndex) {
         return localStyle.getIndexedProperty(propertyName, propertyIndex);
     }
 
     /**
-     * Returns the application-wide unique id of this component.
-     * This id is only guaranteed to be unique within the application
-     * to which this component is registered.  This method returns
-     * null in the event that the component is not registered to an
-     * application.
+     * Returns the render id of this component.  
+     * This id is only guaranteed to be unique within 
+     * the <code>ApplicationInstance</code> to which this component is 
+     * registered.  This method returns null in the event that the 
+     * component is not registered to an <code>ApplicationInstance</code>.
      * 
-     * @return the application-wide unique id of this component
+     * @return the <code>ApplicationInstance</code>-wide unique id of this 
+     *         component
      * @see nextapp.echo2.app.RenderIdSupport#getRenderId()
      */
     public String getRenderId() {
         return renderId;
     }
     
+    //BUGBUG. need to work out null state on all these getRenderXXX methods.
+    //  probably want to make null = no value instead of allowing null to be set.
     /**
-     * Determines the &quot;rendered state&quot; of a property by querying
-     * the state of a property in both local and shared <code>Style</code>
-     * information.  An application container should invoke this method
+     * Determines the &quot;rendered state&quot; of a property.
+     * The rendered state is destermined by first determining if the given
+     * property is locally set on this <code>Component</code>, and returning
+     * it in that case.  If the property state is not set locally, the 
+     * shared <code>Style</code> assigned to this component will be queried
+     * for the property value.  If the property state is not set in the
+     * shared <code>Style</code>, the <code>StyleSheet</code> of the
+     * <code>ApplicationInstance</code> to which this <code>Component</code>
+     * is registered will be queried for the property value.
+     * In the event the property is not set in any of these resources,
+     * null is returned.
+     * <p>
+     * The application container will invoke this method
      * rather than individual property getter methods to determine the state
      * of properties when rendering.
      * 
      * @param propertyName the name of the property
-     * @return the property state
+     * @return the rendered property value
      */
     public Object getRenderProperty(String propertyName) {
         return getRenderProperty(propertyName, null);
     }
         
     /**
-     * Determines the &quot;rendered state&quot; of a property by querying
-     * the state of a property in both local and shared <code>Style</code>
-     * information.  An application container should invoke this method
-     * rather than individual property getter methods to determine the state
-     * of properties when rendering.
+     * Determines the &quot;rendered state&quot; of a property.
+     * The rendered state is destermined by first determining if the given
+     * property is locally set on this <code>Component</code>, and returning
+     * it in that case.  If the property state is not set locally, the 
+     * shared <code>Style</code> assigned to this component will be queried
+     * for the property value.  If the property state is not set in the
+     * shared <code>Style</code>, the <code>StyleSheet</code> of the
+     * <code>ApplicationInstance</code> to which this <code>Component</code>
+     * is registered will be queried for the property value.
+     * In the event the property is not set in any of these resources,
+     * <code>defaultValue</code> is returned.
      * 
      * @param propertyName the name of the property
      * @param defaultValue the value to be returned if the property is not set
@@ -482,29 +601,43 @@ implements RenderIdSupport, Serializable {
     }
 
     /**
-     * Determines the &quot;rendered state&quot; of an indexed property by 
-     * querying the state of a property in both local and shared 
-     * <code>Style</code> information.  An application container should invoke 
-     * this method rather than individual property getter methods to determine 
-     * the state of indexed properties when rendering.
+     * Determines the &quot;rendered state&quot; of an indexed property.
+     * The rendered state is destermined by first determining if the given
+     * property is locally set on this <code>Component</code>, and returning
+     * it in that case.  If the property state is not set locally, the 
+     * shared <code>Style</code> assigned to this component will be queried
+     * for the property value.  If the property state is not set in the
+     * shared <code>Style</code>, the <code>StyleSheet</code> of the
+     * <code>ApplicationInstance</code> to which this <code>Component</code>
+     * is registered will be queried for the property value.
+     * In the event the property is not set in any of these resources,
+     * null is returned.
+     * <p>
+     * The application container will invoke this method
+     * rather than individual property getter methods to determine the state
+     * of properties when rendering.
      * 
      * @param propertyName the name of the property
-     * @param propertyIndex the index of the property
-     * @return the property state
-     */ 
+     * @return the rendered property value
+     */
     public Object getRenderIndexedProperty(String propertyName, int propertyIndex) {
         return getRenderIndexedProperty(propertyName, propertyIndex, null);
     }
     
     /**
-     * Determines the &quot;rendered state&quot; of an indexed property by 
-     * querying the state of a property in both local and shared 
-     * <code>Style</code> information.  An application container should invoke 
-     * this method rather than individual property getter methods to determine 
-     * the state of indexed properties when rendering.
+     * Determines the &quot;rendered state&quot; of an indexed property.
+     * The rendered state is destermined by first determining if the given
+     * property is locally set on this <code>Component</code>, and returning
+     * it in that case.  If the property state is not set locally, the 
+     * shared <code>Style</code> assigned to this component will be queried
+     * for the property value.  If the property state is not set in the
+     * shared <code>Style</code>, the <code>StyleSheet</code> of the
+     * <code>ApplicationInstance</code> to which this <code>Component</code>
+     * is registered will be queried for the property value.
+     * In the event the property is not set in any of these resources,
+     * <code>defaultValue</code> is returned.
      * 
      * @param propertyName the name of the property
-     * @param propertyIndex the index of the property
      * @param defaultValue the value to be returned if the property is not set
      * @return the property state
      */ 
@@ -532,6 +665,9 @@ implements RenderIdSupport, Serializable {
      * <code>Component</code>.
      * As its name implies, the <strong>shared</strong> <code>Style</code> 
      * may be shared amongst multiple <code>Component</code>s.
+     * Style properties will be rendered from the specified <code>Style</code>
+     * when they are not specified locally in the <code>Component</code> 
+     * itself.
      * 
      * @return the shared <code>Style</code>
      */
@@ -540,8 +676,12 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the name of the style to use from the application-level
-     * style-sheets.
+     * Returns the name of the <code>Style</code> in the
+     * <code>ApplicationInstance</code>'s<code>StyleSheet</code> from
+     * which the renderer will retrieve properties. The renderer will only query
+     * the <code>StyleSheet</code> when properties are not specified directly
+     * by the <code>Component</code> or by the <code>Component</code>'s
+     * shared <code>Style</code>.
      * 
      * @return the style name
      */
@@ -551,18 +691,23 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Returns the focus traversal (tab) index of the component.
+     * Components with numerically lower indices will be focused before
+     * components with numerically higher indices.  The value 0 has special
+     * meaning, in that components with a value of 0 will be focused last.
+     * The default value is 0.
      * 
-     * @return the focus traversalindex
+     * @return the focus traversal index, a value between 0 and 32767
      */
     public int getFocusTraversalIndex() {
         return (flags & FLAGS_FOCUS_TRAVERSAL_INDEX) >> 16;
     }
     
     /**
-     * Gets the nth immediate visible child component.
+     * Returns the <code>n</code>th immediate <strong>visible</strong> 
+     * child <code>Component</code>.
      *
-     * @param n the index of the component to retrieve
-     * @return the component at index n
+     * @param n the index of the <code>Component</code> to retrieve
+     * @return the <code>Component</code> at index <code>n</code>
      * @throws IndexOutOfBoundsException when the index is invalid
      */
     public Component getVisibleComponent(int n) {
@@ -585,9 +730,11 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns an array of all immediate visible child components.
+     * Returns an array of all <strong>visible</strong> immediate child 
+     * <code>Component</code>s.
      *
-     * @return an array of all immediate visible child components
+     * @return an array of all <strong>visible</strong> immediate child 
+     *         <code>Component</code>s
      */
     public Component[] getVisibleComponents() {
         if (children == null) {
@@ -606,9 +753,11 @@ implements RenderIdSupport, Serializable {
     }
 
     /**
-     * Returns the number of immediate visible child components.
+     * Returns the number of <strong>visible</strong> immediate child 
+     * <code>Component</code>s.
      *
-     * @return the number of immediate visible child components
+     * @return the number of <strong>visible</strong> immediate child 
+     *         <code>Component</code>s
      */
     public int getVisibleComponentCount() {
         if (children == null) {
@@ -629,10 +778,10 @@ implements RenderIdSupport, Serializable {
     /**
      * Determines the index of the given <code>Component</code> within the 
      * children of this <code>Component</code>.  If the given 
-     * <code>Component</code> is not a child, returns -1.
+     * <code>Component</code> is not a child, <code>-1</code> is returned.
      * 
      * @param c the <code>Component</code> to analyze
-     * @return the index of the given <code>Component</code> amongst the 
+     * @return the index of the specified <code>Component</code> amongst the 
      *         children of this <code>Component</code>
      */
     public final int indexOf(Component c) {
@@ -663,26 +812,33 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Determines the enabled state of this <code>Component</code>.
+     * Disabled<code>Component</code>s are not eligible to receive user input.
+     * The application container may render disabled components with an altered
+     * appearance. 
      * 
      * @return true if the component is enabled
+     * @see #verifyInput(java.lang.String, java.lang.Object)
      */
     public boolean isEnabled() {
         return (flags & FLAG_ENABLED) != 0;
     }
     
     /**
-     * Determines if the component participates in (tab) focus traversal.
+     * Determines if the <code>Component</code> participates in (tab) focus 
+     * traversal.
      * 
-     * @return true if the component participates in focus traversal
+     * @return true if the <code>Component</code> participates in focus 
+     *         traversal
      */
     public boolean isFocusTraversalParticipant() {
         return (flags & FLAG_FOCUS_TRAVERSAL_PARTICIPANT) != 0;
     }
     
     /**
-     * Determines if the component and all of its parents are visible.
+     * Determines if the <code>Component</code> and all of its parents are
+     * visible.
      * 
-     * @return true if the component is recursively visible
+     * @return true if the <code>Component</code> is recursively visible
      */
     public boolean isRecursivelyVisible() {
         Component component = this;
@@ -696,40 +852,48 @@ implements RenderIdSupport, Serializable {
     }
 
     /**
-     * Returns true if the <code>Component</code> is registered to an application.
+     * Determines if the <code>Component</code> is registered to an 
+     * <code>ApplicationInstance</code>.
      * 
-     * @return true if the <code>Component</code> is registered to an application
+     * @return true if the <code>Component</code> is registered to an 
+     *         <code>ApplicationInstance</code>
      */
     public final boolean isRegistered() {
         return applicationInstance != null;
     }
     
     /**
-     * Determines if a given component is valid to be added as a child
-     * to this component.  Default implementation always returns true,
-     * may be overridden to provide specific behavior.
+     * Determines if a given <code>Component</code> is valid to be added as a
+     * child to this <code>Component</code>. Default implementation always
+     * returns true, may be overridden to provide specific behavior.
      * 
-     * @param component the component to evaluate as a child
-     * @return true if the component is a valid child
+     * @param child the <code>Component</code> to evaluate as a child
+     * @return true if the <code>Component</code> is a valid child
      */
-    public boolean isValidChild(Component component) {
+    public boolean isValidChild(Component child) {
         return true;
     }
     
     /**
-     * Determines if this component is valid to be added as a child
-     * of the given parent.  Default implementation always returns true,
-     * may be overridden to provide specific behavior.
+     * Determines if this <code>Component</code> is valid to be added as a
+     * child of the given parent <code>Component</code>. Default
+     * implementation always returns true, may be overridden to provide specific
+     * behavior.
      * 
-     * @param component the component to evaluate as a parent
-     * @return true if the component is a valid parent
+     * @param parent the <code>Component</code> to evaluate as a parent
+     * @return true if the <code>Component</code> is a valid parent
      */
-    public boolean isValidParent(Component component) {
+    public boolean isValidParent(Component parent) {
         return true;
     }
     
     /**
      * Returns the visibility state of this <code>Component</code>.
+     * Non-visible components will not be seen by the rendering application
+     * container, and will not be rendered in any fashion on the user 
+     * interface.  Rendering Application conatiners should ensure that no 
+     * information about the state of an invisible component is provided to 
+     * the user interface for security purposes. 
      *
      * @return the visibility state of this <code>Component</code>
      */
@@ -743,16 +907,18 @@ implements RenderIdSupport, Serializable {
      * 
      * @param inputName the name of the input
      * @param inputValue the value of the input
+     * @see nextapp.echo2.app.update.UpdateManager
      */
     public void processInput(String inputName, Object inputValue) { }
     
     /**
-     * Removes the specified child component.
-     * 
+     * Removes the specified child <code>Component</code> from this
+     * <code>Component</code>
+     * <p>
      * All <code>Component</code> remove operations use this method to 
      * remove <code>Component</code>s. <code>Component</code>s that require 
      * notification of all child removals should 
-     * override this method (making sure to call the superclass' 
+     * override this method (while ensuring to call the superclass' 
      * implementation).
      * 
      * @param c the child <code>Component</code> to remove
@@ -781,7 +947,7 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Removes the <code>Component</code> at the given index.
+     * Removes the <code>Component</code> at the <code>n</code>th index.
      *
      * @param n the index of the child <code>Component</code> to remove
      * @throws IndexOutOfBoundsException if the index is not valid
@@ -818,17 +984,17 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Sets the <code>ApplicationInstance</code> to which this component 
-     * is registered.
+     * Sets the <code>ApplicationInstance</code> to which this component is
+     * registered.
      * <p>
      * The <code>ApplicationInstance</code> to which a component is registered
      * may not be changed directly from one to another, i.e., if the component
-     * is registered to instance "A" and you attempt to set it to instance "B",
-     * an <code>IllegalStateException</code> will be thrown.  In order to change
-     * the instance to which a component is registered, the instance must first
-     * be set to null.
+     * is registered to instance "A" and an attempt is made to set it to
+     * instance "B", an <code>IllegalStateException</code> will be thrown. In
+     * order to change the instance to which a component is registered, the
+     * instance must first be set to null.
      * 
-     * @param newValue the new <code>ApplicationInstance</code>.
+     * @param newValue the new <code>ApplicationInstance</code>
      */
     void setApplicationInstance(ApplicationInstance newValue) {
         if (applicationInstance != null && newValue != null 
@@ -867,6 +1033,7 @@ implements RenderIdSupport, Serializable {
      * Sets the enabled state of the <code>Component</code>.
      * 
      * @param newValue the new state
+     * @see #isEnabled
      */
     public void setEnabled(boolean newValue) {
         boolean oldValue = (flags & FLAG_ENABLED) != 0;
@@ -909,6 +1076,7 @@ implements RenderIdSupport, Serializable {
      * when the component is registered or deregistered.
      * 
      * @param renderId the new identifier
+     * @see #getRenderId()
      */
     void setRenderId(String renderId) {
         this.renderId = renderId;
@@ -921,6 +1089,8 @@ implements RenderIdSupport, Serializable {
      * @param propertyName the name of the property
      * @param propertyIndex the index of the property
      * @param newValue the value of the property
+     * 
+     * @see #getIndexedProperty(java.lang.String, int)
      */
     public void setIndexedProperty(String propertyName, int propertyIndex, Object newValue) {
         localStyle.setIndexedProperty(propertyName, propertyIndex, newValue);
@@ -934,6 +1104,7 @@ implements RenderIdSupport, Serializable {
      * containing parent <code>Component</code>.
      * 
      * @param layoutData the new <code>LayoutData</code>
+     * @see LayoutData
      */
     public void setLayoutData(LayoutData layoutData) {
         setProperty(PROPERTY_LAYOUT_DATA, layoutData);
@@ -943,6 +1114,7 @@ implements RenderIdSupport, Serializable {
      * Sets the locale of the <code>Component</code>.
      *
      * @param newValue the new locale
+     * @see #getLocale()
      */
     public void setLocale(Locale newValue) {
         Locale oldValue = locale;
@@ -961,6 +1133,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @param propertyName the name of the property
      * @param newValue the value of the property
+     * @see #getProperty(java.lang.String)
      */
     public void setProperty(String propertyName, Object newValue) {
         Object oldValue = localStyle.getProperty(propertyName);
@@ -975,9 +1148,10 @@ implements RenderIdSupport, Serializable {
     /**
      * Sets the shared style of the <code>Component</code>.
      * Setting the shared style will have no impact on the local stylistic
-     * properties of the component.
+     * properties of the <code>Component</code>.
      * 
      * @param newValue the new shared style
+     * @see #getStyle()
      */
     public void setStyle(Style newValue) {
         Style oldValue = sharedStyle;
@@ -986,12 +1160,13 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Sets the name of the style to use from the application-level
-     * style-sheets.
+     * Sets the name of the style to use from the
+     * <code>ApplicationInstance</code>-defined <code>StyleSheet</code>.
      * Setting the style name wil have no impact on the local stylistic
-     * properties of the component.
+     * properties of the <code>Component</code>.
      * 
      * @param newValue the new style name
+     * @see #getStyleName
      */
     public void setStyleName(String newValue) {
         String oldValue = styleName;
@@ -1003,6 +1178,7 @@ implements RenderIdSupport, Serializable {
      * Sets the focus traversal (tab) index of the component.
      * 
      * @param newValue the new focus traversal index
+     * @see #getFocusTraversalIndex()
      */
     public void setFocusTraversalIndex(int newValue) {
         int oldValue = getFocusTraversalIndex();
@@ -1030,6 +1206,7 @@ implements RenderIdSupport, Serializable {
      * Sets the visibility state of this <code>Component</code>.
      * 
      * @param newValue the new visibility state
+     * @see #isVisible()
      */
     public void setVisible(boolean newValue) {
         boolean oldValue = (flags & FLAG_VISIBLE) != 0;
@@ -1040,24 +1217,26 @@ implements RenderIdSupport, Serializable {
     }
 
     /**
-     * A life-cycle method invoked before the component is rendered to ensure
-     * it is in a valid state.
+     * A life-cycle method invoked before the component is rendered to ensure it
+     * is in a valid state. Default implementation is empty. Overriding
+     * implementations should ensure to invoke <code>super.validate()</code>
+     * out of convention.
      */
     public void validate() { }
     
     /**
-     * Invoked by <code>ClientUpdateManager</code> on each component in the
+     * Invoked by the <code>ClientUpdateManager</code> on each component in the
      * hierarchy whose <code>processInput()</code> method will layer be invoked
      * in the current transaction.  This method should return true if the 
      * component will be capable of processing the given input in its current 
      * state or false otherwise.  This method should not do any of the actual
      * processing work if overridden (any actual processing should be done in
-     * the <code>processInput()</code> implementation.
+     * the <code>processInput()</code> implementation).
      * <p>
      * The default implementation verifies that the component is visible, 
      * enabled, and not "obscured" by the presence of any modal component.
      * If overriding this method, your implementation should invoke
-     * <code>super.verifyInput()</code> if you wish to retain these behaviors.
+     * <code>super.verifyInput()</code>.
      * 
      * @param inputName the name of the input
      * @param inputValue the value of the input
@@ -1065,9 +1244,6 @@ implements RenderIdSupport, Serializable {
      *         in its current state
      */
     public boolean verifyInput(String inputName, Object inputValue) {
-        //BUGBUG. what if the enabled state changes on the client and then it receives input--or do we
-        //        just want to make such practice illegal...or does the component simply need to handle 
-        //        (mind the fact that ordering of inputs cannot be guaranteed).
         if (applicationInstance != null && !applicationInstance.verifyModalContext(this)) {
             return false;
         }
@@ -1076,12 +1252,13 @@ implements RenderIdSupport, Serializable {
 
     /**
      * Determines the index of the given <code>Component</code> within the 
-     * visible children of this <code>Component</code>.  If the given 
-     * <code>Component</code> is not a child, returns -1.
+     * <strong>visible</strong> children of this <code>Component</code>.  If the
+     * given <code>Component</code> is not a child, <code>-1</code> is 
+     * returned.
      * 
      * @param c the <code>Component</code> to analyze
-     * @return the index of the given <code>Component</code> amongst the 
-     *         visible children of this <code>Component</code>
+     * @return the index of the specified <code>Component</code> amongst the 
+     *         <strong>visible</strong> children of this <code>Component</code>
      */
     public final int visibleIndexOf(Component c) {
         if (!c.isVisible()) {
@@ -1104,5 +1281,4 @@ implements RenderIdSupport, Serializable {
         }
         return -1;
     }
-    
 }
