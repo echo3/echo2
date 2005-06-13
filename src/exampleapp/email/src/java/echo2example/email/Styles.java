@@ -48,6 +48,9 @@ public class Styles {
             IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
             FillImage.ATTACHMENT_FIXED);
     
+    public static final ImageReference ECHO2_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo2.png");
+    public static final ImageReference WEBMAIL_EXAMPLE_IMAGE = new ResourceImageReference(IMAGE_PATH + "WebMailExample.png");
+    
     public static final ImageReference ICON_24_LEFT_ARROW 
             = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowCyanLeft.gif"); 
     public static final ImageReference ICON_24_RIGHT_ARROW 

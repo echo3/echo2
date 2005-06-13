@@ -34,10 +34,10 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
-import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.PasswordField;
 import nextapp.echo2.app.TextField;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
@@ -47,7 +47,6 @@ import nextapp.echo2.app.event.ActionListener;
 public class LoginScreen extends ContentPane {
 
     private static final Extent PX_300 = new Extent(300, Extent.PX);
-    private static final Insets PLACEMENT_INSETS = new Insets(240,270,0,0);
 
     private TextField emailAddressField;
     private PasswordField passwordField;
@@ -58,21 +57,29 @@ public class LoginScreen extends ContentPane {
     public LoginScreen() {
         super();
         setStyleName("LoginScreen.ContentPane");
+        
+        Label label;
 
         Column column = new Column();
-        column.setInsets(PLACEMENT_INSETS);
+        column.setStyleName("LoginScreen.Column");
         add(column);
+        
+        label = new Label(Styles.ECHO2_IMAGE);
+        column.add(label);
+        
+        label = new Label(Styles.WEBMAIL_EXAMPLE_IMAGE);
+        column.add(label);
+        
+        WindowPane loginWindow = new WindowPane();
+        loginWindow.setTitle(Messages.getString("LoginScreen.LoginWindowTitle"));
+        loginWindow.setStyleName("LoginScreen.LoginWindow");
+        loginWindow.setDefaultCloseOperation(WindowPane.DO_NOTHING_ON_CLOSE);
+        add(loginWindow);
         
         Grid layoutGrid = new Grid();
         layoutGrid.setStyleName("LoginScreen.LayoutGrid");
-        column.add(layoutGrid);
-        
-        Label label;
-        
-//        label = new Label(Messages.getString("LoginScreen.WelcomeLabel"));
-//        label.setStyleName("LoginScreen.WelcomeLabel");
-//        layoutGrid.add(label);
-        
+        loginWindow.add(layoutGrid);
+
         label = new Label(Messages.getString("LoginScreen.PromptEmailAddress"));
         label.setStyleName("LoginScreen.Prompt");
         layoutGrid.add(label);

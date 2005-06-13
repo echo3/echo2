@@ -75,10 +75,24 @@
    </property>
   </properties>
  </style>
+ <style name="LoginScreen.Column" type="nextapp.echo2.app.Column">
+  <properties>
+   <property name="insets" value="245px 45px 0px 0px"/>
+   <property name="cellSpacing" value="40px"/>
+  </properties>
+ </style>
+ <style name="LoginScreen.LoginWindow" basename="Default" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <property name="positionX" value="160px"/>
+   <property name="positionY" value="320px"/>
+   <property name="width" value="450px"/>
+   <property name="height" value="200px"/>
+  </properties>  
+ </style>
  <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
   <properties>
    <property name="backgroundImage">
-    <fillimage repeat="none">
+    <fillimage repeat="vertical">
      <image type="nextapp.echo2.app.ResourceImageReference">
       <resourceimagereference resource="/echo2example/email/resource/image/LoginBackground.png"/>
      </image>
