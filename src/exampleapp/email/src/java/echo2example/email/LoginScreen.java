@@ -36,6 +36,8 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.PasswordField;
+import nextapp.echo2.app.Row;
+import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
@@ -76,9 +78,12 @@ public class LoginScreen extends ContentPane {
         loginWindow.setDefaultCloseOperation(WindowPane.DO_NOTHING_ON_CLOSE);
         add(loginWindow);
         
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-32));
+        loginWindow.add(splitPane);
+        
         Grid layoutGrid = new Grid();
         layoutGrid.setStyleName("LoginScreen.LayoutGrid");
-        loginWindow.add(layoutGrid);
+        splitPane.add(layoutGrid);
 
         label = new Label(Messages.getString("LoginScreen.PromptEmailAddress"));
         label.setStyleName("LoginScreen.Prompt");
@@ -98,14 +103,18 @@ public class LoginScreen extends ContentPane {
         passwordField.setStyleName("Default");
         layoutGrid.add(passwordField);
         
-        Button button = new Button(Messages.getString("LoginScreen.Continue"));
-        button.setStyleName("LoginScreen.Continue");
+        Row controlRow = new Row();
+        controlRow.setStyleName("ControlPane");
+        splitPane.add(controlRow);
+        
+        Button button = new Button(Messages.getString("LoginScreen.Continue"), Styles.ICON_24_YES);
+        button.setStyleName("ControlPane.Button");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 processLogin();
             }
         });
-        layoutGrid.add(button);
+        controlRow.add(button);
 
         if (EmailApp.FAUX_MODE) {
             emailAddressField.setText("joe.smith@test.nextapp.com");

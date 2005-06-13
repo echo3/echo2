@@ -83,10 +83,11 @@
  </style>
  <style name="LoginScreen.LoginWindow" basename="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
+   <property name="resizable" value="false"/>
    <property name="positionX" value="160px"/>
    <property name="positionY" value="320px"/>
    <property name="width" value="450px"/>
-   <property name="height" value="200px"/>
+   <property name="height" value="160px"/>
   </properties>  
  </style>
  <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
