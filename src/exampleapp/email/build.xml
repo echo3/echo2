@@ -68,6 +68,7 @@
             <classpath>
                 <pathelement path="${servlet.lib.jar}"/>
                 <pathelement path="${mail.lib.jar}"/>
+                <pathelement path="${activation.lib.jar}"/>
                 <pathelement path="${echo2.app.lib.jar}"/>
                 <pathelement path="${echo2.webcontainer.lib.jar}"/>
                 <pathelement path="${echo2.webrender.lib.jar}"/>

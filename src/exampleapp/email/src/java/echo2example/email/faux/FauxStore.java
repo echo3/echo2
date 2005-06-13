@@ -30,7 +30,6 @@
 package echo2example.email.faux;
 
 import javax.mail.Folder;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -58,10 +57,6 @@ public class FauxStore extends Store {
         try {
             rootFolder = FauxFolder.createRoot(this);
             inboxFolder = FauxFolder.createInbox(this);
-            MessageGenerator generator = new MessageGenerator(session);
-            for (int i = 0; i < 140; ++i) {
-                inboxFolder.appendMessages(new Message[]{generator.generateMessage()});
-            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

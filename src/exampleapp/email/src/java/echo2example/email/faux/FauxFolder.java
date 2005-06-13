@@ -44,8 +44,36 @@ import javax.mail.MessagingException;
  */
 public class FauxFolder extends Folder {
     
-    private SortedSet messageSet;
-    private Message[] messageCacheArray;
+    private static final int MESSAGE_COUNT = 140;
+    
+    private static final Message[] INBOX_MESSAGES;
+    static {
+        try {
+            MessageGenerator messageGenerator = new MessageGenerator();
+            SortedSet sortingSet = new TreeSet(new Comparator(){
+                 public int compare(Object a, Object b) {
+                     try {
+                         Message message1 = (Message) a;
+                         Message message2 = (Message) b;
+                         int dateDelta = message1.getSentDate().compareTo(message2.getSentDate());
+                         if (dateDelta != 0) {
+                             return dateDelta;
+                         }
+                         return message1.toString().compareTo(message2.toString());
+                     } catch (MessagingException ex) {
+                         throw new RuntimeException(ex);
+                     }
+                 }
+            });
+            for (int i = 0; i < MESSAGE_COUNT; ++i) {
+                sortingSet.add(messageGenerator.generateMessage());
+            }
+            INBOX_MESSAGES = (Message[]) sortingSet.toArray(new Message[sortingSet.size()]);
+        } catch (MessagingException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
     private int type;
     private FauxStore store;
     
@@ -77,22 +105,6 @@ public class FauxFolder extends Folder {
      */
     private FauxFolder(FauxStore store, int type) {
         super(store);
-        messageSet = new TreeSet(new Comparator(){
-             public int compare(Object a, Object b) {
-                 try {
-                     Message message1 = (Message) a;
-                     Message message2 = (Message) b;
-                     int dateDelta = message1.getSentDate().compareTo(message2.getSentDate());
-                     if (dateDelta != 0) {
-                         return dateDelta;
-                     }
-                     return message1.toString().compareTo(message2.toString());
-                 } catch (MessagingException ex) {
-                     throw new RuntimeException(ex);
-                 }
-             }
-        });
-        
         this.store = store;
         this.type = type;
     }
@@ -102,10 +114,7 @@ public class FauxFolder extends Folder {
      */
     public void appendMessages(Message[] messages) 
     throws MessagingException {
-        messageCacheArray = null;
-        for (int i = 0; i < messages.length; ++i) {
-            messageSet.add(messages[i]);
-        }
+        throw new UnsupportedOperationException();
     }
     
     /**
@@ -166,17 +175,14 @@ public class FauxFolder extends Folder {
      * @see javax.mail.Folder#getMessage(int)
      */
     public Message getMessage(int index) throws MessagingException {
-        if (messageCacheArray == null) {
-            messageCacheArray = (Message[]) messageSet.toArray(new Message[messageSet.size()]);
-        }
-        return messageCacheArray[index - 1];
+        return INBOX_MESSAGES[index - 1];
     }
 
     /**
      * @see javax.mail.Folder#getMessageCount()
      */
     public int getMessageCount() throws MessagingException {
-        return messageSet.size();
+        return INBOX_MESSAGES.length;
     }
     
     /**

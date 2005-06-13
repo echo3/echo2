@@ -41,15 +41,13 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.mail.Address;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 /**
- * Generates random fake JavaMail <code>Message</code> objects.
+ * Generates random fake content for the fake JavaMail <code>Message</code> 
+ * objects.
  */
 public class MessageGenerator {
     
@@ -190,13 +188,6 @@ public class MessageGenerator {
     private String[] femaleFirstNames = loadStrings("resource/FemaleFirstNames.txt");
     private String[] latinSentences = loadStrings("resource/LatinSentences.txt");
     
-    private Session session;
-    
-    public MessageGenerator(Session session) {
-        super();
-        this.session = session;
-    }
-    
     private Address createAddress() 
     throws MessagingException {
         // Create Name.
@@ -223,34 +214,33 @@ public class MessageGenerator {
         return cal.getTime();
     }
     
-    public Message generateMessage()
+    public FauxMessage generateMessage() 
     throws MessagingException {
-        MimeMessage message = new MimeMessage(session);
+        
+        Date receivedDate = randomDate();
+        Address from = createAddress();
 
-        message.setSentDate(randomDate());
-        message.setFrom(createAddress());
+        Address[] to = null;
+        Address[] cc = null;
+        Address[] bcc = null;
         switch (randomInteger(0, 3)) {
         case 0:
-            message.addRecipient(Message.RecipientType.TO, createAddress());
-            message.addRecipient(Message.RecipientType.TO, YOUR_ADDRESS);
+            to = new Address[]{YOUR_ADDRESS};
             break;
         case 1:
-            message.addRecipient(Message.RecipientType.TO, createAddress());
-            message.addRecipient(Message.RecipientType.BCC, YOUR_ADDRESS);
+            to = new Address[]{createAddress(), createAddress()};
+            cc = new Address[]{createAddress(), createAddress(), createAddress()};
+            bcc = new Address[]{YOUR_ADDRESS};
             break;
         case 2:
-            message.addRecipient(Message.RecipientType.CC, createAddress());
-            message.addRecipient(Message.RecipientType.CC, createAddress());
-            message.addRecipient(Message.RecipientType.TO, YOUR_ADDRESS);
+            to = new Address[]{YOUR_ADDRESS};
+            cc = new Address[]{createAddress(), createAddress()};
             break;
         case 3:
-            message.addRecipient(Message.RecipientType.TO, createAddress());
-            message.addRecipient(Message.RecipientType.TO, YOUR_ADDRESS);
-            message.addRecipient(Message.RecipientType.CC, createAddress());
-            message.addRecipient(Message.RecipientType.CC, createAddress());
+            to = new Address[]{createAddress()};
+            cc = new Address[]{createAddress(), YOUR_ADDRESS, createAddress()};
             break;
         }
-
         // Create Article Title
         String subject = latinSentences[randomInteger(latinSentences.length)];
         if (subject.length() > 40) {
@@ -260,10 +250,10 @@ public class MessageGenerator {
             subject = subject.substring(0, subject.length() - 1);
         }
         subject = titleCapitalize(subject);
-        message.setSubject(subject);
 
-        message.setText(generateText(latinSentences, 2, 8, 6, 26));
+        String content = generateText(latinSentences, 2, 8, 6, 26);
 
-        return message;
+        return new FauxMessage(from, receivedDate, to, cc, bcc, subject, content);
+        
     }
 }
