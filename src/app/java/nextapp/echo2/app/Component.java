@@ -334,7 +334,6 @@ implements RenderIdSupport, Serializable {
         return (Component) children.get(n);
     }
     
-    //BUGBUG. needs test.
     /**
      * Recursively searches for the component with the specified id
      * by querying this component and its descendants.

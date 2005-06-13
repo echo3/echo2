@@ -73,6 +73,25 @@ public class ComponentTest extends TestCase {
         c.setEnabled(true);
         assertTrue(c.isEnabled());
     }
+    
+    /**
+     * Test <code>focusTraversalIndex</code> property.
+     */
+    public void testFocusTraversalIndex() {
+        Component c = new NullComponent();
+        PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
+        c.addPropertyChangeListener(pce);
+        assertEquals(0, c.getFocusTraversalIndex());
+        c.setFocusTraversalIndex(5);
+        assertEquals(Component.FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
+        assertEquals(5, c.getFocusTraversalIndex());
+        c.setVisible(false);
+        assertEquals(false, c.isVisible());
+        assertEquals(5, c.getFocusTraversalIndex());
+        c.setFocusTraversalIndex(70);
+        assertEquals(false, c.isVisible());
+        assertEquals(70, c.getFocusTraversalIndex());
+    }
 
     /**
      * Test <code>font</code> property. 
@@ -113,6 +132,58 @@ public class ComponentTest extends TestCase {
             c.add(new NullComponent());
         }
         assertTrue(sixthComponent == c.getComponent(5));
+    }
+
+    /**
+     * Tests <code>getComponent(String)</code>,
+     * and <code>getId()</code>/<code>setId()</code> methods.
+     */
+    public void testGetComponentById() {
+        NullComponent c1 = new NullComponent();
+        c1.setId("c1");
+        NullComponent c2 = new NullComponent();
+        c2.setId("c2");
+        c1.add(c2);
+        NullComponent c3 = new NullComponent();
+        c3.setId("c3");
+        c1.add(c3);
+        NullComponent c4 = new NullComponent();
+        c4.setId("c4");
+        c2.add(c4);
+        NullComponent c5 = new NullComponent();
+        c5.setId("c5");
+        c2.add(c5);
+        NullComponent c6 = new NullComponent();
+        c6.setId("c6");
+        c5.add(c6);
+        
+        assertEquals("c1", c1.getId());
+        assertEquals("c2", c2.getId());
+        assertEquals("c3", c3.getId());
+        assertEquals("c4", c4.getId());
+        assertEquals("c5", c5.getId());
+        assertEquals("c6", c6.getId());
+
+        assertEquals(c1, c1.getComponent("c1"));
+        assertEquals(c2, c1.getComponent("c2"));
+        assertEquals(c3, c1.getComponent("c3"));
+        assertEquals(c4, c1.getComponent("c4"));
+        assertEquals(c5, c1.getComponent("c5"));
+        assertEquals(c6, c1.getComponent("c6"));
+        
+        assertEquals(null, c2.getComponent("c1"));
+        assertEquals(c2, c2.getComponent("c2"));
+        assertEquals(null, c2.getComponent("c3"));
+        assertEquals(c4, c2.getComponent("c4"));
+        assertEquals(c5, c2.getComponent("c5"));
+        assertEquals(c6, c2.getComponent("c6"));
+        
+        assertEquals(null, c3.getComponent("c1"));
+        assertEquals(null, c3.getComponent("c2"));
+        assertEquals(c3, c3.getComponent("c3"));
+        assertEquals(null, c3.getComponent("c4"));
+        assertEquals(null, c3.getComponent("c5"));
+        assertEquals(null, c3.getComponent("c6"));
     }
 
     /**
@@ -234,7 +305,25 @@ public class ComponentTest extends TestCase {
         assertEquals(1, children.length);
         assertSame(child1, children[0]);
     }
-
+    
+    /**
+     * Test <code>indexOf()</code> method.
+     */
+    public void testIndexOf() {
+        NullComponent parent = new NullComponent();
+        NullComponent a = new NullComponent();
+        NullComponent b = new NullComponent();
+        NullComponent c = new NullComponent();
+        NullComponent d = new NullComponent();
+        parent.add(a);
+        parent.add(b);
+        parent.add(c);
+        assertEquals(0, parent.indexOf(a));
+        assertEquals(1, parent.indexOf(b));
+        assertEquals(2, parent.indexOf(c));
+        assertEquals(-1, parent.indexOf(d));
+    }
+    
     /**
      * Test <code>layoutData</code> property.
      */
@@ -282,24 +371,6 @@ public class ComponentTest extends TestCase {
     }
     
     /**
-     * Test <code>indexOf()</code> method.
-     */
-    public void testIndexOf() {
-        NullComponent parent = new NullComponent();
-        NullComponent a = new NullComponent();
-        NullComponent b = new NullComponent();
-        NullComponent c = new NullComponent();
-        NullComponent d = new NullComponent();
-        parent.add(a);
-        parent.add(b);
-        parent.add(c);
-        assertEquals(0, parent.indexOf(a));
-        assertEquals(1, parent.indexOf(b));
-        assertEquals(2, parent.indexOf(c));
-        assertEquals(-1, parent.indexOf(d));
-    }
-    
-    /**
      * Test <code>removeAll()</code> method.
      */
     public void testRemoveAll() {
@@ -333,22 +404,30 @@ public class ComponentTest extends TestCase {
     }
     
     /**
-     * Test <code>focusTraversalIndex</code> property.
+     * Tests assignment/reassignment of render ids.
      */
-    public void testFocusTraversalIndex() {
-        Component c = new NullComponent();
-        PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
-        c.addPropertyChangeListener(pce);
-        assertEquals(0, c.getFocusTraversalIndex());
-        c.setFocusTraversalIndex(5);
-        assertEquals(Component.FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY, pce.lastEvent.getPropertyName());
-        assertEquals(5, c.getFocusTraversalIndex());
-        c.setVisible(false);
-        assertEquals(false, c.isVisible());
-        assertEquals(5, c.getFocusTraversalIndex());
-        c.setFocusTraversalIndex(70);
-        assertEquals(false, c.isVisible());
-        assertEquals(70, c.getFocusTraversalIndex());
+    public void testRenderId() {
+        ColumnApp app1 = new ColumnApp();
+        app1.doInit();
+        NullComponent component1 = new NullComponent();
+        assertNull(component1.getRenderId());
+        app1.getColumn().add(component1);
+        assertNotNull(component1.getApplicationInstance());
+        assertNotNull(component1.getRenderId());
+
+        ColumnApp app2 = new ColumnApp();
+        app2.doInit();
+        NullComponent component2 = new NullComponent();
+        assertNull(component2.getRenderId());
+        app2.getColumn().add(component2);
+        assertNotNull(component2.getApplicationInstance());
+        assertNotNull(component2.getRenderId());
+        
+        // This code relies on fact that ids are handed out sequentially, so sequence counters should be at same index.
+        assertTrue(component1.getRenderId().equals(component2.getRenderId()));
+        app1.getColumn().remove(component1);
+        app2.getColumn().add(component1);
+        assertFalse(component1.getRenderId().equals(component2.getRenderId()));
     }
     
     /**
