@@ -63,8 +63,9 @@ public class WelcomePane extends ContentPane {
         
         label = new Label("Welcome to the NextApp Echo2 Test Application.  "
                 + "This application was built to interactively test components of Echo2 during development.  "
-                + "It is also being (mis)used as a public demonstration of Echo2's capabilities.  Many "
-                + "of the features and capabilities demonstrated in this application are not complete.");
+                + "It is also being (mis)used as a public demonstration of Echo2's capabilities. "
+                + "Note that if this is a development version of Echo, then some "
+                + "of the features and capabilities demonstrated in this application may not be complete.");
         column.add(label);
         
         label = new Label("Note that you may watch the AJAX XML messages being sent between the client and server by "

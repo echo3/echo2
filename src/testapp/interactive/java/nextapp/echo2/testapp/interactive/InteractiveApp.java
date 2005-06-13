@@ -105,7 +105,7 @@ public class InteractiveApp extends ApplicationInstance {
     public Window init() {
         setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
         mainWindow = new Window();
-        mainWindow.setTitle("NextApp Echo2 Test Application [EARLY ACCESS/EXPERIMENTAL]");
+        mainWindow.setTitle("NextApp Echo2 Test Application");
         mainWindow.setContent(new WelcomePane());
         
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);

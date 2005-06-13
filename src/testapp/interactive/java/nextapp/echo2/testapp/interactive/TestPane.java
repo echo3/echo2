@@ -87,7 +87,7 @@ public class TestPane extends ContentPane {
         verticalPane.setStyleName("testPane");
         add(verticalPane);
 
-        Label titleLabel = new Label("NextApp Echo2 Test Application [EARLY ACCESS/EXPERIMENTAL]");
+        Label titleLabel = new Label("NextApp Echo2 Test Application");
         titleLabel.setStyleName(Styles.TITLE_LABEL_STYLE_NAME);
         verticalPane.add(titleLabel);
         
