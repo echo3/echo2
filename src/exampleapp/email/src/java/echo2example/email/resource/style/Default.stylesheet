@@ -77,7 +77,7 @@
  </style>
  <style name="LoginScreen.Column" type="nextapp.echo2.app.Column">
   <properties>
-   <property name="insets" value="245px 45px 0px 0px"/>
+   <property name="insets" value="245px 0px 0px 0px"/>
    <property name="cellSpacing" value="40px"/>
   </properties>
  </style>

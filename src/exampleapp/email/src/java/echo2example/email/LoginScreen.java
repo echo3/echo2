@@ -66,6 +66,9 @@ public class LoginScreen extends ContentPane {
         column.setStyleName("LoginScreen.Column");
         add(column);
         
+        label = new Label(Styles.NEXTAPP_LOG_IMAGE);
+        column.add(label);
+        
         label = new Label(Styles.ECHO2_IMAGE);
         column.add(label);
         

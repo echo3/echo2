@@ -57,6 +57,7 @@ public class Styles {
     }
 
     // Images
+    public static final ImageReference NEXTAPP_LOG_IMAGE = new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
     public static final ImageReference ECHO2_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo2.png");
     public static final ImageReference WEBMAIL_EXAMPLE_IMAGE = new ResourceImageReference(IMAGE_PATH + "WebMailExample.png");
     public static final ImageReference ICON_24_LEFT_ARROW 
