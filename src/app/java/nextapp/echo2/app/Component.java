@@ -913,7 +913,7 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Removes the specified child <code>Component</code> from this
-     * <code>Component</code>
+     * <code>Component</code>.
      * <p>
      * All <code>Component</code> remove operations use this method to 
      * remove <code>Component</code>s. <code>Component</code>s that require 
