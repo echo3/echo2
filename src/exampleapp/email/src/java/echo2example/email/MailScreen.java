@@ -143,9 +143,9 @@ public class MailScreen extends ContentPane {
     }
     
     /**
-     * Creates the menu.
+     * Creates the "option pane".
      * 
-     * @return the menu <code>Component</code>
+     * @return the option pane <code>Component</code>
      */
     private Component createOptionPane() {
         Button button;

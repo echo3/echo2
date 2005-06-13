@@ -49,7 +49,7 @@ import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
 
 /**
- * 
+ * A selectable <code>Table</code> which displays a list of messages.
  */
 public class MessageListTable extends Table {
     
