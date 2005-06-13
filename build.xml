@@ -435,6 +435,11 @@
         </copy>
 
         <!-- Binary Web Applications: E-Mail Client -->
+    	<antcall target="dist.exampleapp.email"/>
+        <copy todir="${dir.build.release.root}/BinaryApplications">
+            <fileset dir="${dir.src.exampleapp.email}/war"/>
+        </copy>
+    	<antcall target="clean.exampleapp.email"/>
 
         <!-- Binary Web Applications: Tutorial Application -->
     	<antcall target="dist.tutorialapp"/>
