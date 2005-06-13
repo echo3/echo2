@@ -46,7 +46,6 @@ public class BackgroundImageTest extends TestCase {
         assertEquals(TestConstants.ICON, backgroundImage.getImage());
         assertEquals(null, backgroundImage.getHorizontalOffset());
         assertEquals(null, backgroundImage.getVerticalOffset());
-        assertEquals(FillImage.ATTACHMENT_SCROLL, backgroundImage.getAttachment());
         assertEquals(FillImage.REPEAT, backgroundImage.getRepeat());
     }
     
@@ -55,11 +54,10 @@ public class BackgroundImageTest extends TestCase {
      */
     public void testConstructorFullFeature() {
         FillImage backgroundImage = new FillImage(TestConstants.ICON, TestConstants.EXTENT_30_PX, 
-                TestConstants.EXTENT_50_PERCENT, FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_FIXED);
+                TestConstants.EXTENT_50_PERCENT, FillImage.REPEAT_HORIZONTAL);
         assertEquals(TestConstants.ICON, backgroundImage.getImage());
         assertEquals(TestConstants.EXTENT_30_PX, backgroundImage.getHorizontalOffset());
         assertEquals(TestConstants.EXTENT_50_PERCENT, backgroundImage.getVerticalOffset());
-        assertEquals(FillImage.ATTACHMENT_FIXED, backgroundImage.getAttachment());
         assertEquals(FillImage.REPEAT_HORIZONTAL, backgroundImage.getRepeat());
     }
 }

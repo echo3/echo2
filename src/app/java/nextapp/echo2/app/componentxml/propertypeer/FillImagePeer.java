@@ -57,8 +57,6 @@ implements PropertyXmlPeer {
             throw new InvalidPropertyException("Invalid FillImage property.", null);
         }
         
-        int attachment = "fixed".equals(fillImageElement.getAttribute("attachment")) 
-                ? FillImage.ATTACHMENT_FIXED : FillImage.ATTACHMENT_SCROLL;
         Extent offsetX = fillImageElement.hasAttribute("horizontal")
                 ? ExtentPeer.toExtent(fillImageElement.getAttribute("horizontal")) : null;
         Extent offsetY = fillImageElement.hasAttribute("vertical")
@@ -97,7 +95,7 @@ implements PropertyXmlPeer {
         }
 
         ImageReference imageReference = (ImageReference) imagePropertyValue;
-        FillImage fillImage = new FillImage(imageReference, offsetX, offsetY, repeat, attachment);
+        FillImage fillImage = new FillImage(imageReference, offsetX, offsetY, repeat);
         
         return fillImage;
     }

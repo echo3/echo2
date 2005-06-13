@@ -45,8 +45,7 @@ public class Styles {
     public static final String STYLE_PATH = "/echo2example/email/resource/style/";
 
     public static final FillImage BG_NW_SHADOW = new FillImage(new ResourceImageReference(
-            IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT, 
-            FillImage.ATTACHMENT_FIXED);
+            IMAGE_PATH + "ShadowBackground.png"), null, null, FillImage.NO_REPEAT);
     
     public static final ImageReference ECHO2_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo2.png");
     public static final ImageReference WEBMAIL_EXAMPLE_IMAGE = new ResourceImageReference(IMAGE_PATH + "WebMailExample.png");

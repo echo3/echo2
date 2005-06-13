@@ -39,32 +39,15 @@ import java.io.Serializable;
 public class FillImage 
 implements Serializable {
     
-    //BUGBUG. Remove all "BackgroundImage" references in this class and all clasess that use it
-    //        there are still some test classes that refer to these as background images.
-
-    /** 
-     * A constant for the attachment property that indicates that the 
-     * fill image should remain fixed and NOT scroll with content.
-     */
-    public static final int ATTACHMENT_FIXED = 0;
-    
-    /**
-     * A constant for the attachment property that indicates that the
-     * fill image should scroll with content above it.
-     */
-    public static final int ATTACHMENT_SCROLL = 1;
-    
     public static final int NO_REPEAT = 0;
     public static final int REPEAT_HORIZONTAL = 1;
     public static final int REPEAT_VERTICAL = 2;
     public static final int REPEAT = 3;
     
-    private int attachment;
-    private Extent horizontalOffset;
-
     private ImageReference image;
-    private int repeat;
+    private Extent horizontalOffset;
     private Extent verticalOffset;
+    private int repeat;
     
     /**
      * Creates a new <code>FillImage</code> with no horizontal/vertical 
@@ -75,7 +58,7 @@ implements Serializable {
      *        fill
      */
     public FillImage(ImageReference image) {
-        this(image, null, null, REPEAT, ATTACHMENT_SCROLL);
+        this(image, null, null, REPEAT);
     }
 
     /**
@@ -98,21 +81,13 @@ implements Serializable {
      *         <li><code>REPEAT_VERTICAL</code></li>
      *         <li><code>REPEAT</code> (the default)</li>
      *        </ul>
-     * @param attachment the attachment mode of the image, one of the following
-     *        values:
-     *        <ul>
-     *         <li><code>ATTACHMENT_FIXED</code></li>
-     *         <li><code>ATTACHMENT_SCROLL</code> (the default)</li>
-     *        </ul>
      */
-    public FillImage(ImageReference image, Extent horizontalOffset, Extent verticalOffset,
-            int repeat, int attachment) {
+    public FillImage(ImageReference image, Extent horizontalOffset, Extent verticalOffset, int repeat) {
         super();
         this.image = image;
         this.horizontalOffset = horizontalOffset;
         this.verticalOffset = verticalOffset;
         this.repeat = repeat;
-        this.attachment = attachment;
     }
     
     /**
@@ -124,9 +99,6 @@ implements Serializable {
         }
         FillImage that = (FillImage) o;
         if (this.repeat != that.repeat) {
-            return false;
-        }
-        if (this.attachment != that.attachment) {
             return false;
         }
         if (!(this.image == that.image || (this.image != null && this.image.equals(that.image)))) {
@@ -141,19 +113,6 @@ implements Serializable {
             return false;
         }
         return true;
-    }
-    
-    /**
-     * Returns the attachment mode.
-     * 
-     * @return the attachmnent mode, one of the following values:
-     *         <ul>
-     *          <li><code>ATTACHMENT_FIXED</code></li>
-     *          <li><code>ATTACHMENT_SCROLL</code> (the default)</li>
-     *         </ul>
-     */
-    public int getAttachment() {
-        return attachment;
     }
     
     /**

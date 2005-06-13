@@ -47,11 +47,11 @@ public class FillImageTest extends TestCase {
     private static final ResourceImageReference image2 = new ResourceImageReference("image2.png", "image/png", 
             new Extent(50), new Extent(40));
     private static final FillImage fillImage1 = new FillImage(image1, new Extent(5), new Extent(3, Extent.PX), 
-            FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_FIXED);
+            FillImage.REPEAT_HORIZONTAL);
     private static final FillImage fillImage1Copy = new FillImage(image1Copy, new Extent(5), new Extent(3, Extent.PX), 
-            FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_FIXED);
+            FillImage.REPEAT_HORIZONTAL);
     private static final FillImage fillImage2 = new FillImage(image2, new Extent(5), new Extent(3, Extent.PX), 
-            FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_FIXED);
+            FillImage.REPEAT_HORIZONTAL);
     
     /**
      * Test equality.

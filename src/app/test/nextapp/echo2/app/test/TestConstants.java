@@ -56,7 +56,7 @@ public class TestConstants {
             new Extent(3, Extent.PX), new Extent(4, Extent.PX));
     
     public static final FillImage BACKGROUND_IMAGE = new FillImage(ICON, new Extent(5), new Extent(30), 
-            FillImage.REPEAT_HORIZONTAL, FillImage.ATTACHMENT_SCROLL);
+            FillImage.REPEAT_HORIZONTAL);
 
     public static final Extent EXTENT_500_PX = new Extent(500);
     public static final Extent EXTENT_200_PX = new Extent(200);
