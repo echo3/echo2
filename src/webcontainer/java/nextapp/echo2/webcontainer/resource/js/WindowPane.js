@@ -381,8 +381,7 @@ EchoWindowPane.processBorderDragMouseMove = function(e) {
             EchoWindowPane.activeElement.style.top = newY + "px";
         }
 
-        //BUGBUG. this quirk should be pulled from clientproperties.
-        if ("true" == EchoDomPropertyStore.getPropertyValue(EchoWindowPane.activeElement.getAttribute("id"), "quirkResizeOnMove")) {
+        if (EchoClientProperties.get("quirkIERepaint")) {
             // Tickle window width because Internet Explorer will only recompute size of hidden IFRAME
             // on *WIDTH* adjustments, not height adjustments (this is a bug in IE).
             // This only need be applied when vertical resizes can be performed.
