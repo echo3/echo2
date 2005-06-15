@@ -29,25 +29,24 @@
 
 package nextapp.echo2.webrender;
 
-
 import java.util.Properties;
-
 import javax.xml.transform.OutputKeys;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.output.HtmlDocument;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
- * 
+ * The initial document rendered when a user visits an application.
  */
 public class BaseHtmlDocument extends HtmlDocument {
 
     private static final Properties outputProperties = new Properties();
     static {
+        // The XML declaration is ommitted as Internet Explorer 6 will operate in quirks mode if it is present.
         outputProperties.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        
         outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC, XHTML_1_0_TRANSITIONAL_PUBLIC_ID);
         outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID);
     }
@@ -55,7 +54,7 @@ public class BaseHtmlDocument extends HtmlDocument {
     private String contentId;
     
     /**
-     * Creates a new <code>HtmlDocument</code>.
+     * Creates a new <code>BaseHtmlDocument</code>.
      * 
      * @param contentId The desired id which will be used for the element to 
      *        which content should be added, i.e., the FORM element.
