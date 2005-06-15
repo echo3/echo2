@@ -55,8 +55,8 @@ public class BlockingPane {
      * @return the created directive element
      */
     public static Element renderSetDelayMessage(ServerMessage serverMessage) {
-        Element setDelayMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "EchoBlockingPane",
-                "setdelaymessage");
+        Element setDelayMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "EchoBlockingPane.MessageProcessor", "setdelaymessage");
         setDelayMessageElement.setAttribute("xmlns", XHTML_NAMESPACE);
         
         return setDelayMessageElement;

@@ -30,6 +30,10 @@
 // _____________________________
 // Object EchoAsyncMonitor
 
+/**
+ * Static object/namespace for polling server to monitor for asynchronous
+ * server-initiated updates to the client ("server push").
+ */
 function EchoAsyncMonitor() { }
 
 /**
@@ -37,10 +41,21 @@ function EchoAsyncMonitor() { }
  */
 EchoAsyncMonitor.timeInterval = 500;
 
+/**
+ * Server query for polling service.
+ */
 EchoAsyncMonitor.pollServiceRequest = "?serviceId=Echo.AsyncMonitor";
 
+/**
+ * Timeout identifier for the delayed invocation of the next poll request
+ * (used to cancel the timeout if required).
+ */
 EchoAsyncMonitor.timeoutId = null;
 
+/**
+ * Initiates an HTTP request to the asynchronous monitor poll service to
+ * determine if the server has the need to update the client.
+ */
 EchoAsyncMonitor.connect = function() {
     var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoAsyncMonitor.pollServiceRequest, "GET");
     conn.responseHandler = EchoAsyncMonitor.responseHandler;
@@ -49,12 +64,15 @@ EchoAsyncMonitor.connect = function() {
 };
 
 /**
- * Processes an invalid response from the server.
+ * Processes an invalid response to the poll request
  */
 EchoAsyncMonitor.invalidResponseHandler = function() {
     alert("Invalid response from server to asynchronous polling connection.");
 };
 
+/**
+ * Starts the countdown to the next poll request.
+ */
 EchoAsyncMonitor.start = function() {
     if (!EchoServerTransaction.active) {
         EchoAsyncMonitor.timeoutId = window.setTimeout("EchoAsyncMonitor.connect();", 
@@ -62,6 +80,9 @@ EchoAsyncMonitor.start = function() {
     }
 };
 
+/**
+ * Cancels the countdown to the next poll request, if necessary.
+ */
 EchoAsyncMonitor.stop = function() {
     if (EchoAsyncMonitor.timeoutId) {
         window.clearTimeout(EchoAsyncMonitor.timeoutId);
@@ -70,14 +91,17 @@ EchoAsyncMonitor.stop = function() {
 };
 
 /**
- * Processes a valid response from the server.
+ * Processes a response from the HTTP request made to the polling
+ * service.
  *
  * @param conn the EchoHttpConnection containing the response information.
  */
 EchoAsyncMonitor.responseHandler = function(conn) {
     if ("true" == conn.getResponseXml().documentElement.getAttribute("requestsync")) {
+        // Server is requesting synchronization: Initiate server transaction.
         EchoServerTransaction.connect();
     } else {
+        // Server does not require synchronization: restart countdown to next poll request.
         EchoAsyncMonitor.start();
     }
     
@@ -86,76 +110,46 @@ EchoAsyncMonitor.responseHandler = function(conn) {
 // _______________________
 // Object EchoBlockingPane
 
-/** 
- * Temporarily disconnects UI from input during synchronous client/server
- * transactions.  Handles display/removal of "please wait"-type messages,
- * "spinner graphics", etc.
- *
- * Do not instantiate. 
- */
+ /**
+  * Static object/namespace to manage configuration and activation of the
+  * "Blocking Pane".  
+  * The blocking pane serves the following purposes:
+  * <ul>
+  *  <li>Provides an additional barrier to user input (this should not be
+  *   be relied upon in any fashion, as components should themselves 
+  *   check the state of EchoServerTransaction.active before accepting
+  *   input.</li>
+  *  <li>Displays a "wait" (hourglass) mouse cursor.</li>
+  *  <li>Displays a "please wait" message after a time interval has elapsed
+  *   during a longer-than-normal server transaction.</li>
+  * </ul>
+  */
 function EchoBlockingPane() { }
 
-/** 
- * id of HTML element providing "long-running" delay message.  
- * This element is shown/hidden as necessary when long-running delays
- * occur or are completed.
+/**
+ * MessagePartProcessor implementation for EchoBlockingPane.
  */
-EchoBlockingPane.delayMessageTimeoutId = null;
+EchoBlockingPane.MessageProcessor = function() { }
 
-/** Timeout (in ms) before "long-running" delay message is displayed. */ 
-EchoBlockingPane.timeout = 500;
-
-EchoBlockingPane.activate = function() {
-    var blockingPane = document.getElementById("blockingPane");
-    if (!blockingPane) {
-        return;
-    }
-    blockingPane.style.visibility = "visible";
-    EchoBlockingPane.delayMessageTimeoutId = window.setTimeout("EchoBlockingPane.activateDelayMessage()", 
-            EchoBlockingPane.timeout);
-};
-
-EchoBlockingPane.activateDelayMessage = function() {
-    EchoBlockingPane.cancelDelayMessageTimeout();
-    var delayPane = document.getElementById("blockingPaneDelayMessage");
-    if (!delayPane) {
-        return;
-    }
-    delayPane.style.visibility = "visible";
-};
-
-EchoBlockingPane.cancelDelayMessageTimeout = function() {
-    if (EchoBlockingPane.delayMessageTimeoutId) {
-        window.clearTimeout(EchoBlockingPane.delayMessageTimeoutId);
-        EchoBlockingPane.delayMessageTimeoutId = null;
-    }
-};
-
-EchoBlockingPane.deactivate = function() {
-    EchoBlockingPane.cancelDelayMessageTimeout();
-    var blockingPane = document.getElementById("blockingPane");
-    var delayPane = document.getElementById("blockingPaneDelayMessage");
-    if (blockingPane) {
-        blockingPane.style.visibility = "hidden";
-    }
-    if (delayPane) {
-        delayPane.style.visibility = "hidden";
-    }
-};
-
-EchoBlockingPane.process = function(messagePartElement) {
+/**
+ * MessagePartProcessor process() method implementation.
+ */
+EchoBlockingPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
             case "setdelaymessage":
-                EchoBlockingPane.processSetDelayMessage(messagePartElement.childNodes[i]);
+                EchoBlockingPane.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
                 break;
             }
         }
     }
 };
 
-EchoBlockingPane.processSetDelayMessage = function(setDelayMessageElement) {
+/**
+ * ServerMessage parser to handle requests to set delay message text.
+ */
+EchoBlockingPane.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
     var blockingPane = document.getElementById("blockingPane");
     var i;
     // Remove existing children.
@@ -168,10 +162,77 @@ EchoBlockingPane.processSetDelayMessage = function(setDelayMessageElement) {
     }
 };
 
+
+/** 
+ * Id of HTML element providing "long-running" delay message.  
+ * This element is shown/hidden as necessary when long-running delays
+ * occur or are completed.
+ */
+EchoBlockingPane.delayMessageTimeoutId = null;
+
+/** Timeout (in ms) before "long-running" delay message is displayed. */ 
+EchoBlockingPane.timeout = 500;
+
+/**
+ * Activates/shows the blocking pane.
+ */
+EchoBlockingPane.activate = function() {
+    var blockingPane = document.getElementById("blockingPane");
+    if (!blockingPane) {
+        return;
+    }
+    blockingPane.style.visibility = "visible";
+    EchoBlockingPane.delayMessageTimeoutId = window.setTimeout("EchoBlockingPane.activateDelayMessage()", 
+            EchoBlockingPane.timeout);
+};
+
+/**
+ * Activates the "long-running" delay message (requires blocking pane
+ * to have been previously activated).
+ */
+EchoBlockingPane.activateDelayMessage = function() {
+    EchoBlockingPane.cancelDelayMessageTimeout();
+    var delayPane = document.getElementById("blockingPaneDelayMessage");
+    if (!delayPane) {
+        return;
+    }
+    delayPane.style.visibility = "visible";
+};
+
+/**
+ * Cancels timeout object that will raise delay message when server
+ * transaction is determined to be "long running".
+ */
+EchoBlockingPane.cancelDelayMessageTimeout = function() {
+    if (EchoBlockingPane.delayMessageTimeoutId) {
+        window.clearTimeout(EchoBlockingPane.delayMessageTimeoutId);
+        EchoBlockingPane.delayMessageTimeoutId = null;
+    }
+};
+
+/**
+ * Deactives/hides the blocking pane.
+ */
+EchoBlockingPane.deactivate = function() {
+    EchoBlockingPane.cancelDelayMessageTimeout();
+    var blockingPane = document.getElementById("blockingPane");
+    var delayPane = document.getElementById("blockingPaneDelayMessage");
+    if (blockingPane) {
+        blockingPane.style.visibility = "hidden";
+    }
+    if (delayPane) {
+        delayPane.style.visibility = "hidden";
+    }
+};
+
 // _________________________
 // Object EchoClientAnalyzer
 
-/** Do not instantiate. */
+/**
+  * Static object/namespace to perform analysis of client browser's 
+  * version information, capabilities, and quirks and store the information
+  * in the outgoing ClientMessage.
+  */
 function EchoClientAnalyzer() { }
 
 /**
@@ -199,7 +260,7 @@ EchoClientAnalyzer.analyze = function() {
 };
 
 /**
- * Stores a boolean client property.
+ * Stores a boolean client property in the ClientMessage.
  *
  * @param messagePartElement the XMLElement in which generated property 
  *        XML elements should be stored
@@ -215,7 +276,7 @@ EchoClientAnalyzer.setBooleanProperty = function(messagePartElement, propertyNam
 };
 
 /**
- * Stores a integer client property.
+ * Stores a integer client property in the ClientMessage.
  *
  * @param messagePartElement the XMLElement in which generated property 
  *        XML elements should be stored
@@ -235,7 +296,7 @@ EchoClientAnalyzer.setIntegerProperty = function(messagePartElement, propertyNam
 };
 
 /**
- * Stores a text client property.
+ * Stores a text client property in the ClientMessage.
  *
  * @param messagePartElement the XMLElement in which generated property 
  *        XML elements should be stored
@@ -253,6 +314,9 @@ EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, 
 // _______________________
 // Object EchoClientEngine
 
+/**
+  * Static object/namespace.
+  */
 function EchoClientEngine() { }
 
 EchoClientEngine.baseServerUri = null;
@@ -1159,30 +1223,45 @@ EchoModalManager.isElementInModalContext = function(elementId) {
 // Object EchoScriptLibraryManager
 
 /**
- * Manages dynamic loading of external JavaScript libraries.
+ * Static object/namespace to manage dynamic loading of client libraries.
  */
 function EchoScriptLibraryManager() { }
 
+/**
+ * Library load-state constant indicating a library has been requested from 
+ * the server.
+ */
 EchoScriptLibraryManager.STATE_REQUESTED = 1;
+
+/**
+ * Library load-state constant indicating a library has been successfully
+ * retrieved and installed from the server.
+ */
 EchoScriptLibraryManager.STATE_LOADED = 2;
 
 EchoScriptLibraryManager.loadedLibraries = new Array();
 
+/**
+ * Queries the state of the specified libary.
+ *
+ * @param serviceId the server service identifier of the library.
+ * @return the load-state of the library, either
+ *         <code>STATE_REQUESTED</code> or <code>STATE_LOADED</code>.
+ */
 EchoScriptLibraryManager.getState = function(serviceId) {
     return EchoScriptLibraryManager.loadedLibraries[serviceId];
 };
 
-EchoScriptLibraryManager.isLoaded = function(serviceId) {
-    return EchoScriptLibraryManager.loadedLibraries[serviceId] == EchoScriptLibraryManager.STATE_LOADED;
-};
-
-EchoScriptLibraryManager.loadLibrary = function(serviceId, serviceUri) {
+/**
+ * Loads a JavaScript library.
+ */
+EchoScriptLibraryManager.loadLibrary = function(serviceId) {
     if (EchoScriptLibraryManager.getState(serviceId)) {
         // Library already present.
         return;
     }
 
-    var conn = new EchoHttpConnection(serviceUri, "GET");
+    var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + "?serviceId=" + serviceId, "GET");
     conn.serviceId = serviceId;
     conn.responseHandler = EchoScriptLibraryManager.responseHandler;
     conn.connect();
@@ -1208,8 +1287,7 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
 // Object EchoServerMessage
 
 /**
- * Static object to process messages received from server.
- * Do not instantiate.
+ * Static object to process synchronization messages received from server.
  */
 function EchoServerMessage() { }
 
@@ -1234,7 +1312,11 @@ EchoServerMessage.processingCompleteListener = null;
 EchoServerMessage.status = EchoServerMessage.STATUS_INITIALIZED;
 
 /**
- * Initializes (or resets) the life-cycle of the server message processor.
+ * Initializes the state of the server message processor.
+ *
+ * @param messageDocument the ServerMessage XML document to be processed
+ * @param processingCompleteListener a callback to be invoked when processing
+ *        has been completed
  */
 EchoServerMessage.init = function(messageDocument, processingCompleteListener) {
     EchoServerMessage.messageDocument = messageDocument;
@@ -1281,7 +1363,6 @@ EchoServerMessage.isLibraryLoadComplete = function() {
  * method will return before the actual libraries have been loaded.
  */
 EchoServerMessage.loadLibraries = function() {
-    var applicationUri = EchoServerMessage.messageDocument.documentElement.getAttribute("applicationuri");
     var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
     var headElement = document.getElementsByTagName("head").item(0);
     if (!librariesElement) {
@@ -1290,20 +1371,24 @@ EchoServerMessage.loadLibraries = function() {
     var libraryElements = librariesElement.getElementsByTagName("library");
     for (var i = 0; i < libraryElements.length; ++i) {
         var serviceId = libraryElements.item(i).getAttribute("serviceid");
-        var serviceUri = applicationUri + "?serviceId=" + serviceId;
-        EchoScriptLibraryManager.loadLibrary(serviceId, serviceUri);
+        EchoScriptLibraryManager.loadLibrary(serviceId);
     }
 };
 
 /**
  * Processes the server message.
- * The processing is done asynchronously--this method will return before
+ * The processing is performed asynchronously--this method will return before
  * the processing has been completed.
  */
 EchoServerMessage.process = function() {
     EchoServerMessage.processPhase1();
 };
 
+/**
+ * Configures the asynchronous server polling system by retrieving
+ * the "asyncinterval" attribute from the ServerMessage and starting
+ * the asynchronous monitor if required.
+ */
 EchoServerMessage.processAsyncConfig = function() {
     var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("asyncinterval"));
     if (!isNaN(timeInterval)) {
@@ -1312,6 +1397,10 @@ EchoServerMessage.processAsyncConfig = function() {
     }
 };
 
+/**
+ * Configures the client modal state by retrieving the 
+ * value of the "modalid" attribute from the ServerMessage.
+ */
 EchoServerMessage.processModalState = function() {
     EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modalid");
 };
@@ -1340,6 +1429,13 @@ EchoServerMessage.processMessageParts = function() {
     }
 };
 
+/**
+ * Performs FIRST phase of synchronization response processing.
+ * During this phase required JavaScript libraries are loaded.
+ * Library loading is performed asynchronously, so a callback
+ * interval is established to wait for the libraries to load
+ * before the second phase of processing is invoked.
+ */
 EchoServerMessage.processPhase1 = function() {
     EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
     EchoServerMessage.loadLibraries();
@@ -1350,6 +1446,13 @@ EchoServerMessage.processPhase1 = function() {
     }
 };
 
+/**
+ * Performs SECOND phase of synchronization response processing.
+ * This phase may only be performed after all required JavaScript
+ * libraries have been loaded.   During this phase, directives provided
+ * in the server message are processed.  Additionally, the client modal 
+ * state and asynchoronous serevr polling configurations are established.
+ */
 EchoServerMessage.processPhase2 = function() {
     EchoServerMessage.processMessageParts();
     EchoServerMessage.processModalState();
@@ -1376,10 +1479,8 @@ EchoServerMessage.waitForLibraries = function() {
 // Object EchoServerTransaction
 
 /**
- * Static object representing a client-server transaction over an
- * XMLHttpRequest.
- * 
- * Do not instantiate.
+ * Static object/namespace to manage HTTP synchronization connections to 
+ * server.
  */
 function EchoServerTransaction() { }
 
@@ -1391,12 +1492,15 @@ function EchoServerTransaction() { }
  */
 EchoServerTransaction.active = false;
 
+/**
+ * Servlet query for synchronize service.
+ */
 EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
 
 /**
  * Initiates a client-server transaction my making a request to the server.
  * This operation is asynchronous; this method will return before the server
- * issued a response.
+ * issues a response.
  */
 EchoServerTransaction.connect = function() {
     EchoBlockingPane.activate();
@@ -1412,13 +1516,10 @@ EchoServerTransaction.connect = function() {
     EchoClientMessage.reset();
 };
 
-EchoServerTransaction.postProcess = function() {
-    EchoBlockingPane.deactivate();
-    EchoServerTransaction.active = false;
-};
-
 /**
- * Processes an invalid response from the server.
+ * Processes an invalid HTTP response to the synchronize request.
+ *
+ * @param conn the EchoHttpConnection containing the response information. 
  */
 EchoServerTransaction.invalidResponseHandler = function(conn) {
     EchoServerTransaction.postProcess();
@@ -1426,7 +1527,16 @@ EchoServerTransaction.invalidResponseHandler = function(conn) {
 };
 
 /**
- * Processes a valid response from the server.
+ * Handles post processing cleanup tasks, i.e., disabling blocking pane 
+ * and setting active flag state to false.
+ */
+EchoServerTransaction.postProcess = function() {
+    EchoBlockingPane.deactivate();
+    EchoServerTransaction.active = false;
+};
+
+/**
+ * Processes a (valid) HTTP response to the synchronize request.
  *
  * @param conn the EchoHttpConnection containing the response information.
  */
@@ -1438,8 +1548,15 @@ EchoServerTransaction.responseHandler = function(conn) {
 // _______________________
 // Object EchoWindowUpdate
 
+/**
+ * MessageProcessor implementation to perform browser window-related updates,
+ * such as setting the window title.
+ */
 function EchoWindowUpdate() { }
 
+/**
+ * MessageProcessor process() implementation.
+ */
 EchoWindowUpdate.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
@@ -1452,6 +1569,11 @@ EchoWindowUpdate.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a server directive to set the window title.
+ *
+ * @param setTitleElement the "setTitle" directive
+ */
 EchoWindowUpdate.processSetTitle = function(setTitleElement) {
     document.title = setTitleElement.getAttribute("title");
 };

@@ -365,10 +365,6 @@ public class ServerMessage extends XmlDocument {
         return element;
     }
     
-    public void setApplicationUri(String applicationUri) {
-        serverMessageElement.setAttribute("applicationuri", applicationUri);
-    }
-    
     public void setModalContextRootId(String id) {
         if (id == null) {
             serverMessageElement.setAttribute("modalid", ""); 

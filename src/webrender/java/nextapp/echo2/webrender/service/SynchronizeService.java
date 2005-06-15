@@ -184,7 +184,6 @@ implements Service {
         Document clientMessageDocument = parseRequestDocument(conn);
         String messageType = clientMessageDocument.getDocumentElement().getAttribute("type");
         ServerMessage serverMessage = new ServerMessage();
-        serverMessage.setApplicationUri(conn.getUserInstance().getApplicationUri());
         
         if ("initialize".equals(messageType)) {
 //BUGBUG. clientproperties stuff here is not well done, redo.            
