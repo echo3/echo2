@@ -62,6 +62,22 @@ implements Comparable, Serializable {
     }
     
     /**
+     * Validates that the specified <code>Extent</code> is acceptable for use
+     * in a particular environment, by ensuring that its units are of a
+     * supported type.
+     * 
+     * @param value the <code>Extent</code> to validate
+     * @param validUnits a bitmask containing one or more of the unit constants
+     *        (multiple unit constants may be ORed together)
+     * @throws IllegalArgumentException if the <code>Extent</code> is invalid
+     */
+    public static void validate(Extent value, int validUnits) {
+        if (value != null && (value.getUnits() & validUnits) == 0) {
+            throw new IllegalArgumentException("Specified Extent must be in pixel units.");
+        }
+    }
+
+    /**
      * Pixel units.
      */
     public static final int PX = 1;
@@ -74,37 +90,37 @@ implements Comparable, Serializable {
     /**
      * Points (1pt = 1/72in).
      */
-    public static final int PT = 3;
+    public static final int PT = 4;
     
     /**
      * Centimeter units.
      */
-    public static final int CM = 4;
+    public static final int CM = 8;
     
     /**
      * Millimeter units.
      */
-    public static final int MM = 5;
+    public static final int MM = 16;
     
     /**
      * Inch units.
      */
-    public static final int IN = 6;
+    public static final int IN = 32;
     
     /**
      * Em units (height of font).
      */
-    public static final int EM = 7;
+    public static final int EM = 64;
     
     /**
      * Ex units (height of character 'x' in font).
      */
-    public static final int EX = 8;
+    public static final int EX = 128;
     
     /**
      * Picas (1pc = 12pt)
      */
-    public static final int PC = 9;
+    public static final int PC = 256;
     
     
     private int value;

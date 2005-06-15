@@ -252,19 +252,23 @@ public class SplitPane extends Component {
     /**
      * Sets the height of the pane separator.  This value is only relevant
      * when the <code>SplitPane</code> has a vertical orientation.
+     * Values must be in pixel units.
      * 
      * @param newValue the new height
      */
     public void setSeparatorHeight(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_SEPARATOR_HEIGHT, newValue);
     }
     
     /**
      * Sets the position of the pane separator.
+     * Values must be in pixel units.
      * 
      * @param newValue the new position
      */
     public void setSeparatorPosition(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_SEPARATOR_POSITION, newValue);
     }
     
@@ -281,10 +285,12 @@ public class SplitPane extends Component {
     /**
      * Sets the width of the pane separator.  This value is only relevant
      * when the <code>SplitPane</code> has a horizontal orientation.
+     * Values must be in pixel units.
      * 
      * @param newValue the new width
      */
     public void setSeparatorWidth(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_SEPARATOR_WIDTH, newValue);
     }
 }

@@ -449,10 +449,12 @@ implements ModalSupport {
     
     /**
      * Sets the height of the content region of the <code>WindowPane</code>.
+     * Values must be in pixel units.
      * 
      * @param newValue the new height
      */
     public void setHeight(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_HEIGHT, newValue);
     }
     
@@ -477,40 +479,48 @@ implements ModalSupport {
     /**
      * Sets the maximum height of the content region of the 
      * <code>WindowPane</code>.
+     * Values must be in pixel units.
      * 
      * @param newValue the new maximum height
      */
     public void setMaximumHeight(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_MAXIMUM_HEIGHT, newValue);
     }
     
     /**
      * Sets the maximum width of the content region of the 
      * <code>WindowPane</code>.
+     * Values must be in pixel units.
      * 
      * @param newValue the new maximum width
      */
     public void setMaximumWidth(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_MAXIMUM_WIDTH, newValue);
     }
     
     /**
      * Sets the minimum height of the content region of the 
      * <code>WindowPane</code>.
+     * Values must be in pixel units.
      * 
      * @param newValue the new minimum height
      */
     public void setMinimumHeight(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_MINIMUM_HEIGHT, newValue);
     }
     
     /**
      * Sets the minimum width of the content region of the 
      * <code>WindowPane</code>.
+     * Values must be in pixel units.
      * 
      * @param newValue the new minimum width
      */
     public void setMinimumWidth(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_MINIMUM_WIDTH, newValue);
     }
     
@@ -535,20 +545,24 @@ implements ModalSupport {
     /**
      * Sets the horizontal (X) position of the <code>WindowPane</code> with
      * respect to its container.
+     * Values must be in pixel units.
      * 
      * @param newValue the new position
      */
     public void setPositionX(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_POSITION_X, newValue);
     }
     
     /**
      * Sets the vertical (Y) position of the <code>WindowPane</code> with
      * respsect to its container.
+     * Values must be in pixel units.
      * 
      * @param newValue the new position
      */
     public void setPositionY(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_POSITION_Y, newValue);
     }
 
@@ -608,10 +622,12 @@ implements ModalSupport {
     
     /**
      * Sets the height of the title region.
+     * Values must be in pixel units.
      * 
      * @param newValue the new height
      */
     public void setTitleHeight(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_TITLE_HEIGHT, newValue);
     }
     
@@ -626,10 +642,12 @@ implements ModalSupport {
     
     /**
      * Sets the width of the content region of the window.
+     * Values must be in pixel units.
      * 
      * @param newValue the new width
      */
     public void setWidth(Extent newValue) {
+        Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_WIDTH, newValue);
     }
     
