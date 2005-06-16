@@ -194,6 +194,24 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("TextPosition = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setTextPosition(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextPosition = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setTextPosition(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("TextAlignment = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -208,6 +226,15 @@ public class LabelTest extends SplitPane {
                 apply(new Applicator() {
                     public void apply(Label label) {
                         label.setTextAlignment(new Alignment(Alignment.DEFAULT, Alignment.TOP));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Center(V)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setTextAlignment(new Alignment(Alignment.DEFAULT, Alignment.CENTER));
                     }
                 });
             }
@@ -230,11 +257,38 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("TextAlignment = Center (H)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setTextAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("TextAlignment = Right", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(Label label) {
                         label.setTextAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setTextAlignment(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setTextAlignment(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
                     }
                 });
             }

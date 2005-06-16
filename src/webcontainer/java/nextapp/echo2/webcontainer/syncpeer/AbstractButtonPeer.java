@@ -120,78 +120,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
     
     /**
-     * Converts the value of the <code>alignment</code> property of an 
-     * <code>AbstractButton</code> into a value suitable to be passed to a
-     * <code>TriCellTable</code> as an <code>orientation</code> constructor
-     * parameter.
-     * 
-     * @param alignment the <code>Alignment</code>
-     * @param component the button being rendered
-     * @return the <code>orientation</code> value
-     */
-    private int convertIconTextPositionToOrientation(Alignment alignment, Component component) {
-        if (alignment.getVertical() == Alignment.DEFAULT) {
-            switch (alignment.getHorizontal()) {
-            case Alignment.LEFT:
-                return component.getLayoutDirection().isLeftToRight() 
-                        ? TriCellTable.LEADING_TRAILING : TriCellTable.TRAILING_LEADING;
-            case Alignment.RIGHT:
-                return component.getLayoutDirection().isLeftToRight() 
-                        ? TriCellTable.TRAILING_LEADING : TriCellTable.LEADING_TRAILING;
-            case Alignment.LEADING:
-                return TriCellTable.LEADING_TRAILING;
-            case Alignment.TRAILING:
-                return TriCellTable.TRAILING_LEADING;
-            default:
-                // Invalid, return value for TRAILING (default).
-                return TriCellTable.TRAILING_LEADING;
-            }
-        } else {
-            if (alignment.getVertical() == Alignment.TOP) {
-                return TriCellTable.TOP_BOTTOM;
-            } else {
-                return TriCellTable.BOTTOM_TOP;
-            }
-        }
-    }
-    
-    /**
-     * Converts the value of the <code>stateAlignment</code> property of a 
-     * <code>ToggleButton</code> into a value suitable to be passed to a
-     * <code>TriCellTable</code> as an <code>orientation</code> constructor
-     * parameter.
-     * 
-     * @param alignment the state <code>Alignment</code>
-     * @param component the button being rendered
-     * @return the <code>orientation</code> value
-     */
-    private int convertStatePositionToOrientation(Alignment alignment, Component component) {
-        if (alignment.getVertical() == Alignment.DEFAULT) {
-            switch (alignment.getHorizontal()) {
-            case Alignment.LEFT:
-                return component.getLayoutDirection().isLeftToRight() 
-                        ? TriCellTable.TRAILING_LEADING : TriCellTable.LEADING_TRAILING;
-            case Alignment.RIGHT:
-                return component.getLayoutDirection().isLeftToRight() 
-                        ? TriCellTable.LEADING_TRAILING : TriCellTable.TRAILING_LEADING;
-            case Alignment.LEADING:
-                return TriCellTable.TRAILING_LEADING;
-            case Alignment.TRAILING:
-                return TriCellTable.LEADING_TRAILING;
-            default:
-                // Invalid, return value for LEADING (default).
-                return TriCellTable.TRAILING_LEADING;
-            }
-        } else {
-            if (alignment.getVertical() == Alignment.TOP) {
-                return TriCellTable.BOTTOM_TOP;
-            } else {
-                return TriCellTable.TOP_BOTTOM;
-            }
-        }
-    }
-    
-    /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
@@ -415,7 +343,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     DEFAULT_TEXT_POSITION);
             if (stateIconElement == null) {
                 // Not rendering a ToggleButton.
-                int orientation = convertIconTextPositionToOrientation(textPosition, button);
+                int orientation = TriCellTableConfigurator.convertIconTextPositionToOrientation(textPosition, button);
                 tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
                 
                 renderCellText(tct, textNode, button);
@@ -430,7 +358,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                         DEFAULT_ICON_TEXT_MARGIN);
                 Alignment statePosition = (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_POSITION,
                         DEFAULT_STATE_POSITION);
-                int orientation = convertStatePositionToOrientation(statePosition, button);
+                int orientation = TriCellTableConfigurator.convertStatePositionToOrientation(statePosition, button);
                 tct = new TriCellTable(document, elementId, orientation, stateMargin);
 
                 if (textNode == null) {
@@ -454,8 +382,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     DEFAULT_ICON_TEXT_MARGIN);
             Alignment statePosition = (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_POSITION,
                     DEFAULT_STATE_POSITION);
-            int stateOrientation = convertStatePositionToOrientation(statePosition, button);
-            int orientation = convertIconTextPositionToOrientation(textPosition, button);
+            int stateOrientation = TriCellTableConfigurator.convertStatePositionToOrientation(statePosition, button);
+            int orientation = TriCellTableConfigurator.convertIconTextPositionToOrientation(textPosition, button);
             tct = new TriCellTable(document, elementId, orientation, iconTextMargin, stateOrientation, stateMargin);
 
             renderCellText(tct, textNode, button);

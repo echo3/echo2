@@ -160,21 +160,7 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
                 DEFAULT_ICON_TEXT_MARGIN);
         String elementId = ContainerInstance.getElementId(label);
         
-        int orientation;
-        if (textPosition.getVertical() == Alignment.DEFAULT) {
-            if (AlignmentRender.getRenderedHorizontal(textPosition, null) == Alignment.LEFT) {
-                orientation = TriCellTable.LEADING_TRAILING;
-            } else {
-                orientation = TriCellTable.TRAILING_LEADING;
-            }
-        } else {
-            if (textPosition.getVertical() == Alignment.TOP) {
-                orientation = TriCellTable.TOP_BOTTOM;
-            } else {
-                orientation = TriCellTable.BOTTOM_TOP;
-            }
-        }
-        
+        int orientation = TriCellTableConfigurator.convertIconTextPositionToOrientation(textPosition, label);
         TriCellTable tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
         
         Element textTdElement = tct.getTdElement(0);
