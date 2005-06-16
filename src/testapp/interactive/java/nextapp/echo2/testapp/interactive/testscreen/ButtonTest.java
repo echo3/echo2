@@ -272,6 +272,28 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Set Text = Short", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getText() != null) {
+                            button.setText("Test Button");
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Text = Long", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getText() != null) {
+                            button.setText("This button has a longer label.  The quick brown fox jumps over the lazy brown dog.");
+                        }
+                    }
+                });
+            }
+        });
 
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);
@@ -354,6 +376,25 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Set Line Wrap = true", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLineWrap(true);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Line Wrap = false", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLineWrap(false);
+                    }
+                });
+            }
+        });
+        
 
         // Rollover Effect Settings
 
