@@ -270,6 +270,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             ExtentRender.renderToStyle(cssStyle, "height", height);
             cssStyle.setAttribute("overflow", "hidden");
         }
+        if (Boolean.FALSE.equals(button.getRenderProperty(AbstractButton.PROPERTY_LINE_WRAP))) {
+            cssStyle.setAttribute("white-space", "nowrap");
+        }
         BorderRender.renderToStyle(cssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
         ColorRender.renderToStyle(cssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
                 (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND));

@@ -43,7 +43,6 @@ implements LayoutData {
     
     private Color background;
     private Insets insets;
-    private boolean lineWrap = true;
     private Alignment alignment;
     
     /**
@@ -74,15 +73,6 @@ implements LayoutData {
     }
     
     /**
-     * Determines whether line wrapping is enabled on the cell.
-     * 
-     * @return true if line wrapping is enabled
-     */
-    public boolean isLineWrap() {
-        return lineWrap;
-    }
-    
-    /**
      * Sets the alignment of the cell.
      * 
      * @param newValue the new alignment
@@ -107,14 +97,5 @@ implements LayoutData {
      */
     public void setInsets(Insets newValue) {
         insets = newValue;
-    }
-    
-    /**
-     * Sets whether line wrapping is enabled on the cell.
-     * 
-     * @param newValue ture to enable line wrapping
-     */
-    public void setLineWrap(boolean newValue) {
-        lineWrap = newValue;
     }
 }

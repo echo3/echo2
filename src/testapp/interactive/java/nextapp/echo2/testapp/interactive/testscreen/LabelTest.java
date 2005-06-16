@@ -29,6 +29,8 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import java.util.Locale;
+
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
@@ -37,6 +39,7 @@ import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.LayoutDirection;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -63,10 +66,11 @@ public class LabelTest extends SplitPane {
 
         SplitPaneLayoutData splitPaneLayoutData;
         
-        ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
-        add(controlsColumn);
-
+        Column controlGroupsColumn = new Column();
+        controlGroupsColumn.setCellSpacing(new Extent(5));
+        controlGroupsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        add(controlGroupsColumn);
+        
         testColumn = new Column();
         testColumn.setCellSpacing(new Extent(15));
         splitPaneLayoutData = new SplitPaneLayoutData();
@@ -83,6 +87,17 @@ public class LabelTest extends SplitPane {
         final Label iconTextLabel = new Label("Test Label", Styles.ICON_LOGO);
         testColumn.add(iconTextLabel);
 
+        ButtonColumn controlsColumn;
+        
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+
+        // Base Properties
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Base Properties"));
         controlsColumn.addButton("Toggle Container Cell Spacing", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testColumn.getCellSpacing() == null) {
@@ -149,6 +164,53 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Set Text = Short", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        if (label.getText() != null) {
+                            label.setText("Test Label");
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Text = Long", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        if (label.getText() != null) {
+                            label.setText("This is a longer label.  The quick brown fox jumps over the lazy brown dog.");
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Line Wrap = true", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLineWrap(true);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Line Wrap = false", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLineWrap(false);
+                    }
+                });
+            }
+        });
+
+        // Alignment & Positioning
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Alignment & Positioning"));
         controlsColumn.addButton("TextPosition = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -329,6 +391,69 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
+        
+        // Localization
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Localization"));
+        
+        controlsColumn.addButton("Locale = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLocale(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Locale = US", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLocale(Locale.US);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Locale = HEBREW (RTL)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLocale(new Locale("iw"));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("LayoutDirection = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLayoutDirection(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("LayoutDirection = LTR", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLayoutDirection(LayoutDirection.LTR);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("LayoutDirection = RTL", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setLayoutDirection(LayoutDirection.RTL);
+                    }
+                });
+            }
+        });
+        
     }
 
     public void apply(Applicator applicator) {

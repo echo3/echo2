@@ -68,8 +68,8 @@ public class CellLayoutDataRender {
             cssStyle.setAttribute("padding", InsetsRender.renderCssAttributeValue(cellInsets));
         }
         ColorRender.renderToStyle(cssStyle, null, layoutData.getBackground());
-        if (!layoutData.isLineWrap()) {
-            cssStyle.setAttribute("white-space", "nowrap");
-        }
     }
+    
+    /** Non-instantiable class. */
+    private CellLayoutDataRender() { }
 }

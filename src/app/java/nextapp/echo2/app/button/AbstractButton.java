@@ -503,7 +503,6 @@ public abstract class AbstractButton extends Component {
         setProperty(PROPERTY_LINE_WRAP, new Boolean(newValue));
     }
     
-
     /**
      * Sets the model that this button represents. The model may not be null.
      * 

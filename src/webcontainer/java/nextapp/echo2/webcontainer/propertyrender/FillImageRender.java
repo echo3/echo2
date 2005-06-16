@@ -43,9 +43,6 @@ import nextapp.echo2.webrender.output.CssStyle;
  */
 public class FillImageRender {
     
-    /** Non-instantiable class. */
-    private FillImageRender() { }
-    
     /**
      * A flag indicating that the 'fixed' property of the <code>FillImage</code>
      * should be ignored.
@@ -135,5 +132,8 @@ public class FillImageRender {
             }
             cssStyle.setAttribute("background-position", positionText.toString());
         }
-    }    
+    }
+    
+    /** Non-instantiable class. */
+    private FillImageRender() { }
 }

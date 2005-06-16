@@ -63,4 +63,7 @@ public class ImageReferenceRender {
        imgElement.setAttribute("style", cssStyle.renderInline());
        return imgElement;
     }
+    
+    /** Non-instantiable class. */
+    private ImageReferenceRender() { }
 }

@@ -283,15 +283,6 @@ public class GridTest extends SplitPane {
                 }
             }
         });
-        controlsColumn.addButton("Toggle Line Wrap", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
-                    layoutData.setLineWrap(!layoutData.isLineWrap());
-                    selectedButton.setLayoutData(layoutData);
-                }
-            }
-        });
     }
 
     public Button createGridCellButton() {

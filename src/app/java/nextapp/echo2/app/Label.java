@@ -36,6 +36,7 @@ public class Label extends Component {
 
     public static final String PROPERTY_ICON = "icon";
     public static final String PROPERTY_ICON_TEXT_MARGIN = "iconTextMargin";
+    public static final String PROPERTY_LINE_WRAP = "lineWrap";
     public static final String PROPERTY_TEXT = "text";
     public static final String PROPERTY_TEXT_ALIGNMENT = "textAlignment";
     public static final String PROPERTY_TEXT_POSITION = "textPosition";
@@ -124,6 +125,17 @@ public class Label extends Component {
     public Alignment getTextPosition() {
         return (Alignment) getProperty(PROPERTY_TEXT_POSITION);
     }
+
+    /**
+     * Determines if the text of the label should wrap in the event that 
+     * horizontal space is limited.  Default value is true.
+     * 
+     * @return the line wrap state
+     */
+    public boolean isLineWrap() {
+        Boolean value = (Boolean) getProperty(PROPERTY_LINE_WRAP);
+        return value == null ? true : value.booleanValue();
+    }
     
     /**
      * This component does not support children.
@@ -152,6 +164,16 @@ public class Label extends Component {
      */
     public void setIconTextMargin(Extent newValue) {
         setProperty(PROPERTY_ICON_TEXT_MARGIN, newValue);
+    }
+    
+    /**
+     * Sets whether the text of the label should wrap in the event that 
+     * horizontal space is limited.  Default value is true.
+     * 
+     * @param newValue the new line wrap state
+     */
+    public void setLineWrap(boolean newValue) {
+        setProperty(PROPERTY_LINE_WRAP, new Boolean(newValue));
     }
     
     /**

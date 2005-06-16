@@ -46,6 +46,7 @@ import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
+import nextapp.echo2.webcontainer.propertyrender.LayoutDirectionRender;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.util.DomUtil;
@@ -63,8 +64,6 @@ import org.w3c.dom.Node;
  */
 public class LabelPeer
 implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
-    
-    //BUGBUG. Label support for bidi is not rendering correctly at moment.
     
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Extent DEFAULT_ICON_TEXT_MARGIN = new Extent(3);
@@ -166,6 +165,9 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
         textTdCssStyle.setAttribute("padding", "0px");
+        if (Boolean.FALSE.equals(label.getRenderProperty(Label.PROPERTY_LINE_WRAP))) {
+            textTdCssStyle.setAttribute("white-space", "nowrap");
+        }
         AlignmentRender.renderToStyle(textTdCssStyle, (Alignment) label.getRenderProperty(Label.PROPERTY_TEXT_ALIGNMENT), label);
         textTdElement.setAttribute("style", textTdCssStyle.renderInline());
         DomUtil.setElementText(textTdElement, text);
@@ -179,6 +181,7 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         tableElement.setAttribute("id", elementId);
         
         CssStyle cssStyle = new CssStyle();
+        LayoutDirectionRender.renderToStyle(cssStyle, label.getLayoutDirection(), label.getLocale());
         ColorRender.renderToStyle(cssStyle, (Color) label.getRenderProperty(Label.PROPERTY_FOREGROUND), 
                 (Color) label.getRenderProperty(Label.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) label.getRenderProperty(Label.PROPERTY_FONT));
@@ -204,6 +207,9 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         DomUtil.setElementText(spanElement, (String) label.getRenderProperty(Label.PROPERTY_TEXT));
 
         CssStyle cssStyle = new CssStyle();
+        if (Boolean.FALSE.equals(label.getRenderProperty(Label.PROPERTY_LINE_WRAP))) {
+            cssStyle.setAttribute("white-space", "nowrap");
+        }
         ColorRender.renderToStyle(cssStyle, (Color) label.getRenderProperty(Label.PROPERTY_FOREGROUND), 
                 (Color) label.getRenderProperty(Label.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) label.getRenderProperty(Label.PROPERTY_FONT));

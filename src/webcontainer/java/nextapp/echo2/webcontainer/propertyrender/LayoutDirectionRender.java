@@ -39,6 +39,17 @@ import nextapp.echo2.webrender.output.CssStyle;
  * <code>nextapp.echo2.app.LayoutDirection</code> properties.
  */
 public class LayoutDirectionRender {
+
+    /**
+     * Renders a CSS attribute value representation of a 
+     * <code>LayoutDirection</code>.
+     * 
+     * @param layoutDirection the <code>LayoutDirection</code> to render
+     * @return a CSS attribute value representation
+     */
+    public static String renderCssAttributeValue(LayoutDirection layoutDirection) {
+        return layoutDirection.isLeftToRight() ? "ltr" : "rtl";
+    }
     
     /**
      * Renders the layout direction of a component to the given CSS style, 
@@ -64,15 +75,7 @@ public class LayoutDirectionRender {
         }
         cssStyle.setAttribute("direction", renderCssAttributeValue(layoutDirection));
     }
-
-    /**
-     * Renders a CSS attribute value representation of a 
-     * <code>LayoutDirection</code>.
-     * 
-     * @param layoutDirection the <code>LayoutDirection</code> to render
-     * @return a CSS attribute value representation
-     */
-    public static String renderCssAttributeValue(LayoutDirection layoutDirection) {
-        return layoutDirection.isLeftToRight() ? "ltr" : "rtl";
-    }
+    
+    /** Non-instantiable class. */
+    private LayoutDirectionRender() { }
 }

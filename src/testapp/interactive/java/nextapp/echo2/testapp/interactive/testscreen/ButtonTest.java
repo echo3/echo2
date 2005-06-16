@@ -394,7 +394,6 @@ extends SplitPane {
                 });
             }
         });
-        
 
         // Rollover Effect Settings
 
