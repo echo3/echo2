@@ -58,7 +58,7 @@ public class AlignmentRender {
         if (component == null) {
             layoutDirection = LayoutDirection.LTR;
         } else {
-            layoutDirection = component.getLayoutDirection();
+            layoutDirection = component.getRenderLayoutDirection();
         }
         switch (alignment.getHorizontal()) {
         case Alignment.LEADING:

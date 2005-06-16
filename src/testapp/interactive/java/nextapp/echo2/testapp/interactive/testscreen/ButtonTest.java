@@ -31,6 +31,7 @@ package nextapp.echo2.testapp.interactive.testscreen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Button;
@@ -42,6 +43,7 @@ import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.LayoutDirection;
 import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.button.AbstractButton;
@@ -59,7 +61,7 @@ import nextapp.echo2.testapp.interactive.Styles;
 import nextapp.echo2.testapp.interactive.TestGrid;
 
 /**
- * 
+ * Interactive test module for <code>AbstractButton</code>-derived components.
  */
 public class ButtonTest 
 extends SplitPane {
@@ -1024,6 +1026,70 @@ extends SplitPane {
                 });
             }
         });
+
+        // Localization
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Localization"));
+        
+        controlsColumn.addButton("Locale = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLocale(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Locale = US", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLocale(Locale.US);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Locale = HEBREW (RTL)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLocale(new Locale("iw"));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("LayoutDirection = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLayoutDirection(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("LayoutDirection = LTR", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLayoutDirection(LayoutDirection.LTR);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("LayoutDirection = RTL", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setLayoutDirection(LayoutDirection.RTL);
+                    }
+                });
+            }
+        });
+        
+    
     }
     
     public void apply(Applicator applicator) {

@@ -53,10 +53,10 @@ class TriCellTableConfigurator {
         if (textPosition.getVertical() == Alignment.DEFAULT) {
             switch (textPosition.getHorizontal()) {
             case Alignment.LEFT:
-                return component.getLayoutDirection().isLeftToRight() 
+                return component.getRenderLayoutDirection().isLeftToRight() 
                         ? TriCellTable.LEADING_TRAILING : TriCellTable.TRAILING_LEADING;
             case Alignment.RIGHT:
-                return component.getLayoutDirection().isLeftToRight() 
+                return component.getRenderLayoutDirection().isLeftToRight() 
                         ? TriCellTable.TRAILING_LEADING : TriCellTable.LEADING_TRAILING;
             case Alignment.LEADING:
                 return TriCellTable.LEADING_TRAILING;
@@ -91,10 +91,10 @@ class TriCellTableConfigurator {
         if (statePosition.getVertical() == Alignment.DEFAULT) {
             switch (statePosition.getHorizontal()) {
             case Alignment.LEFT:
-                return component.getLayoutDirection().isLeftToRight() 
+                return component.getRenderLayoutDirection().isLeftToRight() 
                         ? TriCellTable.TRAILING_LEADING : TriCellTable.LEADING_TRAILING;
             case Alignment.RIGHT:
-                return component.getLayoutDirection().isLeftToRight() 
+                return component.getRenderLayoutDirection().isLeftToRight() 
                         ? TriCellTable.LEADING_TRAILING : TriCellTable.TRAILING_LEADING;
             case Alignment.LEADING:
                 return TriCellTable.TRAILING_LEADING;

@@ -61,6 +61,7 @@ import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webcontainer.propertyrender.LayoutDirectionRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -262,6 +263,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         cssStyle.setAttribute("cursor", "pointer");
         cssStyle.setAttribute("margin", "0px");
         cssStyle.setAttribute("border-spacing", "0px");
+        LayoutDirectionRender.renderToStyle(cssStyle, button.getLayoutDirection(), button.getLocale());
         ExtentRender.renderToStyle(cssStyle, "width", (Extent) button.getRenderProperty(AbstractButton.PROPERTY_WIDTH));
         Extent height = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_HEIGHT);
         if (height != null) {

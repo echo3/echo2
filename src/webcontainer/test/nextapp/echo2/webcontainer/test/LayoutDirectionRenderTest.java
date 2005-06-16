@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer.test;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
 import nextapp.echo2.app.LayoutDirection;
 import nextapp.echo2.webcontainer.propertyrender.LayoutDirectionRender;
@@ -40,11 +42,28 @@ import nextapp.echo2.webrender.output.CssStyle;
  */
 public class LayoutDirectionRenderTest extends TestCase {
     
+    private static final Locale HEBREW = new Locale("iw");
+    
     public void test() {
         CssStyle cssStyle = new CssStyle();
-        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.LTR);
+        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.LTR, null);
         assertEquals("ltr", cssStyle.getAttribute("direction"));
-        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.RTL);
+        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.RTL, null);
+        assertEquals("rtl", cssStyle.getAttribute("direction"));
+
+        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.LTR, Locale.US);
+        assertEquals("ltr", cssStyle.getAttribute("direction"));
+        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.RTL, HEBREW);
+        assertEquals("rtl", cssStyle.getAttribute("direction"));
+
+        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.LTR, Locale.US);
+        assertEquals("ltr", cssStyle.getAttribute("direction"));
+        LayoutDirectionRender.renderToStyle(cssStyle, LayoutDirection.RTL, HEBREW);
+        assertEquals("rtl", cssStyle.getAttribute("direction"));
+
+        LayoutDirectionRender.renderToStyle(cssStyle, null, Locale.US);
+        assertEquals("ltr", cssStyle.getAttribute("direction"));
+        LayoutDirectionRender.renderToStyle(cssStyle, null, HEBREW);
         assertEquals("rtl", cssStyle.getAttribute("direction"));
     }
     

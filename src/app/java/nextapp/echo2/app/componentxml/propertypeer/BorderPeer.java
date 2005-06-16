@@ -52,7 +52,7 @@ implements PropertyXmlPeer {
     private static final Map STYLE_TEXT_TO_CONSTANT;
     static {
         Map constantMap = new HashMap();
-        constantMap.put("dahsed", new Integer(Border.STYLE_DASHED));
+        constantMap.put("dashed", new Integer(Border.STYLE_DASHED));
         constantMap.put("dotted", new Integer(Border.STYLE_DOTTED));
         constantMap.put("double", new Integer(Border.STYLE_DOUBLE));
         constantMap.put("groove", new Integer(Border.STYLE_GROOVE));

@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer.propertyrender;
 
+import java.util.Locale;
+
 import nextapp.echo2.app.LayoutDirection;
 import nextapp.echo2.webrender.output.CssStyle;
 
@@ -39,15 +41,26 @@ import nextapp.echo2.webrender.output.CssStyle;
 public class LayoutDirectionRender {
     
     /**
-     * Renders the <code>LayoutDirection</code> of a component to the given CSS style.
-     * Null property values are ignored.
+     * Renders the layout direction of a component to the given CSS style, 
+     * based on the provided <code>LayoutDirection</code> and 
+     * <code>Locale</code> property values.  Null property values are ignored.
+     * <p> 
+     * The provided <code>locale</code> and <code>layoutDirection</code>
+     * properties should represent the specific settings of a single 
+     * <code>Component</code>, NOT those derived recursively from within its
+     * hierarchy.  Using the recursively retrieved versions will result in
+     * direction information being rendered in cases where it is unncessary.
      * 
      * @param cssStyle the target <code>CssStyle</code>
-     * @param layoutDirection the property value
+     * @param layoutDirection the <code>LayoutDirection</code>
+     * @param locale the <code>Locale</code>
      */
-    public static void renderToStyle(CssStyle cssStyle, LayoutDirection layoutDirection) {
+    public static void renderToStyle(CssStyle cssStyle, LayoutDirection layoutDirection, Locale locale) {
         if (layoutDirection == null) {
-            return;
+            if (locale == null) {
+                return;
+            }
+            layoutDirection = LayoutDirection.forLocale(locale);
         }
         cssStyle.setAttribute("direction", renderCssAttributeValue(layoutDirection));
     }

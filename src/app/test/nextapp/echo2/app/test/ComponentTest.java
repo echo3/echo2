@@ -340,14 +340,14 @@ public class ComponentTest extends TestCase {
     }
 
     /**
-     * Test querying <code>locale</code> property when no application is 
-     * active. 
+     * Test querying rendered <code>locale</code> property when no application 
+     * is active. 
      */
-    public void testLocaleWithoutApplication() {
+    public void testRenderLocaleWithoutApplication() {
         NullComponent c = new NullComponent();
-        assertNull(c.getLocale());
+        assertNull(c.getRenderLocale());
         c.setLocale(Locale.TRADITIONAL_CHINESE);
-        assertEquals(Locale.TRADITIONAL_CHINESE, c.getLocale());
+        assertEquals(Locale.TRADITIONAL_CHINESE, c.getRenderLocale());
     }
     
     /**

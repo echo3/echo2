@@ -225,7 +225,7 @@ implements Serializable {
         if (isFullRefreshRequired()) {
             return;
         }
-        if (!child.isRecursivelyVisible()) {
+        if (!child.isRenderVisible()) {
             return;
         }
         if (isAncestorBeingAdded(child)) {
@@ -247,7 +247,7 @@ implements Serializable {
         if (isFullRefreshRequired()) {
             return;
         }
-        if (!parent.isRecursivelyVisible()) {
+        if (!parent.isRenderVisible()) {
             return;
         }
         if (isAncestorBeingAdded(parent)) {
@@ -295,7 +295,7 @@ implements Serializable {
         if (isFullRefreshRequired()) {
             return;
         }
-        if (!updatedComponent.isRecursivelyVisible()) {
+        if (!updatedComponent.isRenderVisible()) {
             return;
         }
 
@@ -322,7 +322,7 @@ implements Serializable {
         if (isFullRefreshRequired()) {
             return;
         }
-        if (!updatedComponent.isRecursivelyVisible()) {
+        if (!updatedComponent.isRenderVisible()) {
             return;
         }
         if (isAncestorBeingAdded(updatedComponent)) {

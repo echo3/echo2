@@ -460,62 +460,6 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the <code>LayoutDirection</code> of the <code>Component</code>.
-     * 
-     * @return the layout direction of this component
-     */
-    public LayoutDirection getLayoutDirection() {
-        if (layoutDirection == null) { 
-            if (locale == null) {
-                if (parent == null) {
-                    if (applicationInstance == null) {
-                        return null;
-                    } else {
-                        return applicationInstance.getLayoutDirection();
-                    }
-                } else {
-                    return parent.getLayoutDirection();
-                }
-            } else {
-                return LayoutDirection.forLocale(locale);
-            }
-        } else {
-            return layoutDirection;
-        }
-    }
-    
-    //BUGBUG. provide local-only getLocale/getLayoutDirection() methods.
-    // probably rename the recursive ones and use the the plaing getXXX() 
-    // name for the local-only version.
-    /**
-     * Returns the <code>Locale</code> of the <code>Component</code>.  If this 
-     * <code>Component</code> does not itself specify a locale, its ancestors 
-     * will be queried recursively until a <code>Component</code> providing
-     * a <code>Locale</code> is found.  If no ancestors have 
-     * <code>Locale</code>s set, the <code>ApplicationInstance</code>'s locale 
-     * will be returned. In the event that no locale information is 
-     * available from the ancestral hierarchy of <code>Component</code>s and no 
-     * <code>ApplicationInstance</code> is registered, null is returned.
-     *
-     * @return the locale for this component
-     */
-    public Locale getLocale() {
-        if (locale == null) {
-            if (parent == null) {
-                if (applicationInstance == null) {
-                    return null;
-                } else {
-                    return applicationInstance.getLocale();
-                }
-            } else {
-                return parent.getLocale();
-            }
-        } else {
-            return locale;
-        }
-    }
-    
-    /**
      * Returns the parent component.
      * 
      * @return the parent component, or null if this component has no parent
@@ -558,7 +502,33 @@ implements RenderIdSupport, Serializable {
     public Object getIndexedProperty(String propertyName, int propertyIndex) {
         return localStyle.getIndexedProperty(propertyName, propertyIndex);
     }
+    
+    /**
+     * Returns the specific layout direction setting of this component, if any.
+     * This method will return null unless a <code>LayoutDirection</code> is
+     * specifically set on <strong>this</strong> <code>Component</code>.
+     * 
+     * @return the layout directionproperty of <strong>this </strong>
+     *         <code>Component</code>
+     * @see #getRenderLayoutDirection()
+     */
+    public LayoutDirection getLayoutDirection() {
+        return layoutDirection;
+    }
 
+    /**
+     * Returns the specific locale setting of this component, if any.
+     * This method will return null unless a <code>Locale</code> is
+     * specifically set on <strong>this</strong> <code>Component</code>.
+     * 
+     * @return the locale property of <strong>this</strong> 
+     *         <code>Component</code>
+     * @see #getRenderLocale()
+     */
+    public Locale getLocale() {
+        return locale;
+    }
+    
     /**
      * Returns the render id of this component.  
      * This id is only guaranteed to be unique within 
@@ -572,6 +542,60 @@ implements RenderIdSupport, Serializable {
      */
     public String getRenderId() {
         return renderId;
+    }
+    
+    /**
+     * Returns the rendered <code>LayoutDirection</code> of the
+     * <code>Component</code>.
+     * 
+     * @return the layout direction of this component
+     */
+    public LayoutDirection getRenderLayoutDirection() {
+        if (layoutDirection == null) { 
+            if (locale == null) {
+                if (parent == null) {
+                    if (applicationInstance == null) {
+                        return null;
+                    } else {
+                        return applicationInstance.getLayoutDirection();
+                    }
+                } else {
+                    return parent.getRenderLayoutDirection();
+                }
+            } else {
+                return LayoutDirection.forLocale(locale);
+            }
+        } else {
+            return layoutDirection;
+        }
+    }
+    
+    /**
+     * Returns the rendered <code>Locale</code> of the <code>Component</code>.
+     * If this <code>Component</code> does not itself specify a locale, its
+     * ancestors will be queried recursively until a <code>Component</code>
+     * providing a <code>Locale</code> is found. If no ancestors have
+     * <code>Locale</code> s set, the <code>ApplicationInstance</code>'s
+     * locale will be returned. In the event that no locale information is
+     * available from the ancestral hierarchy of <code>Component</code> s and
+     * no <code>ApplicationInstance</code> is registered, null is returned.
+     * 
+     * @return the locale for this component
+     */
+    public Locale getRenderLocale() {
+        if (locale == null) {
+            if (parent == null) {
+                if (applicationInstance == null) {
+                    return null;
+                } else {
+                    return applicationInstance.getLocale();
+                }
+            } else {
+                return parent.getRenderLocale();
+            }
+        } else {
+            return locale;
+        }
     }
     
     //BUGBUG. need to work out null state on all these getRenderXXX methods.
@@ -876,7 +900,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return true if the <code>Component</code> is recursively visible
      */
-    public boolean isRecursivelyVisible() {
+    public boolean isRenderVisible() {
         Component component = this;
         while (component != null) {
             if ((component.flags & FLAG_VISIBLE) == 0) {

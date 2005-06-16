@@ -78,15 +78,15 @@ public class LayoutDirectionTest extends TestCase {
     
     public void testComponentInheritanceFromApplication() {
         Component component = new NullComponent();
-        assertNull(component.getLayoutDirection());
+        assertNull(component.getRenderLayoutDirection());
         
         app.getColumn().add(component);
         
         app.setLocale(Locale.US);
-        assertTrue(component.getLayoutDirection().isLeftToRight());
+        assertTrue(component.getRenderLayoutDirection().isLeftToRight());
         
         app.setLocale(ARABIC);
-        assertFalse(component.getLayoutDirection().isLeftToRight());
+        assertFalse(component.getRenderLayoutDirection().isLeftToRight());
     }
     
     public void testComponentInheritanceFromHierarchy() {
@@ -94,24 +94,24 @@ public class LayoutDirectionTest extends TestCase {
         app.getColumn().add(component);
         
         app.setLocale(Locale.US);
-        assertTrue(component.getLayoutDirection().isLeftToRight());
+        assertTrue(component.getRenderLayoutDirection().isLeftToRight());
         
         app.getDefaultWindow().setLocale(ARABIC);
-        assertFalse(component.getLayoutDirection().isLeftToRight());
+        assertFalse(component.getRenderLayoutDirection().isLeftToRight());
         
         app.getContentPane().setLocale(Locale.ITALY);
-        assertTrue(component.getLayoutDirection().isLeftToRight());
+        assertTrue(component.getRenderLayoutDirection().isLeftToRight());
         
         app.getContentPane().setLayoutDirection(LayoutDirection.RTL);
-        assertFalse(component.getLayoutDirection().isLeftToRight());
+        assertFalse(component.getRenderLayoutDirection().isLeftToRight());
         
         app.getContentPane().setLayoutDirection(null);
-        assertTrue(component.getLayoutDirection().isLeftToRight());
+        assertTrue(component.getRenderLayoutDirection().isLeftToRight());
         
         app.getColumn().setLocale(HEBREW);
-        assertFalse(component.getLayoutDirection().isLeftToRight());
+        assertFalse(component.getRenderLayoutDirection().isLeftToRight());
         
         app.getColumn().setLayoutDirection(LayoutDirection.LTR);
-        assertTrue(component.getLayoutDirection().isLeftToRight());
+        assertTrue(component.getRenderLayoutDirection().isLeftToRight());
     }
 }
