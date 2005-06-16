@@ -155,7 +155,6 @@ public class ContainerInstance extends UserInstance {
         }
     }
     
-
     /**
      * Retrieves the <code>IdTable</code> used by this 
      * <code>ContainerInstance</code> to assign weakly-referenced unique 

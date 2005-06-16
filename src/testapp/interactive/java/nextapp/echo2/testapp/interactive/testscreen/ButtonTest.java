@@ -651,6 +651,24 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("TextPosition = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextPosition = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextPosition(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
         
         // Text Alignment
 
@@ -718,6 +736,24 @@ extends SplitPane {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
                         button.setTextAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("TextAlignment = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setTextAlignment(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
                     }
                 });
             }
@@ -802,7 +838,7 @@ extends SplitPane {
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);
         
-        controlsColumn.add(new Label("ToggleButton State Alignment"));
+        controlsColumn.add(new Label("ToggleButton State Position"));
         
         controlsColumn.addButton("StatePosition = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -854,6 +890,28 @@ extends SplitPane {
                     public void apply(AbstractButton button) {
                         if (button instanceof ToggleButton) {
                             ((ToggleButton) button).setStatePosition(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StatePosition = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStatePosition(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
                         }
                     }
                 });
@@ -939,6 +997,28 @@ extends SplitPane {
                     public void apply(AbstractButton button) {
                         if (button instanceof ToggleButton) {
                             ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateAlignment = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
                         }
                     }
                 });

@@ -131,10 +131,20 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     private int convertIconTextPositionToOrientation(Alignment alignment, Component component) {
         if (alignment.getVertical() == Alignment.DEFAULT) {
-            if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
-                return TriCellTable.LEFT_RIGHT;
-            } else {
-                return TriCellTable.RIGHT_LEFT;
+            switch (alignment.getHorizontal()) {
+            case Alignment.LEFT:
+                return component.getLayoutDirection().isLeftToRight() 
+                        ? TriCellTable.LEADING_TRAILING : TriCellTable.TRAILING_LEADING;
+            case Alignment.RIGHT:
+                return component.getLayoutDirection().isLeftToRight() 
+                        ? TriCellTable.TRAILING_LEADING : TriCellTable.LEADING_TRAILING;
+            case Alignment.LEADING:
+                return TriCellTable.LEADING_TRAILING;
+            case Alignment.TRAILING:
+                return TriCellTable.TRAILING_LEADING;
+            default:
+                // Invalid, return value for TRAILING (default).
+                return TriCellTable.TRAILING_LEADING;
             }
         } else {
             if (alignment.getVertical() == Alignment.TOP) {
@@ -157,10 +167,20 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     private int convertStatePositionToOrientation(Alignment alignment, Component component) {
         if (alignment.getVertical() == Alignment.DEFAULT) {
-            if (alignment.getRenderedHorizontal(component) == Alignment.LEFT) {
-                return TriCellTable.RIGHT_LEFT;
-            } else {
-                return TriCellTable.LEFT_RIGHT;
+            switch (alignment.getHorizontal()) {
+            case Alignment.LEFT:
+                return component.getLayoutDirection().isLeftToRight() 
+                        ? TriCellTable.TRAILING_LEADING : TriCellTable.LEADING_TRAILING;
+            case Alignment.RIGHT:
+                return component.getLayoutDirection().isLeftToRight() 
+                        ? TriCellTable.LEADING_TRAILING : TriCellTable.TRAILING_LEADING;
+            case Alignment.LEADING:
+                return TriCellTable.TRAILING_LEADING;
+            case Alignment.TRAILING:
+                return TriCellTable.LEADING_TRAILING;
+            default:
+                // Invalid, return value for LEADING (default).
+                return TriCellTable.TRAILING_LEADING;
             }
         } else {
             if (alignment.getVertical() == Alignment.TOP) {
@@ -485,8 +505,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element stateTdElement = tct.getTdElement(cellIndex);
         CssStyle stateTdCssStyle = new CssStyle();
         stateTdCssStyle.setAttribute("padding", "0px");
-        AlignmentRender.renderToStyle(stateTdCssStyle, button, 
-                (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_ALIGNMENT));
+        AlignmentRender.renderToStyle(stateTdCssStyle,  
+                (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_ALIGNMENT), button);
         stateTdElement.setAttribute("style", stateTdCssStyle.renderInline());
         stateTdElement.appendChild(stateIconElement);
     }
@@ -507,8 +527,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             textTdCssStyle.setAttribute("white-space", "nowrap");
         }
         textTdCssStyle.setAttribute("padding", "0px");
-        AlignmentRender.renderToStyle(textTdCssStyle, button, 
-                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT));
+        AlignmentRender.renderToStyle(textTdCssStyle, 
+                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT), button);
         textTdElement.setAttribute("style", textTdCssStyle.renderInline());
         textTdElement.appendChild(textNode);
     }

@@ -64,6 +64,8 @@ import org.w3c.dom.Node;
 public class LabelPeer
 implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
     
+    //BUGBUG. Label support for bidi is not rendering correctly at moment.
+    
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Extent DEFAULT_ICON_TEXT_MARGIN = new Extent(3);
     private static final String IMAGE_ID_ICON = "icon";
@@ -160,10 +162,10 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         
         int orientation;
         if (textPosition.getVertical() == Alignment.DEFAULT) {
-            if (textPosition.getRenderedHorizontal(label) == Alignment.LEFT) {
-                orientation = TriCellTable.LEFT_RIGHT;
+            if (AlignmentRender.getRenderedHorizontal(textPosition, null) == Alignment.LEFT) {
+                orientation = TriCellTable.LEADING_TRAILING;
             } else {
-                orientation = TriCellTable.RIGHT_LEFT;
+                orientation = TriCellTable.TRAILING_LEADING;
             }
         } else {
             if (textPosition.getVertical() == Alignment.TOP) {
@@ -178,7 +180,7 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
         textTdCssStyle.setAttribute("padding", "0px");
-        AlignmentRender.renderToStyle(textTdCssStyle, label, (Alignment) label.getRenderProperty(Label.PROPERTY_TEXT_ALIGNMENT));
+        AlignmentRender.renderToStyle(textTdCssStyle, (Alignment) label.getRenderProperty(Label.PROPERTY_TEXT_ALIGNMENT), label);
         textTdElement.setAttribute("style", textTdCssStyle.renderInline());
         DomUtil.setElementText(textTdElement, text);
  

@@ -39,6 +39,7 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.layout.ColumnLayoutData;
+import nextapp.echo2.app.update.PropertyUpdate;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.update.UpdateManager;
 import junit.framework.TestCase;
@@ -198,7 +199,7 @@ public class UpdateManagerTest extends TestCase  {
         String[] updatedPropertyNames = componentUpdates[0].getUpdatedPropertyNames(); 
         assertEquals(1, updatedPropertyNames.length);
         assertEquals(Label.PROPERTY_TEXT, updatedPropertyNames[0]);
-        ServerComponentUpdate.PropertyUpdate propertyUpdate = componentUpdates[0].getUpdatedProperty(Label.PROPERTY_TEXT);
+        PropertyUpdate propertyUpdate = componentUpdates[0].getUpdatedProperty(Label.PROPERTY_TEXT);
         assertEquals("Label", propertyUpdate.getOldValue());
         assertEquals("Hi there", propertyUpdate.getNewValue());
         
@@ -233,7 +234,7 @@ public class UpdateManagerTest extends TestCase  {
         
         ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
         assertEquals(1, componentUpdates.length);
-        ServerComponentUpdate.PropertyUpdate backgroundUpdate = 
+        PropertyUpdate backgroundUpdate = 
                   componentUpdates[0].getUpdatedProperty(TextField.PROPERTY_BACKGROUND);
         assertNotNull(backgroundUpdate);
         assertEquals(Color.BLUE, backgroundUpdate.getNewValue());

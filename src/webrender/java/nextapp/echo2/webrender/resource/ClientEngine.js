@@ -1398,11 +1398,18 @@ EchoServerMessage.processAsyncConfig = function() {
 };
 
 /**
- * Configures the client modal state by retrieving the 
- * value of the "modalid" attribute from the ServerMessage.
+ * Configures various application level properties, including:
+ * <ul>
+ *  <li>Modal context</li>
+ *  <li>Layout direction (LTR/RTL)</li>
+ * </ul>
  */
-EchoServerMessage.processModalState = function() {
+EchoServerMessage.processApplicationProperties = function() {
     EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modalid");
+    if (EchoServerMessage.messageDocument.documentElement.getAttribute("rootlayoutdirection")) {
+        document.documentElement.style.direction 
+                = EchoServerMessage.messageDocument.documentElement.getAttribute("rootlayoutdirection");
+    }
 };
 
 /**
@@ -1455,7 +1462,7 @@ EchoServerMessage.processPhase1 = function() {
  */
 EchoServerMessage.processPhase2 = function() {
     EchoServerMessage.processMessageParts();
-    EchoServerMessage.processModalState();
+    EchoServerMessage.processApplicationProperties();
     if (EchoServerMessage.processingCompleteListener) {
         EchoServerMessage.processingCompleteListener();
     }

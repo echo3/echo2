@@ -54,55 +54,6 @@ implements Serializable {
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     
     /**
-     * A description of an update to a single property of the <code>parent</code> <code>Component</code>.
-     */
-    public class PropertyUpdate 
-    implements Serializable {
-        
-        private Object newValue;
-        private Object oldValue;
-        
-        /**
-         * Creates a new <code>ProeprtyUpdate</code>.
-         * 
-         * @param oldValue the previous value of the property
-         * @param newValue the new value of the property
-         */
-        PropertyUpdate(Object oldValue, Object newValue) {
-            super();
-            this.oldValue = oldValue;
-            this.newValue = newValue;
-        }
-        
-        /**
-         * Returns the new value of the property.
-         * 
-         * @return the new value
-         */
-        public Object getNewValue() {
-            return newValue;
-        }
-        
-        /**
-         * Returns the previous value of the property.
-         * 
-         * @return the previous value
-         */
-        public Object getOldValue() {
-            return oldValue;
-        }
-        
-        /**
-         * Display a debug representation.
-         * 
-         * @see java.lang.Object#toString()
-         */
-        public String toString() {
-            return oldValue + "->" + newValue;
-        }
-    }
-    
-    /**
      * The set of child <code>Component</code>s added to the <code>parent</code>.
      */
     private Set addedChildren;

@@ -138,18 +138,6 @@ implements Serializable {
         return horizontal;
     }
     
-    //BUGBUG. Doc and use provided component.
-    public int getRenderedHorizontal(Component component) {
-        switch (horizontal) {
-        case LEADING:
-            return LEFT;
-        case TRAILING:
-            return RIGHT;
-        default:
-            return horizontal;
-        }
-    }
-    
     /**
      * Returns the vertical setting of this <code>Alignment</code>.
      * 

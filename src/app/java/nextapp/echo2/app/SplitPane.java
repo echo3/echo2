@@ -41,13 +41,12 @@ package nextapp.echo2.app;
  */
 public class SplitPane extends Component {
 
-//BUGBUG. implement support for alternate orderings.    
-    private static final int ORIENTATION_HORIZONTAL_LEADING_TRAILING = 1;
-//    public static final int ORIENTATION_HORIZONTAL_TRAILING_LEADING = 2;
-//    public static final int ORIENTATION_HORIZONTAL_LEFT_RIGHT = 3;
-//    public static final int ORIENTATION_HORIZONTAL_RIGHT_LEFT = 4;
-    private static final int ORIENTATION_VERTICAL_TOP_BOTTOM = 5;
-//    public static final int ORIENTATION_VERTICAL_BOTTOM_TOP = 6;
+    public static final int ORIENTATION_HORIZONTAL_LEADING_TRAILING = 1;
+    public static final int ORIENTATION_HORIZONTAL_TRAILING_LEADING = 2;
+    public static final int ORIENTATION_HORIZONTAL_LEFT_RIGHT = 3;
+    public static final int ORIENTATION_HORIZONTAL_RIGHT_LEFT = 4;
+    public static final int ORIENTATION_VERTICAL_TOP_BOTTOM = 5;
+    public static final int ORIENTATION_VERTICAL_BOTTOM_TOP = 6;
     
     public static final int ORIENTATION_HORIZONTAL = ORIENTATION_HORIZONTAL_LEADING_TRAILING;
     public static final int ORIENTATION_VERTICAL = ORIENTATION_VERTICAL_TOP_BOTTOM;
@@ -69,7 +68,6 @@ public class SplitPane extends Component {
         this(ORIENTATION_HORIZONTAL, null);
     }
     
-    //BUGBUG. update docs for new orientation values.
     /**
      * Creates a new <code>SplitPane</code> with the specified orientation.
      *
@@ -78,6 +76,12 @@ public class SplitPane extends Component {
      *        <ul>
      *         <li><code>ORIENTATION_HORIZONTAL</code></li>
      *         <li><code>ORIENTATION_VERTICAL</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_LEADING_TRAILING</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_TRAILING_LEADING</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_LEFT_RIGHT</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_RIGHT_LEFT</code></li>
+     *         <li><code>ORIENTATION_VERTICAL_TOP_BOTTOM</code></li>
+     *         <li><code>ORIENTATION_VERTICAL_BOTTOM_TOP</code></li>
      *        </ul>
      */
     public SplitPane(int orientation) {
@@ -93,6 +97,12 @@ public class SplitPane extends Component {
      *        <ul>
      *         <li><code>ORIENTATION_HORIZONTAL</code></li>
      *         <li><code>ORIENTATION_VERTICAL</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_LEADING_TRAILING</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_TRAILING_LEADING</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_LEFT_RIGHT</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_RIGHT_LEFT</code></li>
+     *         <li><code>ORIENTATION_VERTICAL_TOP_BOTTOM</code></li>
+     *         <li><code>ORIENTATION_VERTICAL_BOTTOM_TOP</code></li>
      *        </ul>
      * @param separatorPosition the initial position of the separator
      */
@@ -112,6 +122,12 @@ public class SplitPane extends Component {
      *         <ul>
      *          <li><code>ORIENTATION_HORIZONTAL</code></li>
      *          <li><code>ORIENTATION_VERTICAL</code></li>
+     *          <li><code>ORIENTATION_HORIZONTAL_LEADING_TRAILING</code></li>
+     *          <li><code>ORIENTATION_HORIZONTAL_TRAILING_LEADING</code></li>
+     *          <li><code>ORIENTATION_HORIZONTAL_LEFT_RIGHT</code></li>
+     *          <li><code>ORIENTATION_HORIZONTAL_RIGHT_LEFT</code></li>
+     *          <li><code>ORIENTATION_VERTICAL_TOP_BOTTOM</code></li>
+     *          <li><code>ORIENTATION_VERTICAL_BOTTOM_TOP</code></li>
      *         </ul>
      */
     public int getOrienation() {
@@ -223,6 +239,12 @@ public class SplitPane extends Component {
      *        <ul>
      *         <li><code>ORIENTATION_HORIZONTAL</code></li>
      *         <li><code>ORIENTATION_VERTICAL</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_LEADING_TRAILING</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_TRAILING_LEADING</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_LEFT_RIGHT</code></li>
+     *         <li><code>ORIENTATION_HORIZONTAL_RIGHT_LEFT</code></li>
+     *         <li><code>ORIENTATION_VERTICAL_TOP_BOTTOM</code></li>
+     *         <li><code>ORIENTATION_VERTICAL_BOTTOM_TOP</code></li>
      *        </ul>
      */
     public void setOrientation(int newValue) {

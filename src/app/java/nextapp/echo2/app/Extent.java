@@ -73,7 +73,7 @@ implements Comparable, Serializable {
      */
     public static void validate(Extent value, int validUnits) {
         if (value != null && (value.getUnits() & validUnits) == 0) {
-            throw new IllegalArgumentException("Specified Extent must be in pixel units.");
+            throw new IllegalArgumentException("Specified units are unsupported in this context.");
         }
     }
 

@@ -103,6 +103,7 @@ implements RenderIdSupport, Serializable {
     
     public static final String CHILDREN_CHANGED_PROPERTY = "children";
     public static final String ENABLED_CHANGED_PROPERTY = "enabled";
+    public static final String LAYOUT_DIRECTION_CHANGED_PROPERTY = "layoutDirection";
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String STYLE_CHANGED_PROPERTY = "style";
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
@@ -149,6 +150,14 @@ implements RenderIdSupport, Serializable {
      * <code>Component</code> in the hierarchy. 
      */
     private Locale locale;
+    
+    /** 
+     * The layout direction of the component.
+     * This property is generally unset, as layout direction information is 
+     * normally inherited from the <code>ApplicationInstance</code> or from 
+     * an ancestor <code>Component</code> in the hierarchy. 
+     */
+    private LayoutDirection layoutDirection;
     
     /** Listener storage. */
     private EventListenerList listenerList;
@@ -450,6 +459,34 @@ implements RenderIdSupport, Serializable {
         return (LayoutData) localStyle.getProperty(PROPERTY_LAYOUT_DATA);
     }
     
+    /**
+     * Returns the <code>LayoutDirection</code> of the <code>Component</code>.
+     * 
+     * @return the layout direction of this component
+     */
+    public LayoutDirection getLayoutDirection() {
+        if (layoutDirection == null) { 
+            if (locale == null) {
+                if (parent == null) {
+                    if (applicationInstance == null) {
+                        return null;
+                    } else {
+                        return applicationInstance.getLayoutDirection();
+                    }
+                } else {
+                    return parent.getLayoutDirection();
+                }
+            } else {
+                return LayoutDirection.forLocale(locale);
+            }
+        } else {
+            return layoutDirection;
+        }
+    }
+    
+    //BUGBUG. provide local-only getLocale/getLayoutDirection() methods.
+    // probably rename the recursive ones and use the the plaing getXXX() 
+    // name for the local-only version.
     /**
      * Returns the <code>Locale</code> of the <code>Component</code>.  If this 
      * <code>Component</code> does not itself specify a locale, its ancestors 
@@ -1022,10 +1059,10 @@ implements RenderIdSupport, Serializable {
     /**
      * Sets the default background color of the <code>Component</code>.
      * 
-     * @param background the new background <code>Color</code>
+     * @param newValue the new background <code>Color</code>
      */
-    public void setBackground(Color background) {
-        setProperty(PROPERTY_BACKGROUND, background);
+    public void setBackground(Color newValue) {
+        setProperty(PROPERTY_BACKGROUND, newValue);
     }
     
     /**
@@ -1043,21 +1080,49 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
+     * Sets the focus traversal (tab) index of the component.
+     * 
+     * @param newValue the new focus traversal index
+     * @see #getFocusTraversalIndex()
+     */
+    public void setFocusTraversalIndex(int newValue) {
+        int oldValue = getFocusTraversalIndex();
+        newValue &= 0x7fff;
+        flags = flags & ((~FLAGS_FOCUS_TRAVERSAL_INDEX)) | (newValue << 16);
+        firePropertyChange(FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
+    }
+    
+    /**
+     * Sets whether the component participates in the focus traversal order 
+     * (tab order).
+     * 
+     * @param newValue true if the component participates in the focus 
+     *        traversal order
+     */
+    public void setFocusTraversalParticipant(boolean newValue) {
+        boolean oldValue = isFocusTraversalParticipant();
+        if (oldValue != newValue) {
+            flags ^= FLAG_FOCUS_TRAVERSAL_PARTICIPANT; // Toggle FLAG_FOCUS_TRAVERSAL_PARTICIPANT bit.
+            firePropertyChange(FOCUS_TRAVERSAL_PARTICIPANT_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
+        }
+    }
+
+    /**
      * Sets the default text font of the <code>Component</code>.
      * 
-     * @param font the new <code>Font</code>
+     * @param newValue the new <code>Font</code>
      */
-    public void setFont(Font font) {
-        setProperty(PROPERTY_FONT, font);
+    public void setFont(Font newValue) {
+        setProperty(PROPERTY_FONT, newValue);
     }
     
     /**
      * Sets the default foreground color of the <code>Component</code>.
      * 
-     * @param foreground the new foreground <code>Color</code>
+     * @param newValue the new foreground <code>Color</code>
      */
-    public void setForeground(Color foreground) {
-        setProperty(PROPERTY_FOREGROUND, foreground);
+    public void setForeground(Color newValue) {
+        setProperty(PROPERTY_FOREGROUND, newValue);
     }
     
     /**
@@ -1102,11 +1167,23 @@ implements RenderIdSupport, Serializable {
      * <code>Component</code> is layed out within/interacts with its 
      * containing parent <code>Component</code>.
      * 
-     * @param layoutData the new <code>LayoutData</code>
+     * @param newValue the new <code>LayoutData</code>
      * @see LayoutData
      */
-    public void setLayoutData(LayoutData layoutData) {
-        setProperty(PROPERTY_LAYOUT_DATA, layoutData);
+    public void setLayoutData(LayoutData newValue) {
+        setProperty(PROPERTY_LAYOUT_DATA, newValue);
+    }
+    
+    /**
+     * Sets the <code>LayoutDirection</code> of this <code>Component</code>,
+     * describing whether content is rendered left-to-right or right-to-left.
+     * 
+     * @param newValue the new <code>LayoutDirection</code>. 
+     */
+    public void setLayoutDirection(LayoutDirection newValue) {
+        LayoutDirection oldValue = layoutDirection;
+        layoutDirection = newValue;
+        firePropertyChange(LAYOUT_DIRECTION_CHANGED_PROPERTY, oldValue, newValue);
     }
     
     /**
@@ -1173,34 +1250,6 @@ implements RenderIdSupport, Serializable {
         firePropertyChange(STYLE_NAME_CHANGED_PROPERTY, oldValue, newValue);
     }
     
-    /**
-     * Sets the focus traversal (tab) index of the component.
-     * 
-     * @param newValue the new focus traversal index
-     * @see #getFocusTraversalIndex()
-     */
-    public void setFocusTraversalIndex(int newValue) {
-        int oldValue = getFocusTraversalIndex();
-        newValue &= 0x7fff;
-        flags = flags & ((~FLAGS_FOCUS_TRAVERSAL_INDEX)) | (newValue << 16);
-        firePropertyChange(FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
-    }
-    
-    /**
-     * Sets whether the component participates in the focus traversal order 
-     * (tab order).
-     * 
-     * @param newValue true if the component participates in the focus 
-     *        traversal order
-     */
-    public void setFocusTraversalParticipant(boolean newValue) {
-        boolean oldValue = isFocusTraversalParticipant();
-        if (oldValue != newValue) {
-            flags ^= FLAG_FOCUS_TRAVERSAL_PARTICIPANT; // Toggle FLAG_FOCUS_TRAVERSAL_PARTICIPANT bit.
-            firePropertyChange(FOCUS_TRAVERSAL_PARTICIPANT_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
-        }
-    }
-
     /**
      * Sets the visibility state of this <code>Component</code>.
      * 

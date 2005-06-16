@@ -77,6 +77,8 @@ import org.w3c.dom.Node;
 public class SplitPanePeer 
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
+    //BUGBUG. SplitPane support for bidi is not rendering correctly at moment.
+    
     private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
     private static final String IMAGE_ID_PANE_1_BACKGROUND = "pane1Background";
@@ -175,11 +177,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         }
     }
     
-    //BUGBUG. doc...and maybe rename...this sounds weird.
-    private boolean calculateNegativeSeparator(SplitPane splitPane) {
-        return ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION), 100) < 0;
-    }
-
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
@@ -235,9 +232,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      */
     private boolean isOrientationVertical(SplitPane splitPane) {
         Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
-        boolean orientationVertical = (orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue()) 
-                == SplitPane.ORIENTATION_VERTICAL;
-        return orientationVertical;
+        int orientation = orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue();
+        return orientation == SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM || 
+                orientation == SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
+    }
+
+    private int getFirstPaneNumber(SplitPane splitPane) {
+        return (ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION), 100) < 0)
+                ? 1 : 0;
     }
 
     /**
@@ -418,7 +420,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     private void renderInitDirective(RenderContext rc, SplitPane splitPane) {
         String elementId = ContainerInstance.getElementId(splitPane);
         ServerMessage serverMessage = rc.getServerMessage();
-        int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
+        int fixedPaneNumber = getFirstPaneNumber(splitPane);
         Boolean booleanValue = (Boolean) splitPane.getRenderProperty(SplitPane.PROPERTY_RESIZABLE);
         boolean resizable = booleanValue == null ? false : booleanValue.booleanValue();
 
@@ -444,7 +446,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      */
     private void renderPaneCssPositioning(RenderContext rc, SplitPane splitPane, int paneNumber, CssStyle paneDivCssStyle) {
         int separatorPosition = calculateSeparatorPosition(splitPane);
-        int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
+        int fixedPaneNumber = getFirstPaneNumber(splitPane);
         boolean renderingFixedPane = paneNumber == fixedPaneNumber;
         boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
@@ -524,7 +526,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         if (splitPaneLayoutData != null) {
             //BUGBUG. sort whether we want to use renderToElement, i.e., using (transitional) div align attribute....
             // and if so, apply this elsewhere as well.
-            AlignmentRender.renderToElement(paneContentDivElement, paneComponent, splitPaneLayoutData.getAlignment());
+            AlignmentRender.renderToElement(paneContentDivElement, splitPaneLayoutData.getAlignment(), paneComponent);
             if (splitPaneLayoutData.getBackground() != null) {
                 paneDivCssStyle.setAttribute("background-color", 
                         ColorRender.renderCssAttributeValue(splitPaneLayoutData.getBackground()));
@@ -574,7 +576,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         Element separatorDivElement = document.createElement("div");
         separatorDivElement.setAttribute("id", separatorElementId);
         int separatorPosition = calculateSeparatorPosition(splitPane);
-        int fixedPaneNumber = calculateNegativeSeparator(splitPane) ? 1 : 0;
+        int fixedPaneNumber = getFirstPaneNumber(splitPane);
         
         CssStyle separatorDivCssStyle = new CssStyle();
         // font-size/line-height styles correct for IE minimum DIV height rendering issue.

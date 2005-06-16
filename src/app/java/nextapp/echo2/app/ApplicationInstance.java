@@ -108,7 +108,15 @@ implements Serializable {
      * The default <code>Locale</code> of the application.
      * This <code>Locale</code> will be inherited by <code>Component</code>s. 
      */
-    private Locale locale = Locale.getDefault();
+    private Locale locale;
+    
+    /** 
+     * The default <code>LayoutDirection</code> of the application, derived 
+     * from the application's <code>Locale</code>.
+     * This <code>LayoutDirection</code> will be inherited by 
+     * <code>Component</code>s. 
+     */
+    private LayoutDirection layoutDirection;
 
     /** 
      * Contextual data.
@@ -167,6 +175,10 @@ implements Serializable {
      */
     public ApplicationInstance() {
         super();
+        
+        locale = Locale.getDefault();
+        layoutDirection = LayoutDirection.forLocale(locale);
+        
         propertyChangeSupport = new PropertyChangeSupport(this);
         updateManager = new UpdateManager(this);
         renderIdToComponentMap = new HashMap();
@@ -341,6 +353,16 @@ implements Serializable {
         } else {
             return (Component) focusedComponent.get();
         }
+    }
+    
+    /**
+     * Returns the application instance's default 
+     * <code>LayoutDirection</code>.
+     *
+     * @return the <code>Locale</code>
+     */
+    public LayoutDirection getLayoutDirection() {
+        return layoutDirection;
     }
     
     /**
@@ -601,6 +623,22 @@ implements Serializable {
             focusedComponent = new WeakReference(newValue);
         }
         propertyChangeSupport.firePropertyChange(FOCUSED_COMPONENT_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the default locale of the application.
+     * 
+     * @param newValue the new locale.
+     */
+    public void setLocale(Locale newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("ApplicationInstance Locale may not be null.");
+        }
+        Locale oldValue = locale;
+        locale = newValue;
+        layoutDirection = LayoutDirection.forLocale(locale);
+        propertyChangeSupport.firePropertyChange(LOCALE_CHANGED_PROPERTY, oldValue, newValue);
+        updateManager.getServerUpdateManager().processFullRefresh();
     }
     
     /**

@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.LayoutDirection;
 import nextapp.echo2.webrender.output.CssStyle;
 
 /**
@@ -40,6 +41,34 @@ import nextapp.echo2.webrender.output.CssStyle;
  * properties to CSS.
  */
 public class AlignmentRender {
+    
+    /**
+     * Returns the horizontal property of an <code>Alignment</code> object,
+     * with <code>Alignment.LEADING</code> and <code>Alignment.TRAILING</code>
+     * automatically translated based on the layout direction of the provided
+     * <code>Component</code>.  If the provided component is null, a 
+     * left-to-right layout direction will be assumed.
+     * 
+     * @param alignment the <code>Alignment</code> to analyze
+     * @param component the <code>Component</code> to analyze
+     * @return the horizontal alignment constant
+     */
+    public static int getRenderedHorizontal(Alignment alignment, Component component) {
+        LayoutDirection layoutDirection;
+        if (component == null) {
+            layoutDirection = LayoutDirection.LTR;
+        } else {
+            layoutDirection = component.getLayoutDirection();
+        }
+        switch (alignment.getHorizontal()) {
+        case Alignment.LEADING:
+            return layoutDirection.isLeftToRight() ? Alignment.LEFT : Alignment.RIGHT;
+        case Alignment.TRAILING:
+            return layoutDirection.isLeftToRight() ? Alignment.RIGHT : Alignment.LEFT;
+        default:
+            return alignment.getHorizontal();
+        }
+    }
     
     /**
      * Renders an <code>Alignment</code> property to the given element.
@@ -51,7 +80,7 @@ public class AlignmentRender {
      * @param alignment the property value
      */
     public static void renderToElement(Element element, Alignment alignment) {
-        renderToElement(element, null, alignment);
+        renderToElement(element, alignment, null);
     }
     
     /**
@@ -61,21 +90,21 @@ public class AlignmentRender {
      * Null property values are ignored.
      * 
      * @param element the target <code>Element</code>
+     * @param alignment the property value
      * @param component The <code>Component</code> for which the style is being
      *        rendered (necessary for property translation of leading/trailing
      *        alignment settings).
-     * @param alignment the property value
      */
-    public static void renderToElement(Element element, Component component, Alignment alignment) {
+    public static void renderToElement(Element element, Alignment alignment, Component component) {
         if (alignment == null) {
             return;
         }
         
-        String horizontal = getHorizontal(component, alignment);
+        String horizontal = getHorizontalCssAttributeValue(alignment, component);
         if (horizontal != null) {
             element.setAttribute("align", horizontal);
         }
-        String vertical = getVertical(alignment);
+        String vertical = getVerticalCssAttributeValue(alignment);
         if (vertical != null) {
             element.setAttribute("valign", vertical);
         }
@@ -91,7 +120,7 @@ public class AlignmentRender {
      * @param alignment the property value
      */
     public static void renderToStyle(CssStyle cssStyle, Alignment alignment) {
-        renderToStyle(cssStyle, null, alignment);
+        renderToStyle(cssStyle, alignment, null);
     }
     
     /**
@@ -106,29 +135,42 @@ public class AlignmentRender {
      *        alignment settings).
      * @param alignment the property value
      */
-    public static void renderToStyle(CssStyle cssStyle, Component component, Alignment alignment) {
+    public static void renderToStyle(CssStyle cssStyle, Alignment alignment, Component component) {
         if (alignment == null) {
             return;
         }
         
-        String horizontal = getHorizontal(component, alignment);
+        String horizontal = getHorizontalCssAttributeValue(alignment, component);
         if (horizontal != null) {
             cssStyle.setAttribute("text-align", horizontal);
         }
-        String vertical = getVertical(alignment);
+        String vertical = getVerticalCssAttributeValue(alignment);
         if (vertical != null) {
             cssStyle.setAttribute("vertical-align", vertical);
         }
     }
     
-    private static String getHorizontal(Component component, Alignment alignment) {
-        switch (component == null ? alignment.getHorizontal() : alignment.getRenderedHorizontal(component)) {
-        case Alignment.LEADING:
+    /**
+     * Determines the CSS attribute value of the horizontal property of the 
+     * specified <code>Alignment</code>.  The provided <code>Component</code>
+     * is used to determine the rendered alignment setting for 
+     * <code>Alignment.LEADING</code> and <code>alignment.TRAILING</code> 
+     * values.
+     * 
+     * @param alignment the <code>Alignment</code> property value
+     * @param component the <code>Component</code> to use in order to determine
+     *        appropriate rendered values for <code>Alignment.LEADING</code> /
+     *        <code>Alignment.TRAILING</code> (this value may be null, in
+     *        which case an LTR layout direction will be assumed)
+     * @return the horizontal CSS attribute value, or null if it is not 
+     *         specified by the <code>Alignment</code>
+     */
+    private static String getHorizontalCssAttributeValue(Alignment alignment, Component component) {
+        switch (getRenderedHorizontal(alignment, component)) {
         case Alignment.LEFT:
             return "left";
         case Alignment.CENTER:
             return "center";
-        case Alignment.TRAILING:
         case Alignment.RIGHT:
             return "right";
         default:
@@ -136,7 +178,15 @@ public class AlignmentRender {
         }
     }
     
-    private static String getVertical(Alignment alignment) {
+    /**
+     * Determines the CSS attribute value of the vertical property of the 
+     * specified <code>Alignment</code>. 
+     * 
+     * @param alignment the <code>Alignment</code> property value
+     * @return the CSS attribute value, or null if it is not specified by the
+     *         <code>Alignment</code>
+     */
+    private static String getVerticalCssAttributeValue(Alignment alignment) {
         switch (alignment.getVertical()) {
         case Alignment.TOP:
             return "top";

@@ -50,8 +50,8 @@ class TriCellTable {
     static final int INVERTED = 1;
     static final int VERTICAL = 2;
     
-    public static final int LEFT_RIGHT = 0;
-    public static final int RIGHT_LEFT = INVERTED;
+    public static final int LEADING_TRAILING = 0;
+    public static final int TRAILING_LEADING = INVERTED;
     public static final int TOP_BOTTOM = VERTICAL;
     public static final int BOTTOM_TOP = INVERTED | VERTICAL;
 
