@@ -53,6 +53,7 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.removeHandler(elementId, "blur");
+        EchoEventProcessor.removeHandler(elementId, "focus");
         EchoEventProcessor.removeHandler(elementId, "keypress");
         EchoEventProcessor.removeHandler(elementId, "keyup");
     }
@@ -82,6 +83,7 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
             textComponent.scrollTop = parseInt(item.getAttribute("verticalscroll"));
         }
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
+        EchoEventProcessor.addHandler(elementId, "focus", "EchoTextComponent.processFocus");
         EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processKeyUp");
         EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processKeyPress");
     }
@@ -116,6 +118,12 @@ EchoTextComponent.processBlur = function(echoEvent) {
         return;
     }
     EchoTextComponent.doUpdate(textComponent);
+    EchoFocusManager.setFocusedState(elementId, false);
+};
+
+EchoTextComponent.processFocus = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    EchoFocusManager.setFocusedState(textComponent.id, true);
 };
 
 EchoTextComponent.processKeyPress = function(echoEvent) {

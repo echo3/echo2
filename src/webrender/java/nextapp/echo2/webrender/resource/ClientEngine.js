@@ -1131,6 +1131,33 @@ EchoEventUpdate.process = function(messagePartElement) {
     }
 };
 
+// _______________________
+// Object EchoFocusManager
+
+/**
+ * Static object/namespace to manage component focus.
+ */
+function EchoFocusManager() { };
+
+/**
+ * Sets the focused state of a component.
+ *
+ * @param componentId the identifier of the component
+ * @param focusState a boolean property describing whether the component is 
+ *        focused
+ */
+EchoFocusManager.setFocusedState = function(componentId, focusState) {
+    if (focusState) {
+        EchoClientMessage.messageDocument.documentElement.setAttribute("focus", componentId);
+    } else {
+        var focusedComponentId = EchoClientMessage.messageDocument.documentElement.getAttribute("focus");
+        if (componentId == focusedComponentId) {
+            EchoClientMessage.messageDocument.documentElement.removeAttribute("focus");
+        }
+    }
+    EchoDebugManager.updateClientMessage();
+};
+
 // _________________________
 // Object EchoHttpConnection
 
