@@ -1163,6 +1163,20 @@ EchoFocusManager.setFocusedState = function(componentId, focusState) {
 // _________________________
 // Object EchoHttpConnection
 
+/**
+ * Creates a new <code>EchoHttpConnection</code>.
+ * This method simply configures the connection, the connection
+ * will not be opened until <code>connect()</code> is invoked.
+ * The responseHandler method property of the connection must be set
+ * before the connection is executed.
+ * An invalidResponseHandler method property may optionally be set to
+ * be invoked if an invalid response is received.
+ *
+ * @param url the target URL
+ * @param method the connection method, i.e., GET or POST
+ * @param messageObject the message to send (may be a String or XML DOM)
+ * @param contentType the request content-type
+ */
 function EchoHttpConnection(url, method, messageObject, contentType) {
     this.url = url;
     this.contentType = contentType;
@@ -1172,7 +1186,17 @@ function EchoHttpConnection(url, method, messageObject, contentType) {
     this.invalidResponseHandler = null;
 }
 
+/**
+ * Executes the HTTP connection.
+ * The responseHandler property of the connection must be set
+ * before the connection is executed.
+ * This method will return asynchronously; the <code>responseHandler</code>
+ * callback will be invoked when a valid response is received.
+ */
 EchoHttpConnection.prototype.connect = function() {
+    if (!this.responseHandler) {
+        throw "EchoHttpConnection response handler not set.";
+    }
     var usingActiveXObject = false;
     if (window.XMLHttpRequest) {
         this.xmlHttpRequest = new XMLHttpRequest();
@@ -1211,6 +1235,10 @@ EchoHttpConnection.prototype.getResponseXml = function() {
     return this.xmlHttpRequest ? this.xmlHttpRequest.responseXML : null;
 };
 
+/**
+ * Event listener for <code>readystatechange</code> events received from
+ * the <code>XMLHttpRequest</code>.
+ */
 EchoHttpConnection.prototype.processReadyStateChange = function() {
     if (this.xmlHttpRequest.readyState == 4) {
         if (this.xmlHttpRequest.status == 200) {
@@ -1232,12 +1260,23 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
 // Object EchoModalManager
 
 /**
- * Manages active modal objects.
+ * Manages the modal state of the application.
  */
 function EchoModalManager() { }
 
+/**
+ * Element id of current modal object, or null if no object is currently 
+ * modal.
+ */
 EchoModalManager.modalElementId = null;
 
+/**
+ * Determines if a particular element lies within the modal context.
+ *
+ * @param elementId the id of the element to analyze
+ * @return true if the specified <code>elementId</code> is within the modal
+ *         context
+ */
 EchoModalManager.isElementInModalContext = function(elementId) {
     var element = document.getElementById(elementId);
     if (EchoModalManager.modalElementId) {
@@ -1268,7 +1307,10 @@ EchoScriptLibraryManager.STATE_REQUESTED = 1;
  */
 EchoScriptLibraryManager.STATE_LOADED = 2;
 
-EchoScriptLibraryManager.loadedLibraries = new Array();
+/**
+ * Associative array mapping library service ids to load-states.
+ */
+EchoScriptLibraryManager.libraryLoadStateMap = new Array();
 
 /**
  * Queries the state of the specified libary.
@@ -1278,7 +1320,7 @@ EchoScriptLibraryManager.loadedLibraries = new Array();
  *         <code>STATE_REQUESTED</code> or <code>STATE_LOADED</code>.
  */
 EchoScriptLibraryManager.getState = function(serviceId) {
-    return EchoScriptLibraryManager.loadedLibraries[serviceId];
+    return EchoScriptLibraryManager.libraryLoadStateMap[serviceId];
 };
 
 /**
@@ -1296,7 +1338,7 @@ EchoScriptLibraryManager.loadLibrary = function(serviceId) {
     conn.connect();
     
     // Mark state as "requested" so that application will wait for library to load.
-    EchoScriptLibraryManager.loadedLibraries[serviceId] = EchoScriptLibraryManager.STATE_REQUESTED;
+    EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_REQUESTED;
 };
 
 /**
@@ -1309,7 +1351,7 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
     eval(conn.getResponseText());
 
     // Mark state as "loaded" so that application will discontinue waiting for library to load.
-    EchoScriptLibraryManager.loadedLibraries[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
 };
 
 // ________________________
@@ -1326,7 +1368,7 @@ EchoServerMessage.STATUS_PROCESSING_COMPLETE = 2;
 EchoServerMessage.STATUS_PROCESSING_FAILED = 3;
 
 /**
- * DOM of the server message.
+ * DOM of the ServerMessage.
  */
 EchoServerMessage.messageDocument = null;
 
@@ -1336,12 +1378,25 @@ EchoServerMessage.messageDocument = null;
  */
 EchoServerMessage.backgroundIntervalId = null;
 
+/**
+ * Callback to invoke when ServerMessage processing has completed.
+ * Set via init() method.
+ */
 EchoServerMessage.processingCompleteListener = null;
 
+/**
+ * ServerMessage processing status, one of the following constants:
+ * <ul>
+ *  <li><code>EchoServerMessage.STATUS_INITIALIZED</code></li>
+ *  <li><code>EchoServerMessage.STATUS_PROCESSING</code></li>
+ *  <li><code>EchoServerMessage.STATUS_PROCESSING_COMPLETE</code></li>
+ *  <li><code>EchoServerMessage.STATUS_PROCESSING_FAILED</code></li>
+ * </ul>
+ */
 EchoServerMessage.status = EchoServerMessage.STATUS_INITIALIZED;
 
 /**
- * Initializes the state of the server message processor.
+ * Initializes the state of the ServerMessage processor.
  *
  * @param messageDocument the ServerMessage XML document to be processed
  * @param processingCompleteListener a callback to be invoked when processing
@@ -1386,9 +1441,9 @@ EchoServerMessage.isLibraryLoadComplete = function() {
 };
 
 /**
- * Parses 'libraries' element of server message and adds 'script' elements
- * to main DOM to dynamically load JavaScript libraries.
- * The libraries themselves are loaded asynchronously--invocation of this
+ * Parses 'libraries' element of ServerMessage and dynamically loads
+ * external JavaScript resources.
+ * The libraries are loaded asynchronously--invocation of this
  * method will return before the actual libraries have been loaded.
  */
 EchoServerMessage.loadLibraries = function() {
@@ -1405,7 +1460,7 @@ EchoServerMessage.loadLibraries = function() {
 };
 
 /**
- * Processes the server message.
+ * Processes the ServerMessage.
  * The processing is performed asynchronously--this method will return before
  * the processing has been completed.
  */
@@ -1442,7 +1497,7 @@ EchoServerMessage.processApplicationProperties = function() {
 };
 
 /**
- * Processes all of the 'messagepart' directives contained in the server message.
+ * Processes all of the 'messagepart' directives contained in the ServerMessage.
  */
 EchoServerMessage.processMessageParts = function() {
     // 'complete' flag is used to set status to 'failed' in the event of an exception.
@@ -1486,7 +1541,7 @@ EchoServerMessage.processPhase1 = function() {
  * Performs SECOND phase of synchronization response processing.
  * This phase may only be performed after all required JavaScript
  * libraries have been loaded.   During this phase, directives provided
- * in the server message are processed.  Additionally, the client modal 
+ * in the ServerMessage are processed.  Additionally, the client modal 
  * state and asynchoronous serevr polling configurations are established.
  */
 EchoServerMessage.processPhase2 = function() {
