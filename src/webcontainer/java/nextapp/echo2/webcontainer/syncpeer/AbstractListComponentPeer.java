@@ -318,8 +318,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
     }
     
     /**
-     * Renders the select control reflecting the given multiple and visibleRows
-     * parameters.
+     * Renders the select control.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
@@ -327,9 +326,13 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      *        appended
      * @param component the <code>nextapp.echo2.app.AbstractListComponent</code>
      *        instance
+     * @param renderAsListBox a flag indicating whether the component should
+     *        be rendered as a list box (true) or as drop-down select (false)
+     * @param multiple a flag indicating whether multiple items may be selected
+     *        at the same time (valid only for listbox rendering)
      */
     protected void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component, 
-            boolean multiple, int visibleRows) {
+            boolean renderAsListBox, boolean multiple) {
         renderInitDirective(rc.getServerMessage(), (AbstractListComponent) component);
 
         AbstractListComponent listComponent = (AbstractListComponent) component;
@@ -342,7 +345,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
                 "select");
         listComponentElement.setAttribute("id", elementId + "_select");
         listComponentElement.setAttribute("name", elementId + "_select");
-        listComponentElement.setAttribute("size", "" + visibleRows);
+        listComponentElement.setAttribute("size", renderAsListBox ? "5" : "1");
 
         if (multiple) {
             listComponentElement.setAttribute("multiple", "multiple");

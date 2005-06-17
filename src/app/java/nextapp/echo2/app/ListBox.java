@@ -41,7 +41,6 @@ import nextapp.echo2.app.list.ListSelectionModel;
 public class ListBox extends AbstractListComponent {
 
 	public static final Integer DEFAULT_ROW_COUNT = new Integer(5);
-    public static final String PROPERTY_VISIBLE_ROW_COUNT = "visibleRowCount";
 
     /**
      * Creates an empty <code>ListBox</code>.
@@ -221,16 +220,6 @@ public class ListBox extends AbstractListComponent {
         return getSelectionModel().getSelectionMode();
     }
     
-    //BUGBUG: Test Extent.EM and nix this if it works ok.
-    public int getVisibleRowCount() {
-		Integer rowcount = (Integer)getProperty(PROPERTY_VISIBLE_ROW_COUNT);
-		if (rowcount == null){
-			rowcount = DEFAULT_ROW_COUNT;
-			setVisibleRowCount(rowcount.intValue());
-		}
-		return rowcount.intValue();
-	}
-    
 	/**
      * Determines whether an index is selected.
      *
@@ -289,14 +278,4 @@ public class ListBox extends AbstractListComponent {
     public void setSelectionMode(int newValue) {
         getSelectionModel().setSelectionMode(newValue);
     }
-    
-    //BUGBUG? del?
-    /**
-     * Sets the visible row count.
-     */
-    public void setVisibleRowCount(int rowcount){
-    	setProperty(PROPERTY_VISIBLE_ROW_COUNT,new Integer(rowcount));
-    }
-    
-    
 }

@@ -56,6 +56,6 @@ public class SelectFieldPeer extends AbstractListComponentPeer {
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
-        renderSelectElementHtml(rc, update, parentNode, component, false, 1);
+        renderSelectElementHtml(rc, update, parentNode, component, false, false);
     }
 }

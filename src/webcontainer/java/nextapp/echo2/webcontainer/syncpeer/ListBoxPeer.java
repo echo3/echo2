@@ -317,7 +317,6 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     public void renderStandardHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ListBox listBox = (ListBox) component;
         boolean multiple = listBox.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION;
-        int visibleRows = listBox.getVisibleRowCount() <= 1 ? DEFAULT_ROW_COUNT : listBox.getVisibleRowCount();
-        renderSelectElementHtml(rc, update, parentNode, listBox, multiple, visibleRows);
+        renderSelectElementHtml(rc, update, parentNode, listBox, true, multiple);
     }
 }
