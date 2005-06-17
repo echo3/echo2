@@ -42,13 +42,16 @@ import nextapp.echo2.webrender.output.HtmlDocument;
  */
 public class BaseHtmlDocument extends HtmlDocument {
 
-    private static final Properties outputProperties = new Properties();
+    /**
+     * <code>OutputProperties</code> used for XML transformation.
+     */
+    private static final Properties OUTPUT_PROPERTIES = new Properties();
     static {
         // The XML declaration is ommitted as Internet Explorer 6 will operate in quirks mode if it is present.
-        outputProperties.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        OUTPUT_PROPERTIES.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         
-        outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC, XHTML_1_0_TRANSITIONAL_PUBLIC_ID);
-        outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID);
+        OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_PUBLIC, XHTML_1_0_TRANSITIONAL_PUBLIC_ID);
+        OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_SYSTEM, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID);
     }
     
     private String contentId;
@@ -61,7 +64,7 @@ public class BaseHtmlDocument extends HtmlDocument {
      */
     public BaseHtmlDocument(String contentId) {
 	    super(XHTML_1_0_TRANSITIONAL_PUBLIC_ID, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID, XHTML_1_0_NAMESPACE_URI);
-        setOutputProperties(outputProperties);
+        setOutputProperties(OUTPUT_PROPERTIES);
         this.contentId = contentId;
 	    Document document = getDocument();
         

@@ -40,7 +40,6 @@ public class ClientProperties
 implements Serializable {
     
     //BUGBUG. Standardize quirk/proprietary names.
-    //BUGBUG. Ensure all properties are beign set, i.e., OS stuff and version stuff, otherwise discard unnecessary code.
     
     /**
      * A quirk flag indicating whether the client will incorrectly render CSS 
@@ -229,65 +228,6 @@ implements Serializable {
      * browser platform.
      */
     public static final String BROWSER_OPERA = "browserOpera";
-    
-    /**
-     * Flag indicating the client platform operating system is a derivative
-     * of Microsoft Windows.
-     */
-    public static final String OS_WINDOWS = "osWindows";
-    
-    /**
-     * Flag indicating the client platform operating system is a derivative
-     * of any Macintosh OS.
-     */
-    public static final String OS_MAC_OS = "osMacOS";
-    
-    /**
-     * Flag indicating the client platform operating system is a derivative
-     * of Macintosh OS X.
-     */
-    public static final String OS_MAC_OSX = "osMacOSX";
-    
-    /**
-     * Flag indicating the client platform operating system is a derivative
-     * of UNIX.
-     */
-    public static final String OS_UNIX = "osUnix";
-    
-    /**
-     * Flag indicating the client platform operating system is based on the
-     * Linux kernel.
-     */
-    public static final String OS_LINUX = "osLinux";
-    
-    /**
-     * Integer value indicating the major version number of the client browser.
-     * For "version 1.2.3.4.5.servicepack17" of a browser, 
-     * this value would be "1".
-     */
-    public static final String BROWSER_VERSION_MAJOR = "browserVersionMajor";
-    
-    /**
-     * Integer value indicating the minor version number of the client browser.
-     * For "version 1.2.3.4.5.servicepack17" of a browser, 
-     * this value would be "2".
-     */
-    public static final String BROWSER_VERSION_MINOR = "browserVersionMinor";
-    
-    /**
-     * Integer value indicating the micro version number of the client browser.
-     * For "version 1.2.3.4.5.servicepack17" of a browser, 
-     * this value would be "3".
-     */
-    public static final String BROWSER_VERSION_MICRO = "browserVersionMicro";
-    
-    /**
-     * String value indicating the "miscellaneous" version number of the 
-     * client browser.
-     * For "version 1.2.3.4.5.servicepack17" of a browser, 
-     * this value would be "4.5.servicepack17".
-     */
-    public static final String BROWSER_VERSION_MISC = "browserVersionMisc";
     
     /**
      * The client's navigator.appName property.
