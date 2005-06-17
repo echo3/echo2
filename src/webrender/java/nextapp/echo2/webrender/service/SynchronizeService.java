@@ -55,25 +55,25 @@ import nextapp.echo2.webrender.servermessage.ClientPropertiesStore;
 import nextapp.echo2.webrender.util.DomUtil;
 
 /**
- * A service which synchronizes the state of the client with that of the
- * server.  Requests made to this service are in the form of "ClientMessage"
- * XML documents which describe the users actions since the last 
- * synchronization, e.g., input typed into text fields and the action taken
- * (e.g., a button press) which caused the server interaction.
- * The service then communicates these changes to the server-side application,
- * and then generates an output "ServerMessage" containing instructions to 
- * update the client-side state of the application to the updated server-side
- * state.
+ * A service which synchronizes the state of the client with that of the server.
+ * Requests made to this service are in the form of "ClientMessage" XML
+ * documents which describe the user's actions since the last synchronization,
+ * e.g., the input typed into text fields and the action taken (e.g., a button
+ * press) which caused the server interaction. The service parses this XML input
+ * from the client and performs updates to the server state of the application.
+ * Once the input has been processed by the server application, an output
+ * "ServerMessage" containing instructions to update the client state is
+ * generated as a response.
  */
 public abstract class SynchronizeService 
 implements Service {
     
     /**
      * An interface describing a ClientMessage MessagePart Processor.
-     * Implementations registered with the 
-     * <code>registerClientMessagePartProcessor</code> will have their
-     * <code>process()</code> methods invoked when a client message part
-     * is submitted with their name.
+     * Implementations registered with the
+     * <code>registerClientMessagePartProcessor()</code> method will have
+     * their <code>process()</code> methods invoked when a matching
+     * messagepart is provided in a ClientMessage.
      */
     public static interface ClientMessagePartProcessor {
         
@@ -87,14 +87,18 @@ implements Service {
         public String getName();
         
         /**
-         * Processes a 
+         * Processes a MessagePart of a ClientMessage
          * 
          * @param userInstance the relevant <code>UserInstance</code>
-         * @param messagePartElement 
+         * @param messagePartElement the <code>messagepart</code> element
+         *        to process
          */
         public void process(UserInstance userInstance, Element messagePartElement);
     }
 
+    /**
+     * <code>Service</code> identifier.
+     */
     public static final String SERVICE_ID = "Echo.Synchronize";
 
     /**
@@ -111,8 +115,8 @@ implements Service {
     }
     
     /**
-     * Trims an XML <code>InputStream</code> to workaround issue 
-     * of XML parser crashing on trailing whitespace.   This issue is present 
+     * Trims an XML <code>InputStream</code> to work around the issue 
+     * of the XML parser crashing on trailing whitespace.   This issue is present 
      * with requests from Konqueror/KHTML browsers. 
      * 
      * @param in the <code>InputStream</code>
@@ -213,8 +217,7 @@ implements Service {
             ClientMessagePartProcessor processor = 
                     (ClientMessagePartProcessor) clientMessagePartProcessorMap.get(messageParts[i].getAttribute("processor"));
             if (processor == null) {
-                //BUGBUG. Possibly have a syncserviceexception
-                throw new RuntimeException("Invalid processor name: " + messageParts[i].getAttribute("processor"));
+                throw new RuntimeException("Invalid processor name \"" + messageParts[i].getAttribute("processor") + "\".");
             }
             processor.process(userInstance, messageParts[i]);
         }
@@ -222,7 +225,7 @@ implements Service {
     
     /**
      * Registers a <code>ClientMessagePartProcessor</code> to handle a
-     * specific type of message part.
+     * specific type of messagepart.
      * 
      * @param processor the <code>ClientMessagePartProcessor</code> to 
      *        register
@@ -241,8 +244,7 @@ implements Service {
      * synchronization.
      * 
      * @param conn the relevant <code>Connection</code>
-     * @param clientMessageDocument the <code>ClientMessage</code> XML
-     *        document
+     * @param clientMessageDocument the ClientMessage XML document
      * @return the generated <code>ServerMessage</code>
      */
     protected abstract ServerMessage renderInit(Connection conn, Document clientMessageDocument);
@@ -252,8 +254,7 @@ implements Service {
      * other than the initial synchronization.
      * 
      * @param conn the relevant <code>Connection</code>
-     * @param clientMessageDocument the <code>ClientMessage</code> XML
-     *        document
+     * @param clientMessageDocument the ClientMessage XML document
      * @return the generated <code>ServerMessage</code>
      */
     protected abstract ServerMessage renderUpdate(Connection conn, Document clientMessageDocument);
