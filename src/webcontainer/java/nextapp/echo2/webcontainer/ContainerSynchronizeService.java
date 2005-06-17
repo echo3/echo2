@@ -298,8 +298,20 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             UpdateManager updateManager = applicationInstance.getUpdateManager();
             
+            // Set focused component
+            if (clientMessageDocument.getDocumentElement().hasAttribute("focus")) {
+                String focusedComponentId = clientMessageDocument.getDocumentElement().getAttribute("focus");
+                Component component = null;
+                if (focusedComponentId.length() > 2) {
+                    // Valid component id.
+                    component = rc.getContainerInstance().getComponentByElementId(focusedComponentId);
+                }
+                applicationInstance.setFocusedComponent(component);
+            }
+            
             // Process updates from client.
             processClientMessage(conn, clientMessageDocument);
+            
             updateManager.processClientUpdates();
             applicationInstance.processQueuedTasks();
             

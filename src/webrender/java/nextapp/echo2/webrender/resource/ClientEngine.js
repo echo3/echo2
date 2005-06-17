@@ -1151,8 +1151,10 @@ EchoFocusManager.setFocusedState = function(componentId, focusState) {
         EchoClientMessage.messageDocument.documentElement.setAttribute("focus", componentId);
     } else {
         var focusedComponentId = EchoClientMessage.messageDocument.documentElement.getAttribute("focus");
-        if (componentId == focusedComponentId) {
-            EchoClientMessage.messageDocument.documentElement.removeAttribute("focus");
+        if (!focusedComponentId || componentId == focusedComponentId) {
+            // Set focus state to indeterminate if either no focused componentId is set 
+            // or if focused componentId matches specified componentId.
+            EchoClientMessage.messageDocument.documentElement.setAttribute("focus", "");
         }
     }
     EchoDebugManager.updateClientMessage();
