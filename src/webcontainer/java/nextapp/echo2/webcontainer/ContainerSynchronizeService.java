@@ -100,6 +100,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
     private ClientMessagePartProcessor propertyUpdateProcessor = new ClientMessagePartProcessor() {
         
         /**
+         * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#getName()
+         */
+        public String getName() {
+            return "EchoPropertyUpdate";
+        }
+        
+        /**
          * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#process(
          *      nextapp.echo2.webrender.UserInstance, org.w3c.dom.Element)
          */
@@ -132,6 +139,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
     private ClientMessagePartProcessor actionProcessor = new ClientMessagePartProcessor() {
         
         /**
+         * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#getName()
+         */
+        public String getName() {
+            return "EchoAction";
+        }
+        
+        /**
          * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#process(
          *      nextapp.echo2.webrender.UserInstance, org.w3c.dom.Element)
          */
@@ -161,8 +175,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
      */
     private ContainerSynchronizeService() {
         super();
-        addClientMessagePartProcessor("EchoPropertyUpdate", propertyUpdateProcessor);
-        addClientMessagePartProcessor("EchoAction", actionProcessor);
+        registerClientMessagePartProcessor(propertyUpdateProcessor);
+        registerClientMessagePartProcessor(actionProcessor);
     }
     
     /**
@@ -256,10 +270,11 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
-     * @see nextapp.echo2.webrender.service.SynchronizeService#renderInit(nextapp.echo2.webrender.Connection, 
-     *      nextapp.echo2.webrender.ServerMessage, org.w3c.dom.Document)
+     * @see nextapp.echo2.webrender.service.SynchronizeService#renderInit(nextapp.echo2.webrender.Connection,
+     *      org.w3c.dom.Document)
      */
-    protected ServerMessage renderInit(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
+    protected ServerMessage renderInit(Connection conn, Document clientMessageDocument) {
+        ServerMessage serverMessage = new ServerMessage();
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
         try {
@@ -277,17 +292,18 @@ public class ContainerSynchronizeService extends SynchronizeService {
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);
             setAsynchronousMonitorInterval(rc);
-            return rc.getServerMessage();
+            return serverMessage;
         } finally {
             ApplicationInstance.setActive(null);
         }
     }
     
     /**
-     * @see nextapp.echo2.webrender.service.SynchronizeService#renderUpdate(nextapp.echo2.webrender.Connection, 
-     *      nextapp.echo2.webrender.ServerMessage, org.w3c.dom.Document)
+     * @see nextapp.echo2.webrender.service.SynchronizeService#renderUpdate(nextapp.echo2.webrender.Connection,
+     *      org.w3c.dom.Document)
      */
-    protected ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument) {
+    protected ServerMessage renderUpdate(Connection conn, Document clientMessageDocument) {
+        ServerMessage serverMessage = new ServerMessage();
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
         
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
@@ -317,15 +333,12 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             // Process updates from server.
             processServerUpdates(rc);
-
             setAsynchronousMonitorInterval(rc);
-
             setModalContextRootId(rc);
             
             updateManager.purge();
             
-            // Return generated ServerMessage.
-            return rc.getServerMessage();
+            return serverMessage;
         } finally {
             // Mark instance as inactive.
             ApplicationInstance.setActive(null);

@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import nextapp.echo2.webrender.ClientPropertiesLoader;
+import nextapp.echo2.webrender.ClientAnalyzerProcessor;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.ServerMessage;
@@ -68,70 +68,58 @@ import nextapp.echo2.webrender.util.DomUtil;
 public abstract class SynchronizeService 
 implements Service {
     
+    /**
+     * An interface describing a ClientMessage MessagePart Processor.
+     * Implementations registered with the 
+     * <code>registerClientMessagePartProcessor</code> will have their
+     * <code>process()</code> methods invoked when a client message part
+     * is submitted with their name.
+     */
     public static interface ClientMessagePartProcessor {
         
+        /**
+         * Returns the name of the <code>ClientMessagePartProcessor</code>.
+         * The processor will be invoked when a messagepart with its name
+         * is found within the ClientMessage.
+         * 
+         * @return the name of the processor
+         */
+        public String getName();
+        
+        /**
+         * Processes a 
+         * 
+         * @param userInstance the relevant <code>UserInstance</code>
+         * @param messagePartElement 
+         */
         public void process(UserInstance userInstance, Element messagePartElement);
     }
 
     public static final String SERVICE_ID = "Echo.Synchronize";
 
-    private Map clientMessagePartProcessors = new HashMap(); 
+    /**
+     * Map containing registered <code>ClientMessagePartProcessor</code>s.
+     */
+    private Map clientMessagePartProcessorMap = new HashMap(); 
     
+    /**
+     * Creates a new <code>SynchronizeService</code>.
+     */
     public SynchronizeService() {
         super();
-        addClientMessagePartProcessor("EchoClientAnalyzer", new ClientPropertiesLoader());
-    }
-    
-    public void addClientMessagePartProcessor(String name, ClientMessagePartProcessor processor) {
-        clientMessagePartProcessors.put(name, processor);
+        registerClientMessagePartProcessor(new ClientAnalyzerProcessor());
     }
     
     /**
-     * @see nextapp.echo2.webrender.Service#getId()
+     * Trims an XML <code>InputStream</code> to workaround issue 
+     * of XML parser crashing on trailing whitespace.   This issue is present 
+     * with requests from Konqueror/KHTML browsers. 
+     * 
+     * @param in the <code>InputStream</code>
+     * @param characterEncoding the character encoding of the stream 
+     * @return a cleaned version of the stream, as a 
+     *         <code>ByteArrayInputStream</code>.
      */
-    public String getId() {
-        return SERVICE_ID;
-    }
-    
-    /**
-     * @see nextapp.echo2.webrender.Service#getVersion()
-     */
-    public int getVersion() {
-        return DO_NOT_CACHE;
-    }
-    
-    private Document parseRequestDocument(Connection conn) 
-    throws IOException {
-        HttpServletRequest request = conn.getRequest();
-        InputStream in = null;
-        try {
-            String userAgent = conn.getRequest().getHeader("user-agent");
-            if (userAgent != null && userAgent.indexOf("onqueror") != -1) {
-                // Invoke XML 'cleaner' on Konqueror 
-                in = cleanXmlInputStream(request.getInputStream(), conn.getUserInstance().getCharacterEncoding());
-            } else {
-                in = request.getInputStream();
-            }
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(in);
-        } catch (ParserConfigurationException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex);
-        } catch (SAXException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex);
-        } catch (IOException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex);
-        } finally {
-            if (in != null) { try { in.close(); } catch (IOException ex) { } }
-        }
-    }
-
-    //BUGBUG. this method is present purely to prevent the XML parser from choking on input from
-    //XMLHttpRequests from the Konqueror browser.  If possible, fix using some other means, as this
-    //is a hack.
-    //If not possible w/ other means, this method should be disabled for all other browsers via
-    //ClientProperties.
     private InputStream cleanXmlInputStream(InputStream in, String characterEncoding) 
     throws IOException{
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -158,13 +146,72 @@ implements Service {
         return new ByteArrayInputStream(data);
     }
     
+    /**
+     * @see nextapp.echo2.webrender.Service#getId()
+     */
+    public String getId() {
+        return SERVICE_ID;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.Service#getVersion()
+     */
+    public int getVersion() {
+        return DO_NOT_CACHE;
+    }
+    
+    /**
+     * Generates a DOM representation of the XML input POSTed to this service.
+     * 
+     * @param conn the relevant <code>Connection</code>
+     * @return a DOM representation of the POSTed XML input
+     * @throws IOException if the input is invalid
+     */
+    private Document parseRequestDocument(Connection conn) 
+    throws IOException {
+        HttpServletRequest request = conn.getRequest();
+        InputStream in = null;
+        try {
+            String userAgent = conn.getRequest().getHeader("user-agent");
+            if (userAgent != null && userAgent.indexOf("onqueror") != -1) {
+                // Invoke XML 'cleaner', but only for  user agents that contain the string "onqueror",
+                // such as Konqueror, for example.
+                in = cleanXmlInputStream(request.getInputStream(), conn.getUserInstance().getCharacterEncoding());
+            } else {
+                in = request.getInputStream();
+            }
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            return builder.parse(in);
+        } catch (ParserConfigurationException ex) {
+            throw new IOException("Provided InputStream cannot be parsed: " + ex);
+        } catch (SAXException ex) {
+            throw new IOException("Provided InputStream cannot be parsed: " + ex);
+        } catch (IOException ex) {
+            throw new IOException("Provided InputStream cannot be parsed: " + ex);
+        } finally {
+            if (in != null) { try { in.close(); } catch (IOException ex) { } }
+        }
+    }
+
+    /**
+     * Processes a "ClientMessage" XML document containing application UI state 
+     * change information from the client.  This method will parse the
+     * <code>messagepart</code>s of the ClientMessage and invoke the
+     * <code>ClientMessagePartProcessor</code>s registered to process them.
+     * 
+     * @param conn the relevant <code>Connection</code> 
+     * @param clientMessageDocument the ClientMessage XML document to process
+     * @see ClientMessagePartProcessor
+     */
     protected void processClientMessage(Connection conn, Document clientMessageDocument) {
         UserInstance userInstance = conn.getUserInstance();
         Element[] messageParts = DomUtil.getChildElementsByTagName(clientMessageDocument.getDocumentElement(), 
                 "messagepart");
         for (int i = 0; i < messageParts.length; ++i) {
             ClientMessagePartProcessor processor = 
-                    (ClientMessagePartProcessor) clientMessagePartProcessors.get(messageParts[i].getAttribute("processor"));
+                    (ClientMessagePartProcessor) clientMessagePartProcessorMap.get(messageParts[i].getAttribute("processor"));
             if (processor == null) {
                 //BUGBUG. Possibly have a syncserviceexception
                 throw new RuntimeException("Invalid processor name: " + messageParts[i].getAttribute("processor"));
@@ -173,9 +220,43 @@ implements Service {
         }
     }
     
-    protected abstract ServerMessage renderInit(Connection conn, ServerMessage serverMessage, Document clientMessageDocument);
+    /**
+     * Registers a <code>ClientMessagePartProcessor</code> to handle a
+     * specific type of message part.
+     * 
+     * @param processor the <code>ClientMessagePartProcessor</code> to 
+     *        register
+     * @throws IllegalStateException if a processor with the same name is 
+     *         already registered
+     */
+    protected void registerClientMessagePartProcessor(ClientMessagePartProcessor processor) {
+        if (clientMessagePartProcessorMap.containsKey(processor.getName())) {
+            throw new IllegalStateException("Processor already registered with name \"" + processor.getName() + "\".");
+        }
+        clientMessagePartProcessorMap.put(processor.getName(), processor);
+    }
     
-    protected abstract ServerMessage renderUpdate(Connection conn, ServerMessage serverMessage, Document clientMessageDocument);
+    /**
+     * Renders a <code>ServerMessage</code> in response to the initial
+     * synchronization.
+     * 
+     * @param conn the relevant <code>Connection</code>
+     * @param clientMessageDocument the <code>ClientMessage</code> XML
+     *        document
+     * @return the generated <code>ServerMessage</code>
+     */
+    protected abstract ServerMessage renderInit(Connection conn, Document clientMessageDocument);
+    
+    /**
+     * Renders a <code>ServerMessage</code> in response to a synchronization
+     * other than the initial synchronization.
+     * 
+     * @param conn the relevant <code>Connection</code>
+     * @param clientMessageDocument the <code>ClientMessage</code> XML
+     *        document
+     * @return the generated <code>ServerMessage</code>
+     */
+    protected abstract ServerMessage renderUpdate(Connection conn, Document clientMessageDocument);
     
     /**
      * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
@@ -183,14 +264,14 @@ implements Service {
     public void service(Connection conn) throws IOException {
         Document clientMessageDocument = parseRequestDocument(conn);
         String messageType = clientMessageDocument.getDocumentElement().getAttribute("type");
-        ServerMessage serverMessage = new ServerMessage();
+        ServerMessage serverMessage;
         
         if ("initialize".equals(messageType)) {
 //BUGBUG. clientproperties stuff here is not well done, redo.            
-            serverMessage = renderInit(conn, serverMessage, clientMessageDocument);
+            serverMessage = renderInit(conn, clientMessageDocument);
             ClientPropertiesStore.renderStoreDirective(serverMessage, conn.getUserInstance().getClientProperties());
         } else {
-            serverMessage = renderUpdate(conn, serverMessage, clientMessageDocument);
+            serverMessage = renderUpdate(conn, clientMessageDocument);
         }
         conn.setContentType(ContentType.TEXT_XML);
         serverMessage.render(conn.getWriter());       

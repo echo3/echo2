@@ -43,7 +43,7 @@ import org.w3c.dom.Element;
  * a <code>ClientProperties</code> object based on the client script's
  * analysis of its environment.
  */
-public class ClientPropertiesLoader 
+public class ClientAnalyzerProcessor 
 implements SynchronizeService.ClientMessagePartProcessor {
 
     /**
@@ -125,6 +125,13 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY, Boolean.TRUE);
         }
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.service.SynchronizeService.ClientMessagePartProcessor#getName()
+     */
+    public String getName() {
+        return "EchoClientAnalyzer";
     }
     
     /**
