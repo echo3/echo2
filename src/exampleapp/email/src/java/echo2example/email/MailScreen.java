@@ -162,6 +162,11 @@ public class MailScreen extends ContentPane {
         folderSelectColumn.add(label);
         
         folderSelect = new SelectField();
+        folderSelect.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setFolder(folders[folderSelect.getSelectedIndex()]);
+            }
+        });
         folderSelectColumn.add(folderSelect);
         
         Column actionsColumn = new Column();

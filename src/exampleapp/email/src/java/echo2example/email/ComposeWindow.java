@@ -189,8 +189,8 @@ public class ComposeWindow extends WindowPane {
         
         if (replyMessage != null) {
             try {
-                toField.setText(replyMessage.getFrom()[0].toString());
-                subjectField.setText(replyMessage.getSubject());
+                toField.setText(MessageUtil.clean(replyMessage.getFrom()[0].toString(), -1, -1));
+                subjectField.setText(MessageUtil.clean(replyMessage.getSubject(), -1, -1));
             } catch (MessagingException ex) {
                 EmailApp.getApp().processFatalException(ex);
             }
