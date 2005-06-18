@@ -41,6 +41,11 @@ public class MessageUtil {
      * Remove control characters from SPAM messages.
      * 
      * @param source the source text
+     * @param wordLengthLimit the maximum length of a word (words longer
+     *        than this length will have spaces inserted; negative values
+     *        indicate unlimited length)
+     * @param lengthLimit Maximum length of text (text longer than this
+     *        length will be cut; negative values indicate unlimited length)
      * @return the translated string
      */
     public static final String clean(String source, int wordLengthLimit, int lengthLimit) {
