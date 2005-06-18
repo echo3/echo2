@@ -49,6 +49,9 @@ public class MessageUtil {
      * @return the translated string
      */
     public static final String clean(String source, int wordLengthLimit, int lengthLimit) {
+        if (source == null) {
+            return null;
+        }
         StringBuffer out = new StringBuffer();
         CharacterIterator ci = new StringCharacterIterator(source);
         int wordLength = 0;

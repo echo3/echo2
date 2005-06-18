@@ -239,7 +239,7 @@ public class MessagePane extends Column {
             updateRecipientData(message, Message.RecipientType.TO, toFieldPromptLabel, toFieldValueLabel);
             updateRecipientData(message, Message.RecipientType.CC, ccFieldPromptLabel, ccFieldValueLabel);
             updateRecipientData(message, Message.RecipientType.BCC, bccFieldPromptLabel, bccFieldValueLabel);
-            subjectFieldValueLabel.setText(message.getSubject());
+            subjectFieldValueLabel.setText(MessageUtil.clean(message.getSubject(), -1, -1));
         }
         
         messageColumn.removeAll();
@@ -259,7 +259,7 @@ public class MessagePane extends Column {
     private void updateRecipientData(Message message, Message.RecipientType type,
             Label promptLabel, Label valueLabel) 
     throws MessagingException {
-        String recipients = formatRecipients(message, type);
+        String recipients = MessageUtil.clean(formatRecipients(message, type), -1, -1);
         if (recipients == null) {
             promptLabel.setVisible(false);
             valueLabel.setVisible(false);
