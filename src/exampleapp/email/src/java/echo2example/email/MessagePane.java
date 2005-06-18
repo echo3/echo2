@@ -195,9 +195,9 @@ public class MessagePane extends Column {
         List componentList = new ArrayList();
         StringBuffer out = new StringBuffer();
         CharacterIterator ci = new StringCharacterIterator(text);
-        char ch = ci.next();
+        char ch = ci.first();
         while (ch != CharacterIterator.DONE) {
-            if (ch == '\n' || ch == '\r') {
+            if (ch == '\n') {
                 String labelText = out.toString();
                 Label label = new Label(labelText);
                 if (labelText.trim().length() == 0) {
@@ -205,7 +205,7 @@ public class MessagePane extends Column {
                 }
                 componentList.add(label);
                 out = new StringBuffer();
-            } else {
+            } else if (ch >= 0x20) {
                 out.append(ch);
             }
             ch  = ci.next();

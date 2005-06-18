@@ -41,12 +41,14 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Table;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
+import nextapp.echo2.app.table.TableColumnModel;
 
 /**
  * A selectable <code>Table</code> which displays a list of messages.
@@ -127,7 +129,9 @@ public class MessageListTable extends Table {
                     // Return the sender's address.
                     Address[] from = displayedMessages[row].getFrom();
                     if (from != null) {
-                        return ((InternetAddress) from[0]).getPersonal();
+                        InternetAddress fromAddress = ((InternetAddress) from[0]); 
+                        String personal = fromAddress.getPersonal(); 
+                        return personal == null ? fromAddress.getAddress() : personal;
                     } else {
                         return Messages.getString("MessageListTable.UnknownSenderText");
                     }
@@ -173,10 +177,19 @@ public class MessageListTable extends Table {
          */
         public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
             Label label;
-            if (column == COLUMN_DATE) {
+            switch (column) {
+            case COLUMN_DATE:
                 label = new Label(Messages.formatDateTimeMedium((Date) value));
-            } else {
-                label = new Label(value == null ? (String) null : value.toString());
+                label.setLineWrap(false);
+                break;
+            case COLUMN_SUBJECT:
+                label = new Label(value == null ? (String) null : MessageUtil.clean(value.toString(), 25, 50));
+                break;
+            case COLUMN_FROM:
+                label = new Label(value == null ? (String) null : MessageUtil.clean(value.toString(), 30, 65));
+                break;
+            default:
+                throw new IndexOutOfBoundsException();
             }
             if (row % 2 == 0) {
                 label.setStyleName("MessageListTable.EvenRowLabel");
@@ -211,6 +224,11 @@ public class MessageListTable extends Table {
         setStyleName("MessageListTable.Table");
         setModel(messageTableModel);
         setDefaultRenderer(Object.class, messageTableCellRenderer);
+        
+        TableColumnModel columnModel = getColumnModel();
+        columnModel.getColumn(0).setWidth(new Extent(35, Extent.PERCENT));
+        columnModel.getColumn(1).setWidth(new Extent(40, Extent.PERCENT));
+        columnModel.getColumn(2).setWidth(new Extent(25, Extent.PERCENT));
     }
 
     /**
