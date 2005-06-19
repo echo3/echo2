@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
  */
 public class DomUpdate {
     
-    private static final String MESSAGE_PART_NAME = "EchoDomUpdate";
+    private static final String MESSAGE_PART_NAME = "EchoDomUpdate.MessageProcessor";
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     /**

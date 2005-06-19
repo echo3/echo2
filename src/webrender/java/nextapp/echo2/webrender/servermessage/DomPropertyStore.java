@@ -40,9 +40,8 @@ import org.w3c.dom.Element;
  */
 public class DomPropertyStore {
 
+    private static final String MESSAGE_PART_NAME = "EchoDomPropertyStore.MessageProcessor";
     private static final String[] PROPERTY_STORE_KEYS= new String[]{"name", "value"};
-
-    private static final String MESSAGE_PART_NAME = "EchoDomPropertyStore";
 
     /**
      * Creates a <code>storeproperty</code> operation to store a non-rendered

@@ -565,10 +565,21 @@ EchoCssUtil.restoreOriginalStyle = function(element) {
 // _______________________
 // Object EchoDebugManager
 
+/**
+ * Static object/namespace for managing the Debug Window.
+ */
 function EchoDebugManager() { }
 
+/**
+ * Reference to the active debug window.
+ */
 EchoDebugManager.debugWindow = null;
 
+/**
+ * Writes a message to the console.
+ *
+ * @param message the message to write
+ */
 EchoDebugManager.consoleWrite = function(message) {
     if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
         return;
@@ -576,11 +587,17 @@ EchoDebugManager.consoleWrite = function(message) {
     EchoDebugManager.debugWindow.EchoDebug.consoleWrite(message);
 };
 
+/**
+ * Opens the debug window.
+ */
 EchoDebugManager.launch = function() {
     EchoDebugManager.debugWindow = window.open(EchoClientEngine.baseServerUri + "?serviceId=Echo.Debug", "EchoDebug", 
             "width=400,height=650,resizable=yes", true);
 };
 
+/**
+ * Updates the current state of the ClientMessage in the synchronization tab.
+ */
 EchoDebugManager.updateClientMessage = function() {
     if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
         return;
@@ -588,6 +605,9 @@ EchoDebugManager.updateClientMessage = function() {
     EchoDebugManager.debugWindow.EchoDebug.displayClientMessage(EchoClientMessage.messageDocument);
 };
 
+/**
+ * Updates the current state of the ServerMessage in the synchronization tab.
+ */
 EchoDebugManager.updateServerMessage = function() {
     if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
         return;
@@ -604,6 +624,30 @@ EchoDebugManager.updateServerMessage = function() {
  */
 function EchoDomPropertyStore() { }
 
+EchoDomPropertyStore.MessageProcessor = function() { }
+
+EchoDomPropertyStore.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "storeproperty":
+                EchoDomPropertyStore.MessageProcessor.processStoreProperty(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+EchoDomPropertyStore.MessageProcessor.processStoreProperty = function(storePropertyElement) {
+    var propertyName = storePropertyElement.getAttribute("name");
+    var propertyValue = storePropertyElement.getAttribute("value");
+    var items = storePropertyElement.getElementsByTagName("item");
+    for (var i = 0; i < items.length; ++i) {
+        var elementId = items[i].getAttribute("eid");
+        EchoDomPropertyStore.setPropertyValue(elementId, propertyName, propertyValue);
+    }
+};
+
 EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
     var element = document.getElementById(elementId);
     if (!element) {
@@ -613,29 +657,6 @@ EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
         return element.echoDomPropertyStore[propertyName];
     } else {
         return null;
-    }
-};
-
-//BUGBUG. move this and similar process methods into inner static processor classes
-EchoDomPropertyStore.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "storeproperty":
-                EchoDomPropertyStore.processStoreProperty(messagePartElement.childNodes[i]);
-                break;
-            }
-        }
-    }
-};
-
-EchoDomPropertyStore.processStoreProperty = function(storePropertyElement) {
-    var propertyName = storePropertyElement.getAttribute("name");
-    var propertyValue = storePropertyElement.getAttribute("value");
-    var items = storePropertyElement.getElementsByTagName("item");
-    for (var i = 0; i < items.length; ++i) {
-        var elementId = items[i].getAttribute("eid");
-        EchoDomPropertyStore.setPropertyValue(elementId, propertyName, propertyValue);
     }
 };
 
@@ -661,10 +682,12 @@ EchoDomPropertyStore.setPropertyValue = function(elementId, propertyName, proper
  */
 function EchoDomUpdate() { }
 
+EchoDomUpdate.MessageProcessor = function() { }
+
 /**
  *
  */
-EchoDomUpdate.process = function(messagePartElement) {
+EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
@@ -688,7 +711,7 @@ EchoDomUpdate.process = function(messagePartElement) {
     }
 };
 
-EchoDomUpdate.processAdd = function(domAddElement) {
+EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
     var parentId = domAddElement.getAttribute("parentid");
     var siblingId = domAddElement.getAttribute("siblingid");
     var parentElement = document.getElementById(parentId);
@@ -696,11 +719,11 @@ EchoDomUpdate.processAdd = function(domAddElement) {
     if (siblingId) {
         siblingElement = document.getElementById(siblingId);
         if (!siblingElement) {
-            throw new EchoDomUpdateTargetNotFoundException("Add", "sibling", siblingId);
+            throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
         }
     }
     if (!parentElement) {
-         throw new EchoDomUpdateTargetNotFoundException("Add", "parent", parentId);
+         throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
     }
     var contentElement = domAddElement.getElementsByTagName("content")[0];
     for (var i = 0; i < contentElement.childNodes.length; ++i) {
@@ -724,16 +747,16 @@ EchoDomUpdate.processAdd = function(domAddElement) {
     }
 };
 
-EchoDomUpdate.processAttributeUpdate = function(attributeUpdateElement) {
+EchoDomUpdate.MessageProcessor.processAttributeUpdate = function(attributeUpdateElement) {
     var targetId = attributeUpdateElement.getAttribute("targetid");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
-        throw new EchoDomUpdateTargetNotFoundException("AttributeUpdate", "target", targetId);
+        throw new EchoDomUpdate.TargetNotFoundException("AttributeUpdate", "target", targetId);
     }
     targetElement[attributeUpdateElement.getAttribute("name")] = attributeUpdateElement.getAttribute("value");
 };
 
-EchoDomUpdate.processRemove = function(domRemoveElement) {
+EchoDomUpdate.MessageProcessor.processRemove = function(domRemoveElement) {
     var targetId = domRemoveElement.getAttribute("targetid");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
@@ -742,7 +765,7 @@ EchoDomUpdate.processRemove = function(domRemoveElement) {
     targetElement.parentNode.removeChild(targetElement);
 };
 
-EchoDomUpdate.processRemoveChildren = function(domRemoveElement) {
+EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement) {
     var targetId = domRemoveElement.getAttribute("targetid");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
@@ -756,32 +779,39 @@ EchoDomUpdate.processRemoveChildren = function(domRemoveElement) {
     }
 };
 
-EchoDomUpdate.processStyleUpdate = function(styleUpdateElement) {
+EchoDomUpdate.MessageProcessor.processStyleUpdate = function(styleUpdateElement) {
     var targetId = styleUpdateElement.getAttribute("targetid");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
-        throw new EchoDomUpdateTargetNotFoundException("StyleUpdate", "target", targetId);
+        throw new EchoDomUpdate.TargetNotFoundException("StyleUpdate", "target", targetId);
     }
     targetElement.style[styleUpdateElement.getAttribute("name")] = styleUpdateElement.getAttribute("value");
 };
 
-// ___________________________________________
-// Object EchoDomUpdateTargetNotFoundException
+// ____________________________________________
+// Object EchoDomUpdate.TargetNotFoundException
 
-function EchoDomUpdateTargetNotFoundException(updateType, targetType, targetId) {
+/**
+ * An exception thrown when an <code>EchoDomUpdate</code> opeation fails 
+ */
+EchoDomUpdate.TargetNotFoundException = function(updateType, targetType, targetId) {
     this.targetId = targetId;
     this.targetType = targetType;
     this.updateType = updateType;
 }
 
-EchoDomUpdateTargetNotFoundException.prototype.toString = function() {
+EchoDomUpdate.TargetNotFoundException.prototype.toString = function() {
     return "Failed to perform \"" + this.updateType + "\": " + this.targetType + " element \"" + this.targetId + "\" not found.";
 };
 
 // __________________
 // Object EchoDomUtil
 
-/** Do not instantiate. */
+/** 
+ * Static object/namespace for performing cross-platform DOM-related 
+ * operations.  Most methods in this object/namespace are provided due
+ * to nonstandard behavior in clients.
+ */
 function EchoDomUtil() { }
 
 /**
@@ -805,6 +835,16 @@ EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, u
     }
 };
 
+/**
+ * Creates a new XML DOM.
+ *
+ * @param namespaceUri the unique URI of the namespace of the root element in 
+ *        the created document (not supported for
+ *        Internet Explorer 6 clients, null may be specified for all clients)
+ * @param qualifiedName the name of the root element of the new document (this
+ *        element will be created automatically)
+ * @return the created DOM
+ */
 EchoDomUtil.createDocument = function(namespaceUri, qualifiedName) {
     if (document.implementation && document.implementation.createDocument) {
         // DOM Level 2 Browsers
@@ -824,6 +864,13 @@ EchoDomUtil.createDocument = function(namespaceUri, qualifiedName) {
     }
 };
 
+/**
+ * Converts a hyphen-separated CSS attribute name into a camelCase
+ * property name.
+ *
+ * @param attribute the CSS attribute name, e.g., border-color
+ * @return the style property name, e.g., borderColor
+ */
 EchoDomUtil.cssAttributeNameToPropertyName = function(attribute) {
     var segments = attribute.split("-");
     var out = segments[0];
@@ -865,6 +912,19 @@ EchoDomUtil.getEventTarget = function(e) {
     return e.target ? e.target : e.srcElement;
 };
 
+/**
+ * Imports a node into a document.  This method is a 
+ * cross-browser replacement for DOMImplementation.importNode, as Internet
+ * Explorer 6 clients do not provide such a method.
+ * This method will directly invoke targetDocument.importNode() in the event
+ * that a client provides such a method.
+ *
+ * @param targetDocument the document into which the node/hierarchy is to be
+ *        imported
+ * @param sourceNode the node to import
+ * @param importChildren a boolean flag indicating whether child nodes should
+ *        be recursively imported
+ */
 EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
     if (targetDocument.importNode) {
         // DOM Level 2 Browsers
@@ -881,6 +941,12 @@ EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
 /**
  * Manual implementation of DOMImplementation.importNode() for clients that do
  * not provide their own (i.e., Internet Explorer 6).
+ *
+ * @param targetDocument the document into which the node/hierarchy is to be
+ *        imported
+ * @param sourceNode the node to import
+ * @param importChildren a boolean flag indicating whether child nodes should
+ *        be recursively imported
  */
 EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren) {
     var targetNode, i;
@@ -916,6 +982,15 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
     return targetNode;
 };
 
+/**
+ * Determines if <code>ancestorNode</code> is or is an ancestor of
+ * <code>descendantNode</code>.
+ *
+ * @param ancestorNode the potential ancestor node
+ * @param descendantNode the potential descendant node
+ * @return true if <code>ancestorNode</code> is or is an ancestor of
+ *         <code>descendantNode</code>.
+ */
 EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
     var testNode = descendantNode;
     while (testNode !== null) {
@@ -930,6 +1005,10 @@ EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
 /**
  * Prevents the default action of an event from occurring, using the
  * client's supported event model.
+ * On clients which support the W3C DOM Level 2 event specification,
+ * the preventDefault() method is invoked.
+ * On clients which support only the Internet Explorer event model,
+ * the 'returnValue' property is set to false.
  *
  * @param e the event
  */
@@ -1112,6 +1191,8 @@ EchoEventProcessor.removeHandler = function(elementId, eventType) {
 /* Do not instantiate */
 function EchoEventUpdate() { }
 
+EchoEventUpdate.MessageProcessor = function() { }
+
 /**
  * EchoEventUpdate Message Part Procesor implementation.
  *
@@ -1119,7 +1200,7 @@ function EchoEventUpdate() { }
  *        element containing event add and remove directives
  *        to process.
  */
-EchoEventUpdate.process = function(messagePartElement) {
+EchoEventUpdate.MessageProcessor.process = function(messagePartElement) {
     var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
     var adds = messagePartElement.getElementsByTagName("eventadd");
     var removes = messagePartElement.getElementsByTagName("eventremove");
