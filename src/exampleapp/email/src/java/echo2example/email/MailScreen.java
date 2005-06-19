@@ -204,6 +204,12 @@ public class MailScreen extends ContentPane {
         return optionColumn;
     }
     
+    /**
+     * Processes a user request to compose/reply to a message.
+     * 
+     * @param message the message to reply to, or null to a compose a new 
+     *        message.
+     */
     private void processCompose(Message message) {
         ComposeWindow composeWindow = new ComposeWindow(message);
         Extent dialogPositionExtent = new Extent(dialogPosition);

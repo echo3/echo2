@@ -46,6 +46,7 @@ import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.Table;
 import nextapp.echo2.app.layout.TableCellLayoutData;
 import nextapp.echo2.app.list.ListSelectionModel;
+import nextapp.echo2.app.table.TableColumnModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -281,6 +282,28 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         parentNode.appendChild(tableElement);
+        
+        TableColumnModel columnModel = table.getColumnModel();
+        int columnCount = columnModel.getColumnCount();
+        
+        boolean someColumnsHaveWidths = false;
+        for (int i = 0; i < columnCount; ++i) {
+            if (columnModel.getColumn(i).getWidth() != null) {
+                someColumnsHaveWidths = true;
+            }
+        }
+        if (someColumnsHaveWidths) {
+            Element colGroupElement = document.createElement("colgroup");
+            tableElement.appendChild(colGroupElement);
+            for (int i = 0; i < columnCount; ++i) {
+                Element colElement = document.createElement("col");
+                Extent columnWidth = columnModel.getColumn(i).getWidth();
+                if (width != null) {
+                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                }
+                colGroupElement.appendChild(colElement);
+            }
+        }
         
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");
