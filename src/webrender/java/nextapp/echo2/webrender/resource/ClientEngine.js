@@ -973,11 +973,22 @@ EchoDomUtil.stopPropogation = function(e) {
 // ________________________
 // Object EchoEventProcessor
 
-/* Do not instantiate */
+/**
+ * Static object/namespace to provide event handler management.
+ */
 function EchoEventProcessor() { }
 
 EchoEventProcessor.eventTypeToHandlersMap = new Array();
 
+/**
+ * Registers an event handler.
+ *
+ * @param elementId the target elementId of the event
+ * @param eventType the type of the event (should be specified using 
+ *        DOM level 2 event names, e.g., "mouseover" or "click", without
+ *        the "on" prefix)
+ * @param handler the name of the handler, as a String
+ */
 EchoEventProcessor.addHandler = function(elementId, eventType, handler) {
     var element = document.getElementById(elementId);
     EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
@@ -1071,6 +1082,15 @@ EchoEventProcessor.processEvent = function(e) {
     handler(e);
 };
 
+/**
+ * Unregisters an event handler.
+ *
+ * @param elementId the target elementId of the event
+ * @param eventType the type of the event (should be specified using 
+ *        DOM level 2 event names, e.g., "mouseover" or "click", without
+ *        the "on" prefix)
+ * @param handler the name of the handler, as a String
+ */
 EchoEventProcessor.removeHandler = function(elementId, eventType) {
     var element = document.getElementById(elementId);
     if (element) {
