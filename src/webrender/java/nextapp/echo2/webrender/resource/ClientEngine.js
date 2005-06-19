@@ -1129,11 +1129,6 @@ EchoEventProcessor.processEvent = function(e) {
         e.target = e.srcElement;
     }
     var targetElement = e.target;
-//    if (targetElement.nodeType != 1) {
-        // Only process events from element nodes.
-//        return;
-//    }
-    
     var handlerName = null;
     while (!handlerName && targetElement) {
         if (targetElement.nodeType == 1) { // Element Node
