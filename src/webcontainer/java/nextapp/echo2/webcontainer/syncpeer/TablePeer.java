@@ -76,8 +76,6 @@ import nextapp.echo2.webrender.util.DomUtil;
 //BUGBUG. sort component visiblity with regard to rendered components
 // (may simply want to require returned components be visible (at Table level) and validate this)
 
-//BUGBUG. prevent refreshes on selection events.
-
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Table</code> components.
  * <p>

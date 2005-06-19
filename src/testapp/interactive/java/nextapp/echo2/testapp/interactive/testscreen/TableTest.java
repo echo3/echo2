@@ -45,6 +45,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableModel;
+import nextapp.echo2.app.table.TableColumnModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
@@ -231,7 +232,16 @@ public class TableTest extends SplitPane {
                 testTable.setWidth(new Extent(100, Extent.PERCENT));
             }
         });
-        
+        controlsColumn.addButton("Set ColumnWidths Equal", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                TableColumnModel columnModel = testTable.getColumnModel();
+                int columnCount = columnModel.getColumnCount();
+                Extent width = new Extent(100 / columnCount, Extent.PERCENT);
+                for (int i = 0; i < columnCount; ++i) {
+                    columnModel.getColumn(i).setWidth(width);
+                }
+            }
+        });
         
         // Rollover Effect Settings
 
