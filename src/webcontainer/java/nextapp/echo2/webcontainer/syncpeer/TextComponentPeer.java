@@ -216,7 +216,7 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
     public void renderDisposeDirective(RenderContext rc, TextComponent textComponent) {
         String elementId = ContainerInstance.getElementId(textComponent);
         ServerMessage serverMessage = rc.getServerMessage();
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
                 "EchoTextComponent.MessageProcessor", "dispose", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
