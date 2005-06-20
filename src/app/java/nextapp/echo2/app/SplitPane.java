@@ -41,14 +41,60 @@ package nextapp.echo2.app;
  */
 public class SplitPane extends Component {
 
+    /**
+     * An <code>orientatinon</code> constant indicating that the 
+     * <code>SplitPane</code> should be layed out horizontally with the
+     * first (fixed-sze) pane in the leading position.
+     * The leading position is on the left side for left-to-right languages
+     * and on the right side for right-to-left languages.
+     */
     public static final int ORIENTATION_HORIZONTAL_LEADING_TRAILING = 1;
+
+    /**
+     * An <code>orientatinon</code> constant indicating that the 
+     * <code>SplitPane</code> should be layed out horizontally with the
+     * first (fixed-sze) pane in the trailing position.
+     * The trailing position is on the right side for left-to-right languages
+     * and on the left side for right-to-left languages.
+     */
     public static final int ORIENTATION_HORIZONTAL_TRAILING_LEADING = 2;
+
+    /**
+     * An <code>orientatinon</code> constant indicating that the 
+     * <code>SplitPane</code> should be layed out horizontally with the
+     * first (fixed-sze) pane in the left position.
+     */
     public static final int ORIENTATION_HORIZONTAL_LEFT_RIGHT = 3;
+
+    /**
+     * An <code>orientatinon</code> constant indicating that the 
+     * <code>SplitPane</code> should be layed out horizontally with the
+     * first (fixed-sze) pane in the right position.
+     */
     public static final int ORIENTATION_HORIZONTAL_RIGHT_LEFT = 4;
+
+    /**
+     * An <code>orientatinon</code> constant indicating that the 
+     * <code>SplitPane</code> should be layed out vertically with the
+     * first (fixed-sze) pane in the top position.
+     */
     public static final int ORIENTATION_VERTICAL_TOP_BOTTOM = 5;
+
+    /**
+     * An <code>orientatinon</code> constant indicating that the 
+     * <code>SplitPane</code> should be layed out vertically with the
+     * first (fixed-sze) pane in the bottom position.
+     */
     public static final int ORIENTATION_VERTICAL_BOTTOM_TOP = 6;
     
+    /**
+     * Shorthand for <code>ORIENTATION_HORIZONTAL_LEADING_TRAILING</code>.
+     */
     public static final int ORIENTATION_HORIZONTAL = ORIENTATION_HORIZONTAL_LEADING_TRAILING;
+
+    /**
+     * Shorthand for <code>ORIENTATION_VERTICAL_TOP_BOTTOM</code>.
+     */
     public static final int ORIENTATION_VERTICAL = ORIENTATION_VERTICAL_TOP_BOTTOM;
     
     public static final String PROPERTY_HORIZONTAL_SEPARATOR_IMAGE = "horizontalSeparatorImage";
