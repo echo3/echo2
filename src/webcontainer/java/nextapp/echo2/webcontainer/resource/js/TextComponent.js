@@ -67,20 +67,20 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
 	    if (item.getAttribute("text")) {
             textComponent.value = item.getAttribute("text");
 	    }
-        if (item.getAttribute("serverNotify")) {
-            EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", item.getAttribute("serverNotify"));
+        if (item.getAttribute("server-notify")) {
+            EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", item.getAttribute("server-notify"));
         }
-        if (item.getAttribute("horizontalscroll")) {
-            textComponent.scrollLeft = parseInt(item.getAttribute("horizontalscroll"));
+        if (item.getAttribute("horizontal-scroll")) {
+            textComponent.scrollLeft = parseInt(item.getAttribute("horizontal-scroll"));
         }
-        if (item.getAttribute("verticalscroll")) {
+        if (item.getAttribute("vertical-scroll")) {
             if (EchoClientProperties.get("quirkIERepaint")) {
 	            var originalWidth = textComponent.style.width;
 	            var temporaryWidth = parseInt(textComponent.clientWidth) - 1;
 	            textComponent.style.width = temporaryWidth + "px";
 	            textComponent.style.width = originalWidth;
             }
-            textComponent.scrollTop = parseInt(item.getAttribute("verticalscroll"));
+            textComponent.scrollTop = parseInt(item.getAttribute("vertical-scroll"));
         }
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(elementId, "focus", "EchoTextComponent.processFocus");

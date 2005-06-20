@@ -79,19 +79,19 @@ EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
         var elementId = item.getAttribute("eid");
         var movable = item.getAttribute("movable") == "true";
         var resizable = item.getAttribute("resizable") == "true";
-        var containerId = item.getAttribute("containerid");
+        var containerId = item.getAttribute("container-id");
         
-        if (item.getAttribute("minimumwidth")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", item.getAttribute("minimumwidth"));
+        if (item.getAttribute("minimum-width")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", item.getAttribute("minimum-width"));
         }
-        if (item.getAttribute("maximumwidth")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "maximumWidth", item.getAttribute("maximumwidth"));
+        if (item.getAttribute("maximum-width")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "maximumWidth", item.getAttribute("maximum-width"));
         }
-        if (item.getAttribute("minimumheight")) {             
-            EchoDomPropertyStore.setPropertyValue(elementId, "minimumHeight", item.getAttribute("minimumheight"));
+        if (item.getAttribute("minimum-height")) {             
+            EchoDomPropertyStore.setPropertyValue(elementId, "minimumHeight", item.getAttribute("minimum-height"));
         }
-        if (item.getAttribute("maximumheight")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", item.getAttribute("maximumheight"));
+        if (item.getAttribute("maximum-height")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", item.getAttribute("maximum-height"));
         }
         
         EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);

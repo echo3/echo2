@@ -56,7 +56,7 @@ public class DomPropertyStore {
     public static void renderSetProperty(ServerMessage serverMessage, String elementId, String propertyName, 
             String propertyValue) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                MESSAGE_PART_NAME, "storeproperty", PROPERTY_STORE_KEYS, new String[]{propertyName, propertyValue});
+                MESSAGE_PART_NAME, "store-property", PROPERTY_STORE_KEYS, new String[]{propertyName, propertyValue});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);

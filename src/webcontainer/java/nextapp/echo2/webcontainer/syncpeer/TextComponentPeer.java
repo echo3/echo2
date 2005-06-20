@@ -242,14 +242,14 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (horizontalScroll != null && horizontalScroll.getValue() != 0) {
-            itemElement.setAttribute("horizontalscroll", ExtentRender.renderCssAttributePixelValue(horizontalScroll));
+            itemElement.setAttribute("horizontal-scroll", ExtentRender.renderCssAttributePixelValue(horizontalScroll));
         }
         if (verticalScroll != null && verticalScroll.getValue() != 0) {
-            itemElement.setAttribute("verticalscroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
+            itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
         }
 
-        if (textComponent instanceof TextArea
-                && rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
+        if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
             String value = textComponent.getText();
             if (value != null) {
                 itemElement.setAttribute("text", value);
@@ -257,7 +257,7 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
         }
 
         if (textComponent.hasActionListeners()) {
-            itemElement.setAttribute("serverNotify", "true");
+            itemElement.setAttribute("server-notify", "true");
         }
 
         itemizedUpdateElement.appendChild(itemElement);

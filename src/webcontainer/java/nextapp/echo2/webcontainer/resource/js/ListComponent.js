@@ -71,13 +71,13 @@ EchoListComponent.MessageProcessor.processDispose = function(disposeMessageEleme
 EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        var defaultStyle = item.getAttribute("defaultstyle");
-        var rolloverStyle = item.getAttribute("rolloverstyle");
+        var defaultStyle = item.getAttribute("default-style");
+        var rolloverStyle = item.getAttribute("rollover-style");
 
         EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
         EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
-        if (item.getAttribute("serverNotify")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("serverNotify"));
+        if (item.getAttribute("server-notify")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
         }
 
 	    var selectElement = document.getElementById(elementId + "_select");
@@ -113,7 +113,7 @@ EchoListComponent.applyStyle = function(element, cssText) {
 EchoListComponent.doChange = function(elementId) {
     var element = document.getElementById(elementId);
     var listElementId = element.parentNode.id;
-    var propertyElement = EchoClientMessage.createPropertyElement(listElementId, "selectedOptions");
+    var propertyElement = EchoClientMessage.createPropertyElement(listElementId, "selected-options");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){

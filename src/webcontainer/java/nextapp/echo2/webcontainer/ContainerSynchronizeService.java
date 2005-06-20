@@ -114,7 +114,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             ContainerInstance ci = (ContainerInstance) userInstance;
             Element[] propertyElements = DomUtil.getChildElementsByTagName(messagePartElement, "property");
             for (int i = 0; i < propertyElements.length; ++i) {
-                String componentId = propertyElements[i].getAttribute("componentid");
+                String componentId = propertyElements[i].getAttribute("component-id");
                 Component component = ci.getComponentByElementId(componentId);
                 if (component == null) {
                     // Component removed.  This should not frequently occur, however in certain cases,
@@ -152,7 +152,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
         public void process(UserInstance userInstance, Element messagePartElement) {
             ContainerInstance ci = (ContainerInstance) userInstance;
             Element actionElement = DomUtil.getChildElementByTagName(messagePartElement, "action");
-            String componentId = actionElement.getAttribute("componentid");
+            String componentId = actionElement.getAttribute("component-id");
             Component component = ci.getComponentByElementId(componentId);
             if (component == null) {
                 // Component removed.  This should not frequently occur, however in certain cases,

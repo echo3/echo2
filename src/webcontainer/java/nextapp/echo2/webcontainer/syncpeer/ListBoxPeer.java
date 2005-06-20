@@ -207,14 +207,14 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         itemElement.setAttribute("eid", elementId);
         
         CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
-        itemElement.setAttribute("defaultstyle", defaultCssStyle.renderInline());
+        itemElement.setAttribute("default-style", defaultCssStyle.renderInline());
         CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
-        itemElement.setAttribute("rolloverstyle", rolloverCssStyle.renderInline());
-        itemElement.setAttribute("selectedstyle", SELECTED_CSS_STYLE_TEXT);
+        itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
+        itemElement.setAttribute("selected-style", SELECTED_CSS_STYLE_TEXT);
         itemElement.setAttribute("multiple", 
                 ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "true" : "false");
         if (listBox.hasActionListeners()) {
-            itemElement.setAttribute("serverNotify", "true");
+            itemElement.setAttribute("server-notify", "true");
         }
 
         Element selectionElement = serverMessage.getDocument().createElement("selection");
@@ -222,8 +222,8 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         for (int i = 0; i < model.size(); i++) {
             boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
             if (selected) {
-                Element selectionItemElement = serverMessage.getDocument().createElement("selectionitem");
-                selectionItemElement.setAttribute("optionid", getOptionId(elementId, i));
+                Element selectionItemElement = serverMessage.getDocument().createElement("selection-item");
+                selectionItemElement.setAttribute("option-id", getOptionId(elementId, i));
                 selectionElement.appendChild(selectionItemElement);
             }
         }

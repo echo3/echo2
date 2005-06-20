@@ -85,7 +85,7 @@ import nextapp.echo2.webrender.util.DomUtil;
 public class TablePeer 
 implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor  {
 
-    private static final String[] TABLE_INIT_KEYS = new String[]{"rolloverstyle", "selectionstyle"};
+    private static final String[] TABLE_INIT_KEYS = new String[]{"rollover-style", "selection-style"};
     
     private static final String PROPERTY_SELECTION = "selection";
     
@@ -373,14 +373,14 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         Element itemElement = document.createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (table.hasActionListeners()) {
-            itemElement.setAttribute("servernotify", "true");
+            itemElement.setAttribute("server-notify", "true");
         }
         
         if (selectionEnabled) {
-            itemElement.setAttribute("selectionenabled", "true");
+            itemElement.setAttribute("selection-enabled", "true");
             ListSelectionModel selectionModel = table.getSelectionModel();
             if (selectionModel.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION) {
-                itemElement.setAttribute("selectionmode", "multiple");
+                itemElement.setAttribute("selection-mode", "multiple");
             }
             if (selectionModel.getMinSelectedIndex() != -1) {
                 Element selectionElement = document.createElement("selection");

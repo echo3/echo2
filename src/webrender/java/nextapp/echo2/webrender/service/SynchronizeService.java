@@ -212,7 +212,7 @@ implements Service {
     protected void processClientMessage(Connection conn, Document clientMessageDocument) {
         UserInstance userInstance = conn.getUserInstance();
         Element[] messageParts = DomUtil.getChildElementsByTagName(clientMessageDocument.getDocumentElement(), 
-                "messagepart");
+                "message-part");
         for (int i = 0; i < messageParts.length; ++i) {
             ClientMessagePartProcessor processor = 
                     (ClientMessagePartProcessor) clientMessagePartProcessorMap.get(messageParts[i].getAttribute("processor"));

@@ -428,7 +428,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
                 "EchoSplitPane.MessageProcessor", "init", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
-        itemElement.setAttribute("fixedpane", Integer.toString(fixedPaneNumber));
+        itemElement.setAttribute("fixed-pane", Integer.toString(fixedPaneNumber));
         if (resizable) {
             itemElement.setAttribute("resizable", resizable ? "true" : "false");
         }
@@ -706,18 +706,18 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         ServerMessage serverMessage = rc.getServerMessage();
 
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoSplitPane.MessageProcessor", "updatepane", new String[0], new String[0]);
+                "EchoSplitPane.MessageProcessor", "update-pane", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", paneDivElementId);
         itemizedUpdateElement.appendChild(itemElement);
 
         if (splitPaneLayoutData != null) {
             if (splitPaneLayoutData.getMinimumSize() != null) {
-                itemElement.setAttribute("minimumsize", 
+                itemElement.setAttribute("minimum-size", 
                         ExtentRender.renderCssAttributePixelValue(splitPaneLayoutData.getMinimumSize())); 
             }
             if (splitPaneLayoutData.getMaximumSize() != null) {
-                itemElement.setAttribute("maximumsize", 
+                itemElement.setAttribute("maximum-size", 
                         ExtentRender.renderCssAttributePixelValue(splitPaneLayoutData.getMaximumSize())); 
             }
         }

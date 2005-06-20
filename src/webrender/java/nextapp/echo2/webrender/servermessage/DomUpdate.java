@@ -60,8 +60,8 @@ public class DomUpdate {
             String attributeValue) {
         //BUGUG. support nulls for deletion.
         Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                MESSAGE_PART_NAME, "attributeupdate");
-        element.setAttribute("targetid", targetId);
+                MESSAGE_PART_NAME, "attribute-update");
+        element.setAttribute("target-id", targetId);
         element.setAttribute("name", attributeName);
         element.setAttribute("value", attributeValue);
     }
@@ -94,10 +94,10 @@ public class DomUpdate {
             DocumentFragment htmlFragment) {
         setContentNamespace(htmlFragment);
         Element domAddElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                MESSAGE_PART_NAME, "domadd");
-        domAddElement.setAttribute("parentid", parentId);
+                MESSAGE_PART_NAME, "dom-add");
+        domAddElement.setAttribute("parent-id", parentId);
         if (siblingId != null) {
-            domAddElement.setAttribute("siblingid", siblingId);
+            domAddElement.setAttribute("sibling-id", siblingId);
         }
         Element contentElement = domAddElement.getOwnerDocument().createElement("content");
         domAddElement.appendChild(contentElement);
@@ -113,8 +113,8 @@ public class DomUpdate {
      */
     public static void renderElementRemove(ServerMessage serverMessage, String targetId) {
         Element domRemoveElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
-                MESSAGE_PART_NAME, "domremove");
-        domRemoveElement.setAttribute("targetid", targetId);
+                MESSAGE_PART_NAME, "dom-remove");
+        domRemoveElement.setAttribute("target-id", targetId);
     }
 
     /**
@@ -126,8 +126,8 @@ public class DomUpdate {
      */
     public static void renderElementRemoveChildren(ServerMessage serverMessage, String targetId) {
         Element domRemoveElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
-                MESSAGE_PART_NAME, "domremovechildren");
-        domRemoveElement.setAttribute("targetid", targetId);
+                MESSAGE_PART_NAME, "dom-remove-children");
+        domRemoveElement.setAttribute("target-id", targetId);
     }
     
     /**
@@ -145,8 +145,8 @@ public class DomUpdate {
     public static void renderStyleUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
             String attributeValue) {
         //BUGUG. support nulls for deletion.
-        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "styleupdate");
-        element.setAttribute("targetid", targetId);
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "style-update");
+        element.setAttribute("target-id", targetId);
         element.setAttribute("name", attributeName);
         element.setAttribute("value", attributeValue);
     }

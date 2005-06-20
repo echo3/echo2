@@ -51,7 +51,7 @@ public class WindowUpdate {
      */
     public static void renderSetWindowTitle(ServerMessage serverMessage, String newValue) {
         Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                MESSAGE_PART_NAME, "settitle");
+                MESSAGE_PART_NAME, "set-title");
         element.setAttribute("title", newValue);
     }
 }

@@ -99,7 +99,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final ImageReference DEFAULT_SELECTED_RADIOBUTTON_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOn.gif");
     
-    private static final String[] BUTTON_INIT_KEYS = new String[]{"defaultstyle", "rolloverstyle", "pressedstyle"};
+    private static final String[] BUTTON_INIT_KEYS = new String[]{"default-style", "rollover-style", "pressed-style"};
     
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_ICON = "icon";
@@ -602,24 +602,25 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (defaultIconUri != null) {
-            itemElement.setAttribute("defaulticon", defaultIconUri);
+            itemElement.setAttribute("default-icon", defaultIconUri);
         }
         if (rolloverIconUri != null) {
-            itemElement.setAttribute("rollovericon", rolloverIconUri);
+            itemElement.setAttribute("rollover-icon", rolloverIconUri);
         }
         if (pressedIconUri != null) {
-            itemElement.setAttribute("pressedicon", pressedIconUri);
+            itemElement.setAttribute("pressed-icon", pressedIconUri);
         }
         if (!button.hasActionListeners()) {
-            itemElement.setAttribute("servernotify", "false");
+            itemElement.setAttribute("server-notify", "false");
         }
 
         if (button instanceof ToggleButton) {
             ToggleButton toggleButton = (ToggleButton) button;
             itemElement.setAttribute("toggle", "true");
             itemElement.setAttribute("selected", toggleButton.isSelected() ? "true" : "false");
-            itemElement.setAttribute("stateicon", ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_STATE_ICON));
-            itemElement.setAttribute("selectedstateicon", ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_SELECTED_STATE_ICON));
+            itemElement.setAttribute("state-icon", ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_STATE_ICON));
+            itemElement.setAttribute("selected-state-icon", ImageTools.getUri(rc, this, toggleButton, 
+                    IMAGE_ID_SELECTED_STATE_ICON));
             if (button instanceof RadioButton) {
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {

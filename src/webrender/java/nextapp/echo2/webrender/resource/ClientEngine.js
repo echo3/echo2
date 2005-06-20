@@ -138,7 +138,7 @@ EchoBlockingPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
-            case "setdelaymessage":
+            case "set-delay-message":
                 EchoBlockingPane.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
                 break;
             }
@@ -376,7 +376,7 @@ EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
     var propertyElement = null;
 
     for (var i = 0; i < propertyElements.length; ++i) {
-        if (componentId == propertyElements[i].getAttribute("componentid") &&
+        if (componentId == propertyElements[i].getAttribute("component-id") &&
                 propertyName == propertyElements[i].getAttribute("name")) {
             propertyElement = propertyElements[i];
             break;
@@ -384,7 +384,7 @@ EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
     }
     if (!propertyElement) {
         propertyElement = messagePartElement.ownerDocument.createElement("property");
-        propertyElement.setAttribute("componentid", componentId);
+        propertyElement.setAttribute("component-id", componentId);
         propertyElement.setAttribute("name", propertyName);
         messagePartElement.appendChild(propertyElement);
     }
@@ -393,24 +393,24 @@ EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
 };
 
 /**
- * Creates or retrieves the "messagepart" DOM element from the 
+ * Creates or retrieves the "message-part" DOM element from the 
  * EchoClientMessage with the specified processor attribute.
  *
  * @param processor A string representing the processor type of
- *        the messagepart element to return.
- * @return The "messagepart" DOM element.
+ *        the message-part element to return.
+ * @return The "message-part" DOM element.
  */
 EchoClientMessage.getMessagePart = function(processor) {
-    // Return existing <messagepart> if available.
-    var messagePartElements = EchoClientMessage.messageDocument.getElementsByTagName("messagepart");
+    // Return existing <message-part> if available.
+    var messagePartElements = EchoClientMessage.messageDocument.getElementsByTagName("message-part");
     for (var i = 0; i < messagePartElements.length; ++i) {
         if (messagePartElements[i].getAttribute("processor") == processor) {
             return messagePartElements[i];
         }
     }
     
-    // Create new <messagepart> if none exists.
-    var messagePartElement = EchoClientMessage.messageDocument.createElement("messagepart");
+    // Create new <message-part> if none exists.
+    var messagePartElement = EchoClientMessage.messageDocument.createElement("message-part");
     messagePartElement.setAttribute("processor", processor);
     EchoClientMessage.messageDocument.documentElement.appendChild(messagePartElement);
     return messagePartElement;
@@ -429,7 +429,7 @@ EchoClientMessage.getPropertyValue = function(componentId, propertyName) {
     var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
     var propertyElements = messagePartElement.getElementsByTagName("property");
     for (var i = 0; i < propertyElements.length; ++i) {
-        if (componentId == propertyElements[i].getAttribute("componentid") &&
+        if (componentId == propertyElements[i].getAttribute("component-id") &&
                 propertyName == propertyElements[i].getAttribute("name")) {
             return propertyElements[i].getAttribute("value");
         }
@@ -456,7 +456,7 @@ EchoClientMessage.reset = function() {
 EchoClientMessage.setActionValue = function(componentId, actionName, actionValue) {
     var messagePartElement = EchoClientMessage.getMessagePart("EchoAction");
     var actionElement = messagePartElement.ownerDocument.createElement("action");
-    actionElement.setAttribute("componentid", componentId);
+    actionElement.setAttribute("component-id", componentId);
     actionElement.setAttribute("name", actionName);
     if (actionValue) {
         actionElement.setAttribute("value", actionValue);
@@ -630,7 +630,7 @@ EchoDomPropertyStore.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
-            case "storeproperty":
+            case "store-property":
                 EchoDomPropertyStore.MessageProcessor.processStoreProperty(messagePartElement.childNodes[i]);
                 break;
             }
@@ -691,19 +691,19 @@ EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
-            case "domadd":
+            case "dom-add":
                 this.processAdd(messagePartElement.childNodes[i]);
                 break;
-            case "domremove":
+            case "dom-remove":
                 this.processRemove(messagePartElement.childNodes[i]);
                 break;
-            case "domremovechildren":
+            case "dom-remove-children":
                 this.processRemoveChildren(messagePartElement.childNodes[i]);
                 break;
-            case "attributeupdate":
+            case "attribute-update":
                 this.processAttributeUpdate(messagePartElement.childNodes[i]);
                 break;
-            case "styleupdate":
+            case "style-update":
                 this.processStyleUpdate(messagePartElement.childNodes[i]);
                 break;
             }
@@ -712,8 +712,8 @@ EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
 };
 
 EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
-    var parentId = domAddElement.getAttribute("parentid");
-    var siblingId = domAddElement.getAttribute("siblingid");
+    var parentId = domAddElement.getAttribute("parent-id");
+    var siblingId = domAddElement.getAttribute("sibling-id");
     var parentElement = document.getElementById(parentId);
     var siblingElement = null;
     if (siblingId) {
@@ -748,7 +748,7 @@ EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
 };
 
 EchoDomUpdate.MessageProcessor.processAttributeUpdate = function(attributeUpdateElement) {
-    var targetId = attributeUpdateElement.getAttribute("targetid");
+    var targetId = attributeUpdateElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
         throw new EchoDomUpdate.TargetNotFoundException("AttributeUpdate", "target", targetId);
@@ -757,7 +757,7 @@ EchoDomUpdate.MessageProcessor.processAttributeUpdate = function(attributeUpdate
 };
 
 EchoDomUpdate.MessageProcessor.processRemove = function(domRemoveElement) {
-    var targetId = domRemoveElement.getAttribute("targetid");
+    var targetId = domRemoveElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
         return;
@@ -766,7 +766,7 @@ EchoDomUpdate.MessageProcessor.processRemove = function(domRemoveElement) {
 };
 
 EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement) {
-    var targetId = domRemoveElement.getAttribute("targetid");
+    var targetId = domRemoveElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
         return;
@@ -780,7 +780,7 @@ EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement
 };
 
 EchoDomUpdate.MessageProcessor.processStyleUpdate = function(styleUpdateElement) {
-    var targetId = styleUpdateElement.getAttribute("targetid");
+    var targetId = styleUpdateElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
     if (!targetElement) {
         throw new EchoDomUpdate.TargetNotFoundException("StyleUpdate", "target", targetId);
@@ -1197,8 +1197,8 @@ EchoEventUpdate.MessageProcessor = function() { }
  */
 EchoEventUpdate.MessageProcessor.process = function(messagePartElement) {
     var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
-    var adds = messagePartElement.getElementsByTagName("eventadd");
-    var removes = messagePartElement.getElementsByTagName("eventremove");
+    var adds = messagePartElement.getElementsByTagName("event-add");
+    var removes = messagePartElement.getElementsByTagName("event-remove");
     for (i = 0; i < adds.length; ++i) {
     
         eventTypes = adds[i].getAttribute("type").split(",");
@@ -1519,7 +1519,7 @@ EchoServerMessage.isLibraryLoadComplete = function() {
         
         var returnValue = true;
         for (var i = 0; i < libraryElements.length; ++i) {
-            var serviceId = libraryElements.item(i).getAttribute("serviceid");
+            var serviceId = libraryElements.item(i).getAttribute("service-id");
             if (libraryElements.item(i).getAttribute("wait") == "true" &&
                     EchoScriptLibraryManager.getState(serviceId) != EchoScriptLibraryManager.STATE_LOADED) {
                 // A library that requires immediate loading is not yet available.
@@ -1550,7 +1550,7 @@ EchoServerMessage.loadLibraries = function() {
     }
     var libraryElements = librariesElement.getElementsByTagName("library");
     for (var i = 0; i < libraryElements.length; ++i) {
-        var serviceId = libraryElements.item(i).getAttribute("serviceid");
+        var serviceId = libraryElements.item(i).getAttribute("service-id");
         EchoScriptLibraryManager.loadLibrary(serviceId);
     }
 };
@@ -1570,7 +1570,7 @@ EchoServerMessage.process = function() {
  * the asynchronous monitor if required.
  */
 EchoServerMessage.processAsyncConfig = function() {
-    var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("asyncinterval"));
+    var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("async-interval"));
     if (!isNaN(timeInterval)) {
         EchoAsyncMonitor.timeInterval = timeInterval;
         EchoAsyncMonitor.start();
@@ -1585,10 +1585,10 @@ EchoServerMessage.processAsyncConfig = function() {
  * </ul>
  */
 EchoServerMessage.processApplicationProperties = function() {
-    EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modalid");
-    if (EchoServerMessage.messageDocument.documentElement.getAttribute("rootlayoutdirection")) {
+    EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modal-id");
+    if (EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction")) {
         document.documentElement.style.direction 
-                = EchoServerMessage.messageDocument.documentElement.getAttribute("rootlayoutdirection");
+                = EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction");
     }
 };
 
@@ -1599,7 +1599,7 @@ EchoServerMessage.processMessageParts = function() {
     // 'complete' flag is used to set status to 'failed' in the event of an exception.
     var complete = false;
     try {
-        var messagePartElements = EchoServerMessage.messageDocument.getElementsByTagName("messagepart");
+        var messagePartElements = EchoServerMessage.messageDocument.getElementsByTagName("message-part");
         for (var i = 0; i < messagePartElements.length; ++i) {
             var messagePartElement = messagePartElements[i];
             var processorName = messagePartElement.getAttribute("processor");
@@ -1748,7 +1748,7 @@ EchoWindowUpdate.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
-            case "settitle":
+            case "set-title":
                 EchoWindowUpdate.processSetTitle(messagePartElement.childNodes[i]);
                 break;
             }

@@ -82,7 +82,7 @@ implements CommandSynchronizePeer {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId(), true);
         Element openWindowElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                "EchoBrowserCommand", "openwindow");
+                "EchoBrowserCommand", "open-window");
         openWindowElement.setAttribute("uri", command.getUri());
         if (command.getName() != null) {
             openWindowElement.setAttribute("name", command.getName());

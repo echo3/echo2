@@ -73,14 +73,14 @@ EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessage
 EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        var defaultStyle = item.getAttribute("defaultstyle");
-        var rolloverStyle = item.getAttribute("rolloverstyle");
-        var selectedStyle = item.getAttribute("selectedstyle");
+        var defaultStyle = item.getAttribute("default-style");
+        var rolloverStyle = item.getAttribute("rollover-style");
+        var selectedStyle = item.getAttribute("selected-style");
         var multiple = item.getAttribute("multiple") == "true";
         var i;
 
-        if (item.getAttribute("serverNotify")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("serverNotify"));
+        if (item.getAttribute("server-notify")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
         }
 
 	    var selectElement = document.getElementById(elementId);
@@ -91,9 +91,9 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
 	        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListComponentDhtml.processRolloverEnter");
 	    }
         
-        var selectionItems = item.getElementsByTagName("selectionitem");
+        var selectionItems = item.getElementsByTagName("selection-item");
         for (i = 0; i < selectionItems.length; ++i) {
-            var optionId = selectionItems[i].getAttribute("optionid");
+            var optionId = selectionItems[i].getAttribute("option-id");
             EchoDomPropertyStore.setPropertyValue(optionId, "selectedState", true);
         }
         

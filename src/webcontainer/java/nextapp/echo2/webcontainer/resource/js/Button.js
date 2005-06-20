@@ -77,9 +77,9 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
 };
 
 EchoButton.MessageProcessor.processInit = function(initMessageElement) {
-    var defaultStyle = initMessageElement.getAttribute("defaultstyle");
-    var rolloverStyle = initMessageElement.getAttribute("rolloverstyle");
-    var pressedStyle = initMessageElement.getAttribute("pressedstyle");
+    var defaultStyle = initMessageElement.getAttribute("default-style");
+    var rolloverStyle = initMessageElement.getAttribute("rollover-style");
+    var pressedStyle = initMessageElement.getAttribute("pressed-style");
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -93,25 +93,25 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
         if (pressedStyle) {
             EchoDomPropertyStore.setPropertyValue(elementId, "pressedStyle", pressedStyle);
         }
-        if (item.getAttribute("servernotify")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("servernotify"));
+        if (item.getAttribute("server-notify")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
         }
-        if (item.getAttribute("defaulticon")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "defaultIcon", item.getAttribute("defaulticon"));
+        if (item.getAttribute("default-icon")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "defaultIcon", item.getAttribute("default-icon"));
         }
-        if (item.getAttribute("rollovericon")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "rolloverIcon", item.getAttribute("rollovericon"));
+        if (item.getAttribute("rollover-icon")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "rolloverIcon", item.getAttribute("rollover-icon"));
         }
-        if (item.getAttribute("pressedicon")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "pressedIcon", item.getAttribute("pressedicon"));
+        if (item.getAttribute("pressed-icon")) {
+            EchoDomPropertyStore.setPropertyValue(elementId, "pressedIcon", item.getAttribute("pressed-icon"));
         }
         
         if (item.getAttribute("toggle") == "true") {
             // ToggleButton
             EchoDomPropertyStore.setPropertyValue(elementId, "toggle", "true");
             EchoDomPropertyStore.setPropertyValue(elementId, "selected", item.getAttribute("selected"));
-            EchoDomPropertyStore.setPropertyValue(elementId, "stateIcon", item.getAttribute("stateicon"));
-            EchoDomPropertyStore.setPropertyValue(elementId, "selectedStateIcon", item.getAttribute("selectedstateicon"));
+            EchoDomPropertyStore.setPropertyValue(elementId, "stateIcon", item.getAttribute("state-icon"));
+            EchoDomPropertyStore.setPropertyValue(elementId, "selectedStateIcon", item.getAttribute("selected-state-icon"));
             if (item.getAttribute("group")) {
                 EchoButton.setButtonGroup(elementId, item.getAttribute("group"));
             }

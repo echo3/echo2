@@ -72,7 +72,7 @@ import org.w3c.dom.Node;
 public abstract class AbstractListComponentPeer 
 implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
-    protected static final String PROPERTY_SELECTED_OPTIONS = "selectedOptions";
+    protected static final String PROPERTY_SELECTED_OPTIONS = "selected-options";
     
     // Default Colors
     protected static final Color DEFAULT_BACKGROUND = Color.WHITE;
@@ -296,11 +296,11 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         itemElement.setAttribute("eid", ContainerInstance.getElementId(listComponent));
         
         CssStyle defaultCssStyle = createDefaultCssStyle(listComponent);
-        itemElement.setAttribute("defaultstyle", defaultCssStyle.renderInline());
+        itemElement.setAttribute("default-style", defaultCssStyle.renderInline());
         CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
-        itemElement.setAttribute("rolloverstyle", rolloverCssStyle.renderInline());
+        itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
         if (listComponent.hasActionListeners()) {
-            itemElement.setAttribute("serverNotify", "true");
+            itemElement.setAttribute("server-notify", "true");
         }
         
         itemizedUpdateElement.appendChild(itemElement);

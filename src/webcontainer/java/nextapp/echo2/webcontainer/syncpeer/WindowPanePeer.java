@@ -678,18 +678,18 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         itemElement.setAttribute("eid", elementId);
         itemElement.setAttribute("movable", movable ? "true" : "false");
         itemElement.setAttribute("resizable", resizable ? "true" : "false");
-        itemElement.setAttribute("containerid", windowPane.getParent().getRenderId());  //BUGBUG. may want to move into keys.
+        itemElement.setAttribute("container-id", windowPane.getParent().getRenderId());  //BUGBUG. may want to move into keys.
         if (minimumWidth != null) {
-            itemElement.setAttribute("minimumwidth", minimumWidth);
+            itemElement.setAttribute("minimum-width", minimumWidth);
         }
         if (minimumHeight != null) {
-            itemElement.setAttribute("minimumheight", minimumHeight);
+            itemElement.setAttribute("minimum-height", minimumHeight);
         }
         if (maximumWidth != null) {
-            itemElement.setAttribute("maximumwidth", maximumWidth);
+            itemElement.setAttribute("maximum-width", maximumWidth);
         }
         if (maximumHeight != null) {
-            itemElement.setAttribute("maximumheight", maximumHeight);
+            itemElement.setAttribute("maximum-height", maximumHeight);
         }
         itemizedUpdateElement.appendChild(itemElement);
     }

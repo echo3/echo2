@@ -64,19 +64,19 @@ EchoTable.MessageProcessor.processDispose = function(disposeMessageElement) {
 };
 
 EchoTable.MessageProcessor.processInit = function(initMessageElement) {
-    var rolloverStyle = initMessageElement.getAttribute("rolloverstyle");
-    var selectionStyle = initMessageElement.getAttribute("selectionstyle");
+    var rolloverStyle = initMessageElement.getAttribute("rollover-style");
+    var selectionStyle = initMessageElement.getAttribute("selection-style");
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-        var selectionEnabled = item.getAttribute("selectionenabled") == "true";
+        var selectionEnabled = item.getAttribute("selection-enabled") == "true";
 
         if (selectionEnabled) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionEnabled", "true");
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selectionmode"));
-	        if (item.getAttribute("servernotify")) {
-	            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("servernotify"));
+	        if (item.getAttribute("server-notify")) {
+	            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("server-notify"));
 	        }
         }
 

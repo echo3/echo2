@@ -199,7 +199,7 @@ public class ServerMessage extends XmlDocument {
      * Creates a new <code>ServerMessage</code>.
      */
     public ServerMessage() {
-        super("servermessage", null, null, "http://www.nextapp.com/products/echo2/svrmsg/servermessage");
+        super("server-message", null, null, "http://www.nextapp.com/products/echo2/svrmsg/servermessage");
         Document document = getDocument();
         serverMessageElement = document.getDocumentElement();
         librariesElement = document.createElement("libraries");
@@ -235,7 +235,7 @@ public class ServerMessage extends XmlDocument {
             return;
         }
         Element libraryElement = getDocument().createElement("library");
-        libraryElement.setAttribute("serviceid", serviceId);
+        libraryElement.setAttribute("service-id", serviceId);
         if (wait) {
             libraryElement.setAttribute("wait", "true");
         }
@@ -252,7 +252,7 @@ public class ServerMessage extends XmlDocument {
      * @return the created "messagepartgroup" element.
      */
     public Element addPartGroup(String groupId) {
-        Element messagePartGroupElement = getDocument().createElement("messagepartgroup");
+        Element messagePartGroupElement = getDocument().createElement("message-part-group");
         messagePartGroupElement.setAttribute("id", groupId);
         serverMessageElement.appendChild(messagePartGroupElement);
         return messagePartGroupElement;
@@ -265,7 +265,7 @@ public class ServerMessage extends XmlDocument {
      * @return the "messagepartgroup" element
      */
     public Element getPartGroup(String groupId) {
-        NodeList groupList = serverMessageElement.getElementsByTagName("messagepartgroup");
+        NodeList groupList = serverMessageElement.getElementsByTagName("message-part-group");
         int length = groupList.getLength();
         for (int i = 0; i < length; ++i) {
             Element groupElement = (Element) groupList.item(i);
@@ -289,7 +289,7 @@ public class ServerMessage extends XmlDocument {
      */
     public Element addPart(String groupId, String processor) {
         Element messagePartGroupElement = getPartGroup(groupId);
-        Element messagePartElement = getDocument().createElement("messagepart");
+        Element messagePartElement = getDocument().createElement("message-part");
         messagePartElement.setAttribute("processor", processor);
         messagePartGroupElement.appendChild(messagePartElement);
         return messagePartElement;
@@ -367,9 +367,9 @@ public class ServerMessage extends XmlDocument {
     
     public void setModalContextRootId(String id) {
         if (id == null) {
-            serverMessageElement.setAttribute("modalid", ""); 
+            serverMessageElement.setAttribute("modal-id", ""); 
         } else {
-            serverMessageElement.setAttribute("modalid", id); 
+            serverMessageElement.setAttribute("modal-id", id); 
         }
     }
     
@@ -382,9 +382,9 @@ public class ServerMessage extends XmlDocument {
      */
     public void setAsynchronousMonitorInterval(int newValue) {
         if (newValue < 0) {
-            serverMessageElement.setAttribute("asyncinterval", "disable");
+            serverMessageElement.setAttribute("async-interval", "disable");
         } else {
-            serverMessageElement.setAttribute("asyncinterval", Integer.toString(newValue));
+            serverMessageElement.setAttribute("async-interval", Integer.toString(newValue));
         }
     }
 }

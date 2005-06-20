@@ -42,7 +42,7 @@ EchoBrowserCommand.process = function(messagePartElement) {
             case "redirect":
                 EchoBrowserCommand.processRedirect(messagePartElement.childNodes[i]);
                 break;
-            case "openwindow":
+            case "open-window":
                 EchoBrowserCommand.processOpenWindow(messagePartElement.childNodes[i]);
                 break;
             }

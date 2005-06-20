@@ -59,7 +59,7 @@ public class EventUpdate {
     public static void renderEventAdd(ServerMessage serverMessage, String eventType,
             String elementId, String eventHandler) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                MESSAGE_PART_NAME, "eventadd", EVENT_ADD_KEYS, new String[]{eventType, eventHandler});
+                MESSAGE_PART_NAME, "event-add", EVENT_ADD_KEYS, new String[]{eventType, eventHandler});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
@@ -78,7 +78,7 @@ public class EventUpdate {
     public static void renderEventRemove(ServerMessage serverMessage, String eventType,
             String elementId) {
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE, 
-                MESSAGE_PART_NAME, "eventremove", EVENT_REMOVE_KEYS, new String[]{eventType});
+                MESSAGE_PART_NAME, "event-remove", EVENT_REMOVE_KEYS, new String[]{eventType});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         itemizedUpdateElement.appendChild(itemElement);
