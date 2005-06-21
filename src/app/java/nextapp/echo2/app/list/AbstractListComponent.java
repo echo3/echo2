@@ -29,7 +29,6 @@
 
 package nextapp.echo2.app.list;
 
-import java.io.Serializable;
 import java.util.EventListener;
 
 import nextapp.echo2.app.Color;
@@ -69,12 +68,10 @@ public class AbstractListComponent extends Component {
 
     public static final DefaultListCellRenderer DEFAULT_LIST_CELL_RENDERER = new DefaultListCellRenderer();
 
-    //BUGBUG. listeners can be single-instnace now that interfaces extend Serializable.    
     /**
      * Local handler for list selection events.
      */
-    private class ChangeHandler
-    implements ChangeListener, Serializable {
+    private ChangeListener changeHandler = new ChangeListener() {
 
         /**
          * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
@@ -82,13 +79,12 @@ public class AbstractListComponent extends Component {
         public void stateChanged(ChangeEvent e) {
             firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
         }
-    }
+    };
 
     /**
      * Local handler of <code>ListDataEvent</code>s.
      */
-    private class ListDataHandler 
-    implements ListDataListener, Serializable {
+    private ListDataListener listDataHandler = new ListDataListener() { 
     
         /**
          * @see nextapp.echo2.app.event.ListDataListener#contentsChanged(nextapp.echo2.app.event.ListDataEvent)
@@ -110,10 +106,8 @@ public class AbstractListComponent extends Component {
         public void intervalRemoved(ListDataEvent e) {
             firePropertyChange(LIST_DATA_CHANGED_PROPERTY, null, null);
         }
-    }
+    };
     
-    private ListDataListener listDataHandler = new ListDataHandler();
-    private ChangeListener changeHandler = new ChangeHandler();
     private ListCellRenderer listCellRenderer = DEFAULT_LIST_CELL_RENDERER;
     private ListModel model;
     private ListSelectionModel selectionModel;

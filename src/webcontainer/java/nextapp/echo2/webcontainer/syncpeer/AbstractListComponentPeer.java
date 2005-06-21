@@ -72,13 +72,13 @@ import org.w3c.dom.Node;
 public abstract class AbstractListComponentPeer 
 implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
-    protected static final String PROPERTY_SELECTED_OPTIONS = "selected-options";
+    private static final String PROPERTY_SELECTION = "selection";
     
     // Default Colors
-    protected static final Color DEFAULT_BACKGROUND = Color.WHITE;
-    protected static final Color DEFAULT_FOREGROUND = Color.BLACK;
-    protected static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 150);
-    protected static final Color DEFAULT_ROLLOVER_FOREGROUND = Color.BLACK;
+    static final Color DEFAULT_BACKGROUND = Color.WHITE;
+    static final Color DEFAULT_FOREGROUND = Color.BLACK;
+    private static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 150);
+    private static final Color DEFAULT_ROLLOVER_FOREGROUND = Color.BLACK;
 
     // Default Sizes
     protected static final Extent DEFAULT_WIDTH = new Extent(100, Extent.PERCENT);
@@ -94,57 +94,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         WebRenderServlet.getServiceRegistry().add(LIST_COMPONENT_SERVICE);
     }
 
-    //BUGBUG. determine if appendDefaultCssStyle is required after changes to rendering code (otherwise inline it)
-    /**
-     * Appends the default style to the given style based off of properties
-     * on the given <code>nextapp.echo2.app.AbstractListComponent</code>
-     * 
-     * @param style the style to append to
-     * @param component the <code>nextapp.echo2.app.AbstractListComponent</code>
-     */
-    protected void appendDefaultCssStyle(CssStyle style, Component component) {
-        Color foreground = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_FOREGROUND), DEFAULT_FOREGROUND);
-        Color background = (Color) ensureValue(component.getRenderProperty(Component.PROPERTY_BACKGROUND), DEFAULT_BACKGROUND);
-        ColorRender.renderToStyle(style, foreground, background);
-    }
-
-    /**
-     * Applies CellRenderer style custimization for the given AbstractListComponent
-     * based on the given ListModel and index.
-     * 
-     * @param option the option element
-     * @param listComponent the select list instance
-     * @param model the ListModel
-     * @param index he position in the model representing the given option.
-     *  
-     */
-    protected void applyCellRendererStyle(Element option, CssStyle style, AbstractListComponent listComponent, 
-            ListModel model, int index) {
-        ListCellRenderer renderer = listComponent.getCellRenderer();
-        Object value = model.get(index);
-        Object renderedValue = renderer.getListCellRendererComponent(listComponent, value, index);
-        option.appendChild(option.getOwnerDocument().createTextNode(renderedValue.toString()));
-
-        if (renderedValue instanceof StyledListCell) {
-            StyledListCell styledListCell = (StyledListCell) renderedValue;
-            ColorRender.renderToStyle(style, styledListCell.getForeground(), styledListCell.getBackground());
-            FontRender.renderToStyle(style, styledListCell.getFont());
-        }
-    }
-
-    /**
-     * Creates the default style based off of properties on the given
-     * <code>nextapp.echo2.app.AbstractListComponent</code>
-     * 
-     * @param listComponent the <code>AbstractListComponent</code> instance
-     * @return the style
-     */
-    private CssStyle createDefaultCssStyle(AbstractListComponent listComponent) {
-        CssStyle style = new CssStyle();
-        appendDefaultCssStyle(style, listComponent);
-        return style;
-    }
-
     /**
      * Appends the base style to the given style based off of properties on the
      * given <code>nextapp.echo2.app.AbstractListComponent</code>
@@ -156,16 +105,16 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         CssStyle style = new CssStyle();
 
         // Ensure defaults since proper rendering depends on reasonable values
-        Extent width = (Extent) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_WIDTH), DEFAULT_WIDTH);
-        Extent height = (Extent) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_HEIGHT),
-                getDefaultHeight());
-        Insets insets = (Insets) ensureValue(listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS), 
-                DEFAULT_INSETS);
+        Extent width = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_WIDTH, DEFAULT_WIDTH);
+        Extent height = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_HEIGHT);
+        Insets insets = (Insets) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS, DEFAULT_INSETS);
 
-        appendDefaultCssStyle(style, listComponent);
         FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT));
         InsetsRender.renderToStyle(style, "padding", insets);
-
+        
+        ColorRender.renderToStyle(style, 
+                (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND),
+                (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND));
         ExtentRender.renderToStyle(style, "width", width);
         ExtentRender.renderToStyle(style, "height", height);
         style.setAttribute("position", "relative");
@@ -180,22 +129,14 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      * @param listComponent the <code>AbstractListComponent</code> instance
      * @return the style
      */
-    private CssStyle createRolloverCssStyle(AbstractListComponent listComponent) {
+    CssStyle createRolloverCssStyle(AbstractListComponent listComponent) {
         CssStyle style = new CssStyle();
-        Color foregroundHighlight = (Color) ensureValue(
-                listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND), DEFAULT_ROLLOVER_FOREGROUND);
-        Color backgroundHighlight = (Color) ensureValue(
-                listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND), DEFAULT_ROLLOVER_BACKGROUND);
-        ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
+        Color foregroundRollover = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND, 
+                DEFAULT_ROLLOVER_FOREGROUND);
+        Color backgroundRollover = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND, 
+                DEFAULT_ROLLOVER_BACKGROUND);
+        ColorRender.renderToStyle(style, foregroundRollover, backgroundRollover);
         return style;
-    }
-    
-    protected Object ensureValue(Object value, Object defaultValue) {
-        if (value == null) {
-            return defaultValue;
-        } else {
-            return value;
-        }
     }
 
     /**
@@ -203,17 +144,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      */
     public String getContainerId(Component child) {
         throw new UnsupportedOperationException("Component does not support children.");
-    }
-
-    /**
-     * Allows subclasses to define a default height for the rendered select
-     * control in the event that one has not been set on a particular
-     * <code>nextapp.echo2.app.AbstractListComponent</code>.
-     * 
-     * @return the default height of the component
-     */
-    protected Extent getDefaultHeight() {
-        return null;
     }
 
     /**
@@ -241,11 +171,11 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
-        if (PROPERTY_SELECTED_OPTIONS.equals(propertyName)) {
-            Element[] optionElements = DomUtil.getChildElementsByTagName(propertyElement, "option");
-            int[] selectedIndices = new int[optionElements.length];
-            for (int i = 0; i < optionElements.length; ++i) {
-                String id = optionElements[i].getAttribute("id");
+        if (PROPERTY_SELECTION.equals(propertyName)) {
+            Element[] itemElements = DomUtil.getChildElementsByTagName(propertyElement, "item");
+            int[] selectedIndices = new int[itemElements.length];
+            for (int i = 0; i < itemElements.length; ++i) {
+                String id = itemElements[i].getAttribute("id");
                 int selectedIndex = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
                 selectedIndices[i] = selectedIndex;
             }
@@ -295,8 +225,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", ContainerInstance.getElementId(listComponent));
         
-        CssStyle defaultCssStyle = createDefaultCssStyle(listComponent);
-        itemElement.setAttribute("default-style", defaultCssStyle.renderInline());
         CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
         itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
         if (listComponent.hasActionListeners()) {
@@ -304,6 +232,31 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         }
         
         itemizedUpdateElement.appendChild(itemElement);
+    }
+
+    //BUGBUG StyledListCell behavior is untested.
+    /**
+     * Renders CSS style information to an item element.
+     * This operation is only performed in the event the 
+     * <code>renderedValue</code> implements the <code>StyledListCell</code>
+     * interface.
+     * 
+     * @param itemElement the item HTML element upon which to configure the 
+     *        style
+     * @param renderedValue the rendered model that corresponds to the specified
+     *        item element
+     */
+    void renderItemStyle(Element itemElement, Object renderedValue) {
+        if (!(renderedValue instanceof StyledListCell)) {
+            return;
+        }
+        CssStyle itemStyle = new CssStyle();
+        StyledListCell styledListCell = (StyledListCell) renderedValue;
+        ColorRender.renderToStyle(itemStyle, styledListCell.getForeground(), styledListCell.getBackground());
+        FontRender.renderToStyle(itemStyle, styledListCell.getFont());
+        if (itemStyle.hasAttributes()) {
+            itemElement.setAttribute("style", itemStyle.renderInline());
+        }
     }
 
     /**
@@ -331,7 +284,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      * @param multiple a flag indicating whether multiple items may be selected
      *        at the same time (valid only for listbox rendering)
      */
-    protected void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component, 
+    void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component, 
             boolean renderAsListBox, boolean multiple) {
         renderInitDirective(rc.getServerMessage(), (AbstractListComponent) component);
 
@@ -362,8 +315,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
             optionElement.setAttribute("id", optionId);
             optionElement.setAttribute("value", optionId);
 
-            CssStyle optionStyle = new CssStyle();
-
             ListCellRenderer renderer = listComponent.getCellRenderer();
             Object value = model.get(i);
             Object renderedValue = renderer.getListCellRendererComponent(listComponent, value, i);
@@ -371,13 +322,10 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
 
             if (selected) {
                 optionElement.setAttribute("selected", "true");
-            } else if (renderedValue instanceof StyledListCell) {
-                StyledListCell styledListCell = (StyledListCell) renderedValue;
-                ColorRender.renderToStyle(optionStyle, styledListCell.getForeground(), styledListCell.getBackground());
-                FontRender.renderToStyle(optionStyle, styledListCell.getFont());
-            } else {
-                appendDefaultCssStyle(optionStyle, listComponent);
             }
+            
+            renderItemStyle(optionElement, renderedValue);
+
             listComponentElement.appendChild(optionElement);
         }
 
@@ -390,7 +338,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
 
         parentNode.appendChild(containingDiv);
     }
-
+    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)

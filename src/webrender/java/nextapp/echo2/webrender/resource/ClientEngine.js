@@ -440,7 +440,7 @@ EchoClientMessage.getPropertyValue = function(componentId, propertyName) {
 EchoClientMessage.reset = function() {
     EchoClientMessage.messageDocument = null;
     EchoClientMessage.messageDocument 
-            = EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "clientmessage");
+            = EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "client-message");
 };
 
 /**

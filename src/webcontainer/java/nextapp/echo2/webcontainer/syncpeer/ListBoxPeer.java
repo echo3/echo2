@@ -62,38 +62,25 @@ import org.w3c.dom.Node;
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
     
-    public static final int DEFAULT_ROW_COUNT = 5;
+    private final Extent DEFAULT_HEIGHT = new Extent(80);
     
-    private static final Color SELECTED_BACKGROUND = new Color(10, 36, 106);
-    private static final Color SELECTED_FOREGROUND = Color.WHITE;
-    private static final String SELECTED_CSS_STYLE_TEXT;
+    private static final Color SELECTION_BACKGROUND = new Color(10, 36, 106);
+    private static final Color SELECTION_FOREGROUND = Color.WHITE;
+    private static final String SELECTION_CSS_STYLE_TEXT;
     static {
         CssStyle style = new CssStyle();
-        ColorRender.renderToStyle(style, SELECTED_FOREGROUND, SELECTED_BACKGROUND);
-        SELECTED_CSS_STYLE_TEXT = style.renderInline();
+        ColorRender.renderToStyle(style, SELECTION_FOREGROUND, SELECTION_BACKGROUND);
+        SELECTION_CSS_STYLE_TEXT = style.renderInline();
     }
 
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service LIST_COMPONENT_DHTML_SERVICE = JavaScriptService.forResource("Echo.ListComponentDhtml",
+    private static final Service LIST_COMPONENT_DHTML_SERVICE = JavaScriptService.forResource("Echo.ListComponentDhtml",
             "/nextapp/echo2/webcontainer/resource/js/ListComponentDhtml.js");
 
     static {
         WebRenderServlet.getServiceRegistry().add(LIST_COMPONENT_DHTML_SERVICE);
-    }
-
-    /**
-     * Creates the default style for an inner div of the DHTML rendering
-     * based off of properties on the given <code>ListBox</code>.
-     * 
-     * @param listBox the <code>ListBox</code> instance
-     * @return the style
-     */
-    private CssStyle createDefaultCssStyle(ListBox listBox) {
-        CssStyle style = new CssStyle();
-        appendDefaultCssStyle(style, listBox);
-        return style;
     }
 
     /**
@@ -107,47 +94,30 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     private CssStyle createListBoxCssStyle(RenderContext rc, ListBox listBox) {
         CssStyle style = new CssStyle();
 
-        // Ensure defaults since proper rendering depends on reasonable values
-        Extent width = (Extent) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_WIDTH), DEFAULT_WIDTH);
-        Extent height = (Extent) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_HEIGHT), getDefaultHeight());
-        Insets insets = (Insets) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_INSETS), DEFAULT_INSETS);
-
-        appendDefaultCssStyle(style, listBox);
-        FontRender.renderToStyle(style, (Font) listBox.getRenderProperty(ListBox.PROPERTY_FONT));
-
-        InsetsRender.renderToStyle(style, "padding", insets);
-
+        ColorRender.renderToStyle(style,
+                (Color) listBox.getRenderProperty(ListBox.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND),
+                (Color) listBox.getRenderProperty(ListBox.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND));
+        
+        Extent height = (Extent) listBox.getRenderProperty(ListBox.PROPERTY_HEIGHT, DEFAULT_HEIGHT);
         style.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+
+        Extent width = (Extent) listBox.getRenderProperty(ListBox.PROPERTY_WIDTH, DEFAULT_WIDTH);
         if (!width.equals(DEFAULT_WIDTH) || !isDhtmlComponentRequired(rc)) {
             // For components using DHTML listbox implementation, there is no reason to set width to 100%.
             // This also conveniently avoids another IE bug.
             style.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
 
+        Insets insets = (Insets) listBox.getRenderProperty(ListBox.PROPERTY_INSETS, DEFAULT_INSETS);
+        InsetsRender.renderToStyle(style, "padding", insets);
+
+        FontRender.renderToStyle(style, (Font) listBox.getRenderProperty(ListBox.PROPERTY_FONT));
+
         style.setAttribute("position", "relative");
         style.setAttribute("border", "2px inset");
         style.setAttribute("overflow", "auto");
-
         style.setAttribute("cursor", "default");
 
-        return style;
-    }
-
-    /**
-     * Returns the rollover style for the DHTML rendering derived from
-     * properties on the given <code>ListBox</code>.
-     * 
-     * @param listBox the <code>ListBox</code> instance
-     * @return the style
-     */
-    private CssStyle createRolloverCssStyle(ListBox listBox) {
-        CssStyle style = new CssStyle();
-        Color foregroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_FOREGROUND),
-                DEFAULT_ROLLOVER_FOREGROUND);
-        Color backgroundHighlight = (Color) ensureValue(listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_BACKGROUND),
-                DEFAULT_ROLLOVER_BACKGROUND);
-
-        ColorRender.renderToStyle(style, foregroundHighlight, backgroundHighlight);
         return style;
     }
     
@@ -206,13 +176,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         
-        CssStyle defaultCssStyle = createDefaultCssStyle(listBox);
-        itemElement.setAttribute("default-style", defaultCssStyle.renderInline());
         CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
         itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
-        itemElement.setAttribute("selected-style", SELECTED_CSS_STYLE_TEXT);
-        itemElement.setAttribute("multiple", 
-                ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "true" : "false");
+        itemElement.setAttribute("selection-style", SELECTION_CSS_STYLE_TEXT);
+        itemElement.setAttribute("selection-mode", 
+                ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "multiple" : "single");
         if (listBox.hasActionListeners()) {
             itemElement.setAttribute("server-notify", "true");
         }
@@ -223,7 +191,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
             if (selected) {
                 Element selectionItemElement = serverMessage.getDocument().createElement("selection-item");
-                selectionItemElement.setAttribute("option-id", getOptionId(elementId, i));
+                selectionItemElement.setAttribute("item-id", getOptionId(elementId, i));
                 selectionElement.appendChild(selectionItemElement);
             }
         }
@@ -256,7 +224,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      *        appended
      * @param component the child component to render
      */
-    protected void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
+    private void renderDynamicHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ListBox listBox = (ListBox) component;
         String elementId = ContainerInstance.getElementId(component);
         
@@ -270,19 +238,15 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
         ListModel model = listBox.getModel();
 
-        for (int i = 0; i < model.size(); i++) {
-
-            boolean selected = listBox.getSelectionModel().isSelectedIndex(i);
+        for (int i = 0; i < model.size(); ++i) {
 
             Element optionElement = parentNode.getOwnerDocument().createElement("div");
             String optionId = getOptionId(elementId, i);
             optionElement.setAttribute("id", optionId);
-            optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(model.get(i).toString()));
-
-            if (selected) {
-                optionElement.setAttribute("style", SELECTED_CSS_STYLE_TEXT);
-            }
-
+            Object renderedValue = model.get(i);
+            optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(renderedValue.toString()));
+            renderItemStyle(optionElement, renderedValue);
+            
             listBoxElement.appendChild(optionElement);
         }
 
@@ -314,7 +278,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      *        appended
      * @param component the <code>ListBox</code> instance
      */
-    public void renderStandardHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
+    private void renderStandardHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ListBox listBox = (ListBox) component;
         boolean multiple = listBox.getSelectionMode() == ListSelectionModel.MULTIPLE_SELECTION;
         renderSelectElementHtml(rc, update, parentNode, listBox, true, multiple);

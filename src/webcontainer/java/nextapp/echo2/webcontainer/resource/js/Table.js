@@ -74,7 +74,7 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
         if (selectionEnabled) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionEnabled", "true");
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selectionmode"));
+            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selection-mode"));
 	        if (item.getAttribute("server-notify")) {
 	            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("server-notify"));
 	        }

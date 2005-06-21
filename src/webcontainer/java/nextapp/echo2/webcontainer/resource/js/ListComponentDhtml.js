@@ -27,8 +27,6 @@
 * the terms of any one of the MPL, the GPL or the LGPL.
 */
 
-//BUGBUG. rename all element/elementid with listElement/listElementId, optionElement/optionElementId
-
 //______________________________
 // Object EchoListComponentDhtml
 
@@ -61,11 +59,11 @@ EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessage
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
 	    var selectElement = document.getElementById(elementId);
-	    var optionElements = selectElement.getElementsByTagName("div");
-	    for (var i = 0; i < optionElements.length; ++i) {
-	        EchoEventProcessor.removeHandler(optionElements[i].id, "click");
-	        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseout");
-	        EchoEventProcessor.removeHandler(optionElements[i].id, "mouseover");
+	    var itemElements = selectElement.getElementsByTagName("div");
+	    for (var i = 0; i < itemElements.length; ++i) {
+	        EchoEventProcessor.removeHandler(itemElements[i].id, "click");
+	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
+	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
 	    }
     }
 };
@@ -75,8 +73,8 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
         var elementId = item.getAttribute("eid");
         var defaultStyle = item.getAttribute("default-style");
         var rolloverStyle = item.getAttribute("rollover-style");
-        var selectedStyle = item.getAttribute("selected-style");
-        var multiple = item.getAttribute("multiple") == "true";
+        var selectionStyle = item.getAttribute("selection-style");
+        var selectionMode = item.getAttribute("selection-mode");
         var i;
 
         if (item.getAttribute("server-notify")) {
@@ -84,81 +82,123 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
         }
 
 	    var selectElement = document.getElementById(elementId);
-	    var optionElements = selectElement.getElementsByTagName("div");
-	    for (i = 0; i < optionElements.length; ++i) {
-	        EchoEventProcessor.addHandler(optionElements[i].id, "click", "EchoListComponentDhtml.processSelection");
-	        EchoEventProcessor.addHandler(optionElements[i].id, "mouseout", "EchoListComponentDhtml.processRolloverExit");
-	        EchoEventProcessor.addHandler(optionElements[i].id, "mouseover", "EchoListComponentDhtml.processRolloverEnter");
+	    var itemElements = selectElement.getElementsByTagName("div");
+	    for (i = 0; i < itemElements.length; ++i) {
+	        EchoEventProcessor.addHandler(itemElements[i].id, "click", "EchoListComponentDhtml.processSelection");
+	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponentDhtml.processRolloverExit");
+	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponentDhtml.processRolloverEnter");
 	    }
         
-        var selectionItems = item.getElementsByTagName("selection-item");
-        for (i = 0; i < selectionItems.length; ++i) {
-            var optionId = selectionItems[i].getAttribute("option-id");
-            EchoDomPropertyStore.setPropertyValue(optionId, "selectedState", true);
-        }
-        
-        EchoDomPropertyStore.setPropertyValue(elementId, "multiple", multiple);
+        EchoDomPropertyStore.setPropertyValue(elementId, "selectionMode", selectionMode);
         EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
         EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
-        EchoDomPropertyStore.setPropertyValue(elementId, "selectedStyle", selectedStyle);
+        EchoDomPropertyStore.setPropertyValue(elementId, "selectionStyle", selectionStyle);
+
+        var selectionItems = item.getElementsByTagName("selection-item");
+        for (i = 0; i < selectionItems.length; ++i) {
+            var itemId = selectionItems[i].getAttribute("item-id");
+            EchoListComponentDhtml.setSelected(document.getElementById(itemId), true);
+        }
     }
 };
 
-// BUGBUG. Use EchoCssUtil
-EchoListComponentDhtml.applyStyle = function(element, cssText) {
-    if (!cssText) {
-        //BUGBUG. Temporary fix to prevent exceptions for child element (image) issue.
+EchoListComponentDhtml.drawItemStyle = function(itemDivElement) {
+    var selected = EchoListComponentDhtml.isSelected(itemDivElement);
+    var listComponent = itemDivElement.parentNode;
+    var selectionStyle = EchoDomPropertyStore.getPropertyValue(listComponent.id, "selectionStyle");
+
+    if (selected) {
+        EchoCssUtil.restoreOriginalStyle(itemDivElement);
+        EchoCssUtil.applyTemporaryStyle(itemDivElement, selectionStyle);
+    } else {
+        EchoCssUtil.restoreOriginalStyle(itemDivElement);
+    }
+};
+
+EchoListComponentDhtml.isSelected = function(itemDivElement) {
+    return EchoDomPropertyStore.getPropertyValue(itemDivElement.id, "selectionState") === true;
+};
+
+EchoListComponentDhtml.processRolloverEnter = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
+    
+    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget)) {
         return;
     }
-    var styleProperties = cssText.split(";");
-    var styleData = new Array();
-    for (var i = 0; i < styleProperties.length; ++i) {
-        var separatorIndex = styleProperties[i].indexOf(":");
-        if (separatorIndex == -1) {
-            continue;
-        }
-        var attributeName = styleProperties[i].substring(0, separatorIndex);
-        var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
-        var propertyValue = styleProperties[i].substring(separatorIndex + 1);
-        element.style[propertyName] = propertyValue;
+    
+    if (!EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectionState")) {
+        var rolloverStyle = EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.parentNode.id, "rolloverStyle");
+        EchoCssUtil.applyTemporaryStyle(echoEvent.registeredTarget, rolloverStyle);
     }
 };
 
-EchoListComponentDhtml.clearSelectedValues = function(elementId) {
-    var element = document.getElementById(elementId);
-    var optionDivElements = element.getElementsByTagName("div");
-    for (var i = 0; i < optionDivElements.length; ++i) {
-        var style = EchoDomPropertyStore.getPropertyValue(elementId, "defaultStyle");
-        EchoListComponentDhtml.applyStyle(optionDivElements[i], style);
-        EchoDomPropertyStore.setPropertyValue(optionDivElements[i].id, "selectedState", false);
+EchoListComponentDhtml.processRolloverExit = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
+    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget.id)) {
+        return;
+    }
+    if (!EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectionState")) {
+        EchoListComponentDhtml.drawItemStyle(echoEvent.registeredTarget);
     }
 };
 
-EchoListComponentDhtml.deselectItem = function(optionElementId) {
-    var target = document.getElementById(optionElementId);
-    EchoDomPropertyStore.setPropertyValue(optionElementId, "selectedState", false);
-    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "defaultStyle");
-    EchoListComponentDhtml.applyStyle(target,style);
+EchoListComponentDhtml.processSelection = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
+    var itemDivElement = echoEvent.registeredTarget;
+  
+//BUGBUG. implement ctrl-key based selection.    
+    
+    if (!EchoClientEngine.verifyInput(itemDivElement.id)) {
+        return;
+    }
+
+    if (document.selection && document.selection.empty) {
+        document.selection.empty();
+    }
+
+    if (EchoDomPropertyStore.getPropertyValue(itemDivElement.parentNode.id, "selectionMode") != "multiple") {
+	    var itemDivElements = itemDivElement.parentNode.getElementsByTagName("div");
+	    for (var i = 0; i < itemDivElements.length; ++i) {
+	        EchoListComponentDhtml.setSelected(itemDivElements[i], false);
+	    }
+    }
+
+    EchoListComponentDhtml.setSelected(itemDivElement, !EchoListComponentDhtml.isSelected(itemDivElement));
+    EchoListComponentDhtml.updateClientMessage(itemDivElement.parentNode);
 };
 
-EchoListComponentDhtml.doChange = function(optionElementId) {
-    var listElement = document.getElementById(optionElementId).parentNode;
-    var propertyElement  = EchoClientMessage.createPropertyElement(listElement.id, "selectedOptions");
+/**
+ * Sets the selection state of an item.
+ *
+ * @param itemDivElement the item DIV element
+ * @param newValue the new selection state (a boolean value)
+ */
+EchoListComponentDhtml.setSelected = function(itemDivElement, newValue) {
+
+    // Set state flag.
+    EchoDomPropertyStore.setPropertyValue(itemDivElement.id, "selectionState", newValue);
+    
+    // Redraw.
+    EchoListComponentDhtml.drawItemStyle(itemDivElement);
+};
+
+EchoListComponentDhtml.updateClientMessage = function(listElement) {
+    var propertyElement  = EchoClientMessage.createPropertyElement(listElement.id, "selection");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
         var removed = propertyElement.removeChild(propertyElement.firstChild);
     }
 
-    var optionDivElements = listElement.getElementsByTagName("div");
+    var itemDivElements = listElement.getElementsByTagName("div");
 
     // add new values        
-    for (var i = 0; i < optionDivElements.length; ++i){
-        if (EchoDomPropertyStore.getPropertyValue(optionDivElements[i].id, "selectedState")) {
-            var optionId = optionDivElements[i].id;
-            var optionElement = EchoClientMessage.messageDocument.createElement("option");
-            optionElement.setAttribute("id", optionId);
-            propertyElement.appendChild(optionElement);
+    for (var i = 0; i < itemDivElements.length; ++i){
+        if (EchoDomPropertyStore.getPropertyValue(itemDivElements[i].id, "selectionState")) {
+            var itemId = itemDivElements[i].id;
+            var itemElement = EchoClientMessage.messageDocument.createElement("item");
+            itemElement.setAttribute("id", itemId);
+            propertyElement.appendChild(itemElement);
         }
     }
 
@@ -169,67 +209,3 @@ EchoListComponentDhtml.doChange = function(optionElementId) {
 
     EchoDebugManager.updateClientMessage();
 };
-
-EchoListComponentDhtml.processRolloverEnter = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    var elementId = echoEvent.registeredTarget.id;
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-    if (!EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectedState")) {
-        var style = EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.parentNode.id, "rolloverStyle");
-        EchoListComponentDhtml.applyStyle(echoEvent.registeredTarget, style);
-    }
-};
-
-EchoListComponentDhtml.processRolloverExit = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    var elementId = echoEvent.registeredTarget.id;
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-    if (!EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectedState")) {
-        var style = EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.parentNode.id, "defaultStyle");
-        EchoListComponentDhtml.applyStyle(echoEvent.registeredTarget, style);
-    }
-};
-
-EchoListComponentDhtml.processSelection = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    var elementId = echoEvent.registeredTarget.id;
-  
-//BUGBUG. implement ctrl-key based selection.    
-//    alert(echoEvent.ctrlKey);
-    
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-
-    // BUGBUG: Move into something common
-    if (document.selection && document.selection.empty) {
-        document.selection.empty();
-    }
-
-    var selectedState = EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectedState");
-
-    if (selectedState) {
-        EchoListComponentDhtml.deselectItem(echoEvent.registeredTarget.id);
-    } else {
-        EchoListComponentDhtml.selectItem(echoEvent.registeredTarget.id);
-    }
-    EchoListComponentDhtml.doChange(echoEvent.registeredTarget.id);
-};
-
-EchoListComponentDhtml.selectItem = function(elementId) {
-    var target = document.getElementById(elementId);
-    var style = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "selectedStyle");
-    var multiple = EchoDomPropertyStore.getPropertyValue(target.parentNode.id, "multiple");
-
-    if (!multiple) {
-        EchoListComponentDhtml.clearSelectedValues(target.parentNode.id);
-    }
-    EchoDomPropertyStore.setPropertyValue(target.id, "selectedState", true);
-
-    EchoListComponentDhtml.applyStyle(target,style);
-};
-
