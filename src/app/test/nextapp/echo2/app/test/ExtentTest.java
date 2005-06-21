@@ -148,13 +148,77 @@ public class ExtentTest extends TestCase {
      * Test conversion to millimeters.
      */
     public void testToMm() {
-        //BUGBUG. implement test.
+        assertEquals(20, new Extent(20, Extent.MM).toMm());
+        assertEquals(20, new Extent(2, Extent.CM).toMm());
+        assertEquals(2540, new Extent(100, Extent.IN).toMm());
+        assertEquals(2540, new Extent(7200, Extent.PT).toMm());
+        assertEquals(2540, new Extent(600, Extent.PC).toMm());
+        
+        try {
+            new Extent(1, Extent.EM).toMm();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+        
+        try {
+            new Extent(1, Extent.EX).toMm();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+        
+        try {
+            new Extent(1, Extent.PERCENT).toMm();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+        
+        try {
+            new Extent(1, Extent.PX).toMm();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
     }
 
     /**
      * Test conversion to points.
      */
     public void testToPoint() {
-        //BUGBUG. implement test.
+        assertEquals(20, new Extent(20, Extent.PT).toPoint());
+        assertEquals(7200, new Extent(2540, Extent.MM).toPoint());
+        assertEquals(7200, new Extent(254, Extent.CM).toPoint());
+        assertEquals(7200, new Extent(100, Extent.IN).toPoint());
+        assertEquals(7200, new Extent(600, Extent.PC).toPoint());
+        
+        try {
+            new Extent(1, Extent.EM).toPoint();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+        
+        try {
+            new Extent(1, Extent.EX).toPoint();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+        
+        try {
+            new Extent(1, Extent.PERCENT).toPoint();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+        
+        try {
+            new Extent(1, Extent.PX).toPoint();
+            fail("Did not throw IllegalStateException.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
     }
 }
