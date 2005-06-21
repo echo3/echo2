@@ -598,8 +598,6 @@ implements RenderIdSupport, Serializable {
         }
     }
     
-    //BUGBUG. need to work out null state on all these getRenderXXX methods.
-    //  probably want to make null = no value instead of allowing null to be set.
     /**
      * Determines the &quot;rendered state&quot; of a property.
      * The rendered state is destermined by first determining if the given
@@ -642,22 +640,27 @@ implements RenderIdSupport, Serializable {
      * @return the property state
      */ 
     public Object getRenderProperty(String propertyName, Object defaultValue) {
-        if (localStyle.isPropertySet(propertyName)) {
-            // Return local style value.
-            return localStyle.getProperty(propertyName);
-        } else if (sharedStyle != null && sharedStyle.isPropertySet(propertyName)) {
-            // Return style value specified in shared style.
-            return sharedStyle.getProperty(propertyName);
-        } else {
-            if (applicationInstance != null) {
-                Style applicationStyle = applicationInstance.getStyle(getClass(), styleName);
-                if (applicationStyle != null && applicationStyle.isPropertySet(propertyName)) {
-                    // Return style value specified in application.
-                    return applicationStyle.getProperty(propertyName);
+        Object propertyValue = localStyle.getProperty(propertyName);
+        if (propertyValue != null) {
+            return propertyValue;
+        }
+        if (sharedStyle != null) {
+            propertyValue = sharedStyle.getProperty(propertyName);
+            if (propertyValue != null) {
+                return propertyValue;
+            }
+        }
+        if (applicationInstance != null) {
+            Style applicationStyle = applicationInstance.getStyle(getClass(), styleName);
+            if (applicationStyle != null) {
+                // Return style value specified in application.
+                propertyValue = applicationStyle.getProperty(propertyName);
+                if (propertyValue != null) {
+                    return propertyValue;
                 }
             }
-            return defaultValue;
         }
+        return defaultValue;
     }
 
     /**
@@ -1159,18 +1162,6 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Sets the render identifier of this <code>Component</code>.
-     * This method is invoked by the <code>ApplicationInstance</code>
-     * when the component is registered or deregistered.
-     * 
-     * @param renderId the new identifier
-     * @see #getRenderId()
-     */
-    void setRenderId(String renderId) {
-        this.renderId = renderId;
-    }
-    
-    /**
      * Sets a generic indexed property of the <code>Component</code>.
      * The value will be stored in this <code>Component</code>'s local style.
      * 
@@ -1243,6 +1234,18 @@ implements RenderIdSupport, Serializable {
         } else {
             firePropertyChange(propertyName, oldValue, newValue);
         }
+    }
+    
+    /**
+     * Sets the render identifier of this <code>Component</code>.
+     * This method is invoked by the <code>ApplicationInstance</code>
+     * when the component is registered or deregistered.
+     * 
+     * @param renderId the new identifier
+     * @see #getRenderId()
+     */
+    void setRenderId(String renderId) {
+        this.renderId = renderId;
     }
     
     /**

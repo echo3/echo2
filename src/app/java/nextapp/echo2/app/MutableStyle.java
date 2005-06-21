@@ -315,6 +315,8 @@ implements Style {
     
     /**
      * Sets a property of the <code>Style</code>.
+     * If <code>propertyValue</code> is null, the property will be
+     * removed.
      * 
      * @param propertyName the name of the property
      * @param propertyValue the value of the property
