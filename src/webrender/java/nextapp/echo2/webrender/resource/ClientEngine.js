@@ -1520,8 +1520,7 @@ EchoServerMessage.isLibraryLoadComplete = function() {
         var returnValue = true;
         for (var i = 0; i < libraryElements.length; ++i) {
             var serviceId = libraryElements.item(i).getAttribute("service-id");
-            if (libraryElements.item(i).getAttribute("wait") == "true" &&
-                    EchoScriptLibraryManager.getState(serviceId) != EchoScriptLibraryManager.STATE_LOADED) {
+            if (EchoScriptLibraryManager.getState(serviceId) != EchoScriptLibraryManager.STATE_LOADED) {
                 // A library that requires immediate loading is not yet available.
                 returnValue = false;
                 break;

@@ -80,7 +80,7 @@ implements CommandSynchronizePeer {
      */
     private void renderOpenWindow(RenderContext rc, BrowserOpenWindowCommand command) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId(), true);
+        serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId());
         Element openWindowElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoBrowserCommand", "open-window");
         openWindowElement.setAttribute("uri", command.getUri());
@@ -101,7 +101,7 @@ implements CommandSynchronizePeer {
      */
     private void renderRedirect(RenderContext rc, BrowserRedirectCommand command) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId(), true);
+        serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId());
         Element redirectElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoBrowserCommand", "redirect");
         redirectElement.setAttribute("uri", command.getUri());

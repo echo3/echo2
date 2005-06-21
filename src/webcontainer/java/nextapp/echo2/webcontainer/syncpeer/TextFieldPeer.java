@@ -60,7 +60,7 @@ implements DomUpdateSupport {
         String elementId = ContainerInstance.getElementId(textField);
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId(), true);
+        serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId());
         
         Element inputElement = parentNode.getOwnerDocument().createElement("input");
         inputElement.setAttribute("id", elementId);

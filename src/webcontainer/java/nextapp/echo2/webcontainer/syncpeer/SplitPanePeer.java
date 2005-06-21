@@ -397,7 +397,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         }
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId(), true);
+        serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId());
 
         Document document = parentNode.getOwnerDocument();
         Element outerDivElement = document.createElement("div");

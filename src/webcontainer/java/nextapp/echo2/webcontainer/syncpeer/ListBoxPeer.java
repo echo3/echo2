@@ -229,7 +229,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         String elementId = ContainerInstance.getElementId(component);
         
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(LIST_COMPONENT_DHTML_SERVICE.getId(), true);
+        serverMessage.addLibrary(LIST_COMPONENT_DHTML_SERVICE.getId());
 
         renderDhtmlInitDirective(serverMessage, listBox);
 

@@ -58,7 +58,7 @@ public class TextAreaPeer extends TextComponentPeer {
         String elementId = ContainerInstance.getElementId(component);
         
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId(), true);
+        serverMessage.addLibrary(TEXT_COMPONENT_SERVICE.getId());
         
         Element textAreaElement = parentNode.getOwnerDocument().createElement("textarea");
         textAreaElement.setAttribute("id", elementId);

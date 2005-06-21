@@ -29,26 +29,66 @@
 
 package nextapp.echo2.webrender.test;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import nextapp.echo2.webrender.ServerMessage;
 import junit.framework.TestCase;
 
 /**
- * 
+ * Unit tests for <code>ServerMessage</code>.
  */
 public class ServerMessageTest extends TestCase {
     
-    //BUGBUG. add test for group ids.
-    
-    // BUGBUG. Possibly remove this test given that we now have message part groups and 
-    // appendPartDirective doesn't perform the "only add to existing if its the last one trickery."
-    public void testServerMessage() {
+    /**
+     * Test <code>addLibrary()</code>.
+     */
+    public void testAddLibrary() {
+        NodeList libraryNodeList;
         ServerMessage message = new ServerMessage();
-        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domadd");
-        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domremove");
-        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domadd");
+        
+        message.addLibrary("service1");
+        libraryNodeList = message.getDocument().getElementsByTagName("library");
+        assertEquals(1, libraryNodeList.getLength());
+        
+        message.addLibrary("service2");
+        libraryNodeList = message.getDocument().getElementsByTagName("library");
+        assertEquals(2, libraryNodeList.getLength());
+        
+        message.addLibrary("service1");
+        libraryNodeList = message.getDocument().getElementsByTagName("library");
+        assertEquals(2, libraryNodeList.getLength());
+    }
+    
+    /**
+     * Test <code>appendPartDirective()</code>.
+     */
+    public void testAppendPartDirective() {
+        ServerMessage message = new ServerMessage();
+        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-add");
+        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-remove");
+        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-add");
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "SomethingElse", "thing");
-        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domremove");
-        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "domadd");
+        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-remove");
+        message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-add");
         assertEquals(2, message.getDocument().getElementsByTagName("message-part").getLength());
+    }
+
+    /**
+     * Test group identifiers.
+     */
+    public void testGroupIds() {
+        ServerMessage message = new ServerMessage();
+        Element directiveElement, messagePartGroupElement;
+
+        directiveElement = message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "Something", "do-something");
+        messagePartGroupElement = (Element) directiveElement.getParentNode().getParentNode();
+        assertEquals("message-part-group", messagePartGroupElement.getNodeName());
+        assertEquals(ServerMessage.GROUP_ID_UPDATE, messagePartGroupElement.getAttribute("id"));
+        
+        directiveElement = message.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, "Something", "do-something");
+        messagePartGroupElement = (Element) directiveElement.getParentNode().getParentNode();
+        assertEquals("message-part-group", messagePartGroupElement.getNodeName());
+        assertEquals(ServerMessage.GROUP_ID_POSTUPDATE, messagePartGroupElement.getAttribute("id"));
     }
 }

@@ -298,7 +298,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         String elementId = ContainerInstance.getElementId(component);
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(LIST_COMPONENT_SERVICE.getId(), true);
+        serverMessage.addLibrary(LIST_COMPONENT_SERVICE.getId());
 
         Element listComponentElement = parentNode.getOwnerDocument().createElement(
                 "select");

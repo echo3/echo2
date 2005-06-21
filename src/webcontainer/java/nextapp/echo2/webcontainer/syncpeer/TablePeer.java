@@ -234,7 +234,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(TABLE_SERVICE.getId(), true);
+        serverMessage.addLibrary(TABLE_SERVICE.getId());
         Table table = (Table) component;
         
         renderInitDirective(rc, table);

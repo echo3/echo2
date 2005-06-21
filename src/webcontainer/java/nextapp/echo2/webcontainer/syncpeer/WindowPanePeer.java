@@ -471,7 +471,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                         ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
 
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(WINDOW_PANE_SERVICE.getId(), true);
+        serverMessage.addLibrary(WINDOW_PANE_SERVICE.getId());
         Document document = serverMessage.getDocument();
         Element windowDivElement = document.createElement("div");
         windowDivElement.setAttribute("id", elementId);

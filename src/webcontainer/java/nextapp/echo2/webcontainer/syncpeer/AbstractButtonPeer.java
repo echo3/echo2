@@ -497,7 +497,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(BUTTON_SERVICE.getId(), true);
+        serverMessage.addLibrary(BUTTON_SERVICE.getId());
         AbstractButton button = (AbstractButton) component;
         Element containerDivElement = renderButtonContainer(rc, parentNode, button);
         renderInitDirective(rc, button);

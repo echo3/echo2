@@ -28,19 +28,9 @@
  */
 
 //BUGBUG. This class needs a bit of performance analysis and tweaking.
-//        It won't necessarily yield and visible benefit, but it'd certainly
+//        It won't necessarily yield any visible benefit, but it'd certainly
 //        be nice to know that the ItemizedDirectiveLookupKey hash code
 //        generation is not being done in vein.  AND IT NEEDS DOCS!
-
-//BUGBUG. Ensure that the following scenario can be handled:
-//        "A syncpeer is rendering HTML content, and needs to set a
-//        non-rendered attribute on the content."
-//        (Make sure its possible to specify that such an attribute is
-//        set AFTER the HTML code is generated...given that it won't work
-//        otherwise).
-//        The example (but no longer necessary) case where this came up was
-//        in setting such a property containing the text of 'textarea' elements
-//        due to IE obliterating newlines.
 
 package nextapp.echo2.webrender;
 
@@ -57,45 +47,50 @@ import org.w3c.dom.NodeList;
 import nextapp.echo2.webrender.output.XmlDocument;
 
 /**
- * The outgoing XML message which synchronizes the state of the client to
- * that of the server.
+ * The outgoing XML message which synchronizes the state of the client to that
+ * of the server.
  */
 public class ServerMessage extends XmlDocument {
-    
+
     /**
-     * A hash table associating <code>ItemizedDirectiveLookupKey</code>s
-     * to corresponding <code>Element</code>s in the message.
+     * A hash table associating <code>ItemizedDirectiveLookupKey</code> s to
+     * corresponding <code>Element</code> s in the message.
      */
     private Map itemizedDirectivesMap = new HashMap();
-    
+
     /**
-     * Representation of the information required to look up a suitable
-     * Itemized Directive <code>Element</code>.  Instances are used as
-     * keys in the <code>itemizedDirectivesMap</code>.  This class provides a
+     * Representation of the information required to look up a suitable Itemized
+     * Directive <code>Element</code>. Instances are used as keys in the
+     * <code>itemizedDirectivesMap</code>. This class provides a
      * <code>getHashCode()</code> implementation for efficient lookups.
      */
     private class ItemizedDirectiveLookupKey {
-        String groupId; 
+        String groupId;
+
         String processor;
+
         String directiveName;
+
         String[] keyAttributeNames;
+
         String[] keyAttributeValues;
+
         int hashCode;
-        
+
         /**
-         * Creates an <code>ItemizedDirectiveLookupKey</code> based on the 
+         * Creates an <code>ItemizedDirectiveLookupKey</code> based on the
          * provided description.
          * 
          * @param groupId the identifier of the target message part group
-         * @param processor the name of the client-side processor object which will
-         *        process the message part containing the directive, e.g., 
+         * @param processor the name of the client-side processor object which
+         *        will process the message part containing the directive, e.g.,
          *        "EchoEventUpdate", or "EchoDomUpdate"
-         * @param directiveName the name of the directive, e.g., "eventadd" or 
+         * @param directiveName the name of the directive, e.g., "eventadd" or
          *        "domremove".
          * @param keyAttributeNames
          * @param keyAttributeValues
          */
-        private ItemizedDirectiveLookupKey(String groupId, String processor, String directiveName, String[] keyAttributeNames, 
+        private ItemizedDirectiveLookupKey(String groupId, String processor, String directiveName, String[] keyAttributeNames,
                 String[] keyAttributeValues) {
             super();
             this.groupId = groupId;
@@ -108,7 +103,7 @@ public class ServerMessage extends XmlDocument {
                 this.hashCode ^= keyAttributeNames[i].hashCode() ^ keyAttributeValues[i].hashCode();
             }
         }
-        
+
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */
@@ -117,7 +112,7 @@ public class ServerMessage extends XmlDocument {
                 return false;
             }
             ItemizedDirectiveLookupKey that = (ItemizedDirectiveLookupKey) o;
-            
+
             if (!this.groupId.equals(that.groupId)) {
                 return false;
             }
@@ -140,10 +135,10 @@ public class ServerMessage extends XmlDocument {
                     return false;
                 }
             }
-            
+
             return true;
         }
-        
+
         /**
          * @see java.lang.Object#hashCode()
          */
@@ -151,50 +146,48 @@ public class ServerMessage extends XmlDocument {
             return hashCode;
         }
     }
-    
+
     /**
-     * Constant for the "init" messagepartgroup.  
-     * Messageparts in this group are processed before the "preremove", 
-     * "remove" "update", and "postupdate" groups.
+     * Constant for the "init" messagepartgroup. Messageparts in this group are
+     * processed before the "preremove", "remove" "update", and "postupdate"
+     * groups.
      */
     public static final String GROUP_ID_INIT = "init";
-    
+
     /**
-     * Constant for the "preremove" messagepartgroup.
-     * Messageparts in this group are processed after the "init" group. 
-     * Messageparts in this group are processed before the "remove", "update" 
-     * and "postupdate" groups.
+     * Constant for the "preremove" messagepartgroup. Messageparts in this group
+     * are processed after the "init" group. Messageparts in this group are
+     * processed before the "remove", "update" and "postupdate" groups.
      */
     public static final String GROUP_ID_PREREMOVE = "preremove";
-    
+
     /**
-     * Constant for the "remove" messagepartgroup.  
-     * Messageparts in this group are processed after the "init" and 
-     * "preremove" groups.
-     * Messageparts in this group are processed before the "update" and
-     * "postupdate" groups.
+     * Constant for the "remove" messagepartgroup. Messageparts in this group
+     * are processed after the "init" and "preremove" groups. Messageparts in
+     * this group are processed before the "update" and "postupdate" groups.
      */
     public static final String GROUP_ID_REMOVE = "remove";
-    
+
     /**
-     * Constant for the "update" messagepartgroup.
-     * Messageparts in this group are processed after the "init", 
-     * "preremove" and "remove" groups.
+     * Constant for the "update" messagepartgroup. Messageparts in this group
+     * are processed after the "init", "preremove" and "remove" groups.
      * Messageparts in this group are processed before the "postupdate" gruop.
      */
     public static final String GROUP_ID_UPDATE = "update";
-    
+
     /**
-     * Constant for the "postupdate" messagepartgroup.  
-     * Messageparts in this group are procssed after the "init", "preremove", 
-     * "remove" and "update" groups.
+     * Constant for the "postupdate" messagepartgroup. Messageparts in this
+     * group are procssed after the "init", "preremove", "remove" and "update"
+     * groups.
      */
     public static final String GROUP_ID_POSTUPDATE = "postupdate";
-    
+
     private Set addedLibraries;
+
     private Element librariesElement;
+
     private Element serverMessageElement;
-    
+
     /**
      * Creates a new <code>ServerMessage</code>.
      */
@@ -204,7 +197,7 @@ public class ServerMessage extends XmlDocument {
         serverMessageElement = document.getDocumentElement();
         librariesElement = document.createElement("libraries");
         serverMessageElement.appendChild(librariesElement);
-        
+
         // Add basic part groups.
         addPartGroup(GROUP_ID_INIT);
         addPartGroup(GROUP_ID_PREREMOVE);
@@ -212,22 +205,14 @@ public class ServerMessage extends XmlDocument {
         addPartGroup(GROUP_ID_UPDATE);
         addPartGroup(GROUP_ID_POSTUPDATE);
     }
-    
+
     /**
      * Adds a JavaScript library service to be dynamically loaded.
      * 
-     * @param serviceId the id of the service to load
-     *        (the service must return javascript code with 
-     *        content-type "text/javascript")
-     * @param wait a flag indicating whether the client-side
-     *        processor should wait for the library to be loaded before
-     *        processing the server message.  If this flag is set to true,
-     *        the JavaScript library MUST invoke the client-side method 
-     *        <code>EchoScriptLibraryManager.setStateLoaded()</code> with its
-     *        service id to indicate that it has loaded.  Failure to invoke this
-     *        method will result in the user-interface hanging.
+     * @param serviceId the id of the service to load (the service must return
+     *        javascript code with content-type "text/javascript")
      */
-    public void addLibrary(String serviceId, boolean wait) {
+    public void addLibrary(String serviceId) {
         if (addedLibraries == null) {
             addedLibraries = new HashSet();
         }
@@ -236,17 +221,14 @@ public class ServerMessage extends XmlDocument {
         }
         Element libraryElement = getDocument().createElement("library");
         libraryElement.setAttribute("service-id", serviceId);
-        if (wait) {
-            libraryElement.setAttribute("wait", "true");
-        }
         librariesElement.appendChild(libraryElement);
         addedLibraries.add(serviceId);
     }
-    
+
     /**
-     * Adds a "group" to the document.  Part groups enable certain groups
-     * of operations, e.g., remove operations, to be performed before others,
-     * e.g., add operations.
+     * Adds a "group" to the document. Part groups enable certain groups of
+     * operations, e.g., remove operations, to be performed before others, e.g.,
+     * add operations.
      * 
      * @param groupId the identifier of the group
      * @return the created "messagepartgroup" element.
@@ -257,7 +239,7 @@ public class ServerMessage extends XmlDocument {
         serverMessageElement.appendChild(messagePartGroupElement);
         return messagePartGroupElement;
     }
-    
+
     /**
      * Retrieves the "messagepartgroup" element pertaining to a specific group.
      * 
@@ -275,7 +257,7 @@ public class ServerMessage extends XmlDocument {
         }
         return null;
     }
-    
+
     /**
      * Adds a "messagepart" to the document that will be processed by the
      * specified client-side processor object.
@@ -283,7 +265,7 @@ public class ServerMessage extends XmlDocument {
      * @param groupId the id of the group to which the "messagepart" element
      *        should be added
      * @param processor the name of the client-side processor object which will
-     *        process the message part, e.g., "EchoEventUpdate", or 
+     *        process the message part, e.g., "EchoEventUpdate", or
      *        "EchoDomUpdate"
      * @return the created "messagepart" element
      */
@@ -294,27 +276,27 @@ public class ServerMessage extends XmlDocument {
         messagePartGroupElement.appendChild(messagePartElement);
         return messagePartElement;
     }
-    
+
     /**
      * Creates and appends a directive element beneath to a messagepart.
-     * Attempts to append the directive to an existing messagepart if the
-     * last messagepart in the specified group happens to have the same
-     * processor as is specified by the <code>processor</code> argument.
-     * If this is not possible, a new "messagepart" element is created
-     * and the directive is added to it.
+     * Attempts to append the directive to an existing messagepart if the last
+     * messagepart in the specified group happens to have the same processor as
+     * is specified by the <code>processor</code> argument. If this is not
+     * possible, a new "messagepart" element is created and the directive is
+     * added to it.
      * 
      * @param groupId
      * @param processor the name of the client-side processor object which will
-     *        process the message part, e.g., "EchoEventUpdate", or 
+     *        process the message part, e.g., "EchoEventUpdate", or
      *        "EchoDomUpdate"
-     * @param directiveName the name of the directive, e.g., "eventadd" or 
+     * @param directiveName the name of the directive, e.g., "eventadd" or
      *        "domremove".
      * @return the directive element
      */
     public Element appendPartDirective(String groupId, String processor, String directiveName) {
         Element messagePartElement = null;
         Element groupElement = getPartGroup(groupId);
-        
+
         for (Node node = groupElement.getFirstChild(); node != null; node = node.getNextSibling()) {
             if (processor.equals(((Element) node).getAttribute("processor"))) {
                 messagePartElement = (Element) node;
@@ -322,38 +304,37 @@ public class ServerMessage extends XmlDocument {
             }
         }
         if (messagePartElement == null) {
-            messagePartElement = addPart(groupId, processor); 
+            messagePartElement = addPart(groupId, processor);
         }
-        
+
         Element directiveElement = getDocument().createElement(directiveName);
         messagePartElement.appendChild(directiveElement);
         return directiveElement;
     }
 
     /**
-     * Creates or retrieves a suitable "Itemized Directive" element.
-     * Itemized Directives may be used to create more bandwidth-efficient
-     * ServerMessage output in cases where a particular operation may
-     * need to be performed on a significant number of targets.
-     * In the case that the directive must be created, it will be added to
-     * the message.
-     * Repeated invocations of this method with equivalent values of all 
-     * paramters will result in the same directive being returned each time. 
+     * Creates or retrieves a suitable "Itemized Directive" element. Itemized
+     * Directives may be used to create more bandwidth-efficient ServerMessage
+     * output in cases where a particular operation may need to be performed on
+     * a significant number of targets. In the case that the directive must be
+     * created, it will be added to the message. Repeated invocations of this
+     * method with equivalent values of all paramters will result in the same
+     * directive being returned each time.
      * 
      * @param groupId the identifier of the target message part group
      * @param processor the name of the client-side processor object which will
-     *        process the message part containing the directive, e.g., 
+     *        process the message part containing the directive, e.g.,
      *        "EchoEventUpdate", or "EchoDomUpdate"
-     * @param directiveName the name of the directive, e.g., "eventadd" or 
+     * @param directiveName the name of the directive, e.g., "eventadd" or
      *        "domremove"
-     * @param keyAttributeNames the names of the key attributes 
+     * @param keyAttributeNames the names of the key attributes
      * @param keyAttributeValues the values of the key attributes
      * @return the created/retrieved directive element
      */
-    public Element getItemizedDirective(String groupId, String processor, String directiveName, 
-            String[] keyAttributeNames, String[] keyAttributeValues) {
-        ItemizedDirectiveLookupKey itemizedDirectiveLookupKey = new ItemizedDirectiveLookupKey(
-                groupId, processor, directiveName, keyAttributeNames, keyAttributeValues);
+    public Element getItemizedDirective(String groupId, String processor, String directiveName, String[] keyAttributeNames,
+            String[] keyAttributeValues) {
+        ItemizedDirectiveLookupKey itemizedDirectiveLookupKey = new ItemizedDirectiveLookupKey(groupId, processor, directiveName,
+                keyAttributeNames, keyAttributeValues);
         Element element = (Element) itemizedDirectivesMap.get(itemizedDirectiveLookupKey);
         if (element == null) {
             element = appendPartDirective(groupId, processor, directiveName);
@@ -364,21 +345,29 @@ public class ServerMessage extends XmlDocument {
         }
         return element;
     }
-    
+
+    /**
+     * Sets the element id of the root of the modal context. Only elements
+     * within the modal context will be enabled. A <code>id</code> value of
+     * null will disable the modal context, thus allowing ALL elements to be
+     * enabled.
+     * 
+     * @param id the root element id of the modal context
+     */
     public void setModalContextRootId(String id) {
         if (id == null) {
-            serverMessageElement.setAttribute("modal-id", ""); 
+            serverMessageElement.setAttribute("modal-id", "");
         } else {
-            serverMessageElement.setAttribute("modal-id", id); 
+            serverMessageElement.setAttribute("modal-id", id);
         }
     }
-    
+
     /**
      * Sets the interval between asynchronous requests to the server to check
      * for server-pushed updates.
      * 
-     * @param newValue the new interval in milleseconds (a negative value
-     *        will disable asynchronous requests)
+     * @param newValue the new interval in milleseconds (a negative value will
+     *        disable asynchronous requests)
      */
     public void setAsynchronousMonitorInterval(int newValue) {
         if (newValue < 0) {
