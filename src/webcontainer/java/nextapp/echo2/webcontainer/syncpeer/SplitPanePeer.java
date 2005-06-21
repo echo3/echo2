@@ -194,10 +194,10 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         } else if (IMAGE_ID_PANE_1_BACKGROUND.equals(imageId)) {
             return getPaneBackgroundImage(component);
         } else if (IMAGE_ID_HORIZONTAL_SEPARATOR.equals(imageId)) {
-            FillImage fillImage = (FillImage) component.getRenderProperty(SplitPane.PROPERTY_HORIZONTAL_SEPARATOR_IMAGE);
+            FillImage fillImage = (FillImage) component.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_HORIZONTAL_IMAGE);
             return fillImage == null ? null : fillImage.getImage();
         } else if (IMAGE_ID_VERTICAL_SEPARATOR.equals(imageId)) {
-            FillImage fillImage = (FillImage) component.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE);
+            FillImage fillImage = (FillImage) component.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_VERTICAL_IMAGE);
             return fillImage == null ? null : fillImage.getImage();
         } else {
             return null;
@@ -611,7 +611,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         
         if (isOrientationVertical(splitPane)) {
             FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_VERTICAL_SEPARATOR, 
-                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_VERTICAL_SEPARATOR_IMAGE), 0);
+                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_VERTICAL_IMAGE), 0);
             if (fixedPaneNumber == 0) {
                 separatorDivCssStyle.setAttribute("top", separatorPosition + "px");
             } else {
@@ -629,7 +629,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             }
         } else {
             FillImageRender.renderToStyle(separatorDivCssStyle, rc, this, splitPane, IMAGE_ID_HORIZONTAL_SEPARATOR, 
-                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_HORIZONTAL_SEPARATOR_IMAGE), 0);
+                    (FillImage) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_HORIZONTAL_IMAGE), 0);
             if (fixedPaneNumber == 0) {
                 separatorDivCssStyle.setAttribute("left", separatorPosition + "px");
             } else {

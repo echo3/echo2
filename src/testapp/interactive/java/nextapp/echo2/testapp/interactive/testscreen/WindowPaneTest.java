@@ -140,12 +140,6 @@ public class WindowPaneTest extends SplitPane {
                     SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(42));
                     SplitPaneLayoutData splitPaneLayoutData;
                     
-                    Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0xefefff));
-                    contentLabel.setLayoutData(splitPaneLayoutData);
-                    splitPane.add(contentLabel);
-                    
                     Button okButton = new Button("Ok");
                     okButton.addActionListener(new ActionListener() {
                         /**
@@ -164,6 +158,12 @@ public class WindowPaneTest extends SplitPane {
                     okButton.setWidth(new Extent(100));
                     okButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
                     splitPane.add(okButton);
+                    
+                    Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
+                    splitPaneLayoutData = new SplitPaneLayoutData();
+                    splitPaneLayoutData.setBackground(new Color(0xefefff));
+                    contentLabel.setLayoutData(splitPaneLayoutData);
+                    splitPane.add(contentLabel);
                     
                     windowPane.add(splitPane);
                 }

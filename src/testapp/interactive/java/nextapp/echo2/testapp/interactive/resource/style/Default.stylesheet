@@ -77,14 +77,14 @@
  <style name="defaultResizable" type="nextapp.echo2.app.SplitPane">
   <properties>
    <property name="resizable" value="true"/>
-   <property name="horizontalSeparatorImage">
+   <property name="separatorHorizontalImage">
     <fillimage>
      <image type="nextapp.echo2.app.ResourceImageReference">
       <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/SplitPaneHorizontalSeparator.png"/>
      </image>
     </fillimage>
    </property>
-   <property name="verticalSeparatorImage">
+   <property name="separatorVerticalImage">
     <fillimage>
      <image type="nextapp.echo2.app.ResourceImageReference">
       <resourceimagereference resource="/nextapp/echo2/testapp/interactive/resource/image/SplitPaneVerticalSeparator.png"/>

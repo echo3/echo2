@@ -81,9 +81,22 @@ public class LoginScreen extends ContentPane {
         loginWindow.setDefaultCloseOperation(WindowPane.DO_NOTHING_ON_CLOSE);
         add(loginWindow);
         
-        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-32));
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(32));
         loginWindow.add(splitPane);
         
+        Row controlRow = new Row();
+        controlRow.setStyleName("ControlPane");
+        splitPane.add(controlRow);
+        
+        Button button = new Button(Messages.getString("LoginScreen.Continue"), Styles.ICON_24_YES);
+        button.setStyleName("ControlPane.Button");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                processLogin();
+            }
+        });
+        controlRow.add(button);
+
         Grid layoutGrid = new Grid();
         layoutGrid.setStyleName("LoginScreen.LayoutGrid");
         splitPane.add(layoutGrid);
@@ -106,19 +119,6 @@ public class LoginScreen extends ContentPane {
         passwordField.setStyleName("Default");
         layoutGrid.add(passwordField);
         
-        Row controlRow = new Row();
-        controlRow.setStyleName("ControlPane");
-        splitPane.add(controlRow);
-        
-        Button button = new Button(Messages.getString("LoginScreen.Continue"), Styles.ICON_24_YES);
-        button.setStyleName("ControlPane.Button");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                processLogin();
-            }
-        });
-        controlRow.add(button);
-
         if (EmailApp.FAUX_MODE) {
             emailAddressField.setText("joe.smith@test.nextapp.com");
             passwordField.setText("Joshua");

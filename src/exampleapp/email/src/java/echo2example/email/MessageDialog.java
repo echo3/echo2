@@ -74,12 +74,8 @@ public class MessageDialog extends WindowPane {
         setStyleName("Default");
         setModal(true);
 
-        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-32));
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(32));
         add(splitPane);
-        
-        Label contentLabel = new Label(message);
-        contentLabel.setStyleName("MessageDialog.ContentLabel");
-        splitPane.add(contentLabel);
         
         Row controlsRow = new Row();
         controlsRow.setStyleName("ControlPane");
@@ -107,6 +103,10 @@ public class MessageDialog extends WindowPane {
             controlsRow.add(button);
             break;
         }
+        
+        Label contentLabel = new Label(message);
+        contentLabel.setStyleName("MessageDialog.ContentLabel");
+        splitPane.add(contentLabel);
         
         setModal(true);
     }
