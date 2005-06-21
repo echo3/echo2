@@ -137,6 +137,9 @@ implements ModalSupport {
      * to close this <code>WindowPane</code>. 
      */
     protected void fireWindowClosing() {
+        if (!hasEventListenerList()) {
+            return;
+        }
         EventListener[] listeners = getEventListenerList().getListeners(WindowPaneListener.class);
         if (listeners.length == 0) {
             return;
@@ -670,6 +673,9 @@ implements ModalSupport {
      * @param l the <code>WindowPaneListener</code> to remove
      */
     public void removeWindowPaneListener(WindowPaneListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
         getEventListenerList().removeListener(WindowPaneListener.class, l);
     }
     

@@ -322,6 +322,9 @@ public class Table extends Component {
      * Fires an action event to all listeners.
      */
     private void fireActionEvent() {
+        if (!hasEventListenerList()) {
+            return;
+        }
         EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
         ActionEvent e = null;
         for (int i = 0; i < listeners.length; ++i) {
@@ -592,6 +595,9 @@ public class Table extends Component {
      * @param l the <code>ActionListener</code> to remove
      */
     public void removeActionListener(ActionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
         getEventListenerList().removeListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
         // existance of hasActionListeners() method. 

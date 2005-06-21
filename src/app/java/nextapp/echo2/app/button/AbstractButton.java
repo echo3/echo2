@@ -119,6 +119,9 @@ public abstract class AbstractButton extends Component {
      * @param e the <code>ActionEvent</code> to send
      */
     public void fireActionPerformed(ActionEvent e) {
+        if (!hasEventListenerList()) {
+            return;
+        }
         EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
         for (int index = 0; index < listeners.length; ++index) {
             ((ActionListener) listeners[index]).actionPerformed(e);
@@ -359,7 +362,7 @@ public abstract class AbstractButton extends Component {
      * @return true if any action listeners are registered
      */
     public boolean hasActionListeners() {
-        return getEventListenerList().getListenerCount(ActionListener.class) != 0;
+        return hasEventListenerList() && getEventListenerList().getListenerCount(ActionListener.class) != 0;
     }
     
     /**
@@ -421,6 +424,9 @@ public abstract class AbstractButton extends Component {
      * @param l the listener to remove
      */
     public void removeActionListener(ActionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
         getEventListenerList().removeListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
         // existance of hasActionListeners() method. 

@@ -94,27 +94,37 @@ public abstract class Component
 implements RenderIdSupport, Serializable {
     
     private static final int CHILD_LIST_CAPACITY = 3;
+    
     private static final Component[] EMPTY_COMPONENT_ARRAY = new Component[0];
+
+    private static final int FLAG_ENABLED = 0x1;
+    private static final int FLAG_FOCUS_TRAVERSAL_PARTICIPANT= 0x4;
+    private static final int FLAG_VISIBLE = 0x2;
+    private static final int FLAGS_FOCUS_TRAVERSAL_INDEX = 0x7fff0000;
+    
+    public static final String CHILDREN_CHANGED_PROPERTY = "children";
+    public static final String ENABLED_CHANGED_PROPERTY = "enabled";
+    public static final String FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY = "focusTraversalIndex";
+    public static final String FOCUS_TRAVERSAL_PARTICIPANT_CHANGED_PROPERTY = "focusTraversalParticipant";
+    public static final String LAYOUT_DIRECTION_CHANGED_PROPERTY = "layoutDirection";
+    public static final String LOCALE_CHANGED_PROPERTY = "locale";
     
     public static final String PROPERTY_BACKGROUND = "background";
     public static final String PROPERTY_FONT = "font";
     public static final String PROPERTY_FOREGROUND = "foreground";
     public static final String PROPERTY_LAYOUT_DATA = "layoutData";
-    
-    public static final String CHILDREN_CHANGED_PROPERTY = "children";
-    public static final String ENABLED_CHANGED_PROPERTY = "enabled";
-    public static final String LAYOUT_DIRECTION_CHANGED_PROPERTY = "layoutDirection";
-    public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String STYLE_CHANGED_PROPERTY = "style";
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
-    public static final String FOCUS_TRAVERSAL_INDEX_CHANGED_PROPERTY = "focusTraversalIndex";
-    public static final String FOCUS_TRAVERSAL_PARTICIPANT_CHANGED_PROPERTY = "focusTraversalParticipant";
     public static final String VISIBLE_CHANGED_PROPERTY = "visible";
-
-    private static final int FLAG_ENABLED = 0x1;
-    private static final int FLAG_VISIBLE = 0x2;
-    private static final int FLAG_FOCUS_TRAVERSAL_PARTICIPANT= 0x4;
-    private static final int FLAGS_FOCUS_TRAVERSAL_INDEX = 0x7fff0000;
+    
+    /** The <code>ApplicationInstance</code> to which the component is registered. */
+    private ApplicationInstance applicationInstance;
+    
+    /** 
+     * An ordered collection of references to child components.
+     * This object is lazily instantiated. 
+     */
+    private List children;
     
     /**
      * Boolean flags for this component, including enabled state, visibility, 
@@ -126,30 +136,10 @@ implements RenderIdSupport, Serializable {
     private int flags;
     
     /** 
-     * An ordered collection of references to child components.
-     * This object is lazily instantiated. 
-     */
-    private List children;
-    
-    /** 
      * A  user-defined identifier for this component.
      * This identifier is not related in any way to <code>renderId</code>. 
      */
     private String id;
-    
-    /** 
-     * A application-wide unique identifier for this component. 
-     * This identifier is not related in any way to <code>id</code>. 
-     */
-    private String renderId;
-
-    /** 
-     * The locale of the component.
-     * This property is generally unset, as locale information is normally
-     * inherited from the <code>ApplicationInstance</code> or from an ancestor
-     * <code>Component</code> in the hierarchy. 
-     */
-    private Locale locale;
     
     /** 
      * The layout direction of the component.
@@ -161,12 +151,17 @@ implements RenderIdSupport, Serializable {
     
     /** Listener storage. */
     private EventListenerList listenerList;
+
+    /** 
+     * The locale of the component.
+     * This property is generally unset, as locale information is normally
+     * inherited from the <code>ApplicationInstance</code> or from an ancestor
+     * <code>Component</code> in the hierarchy. 
+     */
+    private Locale locale;
     
     /** Local style data storage for properties directly set on component itself. */
     private MutableStyle localStyle;
-    
-    /** The <code>ApplicationInstance</code> to which the component is registered. */
-    private ApplicationInstance applicationInstance;
     
     /** The parent component. */
     private Component parent;
@@ -176,6 +171,12 @@ implements RenderIdSupport, Serializable {
      * This object is lazily instantiated. 
      */
     private PropertyChangeSupport propertyChangeSupport;
+    
+    /** 
+     * A application-wide unique identifier for this component. 
+     * This identifier is not related in any way to <code>id</code>. 
+     */
+    private String renderId;
     
     /** Shared style. */
     private Style sharedStyle;
@@ -398,7 +399,6 @@ implements RenderIdSupport, Serializable {
         }
     }
     
-    //BUGBUG. potentially add hasEventListenerList() to avoid lazy-creation?
     /**
      * Returns the local <code>EventListenerList</code>.
      * The listener list is lazily created; invoking this method will 
@@ -411,6 +411,19 @@ implements RenderIdSupport, Serializable {
             listenerList = new EventListenerList();
         }
         return listenerList;
+    }
+    
+    /**
+     * Returns the focus traversal (tab) index of the component.
+     * Components with numerically lower indices will be focused before
+     * components with numerically higher indices.  The value 0 has special
+     * meaning, in that components with a value of 0 will be focused last.
+     * The default value is 0.
+     * 
+     * @return the focus traversal index, a value between 0 and 32767
+     */
+    public int getFocusTraversalIndex() {
+        return (flags & FLAGS_FOCUS_TRAVERSAL_INDEX) >> 16;
     }
     
     /**
@@ -449,43 +462,6 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the <code>LayoutData</code> object used to describe how this
-     * <code>Component</code> should be layed out within its parent container.
-     * 
-     * @return the layout data, or null if unset
-     * @see LayoutData
-     */
-    public LayoutData getLayoutData() {
-        return (LayoutData) localStyle.getProperty(PROPERTY_LAYOUT_DATA);
-    }
-    
-    /**
-     * Returns the parent component.
-     * 
-     * @return the parent component, or null if this component has no parent
-     */
-    public Component getParent() {
-        return parent;
-    }
-    
-    /**
-     * Returns the value of the specified property.
-     * This method is generally used only internally by a 
-     * <code>Component</code>, however there are exceptions.
-     * The more specific <code>getXXX()</code> methods to retrieve 
-     * property values from a <code>Component</code> whenever
-     * possible.
-     * See the class-level documentation for a more detailed 
-     * explanation of the use of this method.
-     * 
-     * @param propertyName the property name
-     * @return the property value
-     */
-    public Object getProperty(String propertyName) {
-        return localStyle.getProperty(propertyName);
-    }
-    
-    /**
      * Returns the value of the specified indexed property.
      * This method is generally used only internally by a 
      * <code>Component</code>, however there are exceptions.
@@ -501,6 +477,17 @@ implements RenderIdSupport, Serializable {
      */
     public Object getIndexedProperty(String propertyName, int propertyIndex) {
         return localStyle.getIndexedProperty(propertyName, propertyIndex);
+    }
+    
+    /**
+     * Returns the <code>LayoutData</code> object used to describe how this
+     * <code>Component</code> should be layed out within its parent container.
+     * 
+     * @return the layout data, or null if unset
+     * @see LayoutData
+     */
+    public LayoutData getLayoutData() {
+        return (LayoutData) localStyle.getProperty(PROPERTY_LAYOUT_DATA);
     }
     
     /**
@@ -530,6 +517,32 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
+     * Returns the parent component.
+     * 
+     * @return the parent component, or null if this component has no parent
+     */
+    public Component getParent() {
+        return parent;
+    }
+    
+    /**
+     * Returns the value of the specified property.
+     * This method is generally used only internally by a 
+     * <code>Component</code>, however there are exceptions.
+     * The more specific <code>getXXX()</code> methods to retrieve 
+     * property values from a <code>Component</code> whenever
+     * possible.
+     * See the class-level documentation for a more detailed 
+     * explanation of the use of this method.
+     * 
+     * @param propertyName the property name
+     * @return the property value
+     */
+    public Object getProperty(String propertyName) {
+        return localStyle.getProperty(propertyName);
+    }
+    
+    /**
      * Returns the render id of this component.  
      * This id is only guaranteed to be unique within 
      * the <code>ApplicationInstance</code> to which this component is 
@@ -542,6 +555,66 @@ implements RenderIdSupport, Serializable {
      */
     public String getRenderId() {
         return renderId;
+    }
+
+    /**
+     * Determines the &quot;rendered state&quot; of an indexed property.
+     * The rendered state is destermined by first determining if the given
+     * property is locally set on this <code>Component</code>, and returning
+     * it in that case.  If the property state is not set locally, the 
+     * shared <code>Style</code> assigned to this component will be queried
+     * for the property value.  If the property state is not set in the
+     * shared <code>Style</code>, the <code>StyleSheet</code> of the
+     * <code>ApplicationInstance</code> to which this <code>Component</code>
+     * is registered will be queried for the property value.
+     * In the event the property is not set in any of these resources,
+     * null is returned.
+     * <p>
+     * The application container will invoke this method
+     * rather than individual property getter methods to determine the state
+     * of properties when rendering.
+     * 
+     * @param propertyName the name of the property
+     * @return the rendered property value
+     */
+    public Object getRenderIndexedProperty(String propertyName, int propertyIndex) {
+        return getRenderIndexedProperty(propertyName, propertyIndex, null);
+    }
+    
+    /**
+     * Determines the &quot;rendered state&quot; of an indexed property.
+     * The rendered state is destermined by first determining if the given
+     * property is locally set on this <code>Component</code>, and returning
+     * it in that case.  If the property state is not set locally, the 
+     * shared <code>Style</code> assigned to this component will be queried
+     * for the property value.  If the property state is not set in the
+     * shared <code>Style</code>, the <code>StyleSheet</code> of the
+     * <code>ApplicationInstance</code> to which this <code>Component</code>
+     * is registered will be queried for the property value.
+     * In the event the property is not set in any of these resources,
+     * <code>defaultValue</code> is returned.
+     * 
+     * @param propertyName the name of the property
+     * @param defaultValue the value to be returned if the property is not set
+     * @return the property state
+     */ 
+    public Object getRenderIndexedProperty(String propertyName, int propertyIndex, Object defaultValue) {
+        if (localStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
+            // Return local style value.
+            return localStyle.getIndexedProperty(propertyName, propertyIndex);
+        } else if (sharedStyle != null && sharedStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
+            // Return style value specified in shared style.
+            return sharedStyle.getIndexedProperty(propertyName, propertyIndex);
+        } else {
+            if (applicationInstance != null) {
+                Style applicationStyle = applicationInstance.getStyle(getClass(), styleName);
+                if (applicationStyle != null && applicationStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
+                    // Return style value specified in application.
+                    return applicationStyle.getIndexedProperty(propertyName, propertyIndex);
+                }
+            }
+            return defaultValue;
+        }
     }
     
     /**
@@ -662,66 +735,6 @@ implements RenderIdSupport, Serializable {
         }
         return defaultValue;
     }
-
-    /**
-     * Determines the &quot;rendered state&quot; of an indexed property.
-     * The rendered state is destermined by first determining if the given
-     * property is locally set on this <code>Component</code>, and returning
-     * it in that case.  If the property state is not set locally, the 
-     * shared <code>Style</code> assigned to this component will be queried
-     * for the property value.  If the property state is not set in the
-     * shared <code>Style</code>, the <code>StyleSheet</code> of the
-     * <code>ApplicationInstance</code> to which this <code>Component</code>
-     * is registered will be queried for the property value.
-     * In the event the property is not set in any of these resources,
-     * null is returned.
-     * <p>
-     * The application container will invoke this method
-     * rather than individual property getter methods to determine the state
-     * of properties when rendering.
-     * 
-     * @param propertyName the name of the property
-     * @return the rendered property value
-     */
-    public Object getRenderIndexedProperty(String propertyName, int propertyIndex) {
-        return getRenderIndexedProperty(propertyName, propertyIndex, null);
-    }
-    
-    /**
-     * Determines the &quot;rendered state&quot; of an indexed property.
-     * The rendered state is destermined by first determining if the given
-     * property is locally set on this <code>Component</code>, and returning
-     * it in that case.  If the property state is not set locally, the 
-     * shared <code>Style</code> assigned to this component will be queried
-     * for the property value.  If the property state is not set in the
-     * shared <code>Style</code>, the <code>StyleSheet</code> of the
-     * <code>ApplicationInstance</code> to which this <code>Component</code>
-     * is registered will be queried for the property value.
-     * In the event the property is not set in any of these resources,
-     * <code>defaultValue</code> is returned.
-     * 
-     * @param propertyName the name of the property
-     * @param defaultValue the value to be returned if the property is not set
-     * @return the property state
-     */ 
-    public Object getRenderIndexedProperty(String propertyName, int propertyIndex, Object defaultValue) {
-        if (localStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
-            // Return local style value.
-            return localStyle.getIndexedProperty(propertyName, propertyIndex);
-        } else if (sharedStyle != null && sharedStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
-            // Return style value specified in shared style.
-            return sharedStyle.getIndexedProperty(propertyName, propertyIndex);
-        } else {
-            if (applicationInstance != null) {
-                Style applicationStyle = applicationInstance.getStyle(getClass(), styleName);
-                if (applicationStyle != null && applicationStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
-                    // Return style value specified in application.
-                    return applicationStyle.getIndexedProperty(propertyName, propertyIndex);
-                }
-            }
-            return defaultValue;
-        }
-    }
     
     /**
      * Returns the shared <code>Style</code> object assigned to this 
@@ -753,19 +766,6 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Returns the focus traversal (tab) index of the component.
-     * Components with numerically lower indices will be focused before
-     * components with numerically higher indices.  The value 0 has special
-     * meaning, in that components with a value of 0 will be focused last.
-     * The default value is 0.
-     * 
-     * @return the focus traversal index, a value between 0 and 32767
-     */
-    public int getFocusTraversalIndex() {
-        return (flags & FLAGS_FOCUS_TRAVERSAL_INDEX) >> 16;
-    }
-    
-    /**
      * Returns the <code>n</code>th immediate <strong>visible</strong> 
      * child <code>Component</code>.
      *
@@ -791,6 +791,29 @@ implements RenderIdSupport, Serializable {
         }
         return component;
     }
+
+    /**
+     * Returns the number of <strong>visible</strong> immediate child 
+     * <code>Component</code>s.
+     *
+     * @return the number of <strong>visible</strong> immediate child 
+     *         <code>Component</code>s
+     */
+    public int getVisibleComponentCount() {
+        if (children == null) {
+            return 0;
+        } else {
+            int visibleComponentCount = 0;
+            Iterator it = children.iterator();
+            while (it.hasNext()) {
+                Component component = (Component) it.next();
+                if (component.isVisible()) {
+                    ++visibleComponentCount;
+                }
+            }
+            return visibleComponentCount;
+        }
+    }
     
     /**
      * Returns an array of all <strong>visible</strong> immediate child 
@@ -814,28 +837,19 @@ implements RenderIdSupport, Serializable {
             return (Component[]) visibleChildList.toArray(new Component[visibleChildList.size()]);
         }
     }
-
+    
     /**
-     * Returns the number of <strong>visible</strong> immediate child 
-     * <code>Component</code>s.
-     *
-     * @return the number of <strong>visible</strong> immediate child 
-     *         <code>Component</code>s
+     * Determines if a local <code>EventListenerList</code> exists.
+     * If no listener list exists, it can be assured that there are thus no
+     * listeners reigstered to it.  This method should be invoked by event
+     * firing code prior to invoking <code>getListenerList()</code> to avoid
+     * unnecessary creation of an <code>EventListenerList</code> in response
+     * to their query.
+     * 
+     * @return true if a local <code>EventListenerList</code> exists
      */
-    public int getVisibleComponentCount() {
-        if (children == null) {
-            return 0;
-        } else {
-            int visibleComponentCount = 0;
-            Iterator it = children.iterator();
-            while (it.hasNext()) {
-                Component component = (Component) it.next();
-                if (component.isVisible()) {
-                    ++visibleComponentCount;
-                }
-            }
-            return visibleComponentCount;
-        }
+    protected boolean hasEventListenerList() {
+        return listenerList != null;
     }
     
     /**
@@ -896,6 +910,17 @@ implements RenderIdSupport, Serializable {
     public boolean isFocusTraversalParticipant() {
         return (flags & FLAG_FOCUS_TRAVERSAL_PARTICIPANT) != 0;
     }
+
+    /**
+     * Determines if the <code>Component</code> is registered to an 
+     * <code>ApplicationInstance</code>.
+     * 
+     * @return true if the <code>Component</code> is registered to an 
+     *         <code>ApplicationInstance</code>
+     */
+    public final boolean isRegistered() {
+        return applicationInstance != null;
+    }
     
     /**
      * Determines if the <code>Component</code> and all of its parents are
@@ -912,17 +937,6 @@ implements RenderIdSupport, Serializable {
             component = component.parent;
         }
         return true;
-    }
-
-    /**
-     * Determines if the <code>Component</code> is registered to an 
-     * <code>ApplicationInstance</code>.
-     * 
-     * @return true if the <code>Component</code> is registered to an 
-     *         <code>ApplicationInstance</code>
-     */
-    public final boolean isRegistered() {
-        return applicationInstance != null;
     }
     
     /**
