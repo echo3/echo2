@@ -75,6 +75,37 @@ public class ServerMessageTest extends TestCase {
     }
 
     /**
+     * Test itemized directive capability.
+     */
+    public void testItemizedDirective() {
+        ServerMessage message = new ServerMessage();
+        String[] keyAttributeNames = new String[]{"alpha", "bravo"};
+        
+        Element directiveElement1 = message.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, "Processor", "Directive", 
+                keyAttributeNames, new String[]{"alpha1", "bravo1"});
+        assertEquals("Directive", directiveElement1.getNodeName());
+        assertEquals("alpha1", directiveElement1.getAttribute("alpha"));
+        assertEquals("bravo1", directiveElement1.getAttribute("bravo"));
+        
+        Element directiveElement2 = message.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, "Processor", "Directive", 
+                keyAttributeNames, new String[]{"alpha1", "bravo1"});
+        assertEquals("Directive", directiveElement2.getNodeName());
+        assertEquals("alpha1", directiveElement2.getAttribute("alpha"));
+        assertEquals("bravo1", directiveElement2.getAttribute("bravo"));
+        
+        assertTrue(directiveElement1.equals(directiveElement2));
+
+        Element directiveElement3 = message.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE, "Processor", "Directive", 
+                keyAttributeNames, new String[]{"alpha2", "bravo2"});
+        assertEquals("Directive", directiveElement3.getNodeName());
+        assertEquals("alpha2", directiveElement3.getAttribute("alpha"));
+        assertEquals("bravo2", directiveElement3.getAttribute("bravo"));
+        
+        assertFalse(directiveElement1.equals(directiveElement3));
+        assertFalse(directiveElement2.equals(directiveElement3));
+    }
+    
+    /**
      * Test group identifiers.
      */
     public void testGroupIds() {
