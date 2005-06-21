@@ -77,16 +77,12 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
 };
 
 EchoButton.MessageProcessor.processInit = function(initMessageElement) {
-    var defaultStyle = initMessageElement.getAttribute("default-style");
     var rolloverStyle = initMessageElement.getAttribute("rollover-style");
     var pressedStyle = initMessageElement.getAttribute("pressed-style");
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         
-        if (defaultStyle) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
-        }
         if (rolloverStyle) {
             EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
         }
@@ -283,14 +279,14 @@ EchoButton.setState = function(buttonElement, newState) {
         newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "pressedIcon");
         break;
     default:
-        newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultStyle");
         newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultIcon");
     }
     if (newIcon) {
         EchoButton.setIcon(buttonElement.id, newIcon);
     }
+    EchoCssUtil.restoreOriginalStyle(buttonElement);
     if (newStyle) {
-        EchoCssUtil.applyStyle(buttonElement, newStyle);
+        EchoCssUtil.applyTemporaryStyle(buttonElement, newStyle);
     }
     EchoButton.ieRepaint(buttonElement);
 };

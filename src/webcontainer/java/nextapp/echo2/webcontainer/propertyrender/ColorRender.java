@@ -57,16 +57,6 @@ public class ColorRender {
             cssStyle.setAttribute("background-color", renderCssAttributeValue(background));
         }
     }
-
-    //BUGBUG. Unknown if we want to keep this one or not.
-    public static void renderToStyle(CssStyle cssStyle, Color foreground, Color background, boolean renderNull) {
-        if (renderNull || foreground != null) {
-            cssStyle.setAttribute("color", renderCssAttributeValue(foreground));
-        }
-        if (renderNull || background != null) {
-            cssStyle.setAttribute("background-color", renderCssAttributeValue(background));
-        }
-    }
     
     /**
      * Renders the foreground and background <code>Color</code> properties 

@@ -84,8 +84,6 @@ import org.w3c.dom.Text;
  */
 public class AbstractButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
-    
-    //BUGBUG. support rollover and pressed properties where default property value is null (currently renders wrong).
 
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Alignment DEFAULT_STATE_POSITION = new Alignment(Alignment.LEADING, Alignment.DEFAULT);
@@ -99,7 +97,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final ImageReference DEFAULT_SELECTED_RADIOBUTTON_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOn.gif");
     
-    private static final String[] BUTTON_INIT_KEYS = new String[]{"default-style", "rollover-style", "pressed-style"};
+    private static final String[] BUTTON_INIT_KEYS = new String[]{"rollover-style", "pressed-style"};
     
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_ICON = "icon";
@@ -523,7 +521,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 Boolean.FALSE)).booleanValue();
         
         String pressedStyle = "";
-        String defaultStyle = "";
         String rolloverStyle = "";
         
         String defaultIconUri = null;
@@ -532,16 +529,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         
         if (rolloverEnabled || pressedEnabled) {
             boolean hasIcon = button.getRenderProperty(AbstractButton.PROPERTY_ICON) != null;
-            CssStyle defaultCssStyle = new CssStyle();
-            BorderRender.renderToStyle(defaultCssStyle, (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER));
-            ColorRender.renderToStyle(defaultCssStyle, (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND), 
-                    (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND), true);
-            FontRender.renderToStyle(defaultCssStyle, (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT));
-            FillImageRender.renderToStyle(defaultCssStyle, rc, this, button, IMAGE_ID_BACKGROUND,
-                    (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE), 
-                    FillImageRender.FLAG_DISABLE_FIXED_MODE);
-            defaultStyle = defaultCssStyle.renderInline();
-
             if (hasIcon) {
                 defaultIconUri = ImageTools.getUri(rc, this, button, IMAGE_ID_ICON);
             }
@@ -598,7 +585,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoButton.MessageProcessor", "init",  BUTTON_INIT_KEYS, new String[]{defaultStyle, rolloverStyle, pressedStyle});
+                "EchoButton.MessageProcessor", "init",  BUTTON_INIT_KEYS, new String[]{rolloverStyle, pressedStyle});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (defaultIconUri != null) {
