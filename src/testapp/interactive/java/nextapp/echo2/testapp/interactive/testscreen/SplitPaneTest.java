@@ -284,13 +284,34 @@ public class SplitPaneTest extends SplitPane {
                 testPane.setSeparatorPosition(new Extent(300));
             }
         });
-        controlsColumn.addButton("Swap Orientation", new ActionListener() {
+        controlsColumn.addButton("Set Orientation = Leading/Trailing", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (testPane.getOrienation() == SplitPane.ORIENTATION_VERTICAL) {
-                    testPane.setOrientation(SplitPane.ORIENTATION_HORIZONTAL);
-                } else {
-                    testPane.setOrientation(SplitPane.ORIENTATION_VERTICAL);
-                }
+                testPane.setOrientation(SplitPane.ORIENTATION_HORIZONTAL_LEADING_TRAILING);
+            }
+        });
+        controlsColumn.addButton("Set Orientation = Trailing/Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setOrientation(SplitPane.ORIENTATION_HORIZONTAL_TRAILING_LEADING);
+            }
+        });
+        controlsColumn.addButton("Set Orientation = Left/Right", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setOrientation(SplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT);
+            }
+        });
+        controlsColumn.addButton("Set Orientation = Right/Left", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setOrientation(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT);
+            }
+        });
+        controlsColumn.addButton("Set Orientation = Top/Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setOrientation(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
+            }
+        });
+        controlsColumn.addButton("Set Orientation = Bottom/Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testPane.setOrientation(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP);
             }
         });
         controlsColumn.addButton("Disable Resize", new ActionListener() {

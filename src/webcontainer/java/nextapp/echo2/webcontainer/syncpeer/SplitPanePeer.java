@@ -228,6 +228,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      * Determines if the orientation of a <code>SplitPane</code> is horizontal
      * or vertical.
      * 
+     * @param splitPane the <code>SplitPane</code> to analyze
      * @return true if the orientation is vertical, false if it is horizontal
      */
     private boolean isOrientationVertical(SplitPane splitPane) {
@@ -237,9 +238,35 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
                 orientation == SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
     }
 
-    private int getFirstPaneNumber(SplitPane splitPane) {
-        return (ExtentRender.toPixels((Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION), 100) < 0)
-                ? 1 : 0;
+    /**
+     * Determines the number of the pane which should be rendered in the 
+     * top of left position.  This method will transform leading/trailing
+     * values based on the rendered layout direction of the 
+     * <code>SplitPane</code>.
+     * 
+     * @param splitPane the <code>SplitPane</code> to analyze
+     * @return the number  of the pane which should be rendered in the 
+     *         top of left position
+     */
+    private int getTopLeftPaneNumber(SplitPane splitPane) {
+        Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
+        int orientation = orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL : orientationValue.intValue();
+        switch (orientation) {
+        case SplitPane.ORIENTATION_HORIZONTAL_LEADING_TRAILING:
+            return splitPane.getRenderLayoutDirection().isLeftToRight() ? 0 : 1;
+        case SplitPane.ORIENTATION_HORIZONTAL_TRAILING_LEADING:
+            return splitPane.getRenderLayoutDirection().isLeftToRight() ? 1 : 0;
+        case SplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
+            return 0;
+        case SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
+            return 1;
+        case SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
+            return 0;
+        case SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
+            return 1;
+        default:
+            throw new IllegalStateException("Invalid SplitPane orientation.");
+        }
     }
 
     /**
@@ -248,12 +275,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         if ("separatorPosition".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {
-            Extent oldValue = (Extent) component.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION);
             Extent newValue = ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)); 
-            if (oldValue != null && oldValue.getValue() < 0) {
-                // If sign of old value is negative, adjust sign of new value to be negative as well.
-                newValue = new Extent(0 - newValue.getValue(), newValue.getUnits()); 
-            }
             ci.getUpdateManager().addClientPropertyUpdate(component, SplitPane.PROPERTY_SEPARATOR_POSITION, newValue);
         }
     }
@@ -420,7 +442,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     private void renderInitDirective(RenderContext rc, SplitPane splitPane) {
         String elementId = ContainerInstance.getElementId(splitPane);
         ServerMessage serverMessage = rc.getServerMessage();
-        int fixedPaneNumber = getFirstPaneNumber(splitPane);
         Boolean booleanValue = (Boolean) splitPane.getRenderProperty(SplitPane.PROPERTY_RESIZABLE);
         boolean resizable = booleanValue == null ? false : booleanValue.booleanValue();
 
@@ -428,7 +449,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
                 "EchoSplitPane.MessageProcessor", "init", new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
-        itemElement.setAttribute("fixed-pane", Integer.toString(fixedPaneNumber));
+        itemElement.setAttribute("top-left-pane", Integer.toString(getTopLeftPaneNumber(splitPane)));
         if (resizable) {
             itemElement.setAttribute("resizable", resizable ? "true" : "false");
         }
@@ -446,8 +467,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      */
     private void renderPaneCssPositioning(RenderContext rc, SplitPane splitPane, int paneNumber, CssStyle paneDivCssStyle) {
         int separatorPosition = calculateSeparatorPosition(splitPane);
-        int fixedPaneNumber = getFirstPaneNumber(splitPane);
-        boolean renderingFixedPane = paneNumber == fixedPaneNumber;
+        int topLeftPaneNumber = getTopLeftPaneNumber(splitPane);
+        boolean renderingTopLeftPane = paneNumber == topLeftPaneNumber;
         boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
                 .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
         boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
@@ -456,14 +477,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
 
         if (isOrientationVertical(splitPane)) { // Vertical Orientation
             paneDivCssStyle.setAttribute("width", "100%");
-            if (renderingFixedPane) {
-                paneDivCssStyle.setAttribute(paneNumber == 0 ? "top" : "bottom", "0px");
+            if (paneNumber == 0) {
+                paneDivCssStyle.setAttribute(renderingTopLeftPane ? "top" : "bottom", "0px");
                 paneDivCssStyle.setAttribute("height", separatorPosition + "px");
             } else {
                 int separatorSize = calculateSeparatorSize(splitPane);
-                paneDivCssStyle.setAttribute(paneNumber == 0 ? "bottom" : "top", (separatorPosition + separatorSize) + "px");
+                paneDivCssStyle.setAttribute(renderingTopLeftPane ? "bottom" : "top", (separatorPosition + separatorSize) + "px");
                 if (renderPositioningBothSides) {
-                    paneDivCssStyle.setAttribute(paneNumber == 0 ? "top" : "bottom", "0px");
+                    paneDivCssStyle.setAttribute(renderingTopLeftPane ? "top" : "bottom", "0px");
                 }
                 if (renderSizeExpression) {
                     renderCssPositionExpression(paneDivCssStyle, elementId, separatorPosition + separatorSize, true);
@@ -471,14 +492,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             }
         } else { // Horizontal Orientation
             paneDivCssStyle.setAttribute("height", "100%");
-            if (renderingFixedPane) {
-                paneDivCssStyle.setAttribute(paneNumber == 0 ? "left" : "right", "0px");
+            if (paneNumber == 0) {
+                paneDivCssStyle.setAttribute(renderingTopLeftPane ? "left" : "right", "0px");
                 paneDivCssStyle.setAttribute("width", separatorPosition + "px");
             } else {
                 int separatorSize = calculateSeparatorSize(splitPane);
-                paneDivCssStyle.setAttribute(paneNumber == 0 ? "right" : "left", (separatorPosition + separatorSize) + "px");
+                paneDivCssStyle.setAttribute(renderingTopLeftPane ? "right" : "left", (separatorPosition + separatorSize) + "px");
                 if (renderPositioningBothSides) {
-                    paneDivCssStyle.setAttribute(paneNumber == 0 ? "left" : "right", "0px");
+                    paneDivCssStyle.setAttribute(renderingTopLeftPane ? "left" : "right", "0px");
                 }
                 if (renderSizeExpression) {
                     renderCssPositionExpression(paneDivCssStyle, elementId, separatorPosition + separatorSize, false);
@@ -576,7 +597,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         Element separatorDivElement = document.createElement("div");
         separatorDivElement.setAttribute("id", separatorElementId);
         int separatorPosition = calculateSeparatorPosition(splitPane);
-        int fixedPaneNumber = getFirstPaneNumber(splitPane);
+        int fixedPaneNumber = getTopLeftPaneNumber(splitPane);
         
         CssStyle separatorDivCssStyle = new CssStyle();
         // font-size/line-height styles correct for IE minimum DIV height rendering issue.

@@ -137,7 +137,7 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     windowPane.setHeight(new Extent(300, Extent.PX));
-                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(-42));
+                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(42));
                     SplitPaneLayoutData splitPaneLayoutData;
                     
                     Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);

@@ -69,7 +69,7 @@ EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
         var elementId = item.getAttribute("eid");
         var resizable = item.getAttribute("resizable") == "true";
         
-        EchoDomPropertyStore.setPropertyValue(elementId, "fixedPane", item.getAttribute("fixed-pane"));
+        EchoDomPropertyStore.setPropertyValue(elementId, "topLeftPane", item.getAttribute("top-left-pane"));
         if (resizable) {
 	        EchoEventProcessor.addHandler(elementId + "_separator", "mousedown", "EchoSplitPane.mouseDown");
         }
@@ -90,7 +90,7 @@ EchoSplitPane.MessageProcessor.processUpdatePane = function(updatePaneMessageEle
 
 EchoSplitPane.DEFAULT_MINIMUM_SIZE = 80;
 EchoSplitPane.verticalDrag = false;
-EchoSplitPane.fixedPane = 0;
+EchoSplitPane.topLeftPane = 0;
 EchoSplitPane.initialWindowPosition = -1;
 EchoSplitPane.mouseOffset = -1;
 EchoSplitPane.activePaneId = null;
@@ -173,8 +173,8 @@ EchoSplitPane.mouseDown = function(echoEvent) {
             EchoSplitPane.separatorSize = parseInt(mouseDownElement.style.width);
         }
         EchoSplitPane.activePaneId = mouseDownElement.parentNode.getAttribute("id");
-        EchoSplitPane.fixedPane = EchoDomPropertyStore.getPropertyValue(
-                EchoSplitPane.activePaneId, "fixedPane") == "1" ? 1 : 0;
+        EchoSplitPane.topLeftPane = EchoDomPropertyStore.getPropertyValue(
+                EchoSplitPane.activePaneId, "topLeftPane") == "1" ? 1 : 0;
         EchoSplitPane.activePaneDiv = document.getElementById(EchoSplitPane.activePaneId);
         EchoSplitPane.activePane0Div = document.getElementById(EchoSplitPane.activePaneId + "_pane_0");
         EchoSplitPane.activePane0MinimumSize = parseInt(EchoDomPropertyStore.getPropertyValue(
@@ -201,14 +201,14 @@ EchoSplitPane.mouseDown = function(echoEvent) {
         }
         if (EchoSplitPane.verticalDrag) {
             EchoSplitPane.mouseOffset = echoEvent.clientY;
-            if (EchoSplitPane.fixedPane == 1) {
+            if (EchoSplitPane.topLeftPane == 1) {
                 EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.bottom);
             } else {
                 EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.top);
             }
         } else {
             EchoSplitPane.mouseOffset = echoEvent.clientX;
-            if (EchoSplitPane.fixedPane == 1) {
+            if (EchoSplitPane.topLeftPane == 1) {
                 EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.right);
             } else {
                 EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.left);
@@ -237,19 +237,19 @@ EchoSplitPane.mouseMove = function(e) {
     
     var newSeparatorBegin, newSeparatorEnd;
     if (EchoSplitPane.verticalDrag) {
-        if (EchoSplitPane.fixedPane == 1) {
+        if (EchoSplitPane.topLeftPane == 1) {
 	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
 	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
                     EchoSplitPane.activePaneDiv.clientHeight);
 	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
             EchoSplitPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
-            if (EchoSplitPane.activePane1Div) {
-                EchoSplitPane.activePane1Div.style.height = newSeparatorBegin + "px";
-            }
             if (EchoSplitPane.activePane0Div) {
-                EchoSplitPane.activePane0Div.style.bottom = newSeparatorEnd + "px";
-                if (EchoSplitPane.activePane0Div.style.setExpression) {
-                    EchoSplitPane.activePane0Div.style.setExpression("height", "(document.getElementById('" 
+                EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
+            }
+            if (EchoSplitPane.activePane1Div) {
+                EchoSplitPane.activePane1Div.style.bottom = newSeparatorEnd + "px";
+                if (EchoSplitPane.activePane1Div.style.setExpression) {
+                    EchoSplitPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
                             + EchoSplitPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
                 }
             }
@@ -271,19 +271,19 @@ EchoSplitPane.mouseMove = function(e) {
 	        }
         }
     } else {
-        if (EchoSplitPane.fixedPane == 1) {
+        if (EchoSplitPane.topLeftPane == 1) {
 	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
 	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
 	                EchoSplitPane.activePaneDiv.clientWidth);
 	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
             EchoSplitPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
-            if (EchoSplitPane.activePane1Div) {
-                EchoSplitPane.activePane1Div.style.width = newSeparatorBegin + "px";
-            }
             if (EchoSplitPane.activePane0Div) {
-                EchoSplitPane.activePane0Div.style.right = newSeparatorEnd + "px";
-                if (EchoSplitPane.activePane0Div.style.setExpression) {
-                    EchoSplitPane.activePane0Div.style.setExpression("width", "(document.getElementById('" 
+                EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
+            }
+            if (EchoSplitPane.activePane1Div) {
+                EchoSplitPane.activePane1Div.style.right = newSeparatorEnd + "px";
+                if (EchoSplitPane.activePane1Div.style.setExpression) {
+                    EchoSplitPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
                             + EchoSplitPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
                 }
             }
@@ -317,7 +317,7 @@ EchoSplitPane.mouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
     
     if (EchoSplitPane.verticalDrag) {
-	    if (EchoSplitPane.fixedPane == 1) {
+	    if (EchoSplitPane.topLeftPane == 1) {
 	        EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
 	                EchoSplitPane.activePaneSeparatorDiv.style.bottom);
 	    } else {
@@ -325,7 +325,7 @@ EchoSplitPane.mouseUp = function(e) {
 	                EchoSplitPane.activePaneSeparatorDiv.style.top);
 	    }
     } else {
-        if (EchoSplitPane.fixedPane == 1) {
+        if (EchoSplitPane.topLeftPane == 1) {
 	        EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
 	                EchoSplitPane.activePaneSeparatorDiv.style.right);
         } else {

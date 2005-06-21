@@ -1,5 +1,3 @@
-package nextapp.echo2.app;
-
 /* 
  * This file is part of the Echo Web Application Framework (hereinafter "Echo").
  * Copyright (C) 2002-2005 NextApp, Inc.
@@ -28,6 +26,8 @@ package nextapp.echo2.app;
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
+
+package nextapp.echo2.app;
 
 /**
  * A container which displays two components horizontally or vertically
@@ -161,6 +161,16 @@ public class SplitPane extends Component {
     }
     
     /**
+     * Returns the fill image of the pane separator that is displayed when the
+     * <code>SplitPane</code> has a horizontal orientation.
+     * 
+     * @return the image
+     */
+    public FillImage getHorizontalSeparatorImage() {
+        return (FillImage) getProperty(PROPERTY_HORIZONTAL_SEPARATOR_IMAGE);
+    }
+    
+    /**
      * Returns the orientation of the <code>SplitPane</code>.
      * 
      * @return a constant representing the orientation, one of the following 
@@ -179,16 +189,6 @@ public class SplitPane extends Component {
     public int getOrienation() {
         Integer orientation = (Integer) getProperty(PROPERTY_ORIENTATION); 
         return orientation == null ? ORIENTATION_VERTICAL : orientation.intValue();
-    }
-    
-    /**
-     * Returns the fill image of the pane separator that is displayed when the
-     * <code>SplitPane</code> has a horizontal orientation.
-     * 
-     * @return the image
-     */
-    public FillImage getHorizontalSeparatorImage() {
-        return (FillImage) getProperty(PROPERTY_HORIZONTAL_SEPARATOR_IMAGE);
     }
     
     /**
@@ -337,19 +337,12 @@ public class SplitPane extends Component {
      */
     public void setSeparatorPosition(Extent newValue) {
         Extent.validate(newValue, Extent.PX);
+        if (newValue != null && newValue.getValue() < 0) {
+            throw new IllegalArgumentException("Extent value may not be negative.");
+        }
         setProperty(PROPERTY_SEPARATOR_POSITION, newValue);
     }
     
-    /**
-     * Sets the fill image of the pane separator that is displayed when the
-     * <code>SplitPane</code> has a vertical orientation.
-     * 
-     * @param newValue the new image
-     */
-    public void setVerticalSeparatorImage(FillImage newValue) {
-        setProperty(PROPERTY_VERTICAL_SEPARATOR_IMAGE, newValue);
-    }
-
     /**
      * Sets the width of the pane separator.  This value is only relevant
      * when the <code>SplitPane</code> has a horizontal orientation.
@@ -360,5 +353,16 @@ public class SplitPane extends Component {
     public void setSeparatorWidth(Extent newValue) {
         Extent.validate(newValue, Extent.PX);
         setProperty(PROPERTY_SEPARATOR_WIDTH, newValue);
+    }
+
+    //BUGBUG. change name.
+    /**
+     * Sets the fill image of the pane separator that is displayed when the
+     * <code>SplitPane</code> has a vertical orientation.
+     * 
+     * @param newValue the new image
+     */
+    public void setVerticalSeparatorImage(FillImage newValue) {
+        setProperty(PROPERTY_VERTICAL_SEPARATOR_IMAGE, newValue);
     }
 }
