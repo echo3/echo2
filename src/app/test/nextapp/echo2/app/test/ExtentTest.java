@@ -68,7 +68,16 @@ public class ExtentTest extends TestCase {
      * Test <code>Comparable</code> implementation.
      */
     public void testCompareTo() {
-        //BUGBUG. implement test.
+        assertTrue(_50_INCHES.compareTo(_50_INCHES) == 0);
+        assertTrue(_50_CENTIMETERS.compareTo(_50_INCHES) < 0);
+        assertTrue(_50_MILLIMETERS.compareTo(_50_INCHES) < 0);
+        assertTrue(_50_PICAS.compareTo(_50_INCHES) < 0);
+        assertTrue(_50_POINT.compareTo(_50_INCHES) < 0);
+        assertTrue(_50_INCHES.compareTo(_50_CENTIMETERS) == 0 - _50_CENTIMETERS.compareTo(_50_INCHES));
+        assertTrue(_50_POINT.compareTo(_50_INCHES) == 0 - _50_INCHES.compareTo(_50_POINT));
+        
+        assertTrue(_50_EX.compareTo(_50_PIXELS) != 0);
+        assertTrue(_50_EX.compareTo(_50_PIXELS) == 0 - _50_PIXELS.compareTo(_50_EX));
     }
 
     /**

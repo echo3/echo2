@@ -164,10 +164,13 @@ implements Comparable, Serializable {
      */
     public int compareTo(Object o) {
         Extent that = (Extent) o;
+        if (this.units == that.units) {
+            return this.value - that.value;
+        }
         if (this.isPrint() && that.isPrint()) {
             return this.toPoint() - that.toPoint();
         }
-        return 0;
+        return this.units - that.units;
     }
     
     /**
