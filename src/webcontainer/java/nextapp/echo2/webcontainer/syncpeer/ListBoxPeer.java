@@ -131,7 +131,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      */
     private boolean isDhtmlComponentRequired(RenderContext rc) {
         ClientProperties clientProperties = rc.getContainerInstance().getClientProperties();
-        return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_MULTIPLE_DOM_UPDATE);
+        return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE);
     }
 
     /**

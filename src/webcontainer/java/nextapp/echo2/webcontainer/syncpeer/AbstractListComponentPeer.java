@@ -50,6 +50,7 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -104,8 +105,13 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
     private CssStyle createListComponentCssStyle(RenderContext rc, AbstractListComponent listComponent) {
         CssStyle style = new CssStyle();
 
-        // Ensure defaults since proper rendering depends on reasonable values
         Extent width = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_WIDTH, DEFAULT_WIDTH);
+        if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH)
+                && width.getUnits() == Extent.PERCENT) {
+            // Render default width. 
+            width = null;
+        }
+        
         Extent height = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_HEIGHT);
         Insets insets = (Insets) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS, DEFAULT_INSETS);
 
