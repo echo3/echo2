@@ -50,6 +50,7 @@ public class TestConstants {
 
     public static final ImageReference ICON = new ResourceImageReference("/icon.jpg");
     public static final ImageReference ROLLOVER_ICON = new ResourceImageReference("/rollovericon.jpg");
+    public static final ImageReference PRESSED_ICON = new ResourceImageReference("/pressedicon.jpg");
     
     public static final Insets INSETS_SIMPLE = new Insets(new Extent(10, Extent.PX));
     public static final Insets INSETS_1234 = new Insets(new Extent(1, Extent.PX), new Extent(2, Extent.PX), 

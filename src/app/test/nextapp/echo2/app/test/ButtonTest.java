@@ -182,6 +182,7 @@ public class ButtonTest extends TestCase {
      */
     public void testProperties() {
         Button button = new Button();
+
         button.setRolloverBackground(Color.RED);
         button.setRolloverForeground(Color.BLUE);
         button.setRolloverFont(TestConstants.MONOSPACE_12);
@@ -190,10 +191,23 @@ public class ButtonTest extends TestCase {
         assertEquals(Color.BLUE, button.getRolloverForeground());
         assertEquals(TestConstants.MONOSPACE_12, button.getRolloverFont());
 
+        button.setPressedBackground(Color.GREEN);
+        button.setPressedForeground(Color.YELLOW);
+        button.setPressedFont(TestConstants.TIMES_72);
+        
+        assertEquals(Color.GREEN, button.getPressedBackground());
+        assertEquals(Color.YELLOW, button.getPressedForeground());
+        assertEquals(TestConstants.TIMES_72, button.getPressedFont());
+
         button.setRolloverEnabled(true);
         assertTrue(button.isRolloverEnabled());
         button.setRolloverEnabled(false);
         assertFalse(button.isRolloverEnabled());
+
+        button.setPressedEnabled(true);
+        assertTrue(button.isPressedEnabled());
+        button.setPressedEnabled(false);
+        assertFalse(button.isPressedEnabled());
         
         button.setText("Alpha");
         assertEquals("Alpha", button.getText());
@@ -203,6 +217,9 @@ public class ButtonTest extends TestCase {
         
         button.setRolloverIcon(TestConstants.ROLLOVER_ICON);
         assertEquals(TestConstants.ROLLOVER_ICON, button.getRolloverIcon());
+        
+        button.setPressedIcon(TestConstants.PRESSED_ICON);
+        assertEquals(TestConstants.PRESSED_ICON, button.getPressedIcon());
 
         button.setBorder(TestConstants.BORDER_THIN_YELLOW);
         assertEquals(TestConstants.BORDER_THIN_YELLOW, button.getBorder());
@@ -210,7 +227,5 @@ public class ButtonTest extends TestCase {
         button.setRolloverBorder(TestConstants.BORDER_THICK_ORANGE);
         assertEquals(TestConstants.BORDER_THICK_ORANGE, button.getRolloverBorder());
         assertEquals(TestConstants.BORDER_THIN_YELLOW, button.getBorder());
-        
-        //BUGBUG. tests for pressed effects.
     }
 }
