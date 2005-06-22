@@ -57,6 +57,9 @@ implements Runnable {
         // Ghost test is also protected using other means, but no reason to bother with it.
         blacklist.add("Push (Ghost Test)");
         
+        // Exception test deliberately throws exceptions...not what we're looking for.
+        blacklist.add("Exception");
+        
         // Delay test skews ghost-test based performance test results.
         blacklist.add("Delay");
         
