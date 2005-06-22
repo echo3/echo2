@@ -41,8 +41,6 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.button.AbstractButton;
-import nextapp.echo2.webcontainer.ContainerContext;
-
 /**
  * Note to developers who might use this class as an example:
  * Don't.  This is a *very unusual* use of asynchronous tasks.
@@ -78,12 +76,7 @@ implements Runnable {
         BUTTON_BLACKLIST = Collections.unmodifiableSet(blacklist);
     }
     
-    static void start(InteractiveApp app, int taskQueueInterval, long runTime) {
-        TaskQueueHandle taskQueue = app.createTaskQueue();
-        ContainerContext containerContext = 
-                (ContainerContext) app.getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-        containerContext.setTaskQueueCallbackInterval(taskQueue, taskQueueInterval);
-        app.ghostTestRunning = true;
+    static void start(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
         app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, runTime));
     }
     
@@ -102,7 +95,7 @@ implements Runnable {
         }
     }
     
-    public void clickRandomButton() {
+    private void clickRandomButton() {
         Window window = ApplicationInstance.getActive().getDefaultWindow();
         List buttonList = new ArrayList();
         findButtons(buttonList, window);
@@ -110,7 +103,7 @@ implements Runnable {
         button.doAction();
     }
     
-    public void findButtons(Collection foundButtons, Component component) {
+    private void findButtons(Collection foundButtons, Component component) {
         if (component instanceof AbstractButton && !BUTTON_BLACKLIST.contains(((AbstractButton) component).getText())) {
             foundButtons.add(component);
         }
@@ -129,8 +122,7 @@ implements Runnable {
             app.enqueueTask(taskQueue, this);
         } else {
             // Test complete.
-            app.ghostTestRunning = false;
-            app.removeTaskQueue(taskQueue);
+            app.stopGhostTest();
         }
     }
 }

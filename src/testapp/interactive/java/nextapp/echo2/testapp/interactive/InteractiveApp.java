@@ -30,6 +30,7 @@
 package nextapp.echo2.testapp.interactive;
 
 import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.webcontainer.ContainerContext;
@@ -64,15 +65,13 @@ public class InteractiveApp extends ApplicationInstance {
         LIVE_DEMO_SERVER = liveDemoServer;
     }
     
-    // BUGBUG. This needs to be done more cleanly...e.g., have the app itself start/stop/manage the ghost test.
-    boolean ghostTestRunning = false;
-    
     public static final String ACTION_WINDOW_PANE_TEST = "windowPaneTest";
     
     public static InteractiveApp getApp() {
         return (InteractiveApp) ApplicationInstance.getActive();
     }
 
+    private TaskQueueHandle ghostTaskQueue;
     private Window mainWindow;
     private ConsoleWindowPane console;
     
@@ -125,9 +124,18 @@ public class InteractiveApp extends ApplicationInstance {
     }
     
     public void startGhostTask(int interval, long runTime) {
-        if (ghostTestRunning) {
+        if (ghostTaskQueue != null) {
             return;
         }
-        GhostTask.start(this, interval, runTime);
+        ghostTaskQueue = createTaskQueue();
+        ContainerContext containerContext = 
+                (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        containerContext.setTaskQueueCallbackInterval(ghostTaskQueue, interval);
+        GhostTask.start(this, ghostTaskQueue, runTime);
+    }
+    
+    public void stopGhostTest() {
+        removeTaskQueue(ghostTaskQueue);
+        ghostTaskQueue = null;
     }
 }
