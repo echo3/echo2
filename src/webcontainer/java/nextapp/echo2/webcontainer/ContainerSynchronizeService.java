@@ -224,6 +224,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
             RootSynchronizePeer rootSyncPeer 
                     = (RootSynchronizePeer) SynchronizePeerFactory.getPeerForComponent(window.getClass());
             rootSyncPeer.renderRefresh(rc, fullRefreshUpdate, window);
+            
+            setRootLayoutDirection(rc);
         } else {
             
             // Set of Components whose HTML was entirely re-rendered, negating the need
@@ -292,6 +294,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);
             setAsynchronousMonitorInterval(rc);
+            setRootLayoutDirection(rc);
             return serverMessage;
         } finally {
             ApplicationInstance.setActive(null);
@@ -374,5 +377,17 @@ public class ContainerSynchronizeService extends SynchronizeService {
         } else {
             rc.getServerMessage().setModalContextRootId(ContainerInstance.getElementId(modalContextRoot));
         }
+    }
+    
+    /**
+     * Update the <code>ServerMessage</code> to describe the current root
+     * layout direction
+     * 
+     * @param rc the relevant <code>RenderContext</code>.
+     */
+    private void setRootLayoutDirection(RenderContext rc) {
+        ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+        rc.getServerMessage().setRootLayoutDirection(applicationInstance.getLayoutDirection().isLeftToRight()
+                ? ServerMessage.LEFT_TO_RIGHT : ServerMessage.RIGHT_TO_LEFT);
     }
 }

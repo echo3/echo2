@@ -310,8 +310,8 @@ implements Serializable {
     
     /**
      * Processes an update to a property of a component (other than the
+     * <code>LayoutData</code> property).
      * Creates/updates a <code>ServerComponentUpdate</code> if required.
-     * <code>LayoutData</code> property.
      * 
      * @param updatedComponent the component whose property(ies) changed.
      * @param propertyName the name of the changed property

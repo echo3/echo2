@@ -51,6 +51,9 @@ import nextapp.echo2.webrender.output.XmlDocument;
  * of the server.
  */
 public class ServerMessage extends XmlDocument {
+    
+    public static final int LEFT_TO_RIGHT = 0;
+    public static final int RIGHT_TO_LEFT = 1;
 
     /**
      * A hash table associating <code>ItemizedDirectiveLookupKey</code> s to
@@ -345,6 +348,21 @@ public class ServerMessage extends XmlDocument {
         }
         return element;
     }
+    
+    /**
+     * Sets the interval between asynchronous requests to the server to check
+     * for server-pushed updates.
+     * 
+     * @param newValue the new interval in milleseconds (a negative value will
+     *        disable asynchronous requests)
+     */
+    public void setAsynchronousMonitorInterval(int newValue) {
+        if (newValue < 0) {
+            serverMessageElement.setAttribute("async-interval", "disable");
+        } else {
+            serverMessageElement.setAttribute("async-interval", Integer.toString(newValue));
+        }
+    }
 
     /**
      * Sets the element id of the root of the modal context. Only elements
@@ -363,17 +381,21 @@ public class ServerMessage extends XmlDocument {
     }
 
     /**
-     * Sets the interval between asynchronous requests to the server to check
-     * for server-pushed updates.
+     * Sets the root layout direction of the application, i.e., either
+     * <code>LEFT_TO_RIGHT</code> or <code>RIGHT_TO_LEFT</code>.
      * 
-     * @param newValue the new interval in milleseconds (a negative value will
-     *        disable asynchronous requests)
+     * @param layoutDirection the new layout direction
      */
-    public void setAsynchronousMonitorInterval(int newValue) {
-        if (newValue < 0) {
-            serverMessageElement.setAttribute("async-interval", "disable");
-        } else {
-            serverMessageElement.setAttribute("async-interval", Integer.toString(newValue));
+    public void setRootLayoutDirection(int layoutDirection) {
+        switch (layoutDirection) {
+        case LEFT_TO_RIGHT:
+            serverMessageElement.setAttribute("root-layout-direction", "ltr");
+            break;
+        case RIGHT_TO_LEFT:
+            serverMessageElement.setAttribute("root-layout-direction", "rtl");
+            break;
+        default:
+            throw new IllegalArgumentException("Illegal layout direction.");
         }
     }
 }

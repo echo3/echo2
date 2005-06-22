@@ -118,11 +118,6 @@ implements RootSynchronizePeer {
             ComponentSynchronizePeer childSyncPeer = SynchronizePeerFactory.getPeerForComponent(addedChildren[i].getClass());
             childSyncPeer.renderAdd(rc, update, elementId, addedChildren[i]);
         }
-        
-        //BUGBUG. This is not the appropriate place for this, and will not set it will not be initially
-        // set if we start off in an RTL language.
-        rc.getServerMessage().getDocument().getDocumentElement().setAttribute("root-layout-direction",
-                window.getApplicationInstance().getLayoutDirection().isLeftToRight() ? "ltr" : "rtl");
     }
 
     /**
