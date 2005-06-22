@@ -51,6 +51,9 @@ import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
+import nextapp.echo2.webcontainer.partialupdate.BorderUpdate;
+import nextapp.echo2.webcontainer.partialupdate.ColorUpdate;
+import nextapp.echo2.webcontainer.partialupdate.InsetsUpdate;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -95,7 +98,14 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
      */
     public TextComponentPeer() {
         partialUpdateManager = new PartialUpdateManager();
-        //BUGBUG. add property renderers to registry.
+        partialUpdateManager.add(TextComponent.PROPERTY_FOREGROUND,
+                new ColorUpdate(TextComponent.PROPERTY_FOREGROUND, null, ColorUpdate.CSS_COLOR));
+        partialUpdateManager.add(TextComponent.PROPERTY_BACKGROUND,
+                new ColorUpdate(TextComponent.PROPERTY_BACKGROUND, null, ColorUpdate.CSS_BACKGROUND_COLOR));
+        partialUpdateManager.add(TextComponent.PROPERTY_BORDER,
+                new BorderUpdate(TextComponent.PROPERTY_BORDER, null, BorderUpdate.CSS_BORDER));
+        partialUpdateManager.add(TextComponent.PROPERTY_INSETS,
+                new InsetsUpdate(TextComponent.PROPERTY_INSETS, null, InsetsUpdate.CSS_PADDING));
     }
 
     /**
