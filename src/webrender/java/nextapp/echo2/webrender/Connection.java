@@ -38,34 +38,38 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 /**
  * A representation of a connection to the server by the client, encapsulating
  * the servlet request and response objects, and providing access to the
  * relevant application instance.
+ * <code>Connection</code>s also manage the lifecycle of 
+ * <code>UserInstance</code>s within the <code>HttpSession</code>.
  */
 public class Connection {
-    
-    private static final String USER_INSTANCE_SESSION_KEY = "Echo2UserInstance";
-    
+
+    /**
+     * Prefix to use for user instance <code>HttpSession</code> keys.
+     */
+    private static final String USER_INSTANCE_SESSION_KEY_PREFIX = "Echo2UserInstance";
+
     private HttpServletRequest request;
     private HttpServletResponse response;
     private WebRenderServlet servlet;
     private UserInstance userInstance;
-    
+
     /**
      * Creates a <code>connection</code> object that will handle the given 
-     * request and response.  The InstancePeer will be pulled from the session 
+     * request and response.  The <code>UserInstance</code> will be acquired from the session 
      * if one exists.  A session will NOT be created if one does not exist.
      *
      * @param servlet the <code>WebRenderServlet</code> generating the connection
      * @param request the HTTP request object that was passed to the servlet
      * @param response the HTTP response object that was passed to the servlet
      */
-    Connection(WebRenderServlet servlet, HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException {
+    Connection(WebRenderServlet servlet, HttpServletRequest request, HttpServletResponse response) throws IOException,
+            ServletException {
         super();
-        
+
         this.servlet = servlet;
         this.request = request;
         this.response = response;
@@ -74,8 +78,7 @@ public class Connection {
         String contentType = request.getContentType();
         if (contentType != null && contentType.startsWith(ContentType.MULTIPART_FORM_DATA.getMimeType())) {
             if (WebRenderServlet.getMultipartRequestWrapper() == null) {
-                throw new WebRenderServletException(
-                        "MultipartRequestWrapper was never set and client made an HTTP request "
+                throw new WebRenderServletException("MultipartRequestWrapper was never set and client made an HTTP request "
                         + "encoded as multipart/form-data.");
             }
             this.request = WebRenderServlet.getMultipartRequestWrapper().getWrappedRequest(request);
@@ -83,10 +86,22 @@ public class Connection {
 
         HttpSession session = request.getSession(false);
         if (session != null) {
-            userInstance = (UserInstance) session.getAttribute(USER_INSTANCE_SESSION_KEY + ":" + servlet.getServletName());
+            userInstance = (UserInstance) session.getAttribute(getSessionKey());
         }
     }
-    
+
+    /**
+     * Disposes of the <code>UserInstance</code> associated with this 
+     * <code>Connection</code>.
+     */
+    void disposeUserInstance() {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            getUserInstance().setServletUri(null);
+            session.removeAttribute(getSessionKey());
+        }
+    }
+
     /**
      * Returns the <code>OutputStream</code> object that may be used to 
      * generate a response.  This method may be called once.  If it is called, 
@@ -104,7 +119,7 @@ public class Connection {
             throw new WebRenderServletException("Unable to get PrintWriter.", ex);
         }
     }
-    
+
     /**
      * Returns the <code>HttpServletRequest</code> wrapped by this 
      * <code>Connection</code>.
@@ -115,7 +130,7 @@ public class Connection {
     public HttpServletRequest getRequest() {
         return request;
     }
-    
+
     /**
      * Returns the <code>HttpServletResponse</code> wrapped by this 
      * <code>Connection</code>.
@@ -126,7 +141,17 @@ public class Connection {
     public HttpServletResponse getResponse() {
         return response;
     }
-    
+
+    /**
+     * Determines the <code>HttpSession</code> key value in which the
+     * associated <code>UserInstance</code> should be stored.
+     * 
+     * @return the <code>HttpSession</code> key
+     */
+    private String getSessionKey() {
+        return USER_INSTANCE_SESSION_KEY_PREFIX + ":" + servlet.getServletName();
+    }
+
     /**
      * Returns the <code>WebRenderServlet</code> wrapped by this 
      * <code>Connection</code>.
@@ -149,7 +174,7 @@ public class Connection {
     public UserInstance getUserInstance() {
         return userInstance;
     }
-    
+
     /**
      * Returns the <code>PrintWriter</code> object that may be used to 
      * generate a response.  This method may be called once.  If it is called, 
@@ -167,14 +192,21 @@ public class Connection {
             throw new WebRenderServletException("Unable to get PrintWriter.", ex);
         }
     }
-    
-    public void removeUserInstance() {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(USER_INSTANCE_SESSION_KEY + ":" + servlet.getServletName());
-        }
+
+    /**
+     * Initializes the state of a new <code>UserInstance</code> and associates
+     * it with this <code>Connection</code> and the underlying
+     * <code>HttpSession</code>
+     * 
+     * @param userInstance the <code>UserInstance</code>
+     */
+    void initUserInstance(UserInstance userInstance) {
+        this.userInstance = userInstance;
+        userInstance.setServletUri(request.getRequestURI());
+        HttpSession session = request.getSession(true);
+        session.setAttribute(getSessionKey(), userInstance);
     }
-    
+
     /**
      * Sets the content type of the response.
      * This method will automatically append a character encoding to
@@ -189,13 +221,5 @@ public class Connection {
         } else {
             response.setContentType(contentType.getMimeType() + "; charset=" + userInstance.getCharacterEncoding());
         }
-    }
-    
-    //BUGBUG. may not want these here.
-    public void setUserInstance(UserInstance userInstance) {
-        this.userInstance = userInstance;
-        userInstance.setApplicationUri(request.getRequestURI());
-        HttpSession session = request.getSession(true);
-        session.setAttribute(USER_INSTANCE_SESSION_KEY + ":" + servlet.getServletName(), userInstance);
     }
 }

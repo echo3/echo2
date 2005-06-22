@@ -30,69 +30,101 @@
 package nextapp.echo2.webrender;
 
 import java.io.Serializable;
-
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.http.HttpSessionEvent;
 
-//BUGBUG. Javadocs.
+/**
+ * An abstract base class representing a single user-instance of an application
+ * hosted in an application container.
+ */
+public abstract class UserInstance implements HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
 
-public abstract class UserInstance
-implements HttpSessionBindingListener, Serializable {
-    
-    private transient ServiceRegistry services = new ServiceRegistry();
-    private String applicationUri;
+    /**
+     * The URI of the servlet.
+     */
+    private String servletUri;
+
+    /**
+     * The default character encoding in which responses should be rendered.
+     */
     private String characterEncoding = "UTF-8";
+
+    /**
+     * A <code>ClientProperties</code> object describing the web browser
+     * client.
+     */
     private ClientProperties clientProperties;
+
+    /**
+     * Reference to the <code>HttpSession</code> in which this
+     * <code>UserInstance</code> is stored.
+     */
     private transient HttpSession session;
 
     /**
      * Creates a new <code>UserInstance</code>.
+     * 
+     * @param conn the client/server <code>Connection</code> for which the
+     *        instance is being instantiated
      */
-    public UserInstance() {
+    public UserInstance(Connection conn) {
         super();
+        conn.initUserInstance(this);
     }
-    
-    public String getApplicationUri() {
-        return applicationUri;
+
+    /**
+     * Returns the URI of the servlet managing this <code>UserInstance</code>.
+     * 
+     * @return the URI
+     */
+    public String getServletUri() {
+        return servletUri;
     }
-    
+
+    /**
+     * Returns the default character encoding in which responses should be
+     * rendered.
+     * 
+     * @return the default character encoding in which responses should be
+     *         rendered
+     */
     public String getCharacterEncoding() {
         return characterEncoding;
     }
 
     /**
-     * Retrieves the <code>ClientProperties</code> object providing information
-     * about the client of this instance.
+     * Retrieves the <code>ClientProperties</code> object providing
+     * information about the client of this instance.
      * 
      * @return the relevant <code>ClientProperties</code>
      */
     public ClientProperties getClientProperties() {
         return clientProperties;
     }
-    
+
     /**
-     * Returns the URI to invoke the specified <code>Service</code>
+     * Determines the URI to invoke the specified <code>Service</code>.
      * 
      * @param service the <code>Service</code>
      * @return the URI
      */
     public String getServiceUri(Service service) {
-        return applicationUri + "?serviceId=" + service.getId();
+        return servletUri + "?serviceId=" + service.getId();
     }
-    
+
     /**
-     * Returns the URI to invoke the specified <code>Service</code> with
-     * additional parameters.  
-     * The additional parameters are provided by way of the 
-     * <code>parameterNames</code> and <code>parameterValues</code> arrays.
-     * The value of a parameter at a specific index in the 
+     * Determines the URI to invoke the specified <code>Service</code> with
+     * additional request parameters. The additional parameters are provided by
+     * way of the <code>parameterNames</code> and <code>parameterValues</code>
+     * arrays. The value of a parameter at a specific index in the
      * <code>parameterNames</code> array is provided in the
-     * <code>parameterValues</code> array at the same index.  The arrays
-     * must be of equal length.
-     * Null values are allowed in the <code>parameterValues</code> array,
-     * and in such cases only the paramter name will be rendered in the
-     * returned URI.
+     * <code>parameterValues</code> array at the same index. The arrays must
+     * thus be of equal length. Null values are allowed in the
+     * <code>parameterValues</code> array, and in such cases only the paramter
+     * name will be rendered in the returned URI.
      * 
      * @param service the <code>Service</code>
      * @param parameterNames the names of the additional URI parameters
@@ -100,7 +132,7 @@ implements HttpSessionBindingListener, Serializable {
      * @return the URI
      */
     public String getServiceUri(Service service, String[] parameterNames, String[] parameterValues) {
-        StringBuffer out = new StringBuffer(applicationUri);
+        StringBuffer out = new StringBuffer(servletUri);
         out.append("?serviceId=");
         out.append(service.getId());
         for (int i = 0; i < parameterNames.length; ++i) {
@@ -113,54 +145,64 @@ implements HttpSessionBindingListener, Serializable {
         }
         return out.toString();
     }
-    
+
     /**
-     * Returns the <code>ServiceRegistry</code> that is used by this instance
-     * to hold all <code>Service</code> objects available to it.
-     *
-     * @return This instance's <code>ServiceRegistry</code>.
-     */
-    public ServiceRegistry getServiceRegistry() {
-        return services;
-    }
-    
-    /**
-     * Returns the <code>HttpSession</code> containing this <code>UserInstance</code>.
+     * Returns the <code>HttpSession</code> containing this
+     * <code>UserInstance</code>.
      * 
      * @return the <code>HttpSession</code>
      */
     public HttpSession getSession() {
         return session;
     }
-    
-    public void setApplicationUri(String applicationUri) {
-        this.applicationUri = applicationUri;
-    }
-    
+
     /**
-     * Stores the <code>ClientProperties</code> object that provides 
+     * @see javax.servlet.http.HttpSessionActivationListener#sessionDidActivate(javax.servlet.http.HttpSessionEvent)
+     */
+    public void sessionDidActivate(HttpSessionEvent e) {
+        session = e.getSession();
+    }
+
+    /**
+     * @see javax.servlet.http.HttpSessionActivationListener#sessionWillPassivate(javax.servlet.http.HttpSessionEvent)
+     */
+    public void sessionWillPassivate(HttpSessionEvent e) {
+        session = null;
+    }
+
+    /**
+     * Sets the URI of the servlet managing this <code>UserInstance</code>.
+     * 
+     * @param servletUri the URI
+     */
+    void setServletUri(String servletUri) {
+        this.servletUri = servletUri;
+    }
+
+    /**
+     * Stores the <code>ClientProperties</code> object that provides
      * information about the client of this instance.
      * 
      * @param clientProperties the relevant <code>ClientProperties</code>
      */
-    public void setClientProperties(ClientProperties clientProperties) {
+    void setClientProperties(ClientProperties clientProperties) {
         this.clientProperties = clientProperties;
     }
-    
+
     /**
      * Listener implementation of <code>HttpSessionBindingListener</code>.
      * Stores reference to session when invoked.
-     *
+     * 
      * @see javax.servlet.http.HttpSessionBindingListener#valueBound(HttpSessionBindingEvent)
      */
     public void valueBound(HttpSessionBindingEvent e) {
-        session = (HttpSession) e.getSource();
+        session = e.getSession();
     }
-    
+
     /**
      * Listener implementation of <code>HttpSessionBindingListener</code>.
      * Removes reference to session when invoked.
-     *
+     * 
      * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(HttpSessionBindingEvent)
      */
     public void valueUnbound(HttpSessionBindingEvent e) {

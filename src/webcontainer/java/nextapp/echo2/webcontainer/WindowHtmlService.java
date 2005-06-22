@@ -73,7 +73,6 @@ implements Service {
         ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
         ApplicationInstance app = ci.getApplicationInstance();
         
-        //BUGBUG. Currently grabs default window.
         Window window = app.getDefaultWindow();
         conn.setContentType(ContentType.TEXT_HTML);
         BaseHtmlDocument baseDoc = new BaseHtmlDocument(ContainerInstance.getElementId(window));
@@ -82,7 +81,7 @@ implements Service {
         
         baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.CLIENT_ENGINE));
         
-        baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getApplicationUri() + "');");
+        baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getServletUri() + "');");
         
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("position", "absolute");

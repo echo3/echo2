@@ -67,6 +67,9 @@ public class ContainerInstance extends UserInstance {
      * Creates a new Web Application Container instance using the provided
      * client <code>Connection</code>.  The instance will automatically
      * be stored in the relevant <code>HttpSession</code>
+     * 
+     * @param conn the client/server <code>Connection</code> for which the 
+     *        instance is being instantiated
      */
     public static void newInstance(Connection conn) {
         new ContainerInstance(conn);
@@ -81,15 +84,15 @@ public class ContainerInstance extends UserInstance {
     /**
      * Creates a new <code>ContainerInstance</code>.
      * 
+     * @param conn the client/server <code>Connection</code> for which the 
+     *        instance is being instantiated
      * @see #newInstance(nextapp.echo2.webrender.Connection)
      */
     private ContainerInstance(Connection conn) {
+        super(conn);
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
         applicationInstance = servlet.newApplicationInstance();
-        
         initialParameterMap = new HashMap(conn.getRequest().getParameterMap());
-        
-        conn.setUserInstance(this);
         
         applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
                 new ContainerContextImpl(this));

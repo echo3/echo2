@@ -172,9 +172,6 @@ public abstract class WebRenderServlet extends HttpServlet {
         }
         
         service = services.get(id);
-        if (service == null && userInstance != null) {
-            service = userInstance.getServiceRegistry().get(id);
-        }
 
         if (service == null) {
             if (SERVICE_ID_DEFAULT.equals(id)) {
@@ -229,17 +226,17 @@ public abstract class WebRenderServlet extends HttpServlet {
             service.service(conn);
         } catch (ServletException ex) {
             if (conn != null) {
-                conn.removeUserInstance();
+                conn.disposeUserInstance();
             }
             throw(ex);
         } catch (IOException ex) {
             if (conn != null) {
-                conn.removeUserInstance();
+                conn.disposeUserInstance();
             }
             throw(ex);
         } catch (RuntimeException ex) {
             if (conn != null) {
-                conn.removeUserInstance();
+                conn.disposeUserInstance();
             }
             throw(ex);
         }
