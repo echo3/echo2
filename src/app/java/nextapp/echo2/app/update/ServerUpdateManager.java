@@ -85,6 +85,7 @@ implements Serializable {
     };
 
     private Map componentUpdateMap = new HashMap();
+    private Map applicationUpdateMap = new HashMap();
     private ArrayList commands = new ArrayList();
     private ServerComponentUpdate fullRefreshUpdate = null;
     private ClientUpdateManager clientUpdateManager;
@@ -215,6 +216,20 @@ implements Serializable {
     }
     
     /**
+     * Processes an update to a property of the <code>ApplicationInstance</code>.
+     * 
+     * @param propertyName the name of the property
+     * @param oldValue the previous value of the property
+     * @param newValue the current value of the property
+     */
+    public void processApplicationPropertyUpdate(String propertyName, Object oldValue, Object newValue) {
+        if (isFullRefreshRequired()) {
+            return;
+        }
+        applicationUpdateMap.put(propertyName, new PropertyUpdate(oldValue, newValue)); 
+    }
+    
+    /**
      * Processes the addition of a component to the hierarchy.
      * Creates/updates a <code>ServerComponentUpdate</code> if required.
      * 
@@ -291,7 +306,7 @@ implements Serializable {
      * @param updatedComponent a component which currently exists in the 
      *        hierarchy whose <code>LayoutData</code> has changed
      */
-    public void processLayoutDataUpdate(Component updatedComponent) {
+    public void processComponentLayoutDataUpdate(Component updatedComponent) {
         if (isFullRefreshRequired()) {
             return;
         }
@@ -318,7 +333,7 @@ implements Serializable {
      * @param oldValue The previous value of the property
      * @param newValue The new value of the property
      */
-    public void processPropertyUpdate(Component updatedComponent, String propertyName, Object oldValue, Object newValue) {
+    public void processComponentPropertyUpdate(Component updatedComponent, String propertyName, Object oldValue, Object newValue) {
         if (isFullRefreshRequired()) {
             return;
         }
@@ -332,7 +347,7 @@ implements Serializable {
         // Do not add update (and if necessary cancel any update) if the property is being updated
         // as the result of input from the client (and thus client and server state of property are
         // already synchronized).
-        ClientComponentUpdate clientComponentUpdate = clientUpdateManager.getUpdate(updatedComponent);
+        ClientComponentUpdate clientComponentUpdate = clientUpdateManager.getComponentUpdate(updatedComponent);
         if (clientComponentUpdate != null) {
             if (clientComponentUpdate.hasInput(propertyName)) {
                 Object inputValue = clientComponentUpdate.getInputValue(propertyName);
@@ -357,7 +372,7 @@ implements Serializable {
      * @param updatedComponent a component which currently exists in the 
      *        hierarchy whose visible state has changed.
      */
-    public void processVisibleUpdate(Component updatedComponent) {
+    public void processComponentVisibilityUpdate(Component updatedComponent) {
         Component parentComponent = updatedComponent.getParent();
         if (updatedComponent.isVisible()) {
             processComponentAdd(parentComponent, updatedComponent);
@@ -371,7 +386,8 @@ implements Serializable {
      * resetting its state to zero.  This method is invoked by the
      * container once it has retrieved and processed all available updates.
      */
-    public void purge() {
+    void purge() {
+        applicationUpdateMap.clear();
         componentUpdateMap.clear();
         commands.clear();
         fullRefreshUpdate = null;

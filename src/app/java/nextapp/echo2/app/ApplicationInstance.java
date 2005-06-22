@@ -492,14 +492,14 @@ implements Serializable {
                 serverUpdateManager.processComponentAdd(parent, (Component) newValue);
             }
         } else if (Component.PROPERTY_LAYOUT_DATA.equals(propertyName)) {
-            serverUpdateManager.processLayoutDataUpdate(parent);
+            serverUpdateManager.processComponentLayoutDataUpdate(parent);
         } else if (Component.VISIBLE_CHANGED_PROPERTY.equals(propertyName)) {
-            serverUpdateManager.processVisibleUpdate(parent);
+            serverUpdateManager.processComponentVisibilityUpdate(parent);
         } else {
             if (parent instanceof ModalSupport && ModalSupport.MODAL_CHANGED_PROPERTY.equals(propertyName)) {
                 setModal(parent, ((Boolean) newValue).booleanValue());
             }
-            serverUpdateManager.processPropertyUpdate(parent, propertyName, oldValue, newValue);
+            serverUpdateManager.processComponentPropertyUpdate(parent, propertyName, oldValue, newValue);
         }
     }
     

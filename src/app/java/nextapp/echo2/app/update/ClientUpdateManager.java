@@ -70,8 +70,19 @@ implements Serializable {
      * @param component the <code>Component</code>
      * @return the representing <code>ClientComponentUpdate</code>
      */
-    public ClientComponentUpdate getUpdate(Component component) {
+    ClientComponentUpdate getComponentUpdate(Component component) {
         return (ClientComponentUpdate) clientComponentUpdateMap.get(component); 
+    }
+
+    /**
+     * Retrieves the value of the application-level property update with the
+     * specified name.
+     * 
+     * @param propertyName the name of the property update
+     * @return the value of the property update, or null if none exists
+     */
+    Object getApplicationUpdatePropertyValue(String propertyName) {
+        return applicationUpdateMap.get(propertyName);
     }
     
     /**
@@ -109,7 +120,7 @@ implements Serializable {
     /**
      * Purges all updates from the <code>ClientUpdateManager</code>.
      */
-    public void purge() {
+    void purge() {
         clientComponentUpdateMap.clear();
         applicationUpdateMap.clear();
         actionComponent = null;
