@@ -53,6 +53,7 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.list.DefaultListModel;
+import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.webcontainer.ContainerContext;
 import nextapp.echo2.webrender.UserInstance;
 
@@ -124,6 +125,10 @@ public class SerialApp extends ApplicationInstance {
      * @see nextapp.echo2.app.ApplicationInstance#init()
      */
     public Window init() {
+        if (InteractiveApp.LIVE_DEMO_SERVER) {
+            throw new RuntimeException("Serialization test disabled on live demo server.");
+        }
+        
         mainWindow = new Window();
         mainWindow.setTitle("NextApp Echo2 Serialization Test Application");
         

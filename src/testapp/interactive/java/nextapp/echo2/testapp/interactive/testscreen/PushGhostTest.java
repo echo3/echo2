@@ -68,7 +68,7 @@ public class PushGhostTest extends Column {
             add(label);
         }
         
-        Button oneMinuteStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 100ms)");
+        Button oneMinuteStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 500ms)");
         oneMinuteStartButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
         oneMinuteStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
