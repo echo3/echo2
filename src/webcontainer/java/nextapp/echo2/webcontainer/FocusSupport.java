@@ -26,41 +26,22 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-
 package nextapp.echo2.webcontainer;
 
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.update.ServerComponentUpdate;
-
-import org.w3c.dom.Node;
 
 /**
- * An optional interface which may be implemented by 
- * <code>ComponentSynchronizePeer</code>s that support rendering directly
- * to HTML.
+ * An optional interface which may be implemented by
+ * <code>ComponentSynchronizePeer</code>s to support receiving input focus
  */
-public interface DomUpdateSupport {
+public interface FocusSupport {
 
     /**
-     * Renders the component in its entirity as a child of the provided 
-     * parent <code>Element</code>.  The implementation should additionally
-     * render any child components, either by invoking their 
-     * <code>renderHtml()</code> methods if their peers also implement
-     * <code>DomUpdateSupport</code> or by invoking their 
-     * <code>ComponentSynchronizePeer.renderAdd()</code> methods if they do
-     * not.
-     * <p>
-     * The implementation must also perform any non-HTML-rendering operations
-     * which are performed in the <code>ComponentSynchronizePeer.renderAdd()</code>
-     * method, e.g., adding messageparts that register event listeners on
-     * the client.
+     * Renders a directive to set the client input focus to the specified
+     * component.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param update the <code>ServerComponentUpdate</code> for which this
-     *        rendering is being performed
-     * @param parentNode the parent DOM node to which this child should 
-     *        add HTML code
-     * @param component the <code>Component</code> to be rendered
+     * @param component the <code>Component</code> to be focused.
      */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component);
+    public void renderSetFocus(RenderContext rc, Component component);    
 }

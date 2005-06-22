@@ -32,7 +32,6 @@ package nextapp.echo2.app.update;
 import java.io.Serializable;
 
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.Component;
 
 /**
  * Primary interface to update management architecture.
@@ -55,21 +54,9 @@ implements Serializable {
     public UpdateManager(ApplicationInstance applicationInstance) {
         super();
         this.applicationInstance = applicationInstance;
-        clientUpdateManager = new ClientUpdateManager();
+        clientUpdateManager = new ClientUpdateManager(applicationInstance);
         serverUpdateManager = new ServerUpdateManager();
         serverUpdateManager.init(clientUpdateManager);
-    }
-    
-    /**
-     * Adds an client property update describing a change made to an 
-     * input property on the client.
-     * 
-     * @param component the updated component
-     * @param inputName the name of the input property
-     * @param inputValue the value of the input property
-     */
-    public void addClientPropertyUpdate(Component component, String inputName, Object inputValue) {
-        clientUpdateManager.addPropertyUpdate(component, inputName, inputValue);
     }
     
     /**
@@ -80,19 +67,6 @@ implements Serializable {
      */
     public ClientUpdateManager getClientUpdateManager() {
         return clientUpdateManager;
-    }
-    
-    /**
-     * Retrieves all <code>ServerComponentUpdate</code>s.
-     * The state of the server updates in unchanged by this operation (they
-     * are not purged).  The updates will be returned
-     * sorted by depth of their parent components within the hierarchy, but in 
-     * otherwise random order.
-     * 
-     * @return the <code>ServerComponentUpdate<code>s.
-     */
-    public ServerComponentUpdate[] getServerComponentUpdates() {
-        return serverUpdateManager.getComponentUpdates();
     }
     
     /**
@@ -122,19 +96,5 @@ implements Serializable {
     public void purge() {
         clientUpdateManager.purge();
         serverUpdateManager.purge();
-    }
-
-    /**
-     * Sets the action received from the client.  The 'action' describes the
-     * client-side update which necessitated the occurrence of this 
-     * client-server interaction.  The application will be notified of the 
-     * action AFTER it has been notified of all other property updates.
-     * 
-     * @param actionComponent the action-producing component
-     * @param actionName the name of the action
-     * @param actionValue the value of the action
-     */
-    public void setClientAction(Component actionComponent, String actionName, Object actionValue) {
-        clientUpdateManager.setAction(actionComponent, actionName, actionValue);
     }
 }

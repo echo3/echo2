@@ -177,7 +177,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().setClientAction(component, WindowPane.INPUT_CLOSE, null);
+        ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, WindowPane.INPUT_CLOSE, null);
     }
 
     /**
@@ -192,26 +192,26 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
         if (WindowPane.PROPERTY_POSITION_X.equals(propertyName)) {
             if (movable) {
-                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_X,
+                ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, WindowPane.PROPERTY_POSITION_X,
                         ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             }
         } else if (WindowPane.PROPERTY_POSITION_Y.equals(propertyName)) {
             if (movable) {
-                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_POSITION_Y,
+                ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, WindowPane.PROPERTY_POSITION_Y,
                         ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             }
         } else if (WindowPane.PROPERTY_WIDTH.equals(propertyName)) {
             if (resizable) {
-                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_WIDTH,
+                ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, WindowPane.PROPERTY_WIDTH,
                         ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             }
         } else if (WindowPane.PROPERTY_HEIGHT.equals(propertyName)) {
             if (resizable) {
-                ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.PROPERTY_HEIGHT,
+                ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, WindowPane.PROPERTY_HEIGHT,
                         ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
             }
         } else if (WindowPane.Z_INDEX_CHANGED_PROPERTY.equals(propertyName)) {
-            ci.getUpdateManager().addClientPropertyUpdate(component, WindowPane.Z_INDEX_CHANGED_PROPERTY,
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, WindowPane.Z_INDEX_CHANGED_PROPERTY,
                     new Integer(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
         }
     }

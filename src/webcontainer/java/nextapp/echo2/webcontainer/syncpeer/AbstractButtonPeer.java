@@ -213,7 +213,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().setClientAction(component, AbstractButton.INPUT_CLICK, null);
+        ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, AbstractButton.INPUT_CLICK, null);
     }
 
     /**

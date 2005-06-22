@@ -168,7 +168,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().setClientAction(component, AbstractListComponent.INPUT_ACTION, null);
+        ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, AbstractListComponent.INPUT_ACTION, null);
     }
 
     /**
@@ -185,8 +185,8 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
                 int selectedIndex = Integer.parseInt(id.substring(id.lastIndexOf("_") + 1));
                 selectedIndices[i] = selectedIndex;
             }
-            ci.getUpdateManager().addClientPropertyUpdate(component, AbstractListComponent.SELECTION_CHANGED_PROPERTY, 
-                    selectedIndices);
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    AbstractListComponent.SELECTION_CHANGED_PROPERTY, selectedIndices);
         }
     }
 

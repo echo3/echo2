@@ -502,6 +502,18 @@ implements Serializable {
             serverUpdateManager.processPropertyUpdate(parent, propertyName, oldValue, newValue);
         }
     }
+    
+    /**
+     * Processes client input specific to the <code>ApplicationInstance</code> 
+     * received from the <code>UpdateManager</code>.
+     * Derivative implementations should take care to invoke 
+     * <code>super.processInput()</code>.
+     */
+    public void processInput(String propertyName, Object propertyValue) {
+        if (FOCUSED_COMPONENT_CHANGED_PROPERTY.equals(propertyName)) {
+            setFocusedComponent((Component) propertyValue);
+        }
+    }
 
     /**
      * Processes all queued tasks.  This method may only be invoked

@@ -157,7 +157,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().setClientAction(component, Table.INPUT_ACTION, null);
+        ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, Table.INPUT_ACTION, null);
     }
     
     /**
@@ -172,7 +172,8 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             for (int i = 0; i < optionElements.length; ++i) {
                 selectedIndices[i] = Integer.parseInt(optionElements[i].getAttribute("index"));
             }
-            ci.getUpdateManager().addClientPropertyUpdate(component, Table.SELECTION_CHANGED_PROPERTY, selectedIndices);
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    Table.SELECTION_CHANGED_PROPERTY, selectedIndices);
         }
     }
     

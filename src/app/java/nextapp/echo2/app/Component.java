@@ -979,8 +979,10 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Processes an input from the user-interface received via the
-     * <code>UpdateManager</code>.
+     * Processes client input specific to the <code>Component</code> 
+     * received from the <code>UpdateManager</code>.
+     * Derivative implementations should take care to invoke 
+     * <code>super.processInput()</code>.
      * 
      * @param inputName the name of the input
      * @param inputValue the value of the input

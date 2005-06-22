@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 
 /**
@@ -45,35 +46,20 @@ import nextapp.echo2.app.Component;
 public class ClientUpdateManager 
 implements Serializable {
      
-    private Map clientUpdates = new HashMap();
+    private Map clientComponentUpdateMap = new HashMap();
+    private Map applicationUpdateMap = new HashMap();
     private Component actionComponent;
     private String actionName;
     private Object actionValue;
+    private ApplicationInstance applicationInstance;
     
     /**
      * Creates a new <Code>ClientUpdateManager</code>.
-     */
-    ClientUpdateManager() { }
-    
-    /**
-     * Adds a property update received from the client.
      * 
-     * @param component the updated component
-     * @param inputName the name of the input property
-     * @param inputValue the value of the input property
+     * @param applicationInstance the <code>ApplicationInstance</code> being supported
      */
-    void addPropertyUpdate(Component component, String inputName, Object inputValue) {
-        if (!component.verifyInput(inputName, inputValue)) {
-            // Invalid input.
-            return;
-        }
-        
-        ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientUpdates.get(component);
-        if (clientUpdate == null) {
-            clientUpdate = new ClientComponentUpdate(component);
-            clientUpdates.put(component, clientUpdate);
-        }
-        clientUpdate.addInput(inputName, inputValue);
+    ClientUpdateManager(ApplicationInstance applicationInstance) {
+        this.applicationInstance = applicationInstance;
     }
     
     /**
@@ -85,7 +71,7 @@ implements Serializable {
      * @return the representing <code>ClientComponentUpdate</code>
      */
     public ClientComponentUpdate getUpdate(Component component) {
-        return (ClientComponentUpdate) clientUpdates.get(component); 
+        return (ClientComponentUpdate) clientComponentUpdateMap.get(component); 
     }
     
     /**
@@ -95,10 +81,18 @@ implements Serializable {
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     void process() {
+        // Process application-level property updates.
+        Iterator applicationUpdateIt = applicationUpdateMap.keySet().iterator();
+        while (applicationUpdateIt.hasNext()) {
+            String propertyName = (String) applicationUpdateIt.next();
+            Object propertyValue = applicationUpdateMap.get(propertyName);
+            applicationInstance.processInput(propertyName, propertyValue);
+        }
+        
         // Process property updates. 
-        Iterator updateIt = clientUpdates.values().iterator();
-        while (updateIt.hasNext()) {
-            ClientComponentUpdate update = (ClientComponentUpdate) updateIt.next();
+        Iterator componentUpdateIt = clientComponentUpdateMap.values().iterator();
+        while (componentUpdateIt.hasNext()) {
+            ClientComponentUpdate update = (ClientComponentUpdate) componentUpdateIt.next();
             Iterator inputNameIt = update.getInputNames();
             while (inputNameIt.hasNext()) {
                 String inputName = (String) inputNameIt.next();
@@ -116,12 +110,23 @@ implements Serializable {
      * Purges all updates from the <code>ClientUpdateManager</code>.
      */
     public void purge() {
-        clientUpdates.clear();
+        clientComponentUpdateMap.clear();
+        applicationUpdateMap.clear();
         actionComponent = null;
         actionName = null;
         actionValue = null;
     }
     
+    /**
+     * Sets an application-level property received from the client.
+     * 
+     * @param propertyName the name of the property
+     * @param propertyValue the value of the property
+     */
+    public void setApplicationProperty(String propertyName, Object propertyValue) {
+        applicationUpdateMap.put(propertyName, propertyValue);
+    }
+
     /**
      * Sets the action received from the client.  The 'action' describes the
      * client-side update which necessitated the occurrence of this 
@@ -132,7 +137,7 @@ implements Serializable {
      * @param actionName the name of the action
      * @param actionValue the value of the action
      */
-    void setAction(Component actionComponent, String actionName, Object actionValue) {
+    public void setComponentAction(Component actionComponent, String actionName, Object actionValue) {
         if (!actionComponent.verifyInput(actionName, actionValue)) {
             // Invalid input.
             return;
@@ -142,4 +147,26 @@ implements Serializable {
         this.actionName = actionName;
         this.actionValue = actionValue;
     }
+    
+    /**
+     * Adds a property update received from the client.
+     * 
+     * @param component the updated component
+     * @param inputName the name of the input property
+     * @param inputValue the value of the input property
+     */
+    public void setComponentProperty(Component component, String inputName, Object inputValue) {
+        if (!component.verifyInput(inputName, inputValue)) {
+            // Invalid input.
+            return;
+        }
+        
+        ClientComponentUpdate clientUpdate = (ClientComponentUpdate) clientComponentUpdateMap.get(component);
+        if (clientUpdate == null) {
+            clientUpdate = new ClientComponentUpdate(component);
+            clientComponentUpdateMap.put(component, clientUpdate);
+        }
+        clientUpdate.addInput(inputName, inputValue);
+    }
+    
 }

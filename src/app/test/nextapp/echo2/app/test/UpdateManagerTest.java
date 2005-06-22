@@ -71,7 +71,7 @@ public class UpdateManagerTest extends TestCase  {
         columnApp.getColumn().add(column1);
         
         // Ensure only 1 update w/ 1 child added.
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         addedChildren = componentUpdates[0].getAddedChildren();
         assertEquals(1, addedChildren.length);
@@ -82,7 +82,7 @@ public class UpdateManagerTest extends TestCase  {
         column1.add(new Label("A"));
 
         // Ensure only 1 update w/ 1 child added.
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         addedChildren = componentUpdates[0].getAddedChildren();
         assertEquals(1, addedChildren.length);
@@ -96,7 +96,7 @@ public class UpdateManagerTest extends TestCase  {
         columnApp.getColumn().add(column2);
         
         // Ensure only 1 update w/ 2 children added.
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         addedChildren = componentUpdates[0].getAddedChildren();
         assertEquals(2, addedChildren.length);
@@ -120,7 +120,7 @@ public class UpdateManagerTest extends TestCase  {
         label.setVisible(false);
         columnApp.getColumn().add(label);
         
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(0, componentUpdates.length);
     }
     
@@ -141,7 +141,7 @@ public class UpdateManagerTest extends TestCase  {
         label2.setVisible(false);
         column.add(label2);
         
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(0, componentUpdates.length);
     }
     
@@ -160,7 +160,7 @@ public class UpdateManagerTest extends TestCase  {
         column.add(label2);
         label2.setLayoutData(new ColumnLayoutData());
 
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertEquals(false, componentUpdates[0].hasUpdatedLayoutDataChildren());
         
@@ -169,7 +169,7 @@ public class UpdateManagerTest extends TestCase  {
         columnLayoutData = new ColumnLayoutData();
         columnLayoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
         label1.setLayoutData(columnLayoutData);
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertEquals(column, componentUpdates[0].getParent());
         assertFalse(componentUpdates[0].hasAddedChildren());
@@ -190,7 +190,7 @@ public class UpdateManagerTest extends TestCase  {
         
         // Update text property of label and verify.
         columnApp.getLabel().setText("Hi there");
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(columnApp.getLabel(), componentUpdates[0].getParent());
         assertEquals(1, componentUpdates.length);
         assertEquals(0, componentUpdates[0].getAddedChildren().length);
@@ -205,7 +205,7 @@ public class UpdateManagerTest extends TestCase  {
         
         // Remove label entirely and ensure property update disappears.
         columnApp.getColumn().remove(columnApp.getLabel());
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertEquals(0, componentUpdates[0].getUpdatedPropertyNames().length);
         assertEquals(0, componentUpdates[0].getAddedChildren().length);
@@ -216,10 +216,10 @@ public class UpdateManagerTest extends TestCase  {
         columnApp.getColumn().add(textField);
         
         manager.purge();
-        manager.addClientPropertyUpdate(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
+        manager.getClientUpdateManager().setComponentProperty(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
         manager.processClientUpdates();
         
-        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        ServerComponentUpdate[] componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(0, componentUpdates.length);
     }
     
@@ -229,10 +229,10 @@ public class UpdateManagerTest extends TestCase  {
         
         manager.purge();
         textField.setBackground(Color.BLUE);
-        manager.addClientPropertyUpdate(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
+        manager.getClientUpdateManager().setComponentProperty(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
         manager.processClientUpdates();
         
-        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        ServerComponentUpdate[] componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         PropertyUpdate backgroundUpdate = 
                   componentUpdates[0].getUpdatedProperty(TextField.PROPERTY_BACKGROUND);
@@ -247,18 +247,18 @@ public class UpdateManagerTest extends TestCase  {
         
         manager.purge();
         textField.setText("first the application set it to this.");
-        manager.addClientPropertyUpdate(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
+        manager.getClientUpdateManager().setComponentProperty(textField, TextField.TEXT_CHANGED_PROPERTY, "a user typed this.");
         manager.processClientUpdates();
         
-        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        ServerComponentUpdate[] componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertFalse(componentUpdates[0].hasUpdatedProperties());
     }
     
     public void testPurge() {
-        assertFalse(manager.getServerComponentUpdates().length == 0);
+        assertFalse(manager.getServerUpdateManager().getComponentUpdates().length == 0);
         manager.purge();
-        assertTrue(manager.getServerComponentUpdates().length == 0);
+        assertTrue(manager.getServerUpdateManager().getComponentUpdates().length == 0);
     }
 
     public void testRemove1() {
@@ -270,7 +270,7 @@ public class UpdateManagerTest extends TestCase  {
         
         columnApp.getColumn().remove(column);
         
-        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        ServerComponentUpdate[] componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         
         assertEquals(true, componentUpdates[0].hasRemovedChildren());
@@ -297,7 +297,7 @@ public class UpdateManagerTest extends TestCase  {
         column1.remove(column2);
         columnApp.getColumn().remove(column1);
         
-        ServerComponentUpdate[] componentUpdates = manager.getServerComponentUpdates();
+        ServerComponentUpdate[] componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         
         assertEquals(true, componentUpdates[0].hasRemovedChildren());
@@ -321,7 +321,7 @@ public class UpdateManagerTest extends TestCase  {
         columnApp.getLabel().setBackground(Color.BLUE);
         columnApp.getContentPane().setBackground(Color.RED);
         columnApp.getColumn().setBackground(Color.GREEN);
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
 
         assertEquals(3, componentUpdates.length);
         assertEquals(columnApp.getContentPane(), componentUpdates[0].getParent());
@@ -346,7 +346,7 @@ public class UpdateManagerTest extends TestCase  {
         label2.setBackground(Color.YELLOW);
         column2.setBackground(Color.ORANGE);
 
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(5, componentUpdates.length);
         assertEquals(columnApp.getContentPane(), componentUpdates[0].getParent());
         assertEquals(columnApp.getColumn(), componentUpdates[1].getParent());
@@ -375,7 +375,7 @@ public class UpdateManagerTest extends TestCase  {
         manager.purge();
         
         label1.setVisible(false);
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertEquals(column, componentUpdates[0].getParent());
         assertFalse(componentUpdates[0].hasAddedChildren());
@@ -390,7 +390,7 @@ public class UpdateManagerTest extends TestCase  {
         manager.purge();
         
         label2.setVisible(true);
-        componentUpdates = manager.getServerComponentUpdates();
+        componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(1, componentUpdates.length);
         assertEquals(column, componentUpdates[0].getParent());
         assertTrue(componentUpdates[0].hasAddedChildren());

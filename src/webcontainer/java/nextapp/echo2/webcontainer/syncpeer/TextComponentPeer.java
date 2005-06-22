@@ -46,6 +46,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.FocusSupport;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
@@ -76,8 +77,8 @@ import nextapp.echo2.webrender.util.DomUtil;
  * This class should not be extended or used by classes outside of the Echo
  * framework.
  */
-public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor,
-        ComponentSynchronizePeer {
+public abstract class TextComponentPeer 
+implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSupport, ImageRenderSupport, PropertyUpdateProcessor {
 
     private static final String IMAGE_ID_BACKGROUND = "background";
 
@@ -171,7 +172,7 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().setClientAction(component, TextComponent.INPUT_ACTION, null);
+        ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, TextComponent.INPUT_ACTION, null);
     }
 
     /**
@@ -183,15 +184,18 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
         if (TextComponent.TEXT_CHANGED_PROPERTY.equals(propertyName)) {
             String propertyValue = DomUtil.getElementText(propertyElement);
-            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.TEXT_CHANGED_PROPERTY, propertyValue);
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    TextComponent.TEXT_CHANGED_PROPERTY, propertyValue);
         } else if (TextComponent.PROPERTY_HORIZONTAL_SCROLL.equals(propertyName)) {
-            Extent propertyValue = new Extent(Integer
-                    .parseInt(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
-            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.PROPERTY_HORIZONTAL_SCROLL, propertyValue);
+            Extent propertyValue = new Extent(Integer.parseInt(
+                    propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    TextComponent.PROPERTY_HORIZONTAL_SCROLL, propertyValue);
         } else if (TextComponent.PROPERTY_VERTICAL_SCROLL.equals(propertyName)) {
-            Extent propertyValue = new Extent(Integer
-                    .parseInt(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
-            ci.getUpdateManager().addClientPropertyUpdate(component, TextComponent.PROPERTY_VERTICAL_SCROLL, propertyValue);
+            Extent propertyValue = new Extent(Integer.parseInt(
+                    propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)));
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    TextComponent.PROPERTY_VERTICAL_SCROLL, propertyValue);
         }
     }
 
@@ -271,6 +275,14 @@ public abstract class TextComponentPeer implements ActionProcessor, DomUpdateSup
         }
 
         itemizedUpdateElement.appendChild(itemElement);
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.FocusSupport#renderSetFocus(nextapp.echo2.webcontainer.RenderContext, 
+     *      nextapp.echo2.app.Component)
+     */
+    public void renderSetFocus(RenderContext rc, Component component) {
+        // TODO Auto-generated method stub
     }
 
     /**

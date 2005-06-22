@@ -276,7 +276,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         if ("separatorPosition".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {
             Extent newValue = ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)); 
-            ci.getUpdateManager().addClientPropertyUpdate(component, SplitPane.PROPERTY_SEPARATOR_POSITION, newValue);
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    SplitPane.PROPERTY_SEPARATOR_POSITION, newValue);
         }
     }
 

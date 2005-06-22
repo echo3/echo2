@@ -209,7 +209,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
     private void processServerUpdates(RenderContext rc) {
         UpdateManager updateManager = rc.getContainerInstance().getUpdateManager();
         ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
-        ServerComponentUpdate[] componentUpdates = updateManager.getServerComponentUpdates();
+        ServerComponentUpdate[] componentUpdates = updateManager.getServerUpdateManager().getComponentUpdates();
         
         if (serverUpdateManager.isFullRefreshRequired()) {
             //BUGBUG. hardcoded to default window.
@@ -325,7 +325,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
                     // Valid component id.
                     component = rc.getContainerInstance().getComponentByElementId(focusedComponentId);
                 }
-                applicationInstance.setFocusedComponent(component);
+                updateManager.getClientUpdateManager().setApplicationProperty(
+                        ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY, component);
             }
             
             // Process updates from client.
