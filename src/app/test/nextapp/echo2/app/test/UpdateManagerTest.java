@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import nextapp.echo2.app.Alignment;
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Label;
@@ -122,6 +123,56 @@ public class UpdateManagerTest extends TestCase  {
         
         componentUpdates = manager.getServerUpdateManager().getComponentUpdates();
         assertEquals(0, componentUpdates.length);
+    }
+    
+    /**
+     * Test storage/retrieval of application property update.
+     */
+    public void testApplicationPropertyUpdate() {
+        manager.purge();
+        columnApp.setFocusedComponent(columnApp.getLabel());
+        PropertyUpdate propertyUpdate = manager.getServerUpdateManager().getApplicationPropertyUpdate(
+                ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
+        assertNotNull(propertyUpdate);
+        assertNull(propertyUpdate.getOldValue());
+        assertEquals(columnApp.getLabel(), propertyUpdate.getNewValue());
+    }
+
+    /**
+     * Ensure that an application property update is stored in the
+     * <code>ServerUpdateManager</code> even if an update to the same
+     * property was received from the <code>ClientUpdateManager</code> BUT
+     * the property value is now different.
+     */
+    public void testApplicationPropertyUpdateWithDifferentClientUpdate() {
+        manager.purge();
+        manager.getClientUpdateManager().setApplicationProperty(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY, 
+                columnApp.getColumn());
+        manager.processClientUpdates();
+        assertEquals(columnApp.getColumn(), columnApp.getFocusedComponent());
+        
+        columnApp.setFocusedComponent(columnApp.getLabel());
+        PropertyUpdate propertyUpdate = manager.getServerUpdateManager().getApplicationPropertyUpdate(
+                ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
+        assertNotNull(propertyUpdate);
+        assertEquals(columnApp.getColumn(), propertyUpdate.getOldValue());
+        assertEquals(columnApp.getLabel(), propertyUpdate.getNewValue());
+    }
+    
+    /**
+     * Ensure that an application property update is NOT stored in the
+     * <code>ServerUpdateManager</code> as a result of a property update
+     * received from the <code>ClientUpdateManager</code>.
+     */
+    public void testApplicationPropertyUpdateWithEquivalentClientUpdate() {
+        manager.purge();
+        manager.getClientUpdateManager().setApplicationProperty(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY, 
+                columnApp.getLabel());
+        manager.processClientUpdates();
+        assertEquals(columnApp.getLabel(), columnApp.getFocusedComponent());
+        PropertyUpdate propertyUpdate = manager.getServerUpdateManager().getApplicationPropertyUpdate(
+                ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
+        assertNull(propertyUpdate);
     }
     
     /**

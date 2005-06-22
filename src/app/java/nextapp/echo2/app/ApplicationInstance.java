@@ -49,6 +49,9 @@ import nextapp.echo2.app.util.Uid;
  */
 public abstract class ApplicationInstance 
 implements Serializable {
+    
+    //BUGBUG. investigate if any properties other than focus can use appliaction-level property update SUM stuff,
+    // e.g., locale, modalcontext.
 
     /** The name and version of the Echo API in use. */
     public static final String ID_STRING = "NextApp Echo v2.0.beta1+";
@@ -635,6 +638,8 @@ implements Serializable {
             focusedComponent = new WeakReference(newValue);
         }
         propertyChangeSupport.firePropertyChange(FOCUSED_COMPONENT_CHANGED_PROPERTY, oldValue, newValue);
+        updateManager.getServerUpdateManager().processApplicationPropertyUpdate(FOCUSED_COMPONENT_CHANGED_PROPERTY, 
+                oldValue, newValue);
     }
     
     /**

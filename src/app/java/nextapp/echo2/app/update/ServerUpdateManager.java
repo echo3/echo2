@@ -53,6 +53,20 @@ implements Serializable {
      * hierarchy.
      */
     private static final Comparator hierarchyDepthUpdateComparator = new Comparator() {
+
+        /**
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        public int compare(Object a, Object b) {
+            return getDepth(((ServerComponentUpdate) a).getParent()) - getDepth(((ServerComponentUpdate) b).getParent());
+        }
+        
+        /**
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        public boolean equals(Object o) {
+            return false;
+        }
         
         /**
          * Returns the depth of the specified component in the hierarchy.
@@ -68,27 +82,14 @@ implements Serializable {
             }
             return count;
         }
-        
-        /**
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        public boolean equals(Object o) {
-            return false;
-        }
-
-        /**
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        public int compare(Object a, Object b) {
-            return getDepth(((ServerComponentUpdate) a).getParent()) - getDepth(((ServerComponentUpdate) b).getParent());
-        }
     };
+    
+    private Map applicationUpdateMap = new HashMap();
+    private ClientUpdateManager clientUpdateManager;
+    private ArrayList commands = new ArrayList();
 
     private Map componentUpdateMap = new HashMap();
-    private Map applicationUpdateMap = new HashMap();
-    private ArrayList commands = new ArrayList();
     private ServerComponentUpdate fullRefreshUpdate = null;
-    private ClientUpdateManager clientUpdateManager;
     
     /**
      * Creates a new <code>ServerUpdateManager</code>.
@@ -131,6 +132,18 @@ implements Serializable {
      */
     public void enqueueCommand(Command command) {
         commands.add(command);
+    }
+    
+    /**
+     * Returns a <code>PropertyUpdate</code> representing the 
+     * application-level property update with the specified name.
+     * If the specified property has not been updated, null is returned.
+     * 
+     * @param propertyName the name of the property
+     * @return the <code>PropertyUpdate</code>
+     */
+    public PropertyUpdate getApplicationPropertyUpdate(String propertyName) {
+        return (PropertyUpdate) applicationUpdateMap.get(propertyName);
     }
     
     /**
@@ -226,7 +239,14 @@ implements Serializable {
         if (isFullRefreshRequired()) {
             return;
         }
-        applicationUpdateMap.put(propertyName, new PropertyUpdate(oldValue, newValue)); 
+        
+        Object clientValue = clientUpdateManager.getApplicationUpdatePropertyValue(propertyName);
+        if (clientValue == newValue || (clientValue != null && clientValue.equals(newValue))) {
+            // New value is same as client value, thus client is already in sync: cancel the update.
+            applicationUpdateMap.remove(propertyName);
+        } else {
+            applicationUpdateMap.put(propertyName, new PropertyUpdate(oldValue, newValue)); 
+        }
     }
     
     /**
@@ -249,54 +269,6 @@ implements Serializable {
         
         ServerComponentUpdate update = createComponentUpdate(parent);
         update.addChild(child);
-    }
-
-    /**
-     * Processes the removal of a component from the hierarchy.
-     * Creates/updates a <code>ServerComponentUpdate</code> if required.
-     * 
-     * @param parent a component which currently exists in the hierarchy
-     * @param child the component which was removed from <code>parent</code>
-     */
-    public void processComponentRemove(Component parent, Component child) {
-        if (isFullRefreshRequired()) {
-            return;
-        }
-        if (!parent.isRenderVisible()) {
-            return;
-        }
-        if (isAncestorBeingAdded(parent)) {
-            return;
-        }
-        ServerComponentUpdate update = createComponentUpdate(parent);
-        update.removeChild(child);
-        
-        Iterator it = componentUpdateMap.keySet().iterator();
-        while (it.hasNext()) {
-            Component testComponent = (Component) it.next();
-            if (child.isAncestorOf(testComponent)) {
-                ServerComponentUpdate childUpdate = (ServerComponentUpdate) componentUpdateMap.get(testComponent);
-                update.appendRemovedDescendants(childUpdate);
-                it.remove();
-            }
-        }
-    }
-    
-    /**
-     * Proceses a full refresh of the application state, in response to a 
-     * severe change, such as application locale or style sheet.
-     */
-    public void processFullRefresh() {
-        ServerComponentUpdate update = new ServerComponentUpdate(null);
-        Iterator it = componentUpdateMap.keySet().iterator();
-//BUGBUG. add window as removed descendant.        
-        while (it.hasNext()) {
-            Component testComponent = (Component) it.next();
-            ServerComponentUpdate childUpdate = (ServerComponentUpdate) componentUpdateMap.get(testComponent);
-            update.appendRemovedDescendants(childUpdate);
-            it.remove();
-        }
-        fullRefreshUpdate = new ServerComponentUpdate(null);
     }
     
     /**
@@ -364,6 +336,37 @@ implements Serializable {
         ServerComponentUpdate update = createComponentUpdate(updatedComponent);
         update.updateProperty(propertyName, oldValue, newValue);
     }
+
+    /**
+     * Processes the removal of a component from the hierarchy.
+     * Creates/updates a <code>ServerComponentUpdate</code> if required.
+     * 
+     * @param parent a component which currently exists in the hierarchy
+     * @param child the component which was removed from <code>parent</code>
+     */
+    public void processComponentRemove(Component parent, Component child) {
+        if (isFullRefreshRequired()) {
+            return;
+        }
+        if (!parent.isRenderVisible()) {
+            return;
+        }
+        if (isAncestorBeingAdded(parent)) {
+            return;
+        }
+        ServerComponentUpdate update = createComponentUpdate(parent);
+        update.removeChild(child);
+        
+        Iterator it = componentUpdateMap.keySet().iterator();
+        while (it.hasNext()) {
+            Component testComponent = (Component) it.next();
+            if (child.isAncestorOf(testComponent)) {
+                ServerComponentUpdate childUpdate = (ServerComponentUpdate) componentUpdateMap.get(testComponent);
+                update.appendRemovedDescendants(childUpdate);
+                it.remove();
+            }
+        }
+    }
     
     /**
      * Processes an update to the visible state of a copmonent.
@@ -379,6 +382,23 @@ implements Serializable {
         } else {
             processComponentRemove(parentComponent, updatedComponent);
         }
+    }
+    
+    /**
+     * Proceses a full refresh of the application state, in response to a 
+     * severe change, such as application locale or style sheet.
+     */
+    public void processFullRefresh() {
+        ServerComponentUpdate update = new ServerComponentUpdate(null);
+        Iterator it = componentUpdateMap.keySet().iterator();
+//BUGBUG. add window as removed descendant.        
+        while (it.hasNext()) {
+            Component testComponent = (Component) it.next();
+            ServerComponentUpdate childUpdate = (ServerComponentUpdate) componentUpdateMap.get(testComponent);
+            update.appendRemovedDescendants(childUpdate);
+            it.remove();
+        }
+        fullRefreshUpdate = new ServerComponentUpdate(null);
     }
     
     /**
