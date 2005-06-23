@@ -195,12 +195,22 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         if (renderState != null && renderState.lastChild != null) {
             int previousLastChildIndex = column.visibleIndexOf(renderState.lastChild);
             if (previousLastChildIndex != -1 && previousLastChildIndex != column.getVisibleComponentCount() - 1) {
-                // Child which was previously last is present, but no longer last.
-                DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-                renderCellSpacingRow(htmlFragment, column, renderState.lastChild);
-                DomUpdate.renderElementAdd(rc.getServerMessage(), elementId,
-                        elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
-                        htmlFragment);
+                // At this point it is known that the child which was previously last is present, but is no longer last.
+
+                // In the event the child was removed and re-added, the special case is unnecessary.
+                boolean lastChildMoved = false;
+                for (int i = 0; i < addedChildren.length; ++i) {
+                    if (renderState.lastChild == addedChildren[i]) {
+                        lastChildMoved = true;
+                    }
+                }
+                if (!lastChildMoved) {
+                    DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                    renderCellSpacingRow(htmlFragment, column, renderState.lastChild);
+                    DomUpdate.renderElementAdd(rc.getServerMessage(), elementId,
+                            elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
+                            htmlFragment);
+                }
             }
         }
     }

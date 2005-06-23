@@ -193,17 +193,27 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
 
         // Special case: Recall the child which was rendered at the last index of the row on the previous
         // rendering.  If this child is still present but is no longer at the last index, render a spacing
-        // row beneath it (if necessary).
+        // column after it (if necessary).
         RowPeerRenderState renderState = (RowPeerRenderState) rc.getContainerInstance().getRenderState(row);
         if (renderState != null && renderState.lastChild != null) {
             int previousLastChildIndex = row.visibleIndexOf(renderState.lastChild);
             if (previousLastChildIndex != -1 && previousLastChildIndex != row.getVisibleComponentCount() - 1) {
-                // Child which was previously last is present, but no longer last.
-                DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-                renderCellSpacingRow(htmlFragment, row, renderState.lastChild);
-                DomUpdate.renderElementAdd(rc.getServerMessage(), trElementId,
-                        elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
-                        htmlFragment);
+                // At this point it is known that the child which was previously last is present, but is no longer last.
+
+                // In the event the child was removed and re-added, the special case is unnecessary.
+                boolean lastChildMoved = false;
+                for (int i = 0; i < addedChildren.length; ++i) {
+                    if (renderState.lastChild == addedChildren[i]) {
+                        lastChildMoved = true;
+                    }
+                }
+                if (!lastChildMoved) {
+                    DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
+                    renderCellSpacingRow(htmlFragment, row, renderState.lastChild);
+                    DomUpdate.renderElementAdd(rc.getServerMessage(), elementId,
+                            elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
+                            htmlFragment);
+                }
             }
         }
     }
