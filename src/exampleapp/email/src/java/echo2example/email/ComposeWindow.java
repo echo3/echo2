@@ -187,7 +187,10 @@ public class ComposeWindow extends WindowPane {
         messageField.setHeight(new Extent(18, Extent.EM));
         layoutColumn.add(messageField);
         
-        if (replyMessage != null) {
+        if (replyMessage == null) {
+            EmailApp.getActive().setFocusedComponent(toField);
+        } else {
+            EmailApp.getActive().setFocusedComponent(messageField);
             try {
                 toField.setText(MessageUtil.clean(replyMessage.getFrom()[0].toString(), -1, -1));
                 subjectField.setText(MessageUtil.clean(replyMessage.getSubject(), -1, -1));

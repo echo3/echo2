@@ -108,6 +108,11 @@ public class LoginScreen extends ContentPane {
         emailAddressField = new TextField();
         emailAddressField.setWidth(PX_300);
         emailAddressField.setStyleName("Default");
+        emailAddressField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EmailApp.getActive().setFocusedComponent(passwordField);
+            }
+        });
         layoutGrid.add(emailAddressField);
         
         label = new Label(Messages.getString("LoginScreen.PromptPassword"));
@@ -118,11 +123,18 @@ public class LoginScreen extends ContentPane {
         passwordField.setWidth(PX_300);
         passwordField.setStyleName("Default");
         layoutGrid.add(passwordField);
+        passwordField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                processLogin();
+            }
+        });
         
         if (EmailApp.FAUX_MODE) {
             emailAddressField.setText("joe.smith@test.nextapp.com");
             passwordField.setText("Joshua");
         }
+        
+        EmailApp.getActive().setFocusedComponent(emailAddressField);
     }
     
     /**

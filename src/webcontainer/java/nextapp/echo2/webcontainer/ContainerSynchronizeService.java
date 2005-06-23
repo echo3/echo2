@@ -202,6 +202,29 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
+     * Retrieves information about the current focused component on the client,
+     * if provided, and in such case notifies the 
+     * <code>ApplicationInstance</code> of the focus.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param clientMessageDocument the ClientMessage <code>Document</code> to 
+     *        retrieve focus information from
+     */
+    private void processClientFocusedComponent(RenderContext rc, Document clientMessageDocument) {
+        if (clientMessageDocument.getDocumentElement().hasAttribute("focus")) {
+            String focusedComponentId = clientMessageDocument.getDocumentElement().getAttribute("focus");
+            Component component = null;
+            if (focusedComponentId.length() > 2) {
+                // Valid component id.
+                component = rc.getContainerInstance().getComponentByElementId(focusedComponentId);
+            }
+            ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+            applicationInstance.getUpdateManager().getClientUpdateManager().setApplicationProperty(
+                    ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY, component);
+        }
+    }
+    
+    /**
      * Processes updates from the application, generating an outgoing
      * <code>ServerMessage</code>.
      * 
@@ -261,18 +284,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 }
             }
         }
-        
-        // Update component focus if required.
-        PropertyUpdate focusUpdate = 
-                serverUpdateManager.getApplicationPropertyUpdate(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
-        if (focusUpdate != null && focusUpdate.getNewValue() != null) {
-            Component focusedComponent = (Component) focusUpdate.getNewValue();
-            ComponentSynchronizePeer componentSyncPeer 
-                    = SynchronizePeerFactory.getPeerForComponent(focusedComponent.getClass());
-            if (componentSyncPeer instanceof FocusSupport) {
-                ((FocusSupport) componentSyncPeer).renderSetFocus(rc, focusedComponent);
-            }
-        }
 
         // Execute queued commands.
         Command[] commands = serverUpdateManager.getCommands();
@@ -304,8 +315,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             BlockingPaneConfigurator.configureDefault(rc);
+            
+            //BUGBUG. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);
+            setFocus(rc);
+            setModalContextRootId(rc);
             setRootLayoutDirection(rc);
+            
             return serverMessage;
         } finally {
             ApplicationInstance.setActive(null);
@@ -328,17 +344,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             UpdateManager updateManager = applicationInstance.getUpdateManager();
             
-            // Set focused component
-            if (clientMessageDocument.getDocumentElement().hasAttribute("focus")) {
-                String focusedComponentId = clientMessageDocument.getDocumentElement().getAttribute("focus");
-                Component component = null;
-                if (focusedComponentId.length() > 2) {
-                    // Valid component id.
-                    component = rc.getContainerInstance().getComponentByElementId(focusedComponentId);
-                }
-                updateManager.getClientUpdateManager().setApplicationProperty(
-                        ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY, component);
-            }
+            processClientFocusedComponent(rc, clientMessageDocument);
             
             // Process updates from client.
             processClientMessage(conn, clientMessageDocument);
@@ -348,7 +354,9 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             // Process updates from server.
             processServerUpdates(rc);
+            
             setAsynchronousMonitorInterval(rc);
+            setFocus(rc);
             setModalContextRootId(rc);
             
             updateManager.purge();
@@ -376,10 +384,31 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
+     * Update the <code>ServerMessage</code> to set the focused component if 
+     * required.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     */
+    private void setFocus(RenderContext rc) {
+        ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+        ServerUpdateManager serverUpdateManager = applicationInstance.getUpdateManager().getServerUpdateManager();
+        PropertyUpdate focusUpdate = 
+                serverUpdateManager.getApplicationPropertyUpdate(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
+        if (focusUpdate != null && focusUpdate.getNewValue() != null) {
+            Component focusedComponent = (Component) focusUpdate.getNewValue();
+            ComponentSynchronizePeer componentSyncPeer 
+                    = SynchronizePeerFactory.getPeerForComponent(focusedComponent.getClass());
+            if (componentSyncPeer instanceof FocusSupport) {
+                ((FocusSupport) componentSyncPeer).renderSetFocus(rc, focusedComponent);
+            }
+        }
+    }
+    
+    /**
      * Update the <code>ServerMessage</code> to describe the current root
      * element of the modal context.
      * 
-     * @param rc the relevant <code>RenderContext</code>.
+     * @param rc the relevant <code>RenderContext</code>
      */
     private void setModalContextRootId(RenderContext rc) {
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
@@ -395,7 +424,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
      * Update the <code>ServerMessage</code> to describe the current root
      * layout direction
      * 
-     * @param rc the relevant <code>RenderContext</code>.
+     * @param rc the relevant <code>RenderContext</code>
      */
     private void setRootLayoutDirection(RenderContext rc) {
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
