@@ -29,10 +29,22 @@
 
 package nextapp.echo2.testapp.interactive;
 
+import nextapp.echo2.app.Button;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.Row;
+import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 
+/**
+ * A <code>WindowPane</code> which contains an event console.
+ */
 public class ConsoleWindowPane extends WindowPane {
     
     private Column column;
@@ -41,8 +53,29 @@ public class ConsoleWindowPane extends WindowPane {
         super();
         setTitle("Console");
         setStyleName("default");
+        
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(40));
+        splitPane.setSeparatorHeight(new Extent(1));
+        add(splitPane);
+        
+        Row controlRow = new Row();
+        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
+        splitPaneLayoutData.setBackground(new Color(0xafafbf));
+        splitPaneLayoutData.setInsets(new Insets(5));
+        controlRow.setLayoutData(splitPaneLayoutData);
+        splitPane.add(controlRow);
+        
+        Button clearButton = new Button("Clear");
+        clearButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                column.removeAll();
+            }
+        });
+        controlRow.add(clearButton);
+        
         column = new Column();
-        add(column);
+        splitPane.add(column);
     }
     
     public void writeMessage(String message) {
