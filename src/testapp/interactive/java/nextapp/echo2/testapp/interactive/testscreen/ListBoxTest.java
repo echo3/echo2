@@ -57,7 +57,7 @@ import nextapp.echo2.testapp.interactive.StyleUtil;
  */
 public class ListBoxTest extends SplitPane {
     
-    private static final String[] NUMBERS = new String[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+    public static final String[] NUMBERS = new String[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
                 "Nine", "Ten" };
 
     /**

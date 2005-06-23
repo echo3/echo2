@@ -30,16 +30,23 @@
 package nextapp.echo2.testapp.interactive.testscreen;
 
 import nextapp.echo2.app.Alignment;
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Button;
+import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.ListBox;
+import nextapp.echo2.app.RadioButton;
+import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.Table;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
+import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
@@ -251,12 +258,140 @@ public class WindowPaneTest extends SplitPane {
         
         final ContentPane contentPane = new ContentPane();
         add(contentPane);
-
+        
         WindowTestControls windowTestControls;
         windowTestControls = new WindowTestControls("Root Level", InteractiveApp.getApp().getMainWindow().getContent());
         controlsColumn.add(windowTestControls);
         windowTestControls = new WindowTestControls("Embedded", contentPane);
         controlsColumn.add(windowTestControls);
+        
+        Column componentSamplerControlsColumn = new Column();
+        componentSamplerControlsColumn.add(new Label("Component \"Sampler\""));
+        controlsColumn.add(componentSamplerControlsColumn);
+
+        Button button;
+
+        button = new Button("Add Component Sampler to Embedded ContentPane");
+        button.setStyleName("Default");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addComponentSampler(contentPane, false);
+            }
+        });
+        componentSamplerControlsColumn.add(button);
+
+        button = new Button("Add \"Modal Launching\" Component Sampler to Embedded ContentPane");
+        button.setStyleName("Default");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addComponentSampler(contentPane, true);
+            }
+        });
+        componentSamplerControlsColumn.add(button);
+
+        button = new Button("Clear Embedded ContentPane");
+        button.setStyleName("Default");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                contentPane.removeAll();
+            }
+        });
+        componentSamplerControlsColumn.add(button);
+    }
+    
+    private void addComponentSampler(ContentPane contentPane, boolean launchModals) {
+        Column componentSamplerColumn = new Column();
+        if (launchModals) {
+            componentSamplerColumn.setBorder(new Border(new Extent(5, Extent.PX), new Color(0xffafaf), Border.STYLE_INSET));
+        } else {
+            componentSamplerColumn.setBorder(new Border(new Extent(5, Extent.PX), new Color(0xafafff), Border.STYLE_INSET));
+        }
+        componentSamplerColumn.setInsets(new Insets(10));
+        componentSamplerColumn.setCellSpacing(new Extent(1));
+        contentPane.add(componentSamplerColumn);
+        
+        for (int i = 1; i <= 3; ++i) {
+            Button button = new Button("Button #" + i);
+            button.setStyleName("Default");
+            componentSamplerColumn.add(button);
+            if (launchModals && i == 1) {
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
+                    }
+                });
+            }
+        }
+        
+        ButtonGroup buttonGroup = new ButtonGroup();
+        for (int i = 1; i <= 3; ++i) {
+            RadioButton radioButton = new RadioButton("RadioButton #" + i);
+            radioButton.setGroup(buttonGroup);
+            radioButton.setStyleName("Default");
+            componentSamplerColumn.add(radioButton);
+            if (launchModals && i == 1) {
+                radioButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
+                    }
+                });
+            }
+        }
+        
+        for (int i = 1; i <= 3; ++i) {
+            CheckBox checkBox = new CheckBox("CheckBox #" + i);
+            checkBox.setStyleName("Default");
+            componentSamplerColumn.add(checkBox);
+            if (launchModals && i == 1) {
+                checkBox.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
+                    }
+                });
+            }
+        }
+        
+        Table table = new Table(TableTest.createEmployeeTableModel());
+        table.setBorder(new Border(new Extent(2), new Color(0xafffcf), Border.STYLE_GROOVE));
+        table.setInsets(new Insets(15, 5));
+        table.setSelectionEnabled(true);
+        table.setSelectionBackground(new Color(0xffcfaf));
+        table.setRolloverEnabled(true);
+        table.setRolloverBackground(new Color(0xafefff));
+        if (launchModals) {
+            table.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
+                }
+            });
+        }
+        componentSamplerColumn.add(table);
+        
+        ListBox listBox = new ListBox(ListBoxTest.NUMBERS);
+        if (launchModals) {
+            listBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
+                }
+            });
+        }
+        componentSamplerColumn.add(listBox);
+
+        SelectField selectField = new SelectField(ListBoxTest.NUMBERS);
+        if (launchModals) {
+            selectField.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
+                }
+            });
+        }
+        componentSamplerColumn.add(selectField);
+    }
+    
+    private WindowPane createComponentSamplerModalTestWindow() {
+        WindowPane windowPane = createSimpleWindow("Component Sampler Modal Test Window");
+        windowPane.setModal(true);
+        return windowPane;
     }
     
     private WindowPane createSimpleWindow(String name) {

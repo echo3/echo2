@@ -46,6 +46,7 @@ import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.app.table.TableColumnModel;
+import nextapp.echo2.app.table.TableModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
@@ -55,6 +56,21 @@ import nextapp.echo2.testapp.interactive.Styles;
  * A test for <code>Tables</code>s.
  */
 public class TableTest extends SplitPane {
+    
+    public static TableModel createEmployeeTableModel() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnCount(3);
+        model.insertRow(0, new String[]{"Bob Johnson", "bob.johnson@test.nextapp.com", "949.555.1234"});
+        model.insertRow(0, new String[]{"Laura Smith", "laura.smith@test.nextapp.com", "217.555.9343"});
+        model.insertRow(0, new String[]{"Jenny Roberts", "jenny.roberts@test.nextapp.com", "630.555.1987"});
+        model.insertRow(0, new String[]{"Thomas Albertson", "thomas.albertson@test.nextapp.com", "619.555.1233"});
+        model.insertRow(0, new String[]{"Albert Thomas", "albert.thomas@test.nextapp.com", "408.555.3232"});
+        model.insertRow(0, new String[]{"Sheila Simmons", "sheila.simmons@test.nextapp.com", "212.555.8700"});
+        model.insertRow(0, new String[]{"Mark Atkinson", "mark.atkinson@test.nextapp.com", "213.555.9456"});
+        model.insertRow(0, new String[]{"Linda Jefferson", "linda.jefferson@test.nextapp.com", "949.555.8925"});
+        model.insertRow(0, new String[]{"Yvonne Adams", "yvonne.adams@test.nextapp.com", "714.555.8543"});
+        return model;
+    }
     
     private Table testTable;
     
@@ -144,18 +160,7 @@ public class TableTest extends SplitPane {
         
         controlsColumn.addButton("DefaultTableModel (Employees)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DefaultTableModel model = new DefaultTableModel();
-                model.setColumnCount(3);
-                model.insertRow(0, new String[]{"Bob Johnson", "bob.johnson@test.nextapp.com", "949.555.1234"});
-                model.insertRow(0, new String[]{"Laura Smith", "laura.smith@test.nextapp.com", "217.555.9343"});
-                model.insertRow(0, new String[]{"Jenny Roberts", "jenny.roberts@test.nextapp.com", "630.555.1987"});
-                model.insertRow(0, new String[]{"Thomas Albertson", "thomas.albertson@test.nextapp.com", "619.555.1233"});
-                model.insertRow(0, new String[]{"Albert Thomas", "albert.thomas@test.nextapp.com", "408.555.3232"});
-                model.insertRow(0, new String[]{"Sheila Simmons", "sheila.simmons@test.nextapp.com", "212.555.8700"});
-                model.insertRow(0, new String[]{"Mark Atkinson", "mark.atkinson@test.nextapp.com", "213.555.9456"});
-                model.insertRow(0, new String[]{"Linda Jefferson", "linda.jefferson@test.nextapp.com", "949.555.8925"});
-                model.insertRow(0, new String[]{"Yvonne Adams", "yvonne.adams@test.nextapp.com", "714.555.8543"});
-                testTable.setModel(model);
+                testTable.setModel(createEmployeeTableModel());
             }
         });
         
