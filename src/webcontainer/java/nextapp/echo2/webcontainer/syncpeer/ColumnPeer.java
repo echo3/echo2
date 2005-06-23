@@ -206,7 +206,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
                 }
                 if (!lastChildMoved) {
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-                    renderCellSpacingRow(htmlFragment, column, renderState.lastChild);
+                    renderSpacingCell(htmlFragment, column, renderState.lastChild);
                     DomUpdate.renderElementAdd(rc.getServerMessage(), elementId,
                             elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
                             htmlFragment);
@@ -243,33 +243,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         
         parentNode.appendChild(divElement);
         
-        renderCellSpacingRow(parentNode, (Column) component, child);
+        renderSpacingCell(parentNode, (Column) component, child);
         
         renderAddChild(rc, update, divElement, child);
-    }
-    
-    /**
-     * Renders a "spacing row" beneath a column cell to provide
-     * cell spacing.
-     * 
-     * @param parentNode the containing node to which the child
-     *        should be appended
-     * @param column the <code>Column</code> being updated
-     * @param child the child preceeding the spacing column
-     */
-    private void renderCellSpacingRow(Node parentNode, Column column, Component child) {
-        Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
-        if (!ExtentRender.isZeroLength(cellSpacing) && column.visibleIndexOf(child) != column.getVisibleComponentCount() - 1) {
-            Element spacingElement = parentNode.getOwnerDocument().createElement("div");
-            spacingElement.setAttribute("id", ContainerInstance.getElementId(column) + "_spacing_" 
-                    + ContainerInstance.getElementId(child));
-            CssStyle spacingCssStyle = new CssStyle();
-            spacingCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(cellSpacing));
-            spacingCssStyle.setAttribute("font-size", "1px");
-            spacingCssStyle.setAttribute("line-height", "0px");
-            spacingElement.setAttribute("style", spacingCssStyle.renderInline());
-            parentNode.appendChild(spacingElement);
-        }
     }
     
     /**
@@ -336,6 +312,30 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         if (componentCount > 0) {
             DomUpdate.renderElementRemove(rc.getServerMessage(), parentId + "_spacing_" 
                     + ContainerInstance.getElementId(parent.getVisibleComponent(componentCount - 1)));
+        }
+    }
+    
+    /**
+     * Renders a "spacing cell" beneath a column cell to provide
+     * cell spacing.
+     * 
+     * @param parentNode the containing node to which the child
+     *        should be appended
+     * @param column the <code>Column</code> being updated
+     * @param child the child preceeding the spacing column
+     */
+    private void renderSpacingCell(Node parentNode, Column column, Component child) {
+        Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
+        if (!ExtentRender.isZeroLength(cellSpacing) && column.visibleIndexOf(child) != column.getVisibleComponentCount() - 1) {
+            Element spacingElement = parentNode.getOwnerDocument().createElement("div");
+            spacingElement.setAttribute("id", ContainerInstance.getElementId(column) + "_spacing_" 
+                    + ContainerInstance.getElementId(child));
+            CssStyle spacingCssStyle = new CssStyle();
+            spacingCssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(cellSpacing));
+            spacingCssStyle.setAttribute("font-size", "1px");
+            spacingCssStyle.setAttribute("line-height", "0px");
+            spacingElement.setAttribute("style", spacingCssStyle.renderInline());
+            parentNode.appendChild(spacingElement);
         }
     }
     

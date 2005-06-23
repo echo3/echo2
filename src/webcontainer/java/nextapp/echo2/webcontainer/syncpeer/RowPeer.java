@@ -62,7 +62,6 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 
@@ -190,7 +189,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
                 }
             }
         }
-
+        
         // Special case: Recall the child which was rendered at the last index of the row on the previous
         // rendering.  If this child is still present but is no longer at the last index, render a spacing
         // column after it (if necessary).
@@ -209,8 +208,8 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
                 }
                 if (!lastChildMoved) {
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-                    renderCellSpacingRow(htmlFragment, row, renderState.lastChild);
-                    DomUpdate.renderElementAdd(rc.getServerMessage(), elementId,
+                    renderSpacingCell(htmlFragment, row, renderState.lastChild);
+                    DomUpdate.renderElementAdd(rc.getServerMessage(), trElementId,
                             elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
                             htmlFragment);
                 }
@@ -246,33 +245,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         
         parentNode.appendChild(tdElement);
         
-        renderCellSpacingRow(parentNode, (Row) component, child);
+        renderSpacingCell(parentNode, (Row) component, child);
         
         renderAddChild(rc, update, tdElement, child);
-    }
-    
-    /**
-     * Renders a "spacing row" beneath a row cell to provide
-     * cell spacing.
-     * 
-     * @param parentNode the containing node to which the child
-     *        should be appended
-     * @param row the <code>Row</code> being updated
-     * @param child the child preceeding the spacing row
-     */
-    private void renderCellSpacingRow(Node parentNode, Row row, Component child) {
-        Extent cellSpacing = (Extent) row.getRenderProperty(Row.PROPERTY_CELL_SPACING);
-        if (!ExtentRender.isZeroLength(cellSpacing) && row.visibleIndexOf(child) != row.getVisibleComponentCount() - 1) {
-            Element spacingElement = parentNode.getOwnerDocument().createElement("td");
-            spacingElement.setAttribute("id", ContainerInstance.getElementId(row) + "_spacing_" 
-                    + ContainerInstance.getElementId(child));
-            CssStyle spacingCssStyle = new CssStyle();
-            spacingCssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(cellSpacing));
-            spacingCssStyle.setAttribute("font-size", "1px");
-            spacingCssStyle.setAttribute("line-height", "0px");
-            spacingElement.setAttribute("style", spacingCssStyle.renderInline());
-            parentNode.appendChild(spacingElement);
-        }
     }
     
     /**
@@ -288,36 +263,30 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         Row row = (Row) component;
         Border border = (Border) row.getRenderProperty(Grid.PROPERTY_BORDER);
-        
         String elementId = ContainerInstance.getElementId(row);
-        
         Document document = parentNode.getOwnerDocument();
-        Element tableElement = document.createElement("table");
-        tableElement.setAttribute("id", elementId);
-        parentNode.appendChild(tableElement);
         
-        CssStyle tableCssStyle = new CssStyle();
-        
-        BorderRender.renderToStyle(tableCssStyle, border);
-        ColorRender.renderToStyle(tableCssStyle, (Color) row.getRenderProperty(Row.PROPERTY_FOREGROUND), 
+        Element divElement = document.createElement("div");
+        divElement.setAttribute("id", elementId);
+        parentNode.appendChild(divElement);
+
+        CssStyle divCssStyle = new CssStyle();
+        BorderRender.renderToStyle(divCssStyle, border);
+        ColorRender.renderToStyle(divCssStyle, (Color) row.getRenderProperty(Row.PROPERTY_FOREGROUND), 
                 (Color) row.getRenderProperty(Row.PROPERTY_BACKGROUND));
-        FontRender.renderToStyle(tableCssStyle, (Font) row.getRenderProperty(Row.PROPERTY_FONT));
+        FontRender.renderToStyle(divCssStyle, (Font) row.getRenderProperty(Row.PROPERTY_FONT));
         Insets insets = (Insets) row.getRenderProperty(Row.PROPERTY_INSETS);
         if (insets == null) {
-            tableCssStyle.setAttribute("padding", "0px");
+            divCssStyle.setAttribute("padding", "0px");
         } else {
-            InsetsRender.renderToStyle(tableCssStyle, "padding", insets);
+            InsetsRender.renderToStyle(divCssStyle, "padding", insets);
         }
-
-        tableCssStyle.setAttribute("border-collapse", "collapse");
-        Extent borderSize = border == null ? null : border.getSize();
-        if (borderSize != null) {
-            if (!rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN)) {
-                tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
-            }
-        }
+        divElement.setAttribute("style", divCssStyle.renderInline());
         
-        tableElement.setAttribute("style", tableCssStyle.renderInline());
+        Element tableElement = document.createElement("table");
+        tableElement.setAttribute("id", elementId + "_table");
+        tableElement.setAttribute("style", "padding:0px;border-collapse:collapse;");
+        divElement.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");
@@ -359,6 +328,30 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         if (componentCount > 0) {
             DomUpdate.renderElementRemove(rc.getServerMessage(), parentId + "_spacing_" 
                     + ContainerInstance.getElementId(parent.getVisibleComponent(componentCount - 1)));
+        }
+    }
+    
+    /**
+     * Renders a "spacing cell" beneath a row cell to provide
+     * cell spacing.
+     * 
+     * @param parentNode the containing node to which the child
+     *        should be appended
+     * @param row the <code>Row</code> being updated
+     * @param child the child preceeding the spacing row
+     */
+    private void renderSpacingCell(Node parentNode, Row row, Component child) {
+        Extent cellSpacing = (Extent) row.getRenderProperty(Row.PROPERTY_CELL_SPACING);
+        if (!ExtentRender.isZeroLength(cellSpacing) && row.visibleIndexOf(child) != row.getVisibleComponentCount() - 1) {
+            Element spacingElement = parentNode.getOwnerDocument().createElement("td");
+            spacingElement.setAttribute("id", ContainerInstance.getElementId(row) + "_spacing_" 
+                    + ContainerInstance.getElementId(child));
+            CssStyle spacingCssStyle = new CssStyle();
+            spacingCssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(cellSpacing));
+            spacingCssStyle.setAttribute("font-size", "1px");
+            spacingCssStyle.setAttribute("line-height", "0px");
+            spacingElement.setAttribute("style", spacingCssStyle.renderInline());
+            parentNode.appendChild(spacingElement);
         }
     }
     
