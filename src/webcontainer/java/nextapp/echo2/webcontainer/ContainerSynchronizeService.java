@@ -384,10 +384,13 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
-     * Update the <code>ServerMessage</code> to set the focused component if 
+     * Update the <code>ServerMessage</code> to set the focused component if
      * required.
      * 
      * @param rc the relevant <code>RenderContext</code>
+     * @param initial a flag indicating whether the initial synchronization is
+     *        being performed, i.e., whether this method is being invoked from
+     *        <code>renderInit()</code>
      */
     private void setFocus(RenderContext rc, boolean initial) {
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
