@@ -35,6 +35,7 @@ import java.util.List;
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Command;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
@@ -49,6 +50,8 @@ import junit.framework.TestCase;
  * Unit test(s) for update management subsystem.
  */
 public class UpdateManagerTest extends TestCase  {
+    
+    private static class ExampleCommand implements Command { }
     
     private ColumnApp columnApp;
     private UpdateManager manager;
@@ -173,6 +176,38 @@ public class UpdateManagerTest extends TestCase  {
         PropertyUpdate propertyUpdate = manager.getServerUpdateManager().getApplicationPropertyUpdate(
                 ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
         assertNull(propertyUpdate);
+    }
+
+    /**
+     * Ensure property handling of <code>Command</code>s.
+     */
+    public void testCommand() {
+        Command command = new ExampleCommand();
+
+        manager.purge();
+        columnApp.enqueueCommand(command);
+
+        // Test basic command queueing.
+        assertEquals(1, manager.getServerUpdateManager().getCommands().length);
+        assertEquals(command, manager.getServerUpdateManager().getCommands()[0]);
+        
+        manager.getServerUpdateManager().processFullRefresh();
+
+        // Ensure command survives full refresh.
+        assertEquals(1, manager.getServerUpdateManager().getCommands().length);
+        assertEquals(command, manager.getServerUpdateManager().getCommands()[0]);
+        
+        manager.purge();
+        
+        // Ensure command purged.
+        assertEquals(0, manager.getServerUpdateManager().getCommands().length);
+
+        manager.getServerUpdateManager().processFullRefresh();
+        columnApp.enqueueCommand(command);
+        
+        // Ensure commands can be enqueued even if a full refresh is present.
+        assertEquals(1, manager.getServerUpdateManager().getCommands().length);
+        assertEquals(command, manager.getServerUpdateManager().getCommands()[0]);
     }
     
     /**
