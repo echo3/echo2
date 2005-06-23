@@ -38,7 +38,8 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 
 /**
- * 
+ * An interactive test which draws a nautilus-like series of nested 
+ * <code>SplitPane</code>s.
  */
 public class SplitPaneNestedTest extends SplitPane {
     
