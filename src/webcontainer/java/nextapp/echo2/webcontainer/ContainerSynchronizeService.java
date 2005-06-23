@@ -318,7 +318,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             //BUGBUG. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);
-            setFocus(rc);
+            setFocus(rc, true);
             setModalContextRootId(rc);
             setRootLayoutDirection(rc);
             
@@ -356,7 +356,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             processServerUpdates(rc);
             
             setAsynchronousMonitorInterval(rc);
-            setFocus(rc);
+            setFocus(rc, false);
             setModalContextRootId(rc);
             
             updateManager.purge();
@@ -389,13 +389,21 @@ public class ContainerSynchronizeService extends SynchronizeService {
      * 
      * @param rc the relevant <code>RenderContext</code>
      */
-    private void setFocus(RenderContext rc) {
+    private void setFocus(RenderContext rc, boolean initial) {
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
-        ServerUpdateManager serverUpdateManager = applicationInstance.getUpdateManager().getServerUpdateManager();
-        PropertyUpdate focusUpdate = 
-                serverUpdateManager.getApplicationPropertyUpdate(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
-        if (focusUpdate != null && focusUpdate.getNewValue() != null) {
-            Component focusedComponent = (Component) focusUpdate.getNewValue();
+        Component focusedComponent = null;
+        if (initial) {
+            focusedComponent = applicationInstance.getFocusedComponent();
+        } else {
+            ServerUpdateManager serverUpdateManager = applicationInstance.getUpdateManager().getServerUpdateManager();
+            PropertyUpdate focusUpdate = 
+                    serverUpdateManager.getApplicationPropertyUpdate(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
+            if (focusUpdate != null) {
+                focusedComponent = (Component) focusUpdate.getNewValue();
+            }
+        }
+
+        if (focusedComponent != null) {
             ComponentSynchronizePeer componentSyncPeer 
                     = SynchronizePeerFactory.getPeerForComponent(focusedComponent.getClass());
             if (componentSyncPeer instanceof FocusSupport) {
