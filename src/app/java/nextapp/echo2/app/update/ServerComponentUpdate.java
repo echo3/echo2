@@ -345,7 +345,7 @@ implements Serializable {
      * 
      * @param descendant the removed descendant
      */
-    private void removeDescendant(Component descendant) {
+    public void removeDescendant(Component descendant) {
         if (removedDescendants == null) {
             removedDescendants = new HashSet();
         }

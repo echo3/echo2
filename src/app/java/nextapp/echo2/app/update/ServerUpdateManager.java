@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Command;
 import nextapp.echo2.app.Component;
 
@@ -84,12 +85,12 @@ implements Serializable {
         }
     };
     
-    private Map applicationUpdateMap = new HashMap();
+    private Map applicationUpdateMap;
+    private ArrayList commands;
+    private Map componentUpdateMap;
+    private ServerComponentUpdate fullRefreshUpdate;
     private ClientUpdateManager clientUpdateManager;
-    private ArrayList commands = new ArrayList();
-
-    private Map componentUpdateMap = new HashMap();
-    private ServerComponentUpdate fullRefreshUpdate = null;
+    private ApplicationInstance applicationInstance;
     
     /**
      * Creates a new <code>ServerUpdateManager</code>.
@@ -97,10 +98,15 @@ implements Serializable {
      * <strong>Warning:</strong> the <code>init()</code> method must be 
      * invoked before the <code>ServerUpdateManager</code> is used.
      * 
+     * @param applicationInstance the relevant <code>ApplicationInstance</code>
      * @see #init(nextapp.echo2.app.update.ClientUpdateManager)
      */
-    public ServerUpdateManager() {
+    public ServerUpdateManager(ApplicationInstance applicationInstance) {
         super();
+        this.applicationInstance = applicationInstance;
+        applicationUpdateMap = new HashMap();
+        commands = new ArrayList();
+        componentUpdateMap = new HashMap();
         fullRefreshUpdate = new ServerComponentUpdate(null);
     }
     
@@ -385,16 +391,19 @@ implements Serializable {
      * severe change, such as application locale or style sheet.
      */
     public void processFullRefresh() {
-        ServerComponentUpdate update = new ServerComponentUpdate(null);
+        fullRefreshUpdate  = new ServerComponentUpdate(null);
+
+        if (applicationInstance.getDefaultWindow() != null) {
+            fullRefreshUpdate.removeDescendant(applicationInstance.getDefaultWindow());
+        }
+
         Iterator it = componentUpdateMap.keySet().iterator();
-//BUGBUG. add window as removed descendant.        
         while (it.hasNext()) {
             Component testComponent = (Component) it.next();
             ServerComponentUpdate childUpdate = (ServerComponentUpdate) componentUpdateMap.get(testComponent);
-            update.appendRemovedDescendants(childUpdate);
+            fullRefreshUpdate.appendRemovedDescendants(childUpdate);
             it.remove();
         }
-        fullRefreshUpdate = new ServerComponentUpdate(null);
     }
     
     /**

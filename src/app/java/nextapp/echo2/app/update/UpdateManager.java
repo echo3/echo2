@@ -55,7 +55,7 @@ implements Serializable {
         super();
         this.applicationInstance = applicationInstance;
         clientUpdateManager = new ClientUpdateManager(applicationInstance);
-        serverUpdateManager = new ServerUpdateManager();
+        serverUpdateManager = new ServerUpdateManager(applicationInstance);
         serverUpdateManager.init(clientUpdateManager);
     }
     
