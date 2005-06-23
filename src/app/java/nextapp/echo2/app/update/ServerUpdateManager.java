@@ -394,6 +394,8 @@ implements Serializable {
         fullRefreshUpdate  = new ServerComponentUpdate(null);
 
         if (applicationInstance.getDefaultWindow() != null) {
+            // Default window may be null if an operation is invoked from within the
+            // ApplicationInstsance.init() implementation that causes a full refresh.
             fullRefreshUpdate.removeDescendant(applicationInstance.getDefaultWindow());
         }
 
