@@ -75,6 +75,7 @@ implements Runnable {
         // Do not add modal windows.
         blacklist.add("Add Modal Window");
         blacklist.add("Add Three Modal Windows");
+        blacklist.add("Add \"Modal Launching\" Component Sampler to Embedded ContentPane");
         
         BUTTON_BLACKLIST = Collections.unmodifiableSet(blacklist);
     }
