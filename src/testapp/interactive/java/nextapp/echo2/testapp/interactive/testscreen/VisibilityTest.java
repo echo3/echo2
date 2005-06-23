@@ -40,7 +40,6 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * Interactive test for component visibility.
@@ -51,10 +50,10 @@ public class VisibilityTest extends SplitPane {
     
     public VisibilityTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
         
         ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
 
         controlsColumn.addButton("Visible = True", new ActionListener() {

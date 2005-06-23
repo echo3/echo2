@@ -92,7 +92,7 @@ public class StyleSheetTest extends Column {
         add(controlsColumn);
         
         Button defaultButton = new Button("Slate Blue Style Sheet (DEFAULT)");
-        defaultButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        defaultButton.setStyleName("Default");
         defaultButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
@@ -101,7 +101,7 @@ public class StyleSheetTest extends Column {
         controlsColumn.add(defaultButton);
         
         Button greenButton = new Button("Forest Green Style Sheet");
-        greenButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        greenButton.setStyleName("Default");
         greenButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().setStyleSheet(Styles.GREEN_STYLE_SHEET);
@@ -110,7 +110,7 @@ public class StyleSheetTest extends Column {
         controlsColumn.add(greenButton);
         
         Button nullButton = new Button("No Style Sheet");
-        nullButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        nullButton.setStyleName("Default");
         nullButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().setStyleSheet(null);
@@ -119,7 +119,7 @@ public class StyleSheetTest extends Column {
         controlsColumn.add(nullButton);
         
         Button customButton = new Button("Custom Style Sheet (Edit Below)");
-        customButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        customButton.setStyleName("Default");
         customButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -134,7 +134,7 @@ public class StyleSheetTest extends Column {
         
         styleSheetEntryTextArea = new TextArea();
         styleSheetEntryTextArea.getDocument().setText(DEFAULT_STYLE_SHEET_TEXT);
-        styleSheetEntryTextArea.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        styleSheetEntryTextArea.setStyleName("Default");
         styleSheetEntryTextArea.setWidth(new Extent(600));
         styleSheetEntryTextArea.setHeight(new Extent(300));
         splitPaneLayoutData = new SplitPaneLayoutData();
@@ -149,7 +149,7 @@ public class StyleSheetTest extends Column {
             exception.printStackTrace(new PrintWriter(w));
             w.close();
             WindowPane windowPane = new WindowPane();
-            windowPane.setStyleName(Styles.DEFAULT_STYLE_NAME);
+            windowPane.setStyleName("Default");
             windowPane.setTitle("Exception Setting Custom Style");
             windowPane.add(new Label(w.toString()));
             InteractiveApp.getApp().addDialogWindowPane(windowPane);

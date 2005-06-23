@@ -43,7 +43,6 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.GridCellLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * 
@@ -62,11 +61,11 @@ public class GridTest extends SplitPane {
     
     public GridTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
         
         Column groupContainerColumn = new Column();
         groupContainerColumn.setCellSpacing(new Extent(5));
-        groupContainerColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        groupContainerColumn.setStyleName("TestControlsColumn");
         add(groupContainerColumn);
         
         Column testColumn = new Column();

@@ -79,7 +79,7 @@ public class ContainerContextTest extends Column {
             }
             
             Label label = new Label(labelValue);
-            label.setStyleName(row % 2 == 0 ? "evenCellLabel" : "oddCellLabel");
+            label.setStyleName(row % 2 == 0 ? "EvenCellLabel" : "OddCellLabel");
             return label;
         }
     }
@@ -114,7 +114,7 @@ public class ContainerContextTest extends Column {
         Arrays.sort(propertyNames);
         
         Table table = new Table();
-        table.setStyleName("default");
+        table.setStyleName("Default");
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);
@@ -134,7 +134,7 @@ public class ContainerContextTest extends Column {
         Map initialParameterMap = containerContext.getInitialParameterMap();
         
         Table table = new Table();
-        table.setStyleName("default");
+        table.setStyleName("Default");
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);

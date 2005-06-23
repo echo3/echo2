@@ -43,7 +43,6 @@ import nextapp.echo2.app.layout.RowLayoutData;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
-import nextapp.echo2.testapp.interactive.Styles;
 
 public class RowTest extends SplitPane {
     
@@ -57,10 +56,10 @@ public class RowTest extends SplitPane {
     
     public RowTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
         
         ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
 
         final Row testRow = new Row();

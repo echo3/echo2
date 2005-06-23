@@ -56,10 +56,10 @@ public class TestPane extends ContentPane {
         public void actionPerformed(ActionEvent e) {
             try {
                 if (activeButton != null) {
-                    activeButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+                    activeButton.setStyleName("Default");
                 }
                 Button button = (Button) e.getSource();
-                button.setStyleName(Styles.SELECTED_BUTTON_STYLE_NAME);
+                button.setStyleName("Selected");
                 activeButton = button;
                 String screenClassName = "nextapp.echo2.testapp.interactive.testscreen." + e.getActionCommand();
                 Class screenClass = Class.forName(screenClassName);
@@ -84,19 +84,19 @@ public class TestPane extends ContentPane {
         super();
         
         SplitPane verticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
-        verticalPane.setStyleName("testPane");
+        verticalPane.setStyleName("TestPane");
         add(verticalPane);
 
         Label titleLabel = new Label("NextApp Echo2 Test Application");
-        titleLabel.setStyleName(Styles.TITLE_LABEL_STYLE_NAME);
+        titleLabel.setStyleName("TitleLabel");
         verticalPane.add(titleLabel);
         
         horizontalPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(215));
-        horizontalPane.setStyleName("defaultResizable");
+        horizontalPane.setStyleName("DefaultResizable");
         verticalPane.add(horizontalPane);
         
         Column controlsColumn = new Column();
-        controlsColumn.setStyleName(Styles.APPLICATION_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("ApplicationControlsColumn");
         controlsColumn.setCellSpacing(new Extent(5));
         
         horizontalPane.add(controlsColumn);
@@ -132,7 +132,7 @@ public class TestPane extends ContentPane {
         controlsColumn.add(applicationControlsColumn);
 
         Button button = new Button("Exit");
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp.getApp().displayWelcomePane();
@@ -144,7 +144,7 @@ public class TestPane extends ContentPane {
     private void addTest(String name, String action) {
         Button button = new Button(name);
         button.setActionCommand(action);
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         button.addActionListener(commandActionListener);
         testLaunchButtonsColumn.add(button);
     }

@@ -83,7 +83,7 @@ public class WelcomePane extends ContentPane {
         column.add(label);
 
         Button continueButton = new Button("Continue");
-        continueButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        continueButton.setStyleName("Default");
         continueButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp.getApp().displayTestPane();

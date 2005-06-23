@@ -79,12 +79,12 @@ public class TextComponentTest extends SplitPane {
     
     public TextComponentTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
         
         ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
 
         Column testColumn = new Column();

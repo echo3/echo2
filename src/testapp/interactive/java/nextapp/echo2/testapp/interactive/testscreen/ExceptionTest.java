@@ -35,7 +35,6 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * A test for handling run-time exceptions. 
@@ -50,7 +49,7 @@ public class ExceptionTest extends Column {
         setLayoutData(splitPaneLayoutData);
         
         Button button = new Button("Throw a RuntimeException");
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 throw new RuntimeException("Deliberately thrown InteractiveTestApp RuntimeException.");

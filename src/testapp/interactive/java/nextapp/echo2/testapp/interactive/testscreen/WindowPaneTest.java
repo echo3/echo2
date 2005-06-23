@@ -46,7 +46,6 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
-import nextapp.echo2.testapp.interactive.Styles;
 
 public class WindowPaneTest extends SplitPane {
     
@@ -133,7 +132,7 @@ public class WindowPaneTest extends SplitPane {
                     targetContentPane.add(windowPane);
                     windowPane.setTitle("SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setStyleName("default");
+                    windowPane.setStyleName("Default");
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(500, Extent.PX));
                     windowPane.setHeight(new Extent(300, Extent.PX));
@@ -156,7 +155,7 @@ public class WindowPaneTest extends SplitPane {
                     splitPaneLayoutData.setOverflow(SplitPaneLayoutData.OVERFLOW_HIDDEN);
                     okButton.setLayoutData(splitPaneLayoutData);
                     okButton.setWidth(new Extent(100));
-                    okButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+                    okButton.setStyleName("Default");
                     splitPane.add(okButton);
                     
                     Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
@@ -176,7 +175,7 @@ public class WindowPaneTest extends SplitPane {
                     targetContentPane.add(windowPane);
                     windowPane.setTitle("Multiple SplitPane Window #" + windowNumber++);
                     windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setStyleName("default");
+                    windowPane.setStyleName("Default");
                     windowPane.setTitleBackground(new Color(0x2f2f4f));
                     windowPane.setWidth(new Extent(700, Extent.PX));
                     windowPane.setWidth(new Extent(500, Extent.PX));
@@ -243,11 +242,11 @@ public class WindowPaneTest extends SplitPane {
     
     public WindowPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
         
         ButtonColumn controlsColumn = new ButtonColumn();
         controlsColumn.setCellSpacing(new Extent(5));
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
         
         final ContentPane contentPane = new ContentPane();
@@ -269,7 +268,7 @@ public class WindowPaneTest extends SplitPane {
         windowPane.setInsets(new Insets(10));
         windowPane.setWidth(new Extent(500));
         windowPane.setHeight(new Extent(280));
-        windowPane.setStyleName("default");
+        windowPane.setStyleName("Default");
         windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
         return windowPane;
     }
@@ -283,7 +282,7 @@ public class WindowPaneTest extends SplitPane {
         windowPane.setInsets(new Insets(10));
         windowPane.setWidth(new Extent(500));
         windowPane.setHeight(new Extent(280));
-        windowPane.setStyleName("default");
+        windowPane.setStyleName("Default");
         
         ButtonColumn column = new ButtonColumn();
         column.addButton("Add Modal Window", new ActionListener() {

@@ -35,8 +35,6 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
-
 /**
  * A test for handling of long-running server-interactions.
  */
@@ -52,7 +50,7 @@ public class DelayTest extends Column {
         setLayoutData(splitPaneLayoutData);
         
         Button delayButton = new Button("Test 3 second delay");
-        delayButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        delayButton.setStyleName("Default");
         delayButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -64,7 +62,7 @@ public class DelayTest extends Column {
         add(delayButton);
         
         final Button blockedButton = new Button("This button has been clicked 0 times");
-        blockedButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        blockedButton.setStyleName("Default");
         blockedButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 blockedButton.setText("This button has been clicked " + ++clickCount + " times");

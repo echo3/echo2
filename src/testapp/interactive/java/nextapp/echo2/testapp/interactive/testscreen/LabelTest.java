@@ -62,13 +62,13 @@ public class LabelTest extends SplitPane {
     
     public LabelTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
         
         Column controlGroupsColumn = new Column();
         controlGroupsColumn.setCellSpacing(new Extent(5));
-        controlGroupsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlGroupsColumn.setStyleName("TestControlsColumn");
         add(controlGroupsColumn);
         
         testColumn = new Column();

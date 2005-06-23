@@ -35,14 +35,13 @@ import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
 import nextapp.echo2.webcontainer.command.BrowserOpenWindowCommand;
 import nextapp.echo2.webcontainer.command.BrowserRedirectCommand;
 
 /**
  * A test for the command infrastructures and browser control commands.
  */
-public class CommandTest  extends Column {
+public class CommandTest extends Column {
     
     public CommandTest() {
         super();
@@ -54,7 +53,7 @@ public class CommandTest  extends Column {
         Button button;
         
         button = new Button("Enqueue Redirect Command");
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().enqueueCommand(new BrowserRedirectCommand("http://www.nextapp.com/products/echo2"));
@@ -63,7 +62,7 @@ public class CommandTest  extends Column {
         add(button);
         
         button = new Button("Enqueue Simple Window Open Command");
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().enqueueCommand(
@@ -73,7 +72,7 @@ public class CommandTest  extends Column {
         add(button);
         
         button = new Button("Enqueue 640x240 Named Window Open Command");
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().enqueueCommand(

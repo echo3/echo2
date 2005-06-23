@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
- <style name="testPane" type="nextapp.echo2.app.SplitPane">
+ <style name="TestPane" type="nextapp.echo2.app.SplitPane">
   <properties>
    <property name="separatorPosition" value="40px"/>
    <proeprty name="separatorHeight" value="1px"/>
    <property name="separatorColor" value="#1d1d1d"/>
   </properties>
  </style> 
- <style name="default" type="nextapp.echo2.app.button.AbstractButton">
+ <style name="Default" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
    <property name="background" value="#4f7f4f"/>
    <property name="foreground" value="#efefff"/>
@@ -29,13 +29,13 @@
    <property name="insets" value="20px 3px"/>
   </properties>
  </style>
- <style name="selectedButton" basename="default" type="nextapp.echo2.app.Button">
+ <style name="Selected" basename="Default" type="nextapp.echo2.app.Button">
   <properties>
    <property name="background" value="#3f6f3f"/>
    <property name="foreground" value="#ffcfcf"/>
   </properties>
  </style>
- <style name="default" type="nextapp.echo2.app.text.TextComponent">
+ <style name="Default" type="nextapp.echo2.app.text.TextComponent">
   <properties>
    <property name="background" value="#dfffdf"/>
    <property name="foreground" value="#000000"/>
@@ -44,7 +44,7 @@
    </property>
   </properties>
  </style>
- <style name="titleLabel" type="nextapp.echo2.app.Label">
+ <style name="TitleLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="font">
     <font typeface="Verdana" size="18px"/>
@@ -64,14 +64,14 @@
    </property>
   </properties>
  </style>
- <style name="default" type="nextapp.echo2.app.WindowPane">
+ <style name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <property name="titleInsets" value="10px 5px"/>
    <property name="titleBackground" value="#2f4f2f"/>
    <property name="titleForeground" value="#ffffff"/>
   </properties>
  </style>
- <style name="applicationControlsColumn" type="nextapp.echo2.app.Column">
+ <style name="ApplicationControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
@@ -85,7 +85,7 @@
    </property>
   </properties>
  </style>
- <style name="testControlsColumn" type="nextapp.echo2.app.Column">
+ <style name="TestControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">

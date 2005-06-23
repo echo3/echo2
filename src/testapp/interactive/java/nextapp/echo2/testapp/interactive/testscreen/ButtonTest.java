@@ -101,13 +101,13 @@ extends SplitPane {
     
     public ButtonTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
         
         Column controlGroupsColumn = new Column();
         controlGroupsColumn.setCellSpacing(new Extent(5));
-        controlGroupsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlGroupsColumn.setStyleName("TestControlsColumn");
         add(controlGroupsColumn);
 
         final TestGrid testGrid = new TestGrid();
@@ -267,7 +267,7 @@ extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
                     public void apply(AbstractButton button) {
-                        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+                        button.setStyleName("Default");
                     }
                 });
             }

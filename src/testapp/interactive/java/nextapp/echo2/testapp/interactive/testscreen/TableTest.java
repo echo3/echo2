@@ -110,11 +110,11 @@ public class TableTest extends SplitPane {
     
     public TableTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
         
         Column groupContainerColumn = new Column();
         groupContainerColumn.setCellSpacing(new Extent(5));
-        groupContainerColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        groupContainerColumn.setStyleName("TestControlsColumn");
         add(groupContainerColumn);
         
         Column testColumn = new Column();

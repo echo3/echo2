@@ -38,7 +38,7 @@ public class ButtonColumn extends Column {
     public void addButton(String label, ActionListener actionListener) {
         Button button = new Button(label);
         button.addActionListener(actionListener);
-        button.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        button.setStyleName("Default");
         add(button);
     }
 }

@@ -38,7 +38,6 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * 
@@ -69,7 +68,7 @@ public class PushGhostTest extends Column {
         }
         
         Button oneMinuteStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 500ms)");
-        oneMinuteStartButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        oneMinuteStartButton.setStyleName("Default");
         oneMinuteStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp app = (InteractiveApp)getApplicationInstance();
@@ -80,7 +79,7 @@ public class PushGhostTest extends Column {
         
         if (!InteractiveApp.LIVE_DEMO_SERVER) {
             Button oneMinuteFastStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 0ms)");
-            oneMinuteFastStartButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+            oneMinuteFastStartButton.setStyleName("Default");
             oneMinuteFastStartButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     InteractiveApp app = (InteractiveApp)getApplicationInstance();
@@ -90,7 +89,7 @@ public class PushGhostTest extends Column {
             add(oneMinuteFastStartButton);
             
             Button indefiniteStartButton = new Button("Start Ghost Click Test (Runtime: Indefinite, Callback interval: 0ms)");
-            indefiniteStartButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+            indefiniteStartButton.setStyleName("Default");
             indefiniteStartButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     InteractiveApp app = (InteractiveApp)getApplicationInstance();

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
- <style name="testPane" type="nextapp.echo2.app.SplitPane">
+ <style name="TestPane" type="nextapp.echo2.app.SplitPane">
   <properties>
    <property name="separatorPosition" value="40px"/>
    <property name="separatorHeight" value="1px"/>
    <property name="separatorColor" value="#1d1d1d"/>
   </properties>
  </style> 
- <style name="default" type="nextapp.echo2.app.Table">
+ <style name="Default" type="nextapp.echo2.app.Table">
   <properties>
    <property name="insets" value="5px 2px"/>
    <property name="border">
@@ -15,7 +15,7 @@
    </property>
   </properties>
  </style>
- <style name="evenCellLabel" type="nextapp.echo2.app.Label">
+ <style name="EvenCellLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
@@ -26,7 +26,7 @@
    </property>
   </properties>
  </style>
- <style name="oddCellLabel" type="nextapp.echo2.app.Label">
+ <style name="OddCellLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
@@ -37,7 +37,7 @@
    </property>
   </properties>
  </style>
- <style name="default" type="nextapp.echo2.app.button.AbstractButton">
+ <style name="Default" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
    <property name="background" value="#4f4f5f"/>
    <property name="foreground" value="#efefff"/>
@@ -59,13 +59,13 @@
    <property name="insets" value="20px 3px"/>
   </properties>
  </style>
- <style name="selectedButton" basename="default" type="nextapp.echo2.app.Button">
+ <style name="Selected" basename="Default" type="nextapp.echo2.app.Button">
   <properties>
    <property name="background" value="#3f3f4f"/>
    <property name="foreground" value="#ffcfcf"/>
   </properties>
  </style>
- <style name="default" type="nextapp.echo2.app.text.TextComponent">
+ <style name="Default" type="nextapp.echo2.app.text.TextComponent">
   <properties>
    <property name="background" value="#ffffdf"/>
    <property name="foreground" value="#000000"/>
@@ -74,7 +74,7 @@
    </property>
   </properties>
  </style>
- <style name="defaultResizable" type="nextapp.echo2.app.SplitPane">
+ <style name="DefaultResizable" type="nextapp.echo2.app.SplitPane">
   <properties>
    <property name="resizable" value="true"/>
    <property name="separatorHorizontalImage">
@@ -93,7 +93,7 @@
    </property>
   </properties>
  </style>
- <style name="titleLabel" type="nextapp.echo2.app.Label">
+ <style name="TitleLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="font">
     <font typeface="Verdana" size="18px"/>
@@ -120,7 +120,7 @@
    </property>
   </properties>
  </style>
- <style name="default" type="nextapp.echo2.app.WindowPane">
+ <style name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
    <property type="java.lang.Boolean" name="nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder" value="true"/>
@@ -196,7 +196,7 @@
    </property>
   </properties>
  </style>
- <style name="applicationControlsColumn" type="nextapp.echo2.app.Column">
+ <style name="ApplicationControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
@@ -217,7 +217,7 @@
    </property>
   </properties>
  </style>
- <style name="testControlsColumn" type="nextapp.echo2.app.Column">
+ <style name="TestControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
     <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">

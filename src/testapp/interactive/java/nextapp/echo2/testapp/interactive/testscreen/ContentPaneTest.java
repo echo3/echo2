@@ -37,7 +37,6 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * 
@@ -46,12 +45,12 @@ public class ContentPaneTest extends SplitPane {
 
     public ContentPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
         
         final ContentPane contentPane = InteractiveApp.getApp().getMainWindow().getContent();
         
         ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
 
         controlsColumn.addButton("Reset", new ActionListener() {

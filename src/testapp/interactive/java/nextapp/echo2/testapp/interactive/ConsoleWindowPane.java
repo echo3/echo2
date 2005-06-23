@@ -52,7 +52,7 @@ public class ConsoleWindowPane extends WindowPane {
     public ConsoleWindowPane() {
         super();
         setTitle("Console");
-        setStyleName("default");
+        setStyleName("Default");
         
         SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(40));
         splitPane.setSeparatorHeight(new Extent(1));
@@ -66,7 +66,7 @@ public class ConsoleWindowPane extends WindowPane {
         splitPane.add(controlRow);
         
         Button clearButton = new Button("Clear");
-        clearButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        clearButton.setStyleName("Default");
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 column.removeAll();

@@ -61,12 +61,6 @@ public class Styles {
     public static final ResourceImageReference PRESSED_ICON_LOGO 
             = new ResourceImageReference(IMAGE_PATH + "NextAppLogoPressed.png");
 
-    public static final String APPLICATION_CONTROLS_COLUMN_STYLE_NAME = "applicationControlsColumn";
-    public static final String DEFAULT_STYLE_NAME = "default";
-    public static final String SELECTED_BUTTON_STYLE_NAME = "selectedButton";
-    public static final String TEST_CONTROLS_COLUMN_STYLE_NAME = "testControlsColumn";
-    public static final String TITLE_LABEL_STYLE_NAME = "titleLabel";
-
     public static final StyleSheet DEFAULT_STYLE_SHEET;
     public static final StyleSheet GREEN_STYLE_SHEET;
     static {

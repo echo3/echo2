@@ -39,7 +39,6 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * Test for asynchronous (server push) operations.
@@ -116,7 +115,7 @@ public class PushTest extends Column {
         add(statusLabel);
         
         Button startButton = new Button("Start Asynchronous (Server Push) Operation");
-        startButton.setStyleName(Styles.DEFAULT_STYLE_NAME);
+        startButton.setStyleName("Default");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (taskQueue == null) {

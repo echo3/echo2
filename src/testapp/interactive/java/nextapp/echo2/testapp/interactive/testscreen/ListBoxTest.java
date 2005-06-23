@@ -51,7 +51,6 @@ import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
-import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * An interactive test for <code>ListBox</code>es.
@@ -120,12 +119,12 @@ public class ListBoxTest extends SplitPane {
 
     public ListBoxTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("defaultResizable");
+        setStyleName("DefaultResizable");
 
         SplitPaneLayoutData splitPaneLayoutData;
 
         ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName(Styles.TEST_CONTROLS_COLUMN_STYLE_NAME);
+        controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
 
         testColumn = new Column();
