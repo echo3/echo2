@@ -41,7 +41,7 @@ import nextapp.echo2.app.componentxml.PropertyXmlPeer;
 
 /**
  * <code>PropertyXmlPeer</code> implementation for 
- * <code>nextapp.echo.Extent</code> properties.
+ * <code>nextapp.echo2.app.Extent</code> properties.
  */
 public class ExtentPeer 
 implements PropertyXmlPeer {

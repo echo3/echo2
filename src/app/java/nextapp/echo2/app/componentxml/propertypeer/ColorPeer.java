@@ -37,7 +37,7 @@ import nextapp.echo2.app.componentxml.PropertyXmlPeer;
 
 /**
  * <code>PropertyXmlPeer</code> implementation for 
- * <code>nextapp.echo.Color</code> properties.
+ * <code>nextapp.echo2.app.Color</code> properties.
  */
 public class ColorPeer 
 implements PropertyXmlPeer {

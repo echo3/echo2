@@ -44,7 +44,7 @@ import nextapp.echo2.app.util.DomUtil;
 
 /**
  * <code>PropertyXmlPeer</code> implementation for 
- * <code>nextapp.echo.Border</code> properties.
+ * <code>nextapp.echo2.app.Border</code> properties.
  */
 public class BorderPeer 
 implements PropertyXmlPeer {

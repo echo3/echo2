@@ -42,7 +42,7 @@ import nextapp.echo2.app.util.DomUtil;
 
 /**
  * <code>PropertyXmlPeer</code> implementation for 
- * <code>nextapp.echo2.Alignment</code> properties.
+ * <code>nextapp.echo2.app.Alignment</code> properties.
  */
 public class AlignmentPeer 
 implements PropertyXmlPeer {
