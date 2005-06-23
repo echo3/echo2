@@ -43,7 +43,20 @@ public class WindowUpdate {
     private static final String MESSAGE_PART_NAME = "EchoWindowUpdate";
     
     /**
-     * Creates a <code>settitle</code> operation to set the title of a 
+     * Creates a <code>focus</code> operation to set the focused
+     * component within the window.
+     * 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param elementId the new focused element id
+     */
+    public static void renderSetFocus(ServerMessage serverMessage, String elementId) {
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
+                MESSAGE_PART_NAME, "set-focus");
+        element.setAttribute("element-id", elementId);
+    }
+    
+    /**
+     * Creates a <code>set-title</code> operation to set the title of a 
      * top-level browser window.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>

@@ -236,10 +236,6 @@ implements Serializable {
      * @param newValue the current value of the property
      */
     public void processApplicationPropertyUpdate(String propertyName, Object oldValue, Object newValue) {
-        if (isFullRefreshRequired()) {
-            return;
-        }
-        
         Object clientValue = clientUpdateManager.getApplicationUpdatePropertyValue(propertyName);
         if (clientValue == newValue || (clientValue != null && clientValue.equals(newValue))) {
             // New value is same as client value, thus client is already in sync: cancel the update.

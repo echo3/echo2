@@ -335,5 +335,20 @@ public class TextComponentTest extends SplitPane {
                 textArea.setHeight(new Extent(300, Extent.PX));
             }
         });
+        controlsColumn.addButton("Focus TextField", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().setFocusedComponent(textField);
+            }
+        });
+        controlsColumn.addButton("Focus PasswordField", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().setFocusedComponent(passwordField);
+            }
+        });
+        controlsColumn.addButton("Focus TextArea", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().setFocusedComponent(textArea);
+            }
+        });
     }
 }

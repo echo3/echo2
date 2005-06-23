@@ -40,6 +40,7 @@ import nextapp.echo2.app.Command;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Window;
+import nextapp.echo2.app.update.PropertyUpdate;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
@@ -212,7 +213,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
         ServerComponentUpdate[] componentUpdates = updateManager.getServerUpdateManager().getComponentUpdates();
         
         if (serverUpdateManager.isFullRefreshRequired()) {
-            //BUGBUG. hardcoded to default window.
             Window window = rc.getContainerInstance().getApplicationInstance().getDefaultWindow();
             ServerComponentUpdate fullRefreshUpdate = componentUpdates[0];
             
@@ -227,7 +227,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             setRootLayoutDirection(rc);
         } else {
-            
             // Set of Components whose HTML was entirely re-rendered, negating the need
             // for updates of their children to be processed.
             Set fullyReplacedHierarchies = new HashSet();
@@ -260,6 +259,18 @@ public class ContainerSynchronizeService extends SynchronizeService {
                         fullyReplacedHierarchies.add(parentComponent);
                     }
                 }
+            }
+        }
+        
+        // Update component focus if required.
+        PropertyUpdate focusUpdate = 
+                serverUpdateManager.getApplicationPropertyUpdate(ApplicationInstance.FOCUSED_COMPONENT_CHANGED_PROPERTY);
+        if (focusUpdate != null && focusUpdate.getNewValue() != null) {
+            Component focusedComponent = (Component) focusUpdate.getNewValue();
+            ComponentSynchronizePeer componentSyncPeer 
+                    = SynchronizePeerFactory.getPeerForComponent(focusedComponent.getClass());
+            if (componentSyncPeer instanceof FocusSupport) {
+                ((FocusSupport) componentSyncPeer).renderSetFocus(rc, focusedComponent);
             }
         }
 

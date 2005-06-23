@@ -67,6 +67,7 @@ import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.servermessage.WindowUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
@@ -282,7 +283,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
      *      nextapp.echo2.app.Component)
      */
     public void renderSetFocus(RenderContext rc, Component component) {
-        // TODO Auto-generated method stub
+        WindowUpdate.renderSetFocus(rc.getServerMessage(), ContainerInstance.getElementId(component));
     }
 
     /**

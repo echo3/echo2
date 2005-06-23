@@ -1747,6 +1747,9 @@ EchoWindowUpdate.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "set-focus":
+                EchoWindowUpdate.processSetFocus(messagePartElement.childNodes[i]);
+                break;
             case "set-title":
                 EchoWindowUpdate.processSetTitle(messagePartElement.childNodes[i]);
                 break;
@@ -1756,9 +1759,22 @@ EchoWindowUpdate.process = function(messagePartElement) {
 };
 
 /**
+ * Processes a server directive to set the focused component.
+ *
+ * @param setFocusElement the "set-focus" directive element
+ */
+EchoWindowUpdate.processSetFocus = function(setFocusElement) {
+    var elementId = setFocusElement.getAttribute("element-id");
+    var element = document.getElementById(elementId);
+    if (element.focus) {
+        element.focus();
+    }
+};
+
+/**
  * Processes a server directive to set the window title.
  *
- * @param setTitleElement the "setTitle" directive
+ * @param setTitleElement the "set-title" directive element
  */
 EchoWindowUpdate.processSetTitle = function(setTitleElement) {
     document.title = setTitleElement.getAttribute("title");
