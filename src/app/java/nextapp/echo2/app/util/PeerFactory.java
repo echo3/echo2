@@ -27,8 +27,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. Doc.
-
 package nextapp.echo2.app.util;
 
 import java.io.IOException;
@@ -39,12 +37,30 @@ import java.util.Map;
 import nextapp.echo2.app.util.PropertiesDiscovery;
 
 /**
- * 
+ * A mechanism for retrieving instances of singleton peer objects which are 
+ * defined to each support a specific <code>Class</code>.
+ * A properties file is used to associate peer classes with their supported
+ * classes.  The properties file should contain the fully qualified class 
+ * names of the supported objects as its keys.  The values of the properties
+ * file should contain the fully qualified class names of the peer objects.
+ * A single instance of each peer class will be used to support ALL instances
+ * of the supported class.
  */
 public class PeerFactory {
     
     private final Map objectClassNameToPeerMap = new HashMap();
     
+    /**
+     * Creates a new <code>PeerFactory</code>.
+     * 
+     * @param resourceName the name of the resource properties file from which
+     *        the peer bindings may be retrieved (this file will be retrieved
+     *        using the <code>PropertiesDiscovery</code> system, so multiple
+     *        instances of the file within the <code>CLASSPATH</code> will be
+     *        automatically discovered.
+     * @param classLoader the <code>ClassLoader</code> to use for retrieving the
+     *        resource file and for instantiating the peer singleton instances
+     */
     public PeerFactory(String resourceName, ClassLoader classLoader) {
         try {
             Map peerNameMap = PropertiesDiscovery.loadProperties(resourceName, classLoader);
@@ -67,15 +83,15 @@ public class PeerFactory {
         }
     }
     
-    
     /**
      * Retrieves the appropriate peer instance for a given object 
-     * <code>Class</code>.
+     * <code>Class</code>.  Returns null in the event that no peer is provided
+     * to support the specified class.
      * 
-     * @param objectClass the object class
+     * @param objectClass the supported object class
      * @param searchSuperClasses flag indicating whether superclasses
      *        of <code>objectClass</code> should be searched for peers if
-     *        none can be found for <code>objectClass</code> itself.
+     *        none can be found for <code>objectClass</code> itself
      * @return the relevant peer, or null if none can be found
      */
     public Object getPeerForObject(Class objectClass, boolean searchSuperClasses) {

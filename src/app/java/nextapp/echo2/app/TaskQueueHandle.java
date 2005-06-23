@@ -31,8 +31,6 @@ package nextapp.echo2.app;
 
 import java.io.Serializable;
 
-//BUGBUG? rename TaskQueueHandle?
-
 /**
  * Handle interface representing a queue of tasks to be run.
  * This is only a handle, the actual tasks are queued in the
