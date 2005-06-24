@@ -29,9 +29,11 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
@@ -42,9 +44,12 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.app.layout.TableCellLayoutData;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.AbstractTableModel;
+import nextapp.echo2.app.table.DefaultTableCellRenderer;
 import nextapp.echo2.app.table.DefaultTableModel;
+import nextapp.echo2.app.table.TableCellRenderer;
 import nextapp.echo2.app.table.TableColumnModel;
 import nextapp.echo2.app.table.TableModel;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
@@ -72,8 +77,6 @@ public class TableTest extends SplitPane {
         return model;
     }
     
-    private Table testTable;
-    
     private class MultiplicationTableModel extends AbstractTableModel {
 
         /**
@@ -97,6 +100,26 @@ public class TableTest extends SplitPane {
             return new Integer((column + 1) * (row + 1));
         }
     }
+    
+    private Table testTable;
+    
+    private TableCellRenderer randomizingCellRenderer = new TableCellRenderer() {
+        
+        /**
+         * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
+         *      java.lang.Object, int, int)
+         */
+        public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+            Label label = new Label(value == null ? null : value.toString());
+            TableCellLayoutData layoutData = new TableCellLayoutData();
+            layoutData.setBackground(StyleUtil.randomBrightColor());
+            layoutData.setInsets(new Insets(StyleUtil.randomExtent(12), StyleUtil.randomExtent(12), StyleUtil.randomExtent(12),
+                    StyleUtil.randomExtent(12)));
+            layoutData.setAlignment(StyleUtil.randomAlignmentHV());
+            label.setLayoutData(layoutData);
+            return label;
+        }
+    };
     
     /**
      * Writes <code>ActionEvent</code>s to console.
@@ -421,5 +444,52 @@ public class TableTest extends SplitPane {
             }
         });
         
+        // Cell Settings
+
+        controlsColumn = new ButtonColumn();
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Cell Renderer"));
+
+        controlsColumn.addButton("Default Cell Renderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer());
+            }
+        });
+        controlsColumn.addButton("Randomizing Cell Renderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, randomizingCellRenderer);
+            }
+        });
+        controlsColumn.addButton("Alignment = Leading/Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, 
+                        createTableCellRenderer(new Alignment(Alignment.LEADING, Alignment.TOP)));
+            }
+        });
+        controlsColumn.addButton("Alignment = Trailing/Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, 
+                        createTableCellRenderer(new Alignment(Alignment.TRAILING, Alignment.BOTTOM)));
+            }
+        });
     }
+
+    private TableCellRenderer createTableCellRenderer(final Alignment alignment) {
+        return new TableCellRenderer(){        
+
+            /**
+             * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
+             *      java.lang.Object, int, int)
+             */
+            public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+                Label label = new Label(value == null ? null : value.toString());
+                TableCellLayoutData layoutData = new TableCellLayoutData();
+                layoutData.setAlignment(alignment);
+                label.setLayoutData(layoutData);
+                return label;
+            }
+        };
+    }
+    
 }

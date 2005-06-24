@@ -29,6 +29,7 @@
 
 package nextapp.echo2.testapp.interactive;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
@@ -81,9 +82,18 @@ public class StyleUtil {
             = new int[]{Border.STYLE_NONE, Border.STYLE_INSET, Border.STYLE_OUTSET, Border.STYLE_SOLID,
             Border.STYLE_DASHED, Border.STYLE_DOTTED, Border.STYLE_DOUBLE, Border.STYLE_RIDGE, Border.STYLE_GROOVE};
     
+    private static final int[] HORIZONTAL_ALIGNMENT_VALUES 
+            = new int[] { Alignment.LEADING, Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT, Alignment.TRAILING };
+    private static final int[] VERTICAL_ALIGNMENT_VALUES 
+            = new int[] { Alignment.TOP, Alignment.CENTER, Alignment.BOTTOM };
+    
+    public static Alignment randomAlignmentHV() {
+        return new Alignment(HORIZONTAL_ALIGNMENT_VALUES[(int) (Math.random() * HORIZONTAL_ALIGNMENT_VALUES.length)],
+                VERTICAL_ALIGNMENT_VALUES[(int) (Math.random() * VERTICAL_ALIGNMENT_VALUES.length)]);
+    }
     
     public static Border randomBorder() {
-        return new Border(randomExtent(), randomColor(), randomBorderStyle());
+        return new Border(randomExtent(25), randomColor(), randomBorderStyle());
     }
     
     public static int randomBorderStyle() {
@@ -98,8 +108,8 @@ public class StyleUtil {
         return new Color((int) (16777216 * Math.random()));
     }
     
-    public static Extent randomExtent() {
-        return new Extent((int) (Math.random() * 50), Extent.PX);
+    public static Extent randomExtent(int max) {
+        return new Extent((int) (Math.random() * max), Extent.PX);
     }
     
     public static Font randomFont() {
