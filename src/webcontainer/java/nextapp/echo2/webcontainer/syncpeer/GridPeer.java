@@ -212,7 +212,8 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
             
                 CssStyle tdCssStyle = new CssStyle();
                 BorderRender.renderToStyle(tdCssStyle, (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER));
-                CellLayoutDataRender.renderToStyle(tdCssStyle, cell, getLayoutData(cell), defaultInsetsAttributeValue);
+                CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, cell, getLayoutData(cell), 
+                        defaultInsetsAttributeValue);
                 tdElement.setAttribute("style", tdCssStyle.renderInline());
                 
                 renderAddChild(rc, update, tdElement, cell);

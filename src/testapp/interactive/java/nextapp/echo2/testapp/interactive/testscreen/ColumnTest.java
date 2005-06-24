@@ -204,8 +204,9 @@ public class ColumnTest extends SplitPane {
                 }
                 Component component =  testColumn.getComponent((int) (Math.random() * componentCount));
                 ColumnLayoutData columnLayoutData = new ColumnLayoutData();
-                columnLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
+                columnLayoutData.setAlignment(StyleUtil.randomAlignmentHV());
                 columnLayoutData.setBackground(StyleUtil.randomBrightColor());
+                columnLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
                 component.setLayoutData(columnLayoutData);
             }
         });

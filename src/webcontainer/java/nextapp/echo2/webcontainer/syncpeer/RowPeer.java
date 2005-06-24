@@ -237,7 +237,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         // Configure cell style.
         CssStyle cssStyle = new CssStyle();
         RowLayoutData layoutData = (RowLayoutData) getLayoutData(child);
-        CellLayoutDataRender.renderToStyle(cssStyle, child, layoutData, "0px");
+        CellLayoutDataRender.renderToElementAndStyle(tdElement, cssStyle, child, layoutData, "0px");
         if (layoutData != null) {
             ExtentRender.renderToStyle(cssStyle, "width", layoutData.getWidth());
         }

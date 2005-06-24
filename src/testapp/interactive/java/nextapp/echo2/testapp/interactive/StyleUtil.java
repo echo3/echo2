@@ -82,10 +82,19 @@ public class StyleUtil {
             = new int[]{Border.STYLE_NONE, Border.STYLE_INSET, Border.STYLE_OUTSET, Border.STYLE_SOLID,
             Border.STYLE_DASHED, Border.STYLE_DOTTED, Border.STYLE_DOUBLE, Border.STYLE_RIDGE, Border.STYLE_GROOVE};
     
-    private static final int[] HORIZONTAL_ALIGNMENT_VALUES 
-            = new int[] { Alignment.LEADING, Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT, Alignment.TRAILING };
-    private static final int[] VERTICAL_ALIGNMENT_VALUES 
-            = new int[] { Alignment.TOP, Alignment.CENTER, Alignment.BOTTOM };
+    /**
+     * Choices for random horizontal layout data. <code>Alignment.DEFAULT</code>
+     * listed multiple times to create bias.
+     */
+    private static final int[] HORIZONTAL_ALIGNMENT_VALUES = new int[] { Alignment.DEFAULT, Alignment.DEFAULT, Alignment.DEFAULT,
+            Alignment.LEADING, Alignment.LEFT, Alignment.CENTER, Alignment.RIGHT, Alignment.TRAILING };
+
+    /**
+     * Choices for random vertical layout data. <code>Alignment.DEFAULT</code>
+     * listed multiple times to create bias.
+     */
+    private static final int[] VERTICAL_ALIGNMENT_VALUES = new int[] { Alignment.DEFAULT, Alignment.DEFAULT, Alignment.TOP,
+            Alignment.CENTER, Alignment.BOTTOM };
     
     public static Alignment randomAlignmentHV() {
         return new Alignment(HORIZONTAL_ALIGNMENT_VALUES[(int) (Math.random() * HORIZONTAL_ALIGNMENT_VALUES.length)],

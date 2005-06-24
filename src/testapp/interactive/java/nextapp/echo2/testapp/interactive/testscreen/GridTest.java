@@ -29,6 +29,7 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
@@ -278,6 +279,60 @@ public class GridTest extends SplitPane {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
                     layoutData.setInsets(new Insets(10, 20, 30, 40));
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Alignment = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setAlignment(null);
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Alignment = Leading/Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setAlignment(new Alignment(Alignment.LEADING, Alignment.TOP));
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Alignment = Trailing/Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setAlignment(new Alignment(Alignment.TRAILING, Alignment.BOTTOM));
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Alignment = Left/Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setAlignment(new Alignment(Alignment.LEFT, Alignment.TOP));
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Alignment = Right/Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setAlignment(new Alignment(Alignment.RIGHT, Alignment.BOTTOM));
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Alignment = Center/Center", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.CENTER));
                     selectedButton.setLayoutData(layoutData);
                 }
             }

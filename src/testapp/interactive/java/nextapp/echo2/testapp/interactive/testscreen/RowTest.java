@@ -204,8 +204,9 @@ public class RowTest extends SplitPane {
                 }
                 Component component =  testRow.getComponent((int) (Math.random() * componentCount));
                 RowLayoutData rowLayoutData = new RowLayoutData();
-                rowLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
+                rowLayoutData.setAlignment(StyleUtil.randomAlignmentHV());
                 rowLayoutData.setBackground(StyleUtil.randomBrightColor());
+                rowLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
                 component.setLayoutData(rowLayoutData);
             }
         });
