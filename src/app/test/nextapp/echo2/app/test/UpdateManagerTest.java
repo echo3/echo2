@@ -51,9 +51,19 @@ import junit.framework.TestCase;
  */
 public class UpdateManagerTest extends TestCase  {
     
+    /**
+     * Test <code>Command</code>.
+     */
     private static class ExampleCommand implements Command { }
     
+    /**
+     * Test <code>ApplicationInstance</code>.
+     */
     private ColumnApp columnApp;
+    
+    /**
+     * <code>UpdateManager</code> for <code>columnApp</code>.
+     */
     private UpdateManager manager;
     
     /**
@@ -65,6 +75,10 @@ public class UpdateManagerTest extends TestCase  {
         manager = columnApp.getUpdateManager();
     }
     
+    /**
+     * Test adding children to an parent that is being added in current 
+     * transaction.
+     */
     public void testAddChlidToAddedParent() {
         ServerComponentUpdate[] componentUpdates;
         Component[] addedChildren;
@@ -231,6 +245,11 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(0, componentUpdates.length);
     }
     
+    /**
+     * Test updating of <code>LayoutData</code> properties, ensuring that
+     * these properties correctly register updates for the 
+     * <strong>parent</strong> <code>Component</code>.
+     */
     public void testLayoutDataUpdate() {
         ServerComponentUpdate[] componentUpdates;
         ColumnLayoutData columnLayoutData;
@@ -269,6 +288,11 @@ public class UpdateManagerTest extends TestCase  {
     }
     
     
+    /**
+     * Test recording of simple property updates, and their removal
+     * in the event that the updated <code>Component</code> is later
+     * removed.
+     */
     public void testPropertyUpdate() {
         ServerComponentUpdate[] componentUpdates;
         // Remove previous updates.
@@ -297,6 +321,11 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(0, componentUpdates[0].getAddedChildren().length);
     }
     
+    /**
+     * Ensure that a property update whose state is already reflected on the
+     * client (because the end-user made the property change) is properly
+     * cancelled.
+     */
     public void testPropertyUpdateCancellation1() {
         TextField textField = new TextField();
         columnApp.getColumn().add(textField);
@@ -309,6 +338,13 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(0, componentUpdates.length);
     }
     
+    /**
+     * Ensure that a property update whose state is already reflected on the
+     * client (because the end-user made the property change) is properly
+     * cancelled.  This test will ensure that if additional properties changed
+     * on a user-updated component, that only the non-user-updated properties
+     * are reflected by the <code>UpdateManager</code>.
+     */
     public void testPropertyUpdateCancellation2() {
         TextField textField = new TextField();
         columnApp.getColumn().add(textField);
@@ -327,6 +363,13 @@ public class UpdateManagerTest extends TestCase  {
         assertNull(componentUpdates[0].getUpdatedProperty(TextField.TEXT_CHANGED_PROPERTY));
     }
     
+    /**
+     * Ensure that a property update whose state is already reflected on the
+     * client (because the end-user made the property change) is properly
+     * cancelled.  This test will ensure that user-changed properties are 
+     * cancelled even in the event that the application ALSO updated the
+     * property, though it was later overwritten by a user update.
+     */
     public void testPropertyUpdateCancellation3() {
         TextField textField = new TextField();
         columnApp.getColumn().add(textField);
@@ -341,12 +384,18 @@ public class UpdateManagerTest extends TestCase  {
         assertFalse(componentUpdates[0].hasUpdatedProperties());
     }
     
+    /**
+     * Test basic operation <code>UpdateManager.purge()</code> method.
+     */
     public void testPurge() {
         assertFalse(manager.getServerUpdateManager().getComponentUpdates().length == 0);
         manager.purge();
         assertTrue(manager.getServerUpdateManager().getComponentUpdates().length == 0);
     }
 
+    /**
+     * Ensure that component removes and descendant removes are properly stored.
+     */
     public void testRemove1() {
         Column column = new Column();
         Label label = new Label();
@@ -371,6 +420,10 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(label, removedDescendants[0]);
     }
 
+    /**
+     * Another slightly more complex test to ensure that component
+     * removes/descendant removes are properly stored.
+     */
     public void testRemove2() {
         Column column1 = new Column();
         Column column2 = new Column();
@@ -443,6 +496,9 @@ public class UpdateManagerTest extends TestCase  {
         assertEquals(label2, componentUpdates[4].getParent());
     }
     
+    /**
+     * Ensure that visible updates are treated as adds/removes.
+     */
     public void testVisibleUpdate() {
         ServerComponentUpdate[] componentUpdates;
  
