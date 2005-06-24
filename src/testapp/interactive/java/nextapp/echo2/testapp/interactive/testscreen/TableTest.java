@@ -340,6 +340,18 @@ public class TableTest extends SplitPane {
                 testTable.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_SELECTION);
             }
         });
+        controlsColumn.addButton("Toggle Selection of Row #2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ListSelectionModel selectionModel = testTable.getSelectionModel();
+                selectionModel.setSelectedIndex(2, !selectionModel.isSelectedIndex(2));
+            }
+        });
+        controlsColumn.addButton("Toggle Selection of Row #500 (there isn't one)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ListSelectionModel selectionModel = testTable.getSelectionModel();
+                selectionModel.setSelectedIndex(500, !selectionModel.isSelectedIndex(500));
+            }
+        });
         controlsColumn.addButton("Set Selection Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testTable.setSelectionForeground(StyleUtil.randomColor());
