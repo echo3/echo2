@@ -31,6 +31,7 @@ package nextapp.echo2.webcontainer.propertyrender;
 
 import org.w3c.dom.Element;
 
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.layout.CellLayoutData;
 import nextapp.echo2.webrender.output.CssStyle;
@@ -51,14 +52,17 @@ public class CellLayoutDataRender {
      * be properly aligned. All other properties will be rednered using the
      * <code>CssSyle</code>.
      * 
+     * @param element the target <code>Element</code>
      * @param cssStyle the target <code>CssStyle</code>
+     * @param component the child <code>Component</code> being layed out (used 
+     *        to determine <code>LayoutDirection</code> (LTR/RTL). 
      * @param layoutData the property value
      * @param defaultInsetsAttributeValue the default insets for the cell
      *        (provided as a string in the interest of performance to avoid
      *        repeatedly rendering the same <code>Insets</code> object for
      *        each cell
      */
-    public static void renderToElementAndStyle(Element element, CssStyle cssStyle, CellLayoutData layoutData, 
+    public static void renderToElementAndStyle(Element element, CssStyle cssStyle, Component component, CellLayoutData layoutData, 
             String defaultInsetsAttributeValue) {
         if (layoutData == null) {
             if (defaultInsetsAttributeValue != null) {
@@ -81,7 +85,7 @@ public class CellLayoutDataRender {
         ColorRender.renderToStyle(cssStyle, null, layoutData.getBackground());
         
         // Render alignment.
-        AlignmentRender.renderToElement(element, layoutData.getAlignment());
+        AlignmentRender.renderToElement(element, layoutData.getAlignment(), component);
     }
     
     /** Non-instantiable class. */
@@ -93,13 +97,16 @@ public class CellLayoutDataRender {
      * rendered if provided in such cases).
      *
      * @param cssStyle the target <code>CssStyle</code>
+     * @param component the child <code>Component</code> being layed out (used 
+     *        to determine <code>LayoutDirection</code> (LTR/RTL). 
      * @param layoutData the property value
      * @param defaultInsetsAttributeValue the default insets for the cell 
      *        (provided as a string in the interest of performance to avoid
      *        repeatedly rendering the same <code>Insets</code> object for
      *        each cell 
      */
-    public static void renderToStyle(CssStyle cssStyle, CellLayoutData layoutData, String defaultInsetsAttributeValue) {
+    public static void renderToStyle(CssStyle cssStyle, Component component, CellLayoutData layoutData, 
+            String defaultInsetsAttributeValue) {
         if (layoutData == null) {
             if (defaultInsetsAttributeValue != null) {
                 cssStyle.setAttribute("padding", defaultInsetsAttributeValue);
@@ -121,6 +128,6 @@ public class CellLayoutDataRender {
         ColorRender.renderToStyle(cssStyle, null, layoutData.getBackground());
         
         // Render alignment.
-        AlignmentRender.renderToStyle(cssStyle, layoutData.getAlignment());
+        AlignmentRender.renderToStyle(cssStyle, layoutData.getAlignment(), component);
     }
 }

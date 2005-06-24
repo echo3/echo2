@@ -438,7 +438,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             
             CssStyle tdCssStyle = new CssStyle();
             BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
-            CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, getLayoutData(childComponent), 
+            CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, childComponent, getLayoutData(childComponent), 
                     defaultInsetsAttributeValue);
             tdElement.setAttribute("style", tdCssStyle.renderInline());
             

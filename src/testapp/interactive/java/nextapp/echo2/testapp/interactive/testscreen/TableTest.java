@@ -473,6 +473,18 @@ public class TableTest extends SplitPane {
                         createTableCellRenderer(new Alignment(Alignment.TRAILING, Alignment.BOTTOM)));
             }
         });
+        controlsColumn.addButton("Alignment = Left/Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, 
+                        createTableCellRenderer(new Alignment(Alignment.LEFT, Alignment.TOP)));
+            }
+        });
+        controlsColumn.addButton("Alignment = Right/Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, 
+                        createTableCellRenderer(new Alignment(Alignment.RIGHT, Alignment.BOTTOM)));
+            }
+        });
     }
 
     private TableCellRenderer createTableCellRenderer(final Alignment alignment) {
