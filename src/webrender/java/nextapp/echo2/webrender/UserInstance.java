@@ -40,12 +40,8 @@ import javax.servlet.http.HttpSessionEvent;
  * An abstract base class representing a single user-instance of an application
  * hosted in an application container.
  */
-public abstract class UserInstance implements HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
-
-    /**
-     * The URI of the servlet.
-     */
-    private String servletUri;
+public abstract class UserInstance 
+implements HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
 
     /**
      * The default character encoding in which responses should be rendered.
@@ -57,6 +53,11 @@ public abstract class UserInstance implements HttpSessionActivationListener, Htt
      * client.
      */
     private ClientProperties clientProperties;
+
+    /**
+     * The URI of the servlet.
+     */
+    private String servletUri;
 
     /**
      * Reference to the <code>HttpSession</code> in which this
@@ -73,15 +74,6 @@ public abstract class UserInstance implements HttpSessionActivationListener, Htt
     public UserInstance(Connection conn) {
         super();
         conn.initUserInstance(this);
-    }
-
-    /**
-     * Returns the URI of the servlet managing this <code>UserInstance</code>.
-     * 
-     * @return the URI
-     */
-    public String getServletUri() {
-        return servletUri;
     }
 
     /**
@@ -147,6 +139,15 @@ public abstract class UserInstance implements HttpSessionActivationListener, Htt
     }
 
     /**
+     * Returns the URI of the servlet managing this <code>UserInstance</code>.
+     * 
+     * @return the URI
+     */
+    public String getServletUri() {
+        return servletUri;
+    }
+
+    /**
      * Returns the <code>HttpSession</code> containing this
      * <code>UserInstance</code>.
      * 
@@ -171,15 +172,6 @@ public abstract class UserInstance implements HttpSessionActivationListener, Htt
     }
 
     /**
-     * Sets the URI of the servlet managing this <code>UserInstance</code>.
-     * 
-     * @param servletUri the URI
-     */
-    void setServletUri(String servletUri) {
-        this.servletUri = servletUri;
-    }
-
-    /**
      * Stores the <code>ClientProperties</code> object that provides
      * information about the client of this instance.
      * 
@@ -187,6 +179,15 @@ public abstract class UserInstance implements HttpSessionActivationListener, Htt
      */
     void setClientProperties(ClientProperties clientProperties) {
         this.clientProperties = clientProperties;
+    }
+
+    /**
+     * Sets the URI of the servlet managing this <code>UserInstance</code>.
+     * 
+     * @param servletUri the URI
+     */
+    void setServletUri(String servletUri) {
+        this.servletUri = servletUri;
     }
 
     /**

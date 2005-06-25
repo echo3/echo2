@@ -36,6 +36,7 @@ import org.w3c.dom.Element;
 
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.output.HtmlDocument;
+import nextapp.echo2.webrender.servermessage.ServerDelayMessage;
 
 /**
  * The initial document rendered when a user visits an application.
@@ -69,7 +70,7 @@ public class BaseHtmlDocument extends HtmlDocument {
 	    Document document = getDocument();
         
         Element blockingPaneDivElement = document.createElement("div");
-        blockingPaneDivElement.setAttribute("id", "blockingPane");        
+        blockingPaneDivElement.setAttribute("id", ServerDelayMessage.ELEMENT_ID_MESSAGE);        
         CssStyle blockingPaneDivCssStyle = new CssStyle();
         blockingPaneDivCssStyle.setAttribute("position", "absolute");
         blockingPaneDivCssStyle.setAttribute("top", "0px");

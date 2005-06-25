@@ -314,7 +314,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             ComponentSynchronizePeer parentSyncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
-            BlockingPaneConfigurator.configureDefault(rc);
+            ServerDelayMessageConfigurator.configureDefault(rc);
             
             //BUGBUG. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);

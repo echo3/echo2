@@ -107,13 +107,13 @@ EchoAsyncMonitor.responseHandler = function(conn) {
     
 };
 
-// _______________________
-// Object EchoBlockingPane
+// _____________________________
+// Object EchoServerDelayMessage
 
  /**
   * Static object/namespace to manage configuration and activation of the
-  * "Blocking Pane".  
-  * The blocking pane serves the following purposes:
+  * server-delay message.  
+  * The server-delay message serves the following purposes:
   * <ul>
   *  <li>Provides an additional barrier to user input (this should not be
   *   be relied upon in any fashion, as components should themselves 
@@ -124,22 +124,25 @@ EchoAsyncMonitor.responseHandler = function(conn) {
   *   during a longer-than-normal server transaction.</li>
   * </ul>
   */
-function EchoBlockingPane() { }
+function EchoServerDelayMessage() { }
+
+EchoServerDelayMessage.MESSAGE_ELEMENT_ID = "serverDelayMessage";
+EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID = "serverDelayMessageLong";
 
 /**
- * MessagePartProcessor implementation for EchoBlockingPane.
+ * MessagePartProcessor implementation for EchoServerDelayMessage.
  */
-EchoBlockingPane.MessageProcessor = function() { }
+EchoServerDelayMessage.MessageProcessor = function() { }
 
 /**
  * MessagePartProcessor process() method implementation.
  */
-EchoBlockingPane.MessageProcessor.process = function(messagePartElement) {
+EchoServerDelayMessage.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
-            case "set-delay-message":
-                EchoBlockingPane.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
+            case "set-message":
+                EchoServerDelayMessage.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -149,79 +152,78 @@ EchoBlockingPane.MessageProcessor.process = function(messagePartElement) {
 /**
  * ServerMessage parser to handle requests to set delay message text.
  */
-EchoBlockingPane.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
-    var blockingPane = document.getElementById("blockingPane");
+EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
     var i;
     // Remove existing children.
-    for (i = blockingPane.childNodes.length - 1; i >= 0; --i) {
-        blockingPane.removeChild(blockingPane.childNodes[i]);
+    for (i = serverDelayMessage.childNodes.length - 1; i >= 0; --i) {
+        serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
     }
     // Add new children.
     for (i = 0; i < setDelayMessageElement.childNodes.length; ++i) {
-        blockingPane.appendChild(EchoDomUtil.importNode(document, setDelayMessageElement.childNodes[i], true));
+        serverDelayMessage.appendChild(EchoDomUtil.importNode(document, setDelayMessageElement.childNodes[i], true));
     }
 };
-
 
 /** 
  * Id of HTML element providing "long-running" delay message.  
  * This element is shown/hidden as necessary when long-running delays
  * occur or are completed.
  */
-EchoBlockingPane.delayMessageTimeoutId = null;
+EchoServerDelayMessage.delayMessageTimeoutId = null;
 
 /** Timeout (in ms) before "long-running" delay message is displayed. */ 
-EchoBlockingPane.timeout = 500;
+EchoServerDelayMessage.timeout = 750;
 
 /**
- * Activates/shows the blocking pane.
+ * Activates/shows the server delay message pane.
  */
-EchoBlockingPane.activate = function() {
-    var blockingPane = document.getElementById("blockingPane");
-    if (!blockingPane) {
+EchoServerDelayMessage.activate = function() {
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    if (!serverDelayMessage) {
         return;
     }
-    blockingPane.style.visibility = "visible";
-    EchoBlockingPane.delayMessageTimeoutId = window.setTimeout("EchoBlockingPane.activateDelayMessage()", 
-            EchoBlockingPane.timeout);
+    serverDelayMessage.style.visibility = "visible";
+    EchoServerDelayMessage.delayMessageTimeoutId = window.setTimeout("EchoServerDelayMessage.activateDelayMessage()", 
+            EchoServerDelayMessage.timeout);
 };
 
 /**
- * Activates the "long-running" delay message (requires blocking pane
+ * Activates the "long-running" delay message (requires server delay message
  * to have been previously activated).
  */
-EchoBlockingPane.activateDelayMessage = function() {
-    EchoBlockingPane.cancelDelayMessageTimeout();
-    var delayPane = document.getElementById("blockingPaneDelayMessage");
-    if (!delayPane) {
+EchoServerDelayMessage.activateDelayMessage = function() {
+    EchoServerDelayMessage.cancelDelayMessageTimeout();
+    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
+    if (!longMessage) {
         return;
     }
-    delayPane.style.visibility = "visible";
+    longMessage.style.visibility = "visible";
 };
 
 /**
  * Cancels timeout object that will raise delay message when server
  * transaction is determined to be "long running".
  */
-EchoBlockingPane.cancelDelayMessageTimeout = function() {
-    if (EchoBlockingPane.delayMessageTimeoutId) {
-        window.clearTimeout(EchoBlockingPane.delayMessageTimeoutId);
-        EchoBlockingPane.delayMessageTimeoutId = null;
+EchoServerDelayMessage.cancelDelayMessageTimeout = function() {
+    if (EchoServerDelayMessage.delayMessageTimeoutId) {
+        window.clearTimeout(EchoServerDelayMessage.delayMessageTimeoutId);
+        EchoServerDelayMessage.delayMessageTimeoutId = null;
     }
 };
 
 /**
- * Deactives/hides the blocking pane.
+ * Deactives/hides the server delay message.
  */
-EchoBlockingPane.deactivate = function() {
-    EchoBlockingPane.cancelDelayMessageTimeout();
-    var blockingPane = document.getElementById("blockingPane");
-    var delayPane = document.getElementById("blockingPaneDelayMessage");
-    if (blockingPane) {
-        blockingPane.style.visibility = "hidden";
+EchoServerDelayMessage.deactivate = function() {
+    EchoServerDelayMessage.cancelDelayMessageTimeout();
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
+    if (serverDelayMessage) {
+        serverDelayMessage.style.visibility = "hidden";
     }
-    if (delayPane) {
-        delayPane.style.visibility = "hidden";
+    if (longMessage) {
+        longMessage.style.visibility = "hidden";
     }
 };
 
@@ -1689,7 +1691,7 @@ EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
  * issues a response.
  */
 EchoServerTransaction.connect = function() {
-    EchoBlockingPane.activate();
+    EchoServerDelayMessage.activate();
     EchoAsyncMonitor.stop();
     var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
             "POST", EchoClientMessage.messageDocument, "text/xml");
@@ -1713,11 +1715,11 @@ EchoServerTransaction.invalidResponseHandler = function(conn) {
 };
 
 /**
- * Handles post processing cleanup tasks, i.e., disabling blocking pane 
- * and setting active flag state to false.
+ * Handles post processing cleanup tasks, i.e., disabling server message delay
+ * pane and setting active flag state to false.
  */
 EchoServerTransaction.postProcess = function() {
-    EchoBlockingPane.deactivate();
+    EchoServerDelayMessage.deactivate();
     EchoServerTransaction.active = false;
 };
 

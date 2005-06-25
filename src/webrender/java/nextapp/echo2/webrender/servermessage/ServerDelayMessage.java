@@ -34,10 +34,11 @@ import nextapp.echo2.webrender.ServerMessage;
 import org.w3c.dom.Element;
 
 /**
- * A utility class to add <code>EchoBlockingPane</code> message parts to an 
- * outgoing server message in order to configure the 
+ * A utility class to render <Code>EchoServerDelayMessage</code> message processor
+ * directives to configure the client-side message displayed during short-
+ * and long-running server interactions. 
  */
-public class BlockingPane {
+public class ServerDelayMessage {
     
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
@@ -46,19 +47,20 @@ public class BlockingPane {
      * visible when the blocking pane has been displayed for a set amount
      * of time. 
      */
-    public static final String ELEMENT_ID_DELAY_MESSAGE = "blockingPaneDelayMessage";
+    public static final String ELEMENT_ID_MESSAGE = "serverDelayMessage";
+    
+    public static final String ELEMENT_ID_LONG_MESSAGE = "serverDelayMessageLong";
 
     /**
-     * Creates a new <code>setDelayMessage</code> directive.
+     * Creates a new <code>setMessage</code> directive.
      * 
      * @param serverMessage the relevant <code>ServerMessage</code>
      * @return the created directive element
      */
-    public static Element renderSetDelayMessage(ServerMessage serverMessage) {
-        Element setDelayMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                "EchoBlockingPane.MessageProcessor", "set-delay-message");
-        setDelayMessageElement.setAttribute("xmlns", XHTML_NAMESPACE);
-        
-        return setDelayMessageElement;
+    public static Element renderSetMessage(ServerMessage serverMessage) {
+        Element setMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "EchoServerDelayMessage.MessageProcessor", "set-message");
+        setMessageElement.setAttribute("xmlns", XHTML_NAMESPACE);
+        return setMessageElement;
     }
 }

@@ -34,18 +34,18 @@ import org.w3c.dom.Element;
 
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.BlockingPane;
+import nextapp.echo2.webrender.servermessage.ServerDelayMessage;
 
 /**
  * 
  */
-public class BlockingPaneConfigurator {
+public class ServerDelayMessageConfigurator {
     
     public static void configureDefault(RenderContext rc) {
         ServerMessage serverMessage = rc.getServerMessage();
         Document document = serverMessage.getDocument();
         
-        Element setDelayMessageElement = BlockingPane.renderSetDelayMessage(serverMessage);
+        Element setDelayMessageElement = ServerDelayMessage.renderSetMessage(serverMessage);
         
         Element tableElement = document.createElement("table");
         CssStyle tableCssStyle = new CssStyle();
@@ -79,7 +79,7 @@ public class BlockingPaneConfigurator {
         divCssStyle.setAttribute("font-size", "10pt");
         divCssStyle.setAttribute("text-align", "center");
         divElement.setAttribute("style", divCssStyle.renderInline());
-        divElement.setAttribute("id", BlockingPane.ELEMENT_ID_DELAY_MESSAGE);
+        divElement.setAttribute("id", ServerDelayMessage.ELEMENT_ID_LONG_MESSAGE);
         divElement.appendChild(document.createTextNode("Please wait..."));
         tdElement.appendChild(divElement);
     }
