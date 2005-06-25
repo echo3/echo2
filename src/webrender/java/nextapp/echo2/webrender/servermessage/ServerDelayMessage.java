@@ -31,6 +31,7 @@ package nextapp.echo2.webrender.servermessage;
 
 import nextapp.echo2.webrender.ServerMessage;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -55,12 +56,18 @@ public class ServerDelayMessage {
      * Creates a new <code>setMessage</code> directive.
      * 
      * @param serverMessage the relevant <code>ServerMessage</code>
-     * @return the created directive element
      */
-    public static Element renderSetMessage(ServerMessage serverMessage) {
+    public static void renderSetMessage(ServerMessage serverMessage, Element htmlElement) {
+        Document document = serverMessage.getDocument();
+        
         Element setMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "EchoServerDelayMessage.MessageProcessor", "set-message");
-        setMessageElement.setAttribute("xmlns", XHTML_NAMESPACE);
-        return setMessageElement;
+        
+        Element contentContainerElement = serverMessage.getDocument().createElement("content");
+        setMessageElement.appendChild(contentContainerElement);
+        
+        htmlElement = (Element) document.importNode(htmlElement, true); 
+        htmlElement.setAttribute("xmlns", XHTML_NAMESPACE);
+        contentContainerElement.appendChild(htmlElement);
     }
 }

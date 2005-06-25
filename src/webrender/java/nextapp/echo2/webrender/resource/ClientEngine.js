@@ -126,9 +126,6 @@ EchoAsyncMonitor.responseHandler = function(conn) {
   */
 function EchoServerDelayMessage() { }
 
-EchoServerDelayMessage.MESSAGE_ELEMENT_ID = "serverDelayMessage";
-EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID = "serverDelayMessageLong";
-
 /**
  * MessagePartProcessor implementation for EchoServerDelayMessage.
  */
@@ -160,10 +157,14 @@ EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDel
         serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
     }
     // Add new children.
-    for (i = 0; i < setDelayMessageElement.childNodes.length; ++i) {
-        serverDelayMessage.appendChild(EchoDomUtil.importNode(document, setDelayMessageElement.childNodes[i], true));
+    var contentElement = setDelayMessageElement.getElementsByTagName("content")[0];
+    for (i = 0; i < contentElement.childNodes.length; ++i) {
+        serverDelayMessage.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
     }
 };
+
+EchoServerDelayMessage.MESSAGE_ELEMENT_ID = "serverDelayMessage";
+EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID = "serverDelayMessageLong";
 
 /** 
  * Id of HTML element providing "long-running" delay message.  

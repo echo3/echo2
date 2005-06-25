@@ -45,8 +45,6 @@ public class ServerDelayMessageConfigurator {
         ServerMessage serverMessage = rc.getServerMessage();
         Document document = serverMessage.getDocument();
         
-        Element setDelayMessageElement = ServerDelayMessage.renderSetMessage(serverMessage);
-        
         Element tableElement = document.createElement("table");
         CssStyle tableCssStyle = new CssStyle();
         tableCssStyle.setAttribute("width", "100%");
@@ -54,7 +52,6 @@ public class ServerDelayMessageConfigurator {
         tableCssStyle.setAttribute("border", "0px");
         tableCssStyle.setAttribute("padding", "0px");
         tableElement.setAttribute("style", tableCssStyle.renderInline());
-        setDelayMessageElement.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");
         tableElement.appendChild(tbodyElement);
@@ -82,5 +79,7 @@ public class ServerDelayMessageConfigurator {
         divElement.setAttribute("id", ServerDelayMessage.ELEMENT_ID_LONG_MESSAGE);
         divElement.appendChild(document.createTextNode("Please wait..."));
         tdElement.appendChild(divElement);
+
+        ServerDelayMessage.renderSetMessage(serverMessage, tableElement);
     }
 }
