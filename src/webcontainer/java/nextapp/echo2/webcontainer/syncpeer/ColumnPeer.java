@@ -190,7 +190,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
 
         // Special case: Recall the child which was rendered at the last index of the column on the previous
         // rendering.  If this child is still present but is no longer at the last index, render a spacing
-        // row beneath it (if necessary).
+        // cell beneath it (if necessary).
         ColumnPeerRenderState renderState = (ColumnPeerRenderState) rc.getContainerInstance().getRenderState(column);
         if (renderState != null && renderState.lastChild != null) {
             int previousLastChildIndex = column.visibleIndexOf(renderState.lastChild);
@@ -276,6 +276,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         } else {
             InsetsRender.renderToStyle(divCssStyle, "padding", insets);
         }
+        
         divElement.setAttribute("style", divCssStyle.renderInline());
         
         parentNode.appendChild(divElement);

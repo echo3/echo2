@@ -192,7 +192,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         
         // Special case: Recall the child which was rendered at the last index of the row on the previous
         // rendering.  If this child is still present but is no longer at the last index, render a spacing
-        // column after it (if necessary).
+        // cell after it (if necessary).
         RowPeerRenderState renderState = (RowPeerRenderState) rc.getContainerInstance().getRenderState(row);
         if (renderState != null && renderState.lastChild != null) {
             int previousLastChildIndex = row.visibleIndexOf(renderState.lastChild);
