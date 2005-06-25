@@ -34,6 +34,9 @@ import java.io.IOException;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.Service;
 
+/**
+ * A do-nothing <code>Serivce</code> implementation for testing.
+ */
 public class NullService 
 implements Service {
 

@@ -37,6 +37,7 @@ import java.io.InputStream;
  * Provides functionality for obtaining text and binary resource files.
  */
 public class Resource {
+    
     private static final int BUFFER_SIZE = 4096;
     
     /**

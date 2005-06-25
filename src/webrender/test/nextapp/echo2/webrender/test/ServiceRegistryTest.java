@@ -29,10 +29,6 @@
 
 package nextapp.echo2.webrender.test;
 
-import java.io.IOException;
-
-import nextapp.echo2.webrender.Connection;
-import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.ServiceRegistry;
 import junit.framework.TestCase;
 
@@ -41,43 +37,14 @@ import junit.framework.TestCase;
  */
 public class ServiceRegistryTest extends TestCase {
     
-    private class TestService 
-    implements Service {
-
-        private String id;
-        
-        private TestService(String id) {
-            this.id = id;
-        }
-        
-        /**
-         * @see nextapp.echo2.webrender.Service#getId()
-         */
-        public String getId() {
-            return id;
-        }
-
-        /**
-         * @see nextapp.echo2.webrender.Service#getVersion()
-         */
-        public int getVersion() {
-            return 0;
-        }
-
-        /**
-         * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
-         */
-        public void service(Connection conn) throws IOException { }
-    }
-    
     /**
      * Test basic add/get/remove functionality of <code>ServiceRegistry</code>.
      */
     public void testBasic() {
         ServiceRegistry services = new ServiceRegistry();
-        TestService alpha = new TestService("alpha");
+        NullService alpha = new NullService("alpha");
         services.add(alpha);
-        TestService bravo = new TestService("bravo");
+        NullService bravo = new NullService("bravo");
         services.add(bravo);
         assertEquals(alpha, services.get("alpha"));
         assertEquals(bravo, services.get("bravo"));
@@ -91,9 +58,9 @@ public class ServiceRegistryTest extends TestCase {
      */
     public void testConflict() {
         ServiceRegistry services = new ServiceRegistry();
-        TestService alpha = new TestService("alpha");
+        NullService alpha = new NullService("alpha");
         services.add(alpha);
-        TestService anotherAlpha = new TestService("alpha");
+        NullService anotherAlpha = new NullService("alpha");
         try {
             services.add(anotherAlpha);
             fail();
@@ -107,7 +74,7 @@ public class ServiceRegistryTest extends TestCase {
      */
     public void testReAdd() {
         ServiceRegistry services = new ServiceRegistry();
-        TestService alpha = new TestService("alpha");
+        NullService alpha = new NullService("alpha");
         services.add(alpha);
         services.add(alpha);
     }
