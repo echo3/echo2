@@ -42,13 +42,13 @@ public class ServerDelayMessage {
     
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
+    public static final String ELEMENT_ID_MESSAGE = "serverDelayMessage";
+    
     /**
-     * The element id of the "delay message" element which will be made 
+     * The element id of the "long delay message" element which will be made 
      * visible when the blocking pane has been displayed for a set amount
      * of time. 
      */
-    public static final String ELEMENT_ID_MESSAGE = "serverDelayMessage";
-    
     public static final String ELEMENT_ID_LONG_MESSAGE = "serverDelayMessageLong";
 
     /**
