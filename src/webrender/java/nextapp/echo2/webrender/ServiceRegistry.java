@@ -30,10 +30,7 @@
 package nextapp.echo2.webrender;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 
 /**
  * A registry of <code>Service</code> objects that may be recalled based
@@ -44,9 +41,6 @@ public class ServiceRegistry {
     /** Maps service Ids to services */
     private final Map serviceMap = new HashMap();
     
-    /** Maps a service to a set of aliases */
-    private final Map serviceAliases = new HashMap();
-
     /**
      * Creates a new <code>ServiceRegistry</code>.
      */
@@ -67,36 +61,6 @@ public class ServiceRegistry {
     }
     
     /**
-     * Adds an aliased service to the registry.  Aliased service are only
-     * removed when all of their aliases have been removed.  This enables
-     * ancillary services to be used by multiple components.
-     *
-     * @param service The service to be added.
-     * @param alias The alias to use for the service.
-     */
-    public synchronized void add(Service service, String alias) {
-        // Retrieve the service's aliases.
-        Set aliases = (Set) serviceAliases.get(service);
-        
-        if (aliases == null) {
-            // The service has no aliases, create the alias set.
-            aliases = new HashSet();
-            // Store the alias set for this service.
-            serviceAliases.put(service, aliases);
-        }
-        
-        if (! aliases.contains(alias)) {
-            // The current alias is not yet in use.
-        
-            // Add the alias to the alias set.
-            aliases.add(alias);
-            
-            // Add the service.
-            add(service);
-        }
-    }
-    
-    /**
      * Returns the service with the specified <code>Id</code>.
      *
      * @param id The <code>Id</code> of the service to be retrieved.
@@ -113,33 +77,5 @@ public class ServiceRegistry {
      */
     public synchronized void remove(Service service) {
         serviceMap.remove(service.getId());
-        serviceAliases.remove(service);
-    }
-    
-    /**
-     * Removes an aliased service from the registry.  Aliased service are only
-     * removed when all of their aliases have been removed.  This enables
-     * ancillary services to be used by multiple components.
-     *
-     * @param service The service to be removed.
-     * @param alias The alias of the service.
-     */
-    public synchronized void remove(Service service, String alias) {
-        Set aliases = (Set) serviceAliases.get(service);
-        if (aliases == null) {
-            // The service has no aliases: remove the service from the registry.
-            remove(service);
-        } else {
-            // The service has aliases: don't remove the service from the
-            // registry yet, it might be in use under a different alias.
-            aliases.remove(alias);
-            
-            if (aliases.size() == 0) {
-                // The service has had its last alias removed: remove the 
-                // service from the registry, delete the alias set.
-                remove(service);
-                serviceAliases.remove(service);
-            }
-        }
     }
 }

@@ -29,65 +29,86 @@
 
 package nextapp.echo2.webrender.test;
 
+import java.io.IOException;
+
+import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.ServiceRegistry;
 import junit.framework.TestCase;
 
+/**
+ * Test for <code>ServiceRegistry</code>.
+ */
 public class ServiceRegistryTest extends TestCase {
     
-    public void testSingleAliasedService() {
-        Service service1 = new NullService("1");
-        ServiceRegistry services = new ServiceRegistry();
-        assertEquals(null, services.get("1"));
-        services.add(service1, "a");
-        assertEquals(service1, services.get("1"));
-        services.add(service1, "b");
-        assertEquals(service1, services.get("1"));
-        services.add(service1, "c");
-        assertEquals(service1, services.get("1"));
-        services.remove(service1, "c");
-        assertEquals(service1, services.get("1"));
-        services.remove(service1, "b");
-        assertEquals(service1, services.get("1"));
-        services.remove(service1, "a");
-        assertEquals(null, services.get("1"));
+    private class TestService 
+    implements Service {
+
+        private String id;
+        
+        private TestService(String id) {
+            this.id = id;
+        }
+        
+        /**
+         * @see nextapp.echo2.webrender.Service#getId()
+         */
+        public String getId() {
+            return id;
+        }
+
+        /**
+         * @see nextapp.echo2.webrender.Service#getVersion()
+         */
+        public int getVersion() {
+            return 0;
+        }
+
+        /**
+         * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
+         */
+        public void service(Connection conn) throws IOException { }
     }
     
-    public void testMultipleAliasedServices() {
-        Service service1 = new NullService("1");
-        Service service2 = new NullService("2");
+    /**
+     * Test basic add/get/remove functionality of <code>ServiceRegistry</code>.
+     */
+    public void testBasic() {
         ServiceRegistry services = new ServiceRegistry();
-        assertEquals(null, services.get("1"));
-        assertEquals(null, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.add(service1, "a");
-        assertEquals(service1, services.get("1"));
-        assertEquals(null, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.add(service2, "a");
-        assertEquals(service1, services.get("1"));
-        assertEquals(service2, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.add(service1, "b");
-        assertEquals(service1, services.get("1"));
-        assertEquals(service2, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.add(service1, "c");
-        assertEquals(service1, services.get("1"));
-        assertEquals(service2, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.remove(service1, "c");
-        assertEquals(service1, services.get("1"));
-        assertEquals(service2, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.remove(service1, "b");
-        assertEquals(service1, services.get("1"));
-        assertEquals(service2, services.get("2"));
-        assertEquals(null, services.get("3"));
-        services.remove(service1, "a");
-        assertEquals(null, services.get("1"));
-        assertEquals(service2, services.get("2"));
-        assertEquals(null, services.get("3"));
+        TestService alpha = new TestService("alpha");
+        services.add(alpha);
+        TestService bravo = new TestService("bravo");
+        services.add(bravo);
+        assertEquals(alpha, services.get("alpha"));
+        assertEquals(bravo, services.get("bravo"));
+        assertNull(services.get("charlie"));
+        services.remove(bravo);
+        assertNull(services.get("bravo"));
     }
-
+    
+    /**
+     * Ensure that two services may not be added with the same service id.
+     */
+    public void testConflict() {
+        ServiceRegistry services = new ServiceRegistry();
+        TestService alpha = new TestService("alpha");
+        services.add(alpha);
+        TestService anotherAlpha = new TestService("alpha");
+        try {
+            services.add(anotherAlpha);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // Expected.
+        }
+    }
+    
+    /**
+     * Ensure that adding the same service twice does not throw an expcetion.
+     */
+    public void testReAdd() {
+        ServiceRegistry services = new ServiceRegistry();
+        TestService alpha = new TestService("alpha");
+        services.add(alpha);
+        services.add(alpha);
+    }
 }
