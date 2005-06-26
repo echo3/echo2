@@ -546,65 +546,55 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
 
         // Create outer title DIV element.
-        Element outerTitleDivElement = document.createElement("div");
-        outerTitleDivElement.setAttribute("id", elementId + "_title");
-        CssStyle outerTitleDivCssStyle = new CssStyle();
+        Element titleContainerDivElement = document.createElement("div");
+        titleContainerDivElement.setAttribute("id", elementId + "_title");
+        CssStyle titleContainerDivCssStyle = new CssStyle();
         if (movable) {
-            outerTitleDivCssStyle.setAttribute("cursor", "move");
+            titleContainerDivCssStyle.setAttribute("cursor", "move");
         }
-        ColorRender.renderToStyle(outerTitleDivCssStyle, (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND,
+        ColorRender.renderToStyle(titleContainerDivCssStyle, (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND,
                 Color.WHITE), (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
-        FontRender.renderToStyle(outerTitleDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
-        FillImageRender.renderToStyle(outerTitleDivCssStyle, rc, this, component, IMAGE_ID_TITLE_BACKGROUND,
+        FontRender.renderToStyle(titleContainerDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
+        FillImageRender.renderToStyle(titleContainerDivCssStyle, rc, this, component, IMAGE_ID_TITLE_BACKGROUND,
                 (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE), 0);
-        outerTitleDivCssStyle.setAttribute("position", "absolute");
-        outerTitleDivCssStyle.setAttribute("top", "0px");
-        outerTitleDivCssStyle.setAttribute("height", titleHeightPixels + "px");
-        outerTitleDivCssStyle.setAttribute("width", "100%");
-        outerTitleDivCssStyle.setAttribute("overflow", "hidden");
-        outerTitleDivElement.setAttribute("style", outerTitleDivCssStyle.renderInline());
-        windowBodyDivElement.appendChild(outerTitleDivElement);
+        titleContainerDivCssStyle.setAttribute("position", "absolute");
+        titleContainerDivCssStyle.setAttribute("top", "0px");
+        titleContainerDivCssStyle.setAttribute("height", titleHeightPixels + "px");
+        titleContainerDivCssStyle.setAttribute("width", "100%");
+        titleContainerDivCssStyle.setAttribute("overflow", "hidden");
+        titleContainerDivElement.setAttribute("style", titleContainerDivCssStyle.renderInline());
+        windowBodyDivElement.appendChild(titleContainerDivElement);
 
-        // Create inner title DIV element.
-        Element innerTitleDivElement = document.createElement("div");
-        innerTitleDivElement.setAttribute("id", elementId + "_innertitle");
-        CssStyle innerTitleDivCssStyle = new CssStyle();
-        InsetsRender.renderToStyle(innerTitleDivCssStyle, "padding", (Insets) windowPane
-                .getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
-        if (innerTitleDivCssStyle.hasAttributes()) {
-            innerTitleDivElement.setAttribute("style", innerTitleDivCssStyle.renderInline());
-        }
-        outerTitleDivElement.appendChild(innerTitleDivElement);
-
-        // Create title layout TABLE.
-        Element titleTableElement = document.createElement("table");
-        titleTableElement.setAttribute("style", "width:100%; padding: 0px; border-collapse: collapse;");
-        Element titleTbodyElement = document.createElement("tbody");
-        titleTableElement.appendChild(titleTbodyElement);
-        Element titleTrElement = document.createElement("tr");
-        titleTbodyElement.appendChild(titleTrElement);
-        Element titleLabelTdElement = document.createElement("td");
-        titleLabelTdElement.setAttribute("style", "padding: 0px; text-align: left;");
-        titleTrElement.appendChild(titleLabelTdElement);
-        Element titleControlsTdElement = document.createElement("td");
-        titleControlsTdElement.setAttribute("style", "padding: 0px; text-align: right;");
-        titleTrElement.appendChild(titleControlsTdElement);
+        // Add Title Content
+        Element titleTextDivElement = document.createElement("div");
+        CssStyle titleTextDivCssStyle = new CssStyle();
+        titleTextDivCssStyle.setAttribute("position", "absolute");
+        titleTextDivCssStyle.setAttribute("left", "0px");
+        titleTextDivCssStyle.setAttribute("top", "0px");
+        titleTextDivCssStyle.setAttribute("white-space", "nowrap");
+        titleTextDivCssStyle.setAttribute("overflow", "hidden");
+        InsetsRender.renderToStyle(titleTextDivCssStyle, "padding", 
+                (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
+        titleTextDivElement.setAttribute("style", titleTextDivCssStyle.renderInline());
         if (title != null) {
-            DomUtil.setElementText(titleLabelTdElement, title);
+            DomUtil.setElementText(titleTextDivElement, title);
         }
-        Element closeSpanElement = document.createElement("span");
-        closeSpanElement.setAttribute("id", elementId + "_close");
-        closeSpanElement.setAttribute("style", "cursor: pointer;");
-        titleControlsTdElement.appendChild(closeSpanElement);
-        ImageReference closeIcon = (ImageReference) windowPane
-                .getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON, DEFAULT_CLOSE_ICON);
-        if (closeIcon == null) {
-            DomUtil.setElementText(closeSpanElement, "[X]");
-        } else {
-            Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_CLOSE_ICON);
-            closeSpanElement.appendChild(imgElement);
-        }
-        innerTitleDivElement.appendChild(titleTableElement);
+        titleContainerDivElement.appendChild(titleTextDivElement);
+        
+        Element closeIconDivElement = document.createElement("div");
+        closeIconDivElement.setAttribute("id", elementId + "_close");
+        CssStyle closeIconDivCssStyle = new CssStyle();
+        closeIconDivCssStyle.setAttribute("cursor", "pointer");
+        closeIconDivCssStyle.setAttribute("position", "absolute");
+        closeIconDivCssStyle.setAttribute("right", "0px");
+        closeIconDivCssStyle.setAttribute("top", "0px");
+        InsetsRender.renderToStyle(closeIconDivCssStyle, "padding", 
+                (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
+        closeIconDivElement.setAttribute("style", closeIconDivCssStyle.renderInline());
+        titleContainerDivElement.appendChild(closeIconDivElement);
+        
+        Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_CLOSE_ICON);
+        closeIconDivElement.appendChild(imgElement);
 
         // Create outer content DIV Element.
         Element outerContentDivElement = document.createElement("div");
