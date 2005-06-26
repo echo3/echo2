@@ -42,10 +42,14 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
 /**
- * 
+ * <code>ContentPane</code> which displays a welcome/instruction message to 
+ * users when they initially visit the application.
  */
 public class WelcomePane extends ContentPane {
     
+    /**
+     * Default constructor.
+     */
     public WelcomePane() {
         Column column = new Column();
         column.setBorder(new Border(3, new Color(0x4f4f7f), Border.STYLE_OUTSET));

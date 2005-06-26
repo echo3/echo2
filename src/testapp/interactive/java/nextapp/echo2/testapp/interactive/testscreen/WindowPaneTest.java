@@ -54,16 +54,20 @@ import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 
+/**
+ * Interactive test for <code>WindowPane</code>s.
+ */
 public class WindowPaneTest extends SplitPane {
-    
-    private int windowNumber = 0;
-    
-    private int nextPosition = 0;
     
     private class WindowTestControls extends ButtonColumn {
         
         private WindowTestControls(String targetName, final ContentPane targetContentPane) {
             add(new Label(targetName));
+            addButton("Add Test Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    targetContentPane.add(createTestWindow("Test"));
+                }
+            });
             addButton("Add Label Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     targetContentPane.add(createSimpleWindow("Simple"));
@@ -71,7 +75,7 @@ public class WindowPaneTest extends SplitPane {
             });
             addButton("Add Modal Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createTestWindow("Modal");
+                    WindowPane windowPane = createModalWindow("Modal");
                     windowPane.setModal(true);
                     targetContentPane.add(windowPane);
                 }
@@ -79,7 +83,7 @@ public class WindowPaneTest extends SplitPane {
             addButton("Add Three Modal Windows", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     for (int i = 0; i < 3; ++i) {
-                        WindowPane windowPane = createTestWindow("3Modal");
+                        WindowPane windowPane = createModalWindow("3Modal");
                         windowPane.setModal(true);
                         targetContentPane.add(windowPane);
                     }
@@ -246,6 +250,16 @@ public class WindowPaneTest extends SplitPane {
             });
         }
     }
+
+    /**
+     * Counter used to position new <code>WindowPane</code>s on the screen.
+     */
+    private int nextPosition = 0;
+    
+    /**
+     * Counter used to assign somewhat unique titles.
+     */
+    private int windowNumber = 0;
     
     public WindowPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
@@ -394,6 +408,32 @@ public class WindowPaneTest extends SplitPane {
         return windowPane;
     }
     
+    private WindowPane createModalWindow(String name) {
+        final WindowPane windowPane = new WindowPane();
+        positionWindowPane(windowPane);
+        windowPane.setTitle(name + " Window #" + windowNumber++);
+        windowPane.setTitleInsets(new Insets(10, 5));
+        windowPane.setTitleBackground(new Color(0x2f2f4f));
+        windowPane.setInsets(new Insets(10));
+        windowPane.setWidth(new Extent(500));
+        windowPane.setHeight(new Extent(280));
+        windowPane.setStyleName("Default");
+        
+        ButtonColumn column = new ButtonColumn();
+        windowPane.add(column);
+
+        column.addButton("Add Modal Window", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ContentPane contentPane = (ContentPane) windowPane.getParent();
+                WindowPane newWindowPane = createModalWindow("YetAnotherModal");
+                newWindowPane.setModal(true);
+                contentPane.add(newWindowPane);
+            }
+        });
+        
+        return windowPane;
+    }
+    
     private WindowPane createSimpleWindow(String name) {
         WindowPane windowPane = new WindowPane();
         positionWindowPane(windowPane);
@@ -408,6 +448,13 @@ public class WindowPaneTest extends SplitPane {
         return windowPane;
     }
     
+    /**
+     * Cresats a 'Test Window' that contains buttons which may be used to 
+     * configure various aspects of t he window.
+     * 
+     * @param name the window name
+     * @return the created window
+     */
     private WindowPane createTestWindow(String name) {
         final WindowPane windowPane = new WindowPane();
         positionWindowPane(windowPane);
@@ -420,15 +467,44 @@ public class WindowPaneTest extends SplitPane {
         windowPane.setStyleName("Default");
         
         ButtonColumn column = new ButtonColumn();
-        column.addButton("Add Modal Window", new ActionListener() {
+        windowPane.add(column);
+        
+        column.addButton("Set Icon", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ContentPane contentPane = (ContentPane) windowPane.getParent();
-                WindowPane newWindowPane = createTestWindow("YetAnotherModal");
-                newWindowPane.setModal(true);
-                contentPane.add(newWindowPane);
+                windowPane.setIcon(null);
             }
         });
-        windowPane.add(column);
+        
+        column.addButton("Clear Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setIcon(null);
+            }
+        });
+        
+        column.addButton("Set Close Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setCloseIcon(null);
+            }
+        });
+        
+        column.addButton("Clear Close Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setCloseIcon(null);
+            }
+        });
+        
+        column.addButton("Set Style Name = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setStyleName("Default");
+            }
+        });
+        
+        column.addButton("Clear Style Name", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setStyleName(null);
+            }
+        });
+        
         return windowPane;
     }
     
