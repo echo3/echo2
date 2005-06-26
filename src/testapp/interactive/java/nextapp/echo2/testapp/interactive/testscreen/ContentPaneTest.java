@@ -47,7 +47,7 @@ public class ContentPaneTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        final ContentPane contentPane = InteractiveApp.getApp().getMainWindow().getContent();
+        final ContentPane contentPane = InteractiveApp.getApp().getDefaultWindow().getContent();
         
         ButtonColumn controlsColumn = new ButtonColumn();
         controlsColumn.setStyleName("TestControlsColumn");

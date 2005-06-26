@@ -32,7 +32,6 @@ package nextapp.echo2.testapp.interactive;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
-import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.webcontainer.ContainerContext;
 
 /**
@@ -44,12 +43,18 @@ import nextapp.echo2.webcontainer.ContainerContext;
  * Echo application.  The intent of this application is to serve as a running
  * testbed for the Echo framework.  As such, the requirements of this 
  * application are dramatically different from a production internet 
- * application.  There is stuff in this code that is downright absurd.  
- * Please do not look to this application to see good design
+ * application.  There is stuff in this code of this app that is downright 
+ * absurd.  Please do not look to this application to see good design
  * practices for building your own Echo apps--you will not find them here.
  */
 public class InteractiveApp extends ApplicationInstance {
 
+    /**
+     * A boolean flag indicating whether the application is running on a live
+     * demo server.  This flag is used to disable certain tests based on 
+     * whether the <code>nextapp.echo2.demoserver</code> system property is
+     * set.
+     */
     public static final boolean LIVE_DEMO_SERVER;
     static {
         boolean liveDemoServer;
@@ -65,8 +70,13 @@ public class InteractiveApp extends ApplicationInstance {
         LIVE_DEMO_SERVER = liveDemoServer;
     }
     
-    public static final String ACTION_WINDOW_PANE_TEST = "windowPaneTest";
-    
+    /**
+     * Convenience method to return the <code>ThreadLocal</code> instance 
+     * precast to the appropriate type.
+     * 
+     * @return the active <code>InteractiveApp</code>
+     * @see #getActive()
+     */
     public static InteractiveApp getApp() {
         return (InteractiveApp) ApplicationInstance.getActive();
     }
@@ -75,12 +85,14 @@ public class InteractiveApp extends ApplicationInstance {
     private Window mainWindow;
     private ConsoleWindowPane console;
     
-    public void addDialogWindowPane(WindowPane windowPane) {
-        mainWindow.getContent().add(windowPane);
-    }
-    
+    /**
+     * Writes a message to a pop-up debugging console.
+     * The console is used for displaying information such as
+     * fired events.
+     * 
+     * @param message the message to write to the console
+     */
     public void consoleWrite(String message) {
-        //BUGBUG. clean this up.
         if (console == null) {
             console = new ConsoleWindowPane();
             getDefaultWindow().getContent().add(console);
@@ -90,10 +102,18 @@ public class InteractiveApp extends ApplicationInstance {
         console.writeMessage(message);
     }
     
+    /**
+     * Displays a <code>TestPane</code> from which the user may select an
+     * interactive test to run.
+     */
     public void displayTestPane() {
         mainWindow.setContent(new TestPane());
     }
     
+    /**
+     * Displays the <code>WelcomePane</code> which greets new users visiting
+     * the application.
+     */
     public void displayWelcomePane() {
         mainWindow.setContent(new WelcomePane());
     }
@@ -114,15 +134,30 @@ public class InteractiveApp extends ApplicationInstance {
         
         return mainWindow;
     }
-
-    public Window getMainWindow() {
-        return mainWindow;
-    }
-
-    public void removeDialogWindowPane(WindowPane windowPane) {
-        mainWindow.getContent().remove(windowPane);
+    
+    /**
+     * Sets the window title to display the current iteration of the ghost 
+     * test.
+     * 
+     * @param iteration the iteration number (negative values will restore
+     *        the window title to its normal state)
+     */
+    public void setGhostIterationWindowTitle(int iteration) {
+        if (iteration < 0) {
+            mainWindow.setTitle("NextApp Echo2 Test Application");
+        } else {
+            mainWindow.setTitle("Iteration #" + iteration);
+        }
     }
     
+    /**
+     * Starts the ghost test with the specified callback interval and run-time.
+     * 
+     * @param interval the callback interval between ghost actions, in
+     *        milleseconds
+     * @param runTime the total run-time of the ghost test, in millesconds;
+     *        specifying 0 will run the ghost test indefinitely
+     */
     public void startGhostTask(int interval, long runTime) {
         if (ghostTaskQueue != null) {
             return;
@@ -134,6 +169,9 @@ public class InteractiveApp extends ApplicationInstance {
         GhostTask.start(this, ghostTaskQueue, runTime);
     }
     
+    /**
+     * Stops the currently running ghost test.
+     */
     public void stopGhostTest() {
         removeTaskQueue(ghostTaskQueue);
         ghostTaskQueue = null;

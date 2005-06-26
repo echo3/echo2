@@ -152,7 +152,7 @@ public class StyleSheetTest extends Column {
             windowPane.setStyleName("Default");
             windowPane.setTitle("Exception Setting Custom Style");
             windowPane.add(new Label(w.toString()));
-            InteractiveApp.getApp().addDialogWindowPane(windowPane);
+            InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

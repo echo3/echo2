@@ -34,13 +34,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.button.AbstractButton;
+
 /**
  * Note to developers who might use this class as an example:
  * Don't.  This is a *very unusual* use of asynchronous tasks.
@@ -50,9 +50,13 @@ import nextapp.echo2.app.button.AbstractButton;
 public class GhostTask 
 implements Runnable {
     
-    private static final Set BUTTON_BLACKLIST;
+    /**
+     * A <code>Collection</code> containing the text of buttons which should 
+     * not be "clicked" by the ghost task for one reason or another.
+     */
+    private static final Collection BUTTON_BLACKLIST;
     static {
-        Set blacklist = new HashSet();
+        Collection blacklist = new HashSet();
         
         // Ghost test is also protected using other means, but no reason to bother with it.
         blacklist.add("Push (Ghost Test)");
@@ -77,18 +81,37 @@ implements Runnable {
         blacklist.add("Add Three Modal Windows");
         blacklist.add("Add \"Modal Launching\" Component Sampler to Embedded ContentPane");
         
-        BUTTON_BLACKLIST = Collections.unmodifiableSet(blacklist);
+        BUTTON_BLACKLIST = Collections.unmodifiableCollection(blacklist);
     }
     
+    /**
+     * Creates and starts a new <code>GhostTask</code>.
+     * 
+     * @param app the application to test
+     * @param taskQueue the <code>TaskQueueHandle</codE> to which tasks will be
+     *        added 
+     * @param runTime the number of milleseconds the test should run (specify 0
+     *        for an indefinite amount of time)
+     */
     static void start(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
         app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, runTime));
     }
     
+    private int iteration = 0;
     private boolean indefinite;
     private long stopTime;
     private TaskQueueHandle taskQueue;
     private InteractiveApp app;
     
+    /**
+     * Creates a new <code>GhostTask</code>.
+     * 
+     * @param app the application to test
+     * @param taskQueue the <code>TaskQueueHandle</code> to which tasks will be 
+     *        added
+     * @param runTime the number of milleseconds the test should run (specify 0
+     *        for an indefinite amount of time)
+     */
     private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
         this.taskQueue = taskQueue;
         this.app = app;
@@ -99,6 +122,10 @@ implements Runnable {
         }
     }
     
+    /**
+     * Retrieves all buttons currently displayed in the user-interface and 
+     * programatticaly clicks one.
+     */
     private void clickRandomButton() {
         Window window = ApplicationInstance.getActive().getDefaultWindow();
         List buttonList = new ArrayList();
@@ -107,6 +134,16 @@ implements Runnable {
         button.doAction();
     }
     
+    /**
+     * Recursively finds <code>Button</code> s in the hierarchy whose parent
+     * is <code>component</code> and adds them to the
+     * <code>foundButtons</code> collection.
+     * 
+     * @param foundButtons the <code>Collection</code> to which
+     *        <code>Button</code> s will be added
+     * @param component the root <code>Component</code> of the hierarchy to
+     *        search
+     */
     private void findButtons(Collection foundButtons, Component component) {
         if (component instanceof AbstractButton && !BUTTON_BLACKLIST.contains(((AbstractButton) component).getText())) {
             foundButtons.add(component);
@@ -123,8 +160,11 @@ implements Runnable {
     public void run() {
         clickRandomButton();
         if (indefinite || System.currentTimeMillis() < stopTime) {
+            ++iteration;
+            app.setGhostIterationWindowTitle(iteration);
             app.enqueueTask(taskQueue, this);
         } else {
+            app.setGhostIterationWindowTitle(-1);
             // Test complete.
             app.stopGhostTest();
         }

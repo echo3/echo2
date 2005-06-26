@@ -260,7 +260,7 @@ public class WindowPaneTest extends SplitPane {
         add(contentPane);
         
         WindowTestControls windowTestControls;
-        windowTestControls = new WindowTestControls("Root Level", InteractiveApp.getApp().getMainWindow().getContent());
+        windowTestControls = new WindowTestControls("Root Level", InteractiveApp.getApp().getDefaultWindow().getContent());
         controlsColumn.add(windowTestControls);
         windowTestControls = new WindowTestControls("Embedded", contentPane);
         controlsColumn.add(windowTestControls);
