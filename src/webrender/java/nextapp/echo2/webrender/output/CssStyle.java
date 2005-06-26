@@ -29,16 +29,21 @@
 
 package nextapp.echo2.webrender.output;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 /**
- * A representation of a single CSS style.
+ * A renderable representation of a single CSS style.
  */
 public class CssStyle {
-
-    private Map styleData = new HashMap();
+    
+    // Note that this class uses a proprietary associative array implementation
+    // in the interest of performance/memory allocation during rendering.  The
+    // implementation is tuned for very low numbers of keys/value which will be
+    // the typical case in describing a CSS style.
+    
+    private static final int GROW_RATE = 5 * 2;  // Must be a multiple of 2.
+    private static final String[] EMPTY = new String[0];
+    
+    private String[] data = EMPTY;
+    int length = 0; // Number of items * 2;
     
     /**
      * Retrieves a style attribute value.
@@ -47,7 +52,12 @@ public class CssStyle {
      * @return the value of the attribute (null if it is not set)
      */
     public String getAttribute(String attributeName) {
-        return (String) styleData.get(attributeName);
+        for (int i = 0; i < length; i += 2) {
+            if (data[i].equals(attributeName)) {
+                return data[i + 1];
+            }
+        }
+        return null;
     }
     
     /**
@@ -56,7 +66,7 @@ public class CssStyle {
      * @return true if any attributes are set.
      */
     public boolean hasAttributes() {
-        return styleData.size() > 0;
+        return length > 0;
     }
     
     /**
@@ -66,7 +76,35 @@ public class CssStyle {
      * @param attributeValue the value of the attribute.
      */
     public void setAttribute(String attributeName, String attributeValue) {
-        styleData.put(attributeName, attributeValue);
+        if (data == EMPTY) {
+            data = new String[GROW_RATE];
+        }
+
+        int propertyNameHashCode = attributeName.hashCode();
+        for (int i = 0; i < data.length; i += 2) {
+            if (data[i] == null) {
+                // Property is not set, space remains to set property.
+                // Add property at end.
+                data[i] = attributeName;
+                data[i + 1] = attributeValue;
+                length += 2;
+                return;
+            }
+            if (propertyNameHashCode == data[i].hashCode() && attributeName.equals(data[i])) {
+                // Found property, overwrite.
+                data[i + 1] = attributeValue;
+                return;
+            }
+        }
+        
+        // Array is full: grow array.
+        String[] newData = new String[data.length + GROW_RATE];
+        System.arraycopy(data, 0, newData, 0, data.length);
+        
+        newData[data.length] = attributeName;
+        newData[data.length + 1] = attributeValue;
+        length += 2;
+        data = newData;
     }
     
     /**
@@ -76,14 +114,11 @@ public class CssStyle {
      * @return the inline representation
      */
     public String renderInline() {
-        Iterator it = styleData.keySet().iterator();
         StringBuffer out = new StringBuffer();
-        while (it.hasNext()) {
-            String attributeName = (String) it.next();
-            String attributeValue = (String) styleData.get(attributeName);
-            out.append(attributeName);
+        for (int i = 0; i < length; i += 2) {
+            out.append(data[i]);
             out.append(":");
-            out.append(attributeValue);
+            out.append(data[i + 1]);
             out.append(";");
         }
         return out.toString();
