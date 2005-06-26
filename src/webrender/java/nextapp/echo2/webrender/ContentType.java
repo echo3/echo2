@@ -32,7 +32,10 @@ package nextapp.echo2.webrender;
 import java.io.Serializable;
 
 /**
- * A representation of a content type.
+ * A representation of a content-type.
+ * This object contains a MIME-type and a flag indicating whether the 
+ * content-type is used exclusively for binary data (i.e., indicating whether
+ * a character encoding needs to be specified).
  */
 public class ContentType 
 implements Serializable {
@@ -53,7 +56,8 @@ implements Serializable {
      * Creates a new content type.
      *
      * @param mimeType The MIME type of the content type.
-     * @param binary True if the content type is used for binary data.
+     * @param binary True if the content type is used exclusively for binary 
+     *        data, i.e., it does not require any character encoding
      */
     public ContentType(String mimeType, boolean binary) {
         super();
@@ -92,9 +96,10 @@ implements Serializable {
     }
 
     /**
-     * Returns true if the content type is binary.
+     * Determines if the content type is used exclusively for binary 
+     *        data, i.e., it does not require any character encoding
      *
-     * @return True if the content type is binary.
+     * @return true if the content type is binary
      */
     public boolean isBinary() {
         return binary;
