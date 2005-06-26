@@ -53,6 +53,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
+import nextapp.echo2.testapp.interactive.Styles;
 
 /**
  * Interactive test for <code>WindowPane</code>s.
@@ -471,7 +472,7 @@ public class WindowPaneTest extends SplitPane {
         
         column.addButton("Set Icon", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setIcon(null);
+                windowPane.setIcon(Styles.COMPOSE_MAIL_ICON);
             }
         });
         
@@ -483,7 +484,7 @@ public class WindowPaneTest extends SplitPane {
         
         column.addButton("Set Close Icon", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setCloseIcon(null);
+                windowPane.setCloseIcon(Styles.NO_ICON);
             }
         });
         

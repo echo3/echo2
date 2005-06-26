@@ -54,63 +54,59 @@ EchoWindowPane.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
-EchoWindowPane.MessageProcessor.processDispose = function(disposeMessageElement) {
-    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        EchoEventProcessor.removeHandler(elementId + "_close", "click");
-        EchoEventProcessor.removeHandler(elementId + "_close", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_title", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_tl", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_t", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_tr", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_l", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_r", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_bl", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_b", "mousedown");
-        EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
+EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
+    var elementId = disposeElement.getAttribute("eid");
+    EchoEventProcessor.removeHandler(elementId + "_close", "click");
+    EchoEventProcessor.removeHandler(elementId + "_close", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_title", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_tl", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_t", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_tr", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_l", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_r", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_bl", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_b", "mousedown");
+    EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
 
-        var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
-        EchoWindowPane.ZIndexManager.removeElement(containerId, elementId);
-    }
+    var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
+    EchoWindowPane.ZIndexManager.removeElement(containerId, elementId);
 };
 
-EchoWindowPane.MessageProcessor.processInit = function(initMessageElement) {
-    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        var movable = item.getAttribute("movable") == "true";
-        var resizable = item.getAttribute("resizable") == "true";
-        var containerId = item.getAttribute("container-id");
-        
-        if (item.getAttribute("minimum-width")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", item.getAttribute("minimum-width"));
-        }
-        if (item.getAttribute("maximum-width")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "maximumWidth", item.getAttribute("maximum-width"));
-        }
-        if (item.getAttribute("minimum-height")) {             
-            EchoDomPropertyStore.setPropertyValue(elementId, "minimumHeight", item.getAttribute("minimum-height"));
-        }
-        if (item.getAttribute("maximum-height")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", item.getAttribute("maximum-height"));
-        }
-        
-        EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
-        EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
-        EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
-        if (movable) {
-            EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.processTitleMouseDown");
-        }
-        if (resizable) {
-            EchoEventProcessor.addHandler(elementId + "_border_tl", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_t", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_tr", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_l", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_r", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_bl", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_b", "mousedown", "EchoWindowPane.processBorderMouseDown");
-            EchoEventProcessor.addHandler(elementId + "_border_br", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        }
+EchoWindowPane.MessageProcessor.processInit = function(initElement) {
+    var elementId = initElement.getAttribute("eid");
+    var movable = initElement.getAttribute("movable") == "true";
+    var resizable = initElement.getAttribute("resizable") == "true";
+    var containerId = initElement.getAttribute("container-id");
+    
+    if (initElement.getAttribute("minimum-width")) {
+        EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", initElement.getAttribute("minimum-width"));
+    }
+    if (initElement.getAttribute("maximum-width")) {
+        EchoDomPropertyStore.setPropertyValue(elementId, "maximumWidth", initElement.getAttribute("maximum-width"));
+    }
+    if (initElement.getAttribute("minimum-height")) {             
+        EchoDomPropertyStore.setPropertyValue(elementId, "minimumHeight", initElement.getAttribute("minimum-height"));
+    }
+    if (initElement.getAttribute("maximum-height")) {
+        EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", initElement.getAttribute("maximum-height"));
+    }
+    
+    EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
+    EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
+    EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
+    if (movable) {
+        EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.processTitleMouseDown");
+    }
+    if (resizable) {
+        EchoEventProcessor.addHandler(elementId + "_border_tl", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_t", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_tr", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_l", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_r", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_bl", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_b", "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(elementId + "_border_br", "mousedown", "EchoWindowPane.processBorderMouseDown");
     }
 };
 

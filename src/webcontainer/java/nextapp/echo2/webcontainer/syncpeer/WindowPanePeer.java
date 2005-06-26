@@ -444,11 +444,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     private void renderDisposeDirective(RenderContext rc, WindowPane windowPane) {
         ServerMessage serverMessage = rc.getServerMessage();
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
-                "EchoWindowPane.MessageProcessor", "dispose",  new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", ContainerInstance.getElementId(windowPane));
-        itemizedUpdateElement.appendChild(itemElement);
+        Element disposeElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoWindowPane.MessageProcessor", "dispose");
+        disposeElement.setAttribute("eid", ContainerInstance.getElementId(windowPane));
     }
 
     /**
@@ -534,7 +532,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         windowBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
         windowDivElement.appendChild(windowBodyDivElement);
 
-        // Create Internet Explorer Select Element blocking IFRAME.
+        // Create Internet Explorer Select-Element blocking IFRAME (if required).
         if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_Z_INDEX)) {
             Element iframeQuirkDivElement = document.createElement("div");
             // Resuse/modify windowBodyDivCssStyle.
@@ -563,6 +561,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         outerTitleDivCssStyle.setAttribute("top", "0px");
         outerTitleDivCssStyle.setAttribute("height", titleHeightPixels + "px");
         outerTitleDivCssStyle.setAttribute("width", "100%");
+        outerTitleDivCssStyle.setAttribute("overflow", "hidden");
         outerTitleDivElement.setAttribute("style", outerTitleDivCssStyle.renderInline());
         windowBodyDivElement.appendChild(outerTitleDivElement);
 
@@ -672,26 +671,24 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         String maximumHeight = ExtentRender.renderCssAttributePixelValue(
                 (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MAXIMUM_HEIGHT));
         
-        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoWindowPane.MessageProcessor", "init", new String[0], new String[0]);
-        Element itemElement = serverMessage.getDocument().createElement("item");
-        itemElement.setAttribute("eid", elementId);
-        itemElement.setAttribute("movable", movable ? "true" : "false");
-        itemElement.setAttribute("resizable", resizable ? "true" : "false");
-        itemElement.setAttribute("container-id", windowPane.getParent().getRenderId());  //BUGBUG. may want to move into keys.
+        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
+                "EchoWindowPane.MessageProcessor", "init");
+        initElement.setAttribute("eid", elementId);
+        initElement.setAttribute("movable", movable ? "true" : "false");
+        initElement.setAttribute("resizable", resizable ? "true" : "false");
+        initElement.setAttribute("container-id", windowPane.getParent().getRenderId());
         if (minimumWidth != null) {
-            itemElement.setAttribute("minimum-width", minimumWidth);
+            initElement.setAttribute("minimum-width", minimumWidth);
         }
         if (minimumHeight != null) {
-            itemElement.setAttribute("minimum-height", minimumHeight);
+            initElement.setAttribute("minimum-height", minimumHeight);
         }
         if (maximumWidth != null) {
-            itemElement.setAttribute("maximum-width", maximumWidth);
+            initElement.setAttribute("maximum-width", maximumWidth);
         }
         if (maximumHeight != null) {
-            itemElement.setAttribute("maximum-height", maximumHeight);
+            initElement.setAttribute("maximum-height", maximumHeight);
         }
-        itemizedUpdateElement.appendChild(itemElement);
     }
 
     /**

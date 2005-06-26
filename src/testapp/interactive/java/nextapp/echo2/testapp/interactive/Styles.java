@@ -30,6 +30,7 @@
 package nextapp.echo2.testapp.interactive;
 
 import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.ComponentXmlException;
@@ -43,6 +44,9 @@ public class Styles {
     public static final String IMAGE_PATH = "/nextapp/echo2/testapp/interactive/resource/image/";
     public static final String STYLE_PATH = "/nextapp/echo2/testapp/interactive/resource/style/";
 
+    public static final ImageReference COMPOSE_MAIL_ICON = new ResourceImageReference(IMAGE_PATH + "Icon24MailCompose.gif"); 
+    public static final ImageReference NO_ICON = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
+    
     public static final FillImage BG_SHADOW_DARK_BLUE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ShadowBackgroundDarkBlue.png"), null, null, FillImage.NO_REPEAT);
     public static final FillImage BG_SHADOW_LIGHT_BLUE = new FillImage(new ResourceImageReference(
@@ -55,10 +59,10 @@ public class Styles {
     public static final FillImage BUTTON_ROLLOVER_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ButtonRolloverBackground.png"));
     
-    public static final ResourceImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
-    public static final ResourceImageReference ROLLOVER_ICON_LOGO 
+    public static final ImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
+    public static final ImageReference ROLLOVER_ICON_LOGO 
             = new ResourceImageReference(IMAGE_PATH + "NextAppLogoRollover.png");
-    public static final ResourceImageReference PRESSED_ICON_LOGO 
+    public static final ImageReference PRESSED_ICON_LOGO 
             = new ResourceImageReference(IMAGE_PATH + "NextAppLogoPressed.png");
 
     public static final StyleSheet DEFAULT_STYLE_SHEET;
