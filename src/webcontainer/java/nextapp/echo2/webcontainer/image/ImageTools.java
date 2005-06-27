@@ -65,6 +65,4 @@ public class ImageTools {
             throw new IllegalArgumentException("Unsupported image type.");
         }
     }
-    
-
 }

@@ -453,7 +453,6 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
-        
     }
 
     public void apply(Applicator applicator) {

@@ -32,8 +32,11 @@ package nextapp.echo2.webcontainer.propertyrender;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.layout.CellLayoutData;
+import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webrender.output.CssStyle;
 
 /**
@@ -42,6 +45,70 @@ import nextapp.echo2.webrender.output.CssStyle;
  * layout data properties to CSS.
  */
 public class CellLayoutDataRender {
+    
+    //BUGBUG. review.
+    
+    private static String IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE = "CellLayoutData.BackgroundImage.";
+    private static int IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE_LENGTH = IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE.length();
+
+    /**
+     * A delegate method to be invoked by the container <code>Component</code>
+     * 's<code>ComponentSynchronizePeer</code>'s
+     * <code>ImageRenderSupport.getImage()</code> implementation. This method
+     * will return the appropriate <code>CellLayoutData</code> background
+     * image if the identifier corresponds to one, otherwise null is returned.
+     * 
+     * @param component the container <code>Component</code>
+     * @param imageId the identifier of the image
+     * @return the <code>ImageReference</code> or null if the specified
+     *         <code>imageId</code> does not specify a
+     *         <code>CellLayoutData</code> <code>BackgroundImage</code>
+     * @see #renderBackgroundImageToStyle(CssStyle, RenderContext,
+     *      ImageRenderSupport, Component, Component)
+     */
+    public static ImageReference getCellLayoutDataBackgroundImage(Component component, String imageId) {
+        if (imageId.startsWith(IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE)) {
+            String childRenderId = imageId.substring(IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE_LENGTH);
+            int childCount = component.getComponentCount();
+            for (int i = 0; i < childCount; ++i) {
+                Component child = component.getComponent(i);
+                if (child.getRenderId().equals(childRenderId)) {
+                    return ((CellLayoutData) child.getLayoutData()).getBackgroundImage().getImage();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Renders the <code>backgroundImage</code> property of a 
+     * <code>CellLayoutDataRender</code> to a <code>CssStyle</code>.
+     * The image will be assigned an identifier by this object 
+     * prefaced with the namespace "CellLayoutData".
+     * The <code>ImageRenderSupport.getImage()</code> implementation
+     * may obtain images based on these ids by invoking the
+     * <code>getCellLayoutDataBackgroundImage()</code> method.  Note
+     * that any image id may be safely passed to 
+     * <code>getCellLayoutDataBackgroundImage()</code> as it will return
+     * null if it does not have an image to match the specified id.
+     * 
+     * @param cssStyle the target <code>CssStyle</code>
+     * @param rc the relevant <code>RenderContext</code>
+     * @param irs the <code>ImageRenderSupport</code> which will provide 
+     *        identified images
+     * @param parent the parent <code>Component</code>
+     * @param child the child <code>Component</code>
+     * @see #getCellLayoutDataBackgroundImage(Component, String)
+     */
+    public static void renderBackgroundImageToStyle(CssStyle cssStyle, RenderContext rc, ImageRenderSupport irs,
+            Component parent, Component child) {
+        CellLayoutData layoutData = (CellLayoutData) child.getLayoutData();
+        if (layoutData == null || layoutData.getBackgroundImage() == null) {
+            return;
+        }
+        FillImageRender.renderToStyle(cssStyle, rc, irs, parent, 
+                IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE + child.getRenderId(), layoutData.getBackgroundImage(), 0);
+    }
     
     /**
      * Renders a <code>CellLayoutData</code> property to the given CSS style
@@ -87,9 +154,6 @@ public class CellLayoutDataRender {
         // Render alignment.
         AlignmentRender.renderToElement(element, layoutData.getAlignment(), component);
     }
-    
-    /** Non-instantiable class. */
-    private CellLayoutDataRender() { }
 
     /**
      * Renders a <code>CellLayoutData</code> property to the given CSS style.
@@ -130,4 +194,7 @@ public class CellLayoutDataRender {
         // Render alignment.
         AlignmentRender.renderToStyle(cssStyle, layoutData.getAlignment(), component);
     }
+    
+    /** Non-instantiable class. */
+    private CellLayoutDataRender() { }
 }

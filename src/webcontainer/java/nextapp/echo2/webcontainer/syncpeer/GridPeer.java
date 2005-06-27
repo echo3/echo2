@@ -41,6 +41,7 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.layout.GridCellLayoutData;
@@ -50,6 +51,7 @@ import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -60,8 +62,6 @@ import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 
-//BUGBUG? find way to line-wrap cross platform or remove. 
-
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Grid</code> components.
  * <p>
@@ -69,7 +69,7 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  * Echo framework.
  */
 public class GridPeer 
-implements DomUpdateSupport, ComponentSynchronizePeer {
+implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
@@ -80,21 +80,34 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
     }
     
     /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        // Only source of ImageReferences from this component are CellLayoutData background images:
+        // Delegate work to CellLayoutDataRender convenience method.
+        return CellLayoutDataRender.getCellLayoutDataBackgroundImage(component, imageId);
+    }
+
+    /**
      * Returns the <code>GridCellLayoutData</code> of the given child,
-     * or null if it does not provide <code>GridCellLayoutData</code>.
-     * 
+     * or null if it does not provide layout data.
+     *
      * @param child the child component
      * @return the layout data
+     * @throws java.lang.RuntimeException if the the provided
+     *         <code>LayoutData</code> is not a <code>GridCellLayoutData</code>
      */
     private GridCellLayoutData getLayoutData(Component child) {
-        LayoutData layoutData = (LayoutData) child.getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
-        if (layoutData instanceof GridCellLayoutData) {
+        LayoutData layoutData = (LayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
+        if (layoutData == null) {
+            return null;
+        } else if (layoutData instanceof GridCellLayoutData) {
             return (GridCellLayoutData) layoutData;
         } else {
-            return null;
+            throw new RuntimeException("Invalid LayoutData for Grid Child: " + layoutData.getClass().getName());
         }
     }
-    
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
@@ -214,6 +227,7 @@ implements DomUpdateSupport, ComponentSynchronizePeer {
                 BorderRender.renderToStyle(tdCssStyle, (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER));
                 CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, cell, getLayoutData(cell), 
                         defaultInsetsAttributeValue);
+                CellLayoutDataRender.renderBackgroundImageToStyle(tdCssStyle, rc, this, grid, cell);
                 tdElement.setAttribute("style", tdCssStyle.renderInline());
                 
                 renderAddChild(rc, update, tdElement, cell);

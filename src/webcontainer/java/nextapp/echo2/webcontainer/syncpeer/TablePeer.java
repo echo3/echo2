@@ -132,23 +132,28 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 return backgroundImage.getImage();
             }
         } else {
-            return null;
+            // Retrieve CellLayoutData background image if applicable.
+            return CellLayoutDataRender.getCellLayoutDataBackgroundImage(component, imageId);
         }
     }
 
     /**
      * Returns the <code>TableCellLayoutData</code> of the given child,
-     * or null if it does not provide <code>TableCellLayoutData</code>.
-     * 
+     * or null if it does not provide layout data.
+     *
      * @param child the child component
      * @return the layout data
+     * @throws java.lang.RuntimeException if the the provided
+     *         <code>LayoutData</code> is not a <code>TableCellLayoutData</code>
      */
     private TableCellLayoutData getLayoutData(Component child) {
-        LayoutData layoutData = (LayoutData) child.getRenderProperty(Table.PROPERTY_LAYOUT_DATA);
-        if (layoutData instanceof TableCellLayoutData) {
+        LayoutData layoutData = (LayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
+        if (layoutData == null) {
+            return null;
+        } else if (layoutData instanceof TableCellLayoutData) {
             return (TableCellLayoutData) layoutData;
         } else {
-            return null;
+            throw new RuntimeException("Invalid LayoutData for Table Child: " + layoutData.getClass().getName());
         }
     }
     
@@ -440,6 +445,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
             CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, childComponent, getLayoutData(childComponent), 
                     defaultInsetsAttributeValue);
+            CellLayoutDataRender.renderBackgroundImageToStyle(tdCssStyle, rc, this, table, childComponent);
             tdElement.setAttribute("style", tdCssStyle.renderInline());
             
             trElement.appendChild(tdElement);

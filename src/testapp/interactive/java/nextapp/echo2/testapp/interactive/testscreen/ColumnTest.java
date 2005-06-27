@@ -43,6 +43,7 @@ import nextapp.echo2.app.layout.ColumnLayoutData;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
+import nextapp.echo2.testapp.interactive.Styles;
 
 public class ColumnTest extends SplitPane {
     
@@ -207,6 +208,17 @@ public class ColumnTest extends SplitPane {
                 columnLayoutData.setAlignment(StyleUtil.randomAlignmentHV());
                 columnLayoutData.setBackground(StyleUtil.randomBrightColor());
                 columnLayoutData.setInsets(new Insets((int) (Math.random() * 30)));
+                switch((int) (Math.random() * 7)) {
+                case 0:
+                     columnLayoutData.setBackgroundImage(Styles.BG_SHADOW_DARK_BLUE);
+                     break;
+                case 1:
+                     columnLayoutData.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                     break;
+                default:
+                     columnLayoutData.setBackgroundImage(null);
+                }
+                
                 component.setLayoutData(columnLayoutData);
             }
         });

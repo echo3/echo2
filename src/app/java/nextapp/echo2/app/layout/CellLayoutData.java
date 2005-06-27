@@ -31,6 +31,7 @@ package nextapp.echo2.app.layout;
 
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Color;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 
@@ -42,6 +43,7 @@ public abstract class CellLayoutData
 implements LayoutData {
     
     private Color background;
+    private FillImage backgroundImage;
     private Insets insets;
     private Alignment alignment;
     
@@ -61,6 +63,15 @@ implements LayoutData {
      */
     public Color getBackground() {
         return background;
+    }
+    
+    /**
+     * Returns the background image of the cell.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return backgroundImage;
     }
     
     /**
@@ -88,6 +99,15 @@ implements LayoutData {
      */
     public void setBackground(Color newValue) {
         background = newValue;
+    }
+    
+    /**
+     * Sets the background image of the cell.
+     * 
+     * @param newValue the new background image.
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        backgroundImage = newValue;
     }
     
     /**

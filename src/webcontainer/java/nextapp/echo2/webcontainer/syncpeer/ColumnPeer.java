@@ -39,10 +39,10 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.LayoutData;
-import nextapp.echo2.app.layout.CellLayoutData;
 import nextapp.echo2.app.layout.ColumnLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -52,6 +52,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.partialupdate.BorderUpdate;
 import nextapp.echo2.webcontainer.partialupdate.ColorUpdate;
 import nextapp.echo2.webcontainer.partialupdate.InsetsUpdate;
@@ -71,8 +72,8 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  * Echo framework.
  */
 public class ColumnPeer 
-implements ComponentSynchronizePeer, DomUpdateSupport  {
-
+implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
+    
     /**
      * <code>RenderState</code> implementation.
      */
@@ -114,18 +115,31 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
     }
     
     /**
-     * Returns the <code>CellLayoutData</code> of the given child,
-     * or null if it does not provide <code>CellLayoutData</code>.
-     * 
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        // Only source of ImageReferences from this component are CellLayoutData background images:
+        // Delegate work to CellLayoutDataRender convenience method.
+        return CellLayoutDataRender.getCellLayoutDataBackgroundImage(component, imageId);
+    }
+
+    /**
+     * Returns the <code>ColumnLayoutData</code> of the given child,
+     * or null if it does not provide layout data.
+     *
      * @param child the child component
      * @return the layout data
+     * @throws java.lang.RuntimeException if the the provided
+     *         <code>LayoutData</code> is not a <code>ColumnLayoutData</code>
      */
-    private CellLayoutData getLayoutData(Component child) {
+    private ColumnLayoutData getLayoutData(Component child) {
         LayoutData layoutData = (LayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
-        if (layoutData instanceof CellLayoutData) {
-            return (CellLayoutData) layoutData;
-        } else {
+        if (layoutData == null) {
             return null;
+        } else if (layoutData instanceof ColumnLayoutData) {
+            return (ColumnLayoutData) layoutData;
+        } else {
+            throw new RuntimeException("Invalid LayoutData for Column Child: " + layoutData.getClass().getName());
         }
     }
 
@@ -234,8 +248,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport  {
         
         // Configure cell style.
         CssStyle cssStyle = new CssStyle();
-        ColumnLayoutData layoutData = (ColumnLayoutData) getLayoutData(child);
+        ColumnLayoutData layoutData = getLayoutData(child);
         CellLayoutDataRender.renderToElementAndStyle(divElement, cssStyle, child, layoutData, "0px");
+        CellLayoutDataRender.renderBackgroundImageToStyle(cssStyle, rc, this, component, child);
         if (layoutData != null) {
             ExtentRender.renderToStyle(cssStyle, "height", layoutData.getHeight());
         }

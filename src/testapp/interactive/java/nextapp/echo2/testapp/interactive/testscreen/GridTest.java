@@ -44,9 +44,10 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.GridCellLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
+import nextapp.echo2.testapp.interactive.Styles;
 
 /**
- * 
+ * Interactive test for <code>Grid</code> components.
  */
 public class GridTest extends SplitPane {
 
@@ -333,6 +334,24 @@ public class GridTest extends SplitPane {
                 if (selectedButton != null) {
                     GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.CENTER));
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Set BackgroundImage", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setBackgroundImage(Styles.BG_SHADOW_DARK_BLUE);
+                    selectedButton.setLayoutData(layoutData);
+                }
+            }
+        });
+        controlsColumn.addButton("Clear BackgroundImage", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    layoutData.setBackgroundImage(null);
                     selectedButton.setLayoutData(layoutData);
                 }
             }

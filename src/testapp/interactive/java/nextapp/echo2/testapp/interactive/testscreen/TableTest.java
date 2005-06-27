@@ -121,6 +121,26 @@ public class TableTest extends SplitPane {
         }
     };
     
+    private TableCellRenderer checkerCellRenderer = new TableCellRenderer() {
+        
+        /**
+         * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
+         *      java.lang.Object, int, int)
+         */
+        public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+            Label label = new Label(value == null ? null : value.toString());
+            TableCellLayoutData layoutData = new TableCellLayoutData();
+            layoutData.setInsets(new Insets(5));
+            if (row % 2 == column % 2) {
+                layoutData.setBackgroundImage(Styles.BG_SHADOW_DARK_BLUE);
+            } else {
+                layoutData.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+            }
+            label.setLayoutData(layoutData);
+            return label;
+        }
+    };
+    
     /**
      * Writes <code>ActionEvent</code>s to console.
      */
@@ -459,6 +479,11 @@ public class TableTest extends SplitPane {
         controlsColumn.addButton("Randomizing Cell Renderer", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testTable.setDefaultRenderer(Object.class, randomizingCellRenderer);
+            }
+        });
+        controlsColumn.addButton("Checker Cell Renderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, checkerCellRenderer);
             }
         });
         controlsColumn.addButton("Alignment = Leading/Top", new ActionListener() {

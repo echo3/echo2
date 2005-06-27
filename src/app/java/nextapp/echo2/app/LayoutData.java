@@ -32,24 +32,28 @@ package nextapp.echo2.app;
 import java.io.Serializable;
 
 /**
- * Describes the interface between a child <code>Component</code> and its 
- * parent <code>Component</code>.  A <code>LayoutData</code> object may 
+ * Describes the interface between a child <code>Component</code> and its
+ * parent <code>Component</code>. A <code>LayoutData</code> object may
  * contain layout, position, color, or other data to describe how a given
- * <code>Component</code> should be rendered within its parent.  
- * <code>LayoutData</code> objects are used as values of the 
+ * <code>Component</code> should be rendered within its parent.
+ * <code>LayoutData</code> objects are used as values of the
  * <code>layoutData</code> property defined in the <code>Component</code>
  * class.
- *
- * <code>LayoutData</code> is a marker interface which is implemented by 
- * all objects providing such layout information.  A component which needs
- * to present layout information to its parent should use the specific
- * derivative of <code>LayoutData</code> applicable to its parent component,
- * e.g., a child of a <code>Grid</code> might use the 
- * <code>GridCellLayoutData</code> implementation.  The specific 
- * <code>LayoutData</code> implementations available for use with a given
- * parent component will be described in the parent component's documentation.
- * Use of incorrect or incompatible <code>LayoutData</code> implementations 
- * will be ignored.  
+ * <p>
+ * <code>LayoutData</code> is a marker interface which is implemented by all
+ * objects providing such layout information. A component which needs to present
+ * layout information to its parent should use the specific derivative of
+ * <code>LayoutData</code> applicable to its parent component, e.g., a child
+ * of a <code>Grid</code> might use the <code>GridCellLayoutData</code>
+ * implementation. The specific <code>LayoutData</code> implementations
+ * available for use with a given parent component will be described in the
+ * parent component's documentation.
+ * <p>
+ * <strong>WARNING: </strong> Setting an incompatbile <code>LayoutData</code>
+ * property on a <code>Component</code> may result in a render-time exception
+ * being thrown. Take care to check the requirements specified by the
+ * documentation of a container <code>Component</code> before setting a
+ * <code>LayoutData</code> on a child of that container.
  */
 public interface LayoutData 
 extends Serializable { }
