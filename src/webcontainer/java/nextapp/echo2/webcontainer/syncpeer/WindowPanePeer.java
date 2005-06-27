@@ -96,6 +96,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String DEFAULT_HEIGHT = "256px";
     private static final String IMAGE_ID_TITLE_BACKGROUND = "titleBackground";
     private static final String IMAGE_ID_CLOSE_ICON = "close";
+    private static final String IMAGE_ID_ICON = "icon";
     private static final String IMAGE_ID_BORDER_TOP_LEFT = "borderTopLeft";
     private static final String IMAGE_ID_BORDER_TOP = "borderTop";
     private static final String IMAGE_ID_BORDER_TOP_RIGHT = "borderTopRight";
@@ -133,6 +134,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (IMAGE_ID_TITLE_BACKGROUND.equals(imageId)) {
             FillImage backgroundImage = (FillImage) component.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE);
             return backgroundImage == null ? null : backgroundImage.getImage();
+        } else if (IMAGE_ID_ICON.equals(imageId)) {
+            return (ImageReference) component.getRenderProperty(WindowPane.PROPERTY_ICON);
         } else if (IMAGE_ID_CLOSE_ICON.equals(imageId)) {
             return (ImageReference) component.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON, DEFAULT_CLOSE_ICON);
         } else if (IMAGE_ID_BORDER_TOP_LEFT.equals(imageId)) {
@@ -457,6 +460,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         WindowPane windowPane = (WindowPane) component;
         String elementId = ContainerInstance.getElementId(windowPane);
         String bodyElementId = elementId + "_body";
+        ImageReference icon = (ImageReference) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON);
         String title = (String) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE);
         Extent width = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_WIDTH);
         Extent height = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_HEIGHT);
@@ -545,15 +549,16 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             iframeQuirkDivElement.appendChild(iframeQuirkIframeElement);
         }
 
-        // Create outer title DIV element.
+        // Create title DIV container element.
         Element titleContainerDivElement = document.createElement("div");
         titleContainerDivElement.setAttribute("id", elementId + "_title");
         CssStyle titleContainerDivCssStyle = new CssStyle();
         if (movable) {
             titleContainerDivCssStyle.setAttribute("cursor", "move");
         }
-        ColorRender.renderToStyle(titleContainerDivCssStyle, (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND,
-                Color.WHITE), (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
+        ColorRender.renderToStyle(titleContainerDivCssStyle, 
+                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND, Color.WHITE), 
+                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
         FontRender.renderToStyle(titleContainerDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
         FillImageRender.renderToStyle(titleContainerDivCssStyle, rc, this, component, IMAGE_ID_TITLE_BACKGROUND,
                 (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE), 0);
@@ -564,23 +569,52 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         titleContainerDivCssStyle.setAttribute("overflow", "hidden");
         titleContainerDivElement.setAttribute("style", titleContainerDivCssStyle.renderInline());
         windowBodyDivElement.appendChild(titleContainerDivElement);
-
-        // Add Title Content
-        Element titleTextDivElement = document.createElement("div");
-        CssStyle titleTextDivCssStyle = new CssStyle();
-        titleTextDivCssStyle.setAttribute("position", "absolute");
-        titleTextDivCssStyle.setAttribute("left", "0px");
-        titleTextDivCssStyle.setAttribute("top", "0px");
-        titleTextDivCssStyle.setAttribute("white-space", "nowrap");
-        titleTextDivCssStyle.setAttribute("overflow", "hidden");
-        InsetsRender.renderToStyle(titleTextDivCssStyle, "padding", 
-                (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
-        titleTextDivElement.setAttribute("style", titleTextDivCssStyle.renderInline());
-        if (title != null) {
-            DomUtil.setElementText(titleTextDivElement, title);
-        }
-        titleContainerDivElement.appendChild(titleTextDivElement);
         
+        // Add Title Icon.
+        if (icon != null) {
+            Insets titleIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON_INSETS);
+            if (titleIconInsets == null) {
+                titleIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
+            }
+            Element titleIconDivElement = document.createElement("div");
+            CssStyle titleIconDivCssStyle = new CssStyle();
+            titleIconDivCssStyle.setAttribute("position", "absolute");
+            titleIconDivCssStyle.setAttribute("left", "0px");
+            titleIconDivCssStyle.setAttribute("top", "0px");
+            titleIconDivCssStyle.setAttribute("white-space", "nowrap");
+            titleIconDivCssStyle.setAttribute("overflow", "hidden");
+            InsetsRender.renderToStyle(titleIconDivCssStyle, "padding", titleIconInsets);
+            titleIconDivElement.setAttribute("style", titleIconDivCssStyle.renderInline());
+            titleContainerDivElement.appendChild(titleIconDivElement);
+
+            Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_ICON);
+            titleIconDivElement.appendChild(imgElement);
+        }
+        
+        // Add Title Text.
+        if (title != null) {
+            int titlePosition = icon == null ? 0 : 32;
+            Element titleTextDivElement = document.createElement("div");
+            CssStyle titleTextDivCssStyle = new CssStyle();
+            titleTextDivCssStyle.setAttribute("position", "absolute");
+            titleTextDivCssStyle.setAttribute("left", titlePosition + "px");
+            titleTextDivCssStyle.setAttribute("top", "0px");
+            titleTextDivCssStyle.setAttribute("white-space", "nowrap");
+            titleTextDivCssStyle.setAttribute("overflow", "hidden");
+            InsetsRender.renderToStyle(titleTextDivCssStyle, "padding", 
+                    (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
+            titleTextDivElement.setAttribute("style", titleTextDivCssStyle.renderInline());
+            if (title != null) {
+                DomUtil.setElementText(titleTextDivElement, title);
+            }
+            titleContainerDivElement.appendChild(titleTextDivElement);
+        }
+        
+        // Add Close Icon.
+        Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS);
+        if (closeIconInsets == null) {
+            closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
+        }
         Element closeIconDivElement = document.createElement("div");
         closeIconDivElement.setAttribute("id", elementId + "_close");
         CssStyle closeIconDivCssStyle = new CssStyle();
@@ -588,8 +622,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         closeIconDivCssStyle.setAttribute("position", "absolute");
         closeIconDivCssStyle.setAttribute("right", "0px");
         closeIconDivCssStyle.setAttribute("top", "0px");
-        InsetsRender.renderToStyle(closeIconDivCssStyle, "padding", 
-                (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
+        InsetsRender.renderToStyle(closeIconDivCssStyle, "padding", closeIconInsets);
         closeIconDivElement.setAttribute("style", closeIconDivCssStyle.renderInline());
         titleContainerDivElement.appendChild(closeIconDivElement);
         

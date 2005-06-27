@@ -473,24 +473,28 @@ public class WindowPaneTest extends SplitPane {
         column.addButton("Set Icon", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setIcon(Styles.COMPOSE_MAIL_ICON);
+                windowPane.setIconInsets(new Insets(4, 2));
             }
         });
         
         column.addButton("Clear Icon", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setIcon(null);
+                windowPane.setIconInsets(null);
             }
         });
         
-        column.addButton("Set Close Icon", new ActionListener() {
+        column.addButton("Set Close Icon (and appropriate Icon Insets)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setCloseIcon(Styles.NO_ICON);
+                windowPane.setCloseIconInsets(new Insets(4, 2));
             }
         });
         
         column.addButton("Clear Close Icon", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setCloseIcon(null);
+                windowPane.setCloseIconInsets(null);
             }
         });
         

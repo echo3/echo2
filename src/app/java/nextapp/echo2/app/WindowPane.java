@@ -43,14 +43,16 @@ import nextapp.echo2.app.event.WindowPaneListener;
  */
 public class WindowPane extends Component 
 implements ModalSupport {
-    
+
     public static final String INPUT_CLOSE = "input_close";
     
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CLOSE_ICON = "closeIcon";
+    public static final String PROPERTY_CLOSE_ICON_INSETS = "closeIconInsets";
     public static final String PROPERTY_DEFAULT_CLOSE_OPERATION = "defaultCloseOperation";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";
+    public static final String PROPERTY_ICON_INSETS = "iconInsets";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_MAXIMUM_HEIGHT = "maximumHeight";
     public static final String PROPERTY_MAXIMUM_WIDTH = "maximumWidth";
@@ -169,6 +171,15 @@ implements ModalSupport {
     }
     
     /**
+     * Returns the inset margin around the close button icon.
+     * 
+     * @return the inset margin
+     */
+    public Insets getCloseIconInsets() {
+        return (Insets) getProperty(PROPERTY_CLOSE_ICON_INSETS);
+    }
+    
+    /**
      * Returns the default close operation.
      * 
      * @return the default close operation, one of the following values:
@@ -199,6 +210,15 @@ implements ModalSupport {
      */
     public ImageReference getIcon() {
         return (ImageReference) getProperty(PROPERTY_ICON);
+    }
+    
+    /**
+     * Returns the inset margin around the icon.
+     * 
+     * @return the inset margin
+     */
+    public Insets getIconInsets() {
+        return (Insets) getProperty(PROPERTY_CLOSE_ICON_INSETS);
     }
     
     /**
@@ -436,6 +456,15 @@ implements ModalSupport {
     }
     
     /**
+     * Sets the inset margin around the close button icon.
+     * 
+     * @param newValue the new inset margin
+     */
+    public void setCloseIconInsets(Insets newValue) {
+        setProperty(PROPERTY_CLOSE_ICON_INSETS, newValue);
+    }
+    
+    /**
      * Sets the default close operation.
      * 
      * @param newValue the new default close operation, one of the following 
@@ -468,6 +497,15 @@ implements ModalSupport {
      */
     public void setIcon(ImageReference newValue) {
         setProperty(PROPERTY_ICON, newValue);
+    }
+    
+    /**
+     * Sets the inset margin around the icon.
+     * 
+     * @param newValue the new inset margin
+     */
+    public void setIconInsets(Insets newValue) {
+        setProperty(PROPERTY_ICON_INSETS, newValue);
     }
     
     /**
