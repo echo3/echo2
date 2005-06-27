@@ -36,7 +36,7 @@ import nextapp.echo2.app.Color;
  * A <code>LayoutData</code> object used to describe how a 
  * <code>Component</code> is rendered within a <code>Grid</code>. 
  */
-public class GridCellLayoutData extends CellLayoutData {
+public class GridLayoutData extends CellLayoutData {
     
     private Color background = null;
     private FillImage backgroundImage = null;

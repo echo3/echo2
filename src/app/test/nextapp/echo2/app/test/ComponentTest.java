@@ -35,7 +35,7 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 import junit.framework.TestCase;
 
 /**
@@ -332,10 +332,10 @@ public class ComponentTest extends TestCase {
         assertNull(c.getLayoutData());
         PropertyChangeEvaluator pce = new PropertyChangeEvaluator();
         c.addPropertyChangeListener(pce);
-        GridCellLayoutData data = new GridCellLayoutData();
+        GridLayoutData data = new GridLayoutData();
         data.setColumnSpan(2);
         c.setLayoutData(data);
-        assertEquals(2, ((GridCellLayoutData) c.getLayoutData()).getColumnSpan());
+        assertEquals(2, ((GridLayoutData) c.getLayoutData()).getColumnSpan());
         assertEquals(Component.PROPERTY_LAYOUT_DATA, pce.lastEvent.getPropertyName());
     }
 

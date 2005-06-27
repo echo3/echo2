@@ -32,7 +32,7 @@ package nextapp.echo2.app.layout;
 /**
  * A <code>LayoutData</code> object for rendered table cells.
  */
-public class TableCellLayoutData extends CellLayoutData {
+public class TableLayoutData extends CellLayoutData {
     
     //BUGBUG. Add additional methods if necessary, otherwise, just use CellLayoutData and del this class.
 }

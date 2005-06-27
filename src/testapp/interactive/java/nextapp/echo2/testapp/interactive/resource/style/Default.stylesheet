@@ -18,7 +18,7 @@
  <style name="EvenCellLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
+    <layoutdata type="nextapp.echo2.app.layout.TableLayoutData">
      <properties>
       <property name="background" value="#afffaf"/>
      </properties>
@@ -29,7 +29,7 @@
  <style name="OddCellLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.TableCellLayoutData">
+    <layoutdata type="nextapp.echo2.app.layout.TableLayoutData">
      <properties>
       <property name="background" value="#ffffaf"/>
      </properties>

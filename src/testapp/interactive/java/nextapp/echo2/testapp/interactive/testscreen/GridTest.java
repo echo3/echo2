@@ -41,7 +41,7 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
@@ -203,7 +203,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("[+] Column Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setColumnSpan(layoutData.getColumnSpan() + 1);
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
@@ -214,7 +214,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("[-] Column Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     if (layoutData.getColumnSpan() > 1) {
                         layoutData.setColumnSpan(layoutData.getColumnSpan() - 1);
                     }
@@ -227,7 +227,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("[+] Row Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setRowSpan(layoutData.getRowSpan() + 1);
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
@@ -238,7 +238,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("[-] Row Span", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     if (layoutData.getRowSpan() > 1) {
                         layoutData.setRowSpan(layoutData.getRowSpan() - 1);
                     }
@@ -251,7 +251,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Insets 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setInsets(new Insets(0));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -260,7 +260,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Insets 2px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setInsets(new Insets(2));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -269,7 +269,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Insets 10/5px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setInsets(new Insets(10, 5));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -278,7 +278,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Insets 10/20/30/40px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setInsets(new Insets(10, 20, 30, 40));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -287,7 +287,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Alignment = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(null);
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -296,7 +296,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Alignment = Leading/Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(new Alignment(Alignment.LEADING, Alignment.TOP));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -305,7 +305,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Alignment = Trailing/Bottom", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(new Alignment(Alignment.TRAILING, Alignment.BOTTOM));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -314,7 +314,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Alignment = Left/Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(new Alignment(Alignment.LEFT, Alignment.TOP));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -323,7 +323,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Alignment = Right/Bottom", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(new Alignment(Alignment.RIGHT, Alignment.BOTTOM));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -332,7 +332,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set Alignment = Center/Center", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.CENTER));
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -341,7 +341,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Set BackgroundImage", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setBackgroundImage(Styles.BG_SHADOW_DARK_BLUE);
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -350,7 +350,7 @@ public class GridTest extends SplitPane {
         controlsColumn.addButton("Clear BackgroundImage", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
-                    GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     layoutData.setBackgroundImage(null);
                     selectedButton.setLayoutData(layoutData);
                 }
@@ -360,7 +360,7 @@ public class GridTest extends SplitPane {
 
     public Button createGridCellButton() {
         Button button = new Button("Grid Cell #" + nextCellNumber++);
-        GridCellLayoutData layoutData = new GridCellLayoutData();
+        GridLayoutData layoutData = new GridLayoutData();
         button.setLayoutData(layoutData);
         button.addActionListener(cellButtonActionListener);
         return button;
@@ -368,7 +368,7 @@ public class GridTest extends SplitPane {
     
     private void retitle(Button button) {
         StringBuffer out = new StringBuffer();
-        GridCellLayoutData layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+        GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
         if (layoutData.getColumnSpan() > 1 || layoutData.getRowSpan() > 1) {
             out.append("[" + layoutData.getColumnSpan() + "x" + layoutData.getRowSpan() + "]"); 
         }
@@ -389,14 +389,14 @@ public class GridTest extends SplitPane {
     }
     
     private void selectCellButton(Button button) {
-        GridCellLayoutData layoutData;
+        GridLayoutData layoutData;
         if (selectedButton != null) {
-            layoutData = (GridCellLayoutData) selectedButton.getLayoutData();
+            layoutData = (GridLayoutData) selectedButton.getLayoutData();
             layoutData.setBackground(null);
             selectedButton.setLayoutData(layoutData);
         }
         if (button != null) {
-            layoutData = (GridCellLayoutData) button.getLayoutData();
+            layoutData = (GridLayoutData) button.getLayoutData();
             layoutData.setBackground(new Color(0xefefaf));
             button.setLayoutData(layoutData);
         }

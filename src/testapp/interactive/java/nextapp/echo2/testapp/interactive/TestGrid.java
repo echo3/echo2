@@ -35,7 +35,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 
 /**
  * A layout component based on a <code>Grid</code> which provides a two column
@@ -56,7 +56,7 @@ public class TestGrid extends Grid {
     
     public void addHeaderCell(String text) {
         Label label = new Label(text);
-        GridCellLayoutData layoutData = new GridCellLayoutData();
+        GridLayoutData layoutData = new GridLayoutData();
         layoutData.setBackground(HEADER_CELL_BACKGROUND);
         layoutData.setColumnSpan(2);
         label.setLayoutData(layoutData);
@@ -65,7 +65,7 @@ public class TestGrid extends Grid {
     
     public void addTestCell(String descriptor, Component testComponent) {
         Label label = new Label(descriptor);
-        GridCellLayoutData layoutData = new GridCellLayoutData();
+        GridLayoutData layoutData = new GridLayoutData();
         layoutData.setBackground(DESCRIPTOR_CELL_BACKGROUND);
         label.setLayoutData(layoutData);
         add(label);

@@ -44,7 +44,7 @@ import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.Table;
-import nextapp.echo2.app.layout.TableCellLayoutData;
+import nextapp.echo2.app.layout.TableLayoutData;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.TableColumnModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -138,20 +138,20 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
     }
 
     /**
-     * Returns the <code>TableCellLayoutData</code> of the given child,
+     * Returns the <code>TableLayoutData</code> of the given child,
      * or null if it does not provide layout data.
      *
      * @param child the child component
      * @return the layout data
      * @throws java.lang.RuntimeException if the the provided
-     *         <code>LayoutData</code> is not a <code>TableCellLayoutData</code>
+     *         <code>LayoutData</code> is not a <code>TableLayoutData</code>
      */
-    private TableCellLayoutData getLayoutData(Component child) {
+    private TableLayoutData getLayoutData(Component child) {
         LayoutData layoutData = (LayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
         if (layoutData == null) {
             return null;
-        } else if (layoutData instanceof TableCellLayoutData) {
-            return (TableCellLayoutData) layoutData;
+        } else if (layoutData instanceof TableLayoutData) {
+            return (TableLayoutData) layoutData;
         } else {
             throw new RuntimeException("Invalid LayoutData for Table Child: " + layoutData.getClass().getName());
         }

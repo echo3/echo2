@@ -44,7 +44,7 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.app.layout.TableCellLayoutData;
+import nextapp.echo2.app.layout.TableLayoutData;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableCellRenderer;
@@ -111,7 +111,7 @@ public class TableTest extends SplitPane {
          */
         public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
             Label label = new Label(value == null ? null : value.toString());
-            TableCellLayoutData layoutData = new TableCellLayoutData();
+            TableLayoutData layoutData = new TableLayoutData();
             layoutData.setBackground(StyleUtil.randomBrightColor());
             layoutData.setInsets(new Insets(StyleUtil.randomExtent(12), StyleUtil.randomExtent(12), StyleUtil.randomExtent(12),
                     StyleUtil.randomExtent(12)));
@@ -129,7 +129,7 @@ public class TableTest extends SplitPane {
          */
         public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
             Label label = new Label(value == null ? null : value.toString());
-            TableCellLayoutData layoutData = new TableCellLayoutData();
+            TableLayoutData layoutData = new TableLayoutData();
             layoutData.setInsets(new Insets(5));
             if (row % 2 == column % 2) {
                 layoutData.setBackgroundImage(Styles.BG_SHADOW_DARK_BLUE);
@@ -521,7 +521,7 @@ public class TableTest extends SplitPane {
              */
             public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
                 Label label = new Label(value == null ? null : value.toString());
-                TableCellLayoutData layoutData = new TableCellLayoutData();
+                TableLayoutData layoutData = new TableLayoutData();
                 layoutData.setAlignment(alignment);
                 label.setLayoutData(layoutData);
                 return label;

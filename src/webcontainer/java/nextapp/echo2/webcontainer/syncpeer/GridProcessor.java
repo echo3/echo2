@@ -32,7 +32,7 @@ package nextapp.echo2.webcontainer.syncpeer;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.LayoutData;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 
 /**
  * Provides analysis of a Grid for rendering purposes.  
@@ -58,8 +58,8 @@ public class GridProcessor {
         
         for (int i = 0; i < children.length; ++i) {
             LayoutData layoutData = (LayoutData) children[i].getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
-            if (layoutData instanceof GridCellLayoutData) {
-                GridCellLayoutData gcLayoutData = (GridCellLayoutData) layoutData;
+            if (layoutData instanceof GridLayoutData) {
+                GridLayoutData gcLayoutData = (GridLayoutData) layoutData;
                 xSpans[i] = horizontalOrientation ? gcLayoutData.getColumnSpan() : gcLayoutData.getRowSpan();
                 ySpans[i] = horizontalOrientation ? gcLayoutData.getRowSpan() : gcLayoutData.getColumnSpan();
                 totalArea += xSpans[i] * ySpans[i];

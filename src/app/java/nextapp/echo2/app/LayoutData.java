@@ -44,7 +44,7 @@ import java.io.Serializable;
  * objects providing such layout information. A component which needs to present
  * layout information to its parent should use the specific derivative of
  * <code>LayoutData</code> applicable to its parent component, e.g., a child
- * of a <code>Grid</code> might use the <code>GridCellLayoutData</code>
+ * of a <code>Grid</code> might use the <code>GridLayoutData</code>
  * implementation. The specific <code>LayoutData</code> implementations
  * available for use with a given parent component will be described in the
  * parent component's documentation.

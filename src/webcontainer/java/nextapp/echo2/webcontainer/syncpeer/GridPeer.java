@@ -44,7 +44,7 @@ import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.LayoutData;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
@@ -89,20 +89,20 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     }
 
     /**
-     * Returns the <code>GridCellLayoutData</code> of the given child,
+     * Returns the <code>GridLayoutData</code> of the given child,
      * or null if it does not provide layout data.
      *
      * @param child the child component
      * @return the layout data
      * @throws java.lang.RuntimeException if the the provided
-     *         <code>LayoutData</code> is not a <code>GridCellLayoutData</code>
+     *         <code>LayoutData</code> is not a <code>GridLayoutData</code>
      */
-    private GridCellLayoutData getLayoutData(Component child) {
+    private GridLayoutData getLayoutData(Component child) {
         LayoutData layoutData = (LayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
         if (layoutData == null) {
             return null;
-        } else if (layoutData instanceof GridCellLayoutData) {
-            return (GridCellLayoutData) layoutData;
+        } else if (layoutData instanceof GridLayoutData) {
+            return (GridLayoutData) layoutData;
         } else {
             throw new RuntimeException("Invalid LayoutData for Grid Child: " + layoutData.getClass().getName());
         }

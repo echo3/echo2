@@ -31,7 +31,7 @@ package nextapp.echo2.webcontainer.test;
 
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 import nextapp.echo2.webcontainer.syncpeer.GridProcessor;
 import junit.framework.TestCase;
 
@@ -53,7 +53,7 @@ public class GridPeerTest extends TestCase {
         for (int i = 0; i < 10; ++i) {
             Label label = new Label();
             if (i == 4) {
-                GridCellLayoutData layoutData = new GridCellLayoutData();
+                GridLayoutData layoutData = new GridLayoutData();
                 layoutData.setColumnSpan(2);
                 label.setLayoutData(layoutData);
             }
@@ -79,7 +79,7 @@ public class GridPeerTest extends TestCase {
         for (int i = 0; i < 7; ++i) {
             Label label = new Label(Integer.toString(i));
             if (i == 2) {
-                GridCellLayoutData layoutData = new GridCellLayoutData();
+                GridLayoutData layoutData = new GridLayoutData();
                 layoutData.setRowSpan(2);
                 label.setLayoutData(layoutData);
             }
@@ -111,17 +111,17 @@ public class GridPeerTest extends TestCase {
      * |__|__|__|   |__|__|__|
      */
     public void testInvalidAttemptCollision() {
-        GridCellLayoutData layoutData;
+        GridLayoutData layoutData;
         Grid grid = new Grid(3);
         grid.add(new Label("0"));
         Label verticalCollider = new Label("vc");
-        layoutData = new GridCellLayoutData();
+        layoutData = new GridLayoutData();
         layoutData.setRowSpan(3);
         verticalCollider.setLayoutData(layoutData);
         grid.add(verticalCollider);
         grid.add(new Label("1"));
         Label horizontalCollider = new Label("hc");
-        layoutData = new GridCellLayoutData();
+        layoutData = new GridLayoutData();
         layoutData.setColumnSpan(3);
         horizontalCollider.setLayoutData(layoutData);
         grid.add(horizontalCollider);
@@ -143,7 +143,7 @@ public class GridPeerTest extends TestCase {
         for (int i = 0; i < 10; ++i) {
             Label label = new Label();
             if (i == 4) {
-                GridCellLayoutData layoutData = new GridCellLayoutData();
+                GridLayoutData layoutData = new GridLayoutData();
                 layoutData.setColumnSpan(3);
                 label.setLayoutData(layoutData);
             }

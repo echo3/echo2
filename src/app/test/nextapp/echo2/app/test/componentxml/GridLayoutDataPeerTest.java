@@ -40,13 +40,13 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Style;
 import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.componentxml.StyleSheetLoader;
-import nextapp.echo2.app.layout.GridCellLayoutData;
+import nextapp.echo2.app.layout.GridLayoutData;
 import junit.framework.TestCase;
 
 /**
  * 
  */
-public class GridCellLayoutDataPeerTest extends TestCase {
+public class GridLayoutDataPeerTest extends TestCase {
     
     private StyleSheet styleSheet;
     
@@ -55,14 +55,14 @@ public class GridCellLayoutDataPeerTest extends TestCase {
      */
     public void setUp()
     throws Exception {
-        InputStream in = FillImagePeerTest.class.getResourceAsStream("GridCellLayoutDataPeerTest.stylesheet");
+        InputStream in = FillImagePeerTest.class.getResourceAsStream("GridLayoutDataPeerTest.stylesheet");
         styleSheet = StyleSheetLoader.load(in, StyleSheetLoaderTest.class.getClassLoader());
         in.close();
     }
     
     public void testBasic() {
         Style alphaStyle = styleSheet.getStyle(Column.class, "alpha");
-        GridCellLayoutData layoutData = (GridCellLayoutData) alphaStyle.getProperty(Component.PROPERTY_LAYOUT_DATA);
+        GridLayoutData layoutData = (GridLayoutData) alphaStyle.getProperty(Component.PROPERTY_LAYOUT_DATA);
         assertEquals(2, layoutData.getColumnSpan());
         assertEquals(1, layoutData.getRowSpan());
         assertEquals(new Color(0xabcdef), layoutData.getBackground());
