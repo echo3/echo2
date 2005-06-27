@@ -104,7 +104,6 @@ EchoAsyncMonitor.responseHandler = function(conn) {
         // Server does not require synchronization: restart countdown to next poll request.
         EchoAsyncMonitor.start();
     }
-    
 };
 
 // _____________________________
@@ -476,7 +475,6 @@ EchoClientMessage.setActionValue = function(componentId, actionName, actionValue
  * @param propertyName The name of the property.
  * @param newValue The new value of the property.
  */
- //BUGBUG. rename this setPropertyValue.
 EchoClientMessage.setPropertyValue = function(componentId, propertyName, newValue) {
     var propertyElement = EchoClientMessage.createPropertyElement(componentId, propertyName);
     
@@ -884,6 +882,7 @@ EchoDomUtil.cssAttributeNameToPropertyName = function(attribute) {
     return out;
 };
 
+//BUGBUG. doc....potentially (unlikely) move to separate web-container engine JS object.
 /**
  * Returns the base component id of an extended id.
  * Example: for value "c_333_foo", "c_333" would be returned.
@@ -907,6 +906,10 @@ EchoDomUtil.getComponentId = function(elementId) {
 
 /**
  * Returns the target of an event, using the client's supported event model.
+ * On clients which support the W3C DOM Level 2 event specification,
+ * the target property of the event is returned.
+ * On clients which support only the Internet Explorer event model,
+ * the srcElement property of the event is returned.
  *
  * @param e the event
  * @return the target
@@ -1009,9 +1012,9 @@ EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
  * Prevents the default action of an event from occurring, using the
  * client's supported event model.
  * On clients which support the W3C DOM Level 2 event specification,
- * the preventDefault() method is invoked.
+ * the preventDefault() method of the event is invoked.
  * On clients which support only the Internet Explorer event model,
- * the 'returnValue' property is set to false.
+ * the 'returnValue' property of the event is set to false.
  *
  * @param e the event
  */
@@ -1044,6 +1047,16 @@ EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener
     }
 };
 
+/**
+ * Stops an event from propagating ("bubbling") to parent nodes in the DOM, 
+ * using the client's supported event model.
+ * On clients which support the W3C DOM Level 2 event specification,
+ * the stopPropagation() method of the event is invoked.
+ * On clients which support only the Internet Explorer event model,
+ * the 'cancelBubble' property of the event is set to true.
+ *
+ * @param e the event
+ */
 EchoDomUtil.stopPropagation = function(e) {
     if (e.stopPropagation) {
         e.stopPropagation();

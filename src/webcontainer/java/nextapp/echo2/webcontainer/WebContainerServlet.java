@@ -52,7 +52,7 @@ public abstract class WebContainerServlet extends WebRenderServlet {
         //BUGBUG.  This method of registering services is AWFUL....need automatic discovery like everything else,
         // especially considering 90% of Echo2 services are global.
         serviceRegistry.add(NewInstanceService.INSTANCE);
-        serviceRegistry.add(AsyncMonitorService.INSTANCE);
+        serviceRegistry.add(ContainerAsyncMonitorService.INSTANCE);
         serviceRegistry.add(SessionExpiredService.INSTANCE);
         serviceRegistry.add(ContainerSynchronizeService.INSTANCE);
         serviceRegistry.add(WindowHtmlService.INSTANCE);

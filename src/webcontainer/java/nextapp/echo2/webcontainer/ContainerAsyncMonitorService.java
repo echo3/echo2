@@ -29,53 +29,30 @@
 
 package nextapp.echo2.webcontainer;
 
-import java.io.IOException;
-
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webrender.Connection;
-import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.UserInstance;
+import nextapp.echo2.webrender.service.AsyncMonitorService;
 
 /**
- * A service which handles server poll requests to determine if any 
- * asynchronous operations have completed since the last server interaction,
- * such that the client might resynchronize with the server.
+ * Web Container implementation of <code>AsyncMonitorService</code>.
+ * Determines if a given application instance requires immediate 
+ * client-server synchronization by querying 
+ * <code>ApplicationInstance.hasQueuedTasks()</code>.
  */
-public class AsyncMonitorService 
-implements Service {
+public class ContainerAsyncMonitorService extends AsyncMonitorService {
 
     /**
      * Singleton instance.
      */
-    public static final Service INSTANCE = new AsyncMonitorService();
+    public static final Service INSTANCE = new ContainerAsyncMonitorService();
 
-    public static final String SERVICE_ID = "Echo.AsyncMonitor";
-    
     /**
-     * @see nextapp.echo2.webrender.Service#getId()
+     * @see nextapp.echo2.webrender.service.AsyncMonitorService#isSynchronizationRequired(
+     *      nextapp.echo2.webrender.UserInstance)
      */
-    public String getId() {
-        return SERVICE_ID;
-    }
-    
-    /**
-     * @see nextapp.echo2.webrender.Service#getVersion()
-     */
-    public int getVersion() {
-        return DO_NOT_CACHE;
-    }
-    
-    /**
-     * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
-     */
-    public void service(Connection conn) throws IOException {
-        ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
-        ApplicationInstance app = ci.getApplicationInstance();
-        conn.setContentType(ContentType.TEXT_XML);
-        if (app.hasQueuedTasks()) {
-            conn.getWriter().write("<asyncmonitor requestsync=\"true\"/>");
-        } else {
-            conn.getWriter().write("<asyncmonitor requestsync=\"false\"/>");
-        }
+    public boolean isSynchronizationRequired(UserInstance userInstance) {
+        ApplicationInstance app = ((ContainerInstance) userInstance).getApplicationInstance();
+        return app.hasQueuedTasks();
     }
 }
