@@ -827,7 +827,7 @@ function EchoDomUtil() { }
  *        be specified instead of "onmouseover")
  * @param eventListener the event listener to be invoked when the event occurs
  * @param useCapture a flag indicating whether the event listener should capture
- *        events in the final phase of propogation (only supported by 
+ *        events in the final phase of propagation (only supported by 
  *        DOM Level 2 event model)
  */
 EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, useCapture) {
@@ -1033,7 +1033,7 @@ EchoDomUtil.preventEventDefault = function(e) {
  *        be specified instead of "onmouseover")
  * @param eventListener the event listener to be invoked when the event occurs
  * @param useCapture a flag indicating whether the event listener should capture
- *        events in the final phase of propogation (only supported by 
+ *        events in the final phase of propagation (only supported by 
  *        DOM Level 2 event model)
  */
 EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener, useCapture) {
@@ -1044,9 +1044,9 @@ EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener
     }
 };
 
-EchoDomUtil.stopPropogation = function(e) {
-    if (e.stopPropogation) {
-        e.stopPropogation();
+EchoDomUtil.stopPropagation = function(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
     } else {
         e.cancelBubble = true;
     }
