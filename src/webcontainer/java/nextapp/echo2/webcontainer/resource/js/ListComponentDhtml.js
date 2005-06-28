@@ -30,15 +30,23 @@
 //______________________________
 // Object EchoListComponentDhtml
 
+/**
+ * Static object/namespace for the special DHTML-based ListBox that is used for
+ * Internet Explorer 6 clients.  IE6 clients have major bugs with regard to 
+ * rendering  SELECT-based listboxes.
+ * This object/namespace should not be used externally.
+ */
 EchoListComponentDhtml = function() { };
 
 /**
- * ServerMessage processor.
+ * Static object/namespace for MessageProcessor 
+ * implementation.
  */
 EchoListComponentDhtml.MessageProcessor = function() { };
 
 /**
- * ServerMessage process() implementation.
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
  */
 EchoListComponentDhtml.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
@@ -55,6 +63,12 @@ EchoListComponentDhtml.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * list box component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -68,6 +82,12 @@ EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessage
     }
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * list box component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -105,23 +125,40 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
     }
 };
 
-EchoListComponentDhtml.drawItemStyle = function(itemDivElement) {
-    var selected = EchoListComponentDhtml.isSelected(itemDivElement);
-    var listComponent = itemDivElement.parentNode;
+/**
+ * Redraws an item in the appropriate style (i.e., selected or deselected).
+ *
+ * @param itemElement the item <code>div</code> element to redraw
+ */
+EchoListComponentDhtml.drawItemStyle = function(itemElement) {
+    var selected = EchoListComponentDhtml.isSelected(itemElement);
+    var listComponent = itemElement.parentNode;
     var selectionStyle = EchoDomPropertyStore.getPropertyValue(listComponent.id, "selectionStyle");
 
     if (selected) {
-        EchoCssUtil.restoreOriginalStyle(itemDivElement);
-        EchoCssUtil.applyTemporaryStyle(itemDivElement, selectionStyle);
+        EchoCssUtil.restoreOriginalStyle(itemElement);
+        EchoCssUtil.applyTemporaryStyle(itemElement, selectionStyle);
     } else {
-        EchoCssUtil.restoreOriginalStyle(itemDivElement);
+        EchoCssUtil.restoreOriginalStyle(itemElement);
     }
 };
 
-EchoListComponentDhtml.isSelected = function(itemDivElement) {
-    return EchoDomPropertyStore.getPropertyValue(itemDivElement.id, "selectionState") === true;
+/**
+ * Determines the selection state of an item.
+ *
+ * @param itemElement the item <code>div</code> element
+ * @return true if the item is selected
+ */
+EchoListComponentDhtml.isSelected = function(itemElement) {
+    return EchoDomPropertyStore.getPropertyValue(itemElement.id, "selectionState") === true;
 };
 
+/**
+ * Processes an item mouse over event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponentDhtml.processRolloverEnter = function(echoEvent) {
     var itemElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(itemElement.id);
@@ -137,6 +174,12 @@ EchoListComponentDhtml.processRolloverEnter = function(echoEvent) {
     }
 };
 
+/**
+ * Processes an item mouse exit event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponentDhtml.processRolloverExit = function(echoEvent) {
     var itemElement = echoEvent.registeredTarget;
     if (!EchoDomPropertyStore.getPropertyValue(itemElement.id, "selectionState")) {
@@ -144,6 +187,12 @@ EchoListComponentDhtml.processRolloverExit = function(echoEvent) {
     }
 };
 
+/**
+ * Processes an item selection (click) event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponentDhtml.processSelection = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var itemElement = echoEvent.registeredTarget;
@@ -175,7 +224,7 @@ EchoListComponentDhtml.processSelection = function(echoEvent) {
 /**
  * Sets the selection state of an item.
  *
- * @param itemElement the item DIV element
+ * @param itemElement the item <code>div</code> element
  * @param newValue the new selection state (a boolean value)
  */
 EchoListComponentDhtml.setSelected = function(itemElement, newValue) {
@@ -187,6 +236,11 @@ EchoListComponentDhtml.setSelected = function(itemElement, newValue) {
     EchoListComponentDhtml.drawItemStyle(itemElement);
 };
 
+/**
+ * Updates the selection state in the outgoing <code>ClientMessage</code>.
+ * If any server-side <code>ActionListener</code>s are registered, an action
+ * will be set and a client-server connection initiated.
+ */
 EchoListComponentDhtml.updateClientMessage = function(listElement) {
     var propertyElement  = EchoClientMessage.createPropertyElement(listElement.id, "selection");
 

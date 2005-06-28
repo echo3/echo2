@@ -121,7 +121,7 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
 };
 
 /**
- * Processes a mouse exit event.
+ * Processes an item mouse exit event.
  *
  * @param echoEvent the event, preprocessed by the 
  *        <code>EchoEventProcessor</code>
@@ -141,7 +141,7 @@ EchoListComponent.processRolloverEnter = function(echoEvent) {
 };
 
 /**
- * Processes a mouse over event.
+ * Processes an item mouse over event.
  *
  * @param echoEvent the event, preprocessed by the 
  *        <code>EchoEventProcessor</code>
@@ -169,7 +169,7 @@ EchoListComponent.processSelection = function(echoEvent) {
         EchoListComponent.revertToInitialSelection(componentId);
         return;
     }
-    EchoListComponent.updateState(componentId);
+    EchoListComponent.updateClientMessage(componentId);
 };
 
 /**
@@ -206,7 +206,7 @@ EchoListComponent.revertToInitialSelection = function(componentId) {
  *
  * @param componentId the id of the selection component
  */
-EchoListComponent.updateState = function(componentId) {
+EchoListComponent.updateClientMessage = function(componentId) {
     var propertyElement = EchoClientMessage.createPropertyElement(componentId, "selection");
 
     // remove previous values
