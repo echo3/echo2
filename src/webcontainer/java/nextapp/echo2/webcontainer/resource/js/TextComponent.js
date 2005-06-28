@@ -64,6 +64,9 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         var elementId = item.getAttribute("eid");
         var textComponent = document.getElementById(elementId);
         
+        if (item.getAttribute("enabled") == "false") {
+            textComponent.readOnly = true;
+        }
 	    if (item.getAttribute("text")) {
             textComponent.value = item.getAttribute("text");
 	    }

@@ -262,7 +262,6 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
         if (verticalScroll != null && verticalScroll.getValue() != 0) {
             itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
         }
-
         if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
             String value = textComponent.getText();
@@ -270,7 +269,9 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
                 itemElement.setAttribute("text", value);
             }
         }
-
+        if (!textComponent.isEnabled()) {
+            itemElement.setAttribute("enabled", "false");
+        }
         if (textComponent.hasActionListeners()) {
             itemElement.setAttribute("server-notify", "true");
         }

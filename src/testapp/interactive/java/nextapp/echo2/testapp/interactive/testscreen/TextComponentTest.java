@@ -335,6 +335,14 @@ public class TextComponentTest extends SplitPane {
                 textArea.setHeight(new Extent(300, Extent.PX));
             }
         });
+        controlsColumn.addButton("Toggle Enabled", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean enabled = !textField.isEnabled();
+                textField.setEnabled(enabled);
+                passwordField.setEnabled(enabled);
+                textArea.setEnabled(enabled);
+            }
+        });
         controlsColumn.addButton("Focus TextField", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().setFocusedComponent(textField);
