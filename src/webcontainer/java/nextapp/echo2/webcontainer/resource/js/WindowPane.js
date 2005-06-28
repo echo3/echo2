@@ -485,7 +485,7 @@ EchoWindowPane.processTitleDragMouseMove = function(e) {
     EchoWindowPane.activeElement.style.left = newX + "px";
     EchoWindowPane.activeElement.style.top = newY + "px";
 
-    if (EchoClientProperties.get("quirkDomPerformanceIERepaint")) {
+    if (EchoClientProperties.get("quirkIERepaint")) {
         // Tickle width to force repaint for IE repaint, resulting in aesthetic performance increase.
 	    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
 	    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
