@@ -263,18 +263,20 @@ implements Service {
      * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
      */
     public void service(Connection conn) throws IOException {
-        Document clientMessageDocument = parseRequestDocument(conn);
-        String messageType = clientMessageDocument.getDocumentElement().getAttribute("type");
-        ServerMessage serverMessage;
-        
-        if ("initialize".equals(messageType)) {
-//BUGBUG. clientproperties stuff here is not well done, redo.            
-            serverMessage = renderInit(conn, clientMessageDocument);
-            ClientPropertiesStore.renderStoreDirective(serverMessage, conn.getUserInstance().getClientProperties());
-        } else {
-            serverMessage = renderUpdate(conn, clientMessageDocument);
+        synchronized(conn.getUserInstance()) {
+            Document clientMessageDocument = parseRequestDocument(conn);
+            String messageType = clientMessageDocument.getDocumentElement().getAttribute("type");
+            ServerMessage serverMessage;
+            
+            if ("initialize".equals(messageType)) {
+    //BUGBUG. clientproperties stuff here is not well done, redo.            
+                serverMessage = renderInit(conn, clientMessageDocument);
+                ClientPropertiesStore.renderStoreDirective(serverMessage, conn.getUserInstance().getClientProperties());
+            } else {
+                serverMessage = renderUpdate(conn, clientMessageDocument);
+            }
+            conn.setContentType(ContentType.TEXT_XML);
+            serverMessage.render(conn.getWriter());
         }
-        conn.setContentType(ContentType.TEXT_XML);
-        serverMessage.render(conn.getWriter());       
     }
 }
