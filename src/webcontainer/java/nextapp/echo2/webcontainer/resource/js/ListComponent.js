@@ -60,7 +60,7 @@ EchoListComponent.MessageProcessor.processDispose = function(disposeMessageEleme
         var elementId = item.getAttribute("eid");
 	    var selectElement = document.getElementById(elementId + "_select");
 	    var itemElements = selectElement.options;
-	    EchoEventProcessor.removeHandler(selectElement.id, "change");
+        EchoEventProcessor.removeHandler(selectElement.id, "change");
 	    for (var i = 0; i < itemElements.length; ++i) {
 	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
 	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
@@ -83,11 +83,22 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
 
 	    var selectElement = document.getElementById(elementId + "_select");
 	    var itemElements = selectElement.options;
-	    EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
+        EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
 	    for (var i = 0; i < itemElements.length; ++i) {
 	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponent.processRolloverExit");
 	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponent.processRolloverEnter");
 	    }
+        
+        // Store initial selection in DomPropertyStore such that it may be recalled if component is changed
+        // when input is disabled.
+        var selectionItems = selectElement.options;
+        var selectedItemIds = new Array();
+        for (i = 0; i < selectionItems.length; ++i) {
+            if (selectionItems[i].selected) {
+                selectedItemIds.push(selectionItems[i].id);
+            }
+        }
+        EchoDomPropertyStore.setPropertyValue(elementId, "initialSelection", selectedItemIds);
     }
 };
 
@@ -144,10 +155,29 @@ EchoListComponent.processRolloverExit = function(echoEvent) {
 
 EchoListComponent.processSelection = function(echoEvent) {
     var listElement = echoEvent.registeredTarget;
+    var componentId = EchoDomUtil.getComponentId(listElement.id);
     
-    if (!EchoClientEngine.verifyInput(EchoDomUtil.getComponentId(listElement.id))) {
-        EchoDomUtil.preventEventDefault(echoEvent);
+    if (!EchoClientEngine.verifyInput(componentId)) {
+        EchoListComponent.revertToInitialSelection(componentId);
         return;
     }
     EchoListComponent.doChange(listElement);
+};
+
+EchoListComponent.revertToInitialSelection = function(componentId) {
+    var i;
+    var selectComponent = document.getElementById(componentId);
+    var options = selectComponent.getElementsByTagName("option");
+    for (i = 0; i < options.length; ++i) {
+        options[i].selected = false;
+    }
+    
+    var selectedItemIds = EchoDomPropertyStore.getPropertyValue(componentId, "initialSelection");
+    if (!selectedItemIds) {
+        return;
+    }
+    for (i = 0; i < selectedItemIds.length; ++i) {
+        var optionElement = document.getElementById(selectedItemIds[i]);
+        optionElement.selected = true;
+    }
 };

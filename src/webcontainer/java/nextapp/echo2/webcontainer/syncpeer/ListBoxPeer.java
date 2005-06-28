@@ -201,6 +201,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         if (selectionElement.hasChildNodes()) {
             itemElement.appendChild(selectionElement);
         }
+        
         itemizedUpdateElement.appendChild(itemElement);
     }
 
