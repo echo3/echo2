@@ -30,15 +30,21 @@
 //_________________________
 // Object EchoListComponent
 
+/**
+ * Static object/namespace for SelectField/ListBox support.
+ * This object/namespace should not be used externally.
+ */
 EchoListComponent = function() { };
 
 /**
- * ServerMessage processor.
+ * Static object/namespace for SelectField/ListBox MessageProcessor 
+ * implementation.
  */
 EchoListComponent.MessageProcessor = function() { };
 
 /**
- * ServerMessage process() implementation.
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
  */
 EchoListComponent.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
@@ -55,6 +61,12 @@ EchoListComponent.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * selection component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoListComponent.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -68,6 +80,12 @@ EchoListComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     }
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * selection component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -102,34 +120,12 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
-EchoListComponent.doChange = function(listElement) {
-    var componentId = EchoDomUtil.getComponentId(listElement.id);
-    var propertyElement = EchoClientMessage.createPropertyElement(componentId, "selection");
-
-    // remove previous values
-    while(propertyElement.hasChildNodes()){
-        propertyElement.removeChild(propertyElement.firstChild);
-    }
-
-    var itemElements = listElement.options;
-
-    // add new values        
-    for (var i = 0; i < itemElements.length; ++i) {
-        if (itemElements[i].selected) {
-            var clientMessageItemElement = EchoClientMessage.messageDocument.createElement("item");
-            clientMessageItemElement.setAttribute("id", itemElements[i].id);
-            propertyElement.appendChild(clientMessageItemElement);
-        }
-    }
-
-    EchoDebugManager.updateClientMessage();
-    
-    if (EchoDomPropertyStore.getPropertyValue(componentId, "serverNotify")) {
-	    EchoClientMessage.setActionValue(componentId, "action");
-	    EchoServerTransaction.connect();
-    }
-};
-
+/**
+ * Processes a mouse exit event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponent.processRolloverEnter = function(echoEvent) {
     var itemElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(itemElement.id);
@@ -144,6 +140,12 @@ EchoListComponent.processRolloverEnter = function(echoEvent) {
     }
 };
 
+/**
+ * Processes a mouse over event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponent.processRolloverExit = function(echoEvent) {
     var itemElement = echoEvent.registeredTarget;
     var listElement = itemElement.parentNode;
@@ -153,6 +155,12 @@ EchoListComponent.processRolloverExit = function(echoEvent) {
     EchoCssUtil.restoreOriginalStyle(itemElement);
 };
 
+/**
+ * Processes an item selection (change) event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponent.processSelection = function(echoEvent) {
     var listElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(listElement.id);
@@ -161,9 +169,18 @@ EchoListComponent.processSelection = function(echoEvent) {
         EchoListComponent.revertToInitialSelection(componentId);
         return;
     }
-    EchoListComponent.doChange(listElement);
+    EchoListComponent.updateState(componentId);
 };
 
+/**
+ * Reverts the selection state to the initial selection.
+ * This method is invoked when a user modifies the state of a disabled
+ * or modally obscured selection component.  There is no means to prevent
+ * the selection from occurring, so it is simply immediately reverted to
+ * its prior state once it occurs.
+ *
+ * @param componentId the id of the selection component to revert
+ */
 EchoListComponent.revertToInitialSelection = function(componentId) {
     var i;
     var selectComponent = document.getElementById(componentId);
@@ -179,5 +196,40 @@ EchoListComponent.revertToInitialSelection = function(componentId) {
     for (i = 0; i < selectedItemIds.length; ++i) {
         var optionElement = document.getElementById(selectedItemIds[i]);
         optionElement.selected = true;
+    }
+};
+
+/**
+ * Updates the selection state in the outgoing <code>ClientMessage</code>.
+ * If any server-side <code>ActionListener</code>s are registered, an action
+ * will be set and a client-server connection initiated.
+ *
+ * @param componentId the id of the selection component
+ */
+EchoListComponent.updateState = function(componentId) {
+    var propertyElement = EchoClientMessage.createPropertyElement(componentId, "selection");
+
+    // remove previous values
+    while(propertyElement.hasChildNodes()){
+        propertyElement.removeChild(propertyElement.firstChild);
+    }
+
+    var componentElement = document.getElementById(componentId);
+    var itemElements = componentElement.getElementsByTagName("option");
+
+    // add new values        
+    for (var i = 0; i < itemElements.length; ++i) {
+        if (itemElements[i].selected) {
+            var clientMessageItemElement = EchoClientMessage.messageDocument.createElement("item");
+            clientMessageItemElement.setAttribute("id", itemElements[i].id);
+            propertyElement.appendChild(clientMessageItemElement);
+        }
+    }
+
+    EchoDebugManager.updateClientMessage();
+    
+    if (EchoDomPropertyStore.getPropertyValue(componentId, "serverNotify")) {
+        EchoClientMessage.setActionValue(componentId, "action");
+        EchoServerTransaction.connect();
     }
 };
