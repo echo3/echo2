@@ -30,27 +30,45 @@
 //__________________________
 // Object EchoBrowserCommand
 
+/**
+ * Static object/namespace for sending general-purpose stateless commands to 
+ * the client browser.
+ * This object/namespace should not be used externally.
+ */
 EchoBrowserCommand = function() { };
 
 /**
- * ServerMessage process() implementation.
+ * Static object/namespace for browser command MessageProcessor 
+ * implementation.
  */
-EchoBrowserCommand.process = function(messagePartElement) {
+EchoBrowserCommand.MessageProcessor = function() { };
+
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ */
+EchoBrowserCommand.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
             case "redirect":
-                EchoBrowserCommand.processRedirect(messagePartElement.childNodes[i]);
+                EchoBrowserCommand.MessageProcessor.processRedirect(messagePartElement.childNodes[i]);
                 break;
             case "open-window":
-                EchoBrowserCommand.processOpenWindow(messagePartElement.childNodes[i]);
+                EchoBrowserCommand.MessageProcessor.processOpenWindow(messagePartElement.childNodes[i]);
                 break;
             }
         }
     }
 };
 
-EchoBrowserCommand.processOpenWindow = function(openWindowElement) {
+/**
+ * Processes an <code>open-window</code> command message to display a URI in a
+ * specific or new browser window.
+ *
+ * @param openWindowElement the <code>open-window</code> element to process
+ */
+EchoBrowserCommand.MessageProcessor.processOpenWindow = function(openWindowElement) {
     var uri = openWindowElement.getAttribute("uri");
     var name = openWindowElement.getAttribute("name");
     var features = openWindowElement.getAttribute("features");
@@ -58,7 +76,14 @@ EchoBrowserCommand.processOpenWindow = function(openWindowElement) {
     window.open(uri, name, features, replace);
 };
 
-EchoBrowserCommand.processRedirect = function(redirectElement) {
+
+/**
+ * Processes an <code>redirect</code> to redirect the window containing the
+ * Echo application a new URI.
+ *
+ * @param redirectElement the <code>redirect</code> element to process
+ */
+EchoBrowserCommand.MessageProcessor.processRedirect = function(redirectElement) {
     var uri = redirectElement.getAttribute("uri");
     window.location = uri;
 };

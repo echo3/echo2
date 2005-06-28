@@ -82,7 +82,7 @@ implements CommandSynchronizePeer {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId());
         Element openWindowElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                "EchoBrowserCommand", "open-window");
+                "EchoBrowserCommand.MessageProcessor", "open-window");
         openWindowElement.setAttribute("uri", command.getUri());
         if (command.getName() != null) {
             openWindowElement.setAttribute("name", command.getName());
@@ -103,7 +103,7 @@ implements CommandSynchronizePeer {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(BROWSER_COMMAND_SERVICE.getId());
         Element redirectElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                "EchoBrowserCommand", "redirect");
+                "EchoBrowserCommand.MessageProcessor", "redirect");
         redirectElement.setAttribute("uri", command.getUri());
     }
 }
