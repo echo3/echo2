@@ -89,6 +89,9 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
         if (pressedStyle) {
             EchoDomPropertyStore.setPropertyValue(elementId, "pressedStyle", pressedStyle);
         }
+        if (item.getAttribute("enabled") == "false") {
+            EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
+        }
         if (item.getAttribute("server-notify")) {
             EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
         }

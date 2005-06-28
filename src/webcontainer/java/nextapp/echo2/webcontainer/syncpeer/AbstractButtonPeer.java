@@ -600,6 +600,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (!button.hasActionListeners()) {
             itemElement.setAttribute("server-notify", "false");
         }
+        if (!button.isEnabled()) {
+            itemElement.setAttribute("enabled", "false");
+        }
 
         if (button instanceof ToggleButton) {
             ToggleButton toggleButton = (ToggleButton) button;

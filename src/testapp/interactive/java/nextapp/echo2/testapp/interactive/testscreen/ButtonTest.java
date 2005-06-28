@@ -294,6 +294,15 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Toggle Enabled State", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setEnabled(!button.isEnabled());
+                    }
+                });
+            }
+        });
 
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);

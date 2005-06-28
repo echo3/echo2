@@ -347,6 +347,9 @@ EchoClientEngine.init = function(baseServerUri) {
  * This method should be invoked before procsesing any user input.
  * This method will ensure that no server transaction is active and the element
  * is within the current modal context.
+ * The method will additionally verify that the element does not have the 
+ * <code>EchoDomPropertyStore</code> property 
+ * <code>EchoClientEngine.inputDisabled</code> set to true.
  */
 EchoClientEngine.verifyInput = function(elementId) {
     if (EchoServerTransaction.active) {
