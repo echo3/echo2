@@ -37,14 +37,18 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.Table;
+import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.layout.TableLayoutData;
+import nextapp.echo2.app.list.AbstractListModel;
+import nextapp.echo2.app.list.ListModel;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.table.AbstractTableModel;
 import nextapp.echo2.app.table.DefaultTableCellRenderer;
@@ -62,18 +66,31 @@ import nextapp.echo2.testapp.interactive.Styles;
  */
 public class TableTest extends SplitPane {
     
+    private static class PayGrade {
+        
+        public int payGrade;
+        
+        public PayGrade(int payGrade) {
+            this.payGrade = payGrade;
+        }
+        
+        public String toString() {
+            return "Level " + payGrade;
+        }
+    }
+    
     public static TableModel createEmployeeTableModel() {
         DefaultTableModel model = new DefaultTableModel();
-        model.setColumnCount(3);
-        model.insertRow(0, new String[]{"Bob Johnson", "bob.johnson@test.nextapp.com", "949.555.1234"});
-        model.insertRow(0, new String[]{"Laura Smith", "laura.smith@test.nextapp.com", "217.555.9343"});
-        model.insertRow(0, new String[]{"Jenny Roberts", "jenny.roberts@test.nextapp.com", "630.555.1987"});
-        model.insertRow(0, new String[]{"Thomas Albertson", "thomas.albertson@test.nextapp.com", "619.555.1233"});
-        model.insertRow(0, new String[]{"Albert Thomas", "albert.thomas@test.nextapp.com", "408.555.3232"});
-        model.insertRow(0, new String[]{"Sheila Simmons", "sheila.simmons@test.nextapp.com", "212.555.8700"});
-        model.insertRow(0, new String[]{"Mark Atkinson", "mark.atkinson@test.nextapp.com", "213.555.9456"});
-        model.insertRow(0, new String[]{"Linda Jefferson", "linda.jefferson@test.nextapp.com", "949.555.8925"});
-        model.insertRow(0, new String[]{"Yvonne Adams", "yvonne.adams@test.nextapp.com", "714.555.8543"});
+        model.setColumnCount(4);
+        model.insertRow(0, new Object[]{"Bob Johnson", "bob.johnson@test.nextapp.com", "949.555.1234", new PayGrade(10)});
+        model.insertRow(0, new Object[]{"Laura Smith", "laura.smith@test.nextapp.com", "217.555.9343", new PayGrade(6)});
+        model.insertRow(0, new Object[]{"Jenny Roberts", "jenny.roberts@test.nextapp.com", "630.555.1987", new PayGrade(6)});
+        model.insertRow(0, new Object[]{"Thomas Albertson", "thomas.albertson@test.nextapp.com", "619.555.1233", new PayGrade(3)});
+        model.insertRow(0, new Object[]{"Albert Thomas", "albert.thomas@test.nextapp.com", "408.555.3232", new PayGrade(11)});
+        model.insertRow(0, new Object[]{"Sheila Simmons", "sheila.simmons@test.nextapp.com", "212.555.8700", new PayGrade(6)});
+        model.insertRow(0, new Object[]{"Mark Atkinson", "mark.atkinson@test.nextapp.com", "213.555.9456", new PayGrade(3)});
+        model.insertRow(0, new Object[]{"Linda Jefferson", "linda.jefferson@test.nextapp.com", "949.555.8925", new PayGrade(4)});
+        model.insertRow(0, new Object[]{"Yvonne Adams", "yvonne.adams@test.nextapp.com", "714.555.8543", new PayGrade(5)});
         return model;
     }
     
@@ -102,6 +119,37 @@ public class TableTest extends SplitPane {
     }
     
     private Table testTable;
+    
+    private TableCellRenderer editingTableCellRenderer = new TableCellRenderer() {
+        
+        /**
+         * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
+         *      java.lang.Object, int, int)
+         */
+        public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+            if (value instanceof PayGrade) {
+                ListModel listModel = new AbstractListModel() {
+                    
+                    public Object get(int index) {
+                        return new Integer(index + 3);
+                    }
+    
+                    public int size() {
+                        return 10;
+                    }
+                };
+                SelectField selectField = new SelectField(listModel);
+                selectField.setSelectedIndex(((PayGrade) value).payGrade - 3);
+                return selectField;
+            } else {
+                TextField textField = new TextField();
+                if (value != null) {
+                    textField.setText(value.toString());
+                }
+                return textField;
+            }
+        }
+    };
     
     private TableCellRenderer randomizingCellRenderer = new TableCellRenderer() {
         
@@ -491,6 +539,11 @@ public class TableTest extends SplitPane {
                 testTable.setDefaultRenderer(Object.class, checkerCellRenderer);
             }
         });
+        controlsColumn.addButton("Editing Cell Renderer (not bound to model)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, editingTableCellRenderer);
+            }
+        });
         controlsColumn.addButton("Alignment = Leading/Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testTable.setDefaultRenderer(Object.class, 
@@ -518,7 +571,7 @@ public class TableTest extends SplitPane {
     }
 
     private TableCellRenderer createTableCellRenderer(final Alignment alignment) {
-        return new TableCellRenderer(){        
+        return new TableCellRenderer() {        
 
             /**
              * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
