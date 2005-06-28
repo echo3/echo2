@@ -405,6 +405,10 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 itemElement.appendChild(selectionElement);
             }
         }
+        
+        if (!table.isEnabled()) {
+            itemElement.setAttribute("enabled", "false");
+        }
 
         itemizedUpdateElement.appendChild(itemElement);
     }

@@ -297,6 +297,11 @@ public class TableTest extends SplitPane {
                 testTable.setHeaderVisible(!testTable.isHeaderVisible());
             }
         });
+        controlsColumn.addButton("Toggle Enabled State", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setEnabled(!testTable.isEnabled());
+            }
+        });
         
         // Rollover Effect Settings
 
