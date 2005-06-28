@@ -138,8 +138,14 @@ public class TableTest extends SplitPane {
                         return 10;
                     }
                 };
-                SelectField selectField = new SelectField(listModel);
+                final SelectField selectField = new SelectField(listModel);
                 selectField.setSelectedIndex(((PayGrade) value).payGrade - 3);
+                selectField.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        selectField.setBackground(StyleUtil.randomBrightColor());
+                    }
+                });
                 return selectField;
             } else {
                 TextField textField = new TextField();

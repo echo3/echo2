@@ -80,8 +80,8 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
         if (item.getAttribute("enabled") == "false") {
             EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
         }
-        if (item.getAttribute("server-notify")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
+        if (item.getAttribute("server-notify") == "true") {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", true);
         }
 
 	    var selectElement = document.getElementById(elementId);
@@ -207,7 +207,7 @@ EchoListComponentDhtml.updateClientMessage = function(listElement) {
         }
     }
 
-    if ("true" == EchoDomPropertyStore.getPropertyValue(listElement.id, "serverNotify")) {
+    if (EchoDomPropertyStore.getPropertyValue(listElement.id, "serverNotify")) {
         EchoClientMessage.setActionValue(listElement.id, "action");
         EchoServerTransaction.connect();
     }

@@ -108,7 +108,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return ContainerInstance.getElementId(child.getParent()) + "_cell_" + child.getParent().indexOf(child);
+        return ContainerInstance.getElementId(child.getParent()) + "_cell_" + child.getRenderId();
     }
     
     /**

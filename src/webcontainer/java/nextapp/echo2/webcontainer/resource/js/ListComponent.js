@@ -76,8 +76,8 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
         if (item.getAttribute("enabled") == "false") {
             EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
         }
-        if (item.getAttribute("server-notify")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
+        if (item.getAttribute("server-notify") == "true") {
+            EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", true);
         }
         EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
 
@@ -92,7 +92,8 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
 };
 
 EchoListComponent.doChange = function(listElement) {
-    var propertyElement = EchoClientMessage.createPropertyElement(EchoDomUtil.getComponentId(listElement.id), "selection");
+    var componentId = EchoDomUtil.getComponentId(listElement.id);
+    var propertyElement = EchoClientMessage.createPropertyElement(componentId, "selection");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
@@ -112,8 +113,8 @@ EchoListComponent.doChange = function(listElement) {
 
     EchoDebugManager.updateClientMessage();
     
-    if ("true" == EchoDomPropertyStore.getPropertyValue(listElement.id, "serverNotify")) {
-	    EchoClientMessage.setActionValue(listElement.id, "action");
+    if (EchoDomPropertyStore.getPropertyValue(componentId, "serverNotify")) {
+	    EchoClientMessage.setActionValue(componentId, "action");
 	    EchoServerTransaction.connect();
     }
 };
