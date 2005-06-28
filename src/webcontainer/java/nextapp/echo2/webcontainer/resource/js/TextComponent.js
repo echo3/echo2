@@ -66,12 +66,13 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         
         if (item.getAttribute("enabled") == "false") {
             textComponent.readOnly = true;
+            EchoDomPropertyStore.setPropertyValue(textComponent.id, "EchoClientEngine.inputDisabled", true);
         }
 	    if (item.getAttribute("text")) {
             textComponent.value = item.getAttribute("text");
 	    }
         if (item.getAttribute("server-notify")) {
-            EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", item.getAttribute("server-notify"));
+            EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", true);
         }
         if (item.getAttribute("horizontal-scroll")) {
             textComponent.scrollLeft = parseInt(item.getAttribute("horizontal-scroll"));
@@ -93,7 +94,7 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
 };
 
 EchoTextComponent.doAction = function(textComponent) {
-    if ("true" != EchoDomPropertyStore.getPropertyValue(textComponent.id, "serverNotify")) {
+    if (!EchoDomPropertyStore.getPropertyValue(textComponent.id, "serverNotify")) {
         return;
     }
     EchoClientMessage.setActionValue(textComponent.id, "action");
@@ -101,38 +102,37 @@ EchoTextComponent.doAction = function(textComponent) {
 };
 
 EchoTextComponent.doUpdate = function(textComponent) {
-    var elementId = textComponent.getAttribute("id");
-
-    var textPropertyElement = EchoClientMessage.createPropertyElement(elementId, "text");
+    var textPropertyElement = EchoClientMessage.createPropertyElement(textComponent.id, "text");
     if (textPropertyElement.firstChild) {
         textPropertyElement.firstChild.nodeValue = textComponent.value;
     } else {
         textPropertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(textComponent.value));
     }
     
-    EchoClientMessage.setPropertyValue(elementId, "horizontalScroll", textComponent.scrollLeft);
-    EchoClientMessage.setPropertyValue(elementId, "verticalScroll", textComponent.scrollTop);
+    EchoClientMessage.setPropertyValue(textComponent.id, "horizontalScroll", textComponent.scrollLeft);
+    EchoClientMessage.setPropertyValue(textComponent.id, "verticalScroll", textComponent.scrollTop);
 };
 
 EchoTextComponent.processBlur = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
-    var elementId = textComponent.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
         return;
     }
     EchoTextComponent.doUpdate(textComponent);
-    EchoFocusManager.setFocusedState(elementId, false);
+    EchoFocusManager.setFocusedState(textComponent.id, false);
 };
 
 EchoTextComponent.processFocus = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+        return;
+    }
     EchoFocusManager.setFocusedState(textComponent.id, true);
 };
 
 EchoTextComponent.processKeyPress = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
-    var elementId = textComponent.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
         EchoDomUtil.preventEventDefault(echoEvent);
     }
     if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
@@ -142,8 +142,7 @@ EchoTextComponent.processKeyPress = function(echoEvent) {
 
 EchoTextComponent.processKeyUp = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
-    var elementId = textComponent.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }

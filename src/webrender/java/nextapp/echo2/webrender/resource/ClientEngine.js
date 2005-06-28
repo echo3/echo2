@@ -355,6 +355,9 @@ EchoClientEngine.verifyInput = function(elementId) {
     if (!EchoModalManager.isElementInModalContext(elementId)) {
         return false;
     }
+    if (EchoDomPropertyStore.getPropertyValue(elementId, "EchoClientEngine.inputDisabled")) {
+        return false;
+    }
     return true;
 };
 
