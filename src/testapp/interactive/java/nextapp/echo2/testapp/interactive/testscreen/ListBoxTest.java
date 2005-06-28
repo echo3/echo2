@@ -188,6 +188,12 @@ public class ListBoxTest extends SplitPane {
                 selectField1.getModel().removeListDataListener(listDataListener);
             }
         });
+        controlsColumn.addButton("Toggle Enabled State", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox1.setEnabled(!listBox1.isEnabled());
+                selectField1.setEnabled(!selectField1.isEnabled());
+            }
+        });
         
         controlsColumn.add(new Label("List Box"));
 

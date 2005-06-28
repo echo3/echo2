@@ -175,15 +175,18 @@ public class ListBoxPeer extends AbstractListComponentPeer {
                 "EchoListComponentDhtml.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
+        if (!listBox.isEnabled()) {
+            itemElement.setAttribute("enabled", "false");
+        }
+        if (listBox.hasActionListeners()) {
+            itemElement.setAttribute("server-notify", "true");
+        }
         
         CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
         itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
         itemElement.setAttribute("selection-style", SELECTION_CSS_STYLE_TEXT);
         itemElement.setAttribute("selection-mode", 
                 ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "multiple" : "single");
-        if (listBox.hasActionListeners()) {
-            itemElement.setAttribute("server-notify", "true");
-        }
 
         Element selectionElement = serverMessage.getDocument().createElement("selection");
         ListModel model = listBox.getModel();

@@ -73,10 +73,13 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
         var elementId = item.getAttribute("eid");
         var rolloverStyle = item.getAttribute("rollover-style");
 
-        EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
+        if (item.getAttribute("enabled") == "false") {
+            EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
+        }
         if (item.getAttribute("server-notify")) {
             EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
         }
+        EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
 
 	    var selectElement = document.getElementById(elementId + "_select");
 	    var itemElements = selectElement.options;
@@ -88,63 +91,62 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
-EchoListComponent.doChange = function(elementId) {
-    var element = document.getElementById(elementId);
-    var listElementId = element.parentNode.id;
-    var propertyElement = EchoClientMessage.createPropertyElement(listElementId, "selection");
+EchoListComponent.doChange = function(listElement) {
+    var propertyElement = EchoClientMessage.createPropertyElement(EchoDomUtil.getComponentId(listElement.id), "selection");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
         propertyElement.removeChild(propertyElement.firstChild);
     }
 
-    var items = element.options;
+    var itemElements = listElement.options;
 
     // add new values        
-    for (var i = 0; i < items.length; ++i) {
-        if (items[i].selected) {
-            var itemId = items[i].id;
-            var itemElement = EchoClientMessage.messageDocument.createElement("item");
-            itemElement.setAttribute("id", itemId);
-            propertyElement.appendChild(itemElement);
+    for (var i = 0; i < itemElements.length; ++i) {
+        if (itemElements[i].selected) {
+            var clientMessageItemElement = EchoClientMessage.messageDocument.createElement("item");
+            clientMessageItemElement.setAttribute("id", itemElements[i].id);
+            propertyElement.appendChild(clientMessageItemElement);
         }
     }
 
     EchoDebugManager.updateClientMessage();
     
-    if ("true" == EchoDomPropertyStore.getPropertyValue(listElementId, "serverNotify")) {
-	    EchoClientMessage.setActionValue(listElementId, "action");
+    if ("true" == EchoDomPropertyStore.getPropertyValue(listElement.id, "serverNotify")) {
+	    EchoClientMessage.setActionValue(listElement.id, "action");
 	    EchoServerTransaction.connect();
     }
 };
 
 EchoListComponent.processRolloverEnter = function(echoEvent) {
     var itemElement = echoEvent.registeredTarget;
-    var elementId = itemElement.id;
-    if (!EchoClientEngine.verifyInput(elementId)) {
+    var componentId = EchoDomUtil.getComponentId(itemElement.id);
+    if (!EchoClientEngine.verifyInput(componentId)) {
         return;
     }
     if (!itemElement.selected) {
-        var style = EchoDomPropertyStore.getPropertyValue(EchoDomUtil.getComponentId(itemElement.id), "rolloverStyle");
-        EchoCssUtil.applyTemporaryStyle(itemElement, style);
+        var style = EchoDomPropertyStore.getPropertyValue(componentId, "rolloverStyle");
+        if (style) {
+            EchoCssUtil.applyTemporaryStyle(itemElement, style);
+        }
     }
 };
 
 EchoListComponent.processRolloverExit = function(echoEvent) {
     var itemElement = echoEvent.registeredTarget;
-    var elementId = itemElement.id;
-    if (!EchoClientEngine.verifyInput(elementId)) {
+    var listElement = itemElement.parentNode;
+    if (!EchoClientEngine.verifyInput(listElement.id)) {
         return;
     }
     EchoCssUtil.restoreOriginalStyle(itemElement);
 };
 
 EchoListComponent.processSelection = function(echoEvent) {
-    var itemElement = echoEvent.registeredTarget;
-    var elementId = itemElement.id;
-    if (!EchoClientEngine.verifyInput(elementId)) {
+    var listElement = echoEvent.registeredTarget;
+    
+    if (!EchoClientEngine.verifyInput(EchoDomUtil.getComponentId(listElement.id))) {
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }
-    EchoListComponent.doChange(elementId);
+    EchoListComponent.doChange(listElement);
 };

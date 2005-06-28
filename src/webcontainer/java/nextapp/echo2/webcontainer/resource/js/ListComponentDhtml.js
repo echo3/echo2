@@ -77,6 +77,9 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
         var selectionMode = item.getAttribute("selection-mode");
         var i;
 
+        if (item.getAttribute("enabled") == "false") {
+            EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
+        }
         if (item.getAttribute("server-notify")) {
             EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", item.getAttribute("server-notify"));
         }
@@ -120,66 +123,68 @@ EchoListComponentDhtml.isSelected = function(itemDivElement) {
 };
 
 EchoListComponentDhtml.processRolloverEnter = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    
-    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget)) {
+    var itemElement = echoEvent.registeredTarget;
+    var componentId = EchoDomUtil.getComponentId(itemElement.id);
+    if (!EchoClientEngine.verifyInput(componentId)) {
         return;
     }
     
-    if (!EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectionState")) {
-        var rolloverStyle = EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.parentNode.id, "rolloverStyle");
-        EchoCssUtil.applyTemporaryStyle(echoEvent.registeredTarget, rolloverStyle);
+    if (!EchoDomPropertyStore.getPropertyValue(itemElement.id, "selectionState")) {
+        var rolloverStyle = EchoDomPropertyStore.getPropertyValue(componentId, "rolloverStyle");
+        if (rolloverStyle) {
+            EchoCssUtil.applyTemporaryStyle(itemElement, rolloverStyle);
+        }
     }
 };
 
 EchoListComponentDhtml.processRolloverExit = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget.id)) {
-        return;
-    }
-    if (!EchoDomPropertyStore.getPropertyValue(echoEvent.registeredTarget.id, "selectionState")) {
-        EchoListComponentDhtml.drawItemStyle(echoEvent.registeredTarget);
+    var itemElement = echoEvent.registeredTarget;
+    if (!EchoDomPropertyStore.getPropertyValue(itemElement.id, "selectionState")) {
+        EchoListComponentDhtml.drawItemStyle(itemElement);
     }
 };
 
 EchoListComponentDhtml.processSelection = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
-    var itemDivElement = echoEvent.registeredTarget;
+    var itemElement = echoEvent.registeredTarget;
+    var listElement = itemElement.parentNode;
+    var componentId = EchoDomUtil.getComponentId(itemElement.id);
   
 //BUGBUG. implement ctrl-key based selection.    
     
-    if (!EchoClientEngine.verifyInput(itemDivElement.id)) {
+    if (!EchoClientEngine.verifyInput(componentId)) {
         return;
     }
 
     if (document.selection && document.selection.empty) {
+        // Clear Internet Explorer Selection
         document.selection.empty();
     }
 
-    if (EchoDomPropertyStore.getPropertyValue(itemDivElement.parentNode.id, "selectionMode") != "multiple") {
-	    var itemDivElements = itemDivElement.parentNode.getElementsByTagName("div");
-	    for (var i = 0; i < itemDivElements.length; ++i) {
-	        EchoListComponentDhtml.setSelected(itemDivElements[i], false);
+    if (EchoDomPropertyStore.getPropertyValue(componentId, "selectionMode") != "multiple") {
+	    var itemElements = listElement.getElementsByTagName("div");
+	    for (var i = 0; i < itemElements.length; ++i) {
+	        EchoListComponentDhtml.setSelected(itemElements[i], false);
 	    }
     }
 
-    EchoListComponentDhtml.setSelected(itemDivElement, !EchoListComponentDhtml.isSelected(itemDivElement));
-    EchoListComponentDhtml.updateClientMessage(itemDivElement.parentNode);
+    EchoListComponentDhtml.setSelected(itemElement, !EchoListComponentDhtml.isSelected(itemElement));
+    EchoListComponentDhtml.updateClientMessage(listElement);
 };
 
 /**
  * Sets the selection state of an item.
  *
- * @param itemDivElement the item DIV element
+ * @param itemElement the item DIV element
  * @param newValue the new selection state (a boolean value)
  */
-EchoListComponentDhtml.setSelected = function(itemDivElement, newValue) {
+EchoListComponentDhtml.setSelected = function(itemElement, newValue) {
 
     // Set state flag.
-    EchoDomPropertyStore.setPropertyValue(itemDivElement.id, "selectionState", newValue);
+    EchoDomPropertyStore.setPropertyValue(itemElement.id, "selectionState", newValue);
     
     // Redraw.
-    EchoListComponentDhtml.drawItemStyle(itemDivElement);
+    EchoListComponentDhtml.drawItemStyle(itemElement);
 };
 
 EchoListComponentDhtml.updateClientMessage = function(listElement) {
