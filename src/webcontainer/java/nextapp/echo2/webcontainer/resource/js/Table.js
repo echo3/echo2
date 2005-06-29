@@ -311,10 +311,12 @@ EchoTable.updateClientMessage = function(tableElement) {
         propertyElement.removeChild(propertyElement.firstChild);
     }
     
+    var hasHeaderRow = tableElement.rows.length > 0 && tableElement.rows[0].id.indexOf("_head") != -1;
+    
     for (var i = 0; i < tableElement.rows.length; ++i) {
         if (EchoTable.isSelected(tableElement.rows[i])) {
             var rowElement = EchoClientMessage.messageDocument.createElement("row");
-            rowElement.setAttribute("index", i - 1);
+            rowElement.setAttribute("index", hasHeaderRow ? i - 1 : i);
             propertyElement.appendChild(rowElement);
         }
     }
