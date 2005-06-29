@@ -31,14 +31,21 @@
 // Object EchoSplitPane
 
 /**
- * Static object to provide support for dragging virtual panes.
- *
- * Do not instantiate.
+ * Static object/namespace for SplitPane support.
+ * This object/namespace should not be used externally.
  */
 EchoSplitPane = function() { };
 
+/**
+ * Static object/namespace for SplitPane MessageProcessor 
+ * implementation.
+ */
 EchoSplitPane.MessageProcessor = function() { };
 
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ */
 EchoSplitPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
@@ -57,6 +64,12 @@ EchoSplitPane.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * split pane component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoSplitPane.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -64,6 +77,12 @@ EchoSplitPane.MessageProcessor.processDispose = function(disposeMessageElement) 
     }
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * split pane component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -76,6 +95,13 @@ EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
+/**
+ * Processes an <code>update-pane</code> message to update non-rendered 
+ * properties of a specific pane.
+ *
+ * @param updatePaneMessageElement the <code>update-pane</code> element to 
+ *        process
+ */
 EchoSplitPane.MessageProcessor.processUpdatePane = function(updatePaneMessageElement) {
     for (var item = updatePaneMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -153,10 +179,11 @@ EchoSplitPane.dispose = function() {
 };
 
 /**
- * Event handler for "MouseDown" events.  Permanently registered.
+ * Event handler for "MouseDown" events.  Permanently registered using 
+ * EchoEventProcessor.
  *
- * @param echoEvent the "MouseDown" event, preprocessed by the
- *        EchoEventProcessor
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
  */
 EchoSplitPane.mouseDown = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
