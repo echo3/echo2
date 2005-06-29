@@ -47,7 +47,7 @@ public class PropertiesDiscovery {
      * the specified resource name.
      * 
      * @param resourceName the name of the properties file(s) to load
-     * @return a map containing properties of all propertyies files 
+     * @return a map containing properties of all properties files 
      *         in the CLASSPATH matching the specified 
      *         <code>resourceName</code>
      */

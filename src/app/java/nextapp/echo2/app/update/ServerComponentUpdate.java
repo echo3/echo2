@@ -39,12 +39,12 @@ import nextapp.echo2.app.Component;
 
 /**
  * A description of a server-side update to a single component, i.e.,
- * an update which has occurred on the server and must be propogated
+ * an update which has occurred on the server and must be propagated
  * to the client.
  * 
  * Describes the addition and removal of children to the component.
  * Describes modifications to properties of the component.
- * Describes modiifcations to the <code>LayoutData</code> states of
+ * Describes modifications to the <code>LayoutData</code> states of
  * children of the component.
  */
 public class ServerComponentUpdate 
@@ -75,7 +75,7 @@ implements Serializable {
     private Set removedChildren;
     
     /**
-     * The set of descendant <code>Component</code>s which are implicity removed 
+     * The set of descendant <code>Component</code>s which are implicitly removed 
      * as they were children of removed children.
      */
     private Set removedDescendants;
@@ -392,7 +392,7 @@ implements Serializable {
      * to the <code>ServerComponentUpdate</code>.
      * 
      * @param propertyName the name of the property
-     * @param oldValue te previous value of the property
+     * @param oldValue the previous value of the property
      * @param newValue the current value of the property
      */
     public void updateProperty(String propertyName, Object oldValue, Object newValue) {

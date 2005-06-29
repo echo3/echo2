@@ -100,7 +100,7 @@ extends Component {
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
-        // existance of hasActionListeners() method. 
+        // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
@@ -268,7 +268,7 @@ extends Component {
         }
         getEventListenerList().removeListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
-        // existance of hasActionListeners() method. 
+        // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
     

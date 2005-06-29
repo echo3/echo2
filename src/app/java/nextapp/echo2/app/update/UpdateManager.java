@@ -61,7 +61,7 @@ implements Serializable {
     
     /**
      * Returns the <code>ClientUpdateManager</code>, which is responsible for 
-     * queueing and processing updates received from the client. 
+     * queuing and processing updates received from the client. 
      * 
      * @return the <code>ClientUpdateManager</code>
      */
@@ -71,7 +71,7 @@ implements Serializable {
     
     /**
      * Returns the <code>ServerUpdateManager</code>, which is responsible for
-     * queueing server-side updates and rendering them to the client.
+     * queuing server-side updates and rendering them to the client.
      * 
      * @return the <code>ServerUpdateManager</code>
      */

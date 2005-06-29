@@ -53,7 +53,7 @@ public class GridLayoutData extends CellLayoutData {
     }
     
     /**
-     * Returns the background image fo the cell.
+     * Returns the background image of the cell.
      * 
      * @return the background image
      */

@@ -36,7 +36,7 @@ import nextapp.echo2.app.Font;
 
 
 /**
- * A representation of a rendered item within a list that conatins
+ * A representation of a rendered item within a list that contains
  * color and/or font information.
  * 
  * The <code>toString()</code> method will be invoked on the implementing

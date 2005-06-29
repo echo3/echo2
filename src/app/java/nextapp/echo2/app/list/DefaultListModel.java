@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Defauilt <code>ListModel</code> implementation.
+ * Default <code>ListModel</code> implementation.
  */
 public class DefaultListModel extends AbstractListModel {
 

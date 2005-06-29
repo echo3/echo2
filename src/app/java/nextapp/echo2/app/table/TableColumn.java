@@ -36,7 +36,7 @@ import java.io.Serializable;
 import nextapp.echo2.app.Extent;
 
 /**
- * A description of a single column of a <code>Tabel</code>.
+ * A description of a single column of a <code>Table</code>.
  */
 public class TableColumn 
 implements Serializable {

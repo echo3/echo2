@@ -156,7 +156,7 @@ implements Serializable {
      * Returns the stored <code>Command</code>s.  The commands
      * are NOT removed or modified by this call.  
      * 
-     * @return the comamnds
+     * @return the commands
      */
     public Command[] getCommands() {
         return (Command[])commands.toArray(new Command[commands.size()]);
@@ -187,7 +187,7 @@ implements Serializable {
      * the <code>ServerUpdateManager</code>.
      * 
      * @param clientUpdateManager the <code>ClientUpdateManager</code> that
-     *        will be used to procss input from the client
+     *        will be used to process input from the client
      */
     public void init(ClientUpdateManager clientUpdateManager) {
         this.clientUpdateManager = clientUpdateManager;
@@ -302,7 +302,7 @@ implements Serializable {
      * <code>LayoutData</code> property).
      * Creates/updates a <code>ServerComponentUpdate</code> if required.
      * 
-     * @param updatedComponent the component whose property(ies) changed.
+     * @param updatedComponent the component whose property(s) changed.
      * @param propertyName the name of the changed property
      * @param oldValue The previous value of the property
      * @param newValue The new value of the property
@@ -371,7 +371,7 @@ implements Serializable {
     }
     
     /**
-     * Processes an update to the visible state of a copmonent.
+     * Processes an update to the visible state of a component.
      * Creates/updates a <code>ServerComponentUpdate</code> if required.
      * 
      * @param updatedComponent a component which currently exists in the 
@@ -387,7 +387,7 @@ implements Serializable {
     }
     
     /**
-     * Proceses a full refresh of the application state, in response to a 
+     * Processes a full refresh of the application state, in response to a 
      * severe change, such as application locale or style sheet.
      */
     public void processFullRefresh() {
