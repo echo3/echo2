@@ -111,9 +111,8 @@ public class WindowPaneTest extends TestCase {
      */
     public void testProperties() {
         WindowPane windowPane = new WindowPane();
-//BUGBUG. fix test (fillimageborder needs equals first)        
-//        windowPane.setBorder(TestConstants.BORDER_THICK_ORANGE);
-//        assertEquals(TestConstants.BORDER_THICK_ORANGE, windowPane.getBorder());
+        windowPane.setBorder(TestConstants.FILL_IMAGE_BORDER);
+        assertEquals(TestConstants.FILL_IMAGE_BORDER, windowPane.getBorder());
         windowPane.setHeight(TestConstants.EXTENT_200_PX);
         assertEquals(TestConstants.EXTENT_200_PX, windowPane.getHeight());
         windowPane.setPositionX(TestConstants.EXTENT_100_PX);

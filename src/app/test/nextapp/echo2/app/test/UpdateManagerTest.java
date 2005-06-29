@@ -201,7 +201,7 @@ public class UpdateManagerTest extends TestCase  {
         manager.purge();
         columnApp.enqueueCommand(command);
 
-        // Test basic command queueing.
+        // Test basic command queuing.
         assertEquals(1, manager.getServerUpdateManager().getCommands().length);
         assertEquals(command, manager.getServerUpdateManager().getCommands()[0]);
         
@@ -324,7 +324,7 @@ public class UpdateManagerTest extends TestCase  {
     /**
      * Ensure that a property update whose state is already reflected on the
      * client (because the end-user made the property change) is properly
-     * cancelled.
+     * canceled.
      */
     public void testPropertyUpdateCancellation1() {
         TextField textField = new TextField();
@@ -341,7 +341,7 @@ public class UpdateManagerTest extends TestCase  {
     /**
      * Ensure that a property update whose state is already reflected on the
      * client (because the end-user made the property change) is properly
-     * cancelled.  This test will ensure that if additional properties changed
+     * canceled.  This test will ensure that if additional properties changed
      * on a user-updated component, that only the non-user-updated properties
      * are reflected by the <code>UpdateManager</code>.
      */
@@ -366,8 +366,8 @@ public class UpdateManagerTest extends TestCase  {
     /**
      * Ensure that a property update whose state is already reflected on the
      * client (because the end-user made the property change) is properly
-     * cancelled.  This test will ensure that user-changed properties are 
-     * cancelled even in the event that the application ALSO updated the
+     * canceled.  This test will ensure that user-changed properties are 
+     * canceled even in the event that the application ALSO updated the
      * property, though it was later overwritten by a user update.
      */
     public void testPropertyUpdateCancellation3() {

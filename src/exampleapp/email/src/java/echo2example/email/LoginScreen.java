@@ -54,7 +54,7 @@ public class LoginScreen extends ContentPane {
     private PasswordField passwordField;
     
     /**
-     * Creates a new <code>LoginScreen</cdoe>.
+     * Creates a new <code>LoginScreen</code>.
      */
     public LoginScreen() {
         super();

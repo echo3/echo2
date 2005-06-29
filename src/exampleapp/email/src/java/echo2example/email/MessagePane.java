@@ -134,7 +134,7 @@ public class MessagePane extends Column {
         for (int recipientIndex = 0; recipientIndex < recipients.length; ++recipientIndex) {
             sb.append(recipients[recipientIndex].toString());
             if (recipientIndex < recipients.length - 1) {
-                // Seperate recipient names with a comma.
+                // Separate recipient names with a comma.
                 sb.append(", ");
             }
         }

@@ -53,7 +53,7 @@ public class PageNavigator extends Row {
     public static interface PageIndexChangeListener extends EventListener, Serializable {
         
         /**
-         * Provides notfication of a page index change.
+         * Provides notification of a page index change.
          * 
          * @param e the <code>PageIndexChangeEvent</code> describing the change
          */

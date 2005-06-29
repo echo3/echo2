@@ -79,7 +79,7 @@ public class EmailApp extends ApplicationInstance {
     private Store store;
     
     /**
-     * The <code>javax.mail.Session</code> used to connect ot he mail server.
+     * The <code>javax.mail.Session</code> used to connect to the mail server.
      * See the Sun JavaMail API Specification for details.
      */
     private Session mailSession;

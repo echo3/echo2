@@ -54,7 +54,7 @@ public class IdTableTest extends TestCase {
     
     /**
      * Tests to ensure references are released.  This test relies on
-     * <code>System.gc()</code> acutally causing weak references to
+     * <code>System.gc()</code> actually causing weak references to
      * be collected.  It is not technically safe to rely on this,
      * thus this test may randomly fail. 
      */

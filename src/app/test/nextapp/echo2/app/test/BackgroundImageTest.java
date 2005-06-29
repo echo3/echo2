@@ -39,7 +39,7 @@ import junit.framework.TestCase;
 public class BackgroundImageTest extends TestCase {
     
     /**
-     * Test simpleconstructor.
+     * Test simple constructor.
      */
     public void testConstructorSimple() {
         FillImage backgroundImage = new FillImage(TestConstants.ICON);

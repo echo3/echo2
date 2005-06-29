@@ -117,7 +117,7 @@ public class ApplicationInstanceTest extends TestCase {
     }
     
     /**
-     * Test component-application registration lifecycle methods, i.e.,
+     * Test component-application registration life-cycle methods, i.e.,
      * <code>Component.init()</code> / <code>Component.dispose()</code>.
      */
     public void testRegistrationLifecycle() {

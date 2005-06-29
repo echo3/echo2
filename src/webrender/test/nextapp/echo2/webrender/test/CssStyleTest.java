@@ -58,7 +58,7 @@ extends TestCase {
         
         style.setAttribute("background-color", "green");
         // Note that we know ordering here only because we know the underlying implementation
-        // uses the proprietary low-memory associative array techinque.
+        // uses the proprietary low-memory associative array technique.
         assertEquals("border:10px solid blue;background-color:green;", style.renderInline());
         
         assertNull(style.getAttribute("color"));

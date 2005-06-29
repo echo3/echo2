@@ -46,7 +46,7 @@ import javax.mail.Multipart;
  * The faux <code>Message</code> implementation.
  * This class provides only the minimal implementation of the 
  * <code>Message</code> base class necessary for operation of
- * the webmail example.
+ * the web mail example.
  */
 public class FauxMessage extends Message {
     

@@ -70,7 +70,7 @@ public class ServiceRegistryTest extends TestCase {
     }
     
     /**
-     * Ensure that adding the same service twice does not throw an expcetion.
+     * Ensure that adding the same service twice does not throw an exception.
      */
     public void testReAdd() {
         ServiceRegistry services = new ServiceRegistry();

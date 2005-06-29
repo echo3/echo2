@@ -47,7 +47,7 @@ public class FauxStore extends Store {
     /**
      * Creates a <code>FauxStore</code>.
      * 
-     * @param session the <code>Sesssion</code> object for this 
+     * @param session the <code>Session</code> object for this 
      *        <code>Store</code>
      * @param urlName the <code>URLName</code> object for this 
      *        <code>Store</code>

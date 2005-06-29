@@ -260,7 +260,7 @@ public class MessageListTable extends Table {
     }
 
     /**
-     * Refereshes the current page.
+     * Refreshes the current page.
      */
     private void refresh() {
         if (folder == null) {

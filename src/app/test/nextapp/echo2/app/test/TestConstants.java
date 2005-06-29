@@ -32,6 +32,7 @@ import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
@@ -41,6 +42,8 @@ import nextapp.echo2.app.ResourceImageReference;
  * Property constants used in component tests.
  */
 public class TestConstants {
+    
+    public static final FillImageBorder FILL_IMAGE_BORDER = new FillImageBorder(Color.BLUE, new Insets(3), new Insets(5));
     
     public static final Font MONOSPACE_12 = new Font(Font.MONOSPACE, Font.PLAIN, new Extent(12, Extent.PT));
     public static final Font TIMES_72 = new Font(Font.MONOSPACE, Font.PLAIN, new Extent(72, Extent.PT));

@@ -35,7 +35,7 @@ import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.Service;
 
 /**
- * A do-nothing <code>Serivce</code> implementation for testing.
+ * A do-nothing <code>Service</code> implementation for testing.
  */
 public class NullService 
 implements Service {
