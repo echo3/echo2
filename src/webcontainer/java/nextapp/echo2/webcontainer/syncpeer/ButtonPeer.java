@@ -82,7 +82,7 @@ import org.w3c.dom.Text;
  * This class should not be extended or used by classes outside of the
  * Echo framework.
  */
-public class AbstractButtonPeer 
+public class ButtonPeer 
 implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
@@ -309,7 +309,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (icon == null) {
             iconElement = null;
         } else {
-            iconElement = ImageReferenceRender.renderImageReferenceElement(rc, AbstractButtonPeer.this, button, 
+            iconElement = ImageReferenceRender.renderImageReferenceElement(rc, ButtonPeer.this, button, 
                     IMAGE_ID_ICON);
             iconElement.setAttribute("id", elementId + "_icon");
         }
@@ -318,7 +318,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (toggleButton == null) {
             stateIconElement = null;
         } else {
-            stateIconElement = ImageReferenceRender.renderImageReferenceElement(rc, AbstractButtonPeer.this, button, 
+            stateIconElement = ImageReferenceRender.renderImageReferenceElement(rc, ButtonPeer.this, button, 
                     toggleButton.isSelected() ? IMAGE_ID_SELECTED_STATE_ICON : IMAGE_ID_STATE_ICON);
             stateIconElement.setAttribute("id", elementId + "_stateicon");
         }
