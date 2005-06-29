@@ -392,8 +392,8 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 Element selectionElement = document.createElement("selection");
                 int minimumIndex = selectionModel.getMinSelectedIndex();
                 int maximumIndex = selectionModel.getMaxSelectedIndex();
-                if (maximumIndex > table.getModel().getRowCount()) {
-                    maximumIndex = table.getModel().getRowCount();
+                if (maximumIndex > table.getModel().getRowCount() - 1) {
+                    maximumIndex = table.getModel().getRowCount() - 1;
                 }
                 for (int i = minimumIndex; i <= maximumIndex; ++i) {
                     if (selectionModel.isSelectedIndex(i)) {
