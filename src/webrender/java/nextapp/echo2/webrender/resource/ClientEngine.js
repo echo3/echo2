@@ -369,14 +369,17 @@ EchoClientEngine.verifyInput = function(elementId) {
 
 function EchoClientMessage() { }
 
+/**
+ * The current outgoing ClientMessage XML document.
+ */
 EchoClientMessage.messageDocument = null;
 
 /**
  * Creates a property element in the EchoClientMessage.
  *
- * @param componentId The id of the component.
- * @param propertyName The name of the property.
- * @return the created 'property' element.
+ * @param componentId the id of the component
+ * @param propertyName the name of the property
+ * @return the created 'property' element
  */
 EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
     var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
@@ -489,6 +492,10 @@ EchoClientMessage.setPropertyValue = function(componentId, propertyName, newValu
     EchoDebugManager.updateClientMessage();
 };
 
+/**
+ * Sets the "type" attribute of the <code>client-message</code> element to 
+ * indicate that this is the initial client message.
+ */
 EchoClientMessage.setInitialize = function() {
     EchoClientMessage.messageDocument.documentElement.setAttribute("type", "initialize");
 };
@@ -532,6 +539,13 @@ EchoClientProperties.get = function(name) {
     return EchoClientProperties.propertyMap[name];
 };
 
+// __________________
+// Object EchoCssUtil
+
+/**
+ * Static object/namespace to provide cascading style-sheet (CSS) manipulation
+ * utilities.
+ */
 function EchoCssUtil() { }
 
 EchoCssUtil.applyStyle = function(element, cssText) {
@@ -549,20 +563,36 @@ EchoCssUtil.applyStyle = function(element, cssText) {
     }
 };
 
-EchoCssUtil.applyTemporaryStyle = function(element, cssStyle) {
+/**
+ * Temporarily adjusts the CSS style of an element.  The 'original' style will
+ * be stored in a DomPropertyStore attribute of the element (if it has not been
+ * already) before the new style is applied.  This method is useful for applying
+ * selection/rollover states temporarily to elements.  Use care in that there may
+ * only be one 'original style' set on a particular element.
+ *
+ * @param element the DOM element to update
+ * @param cssStyleText the CSS style text to temporarily apply to the element
+ */
+EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     // Set original style if not already set.
-    if (!EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle")) {
+    if (!EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle")) {
         if (element.style.cssText) {
-            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", element.style.cssText);
+            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", element.style.cssText);
         } else {
-            EchoDomPropertyStore.setPropertyValue(element.id, "originalStyle", "-");
+            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", "-");
         }
     }
-    EchoCssUtil.applyStyle(element, cssStyle);
+    EchoCssUtil.applyStyle(element, cssStyleText);
 };
 
+/**
+ * Restores the original style to an element whose style was updated via
+ * <code>applyTemporaryStyle</code>.
+ *
+ * @param element the DOM element to restore to its original state
+ */
 EchoCssUtil.restoreOriginalStyle = function(element) {
-    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "originalStyle");
+    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle");
     if (!originalStyle) {
         return;
     }
