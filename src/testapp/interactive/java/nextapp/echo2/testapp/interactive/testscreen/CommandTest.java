@@ -61,6 +61,15 @@ public class CommandTest extends Column {
         });
         add(button);
         
+        button = new Button("Enqueue Redirect Command to mailto: URL");
+        button.setStyleName("Default");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().enqueueCommand(new BrowserRedirectCommand("mailto:info@nextapp.com"));
+            }
+        });
+        add(button);
+        
         button = new Button("Enqueue Simple Window Open Command");
         button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
