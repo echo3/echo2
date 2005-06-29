@@ -49,7 +49,7 @@ public class JavaScriptCompressor {
      */
     public static String compress(String script) {
         if (true) {
-            //BUGBUG. Disabled JS Compressor until url mangling fixed.
+            //BUGBUG. Disabled JS Compressor until URL mangling fixed.
             return script;
         }
         

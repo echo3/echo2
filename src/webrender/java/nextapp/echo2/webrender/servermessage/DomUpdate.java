@@ -47,7 +47,7 @@ public class DomUpdate {
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     /**
-     * Creates a <code>attributeupdate</code> operation to update an 
+     * Creates a <code>attribute-update</code> operation to update an 
      * element attribute of the element identified by <code>targetId</code>
      * in the client DOM.
      * 
@@ -67,7 +67,7 @@ public class DomUpdate {
     }
     
     /**
-     * Creates a <code>domadd</code> operation to append HTML content to the 
+     * Creates a <code>dom-add</code> operation to append HTML content to the 
      * end of the element identified by <code>parentId</code>.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
@@ -79,7 +79,7 @@ public class DomUpdate {
     }
 
     /**
-     * Creates a <code>domadd</code> operation to insert HTML content int the 
+     * Creates a <code>dom-add</code> operation to insert HTML content int the 
      * element identified by <code>parentId</code>.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
@@ -105,7 +105,7 @@ public class DomUpdate {
     }
     
     /**
-     * Creates a <code>domremove</code> operation to remove the HTML element 
+     * Creates a <code>dom-remove</code> operation to remove the HTML element 
      * identified by <code>targetId</code> from the client DOM.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
@@ -118,7 +118,7 @@ public class DomUpdate {
     }
 
     /**
-     * Creates a <code>domremove</code> operation to remove all child elements
+     * Creates a <code>dom-remove</code> operation to remove all child elements
      * of the element identified by <code>targetId</code> from the client DOM.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
@@ -131,7 +131,7 @@ public class DomUpdate {
     }
     
     /**
-     * Creates a <code>styleupdate</code> operation to update a CSS style 
+     * Creates a <code>style-update</code> operation to update a CSS style 
      * attribute of the element identified by <code>targetId</code> in the
      * client DOM.
      * 

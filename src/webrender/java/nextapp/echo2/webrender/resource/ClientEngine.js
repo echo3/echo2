@@ -97,7 +97,7 @@ EchoAsyncMonitor.stop = function() {
  * @param conn the EchoHttpConnection containing the response information.
  */
 EchoAsyncMonitor.responseHandler = function(conn) {
-    if ("true" == conn.getResponseXml().documentElement.getAttribute("requestsync")) {
+    if ("true" == conn.getResponseXml().documentElement.getAttribute("request-sync")) {
         // Server is requesting synchronization: Initiate server transaction.
         EchoServerTransaction.connect();
     } else {

@@ -73,13 +73,13 @@ implements Service {
      * Implementations registered with the
      * <code>registerClientMessagePartProcessor()</code> method will have
      * their <code>process()</code> methods invoked when a matching
-     * messagepart is provided in a ClientMessage.
+     * message part is provided in a ClientMessage.
      */
     public static interface ClientMessagePartProcessor {
         
         /**
          * Returns the name of the <code>ClientMessagePartProcessor</code>.
-         * The processor will be invoked when a messagepart with its name
+         * The processor will be invoked when a message part with its name
          * is found within the ClientMessage.
          * 
          * @return the name of the processor
@@ -90,7 +90,7 @@ implements Service {
          * Processes a MessagePart of a ClientMessage
          * 
          * @param userInstance the relevant <code>UserInstance</code>
-         * @param messagePartElement the <code>messagepart</code> element
+         * @param messagePartElement the <code>message part</code> element
          *        to process
          */
         public void process(UserInstance userInstance, Element messagePartElement);
@@ -202,7 +202,7 @@ implements Service {
     /**
      * Processes a "ClientMessage" XML document containing application UI state 
      * change information from the client.  This method will parse the
-     * <code>messagepart</code>s of the ClientMessage and invoke the
+     * message parts of the ClientMessage and invoke the
      * <code>ClientMessagePartProcessor</code>s registered to process them.
      * 
      * @param conn the relevant <code>Connection</code> 
@@ -225,7 +225,7 @@ implements Service {
     
     /**
      * Registers a <code>ClientMessagePartProcessor</code> to handle a
-     * specific type of messagepart.
+     * specific type of message part.
      * 
      * @param processor the <code>ClientMessagePartProcessor</code> to 
      *        register
@@ -269,7 +269,7 @@ implements Service {
             ServerMessage serverMessage;
             
             if ("initialize".equals(messageType)) {
-    //BUGBUG. clientproperties stuff here is not well done, redo.            
+    //BUGBUG. ClientProperties stuff here is not well done, redo.            
                 serverMessage = renderInit(conn, clientMessageDocument);
                 ClientPropertiesStore.renderStoreDirective(serverMessage, conn.getUserInstance().getClientProperties());
             } else {

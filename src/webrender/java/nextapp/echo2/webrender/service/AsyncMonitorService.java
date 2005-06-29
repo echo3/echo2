@@ -83,9 +83,9 @@ implements Service {
     public void service(Connection conn) throws IOException {
         conn.setContentType(ContentType.TEXT_XML);
         if (isSynchronizationRequired(conn.getUserInstance())) {
-            conn.getWriter().write("<asyncmonitor requestsync=\"true\"/>");
+            conn.getWriter().write("<async-monitor request-sync=\"true\"/>");
         } else {
-            conn.getWriter().write("<asyncmonitor requestsync=\"false\"/>");
+            conn.getWriter().write("<async-monitor request-sync=\"false\"/>");
         }
     }
 }

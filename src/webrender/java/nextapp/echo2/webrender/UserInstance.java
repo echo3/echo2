@@ -115,7 +115,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      * <code>parameterNames</code> array is provided in the
      * <code>parameterValues</code> array at the same index. The arrays must
      * thus be of equal length. Null values are allowed in the
-     * <code>parameterValues</code> array, and in such cases only the paramter
+     * <code>parameterValues</code> array, and in such cases only the parameter
      * name will be rendered in the returned URI.
      * 
      * @param service the <code>Service</code>

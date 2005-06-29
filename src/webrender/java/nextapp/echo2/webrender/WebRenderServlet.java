@@ -196,7 +196,7 @@ public abstract class WebRenderServlet extends HttpServlet {
     }
     
     /**
-     * Proceses a HTTP request and generates a response.
+     * Processes a HTTP request and generates a response.
      * 
      * @param request the incoming <code>HttpServletRequest</code>
      * @param response the outgoing <code>HttpServletResponse</code>

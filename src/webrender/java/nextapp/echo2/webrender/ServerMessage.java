@@ -56,8 +56,8 @@ public class ServerMessage extends XmlDocument {
     public static final int RIGHT_TO_LEFT = 1;
 
     /**
-     * A hash table associating <code>ItemizedDirectiveLookupKey</code> s to
-     * corresponding <code>Element</code> s in the message.
+     * A hash table associating <code>ItemizedDirectiveLookupKey</code>s to
+     * corresponding <code>Element</code>s in the message.
      */
     private Map itemizedDirectivesMap = new HashMap();
 
@@ -88,8 +88,8 @@ public class ServerMessage extends XmlDocument {
          * @param processor the name of the client-side processor object which
          *        will process the message part containing the directive, e.g.,
          *        "EchoEventUpdate", or "EchoDomUpdate"
-         * @param directiveName the name of the directive, e.g., "eventadd" or
-         *        "domremove".
+         * @param directiveName the name of the directive, e.g., "event-add" or
+         *        "dom-remove".
          * @param keyAttributeNames
          * @param keyAttributeValues
          */
@@ -151,36 +151,36 @@ public class ServerMessage extends XmlDocument {
     }
 
     /**
-     * Constant for the "init" messagepartgroup. Messageparts in this group are
+     * Constant for the "init" message part group. Message parts in this group are
      * processed before the "preremove", "remove" "update", and "postupdate"
      * groups.
      */
     public static final String GROUP_ID_INIT = "init";
 
     /**
-     * Constant for the "preremove" messagepartgroup. Messageparts in this group
-     * are processed after the "init" group. Messageparts in this group are
+     * Constant for the "preremove" message part group. Message parts in this group
+     * are processed after the "init" group. Message parts in this group are
      * processed before the "remove", "update" and "postupdate" groups.
      */
     public static final String GROUP_ID_PREREMOVE = "preremove";
 
     /**
-     * Constant for the "remove" messagepartgroup. Messageparts in this group
-     * are processed after the "init" and "preremove" groups. Messageparts in
+     * Constant for the "remove" message part group. Message parts in this group
+     * are processed after the "init" and "preremove" groups. Message parts in
      * this group are processed before the "update" and "postupdate" groups.
      */
     public static final String GROUP_ID_REMOVE = "remove";
 
     /**
-     * Constant for the "update" messagepartgroup. Messageparts in this group
+     * Constant for the "update" message part group. Message parts in this group
      * are processed after the "init", "preremove" and "remove" groups.
-     * Messageparts in this group are processed before the "postupdate" gruop.
+     * Message parts in this group are processed before the "postupdate" group.
      */
     public static final String GROUP_ID_UPDATE = "update";
 
     /**
-     * Constant for the "postupdate" messagepartgroup. Messageparts in this
-     * group are procssed after the "init", "preremove", "remove" and "update"
+     * Constant for the "postupdate" message part group. Message parts in this
+     * group are processed after the "init", "preremove", "remove" and "update"
      * groups.
      */
     public static final String GROUP_ID_POSTUPDATE = "postupdate";
@@ -213,7 +213,7 @@ public class ServerMessage extends XmlDocument {
      * Adds a JavaScript library service to be dynamically loaded.
      * 
      * @param serviceId the id of the service to load (the service must return
-     *        javascript code with content-type "text/javascript")
+     *        JavaScript code with content-type "text/javascript")
      */
     public void addLibrary(String serviceId) {
         if (addedLibraries == null) {
@@ -234,7 +234,7 @@ public class ServerMessage extends XmlDocument {
      * add operations.
      * 
      * @param groupId the identifier of the group
-     * @return the created "messagepartgroup" element.
+     * @return the created "message-part-group" element.
      */
     public Element addPartGroup(String groupId) {
         Element messagePartGroupElement = getDocument().createElement("message-part-group");
@@ -244,10 +244,10 @@ public class ServerMessage extends XmlDocument {
     }
 
     /**
-     * Retrieves the "messagepartgroup" element pertaining to a specific group.
+     * Retrieves the "message-part-group" element pertaining to a specific group.
      * 
      * @param groupId the id of the group
-     * @return the "messagepartgroup" element
+     * @return the "message-part-group" element
      */
     public Element getPartGroup(String groupId) {
         NodeList groupList = serverMessageElement.getElementsByTagName("message-part-group");
@@ -262,15 +262,15 @@ public class ServerMessage extends XmlDocument {
     }
 
     /**
-     * Adds a "messagepart" to the document that will be processed by the
+     * Adds a "message-part" to the document that will be processed by the
      * specified client-side processor object.
      * 
-     * @param groupId the id of the group to which the "messagepart" element
+     * @param groupId the id of the group to which the "message-part" element
      *        should be added
      * @param processor the name of the client-side processor object which will
      *        process the message part, e.g., "EchoEventUpdate", or
      *        "EchoDomUpdate"
-     * @return the created "messagepart" element
+     * @return the created "message-part" element
      */
     public Element addPart(String groupId, String processor) {
         Element messagePartGroupElement = getPartGroup(groupId);
@@ -281,19 +281,19 @@ public class ServerMessage extends XmlDocument {
     }
 
     /**
-     * Creates and appends a directive element beneath to a messagepart.
-     * Attempts to append the directive to an existing messagepart if the last
-     * messagepart in the specified group happens to have the same processor as
+     * Creates and appends a directive element beneath to a message part.
+     * Attempts to append the directive to an existing message part if the last
+     * message part in the specified group happens to have the same processor as
      * is specified by the <code>processor</code> argument. If this is not
-     * possible, a new "messagepart" element is created and the directive is
+     * possible, a new "message-part" element is created and the directive is
      * added to it.
      * 
      * @param groupId
      * @param processor the name of the client-side processor object which will
      *        process the message part, e.g., "EchoEventUpdate", or
      *        "EchoDomUpdate"
-     * @param directiveName the name of the directive, e.g., "eventadd" or
-     *        "domremove".
+     * @param directiveName the name of the directive, e.g., "event-add" or
+     *        "dom-remove".
      * @return the directive element
      */
     public Element appendPartDirective(String groupId, String processor, String directiveName) {
@@ -321,15 +321,15 @@ public class ServerMessage extends XmlDocument {
      * output in cases where a particular operation may need to be performed on
      * a significant number of targets. In the case that the directive must be
      * created, it will be added to the message. Repeated invocations of this
-     * method with equivalent values of all paramters will result in the same
+     * method with equivalent values of all parameters will result in the same
      * directive being returned each time.
      * 
      * @param groupId the identifier of the target message part group
      * @param processor the name of the client-side processor object which will
      *        process the message part containing the directive, e.g.,
      *        "EchoEventUpdate", or "EchoDomUpdate"
-     * @param directiveName the name of the directive, e.g., "eventadd" or
-     *        "domremove"
+     * @param directiveName the name of the directive, e.g., "event-add" or
+     *        "dom-remove"
      * @param keyAttributeNames the names of the key attributes
      * @param keyAttributeValues the values of the key attributes
      * @return the created/retrieved directive element
@@ -353,7 +353,7 @@ public class ServerMessage extends XmlDocument {
      * Sets the interval between asynchronous requests to the server to check
      * for server-pushed updates.
      * 
-     * @param newValue the new interval in milleseconds (a negative value will
+     * @param newValue the new interval in milliseconds (a negative value will
      *        disable asynchronous requests)
      */
     public void setAsynchronousMonitorInterval(int newValue) {

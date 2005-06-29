@@ -65,7 +65,7 @@ implements Serializable {
     public static final String QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED = "quirkCssBackgroundAttachmentUseFixed";
     
     /**
-     * A quirk flag indicating whether the client has poor perforamnce when
+     * A quirk flag indicating whether the client has poor performance when
      * attempting to remove large element hierarchies from a DOM.  This quirk can
      * be alleviated by removing the hierarchy in smaller chunks.
      * <p>
@@ -94,7 +94,7 @@ implements Serializable {
     public static final String QUIRK_IE_REPAINT = "quirkIERepaint";
     
     /**
-     * A quirk flag indicating the only means of acheiving 0 padding in table cells is to use 0px padding.
+     * A quirk flag indicating the only means of achieving 0 padding in table cells is to use 0px padding.
      * <p>
      * This quirk occurs with:
      * <ul>
@@ -169,7 +169,7 @@ implements Serializable {
     /**
      * A quirk flag describing the issue of "windowed" select fields in Internet Explorer, which do not
      * render correctly with regard to z-index value.
-     * See http://support.microsoft.com/kb/q177378/ for an expalanation of the underlying issue.
+     * See http://support.microsoft.com/kb/q177378/ for an explanation of the underlying issue.
      * <p>
      * This quirk occurs with:
      * <ul>
@@ -179,7 +179,7 @@ implements Serializable {
     public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
     
     /**
-     * A quirk flag indicating the incorect parsing of newlines in the content of a 'textarea'.
+     * A quirk flag indicating the incorrect parsing of newlines in the content of a 'textarea'.
      * <p>
      * This quirk occurs with:
      * <ul>

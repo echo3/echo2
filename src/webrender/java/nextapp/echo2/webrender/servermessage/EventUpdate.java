@@ -45,7 +45,7 @@ public class EventUpdate {
     private static final String[] EVENT_REMOVE_KEYS = new String[]{"type"};
     
     /**
-     * Creates an <code>eventadd</code> operation to register a client event
+     * Creates an <code>event-add</code> operation to register a client event
      * listener of a particular type on an HTML element.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
@@ -66,7 +66,7 @@ public class EventUpdate {
     }
     
     /**
-     * Creates an <code>eventremove</code> operation to unregister a client 
+     * Creates an <code>event-remove</code> operation to unregister a client 
      * event listener of a particular type on an HTML element.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>

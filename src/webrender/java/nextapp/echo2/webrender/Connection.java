@@ -42,7 +42,7 @@ import javax.servlet.http.HttpSession;
  * A representation of a connection to the server by the client, encapsulating
  * the servlet request and response objects, and providing access to the
  * relevant application instance.
- * <code>Connection</code>s also manage the lifecycle of 
+ * <code>Connection</code>s also manage the life-cycle of 
  * <code>UserInstance</code>s within the <code>HttpSession</code>.
  */
 public class Connection {

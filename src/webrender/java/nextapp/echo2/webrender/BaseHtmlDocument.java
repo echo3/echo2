@@ -48,7 +48,7 @@ public class BaseHtmlDocument extends HtmlDocument {
      */
     private static final Properties OUTPUT_PROPERTIES = new Properties();
     static {
-        // The XML declaration is ommitted as Internet Explorer 6 will operate in quirks mode if it is present.
+        // The XML declaration is omitted as Internet Explorer 6 will operate in quirks mode if it is present.
         OUTPUT_PROPERTIES.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         
         OUTPUT_PROPERTIES.setProperty(OutputKeys.DOCTYPE_PUBLIC, XHTML_1_0_TRANSITIONAL_PUBLIC_ID);

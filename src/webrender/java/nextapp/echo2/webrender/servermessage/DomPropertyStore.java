@@ -44,7 +44,7 @@ public class DomPropertyStore {
     private static final String[] PROPERTY_STORE_KEYS= new String[]{"name", "value"};
 
     /**
-     * Creates a <code>storeproperty</code> operation to store a non-rendered
+     * Creates a <code>store-property</code> operation to store a non-rendered
      * named property in an HTMLElement of the client DOM.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
