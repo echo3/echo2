@@ -240,6 +240,8 @@ EchoListComponentDhtml.setSelected = function(itemElement, newValue) {
  * Updates the selection state in the outgoing <code>ClientMessage</code>.
  * If any server-side <code>ActionListener</code>s are registered, an action
  * will be set and a client-server connection initiated.
+ *
+ * @param listElement the list element whose state is to be updated
  */
 EchoListComponentDhtml.updateClientMessage = function(listElement) {
     var propertyElement  = EchoClientMessage.createPropertyElement(listElement.id, "selection");

@@ -30,15 +30,22 @@
 //_________________
 // Object EchoTable
 
+
+/**
+ * Static object/namespace for Table support.
+ * This object/namespace should not be used externally.
+ */
 EchoTable = function() { };
 
 /**
- * ServerMessage processor.
+ * Static object/namespace for Table MessageProcessor 
+ * implementation.
  */
 EchoTable.MessageProcessor = function() { };
 
 /**
- * ServerMessage process() implementation.
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
  */
 EchoTable.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
@@ -55,14 +62,25 @@ EchoTable.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * Table component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoTable.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-        
         EchoTable.disposeCellListeners(tableElementId);
     }
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * Table component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoTable.MessageProcessor.processInit = function(initMessageElement) {
     var rolloverStyle = initMessageElement.getAttribute("rollover-style");
     var selectionStyle = initMessageElement.getAttribute("selection-style");
@@ -97,6 +115,11 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
+/**
+ * Deselects all selected rows in a Table.
+ *
+ * @param tableElement the Table element
+ */
 EchoTable.clearSelected = function(tableElement) {
     for (var i = 0; i < tableElement.rows.length; ++i) {
         if (EchoTable.isSelected(tableElement.rows[i])) {
@@ -105,6 +128,11 @@ EchoTable.clearSelected = function(tableElement) {
     }
 };
 
+/**
+ * Removes rollover/selection listeners from a Table row.
+ *
+ * @param tableElementId the id of the Table element
+ */
 EchoTable.disposeCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
@@ -117,6 +145,11 @@ EchoTable.disposeCellListeners = function(tableElementId) {
     }
 };
 
+/**
+ * Redraws a row in the appropriate style (i.e., selected or deselected).
+ *
+ * @param trElement the row <code>tr</code> element to redraw
+ */
 EchoTable.drawRowStyle = function(trElement) {
     var selected = EchoTable.isSelected(trElement);
     var tableElementId = EchoDomUtil.getComponentId(trElement.id);
@@ -132,6 +165,11 @@ EchoTable.drawRowStyle = function(trElement) {
     }
 };
 
+/**
+ * Adds rollover/selection listeners to a Table row.
+ *
+ * @param tableElementId the id of the Table element
+ */
 EchoTable.initCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
@@ -154,6 +192,12 @@ EchoTable.isSelected = function(trElement) {
     return EchoDomPropertyStore.getPropertyValue(trElement.id, "selected") == "true";
 };
 
+/**
+ * Processes a row selection (click) event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoTable.processClick = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
     var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
@@ -189,6 +233,12 @@ EchoTable.processClick = function(echoEvent) {
     }
 };
 
+/**
+ * Processes a row mouse over event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoTable.processRolloverEnter = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
     var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
@@ -209,6 +259,12 @@ EchoTable.processRolloverEnter = function(echoEvent) {
     }
 };
 
+/**
+ * Processes a row mouse out event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoTable.processRolloverExit = function(echoEvent) {
     var sourceTdElement = echoEvent.registeredTarget;
     var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
@@ -238,6 +294,13 @@ EchoTable.setSelected = function(trElement, newValue) {
     EchoTable.drawRowStyle(trElement);
 };
 
+/**
+ * Updates the selection state in the outgoing <code>ClientMessage</code>.
+ * If any server-side <code>ActionListener</code>s are registered, an action
+ * will be set and a client-server connection initiated.
+ *
+ * @param tableElement the table element whose state is to be updated
+ */
 EchoTable.updateClientMessage = function(tableElement) {
     var propertyElement = EchoClientMessage.createPropertyElement(tableElement.id, "selection");
 
