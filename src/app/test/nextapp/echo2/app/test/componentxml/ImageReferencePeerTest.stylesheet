@@ -9,21 +9,21 @@
  <style name="bravo" type="nextapp.echo2.app.Button">
   <properties>
    <property type="nextapp.echo2.app.ResourceImageReference" name="icon" >
-    <resourceimagereference resource="/nextapp.echo2/test/componentxml/Bravo.png"/>
+    <resource-image-reference resource="/nextapp.echo2/test/componentxml/Bravo.png"/>
    </property>
   </properties>
  </style>
  <style name="charlie" type="nextapp.echo2.app.Button">
   <properties>
    <property type="nextapp.echo2.app.ResourceImageReference" name="icon" >
-    <resourceimagereference resource="/nextapp.echo2/test/componentxml/Charlie.png" width="20px" height="30px"/>
+    <resource-image-reference resource="/nextapp.echo2/test/componentxml/Charlie.png" width="20px" height="30px"/>
    </property>
   </properties>
  </style>
  <style name="delta" type="nextapp.echo2.app.Button">
   <properties>
    <property type="nextapp.echo2.app.ResourceImageReference" name="icon" >
-    <resourceimagereference resource="/nextapp.echo2/test/componentxml/Delta.whoknows" contenttype="image/gif" width="30px"/>
+    <resource-image-reference resource="/nextapp.echo2/test/componentxml/Delta.whoknows" content-type="image/gif" width="30px"/>
    </property>
   </properties>
  </style>

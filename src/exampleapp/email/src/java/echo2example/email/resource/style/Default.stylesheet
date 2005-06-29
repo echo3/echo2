@@ -6,72 +6,72 @@
    <property name="titleInsets" value="10px 5px"/>
    <property name="titleBackground" value="#2f2f4f"/>
    <property name="titleBackgroundImage">
-    <fillimage vertical="100%" repeat="horizontal">
+    <fill-image vertical="100%" repeat="horizontal">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/echo2example/email/resource/image/WindowPaneTitleBackground.png"/>
+      <resource-image-reference resource="/echo2example/email/resource/image/WindowPaneTitleBackground.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
    <property name="titleForeground" value="#ffffff"/>
    <property name="border">
-    <fillimageborder contentinsets="8px 8px 14px 14px" borderinsets="17px 17px 23px 23px">
-     <borderpart position="topleft">
-      <fillimage>
+    <fill-image-border content-insets="8px 8px 14px 14px" border-insets="17px 17px 23px 23px">
+     <border-part position="top-left">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderTopLeft.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderTopLeft.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="top">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="top">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderTop.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderTop.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="topright">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="top-right">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderTopRight.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderTopRight.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="left">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="left">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderLeft.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderLeft.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="right">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="right">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderRight.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderRight.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="bottomleft">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom-left">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderBottomLeft.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderBottomLeft.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="bottom">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderBottom.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderBottom.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-     <borderpart position="bottomright">
-      <fillimage>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom-right">
+      <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resourceimagereference resource="/echo2example/email/resource/image/BorderBottomRight.png"/>
+        <resource-image-reference resource="/echo2example/email/resource/image/BorderBottomRight.png"/>
        </image>
-      </fillimage>
-     </borderpart>
-    </fillimageborder>
+      </fill-image>
+     </border-part>
+    </fill-image-border>
    </property>
   </properties>
  </style>
@@ -81,7 +81,7 @@
    <property name="cellSpacing" value="40px"/>
   </properties>
  </style>
- <style name="LoginScreen.LoginWindow" basename="Default" type="nextapp.echo2.app.WindowPane">
+ <style name="LoginScreen.LoginWindow" base-name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <property name="resizable" value="false"/>
    <property name="positionX" value="160px"/>
@@ -93,11 +93,11 @@
  <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
   <properties>
    <property name="backgroundImage">
-    <fillimage repeat="vertical">
+    <fill-image repeat="vertical">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/echo2example/email/resource/image/LoginBackground.png"/>
+      <resource-image-reference resource="/echo2example/email/resource/image/LoginBackground.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
   </properties>  
  </style>
@@ -110,35 +110,35 @@
  <style name="LoginScreen.Prompt" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.GridLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
      <properties>
       <property name="alignment">
        <alignment horizontal="right"/>
       </property>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
  <style name="LoginScreen.Continue" type="nextapp.echo2.app.Button">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.GridLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
      <properties>
       <property name="columnSpan" value="2"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
  <style name="LoginScreen.WelcomeLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.GridLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
      <properties>
       <property name="columnSpan" value="2"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -146,12 +146,12 @@
   <properties>
    <property name="foreground" value="#ffffff"/>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="background" value="#514c60"/>
       <property name="insets" value="10px"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -167,25 +167,25 @@
    <property name="rolloverEnabled" value="true"/>
    <property name="pressedEnabled" value="true"/>
    <property name="backgroundImage">
-    <fillimage repeat="none">
+    <fill-image repeat="none">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/echo2example/email/resource/image/OptionButtonDefaultBackground.png"/>
+      <resource-image-reference resource="/echo2example/email/resource/image/OptionButtonDefaultBackground.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
    <property name="rolloverBackgroundImage">
-    <fillimage repeat="none">
+    <fill-image repeat="none">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/echo2example/email/resource/image/OptionButtonRolloverBackground.png"/>
+      <resource-image-reference resource="/echo2example/email/resource/image/OptionButtonRolloverBackground.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
    <property name="pressedBackgroundImage">
-    <fillimage repeat="none">
+    <fill-image repeat="none">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/echo2example/email/resource/image/OptionButtonPressedBackground.png"/>
+      <resource-image-reference resource="/echo2example/email/resource/image/OptionButtonPressedBackground.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
   </properties>
  </style>
@@ -194,30 +194,30 @@
    <property name="cellSpacing" value="50px"/>
    <property name="foreground" value="#ffffff"/>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="backgroundImage">
-       <fillimage repeat="vertical">
+       <fill-image repeat="vertical">
         <image type="nextapp.echo2.app.ResourceImageReference">
-         <resourceimagereference resource="/echo2example/email/resource/image/OptionPaneBackground.png"/>
+         <resource-image-reference resource="/echo2example/email/resource/image/OptionPaneBackground.png"/>
         </image>
-       </fillimage>
+       </fill-image>
       </property>
       <property name="background" value="#6f7094"/>
       <property name="insets" value="0px"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
  <style name="MessageDialog.ContentLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="insets" value="10px"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -233,24 +233,24 @@
  <style name="MessageListTable.EvenRowLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.TableLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.TableLayoutData">
      <properties>
       <property name="insets" value="8px 1px"/>
       <property name="background" value="#e1e1e1"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
  <style name="MessageListTable.OddRowLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.TableLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.TableLayoutData">
      <properties>
       <property name="insets" value="8px 1px"/>
       <property name="background" value="#ffffff"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -266,7 +266,7 @@
    </property>
   </properties>
  </style>
- <style name="ComposeWindow.MessageField" basename="Default" type="nextapp.echo2.app.text.TextComponent">
+ <style name="ComposeWindow.MessageField" base-name="Default" type="nextapp.echo2.app.text.TextComponent">
   <properties>
    <property name="font">
     <font typeface="monospace" size="10pt"/>
@@ -299,20 +299,20 @@
    <property name="insets" value="10px 0px"/>
    <property name="cellSpacing" value="3px"/>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="overflow" value="OVERFLOW_HIDDEN"/>
       <property name="background" value="#cfcfdf"/>
       <property name="backgroundImage">
-       <fillimage>
+       <fill-image>
         <image type="nextapp.echo2.app.ResourceImageReference">
-         <resourceimagereference resource="/echo2example/email/resource/image/ControlPaneFill.png"/>
+         <resource-image-reference resource="/echo2example/email/resource/image/ControlPaneFill.png"/>
         </image>
-       </fillimage>
+       </fill-image>
       </property>
       <property name="insets" value="2px"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -330,10 +330,10 @@
     <font size="14px" bold="true" underline="true"/>
    </property>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.ColumnLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.ColumnLayoutData">
      <properties>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -343,10 +343,10 @@
     <font italic="true"/>
    </property>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.ColumnLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.ColumnLayoutData">
      <properties>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>

@@ -18,7 +18,7 @@
    <property name="background" value="#ff0000"/>
   </properties>
  </style>
- <style name="selected" basename="default" type="nextapp.echo2.app.Button">
+ <style name="selected" base-name="default" type="nextapp.echo2.app.Button">
   <properties>
    <property name="foreground" value="#00cc00"/>
   </properties>

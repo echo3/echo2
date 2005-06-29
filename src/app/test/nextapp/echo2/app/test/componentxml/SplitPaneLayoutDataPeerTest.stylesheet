@@ -3,19 +3,19 @@
  <style name="alpha" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="background" value="#abcdef"/>
       <property name="insets" value="20px 30px"/>
       <property name="backgroundImage">
-       <fillimage>
+       <fill-image>
         <image type="nextapp.echo2.app.ResourceImageReference">
-         <resourceimagereference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+         <resource-image-reference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
         </image>
-       </fillimage>
+       </fill-image>
       </property>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>

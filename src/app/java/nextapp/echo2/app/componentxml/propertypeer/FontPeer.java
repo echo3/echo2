@@ -95,7 +95,7 @@ implements PropertyXmlPeer {
         if ("true".equals(fontElement.getAttribute("overline"))) {
             style |= Font.OVERLINE;
         }
-        if ("true".equals(fontElement.getAttribute("linethrough"))) {
+        if ("true".equals(fontElement.getAttribute("line-through"))) {
             style |= Font.LINE_THROUGH;
         }
         Element[] typefaces = DomUtil.getChildElementsByTagName(fontElement, "typeface");

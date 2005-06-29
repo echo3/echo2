@@ -122,8 +122,8 @@ public class StyleSheetLoader {
             }
             
             DerivedMutableStyle style;
-            if (styleElements[i].hasAttribute("basename")) {
-                String baseName = styleElements[i].getAttribute("basename");
+            if (styleElements[i].hasAttribute("base-name")) {
+                String baseName = styleElements[i].getAttribute("base-name");
                 
                 Map classToStyleMap = (Map) namedStyleMap.get(baseName);
                 if (classToStyleMap == null) {

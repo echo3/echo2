@@ -22,7 +22,7 @@
  <style name="charlie" type="nextapp.echo2.app.Component">
   <properties>
    <property name="font">
-    <font size="24pt" bold="true" italic="true" underline="true" overline="true" linethrough="true">
+    <font size="24pt" bold="true" italic="true" underline="true" overline="true" line-through="true">
      <typeface name="Verdana"/>
     </font>
    </property>

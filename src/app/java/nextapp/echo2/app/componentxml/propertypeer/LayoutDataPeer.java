@@ -61,7 +61,7 @@ implements PropertyXmlPeer {
     public Object getValue(ClassLoader classLoader, Class objectClass, Element propertyElement)
     throws InvalidPropertyException {
         try {
-            Element layoutDataElement = DomUtil.getChildElementByTagName(propertyElement, "layoutdata");
+            Element layoutDataElement = DomUtil.getChildElementByTagName(propertyElement, "layout-data");
             String type = layoutDataElement.getAttribute("type");
 
             // Load properties from XML.

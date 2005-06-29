@@ -3,22 +3,22 @@
  <style name="alpha" type="nextapp.echo2.app.text.TextComponent">
   <properties>
    <property name="backgroundImage">
-    <fillimage>
+    <fill-image>
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+      <resource-image-reference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
   </properties>
  </style>
  <style name="bravo" type="nextapp.echo2.app.text.TextComponent">
   <properties>
    <property name="backgroundImage">
-    <fillimage horizontal="50px" vertical="-30%" repeat="horizontal" attachment="fixed">
+    <fill-image horizontal="50px" vertical="-30%" repeat="horizontal" attachment="fixed">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resourceimagereference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+      <resource-image-reference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
      </image>
-    </fillimage>
+    </fill-image>
    </property>
   </properties>
  </style>

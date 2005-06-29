@@ -53,7 +53,7 @@ implements PropertyXmlPeer {
      */
     public Object getValue(ClassLoader classLoader, Class objectClass, Element propertyElement) 
     throws InvalidPropertyException {
-        Element fillImageBorderElement = DomUtil.getChildElementByTagName(propertyElement, "fillimageborder");
+        Element fillImageBorderElement = DomUtil.getChildElementByTagName(propertyElement, "fill-image-border");
         if (fillImageBorderElement == null) {
             throw new InvalidPropertyException("Invalid FillImageBorder property.", null);
         }
@@ -65,16 +65,16 @@ implements PropertyXmlPeer {
             Color color = ColorPeer.toColor(fillImageBorderElement.getAttribute("color"));
             fillImageBorder.setColor(color);
         }
-        if (fillImageBorderElement.hasAttribute("borderinsets")) {
-            Insets insets = InsetsPeer.toInsets(fillImageBorderElement.getAttribute("borderinsets"));
+        if (fillImageBorderElement.hasAttribute("border-insets")) {
+            Insets insets = InsetsPeer.toInsets(fillImageBorderElement.getAttribute("border-insets"));
             fillImageBorder.setBorderInsets(insets);
         }
-        if (fillImageBorderElement.hasAttribute("contentinsets")) {
-            Insets insets = InsetsPeer.toInsets(fillImageBorderElement.getAttribute("contentinsets"));
+        if (fillImageBorderElement.hasAttribute("content-insets")) {
+            Insets insets = InsetsPeer.toInsets(fillImageBorderElement.getAttribute("content-insets"));
             fillImageBorder.setContentInsets(insets);
         }
         
-        NodeList borderPartList = fillImageBorderElement.getElementsByTagName("borderpart");
+        NodeList borderPartList = fillImageBorderElement.getElementsByTagName("border-part");
         int borderPartCount = borderPartList.getLength();
         for (int i = 0; i < borderPartCount; ++i) {
             Element borderPartElement = (Element) borderPartList.item(i);
@@ -83,21 +83,21 @@ implements PropertyXmlPeer {
             FillImage fillImage = (FillImage) propertyLoader.getPropertyValue(FillImageBorder.class, FillImage.class, 
                     borderPartElement);
             
-            if ("topleft".equals(position)) {
+            if ("top-left".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.TOP_LEFT, fillImage);
             } else if ("top".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.TOP, fillImage);
-            } else if ("topright".equals(position)) {
+            } else if ("top-right".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.TOP_RIGHT, fillImage);
             } else if ("left".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.LEFT, fillImage);
             } else if ("right".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.RIGHT, fillImage);
-            } else if ("bottomleft".equals(position)) {
+            } else if ("bottom-left".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.BOTTOM_LEFT, fillImage);
             } else if ("bottom".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.BOTTOM, fillImage);
-            } else if ("bottomright".equals(position)) {
+            } else if ("bottom-right".equals(position)) {
                 fillImageBorder.setFillImage(FillImageBorder.BOTTOM_RIGHT, fillImage);
             }
         }

@@ -52,7 +52,7 @@ implements PropertyXmlPeer {
      */
     public Object getValue(ClassLoader classLoader, Class objectClass, Element propertyElement)
     throws InvalidPropertyException {
-        Element fillImageElement = DomUtil.getChildElementByTagName(propertyElement, "fillimage");
+        Element fillImageElement = DomUtil.getChildElementByTagName(propertyElement, "fill-image");
         if (fillImageElement == null) {
             throw new InvalidPropertyException("Invalid FillImage property.", null);
         }
@@ -90,7 +90,7 @@ implements PropertyXmlPeer {
         
         Object imagePropertyValue = propertyLoader.getPropertyValue(FillImage.class, propertyClass, imageElement);
         if (!(imagePropertyValue instanceof ImageReference)) {
-            throw new InvalidPropertyException("Invalid FillImage proeprty (type \"" + imageType 
+            throw new InvalidPropertyException("Invalid FillImage property (type \"" + imageType 
                     + "\" is not an ImageReference.", null);
         }
 

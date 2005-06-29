@@ -54,14 +54,14 @@ implements PropertyXmlPeer {
             return new ResourceImageReference(propertyElement.getAttribute("value"));
         } else {
             Element resourceImageReferenceElement = DomUtil.getChildElementByTagName(propertyElement, 
-                    "resourceimagereference");
+                    "resource-image-reference");
             if (!resourceImageReferenceElement.hasAttribute("resource")) {
                 throw new InvalidPropertyException("Invalid ResourceImageReference property (resource not specified).", null);
             }
             String resource = resourceImageReferenceElement.getAttribute("resource");
             String contentType = null;
-            if (resourceImageReferenceElement.hasAttribute("contenttype")) {
-                contentType = resourceImageReferenceElement.getAttribute("contenttype");
+            if (resourceImageReferenceElement.hasAttribute("content-type")) {
+                contentType = resourceImageReferenceElement.getAttribute("content-type");
             }
             Extent width = null;
             if (resourceImageReferenceElement.hasAttribute("width")) {

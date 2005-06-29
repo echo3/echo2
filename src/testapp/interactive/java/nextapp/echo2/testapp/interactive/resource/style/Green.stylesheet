@@ -29,7 +29,7 @@
    <property name="insets" value="20px 3px"/>
   </properties>
  </style>
- <style name="Selected" basename="Default" type="nextapp.echo2.app.Button">
+ <style name="Selected" base-name="Default" type="nextapp.echo2.app.Button">
   <properties>
    <property name="background" value="#3f6f3f"/>
    <property name="foreground" value="#ffcfcf"/>
@@ -51,7 +51,7 @@
    </property>
    <property name="foreground" value="#ffffff"/>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="alignment">
        <alignment horizontal="center"/>
@@ -60,7 +60,7 @@
       <property name="insets" value="8px"/>
       <property name="overflow" value="OVERFLOW_HIDDEN"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
@@ -74,28 +74,28 @@
  <style name="ApplicationControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="background" value="#7f7f4f"/>
       <property name="insets" value="5px"/>
       <property name="minimumSize" value="200px"/>
       <property name="maximumSize" value="300px"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
  <style name="TestControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
-    <layoutdata type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
      <properties>
       <property name="background" value="#dfdfaf"/>
       <property name="insets" value="5px"/>
       <property name="minimumSize" value="200px"/>
       <property name="maximumSize" value="300px"/>
      </properties>
-    </layoutdata>
+    </layout-data>
    </property>
   </properties>
  </style>
