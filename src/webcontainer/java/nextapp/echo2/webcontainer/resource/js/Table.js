@@ -297,7 +297,7 @@ EchoTable.setSelected = function(trElement, newValue) {
 /**
  * Updates the selection state in the outgoing <code>ClientMessage</code>.
  * If any server-side <code>ActionListener</code>s are registered, an action
- * will be set and a client-server connection initiated.
+ * will be set in the ClientMessage and a client-server connection initiated.
  *
  * @param tableElement the table element whose state is to be updated
  */

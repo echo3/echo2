@@ -30,10 +30,22 @@
 //_________________________
 // Object EchoTextComponent
 
+/**
+ * Static object/namespace for Text Component support.
+ * This object/namespace should not be used externally.
+ */
 EchoTextComponent = function() { };
 
+/**
+ * Static object/namespace for Text Component MessageProcessor 
+ * implementation.
+ */
 EchoTextComponent.MessageProcessor = function() { };
 
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ */
 EchoTextComponent.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
@@ -49,6 +61,12 @@ EchoTextComponent.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * Text Component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -59,6 +77,12 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     }
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * Text Component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -93,6 +117,14 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
+/**
+ * Processes a user "action request" on the text component i.e., the pressing
+ * of the ENTER key when the the component is focused.
+ * If any server-side <code>ActionListener</code>s are registered, an action
+ * will be set in the ClientMessage and a client-server connection initiated.
+ *
+ * @param textComponent the text component elemnet
+ */
 EchoTextComponent.doAction = function(textComponent) {
     if (!EchoDomPropertyStore.getPropertyValue(textComponent.id, "serverNotify")) {
         return;
@@ -101,7 +133,78 @@ EchoTextComponent.doAction = function(textComponent) {
     EchoServerTransaction.connect();
 };
 
-EchoTextComponent.doUpdate = function(textComponent) {
+/**
+ * Processes a focus blur event:
+ * Records the current state of the text field to the ClientMessage.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTextComponent.processBlur = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+        return;
+    }
+    EchoTextComponent.updateClientMessage(textComponent);
+    EchoFocusManager.setFocusedState(textComponent.id, false);
+};
+
+/**
+ * Processes a focus event:
+ * Notes focus state in ClientMessage.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTextComponent.processFocus = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+        return;
+    }
+    EchoFocusManager.setFocusedState(textComponent.id, true);
+};
+
+/**
+ * Processes a key press event:
+ * Initiates an action in the event that the key pressed was the
+ * ENTER key.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTextComponent.processKeyPress = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+        EchoDomUtil.preventEventDefault(echoEvent);
+    }
+    if (echoEvent.keyCode == 13) {
+        EchoTextComponent.doAction(textComponent);
+    }
+};
+
+
+/**
+ * Processes a key up event:
+ * Records the current state of the text field to the ClientMessage.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTextComponent.processKeyUp = function(echoEvent) {
+    var textComponent = echoEvent.registeredTarget;
+    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+        EchoDomUtil.preventEventDefault(echoEvent);
+        return;
+    }
+    EchoTextComponent.updateClientMessage(textComponent);
+};
+
+/**
+ * Updates the component state in the outgoing <code>ClientMessage</code>.
+ *
+ * @param componentId the id of the Text Component
+ */
+EchoTextComponent.updateClientMessage = function(textComponent) {
     var textPropertyElement = EchoClientMessage.createPropertyElement(textComponent.id, "text");
     if (textPropertyElement.firstChild) {
         textPropertyElement.firstChild.nodeValue = textComponent.value;
@@ -111,40 +214,4 @@ EchoTextComponent.doUpdate = function(textComponent) {
     
     EchoClientMessage.setPropertyValue(textComponent.id, "horizontalScroll", textComponent.scrollLeft);
     EchoClientMessage.setPropertyValue(textComponent.id, "verticalScroll", textComponent.scrollTop);
-};
-
-EchoTextComponent.processBlur = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
-    if (!EchoClientEngine.verifyInput(textComponent.id)) {
-        return;
-    }
-    EchoTextComponent.doUpdate(textComponent);
-    EchoFocusManager.setFocusedState(textComponent.id, false);
-};
-
-EchoTextComponent.processFocus = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
-    if (!EchoClientEngine.verifyInput(textComponent.id)) {
-        return;
-    }
-    EchoFocusManager.setFocusedState(textComponent.id, true);
-};
-
-EchoTextComponent.processKeyPress = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
-    if (!EchoClientEngine.verifyInput(textComponent.id)) {
-        EchoDomUtil.preventEventDefault(echoEvent);
-    }
-    if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
-        EchoTextComponent.doAction(textComponent);
-    }
-};
-
-EchoTextComponent.processKeyUp = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
-    if (!EchoClientEngine.verifyInput(textComponent.id)) {
-        EchoDomUtil.preventEventDefault(echoEvent);
-        return;
-    }
-    EchoTextComponent.doUpdate(textComponent);
 };

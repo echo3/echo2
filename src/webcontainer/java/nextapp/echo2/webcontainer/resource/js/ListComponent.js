@@ -202,7 +202,7 @@ EchoListComponent.revertToInitialSelection = function(componentId) {
 /**
  * Updates the selection state in the outgoing <code>ClientMessage</code>.
  * If any server-side <code>ActionListener</code>s are registered, an action
- * will be set and a client-server connection initiated.
+ * will be set in the ClientMessage and a client-server connection initiated.
  *
  * @param componentId the id of the selection component
  */
