@@ -597,6 +597,7 @@ EchoCssUtil.restoreOriginalStyle = function(element) {
         return;
     }
     element.style.cssText = originalStyle == "-" ? "" : originalStyle;
+    EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", null);
 };
 
 // _______________________
