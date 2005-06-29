@@ -51,7 +51,7 @@ public class SplitPaneTest extends SplitPane {
     private class PaneControlsColumn extends ButtonColumn {
         
         private PaneControlsColumn(final int paneNumber) {
-            add(new Label("Confgiure Pane #" + paneNumber));
+            add(new Label("Configure Pane #" + paneNumber));
     
             addButton("Fill With Text", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {

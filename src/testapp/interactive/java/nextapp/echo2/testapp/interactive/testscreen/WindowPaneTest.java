@@ -450,8 +450,8 @@ public class WindowPaneTest extends SplitPane {
     }
     
     /**
-     * Cresats a 'Test Window' that contains buttons which may be used to 
-     * configure various aspects of t he window.
+     * Creates a 'Test Window' that contains buttons which may be used to 
+     * configure various aspects of the window.
      * 
      * @param name the window name
      * @return the created window

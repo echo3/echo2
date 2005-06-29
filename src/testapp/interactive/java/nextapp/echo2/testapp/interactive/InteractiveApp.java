@@ -43,9 +43,10 @@ import nextapp.echo2.webcontainer.ContainerContext;
  * Echo application.  The intent of this application is to serve as a running
  * testbed for the Echo framework.  As such, the requirements of this 
  * application are dramatically different from a production internet 
- * application.  There is stuff in this code of this app that is downright 
- * absurd.  Please do not look to this application to see good design
- * practices for building your own Echo apps--you will not find them here.
+ * application.  There is stuff in this code of this application that is 
+ * downright absurd.  Please do not look to this application to see good design
+ * practices for building your own Echo applications--you will not find them 
+ * here.
  */
 public class InteractiveApp extends ApplicationInstance {
 
@@ -154,8 +155,8 @@ public class InteractiveApp extends ApplicationInstance {
      * Starts the ghost test with the specified callback interval and run-time.
      * 
      * @param interval the callback interval between ghost actions, in
-     *        milleseconds
-     * @param runTime the total run-time of the ghost test, in millesconds;
+     *        milliseconds
+     * @param runTime the total run-time of the ghost test, in milliseconds;
      *        specifying 0 will run the ghost test indefinitely
      */
     public void startGhostTask(int interval, long runTime) {

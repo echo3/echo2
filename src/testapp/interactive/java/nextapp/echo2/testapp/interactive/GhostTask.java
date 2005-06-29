@@ -70,7 +70,7 @@ implements Runnable {
         // Command test might do a redirect, killing the ghost test.
         blacklist.add("Command");
         
-        // Demo visitors might think the app broke if the style sheet gets set to null.
+        // Demo visitors might think the application broke if the style sheet gets set to null.
         blacklist.add("No Style Sheet");
         
         // Image test skews ghost-test based performance test results (AWTImageReference).
@@ -90,7 +90,7 @@ implements Runnable {
      * @param app the application to test
      * @param taskQueue the <code>TaskQueueHandle</codE> to which tasks will be
      *        added 
-     * @param runTime the number of milleseconds the test should run (specify 0
+     * @param runTime the number of milliseconds the test should run (specify 0
      *        for an indefinite amount of time)
      */
     static void start(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
@@ -109,7 +109,7 @@ implements Runnable {
      * @param app the application to test
      * @param taskQueue the <code>TaskQueueHandle</code> to which tasks will be 
      *        added
-     * @param runTime the number of milleseconds the test should run (specify 0
+     * @param runTime the number of milliseconds the test should run (specify 0
      *        for an indefinite amount of time)
      */
     private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
@@ -124,7 +124,7 @@ implements Runnable {
     
     /**
      * Retrieves all buttons currently displayed in the user-interface and 
-     * programatticaly clicks one.
+     * programmatically clicks one.
      */
     private void clickRandomButton() {
         Window window = ApplicationInstance.getActive().getDefaultWindow();
@@ -135,12 +135,12 @@ implements Runnable {
     }
     
     /**
-     * Recursively finds <code>Button</code> s in the hierarchy whose parent
+     * Recursively finds <code>Button</code>s in the hierarchy whose parent
      * is <code>component</code> and adds them to the
      * <code>foundButtons</code> collection.
      * 
      * @param foundButtons the <code>Collection</code> to which
-     *        <code>Button</code> s will be added
+     *        <code>Button</code>s will be added
      * @param component the root <code>Component</code> of the hierarchy to
      *        search
      */
