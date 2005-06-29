@@ -101,7 +101,9 @@ public class Grid extends Component {
     }
     
     /**
-     * Returns the default cell insets.
+     * Returns the default cell insets. The default cell insets will be used for
+     * individual child cells that do not provide an <code>Insets</code> value
+     * in their <code>GridLayoutData</code>.
      * 
      * @return the default cell insets
      */
@@ -111,6 +113,15 @@ public class Grid extends Component {
     
     /**
      * Returns the orientation of the grid (either horizontal or vertical).
+     * The orientation describes the direction in which cells are laid out.
+     * An orientation of <code>ORIENTATION_HORIZONTAL</code> (the default)
+     * specifies that cells should be laid out in horizontal rows
+     * with the <code>size</code> property specifying the number of columns
+     * per row.
+     * An orientation of <code>ORIENTATION_VERTICAL</code>
+     * specifies that cells should be laid out in vertical columns
+     * with the <code>size</code> property specifying the number of rows
+     * per column.
      * 
      * @return the orientation, one of the following values:
      *         <ul>
@@ -200,7 +211,9 @@ public class Grid extends Component {
     }
     
     /**
-     * Sets the default cell insets.
+     * Sets the default cell insets. The default cell insets will be used for
+     * individual child cells that do not provide an <code>Insets</code> value
+     * in their <code>GridLayoutData</code>.
      * 
      * @param newValue the new default cell insets
      */
@@ -208,9 +221,17 @@ public class Grid extends Component {
         setProperty(PROPERTY_INSETS, newValue);
     }
 
-    //BUGBUG. Fully describe concept of "orientation".
     /**
-     * Returns the orientation of the grid (either horizontal or vertical).
+     * Sets the orientation of the grid (either horizontal or vertical).
+     * The orientation describes the direction in which cells are laid out.
+     * An orientation of <code>ORIENTATION_HORIZONTAL</code> (the default)
+     * specifies that cells should be laid out in horizontal rows
+     * with the <code>size</code> property specifying the number of columns
+     * per row.
+     * An orientation of <code>ORIENTATION_VERTICAL</code>
+     * specifies that cells should be laid out in vertical columns
+     * with the <code>size</code> property specifying the number of rows
+     * per column.
      * 
      * @param newValue the new orientation, one of the following values:
      *        <ul>
@@ -222,9 +243,12 @@ public class Grid extends Component {
         setProperty(PROPERTY_ORIENTATION, new Integer(newValue));
     }
     
-    //BUGBUG. Fully describe concept of "origin".
     /**
-     * Sets the origin of the grid.
+     * Sets the origin of the grid.  The origin describes the "starting corner"
+     * from which grid child cells are laid out.  The default origin is 
+     * the leading/top corner.  The provided <code>Alignment</code> must not
+     * specify <code>Alignment.CENTER</code> as either the horizontal or
+     * vertical value.
      * 
      * @param newValue the new origin
      */
