@@ -47,6 +47,8 @@ EchoListComponentDhtml.MessageProcessor = function() { };
 /**
  * MessageProcessor process() implementation 
  * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process.
  */
 EchoListComponentDhtml.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {

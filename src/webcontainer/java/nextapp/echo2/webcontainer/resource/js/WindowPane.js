@@ -31,14 +31,23 @@
 // Object EchoWindowPane
 
 /**
- * Static object to provide support for dragging virtual windows.
- *
- * Do not instantiate.
+ * Static object/namespace for WindowPane support.
+ * This object/namespace should not be used externally.
  */
 EchoWindowPane = function() { };
 
+/**
+ * Static object/namespace for WindowPane MessageProcessor 
+ * implementation.
+ */
 EchoWindowPane.MessageProcessor = function() { };
 
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process.
+ */
 EchoWindowPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
@@ -54,6 +63,12 @@ EchoWindowPane.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * WindowPane that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
     var elementId = disposeElement.getAttribute("eid");
     EchoEventProcessor.removeHandler(elementId + "_close", "click");
@@ -69,9 +84,15 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
     EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
 
     var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
-    EchoWindowPane.ZIndexManager.removeElement(containerId, elementId);
+    EchoWindowPane.ZIndexManager.remove(containerId, elementId);
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * WindowPane that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     var elementId = initElement.getAttribute("eid");
     var movable = initElement.getAttribute("movable") == "true";
@@ -92,7 +113,7 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     }
     
     EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
-    EchoWindowPane.ZIndexManager.addElement(containerId, elementId);
+    EchoWindowPane.ZIndexManager.add(containerId, elementId);
     EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
     if (movable) {
         EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
@@ -110,6 +131,10 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     }
 };
 
+/**
+ * Static object/namespace to manage z-index ordering of multiple WindowPanes
+ * with the same parent component.
+ */
 EchoWindowPane.ZIndexManager = function() { };
 
 /**
@@ -117,7 +142,13 @@ EchoWindowPane.ZIndexManager = function() { };
  */
 EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap = new Array();
 
-EchoWindowPane.ZIndexManager.addElement = function(containerId, elementId) {
+/**
+ * Adds a WindowPane to be managed by the ZIndexManager.
+ *
+ * @param containerId the id of the Element containing the WindowPane
+ * @param elementId the id of the WindowPane
+ */
+EchoWindowPane.ZIndexManager.add = function(containerId, elementId) {
     var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
     if (!elementIdArray) {
         elementIdArray = new Array();
@@ -134,6 +165,13 @@ EchoWindowPane.ZIndexManager.addElement = function(containerId, elementId) {
     EchoWindowPane.ZIndexManager.raise(containerId, elementId);
 };
 
+/**
+ * Raises a WindowPane being managed by the ZIndexManager to the above all 
+ * other WindowPanes within its container.
+ *
+ * @param containerId the id of the Element containing the WindowPane
+ * @param elementId the id of the WindowPane
+ */
 EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
     var windowElement = document.getElementById(elementId);
 
@@ -160,10 +198,16 @@ EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
     return raiseIndex;
 };
 
-EchoWindowPane.ZIndexManager.removeElement = function(containerId, elementId) {
+/**
+ * Remvoes a WindowPane from being managed by the ZIndexManager.
+ *
+ * @param containerId the id of the Element containing the WindowPane
+ * @param elementId the id of the WindowPane
+ */
+EchoWindowPane.ZIndexManager.remove = function(containerId, elementId) {
     var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
     if (!elementIdArray) {
-        throw "ZIndexManager.removeElement: no data for container with id \"" + containerId + "\".";
+        throw "ZIndexManager.remove: no data for container with id \"" + containerId + "\".";
     }
     for (var i = 0; i < elementIdArray.length; ++i) {
         if (elementIdArray[i] == elementId) {
@@ -178,53 +222,83 @@ EchoWindowPane.ZIndexManager.removeElement = function(containerId, elementId) {
             return;
         }
     }
-    throw "ZIndexManager.removeElement: Element with id \"" + elementId + 
+    throw "ZIndexManager.remove: Element with id \"" + elementId + 
             "\" does not exist in container with id \"" + containerId + "\".";
 };
 
-/** The initial horizontal position of the window. */
+/** The initial horizontal position of the WindowPane being moved/resized. */
 EchoWindowPane.initialWindowX = -1;
 
-/** The initial vertical position of the window. */
+/** The initial vertical position of the WindowPane being moved/resized. */
 EchoWindowPane.initialWindowY = -1;
 
-/** The initial width of the window. */
+/** The initial width of the WindowPane being moved/resized. */
 EchoWindowPane.initialWidth = -1;
 
-/** The initial height of the window. */
+/** The initial height of the WindowPane being moved/resized. */
 EchoWindowPane.initialHeight = -1;
 
-/** The horizontal drag position of the mouse relative to the window. */
+/** The horizontal drag position of the mouse relative to the WindowPane. */
 EchoWindowPane.mouseOffsetX = -1;
 
-/** The vertical drag position of the mouse relative to the window. */
+/** The vertical drag position of the mouse relative to the WindowPane. */
 EchoWindowPane.mouseOffsetY = -1;
 
-/** The active window DIV element being dragged */
+/** The DIV element of the WindowPane being moved/resized. */
 EchoWindowPane.activeElement = null;
 
+/**
+ * Indicates the direction (if any) that the current WindowPane is being
+ * resized in the horizontal direction.  This value may be one of
+ * the following values:
+ * <ul>
+ *  <lil>-1: the WindowPane is being resized by its left border</li>
+ *  <lil> 0: the WindowPane is not being resized horizontally</li>
+ *  <lil> 1: the WindowPane is being resized by its right border</li>
+ * </ul>
+ */
 EchoWindowPane.resizeModeHorizontal = 0;
+
+/**
+ * Indicates the direction (if any) that the current WindowPane is being
+ * resized in the vertical direction.  This value may be one of
+ * the following values:
+ * <ul>
+ *  <lil>-1: the WindowPane is being resized by its top border</li>
+ *  <lil> 0: the WindowPane is not being resized vertically</li>
+ *  <lil> 1: the WindowPane is being resized by its bottom border</li>
+ * </ul>
+ */
 EchoWindowPane.resizeModeVertical = 0;
 
+/** The minimum width of the WindowPane currently being resized */
 EchoWindowPane.minimumWidth = -1;
+
+/** The minimum height of the WindowPane  currently being resized */
 EchoWindowPane.minimumHeight = -1;
+
+/** The maximum width of the WindowPane  currently being resized */
 EchoWindowPane.maximumWidth= -1;
+
+/** The maximum height of the WindowPane  currently being resized */
 EchoWindowPane.maximumHeight = -1;
 
 /** 
  * The maximum allowed horizontal position of the upper-left corner of 
- * the window. 
+ * the WindowPane currently being moved/resized.  This value is calculated
+ * based on the available movement area.
  */
 EchoWindowPane.maxX = -1;
 
 /** 
  * The maximum allowed vertical position of the upper-left corner of 
- * the window. 
+ * the WindowPane currently being moved/resized.  This value is calculated
+ * based on the available movement area.
  */
 EchoWindowPane.maxY = -1;
 
 /**
- * Calculates height of region in which window may be moved.
+ * Calculates the height of region in which window may be moved.
  *
  * @param element the container element within which the window may
  *        be moved
@@ -270,7 +344,7 @@ EchoWindowPane.getBorderWidth = function(element) {
 };
 
 /**
- * Calculates width of region in which window may be moved.
+ * Calculates width of the region in which window may be moved.
  *
  * @param element the container element within which the window may
  *        be moved
@@ -285,6 +359,16 @@ EchoWindowPane.getClientWidth = function(element) {
     return 0;
 };
 
+/**
+ * Processes a mouse down event within the border region of a WindowPane.
+ * This handler first raises the window and then delegates border
+ * dragging work to <code>processBorderDragMouseDown()</code>.
+ * This event listener is permanently registered to the window border
+ * elements using the EchoEventProcessor.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoWindowPane.processBorderMouseDown = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
@@ -295,6 +379,13 @@ EchoWindowPane.processBorderMouseDown = function(echoEvent) {
     EchoWindowPane.processBorderDragMouseDown(echoEvent);
 };
 
+/**
+ * Configures a window border for resizing in response to a mousedown
+ * event within the border region of a WindowPane.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoWindowPane.processBorderDragMouseDown = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var elementId = echoEvent.registeredTarget.getAttribute("id");
@@ -345,6 +436,19 @@ EchoWindowPane.processBorderDragMouseDown = function(echoEvent) {
     }
 };
 
+/**
+ * Processes a mouse move event when the user is resizing a 
+ * WindowPane.  Adjusts the size of the WindowPane
+ * based on the user's mouse position.
+ *
+ * This event listener is temporarily registered by the 
+ * <code>processBorderDragMouseDown()</code> method when the user begins
+ * resizing a WindowPane by dragging its border.  The event listener is 
+ * unregistered when the user releases the mouse and
+ * <code>processBorderDragMouseUp()</code> is invoked.
+ *
+ * @param e the event (only provided when using DOM Level 2 Event Model)
+ */
 EchoWindowPane.processBorderDragMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
@@ -388,6 +492,20 @@ EchoWindowPane.processBorderDragMouseMove = function(e) {
     }
 };
 
+/**
+ * Processes a mouse button release event when the user is resizing a 
+ * WindowPane.  Stores the updated state of the WindowPane in
+ * the ClientMessage.
+ *
+ * This method will automatically unregister the
+ * temporarily set mouse move/release listeners as its invocation indicates
+ * the completion of a window resize operation.
+ * This event listener is temporarily registered by the 
+ * <code>processBorderDragMouseDown()</code> method when the user begins
+ * resizing a WindowPane by dragging its border.  
+ *
+ * @param e the event (only provided when using DOM Level 2 Event Model)
+ */
 EchoWindowPane.processBorderDragMouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
 
@@ -404,7 +522,7 @@ EchoWindowPane.processBorderDragMouseUp = function(e) {
 };
 
 /**
- * Event handler for "Click" events on the close button.
+ * Event handler for mouse click events on the close button.
  * Notifies server of user action.
  *
  * @param echoEvent the event
@@ -420,8 +538,9 @@ EchoWindowPane.processCloseClick = function(echoEvent) {
 };
 
 /**
- * Event handler for "MouseDown" events on the close button.
- * Avoids close button mouse-down clicks from being processed by drag initiation handler.
+ * Event handler for mouse down events on the close button.
+ * Prevents close button mouse-down clicks from being processed by drag 
+ * initiation handler.
  *
  * @param echoEvent the event
  */
@@ -429,6 +548,13 @@ EchoWindowPane.processCloseMouseDown = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
 };
 
+/**
+ * Configures a WindowPane for dragging in response to a mousedown
+ * event within the title region of a WindowPane.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
     EchoDomUtil.preventEventDefault(echoEvent);
@@ -469,9 +595,17 @@ EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {
 };
 
 /**
- * Event handler for "MouseMove" events.  Registered when drag is initiated.
+ * Processes a mouse move event when the user is dragging a 
+ * WindowPane.  Adjusts the position of the WindowPane
+ * based on the user's mouse position.
  *
- * @param e The event (only provided when using DOM Level 2 Event Model)
+ * This event listener is temporarily registered by the 
+ * <code>processBorderDragMouseDown()</code> method when the user begins
+ * dragging a WindowPane by dragging its title.  The event listener is 
+ * unregistered when the user releases the mouse and
+ * <code>processTitleDragMouseUp()</code> is invoked.
+ *
+ * @param e the event (only provided when using DOM Level 2 Event Model)
  */
 EchoWindowPane.processTitleDragMouseMove = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
@@ -494,9 +628,18 @@ EchoWindowPane.processTitleDragMouseMove = function(e) {
 };
 
 /**
- * Event handler for "MouseUp" events.  Registered when drag is initiated.
+ * Processes a mouse button release event when the user is dragging a 
+ * WindowPane.  Stores the updated state of the WindowPane in
+ * the ClientMessage.
  *
- * @param e The event (only provided when using DOM Level 2 Event Model)
+ * This method will automatically unregister the
+ * temporarily set mouse move/release listeners as its invocation indicates
+ * the completion of a window drag operation.
+ * This event listener is temporarily registered by the 
+ * <code>processTitleDragMouseDown()</code> method when the user begins
+ * dragging a WindowPane by dragging its title.
+ *
+ * @param e the event (only provided when using DOM Level 2 Event Model)
  */
 EchoWindowPane.processTitleDragMouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
@@ -512,10 +655,14 @@ EchoWindowPane.processTitleDragMouseUp = function(e) {
 };
 
 /**
- * Event handler for "MouseDown" events.  Permanently registered.
+ * Processes a mouse down event within the title region of a WindowPane.
+ * This handler first raises the window and then delegates window
+ * dragging work to <code>processTitleDragMouseDown()</code>.
+ * This event listener is permanently registered to the window border
+ * elements using the EchoEventProcessor.
  *
- * @param echoEvent the "MouseDown" event, preprocessed by the
- *        EchoEventProcessor
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
  */
 EchoWindowPane.processTitleMouseDown = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
@@ -530,7 +677,7 @@ EchoWindowPane.processTitleMouseDown = function(echoEvent) {
 /**
  * Raises the specified WindowPane to the top.
  *
- * @param windowComponentId the id of the window pane
+ * @param windowComponentId the id of the WindowPane
  */
 EchoWindowPane.raise = function(windowComponentId) {
     var containerId = EchoDomPropertyStore.getPropertyValue(windowComponentId, "containerId");
@@ -539,7 +686,8 @@ EchoWindowPane.raise = function(windowComponentId) {
 };
 
 /**
- * Event handler for "SelectStart" events to disable selection while dragging the Window.
+ * Event handler for "SelectStart" events to disable selection while dragging
+ * the Window.  (Internet Explorer specific)
  *
  * @param e The event (only provided when using DOM Level 2 Event Model)
  */
