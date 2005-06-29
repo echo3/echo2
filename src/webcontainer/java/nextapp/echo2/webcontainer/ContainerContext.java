@@ -45,7 +45,7 @@ import nextapp.echo2.webrender.ClientProperties;
 public interface ContainerContext {
     
     /**
-     * Property name by which a <code>ContainerContext</code> may be retrived
+     * Property name by which a <code>ContainerContext</code> may be retrieved
      * from an <code>ApplicationInstance</code>'s context properties.
      * 
      * @see nextapp.echo2.app.ApplicationInstance#getContextProperty(java.lang.String)
@@ -83,7 +83,7 @@ public interface ContainerContext {
      * be used.  The default interval is 500ms.
      * 
      * @param taskQueue the <code>TaskQueue</code>
-     * @param ms the number of milleseconds between asynchronous client 
+     * @param ms the number of milliseconds between asynchronous client 
      *        callbacks
      */
     public void setTaskQueueCallbackInterval(TaskQueueHandle taskQueue, int ms);

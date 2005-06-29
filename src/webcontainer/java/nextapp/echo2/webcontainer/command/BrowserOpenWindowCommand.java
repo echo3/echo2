@@ -66,7 +66,7 @@ implements Command {
      *        new browser window (may be null)
      * @param replace a flag indicating whether the new URI should replace the
      *        previous URI in the window's history.  This flag is only relevant
-     *        when using this command to repalce a browser window.
+     *        when using this command to replace a browser window.
      */
     public BrowserOpenWindowCommand(String uri, String name, String features, boolean replace) {
         super();

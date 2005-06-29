@@ -48,7 +48,7 @@ import nextapp.echo2.webrender.UserInstance;
 public class ContainerInstance extends UserInstance {
     
     /**
-     * Default asynchronous monitor callback interval (in ms).
+     * Default asynchronous monitor callback interval (in milliseconds).
      */
     private static final int DEFAULT_CALLBACK_INTERVAL = 500;
     
@@ -97,7 +97,7 @@ public class ContainerInstance extends UserInstance {
         applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
                 new ContainerContextImpl(this));
         
-        //BUGBUG. It is probably better if the app be initialized in response to the initial
+        //BUGBUG. It is probably better if the application is initialized in response to the initial
         // sync service, rather than on the initial invocation.
         // Note that this code doesn't necessarily move..just the place from where it's invoked.
         try {
@@ -118,9 +118,9 @@ public class ContainerInstance extends UserInstance {
         return applicationInstance;
     }
     
-    //BUGBUG. current method of iterating weak-keyed map of taskqueues
-    // is not adequate.  If the app were to for whatever reason hold on
-    // to a dead taskqueue, its interval setting would effect the
+    //BUGBUG. current method of iterating weak-keyed map of task queues
+    // is not adequate.  If the application were to for whatever reason hold on
+    // to a dead task queue, its interval setting would effect the
     // calculation.
     // One solution: add a getTaskQueues() method to ApplicationInstance
     /**
@@ -145,7 +145,7 @@ public class ContainerInstance extends UserInstance {
     }
     
     /**
-     * Retrieves the <code>Component</code> with the specfied element id.
+     * Retrieves the <code>Component</code> with the specified element id.
      * 
      * @param elementId the element id, e.g., "c_42323"
      * @return the component (e.g., the component whose id is "42323")
@@ -236,7 +236,7 @@ public class ContainerInstance extends UserInstance {
      * <code>ContainerContext</code>.
      * 
      * @param taskQueue the <code>TaskQueue</code>
-     * @param ms the number of milleseconds between asynchronous client 
+     * @param ms the number of milliseconds between asynchronous client 
      *        callbacks
      * @see nextapp.echo2.webcontainer.ContainerContext#setTaskQueueCallbackInterval(nextapp.echo2.app.TaskQueueHandle, int)
      */

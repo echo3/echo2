@@ -439,7 +439,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a window pane, performing tasks such as deregistering
+     * dispose the state of a window pane, performing tasks such as unregistering
      * event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -539,7 +539,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         // Create Internet Explorer Select-Element blocking IFRAME (if required).
         if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_Z_INDEX)) {
             Element iframeQuirkDivElement = document.createElement("div");
-            // Resuse/modify windowBodyDivCssStyle.
+            // Reuse/modify windowBodyDivCssStyle.
             windowBodyDivCssStyle.setAttribute("z-index", "1");
             iframeQuirkDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
             windowDivElement.appendChild(iframeQuirkDivElement);

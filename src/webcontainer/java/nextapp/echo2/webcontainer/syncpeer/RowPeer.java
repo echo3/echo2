@@ -172,7 +172,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     }
     
     /**
-     * Renders child components which were added to a <code>Colunm</code>, as 
+     * Renders child components which were added to a <code>Row</code>, as 
      * described in the provided <code>ServerComponentUpdate</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>

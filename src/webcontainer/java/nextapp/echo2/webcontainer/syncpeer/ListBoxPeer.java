@@ -103,7 +103,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
 
         Extent width = (Extent) listBox.getRenderProperty(ListBox.PROPERTY_WIDTH, DEFAULT_WIDTH);
         if (!width.equals(DEFAULT_WIDTH) || !isDhtmlComponentRequired(rc)) {
-            // For components using DHTML listbox implementation, there is no reason to set width to 100%.
+            // For components using DHTML list box implementation, there is no reason to set width to 100%.
             // This also conveniently avoids another IE bug.
             style.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
@@ -122,11 +122,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
     
     /**
-     * Determines whether the use of the custom DHTML listbox widget is 
+     * Determines whether the use of the custom DHTML list box widget is 
      * required based on browser quirk information.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @return true if the custom DHTML listbox widget is required for the 
+     * @return true if the custom DHTML list box widget is required for the 
      *         target client
      */
     private boolean isDhtmlComponentRequired(RenderContext rc) {
@@ -135,7 +135,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
 
     /**
-     * Renders disposal code for a listbox rendered as a custom DHTML widget.
+     * Renders disposal code for a list box rendered as a custom DHTML widget.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update
@@ -148,7 +148,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
      * dispose the state of a list component, performing tasks such as 
-     * deregistering event listeners on the client.
+     * unregistering event listeners on the client.
      * 
      * @param serverMessage the <code>serverMessage</code>
      * @param elementId the HTML element id of the list component
@@ -218,8 +218,8 @@ public class ListBoxPeer extends AbstractListComponentPeer {
     }
     
     /**
-     * Renders a custom DHTML listbox widget (used only for clients that have
-     * quirks using traditional SELECT-based listboxes, i.e., Internet
+     * Renders a custom DHTML list box widget (used only for clients that have
+     * quirks using traditional SELECT-based list boxes, i.e., Internet
      * Explorer 6).
      * 
      * @param rc the relevant <code>RenderContext</code>

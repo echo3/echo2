@@ -73,7 +73,7 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
-//BUGBUG. sort component visiblity with regard to rendered components
+//BUGBUG. sort component visibility with regard to rendered components
 // (may simply want to require returned components be visible (at Table level) and validate this)
 
 /**
@@ -219,7 +219,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
     
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a table, performing tasks such as deregistering
+     * dispose the state of a table, performing tasks such as unregistering
      * event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>

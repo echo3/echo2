@@ -77,7 +77,7 @@ import org.w3c.dom.Node;
 public class SplitPanePeer 
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
 
-    //BUGBUG. SplitPane support for bidi is not rendering correctly at moment.
+    //BUGBUG. SplitPane support for bidirectional is not rendering correctly at moment.
     
     private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
@@ -138,7 +138,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     private PartialUpdateManager partialUpdateManager;
 
     /**
-     * Default contructor.
+     * Default constructor.
      */
     public SplitPanePeer() {
         super();
@@ -368,7 +368,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
 
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a split pane, performing tasks such as deregistering
+     * dispose the state of a split pane, performing tasks such as unregistering
      * event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>

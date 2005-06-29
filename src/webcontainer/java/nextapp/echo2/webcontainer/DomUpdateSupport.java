@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
 public interface DomUpdateSupport {
 
     /**
-     * Renders the component in its entirity as a child of the provided 
+     * Renders the component in its entirety as a child of the provided 
      * parent <code>Element</code>.  The implementation should additionally
      * render any child components, either by invoking their 
      * <code>renderHtml()</code> methods if their peers also implement
@@ -52,7 +52,7 @@ public interface DomUpdateSupport {
      * <p>
      * The implementation must also perform any non-HTML-rendering operations
      * which are performed in the <code>ComponentSynchronizePeer.renderAdd()</code>
-     * method, e.g., adding messageparts that register event listeners on
+     * method, e.g., adding message parts that registering event listeners on
      * the client.
      * 
      * @param rc the relevant <code>RenderContext</code>

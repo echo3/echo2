@@ -34,8 +34,8 @@ import nextapp.echo2.app.Command;
 /**
  * A Web Application Container-specific <code>Command</code> to 
  * redirect the current browser window to a new URI.  
- * Enqueueing any command after a redirect command will result in 
- * indeterminite behavior.
+ * Enqueuing any command after a redirect command will result in 
+ * indeterminate behavior.
  */
 public class BrowserRedirectCommand 
 implements Command {

@@ -79,7 +79,7 @@ public class AwtImageService extends AbstractImageService {
         } catch (IOException ex) {
             ex.printStackTrace();
             //BUGBUG. Socket exceptions (wrapped in Tomcat ClientAbortException (an IO Exception)) when "rapid clicking" in 
-            // Internet Explorer in test app....source is PNG renderer.
+            // Internet Explorer in test application....source is PNG renderer.
             // this may be an issue we have to deal with globally that is only manifesting itself here.
             // Or it might be a tomcat bug (was testing w/ 4.1.31).
             // Research this issue and solve&doc.

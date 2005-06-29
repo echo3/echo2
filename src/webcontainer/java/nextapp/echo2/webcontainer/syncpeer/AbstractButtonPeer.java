@@ -474,7 +474,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
 
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a button, performing tasks such as deregistering
+     * dispose the state of a button, performing tasks such as unregistering
      * event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>

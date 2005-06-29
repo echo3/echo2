@@ -49,7 +49,7 @@ public class IdTable {
     
     // Both of these bugs may be dead, ensure and remove if possible:
     //BUGBUG. Evaluate synchronization issues in this class (may be concurrent issue w/ iterator in purge).
-    //BUGBUG. This object needs a fully custom serialization/deserialization strategy such that weak refs will be held.
+    //BUGBUG. This object needs a fully custom serialization/deserialization strategy such that weak references will be held.
 
     private Map idToReferenceMap = new HashMap();
     private ReferenceQueue referenceQueue = new ReferenceQueue();

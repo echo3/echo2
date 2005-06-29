@@ -80,15 +80,15 @@ public class GridProcessor {
                 xSpans[i] = gridXSize - x;
             }
             if (xSpans[i] != 1 || ySpans[i] != 1) {
-                // Scan to ensure no rowspans are blocking this columnspan.
-                // If a rowspan is blocking, shorten the columnspan to not interfere.
+                // Scan to ensure no row spans are blocking this column span.
+                // If a rowspan is blocking, shorten the column span to not interfere.
                 for (int xIndex = 1; xIndex < xSpans[i]; ++xIndex) {
                     if (componentMatrix[y][x + xIndex] != null) {
                         xSpans[i] = xIndex;
                     }
                 }
                 
-                //BUGBUG! This is a temporary hack to prevent indexoutofbounds on overzealous rowspans
+                //BUGBUG! This is a temporary hack to prevent index-out-of-bounds on overzealous row spans
                 //    This hack still results in mis-rendered tables under such scenarios!
                 //    (note....if we have to take a "row-reduction" pass....this method might be
                 //    just fine).

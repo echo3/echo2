@@ -116,12 +116,12 @@ public class CellLayoutDataRender {
      * insets are still rendered if provided in such cases).
      * <code>Alignment</code> information will be added to the
      * <code>Element</code> such that block elements contained within it will
-     * be properly aligned. All other properties will be rednered using the
+     * be properly aligned. All other properties will be rendered using the
      * <code>CssSyle</code>.
      * 
      * @param element the target <code>Element</code>
      * @param cssStyle the target <code>CssStyle</code>
-     * @param component the child <code>Component</code> being layed out (used 
+     * @param component the child <code>Component</code> being laid out (used 
      *        to determine <code>LayoutDirection</code> (LTR/RTL). 
      * @param layoutData the property value
      * @param defaultInsetsAttributeValue the default insets for the cell
@@ -161,7 +161,7 @@ public class CellLayoutDataRender {
      * rendered if provided in such cases).
      *
      * @param cssStyle the target <code>CssStyle</code>
-     * @param component the child <code>Component</code> being layed out (used 
+     * @param component the child <code>Component</code> being laid out (used 
      *        to determine <code>LayoutDirection</code> (LTR/RTL). 
      * @param layoutData the property value
      * @param defaultInsetsAttributeValue the default insets for the cell 

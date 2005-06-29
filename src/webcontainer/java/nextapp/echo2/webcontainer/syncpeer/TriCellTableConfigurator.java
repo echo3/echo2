@@ -34,7 +34,7 @@ import nextapp.echo2.app.Component;
 
 /**
  * Provides utility methods to configure <code>TriCellTable</code> for
- * text/state positions spsecified by buttons/labels.
+ * text/state positions specified by buttons/labels.
  */
 class TriCellTableConfigurator {
     

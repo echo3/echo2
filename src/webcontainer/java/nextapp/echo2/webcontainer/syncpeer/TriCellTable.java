@@ -210,7 +210,7 @@ class TriCellTable {
         if ((orientation0_1 & VERTICAL) == 0) {
             // horizontally oriented 0/1
             if ((orientation01_2 & VERTICAL) == 0) {
-                // horizontally orientated 01/2
+                // horizontally oriented 01/2
                 trElement = document.createElement("tr");
                 trElement.setAttribute("id", id + "_tr_0");
                 if ((orientation01_2 & INVERTED) != 0) {
@@ -279,7 +279,7 @@ class TriCellTable {
         } else {
             // vertically oriented 0/1
             if ((orientation01_2 & VERTICAL) == 0) {
-                // horizontally orientated 01/2
+                // horizontally oriented 01/2
 
                 // determine and apply row span based on presence of margin between 0 and 1
                 int rows = (margin0_1 != null && margin0_1.getValue() > 0) ? 3 : 2;

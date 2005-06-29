@@ -190,7 +190,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
      * @param rc the relevant <code>RenderContext</code>
      * @param componentUpdate the <code>ServerComponentUpdate</code> causing 
      *        components to be disposed.
-     * @param disposedComponents the componetns to dispose
+     * @param disposedComponents the components to dispose
      */
     private void disposeComponents(RenderContext rc, ServerComponentUpdate componentUpdate, Component[] disposedComponents) {
         ContainerInstance ci = rc.getContainerInstance();
@@ -267,7 +267,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 Component parentComponent = componentUpdates[i].getParent();
                 if (!isAncestor(fullyReplacedHierarchies, parentComponent)) {
                     // Only perform update if ancestor of updated component is NOT contained in
-                    // the set of components whose descenants were fully replaced.
+                    // the set of components whose descendants were fully replaced.
                     ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(parentComponent.getClass());
                     String targetId;
                     if (parentComponent.getParent() == null) {

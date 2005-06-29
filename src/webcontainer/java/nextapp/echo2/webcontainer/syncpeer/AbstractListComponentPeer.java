@@ -204,7 +204,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
      * dispose the state of a list component, performing tasks such as 
-     * deregistering event listeners on the client.
+     * unregistering event listeners on the client.
      * 
      * @param serverMessage the <code>serverMessage</code>
      * @param listComponent the list component
@@ -289,7 +289,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      * @param renderAsListBox a flag indicating whether the component should
      *        be rendered as a list box (true) or as drop-down select (false)
      * @param multiple a flag indicating whether multiple items may be selected
-     *        at the same time (valid only for listbox rendering)
+     *        at the same time (valid only for list box rendering)
      */
     void renderSelectElementHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component, 
             boolean renderAsListBox, boolean multiple) {

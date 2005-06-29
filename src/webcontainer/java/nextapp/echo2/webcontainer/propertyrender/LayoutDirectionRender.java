@@ -60,7 +60,7 @@ public class LayoutDirectionRender {
      * properties should represent the specific settings of a single 
      * <code>Component</code>, NOT those derived recursively from within its
      * hierarchy.  Using the recursively retrieved versions will result in
-     * direction information being rendered in cases where it is unncessary.
+     * direction information being rendered in cases where it is unnecessary.
      * 
      * @param cssStyle the target <code>CssStyle</code>
      * @param layoutDirection the <code>LayoutDirection</code>

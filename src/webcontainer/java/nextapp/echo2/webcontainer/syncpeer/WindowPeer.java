@@ -54,7 +54,7 @@ implements RootSynchronizePeer {
     private PartialUpdateManager partialUpdateManager;
 
     /**
-     * Default contructor.
+     * Default constructor.
      */
     public WindowPeer() {
         super();
