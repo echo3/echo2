@@ -32,7 +32,7 @@ package nextapp.echo2.app;
 import java.util.HashMap;
 import java.util.Map;
 
-//BUGBUG. add removeStyle()...possible some iterator-type retrieveall methods.
+//BUGBUG. add removeStyle()...possible some iterator-type retrieveAll methods.
 
 /**
  * A mutable implementation of a <code>StyleSheet</code>. 

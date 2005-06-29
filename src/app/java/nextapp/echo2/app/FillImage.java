@@ -34,7 +34,7 @@ import java.io.Serializable;
 /**
  * Describes how an image should 'fill' a particular component or region of
  * the user interface.  Includes information about the image itself, its
- * positioning, repitition, and scrolling.
+ * positioning, repetition, and scrolling.
  */
 public class FillImage 
 implements Serializable {
@@ -67,13 +67,13 @@ implements Serializable {
      * @param image the <code>ImageReference</code> to be displayed in the 
      *        fill
      * @param horizontalOffset the horizontal offset of the fill image:
-     *        Positive values indicate an offest from the left side of the 
+     *        Positive values indicate an offset from the left side of the 
      *        region.
      *        Negative values indicate an offset from the right side of the 
      *        region.
      * @param verticalOffset the vertical offset of the fill image:
      *        Positive values indicate an offset from the top of the region.
-     *        Negative values indicate an offset from the bototm of the region.
+     *        Negative values indicate an offset from the bottom of the region.
      * @param repeat the repeat mode of the image, one of the following values:
      *        <ul>
      *         <li><code>NO_REPEAT</code></li>
@@ -117,7 +117,7 @@ implements Serializable {
     
     /**
      * Returns the horizontal offset of the fill image.
-     * Positive values indicate an offest from the left side of the region.
+     * Positive values indicate an offset from the left side of the region.
      * Negative values indicate an offset from the right side of the region.
      * 
      * @return the horizontal offset
@@ -135,9 +135,9 @@ implements Serializable {
     }
 
     /**
-     * Returns the repitition mode of the image.
+     * Returns the repetition mode of the image.
      * 
-     * @return the repitition mode, one of the following values:
+     * @return the repetition mode, one of the following values:
      *         <ul>
      *          <li><code>NO_REPEAT</code></li>
      *          <li><code>REPEAT_HORIZONTAL</code></li>
@@ -152,7 +152,7 @@ implements Serializable {
     /**
      * Returns the vertical offset of the fill image.
      * Positive values indicate an offset from the top of the region.
-     * Negative values indicate an offset from the bototm of the region.
+     * Negative values indicate an offset from the bottom of the region.
      * 
      * @return the vertical offset
      */

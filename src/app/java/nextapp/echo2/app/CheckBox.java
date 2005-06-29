@@ -33,40 +33,40 @@ import nextapp.echo2.app.button.DefaultToggleButtonModel;
 import nextapp.echo2.app.button.ToggleButton;
 
 /**
- * A checkbox implementation.
+ * A check box implementation.
  */
 public class CheckBox extends ToggleButton {
 
     /**
-     * Creates a checkbox with no text or icon.
+     * Creates a check box with no text or icon.
      */
     public CheckBox() {
         this(null, null);
     }
     
     /**
-     * Creates a checkbox with text.
+     * Creates a check box with text.
      *
-     * @param text the text to be displayed in the checkbox
+     * @param text the text to be displayed in the check box
      */
     public CheckBox(String text) {
         this(text, null);
     }
     
     /**
-     * Creates a checkbox with an icon.
+     * Creates a check box with an icon.
      *
-     * @param icon the icon to be displayed in the checkbox
+     * @param icon the icon to be displayed in the check box
      */
     public CheckBox(ImageReference icon) {
         this(null, icon);
     }
 
     /**
-     * Creates a checkbox with text and an icon.
+     * Creates a check box with text and an icon.
      *
-     * @param text the text to be displayed in the checkbox
-     * @param icon the icon to be displayed in the checkbox
+     * @param text the text to be displayed in the check box
+     * @param icon the icon to be displayed in the check box
      */
     public CheckBox(String text, ImageReference icon) {
         super();

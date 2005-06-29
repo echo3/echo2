@@ -56,8 +56,8 @@ public class StyleSheetLoader {
      * Parses an XML style sheet and returns a <code>StyleSheet</code> 
      * instance.
      * 
-     * @param resourceName the name of the resource on the classpath containing
-     *        the XML data
+     * @param resourceName the name of the resource on the 
+     *        <code>CLASSPATH</code> containing the XML data
      * @param classLoader the <code>ClassLoader</code> with which to 
      *        instantiate property objects
      * @return the created <code>StyleSheet</code>

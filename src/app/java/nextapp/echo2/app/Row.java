@@ -31,7 +31,7 @@ package nextapp.echo2.app;
 
 /**
  * A layout <code>Component</code> which renders its contents in a single 
- * horizontal rowof cells.
+ * horizontal row of cells.
  * <p>
  * <strong>Child LayoutData</code>: Children of this component may provide
  * layout information using the 

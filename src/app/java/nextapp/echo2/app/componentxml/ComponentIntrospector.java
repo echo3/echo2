@@ -175,7 +175,7 @@ public class ComponentIntrospector {
     }
     
     /**
-     * Returns the <code>PropertyDescriptor</code> for the specified proeprty.
+     * Returns the <code>PropertyDescriptor</code> for the specified property.
      * 
      * @param propertyName the name of the property
      * @return the <code>PropertyDescriptor</code> associated with the property

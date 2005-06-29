@@ -90,7 +90,7 @@ implements ModalSupport {
     /**
      * A constant for the <code>defaultCloseOperation</code> property 
      * indicating that a window should be removed from the component
-     * hierarhcy when a user attempts to close it.
+     * hierarchy when a user attempts to close it.
      */
     public static final int DISPOSE_ON_CLOSE = 2;
     
@@ -272,7 +272,7 @@ implements ModalSupport {
     
     /**
      * Returns the horizontal (Y) position of the <code>WindowPane</code> with
-     * respsect to its container.
+     * respect to its container.
      * 
      * @return the position
      */
@@ -282,7 +282,7 @@ implements ModalSupport {
     
     /**
      * Returns the vertical (Y) position of the <code>WindowPane</code> with
-     * respsect to its container.
+     * respect to its container.
      * 
      * @return the position
      */
@@ -597,7 +597,7 @@ implements ModalSupport {
     
     /**
      * Sets the vertical (Y) position of the <code>WindowPane</code> with
-     * respsect to its container.
+     * respect to its container.
      * Values must be in pixel units.
      * 
      * @param newValue the new position
@@ -718,7 +718,7 @@ implements ModalSupport {
     }
     
     /**
-     * Proceses a user request to close the window (via the close button).
+     * Processes a user request to close the window (via the close button).
      */
     public void userClose() {
         fireWindowClosing();

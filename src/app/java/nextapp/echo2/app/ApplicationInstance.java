@@ -51,7 +51,7 @@ public abstract class ApplicationInstance
 implements Serializable {
     
     //BUGBUG. investigate if any properties other than focus can use appliaction-level property update SUM stuff,
-    // e.g., locale, modalcontext.
+    // e.g., locale, modalContext.
 
     /** The name and version of the Echo API in use. */
     public static final String ID_STRING = "NextApp Echo v2.0.beta2+";
@@ -302,7 +302,7 @@ implements Serializable {
      * <code>ApplicationInstance</code>.  This identifier should not be
      * used outside of the context of this  <code>ApplicationInstance</code>.
      * 
-     * @return the unique identifer
+     * @return the unique identifier
      * @see #generateSystemId()
      */
     public String generateId() {
@@ -628,7 +628,7 @@ implements Serializable {
     /**
      * Sets the presently focused component.
      * 
-     * @param newValue the compoennt to be focused
+     * @param newValue the component to be focused
      */
     public void setFocusedComponent(Component newValue) {
         Component oldValue = getFocusedComponent();
@@ -694,7 +694,7 @@ implements Serializable {
      * done sparingly, given that doing so forces the entire
      * client state to be updated.  Generally style sheets should
      * only be reconfigured at application initialization and/or when
-     * the user changes the visual theme of a themeable application.
+     * the user changes the visual theme of a theme-capable application.
      * 
      * @param styleSheet the new style sheet
      */

@@ -221,7 +221,7 @@ public class Table extends Component {
     }
     
     /**
-     * Adds an <code>ActionListener</code> to the <code>Tabble</code>.
+     * Adds an <code>ActionListener</code> to the <code>Table</code>.
      * <code>ActionListener</code>s will be invoked when the user
      * selects a row.
      * 
@@ -230,7 +230,7 @@ public class Table extends Component {
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
-        // existance of hasActionListeners() method. 
+        // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
@@ -258,7 +258,7 @@ public class Table extends Component {
      */
     protected void doRender() {
         //BUGBUG. no header rendering yet.
-        //BUGBUG. currently always performs whole rerender.
+        //BUGBUG. currently always performs whole re-render.
         removeAll();
         int rowCount = model.getRowCount();
         int columnCount = columnModel.getColumnCount();
@@ -588,7 +588,7 @@ public class Table extends Component {
     }
     
     /**
-     * Removes an <code>ActionListener</code> from the <code>Tabble</code>.
+     * Removes an <code>ActionListener</code> from the <code>Table</code>.
      * <code>ActionListener</code>s will be invoked when the user
      * selects a row.
      * 
@@ -600,7 +600,7 @@ public class Table extends Component {
         }
         getEventListenerList().removeListener(ActionListener.class, l);
         // Notification of action listener changes is provided due to 
-        // existance of hasActionListeners() method. 
+        // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
     

@@ -105,7 +105,7 @@ public class PropertyLoader {
         try {
             ci = ComponentIntrospector.forName(type, classLoader);
         } catch (ClassNotFoundException ex) {
-            throw new ComponentXmlException("Unable to instrospect component: " + type, ex);
+            throw new ComponentXmlException("Unable to introspect component: " + type, ex);
         }
         
         

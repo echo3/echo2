@@ -165,7 +165,7 @@ public abstract class ToggleButton extends AbstractButton {
     /**
      * Returns the margin size between the state icon and the 
      * toggle button's icon and/or text.  The margin will only
-     * be dispalyed in the case where icon and/or text are
+     * be displayed in the case where icon and/or text are
      * present.
      * 
      * @return the margin size 
@@ -304,7 +304,7 @@ public abstract class ToggleButton extends AbstractButton {
     /**
      * Sets the margin size between the state icon and the 
      * toggle button's icon and/or text.  The margin will only
-     * be dispalyed in the case where icon and/or text are
+     * be displayed in the case where icon and/or text are
      * present.
      * 
      * @param newValue the new margin size 

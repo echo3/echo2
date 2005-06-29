@@ -173,7 +173,7 @@ implements Serializable {
     }
     
     /**
-     * Sets the inset of the border images, thus definining the width and 
+     * Sets the inset of the border images, thus defining the width and 
      * height of the border images.
      * 
      * @param borderInsets the new border inset
@@ -195,7 +195,7 @@ implements Serializable {
     }
 
     /**
-     * Sets the inset of the content that is contained withing the border 
+     * Sets the inset of the content that is contained within the border 
      * relative to the outside of the border.  If this inset value is smaller
      * than the the border inset, the content will be rendered partially on top
      * of the border.  A null value for this property specifies that the

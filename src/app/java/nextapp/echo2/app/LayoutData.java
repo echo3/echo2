@@ -49,7 +49,7 @@ import java.io.Serializable;
  * available for use with a given parent component will be described in the
  * parent component's documentation.
  * <p>
- * <strong>WARNING: </strong> Setting an incompatbile <code>LayoutData</code>
+ * <strong>WARNING: </strong> Setting an incompatible <code>LayoutData</code>
  * property on a <code>Component</code> may result in a render-time exception
  * being thrown. Take care to check the requirements specified by the
  * documentation of a container <code>Component</code> before setting a

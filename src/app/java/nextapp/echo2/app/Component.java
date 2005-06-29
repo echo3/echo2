@@ -43,15 +43,15 @@ import nextapp.echo2.app.event.EventListenerList;
 //BUGBUG. Add general documentation for how event/listeners work.
 
 /**
- * A representation of an Echo component. This is an abstact base class from
+ * A representation of an Echo component. This is an abstract base class from
  * which all Echo components are derived.
  * <p>
  * A hierarchy of <code>Component</code> objects is used to represent the
  * state of an application's user interface. A <code>Component</code> may have
  * a single parent <code>Component</code> and may contain zero or more child
- * <code>Component</code>s. Certain <code>Component</code> s may limit the
+ * <code>Component</code>s. Certain <code>Component</code>s may limit the
  * number or type(s) of children which may be added to them, and may even
- * establish requirements for what type(s) of parent <code>Component</code> s
+ * establish requirements for what type(s) of parent <code>Component</code>s
  * they may be added to. In the event that an application attempts to add a
  * child <code>Component</code> to a parent <code>Component</code> in spite
  * of these requirements, an <code>IllegalChildException</code> is thrown.
@@ -61,7 +61,7 @@ import nextapp.echo2.app.event.EventListenerList;
  * "non-style". Style properties are generally used to represent the
  * "look-and-feel" of a Component--information such as colors, fonts, location,
  * and borders. "Non-style" properties are generally used to represent
- * non-stylistic information such as data models, seleciton models, and locale.
+ * non-stylistic information such as data models, selection models, and locale.
  * <p>
  * "Style Properties" have a special definition because they may be stored in
  * <code>Style</code> or <code>StyleSheet</code> objects instead of within
@@ -77,7 +77,7 @@ import nextapp.echo2.app.event.EventListenerList;
  * will use the <code>Component.getRenderProperty()</code> and
  * <code>Component.getRenderIndexedProperty()</code> to retrieve the values of
  * stylistic properties, in order that that their values might be obtained from
- * the a <code>Compoennt</code>'s shared <code>Style</code> or the
+ * the a <code>Component</code>'s shared <code>Style</code> or the
  * <code>ApplicationInstance</code>'s<code>StyleSheet</code> in the event
  * they are not directly set in the <code>Component</code>.
  * <p>
@@ -167,7 +167,7 @@ implements RenderIdSupport, Serializable {
     private Component parent;
     
     /** 
-     * The propery change event dispatcher.
+     * The property change event dispatcher.
      * This object is lazily instantiated. 
      */
     private PropertyChangeSupport propertyChangeSupport;
@@ -256,7 +256,7 @@ implements RenderIdSupport, Serializable {
             children.add(n, c);
         }
         
-        // Invoke registration lifecycle method.
+        // Invoke registration life-cycle method.
         c.init();
 
         // Notify PropertyChangeListeners of change.
@@ -276,7 +276,7 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Lifecycle method invoked when the <code>Component</code> is removed 
+     * Life-cycle method invoked when the <code>Component</code> is removed 
      * from a registered hierarchy.  Implementations should always invoke
      * <code>super.dispose()</code>.
      */
@@ -481,21 +481,21 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Returns the <code>LayoutData</code> object used to describe how this
-     * <code>Component</code> should be layed out within its parent container.
+     * <code>Component</code> should be laid out within its parent container.
      * 
      * @return the layout data, or null if unset
      * @see LayoutData
      */
     public LayoutData getLayoutData() {
         return (LayoutData) localStyle.getProperty(PROPERTY_LAYOUT_DATA);
-    }
+    } 
     
     /**
      * Returns the specific layout direction setting of this component, if any.
      * This method will return null unless a <code>LayoutDirection</code> is
      * specifically set on <strong>this</strong> <code>Component</code>.
      * 
-     * @return the layout directionproperty of <strong>this </strong>
+     * @return the layout direction property of <strong>this</strong>
      *         <code>Component</code>
      * @see #getRenderLayoutDirection()
      */
@@ -559,7 +559,7 @@ implements RenderIdSupport, Serializable {
 
     /**
      * Determines the &quot;rendered state&quot; of an indexed property.
-     * The rendered state is destermined by first determining if the given
+     * The rendered state is determined by first determining if the given
      * property is locally set on this <code>Component</code>, and returning
      * it in that case.  If the property state is not set locally, the 
      * shared <code>Style</code> assigned to this component will be queried
@@ -583,7 +583,7 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Determines the &quot;rendered state&quot; of an indexed property.
-     * The rendered state is destermined by first determining if the given
+     * The rendered state is determined by first determining if the given
      * property is locally set on this <code>Component</code>, and returning
      * it in that case.  If the property state is not set locally, the 
      * shared <code>Style</code> assigned to this component will be queried
@@ -648,9 +648,9 @@ implements RenderIdSupport, Serializable {
      * If this <code>Component</code> does not itself specify a locale, its
      * ancestors will be queried recursively until a <code>Component</code>
      * providing a <code>Locale</code> is found. If no ancestors have
-     * <code>Locale</code> s set, the <code>ApplicationInstance</code>'s
+     * <code>Locale</code>s set, the <code>ApplicationInstance</code>'s
      * locale will be returned. In the event that no locale information is
-     * available from the ancestral hierarchy of <code>Component</code> s and
+     * available from the ancestral hierarchy of <code>Component</code>s and
      * no <code>ApplicationInstance</code> is registered, null is returned.
      * 
      * @return the locale for this component
@@ -673,7 +673,7 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Determines the &quot;rendered state&quot; of a property.
-     * The rendered state is destermined by first determining if the given
+     * The rendered state is determined by first determining if the given
      * property is locally set on this <code>Component</code>, and returning
      * it in that case.  If the property state is not set locally, the 
      * shared <code>Style</code> assigned to this component will be queried
@@ -697,7 +697,7 @@ implements RenderIdSupport, Serializable {
         
     /**
      * Determines the &quot;rendered state&quot; of a property.
-     * The rendered state is destermined by first determining if the given
+     * The rendered state is determined by first determining if the given
      * property is locally set on this <code>Component</code>, and returning
      * it in that case.  If the property state is not set locally, the 
      * shared <code>Style</code> assigned to this component will be queried
@@ -841,7 +841,7 @@ implements RenderIdSupport, Serializable {
     /**
      * Determines if a local <code>EventListenerList</code> exists.
      * If no listener list exists, it can be assured that there are thus no
-     * listeners reigstered to it.  This method should be invoked by event
+     * listeners registered to it.  This method should be invoked by event
      * firing code prior to invoking <code>getListenerList()</code> to avoid
      * unnecessary creation of an <code>EventListenerList</code> in response
      * to their query.
@@ -866,7 +866,7 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Lifecycle method invoked when the <code>Component</code> is added 
+     * Life-cycle method invoked when the <code>Component</code> is added 
      * to a registered hierarchy.  Implementations should always invoke
      * <code>super.init()</code>.
      */
@@ -968,7 +968,7 @@ implements RenderIdSupport, Serializable {
      * Returns the visibility state of this <code>Component</code>.
      * Non-visible components will not be seen by the rendering application
      * container, and will not be rendered in any fashion on the user 
-     * interface.  Rendering Application conatiners should ensure that no 
+     * interface.  Rendering Application Containers should ensure that no 
      * information about the state of an invisible component is provided to 
      * the user interface for security purposes. 
      *
@@ -1009,7 +1009,7 @@ implements RenderIdSupport, Serializable {
             return;
         }
         
-        // Invoke disposal lifecycle method.
+        // Invoke disposal life-cycle method.
         c.dispose();
 
         // Dissolve references between parent and child.
@@ -1169,7 +1169,7 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Setes a user-defined identifier for this <code>Component</code>.
+     * Sets a user-defined identifier for this <code>Component</code>.
      * 
      * @param id the new identifier
      */
@@ -1195,7 +1195,7 @@ implements RenderIdSupport, Serializable {
     /**
      * Sets the <code>LayoutData</code> of this <code>Component</code>.
      * A <code>LayoutData</code> implementation describes how this
-     * <code>Component</code> is layed out within/interacts with its 
+     * <code>Component</code> is laid out within/interacts with its 
      * containing parent <code>Component</code>.
      * 
      * @param newValue the new <code>LayoutData</code>
@@ -1230,7 +1230,7 @@ implements RenderIdSupport, Serializable {
     }
     
     //BUGBUG. Currently firing null, null in the event that oldValue = newValue
-    // and propname = layoutdata
+    // and propName = layoutData
     //due to PCS design....perhaps we want to use something other than PCS.
     //(case where we want prop event fired on equal items: setting attributes of
     // layout data.)
@@ -1255,7 +1255,7 @@ implements RenderIdSupport, Serializable {
     /**
      * Sets the render identifier of this <code>Component</code>.
      * This method is invoked by the <code>ApplicationInstance</code>
-     * when the component is registered or deregistered.
+     * when the component is registered or unregistered.
      * 
      * @param renderId the new identifier
      * @see #getRenderId()
@@ -1281,7 +1281,7 @@ implements RenderIdSupport, Serializable {
     /**
      * Sets the name of the style to use from the
      * <code>ApplicationInstance</code>-defined <code>StyleSheet</code>.
-     * Setting the style name wil have no impact on the local stylistic
+     * Setting the style name will have no impact on the local stylistic
      * properties of the <code>Component</code>.
      * 
      * @param newValue the new style name

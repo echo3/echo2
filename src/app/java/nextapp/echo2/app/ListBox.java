@@ -145,7 +145,7 @@ public class ListBox extends AbstractListComponent {
     }
         
     /**
-     * Returns the selected item.  This method is inteded to be used when the
+     * Returns the selected item.  This method is intended to be used when the
      * when the selection model is configured to only allow one item to be 
      * selected at a time.  In the event multiple item selection is enabled, 
      * this method will return the item at the lowest selected index.
