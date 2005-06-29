@@ -567,11 +567,12 @@ EchoCssUtil.applyStyle = function(element, cssText) {
  * Temporarily adjusts the CSS style of an element.  The 'original' style will
  * be stored in a DomPropertyStore attribute of the element (if it has not been
  * already) before the new style is applied.  This method is useful for applying
- * selection/rollover states temporarily to elements.  Use care in that there may
+ * selection/rollover states temporarily to elements.  Note that there may
  * only be one 'original style' set on a particular element.
  *
  * @param element the DOM element to update
- * @param cssStyleText the CSS style text to temporarily apply to the element
+ * @param cssStyleText the CSS style text to temporarily apply to the element 
+ *        (via <code>applyStyle</code>)
  */
 EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     // Set original style if not already set.
@@ -579,24 +580,35 @@ EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
         if (element.style.cssText) {
             EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", element.style.cssText);
         } else {
+            // Flag that no original CSS text existed.
             EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", "-");
         }
     }
+    
+    // Apply new style.
     EchoCssUtil.applyStyle(element, cssStyleText);
 };
 
 /**
  * Restores the original style to an element whose style was updated via
- * <code>applyTemporaryStyle</code>.
+ * <code>applyTemporaryStyle</code>.  Removes the 'original' style from the 
+ * DomPropertyStore attribute of the element.
  *
  * @param element the DOM element to restore to its original state
  */
 EchoCssUtil.restoreOriginalStyle = function(element) {
+    // Obtain original style.
     var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle");
+    
+    // Do nothing if no original style exists.
     if (!originalStyle) {
         return;
     }
+
+    // Reset original style on element.
     element.style.cssText = originalStyle == "-" ? "" : originalStyle;
+    
+    // Clear original style from EchoDomPropertyStore.
     EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", null);
 };
 
