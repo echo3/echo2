@@ -71,7 +71,7 @@ public class FontRender {
             if (font.isItalic()) {
                 cssStyle.setAttribute("font-style", "italic");
             }
-            if (font.isUnderline() || font.isLineThrough() || font.isItalic()) {
+            if (font.isUnderline() || font.isOverline() || font.isLineThrough()) {
                 StringBuffer out = new StringBuffer();
                 if (font.isUnderline()) {
                     out.append("underline");
