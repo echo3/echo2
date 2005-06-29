@@ -33,6 +33,7 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
@@ -58,8 +59,10 @@ public class ConsoleWindowPane extends WindowPane {
         splitPane.setSeparatorHeight(new Extent(1));
         add(splitPane);
         
+        SplitPaneLayoutData splitPaneLayoutData;
+        
         Row controlRow = new Row();
-        SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
+        splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(new Color(0xafafbf));
         splitPaneLayoutData.setInsets(new Insets(5));
         controlRow.setLayoutData(splitPaneLayoutData);
@@ -75,6 +78,12 @@ public class ConsoleWindowPane extends WindowPane {
         controlRow.add(clearButton);
         
         column = new Column();
+        column.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
+        column.setForeground(Color.GREEN);
+        splitPaneLayoutData = new SplitPaneLayoutData();
+        splitPaneLayoutData.setBackground(Color.BLACK);
+        splitPaneLayoutData.setInsets(new Insets(5));
+        column.setLayoutData(splitPaneLayoutData);
         splitPane.add(column);
     }
     
