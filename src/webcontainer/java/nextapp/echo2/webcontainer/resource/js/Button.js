@@ -27,27 +27,39 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. Changing button states are sometimes not reflected due to broken rollover/presss code.
-//BUGBUG. Cut this class up into a generic style-replacement system.
-
 //__________________
 // Object EchoButton
 
+/**
+ * Static object/namespace for Button support.
+ * This object/namespace should not be used externally.
+ */
 EchoButton = function() { };
 
+/**
+ * Associative arary mapping button group ids to
+ * arrays of button element ids.
+ */
 EchoButton.buttonGroupIdToButtonArrayMap = new Array();
 
+/** State constant indicating default button state. */
 EchoButton.STATE_DEFAULT = 0;
+
+/** State constant indicating rollover button state. */
 EchoButton.STATE_ROLLOVER = 1;
+
+/** State constant indicating pressed button state. */
 EchoButton.STATE_PRESSED = 2;
 
 /**
- * ServerMessage processor.
+ * Static object/namespace for Button MessageProcessor 
+ * implementation.
  */
 EchoButton.MessageProcessor = function() { };
 
 /**
- * ServerMessage process() implementation.
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
  */
 EchoButton.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
@@ -64,6 +76,12 @@ EchoButton.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * button component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
 EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
@@ -76,6 +94,12 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
     }
 };
 
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * button component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
 EchoButton.MessageProcessor.processInit = function(initMessageElement) {
     var rolloverStyle = initMessageElement.getAttribute("rollover-style");
     var pressedStyle = initMessageElement.getAttribute("pressed-style");
@@ -125,10 +149,14 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
     }
 };
 
+/**
+ * Deselects the selected radio button in the specified group.
+ *
+ * @param groupId the id of the button group to deselect
+ */
 EchoButton.deselectRadioButton = function(groupId) {
     var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
     if (!buttonArray) {
-        //BUGBUG? can this ever happen?
         return;
     }
     for (var i = 0; i < buttonArray.length; ++i) {
@@ -139,6 +167,14 @@ EchoButton.deselectRadioButton = function(groupId) {
     }
 };
 
+/**
+ * Programmatically invokes a button's action.
+ * Togglebuttons will have their state toggled as a result.
+ * The server will be notified of the action in the event
+ * the button has server-side <code>ActionListener</code>s.
+ *
+ * @param elementId the button element id
+ */
 EchoButton.doAction = function(elementId) {
     if ("true" == EchoDomPropertyStore.getPropertyValue(elementId, "toggle")) {
         EchoButton.doToggle(elementId);
@@ -156,6 +192,11 @@ EchoButton.doAction = function(elementId) {
     EchoServerTransaction.connect();
 };
 
+/**
+ * Toggles the state of a toggle button.
+ *
+ * @param elementId the button element id
+ */
 EchoButton.doToggle = function(elementId) {
     var newState = !EchoButton.getSelectionState(elementId);
     
@@ -171,17 +212,33 @@ EchoButton.doToggle = function(elementId) {
     EchoButton.setSelectionState(elementId, newState);
 };
 
+/**
+ * Determines the button group id of a specific radio button.
+ *
+ * @param elementId the radio button element id
+ * @return the button group id
+ */
 EchoButton.getButtonGroup = function(elementId) {
     return EchoDomPropertyStore.getPropertyValue(elementId, "buttonGroup");
 };
 
+/**
+ * Determines the selection state of a specific toggle button.
+ *
+ * @param elementId the toggle button element id
+ * @return true if the button is selected
+ */
 EchoButton.getSelectionState = function(elementId) {
     return "true" == EchoDomPropertyStore.getPropertyValue(elementId, "selected");
 };
 
 /**
- * Forces quirky IE clients to repaint immediately for aesthetic 
- * performance improvement.
+ * Forces quirky IE clients to repaint immediately for a sometimes very 
+ * signficant aesthetic performance improvement.
+ * Invoking this method performs no operation/has no effect for other browser 
+ * clients that do not suffer this quirk.
+ *
+ * @param the button element to force repaint
  */
 EchoButton.ieRepaint = function(buttonElement) {
     if (EchoClientProperties.get("quirkIERepaint")) {
@@ -192,6 +249,12 @@ EchoButton.ieRepaint = function(buttonElement) {
     }
 };
 
+/**
+ * Processes a button mouse click event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoButton.processClick = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
@@ -200,6 +263,12 @@ EchoButton.processClick = function(echoEvent) {
     EchoButton.doAction(elementId);
 };
 
+/**
+ * Processes a button key press event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoButton.processKeyPressed = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
@@ -210,33 +279,61 @@ EchoButton.processKeyPressed = function(echoEvent) {
     }
 };
 
+/**
+ * Processes a button mouse press event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoButton.processPressed = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
-    var eventTarget = echoEvent.registeredTarget;
-    EchoButton.setState(eventTarget, EchoButton.STATE_PRESSED);
+    EchoButton.setVisualState(echoEvent.registeredTarget, EchoButton.STATE_PRESSED);
 };
 
+/**
+ * Processes a button mouse release event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoButton.processReleased = function(echoEvent) {
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
+    EchoButton.setVisualState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
 };
 
+/**
+ * Processes a button mouse rollover enter event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoButton.processRolloverEnter = function(echoEvent) {
     var elementId = echoEvent.registeredTarget.getAttribute("id");
     if (!EchoClientEngine.verifyInput(elementId)) {
         return;
     }
-    var eventTarget = echoEvent.registeredTarget;
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER);
+    EchoButton.setVisualState(echoEvent.registeredTarget, EchoButton.STATE_ROLLOVER);
 };
 
+/**
+ * Processes a button mouse rollover exit event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoButton.processRolloverExit = function(echoEvent) {
-    EchoButton.setState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
+    EchoButton.setVisualState(echoEvent.registeredTarget, EchoButton.STATE_DEFAULT);
 };
 
+/**
+ * Sets the button group id of a specific radio button.
+ *
+ * @param elementId the button element id
+ * @param groupId the id of the button group
+ */
 EchoButton.setButtonGroup = function(elementId, groupId) {
     var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
     if (!buttonArray) {
@@ -247,11 +344,23 @@ EchoButton.setButtonGroup = function(elementId, groupId) {
     EchoDomPropertyStore.setPropertyValue(elementId, "buttonGroup", groupId);
 };
 
+/**
+ * Sets the displayed icon of a specific button.
+ *
+ * @param elementId the button element id
+ * @param newIconUri the URI of the new icon to display
+ */
 EchoButton.setIcon = function(elementId, newIconUri) {
     var iconElement = document.getElementById(elementId + "_icon");
     iconElement.src = newIconUri;
 };
 
+/**
+ * Sets the selection state of a toggle button.
+ *
+ * @param elementId the id of the toggle button
+ * @param newState a boolean flag indicating the new selection state
+ */
 EchoButton.setSelectionState = function(elementId, newState) {
     EchoDomPropertyStore.setPropertyValue(elementId, "selected", newState ? "true" : "false");
 
@@ -265,7 +374,18 @@ EchoButton.setSelectionState = function(elementId, newState) {
     EchoClientMessage.setPropertyValue(elementId, "selected", newState ? "true" : "false");
 };
 
-EchoButton.setState = function(buttonElement, newState) {
+/**
+ * Sets the visual state of a specific button.
+ *
+ * @param buttonElement the button element
+ * @param newState the new visual state, one of the following values:
+ *        <ul>
+ *         <li><code>EchoButton.STATE_DEFFAULT</code></li>
+ *         <li><code>EchoButton.STATE_PRESSED</code></li>
+ *         <li><code>EchoButton.STATE_ROLLOVER</code></li>
+ *        </ul>
+ */
+EchoButton.setVisualState = function(buttonElement, newState) {
     if (buttonElement.nodeType != 1) {
         // Prevent TextNode events.
         return;
