@@ -36,7 +36,7 @@ import nextapp.echo2.webcontainer.syncpeer.GridProcessor;
 import junit.framework.TestCase;
 
 /**
- * 
+ * Unit tests for <code>GridProcessor</code>.
  */
 public class GridPeerTest extends TestCase {
     
@@ -50,14 +50,23 @@ public class GridPeerTest extends TestCase {
         assertEquals(0, gridProcessor.getGridYSize());
     }
     
+    public void testLessThanSize() {
+        Grid grid = new Grid();
+        grid.setSize(4);
+        
+        grid.add(new Label());
+        
+        GridProcessor gridProcessor = new GridProcessor(grid);
+    }
+    
     /**
      * Tests span collisions.
      * 
      * Requested:   Rendered:
      *  __ __ __     __ __ __
-     * |0 |vc|1 |   |0 |vc|1 |
+     * |0 |VC|1 |   |0 |VC|1 |
      * |__|  |__|   |__|  |__|
-     * |hc \/   |   |hc|  |2 |
+     * |HC \/   |   |HC|  |2 |
      * |__ /\ __|   |__|  |__|
      * |2 |  |3 |   |3 |  |  |
      * |__|__|__|   |__|__|__|
@@ -66,13 +75,13 @@ public class GridPeerTest extends TestCase {
         GridLayoutData layoutData;
         Grid grid = new Grid(3);
         grid.add(new Label("0"));
-        Label verticalCollider = new Label("vc");
+        Label verticalCollider = new Label("VC");
         layoutData = new GridLayoutData();
         layoutData.setRowSpan(3);
         verticalCollider.setLayoutData(layoutData);
         grid.add(verticalCollider);
         grid.add(new Label("1"));
-        Label horizontalCollider = new Label("hc");
+        Label horizontalCollider = new Label("HC");
         layoutData = new GridLayoutData();
         layoutData.setColumnSpan(3);
         horizontalCollider.setLayoutData(layoutData);
@@ -81,15 +90,29 @@ public class GridPeerTest extends TestCase {
         grid.add(new Label("3"));
         GridProcessor gridProcessor = new GridProcessor(grid);
         assertEquals("0", ((Label) gridProcessor.getContent(0, 0)).getText());
-        assertEquals("vc", ((Label) gridProcessor.getContent(1, 0)).getText());
+        assertEquals("VC", ((Label) gridProcessor.getContent(1, 0)).getText());
         assertEquals("1", ((Label) gridProcessor.getContent(2, 0)).getText());
-        assertEquals("hc", ((Label) gridProcessor.getContent(0, 1)).getText());
-        assertEquals("vc", ((Label) gridProcessor.getContent(1, 1)).getText());
+        assertEquals("HC", ((Label) gridProcessor.getContent(0, 1)).getText());
+        assertEquals("VC", ((Label) gridProcessor.getContent(1, 1)).getText());
         assertEquals("2", ((Label) gridProcessor.getContent(2, 1)).getText());
         assertEquals("3", ((Label) gridProcessor.getContent(0, 2)).getText());
-        assertEquals("vc", ((Label) gridProcessor.getContent(1, 2)).getText());
+        assertEquals("VC", ((Label) gridProcessor.getContent(1, 2)).getText());
     }
     
+    /**
+     * Tests row reduction to ensure proper rendering of the following:
+     * 
+     * (specified)   (rendered)
+     *  __ __         __ __
+     * |0 |1 |    0  |0 |1 |
+     * |  |  |       |__|  |
+     * |XX|  |    1  |XX|  |
+     * |XX|  |       |XX|__|
+     * |XX|  |    2
+     * |XX|  |
+     * |XX|  |    3
+     * |XX|__|
+     */
     public void testOutOfBoundsRowSpan() {
         Grid grid = new Grid();
         grid.add(new Label());
@@ -104,7 +127,25 @@ public class GridPeerTest extends TestCase {
 
         // Verify Grid size is correct.
         assertEquals(2, gridProcessor.getGridXSize());
-        assertEquals(1, gridProcessor.getGridYSize());
+        assertEquals(2, gridProcessor.getGridYSize());
+        
+        // Verify components are at correct positions.
+        assertEquals(0, gridProcessor.getComponentIndex(0, 0));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 0));
+        assertEquals(-1, gridProcessor.getComponentIndex(0, 1));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 1));
+        
+        // Verify x-spans were untouched.
+        assertEquals(1, gridProcessor.getXSpan(0, 0));
+        assertEquals(1, gridProcessor.getXSpan(1, 0));
+        assertEquals(-1, gridProcessor.getXSpan(0, 1));
+        assertEquals(1, gridProcessor.getXSpan(1, 1));
+
+        // Verify y-spans were properly reduced.
+        assertEquals(1, gridProcessor.getYSpan(0, 0));
+        assertEquals(2, gridProcessor.getYSpan(1, 0));
+        assertEquals(-1, gridProcessor.getYSpan(0, 1));
+        assertEquals(2, gridProcessor.getYSpan(1, 1));
     }
     
     /**
@@ -615,6 +656,23 @@ public class GridPeerTest extends TestCase {
         assertEquals(5, gridProcessor.getGridYSize());
     }
     
+    /**
+     * Test a a simple Grid consisting of ten cells with one of them 
+     * spanning two columns. 
+     *  __ __
+     * |0 |1 |
+     * |__|__|
+     * |2 |3 |
+     * |__|__|
+     * |4    |
+     * |_____|
+     * |5 |6 |
+     * |__|__|
+     * |7 |8 |
+     * |__|__|
+     * |9 |XX|
+     * |__|XX|
+     */
     public void testSimpleWithColumnSpan() {
         Grid grid = new Grid();
         for (int i = 0; i < 10; ++i) {
@@ -626,9 +684,73 @@ public class GridPeerTest extends TestCase {
             }
             grid.add(label);
         }
-        new GridProcessor(grid);
+        
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        
+        // Verify Grid size is correct.
+        assertEquals(2, gridProcessor.getGridXSize());
+        assertEquals(6, gridProcessor.getGridYSize());
+        
+        // Verify components are at correct positions.
+        assertEquals(0, gridProcessor.getComponentIndex(0, 0));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 0));
+        assertEquals(2, gridProcessor.getComponentIndex(0, 1));
+        assertEquals(3, gridProcessor.getComponentIndex(1, 1));
+        assertEquals(4, gridProcessor.getComponentIndex(0, 2));
+        assertEquals(4, gridProcessor.getComponentIndex(1, 2));
+        assertEquals(5, gridProcessor.getComponentIndex(0, 3));
+        assertEquals(6, gridProcessor.getComponentIndex(1, 3));
+        assertEquals(7, gridProcessor.getComponentIndex(0, 4));
+        assertEquals(8, gridProcessor.getComponentIndex(1, 4));
+        assertEquals(9, gridProcessor.getComponentIndex(0, 5));
+        assertEquals(-1, gridProcessor.getComponentIndex(1, 5));
+        
+        // Verify x-spans were untouched.
+        assertEquals(1, gridProcessor.getXSpan(0, 0));
+        assertEquals(1, gridProcessor.getXSpan(1, 0));
+        assertEquals(1, gridProcessor.getXSpan(0, 1));
+        assertEquals(1, gridProcessor.getXSpan(1, 1));
+        assertEquals(2, gridProcessor.getXSpan(0, 2));
+        assertEquals(2, gridProcessor.getXSpan(1, 2));
+        assertEquals(1, gridProcessor.getXSpan(0, 3));
+        assertEquals(1, gridProcessor.getXSpan(1, 3));
+        assertEquals(1, gridProcessor.getXSpan(0, 4));
+        assertEquals(1, gridProcessor.getXSpan(1, 4));
+        assertEquals(1, gridProcessor.getXSpan(0, 5));
+        assertEquals(-1, gridProcessor.getXSpan(1, 5));
+
+        // Verify y-spans were properly reduced.
+        assertEquals(1, gridProcessor.getYSpan(0, 0));
+        assertEquals(1, gridProcessor.getYSpan(1, 0));
+        assertEquals(1, gridProcessor.getYSpan(0, 1));
+        assertEquals(1, gridProcessor.getYSpan(1, 1));
+        assertEquals(1, gridProcessor.getYSpan(0, 2));
+        assertEquals(1, gridProcessor.getYSpan(1, 2));
+        assertEquals(1, gridProcessor.getYSpan(0, 3));
+        assertEquals(1, gridProcessor.getYSpan(1, 3));
+        assertEquals(1, gridProcessor.getYSpan(0, 4));
+        assertEquals(1, gridProcessor.getYSpan(1, 4));
+        assertEquals(1, gridProcessor.getYSpan(0, 5));
+        assertEquals(-1, gridProcessor.getYSpan(1, 5));
     }
     
+    /**
+     * Test a a simple Grid consisting of ten cells with one of them 
+     * spanning three columns (even though only two are available). 
+     *  __ __
+     * |0 |1 |
+     * |__|__|
+     * |2 |3 |
+     * |__|__|__
+     * |4       |
+     * |________|
+     * |5 |6 |
+     * |__|__|
+     * |7 |8 |
+     * |__|__|
+     * |9 |XX|
+     * |__|XX|
+     */
     public void testSimpleWithOversidedColumnSpan() {
         Grid grid = new Grid();
         for (int i = 0; i < 10; ++i) {
@@ -640,6 +762,54 @@ public class GridPeerTest extends TestCase {
             }
             grid.add(label);
         }
-        new GridProcessor(grid);
+        
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        
+        // Verify Grid size is correct.
+        assertEquals(2, gridProcessor.getGridXSize());
+        assertEquals(6, gridProcessor.getGridYSize());
+        
+        // Verify components are at correct positions.
+        assertEquals(0, gridProcessor.getComponentIndex(0, 0));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 0));
+        assertEquals(2, gridProcessor.getComponentIndex(0, 1));
+        assertEquals(3, gridProcessor.getComponentIndex(1, 1));
+        assertEquals(4, gridProcessor.getComponentIndex(0, 2));
+        assertEquals(4, gridProcessor.getComponentIndex(1, 2));
+        assertEquals(5, gridProcessor.getComponentIndex(0, 3));
+        assertEquals(6, gridProcessor.getComponentIndex(1, 3));
+        assertEquals(7, gridProcessor.getComponentIndex(0, 4));
+        assertEquals(8, gridProcessor.getComponentIndex(1, 4));
+        assertEquals(9, gridProcessor.getComponentIndex(0, 5));
+        assertEquals(-1, gridProcessor.getComponentIndex(1, 5));
+        
+        // Verify x-spans were untouched for the most part,
+        // except for oversized cell which is reduced.
+        assertEquals(1, gridProcessor.getXSpan(0, 0));
+        assertEquals(1, gridProcessor.getXSpan(1, 0));
+        assertEquals(1, gridProcessor.getXSpan(0, 1));
+        assertEquals(1, gridProcessor.getXSpan(1, 1));
+        assertEquals(2, gridProcessor.getXSpan(0, 2));
+        assertEquals(2, gridProcessor.getXSpan(1, 2));
+        assertEquals(1, gridProcessor.getXSpan(0, 3));
+        assertEquals(1, gridProcessor.getXSpan(1, 3));
+        assertEquals(1, gridProcessor.getXSpan(0, 4));
+        assertEquals(1, gridProcessor.getXSpan(1, 4));
+        assertEquals(1, gridProcessor.getXSpan(0, 5));
+        assertEquals(-1, gridProcessor.getXSpan(1, 5));
+
+        // Verify y-spans were properly reduced.
+        assertEquals(1, gridProcessor.getYSpan(0, 0));
+        assertEquals(1, gridProcessor.getYSpan(1, 0));
+        assertEquals(1, gridProcessor.getYSpan(0, 1));
+        assertEquals(1, gridProcessor.getYSpan(1, 1));
+        assertEquals(1, gridProcessor.getYSpan(0, 2));
+        assertEquals(1, gridProcessor.getYSpan(1, 2));
+        assertEquals(1, gridProcessor.getYSpan(0, 3));
+        assertEquals(1, gridProcessor.getYSpan(1, 3));
+        assertEquals(1, gridProcessor.getYSpan(0, 4));
+        assertEquals(1, gridProcessor.getYSpan(1, 4));
+        assertEquals(1, gridProcessor.getYSpan(0, 5));
+        assertEquals(-1, gridProcessor.getYSpan(1, 5));
     }
 }

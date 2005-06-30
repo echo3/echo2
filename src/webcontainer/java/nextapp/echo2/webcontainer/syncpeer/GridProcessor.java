@@ -27,7 +27,9 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Grid;
@@ -49,8 +51,6 @@ import nextapp.echo2.app.layout.GridLayoutData;
  */
 public class GridProcessor {
     
-    private static final Cell[][] EMPTY_CELL_MATRIX = new Cell[0][0];
-    
     private class Cell {
         
         private Cell(Component component, int index, int xSpan, int ySpan) {
@@ -66,7 +66,7 @@ public class GridProcessor {
         private int index;
     }
     
-    private Cell[][] cellMatrix;
+    private List cellArrays;
 
     private int gridXSize;
     private int gridYSize;
@@ -82,11 +82,12 @@ public class GridProcessor {
      */
     public GridProcessor(Grid grid) {
         super();
+        cellArrays = new ArrayList();
+        
         Component[] children = grid.getVisibleComponents();
         
         if (children.length == 0) {
             // Special case: empty Grid.
-            cellMatrix = EMPTY_CELL_MATRIX;
             gridXSize = 0;
             gridYSize = 0;
             return;
@@ -94,7 +95,7 @@ public class GridProcessor {
         
         Cell[] cells = new Cell[children.length];
 
-        int totalArea = 0;
+        gridXSize = grid.getSize();
         
         // Create Cell instances for each Component and store them in "cells"
         // array in child index order.
@@ -105,62 +106,40 @@ public class GridProcessor {
                 GridLayoutData gcLayoutData = (GridLayoutData) layoutData;
                 int xSpan = horizontalOrientation ? gcLayoutData.getColumnSpan() : gcLayoutData.getRowSpan();
                 int ySpan = horizontalOrientation ? gcLayoutData.getRowSpan() : gcLayoutData.getColumnSpan();
-                totalArea += xSpan * ySpan;
                 cells[i] = new Cell(children[i], i, xSpan, ySpan);
             } else {
                 cells[i] = new Cell(children[i], i, 1, 1);
-                totalArea += 1;
             }
         }
-
-        gridXSize = grid.getSize();
-        gridYSize = (totalArea / gridXSize) + ((totalArea % gridXSize == 0) ? 0 : 1); // Theoretical maximum
         
-        cellMatrix = new Cell[gridYSize][gridXSize];
-
         int x = 0, y = 0;
+        Cell[] yCells = getCellArray(y, true);
         for (int componentIndex = 0; componentIndex < children.length; ++componentIndex) {
+            
             if (cells[componentIndex].xSpan > gridXSize - x) {
                 // Limit xSpan in case cell has a span greater than remaining
                 // space.
-                int oldSize = cells[componentIndex].xSpan;
-                int newSize = gridXSize - x;
-                totalArea = totalArea - oldSize + newSize;
-                cells[componentIndex].xSpan = newSize;
+                cells[componentIndex].xSpan = gridXSize - x;
             }
             if (cells[componentIndex].xSpan != 1 || cells[componentIndex].ySpan != 1) {
                 // Scan to ensure no y-spans are blocking this x-span.
                 // If a y-span is blocking, shorten the x-span to not
                 // interfere.
                 for (int xIndex = 1; xIndex < cells[componentIndex].xSpan; ++xIndex) {
-                    if (cellMatrix[y][x + xIndex] != null) {
+                    if (yCells[x + xIndex] != null) {
                         // Blocking component found.
-                        int oldSize = cells[componentIndex].xSpan;
-                        int newSize = xIndex;
-                        totalArea = totalArea - oldSize + newSize;
-                        cells[componentIndex].xSpan = newSize;
+                        cells[componentIndex].xSpan = xIndex;
                         break;
                     }
                 }
-
-                // BUGBUG! This is a temporary hack to prevent
-                // index-out-of-bounds on overzealous row spans
-                // This hack still results in mis-rendered tables under such
-                // scenarios!
-                // (note....if we have to take a "row-reduction" pass....this
-                // method might be
-                // just fine).
-                if (y + cells[componentIndex].ySpan > cellMatrix.length) {
-                    cells[componentIndex].ySpan = cellMatrix.length - y;
-                }
-
                 for (int yIndex = 0; yIndex < cells[componentIndex].ySpan; ++yIndex) {
+                    Cell[] yIndexCells = getCellArray(y + yIndex, true);
                     for (int xIndex = 0; xIndex < cells[componentIndex].xSpan; ++xIndex) {
-                        cellMatrix[y + yIndex][x + xIndex] = cells[componentIndex];
+                        yIndexCells[x + xIndex] = cells[componentIndex];
                     }
                 }
             }
-            cellMatrix[y][x] = cells[componentIndex];
+            yCells[x] = cells[componentIndex];
 
             if (componentIndex < children.length - 1) {
                 // Move rendering cursor.
@@ -172,26 +151,35 @@ public class GridProcessor {
                         // Move cursor to next line.
                         x = 0;
                         ++y;
+                        yCells = getCellArray(y, true);
+                        
                     }
-                    nextRenderPointFound = cellMatrix[y][x] == null;
+                    nextRenderPointFound = yCells[x] == null;
                 }
             }
         }
 
         // Recalculate actual 'y' dimension.
-        gridYSize = (totalArea / gridXSize) + ((totalArea % gridXSize == 0) ? 0 : 1);
+        gridYSize = cellArrays.size();
         
         reduceY();
         reduceX();
     }
     
+    private Cell[] getCellArray(int y, boolean expand) {
+        while (expand && y >= cellArrays.size()) {
+            cellArrays.add(new Cell[gridXSize]);
+        }
+        return (Cell[]) cellArrays.get(y);
+    }
+    
     public Component getContent(int x, int y) {
-        Cell cell = cellMatrix[y][x];
+        Cell cell = getCellArray(y, false)[x];
         return cell == null ? null : cell.component;
     }
 
     public int getComponentIndex(int x, int y) {
-        Cell cell = cellMatrix[y][x];
+        Cell cell = getCellArray(y, false)[x];
         return cell == null ? -1 : cell.index;
     }
 
@@ -214,12 +202,12 @@ public class GridProcessor {
     }
 
     public int getXSpan(int x, int y) {
-        Cell cell = cellMatrix[y][x];
+        Cell cell = getCellArray(y, false)[x];
         return cell == null ? -1 : cell.xSpan;
     }
 
     public int getYSpan(int x, int y) {
-        Cell cell = cellMatrix[y][x];
+        Cell cell = getCellArray(y, false)[x];
         return cell == null ? -1 : cell.ySpan;
     }
     
@@ -227,11 +215,12 @@ public class GridProcessor {
         // Determine duplicate cell sets on x-axis.
         BitSet xRemoves = new BitSet();
         int x = 1;
-        while (x  < cellMatrix[0].length) {
+        int length = getCellArray(0, false).length;
+        while (x  < length) {
             int y = 0;
             boolean identical = true;
-            while (y < cellMatrix.length) {
-                if (cellMatrix[y][x] != cellMatrix[y][x - 1]) {
+            while (y < cellArrays.size()) {
+                if (getCellArray(y, false)[x] != getCellArray(y, false)[x - 1]) {
                     identical = false;
                     break;
                 }
@@ -254,16 +243,13 @@ public class GridProcessor {
             }
 
             for (int y = 0; y < gridYSize; ++y) {
-                if (y == 0 || cellMatrix[y][removedX - 1] != cellMatrix[y - 1][removedX - 1]) {
+                if (y == 0 || getCellArray(y, false)[removedX - 1] != getCellArray(y - 1, false)[removedX - 1]) {
                     // Reduce x-span, taking care not to reduce it multiple times if cell has a y-span.
-                    if (cellMatrix[y][removedX - 1] == null) {
-//BUGBUG. fails without this line:                        
-//                        continue;
-                    }
-                    --cellMatrix[y][removedX - 1].xSpan;
+//BUGBUG. this is blowing up with NPE
+                    --getCellArray(y, false)[removedX - 1].xSpan;
                 }
                 for (x = removedX; x < gridXSize - 1; ++x) {
-                    cellMatrix[y][x] = cellMatrix[y][x + 1];
+                    getCellArray(y, false)[x] = getCellArray(y, false)[x + 1];
                 }
             }
             --gridXSize;
@@ -274,11 +260,20 @@ public class GridProcessor {
         // Determine duplicate cell sets on y-axis.
         BitSet yRemoves = new BitSet();
         int y = 1;
-        while (y  < cellMatrix.length) {
+        
+        int size = cellArrays.size();
+        Cell[] previousCellArray;
+        Cell[] currentCellArray = getCellArray(0, false);
+        
+        while (y < size) {
+            previousCellArray = currentCellArray;
+            currentCellArray = getCellArray(y, false);
+            
             int x = 0;
             boolean identical = true;
-            while (x < cellMatrix[0].length) {
-                if (cellMatrix[y][x] != cellMatrix[y - 1][x]) {
+
+            while (x < currentCellArray.length) {
+                if (currentCellArray[x] != previousCellArray[x]) {
                     identical = false;
                     break;
                 }
@@ -287,6 +282,7 @@ public class GridProcessor {
             if (identical) {
                 yRemoves.set(y, true);
             }
+            
             ++y;
         }
         
@@ -300,19 +296,22 @@ public class GridProcessor {
                 continue;
             }
             
+            // Shorten the y-spans of the cell array that will be retained to 
+            // reflect the fact that a cell array is being removed. 
+            Cell[] retainedCellArray = getCellArray(removedY - 1, false);
             for (int x = 0; x < gridXSize; ++x) {
-                if (x == 0 || cellMatrix[removedY - 1][x] != cellMatrix[removedY - 1][x - 1]) {
+                if (x == 0 || retainedCellArray[x] != retainedCellArray[x - 1]) {
                     // Reduce y-span, taking care not to reduce it multiple times if cell has a x-span.
-                    if (cellMatrix[removedY - 1][x] == null) {
-//                      BUGBUG. fails without this line:                        
-                        continue;
+                    if (retainedCellArray[x] != null) {
+                        --retainedCellArray[x].ySpan;
                     }
-                    --cellMatrix[removedY - 1][x].ySpan;
-                }
-                for (y = removedY; y < gridYSize - 1; ++y) {
-                    cellMatrix[y][x] = cellMatrix[y + 1][x];
                 }
             }
+            
+            // Remove the duplicate cell array.
+            cellArrays.remove(removedY);
+            
+            // Decrement the grid size to reflect cell array removal.
             --gridYSize;
         }
     }
