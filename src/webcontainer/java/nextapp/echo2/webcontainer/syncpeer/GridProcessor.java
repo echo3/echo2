@@ -235,6 +235,21 @@ public class GridProcessor {
             // Do nothing.
             return;
         }
+        
+//        for (int removedX = xRemoves.nextSetBit(0); removedX >= 0; removedX = xRemoves.nextSetBit(removedX + 1)) {
+        
+        for (int removedX = gridXSize - 1; removedX >= 0; --removedX) {
+            if (!xRemoves.get(removedX)) {
+                continue;
+            }
+            
+            for (int y = 0; y < gridYSize; ++y) {
+                for (x = removedX; x < gridXSize - 1; ++x) {
+                    cellMatrix[y][x] = cellMatrix[y][x + 1];
+                }
+            }
+            --gridXSize;
+        }
     }
     
     private void reduceY() {

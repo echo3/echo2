@@ -63,15 +63,63 @@ public class GridPeerTest extends TestCase {
     }
     
     /**
+     * Tests column reduction to ensure proper rendering of the following:
+     * 
+     *  0  1  2  3  4  5  6    (specified column)
+     *  __ _____ ___________
+     * |0 |1    |2    |3    |
+     * |__|_____|_____|_____|
+     * |4 |5    |6 |7 |8    |
+     * |__|_____|__|__|     |
+     * |9 |10   |11   |     |
+     * |__|_____|_____|_____|
+     * 
+     * 0   1     2  3  4       (rendered column)
+     */
+    public void testComplexColumnReduce() {
+        Grid grid = new Grid();
+        grid.setSize(7);
+        for (int i = 0; i < 12; ++i) {
+            Label label = new Label(Integer.toString(i));
+            if (i == 1 || i == 2 || i == 3 || i == 5 || i == 8 || i == 10 || i == 11) {
+                GridLayoutData layoutData = new GridLayoutData();
+                layoutData.setColumnSpan(2);
+                if (i == 8) {
+                    layoutData.setRowSpan(2);
+                }
+                label.setLayoutData(layoutData);
+            }
+            grid.add(label);
+        }
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        assertEquals(0, gridProcessor.getComponentIndex(0, 0));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 0));
+        assertEquals(2, gridProcessor.getComponentIndex(2, 0));
+        assertEquals(2, gridProcessor.getComponentIndex(3, 0));
+        assertEquals(3, gridProcessor.getComponentIndex(4, 0));
+        assertEquals(4, gridProcessor.getComponentIndex(0, 1));
+        assertEquals(5, gridProcessor.getComponentIndex(1, 1));
+        assertEquals(6, gridProcessor.getComponentIndex(2, 1));
+        assertEquals(7, gridProcessor.getComponentIndex(3, 1));
+        assertEquals(8, gridProcessor.getComponentIndex(4, 1));
+        assertEquals(9, gridProcessor.getComponentIndex(0, 2));
+        assertEquals(10, gridProcessor.getComponentIndex(1, 2));
+        assertEquals(11, gridProcessor.getComponentIndex(2, 2));
+        assertEquals(11, gridProcessor.getComponentIndex(3, 2));
+        assertEquals(8, gridProcessor.getComponentIndex(4, 2));
+    }
+    
+    /**
      * Tests column reduction to ensure the column #2 is not rendered.
      * 
-     * Column:
-     *  0  1  2  3
+     *  0  1  2  3   (specified column)
      *  __ _____ __
      * |0 |1    |2 |
      * |__|_____|__|
      * |3 |4    |5 |
      * |__|_____|__|
+     * 
+     * 0   1     2   (rendered column)
      */
     public void testSimpleColumnReduce() {
         Grid grid = new Grid();
@@ -85,7 +133,15 @@ public class GridPeerTest extends TestCase {
             }
             grid.add(label);
         }
-        new GridProcessor(grid);
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        assertEquals(0, gridProcessor.getComponentIndex(0, 0));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 0));
+        assertEquals(2, gridProcessor.getComponentIndex(2, 0));
+        assertEquals(3, gridProcessor.getComponentIndex(0, 1));
+        assertEquals(4, gridProcessor.getComponentIndex(1, 1));
+        assertEquals(5, gridProcessor.getComponentIndex(2, 1));
+        assertEquals(3, gridProcessor.getGridXSize());
+        assertEquals(2, gridProcessor.getGridYSize());
     }
 
     /**
