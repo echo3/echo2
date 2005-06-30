@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 /**
  * Unit tests for <code>GridProcessor</code>.
  */
-public class GridPeerTest extends TestCase {
+public class GridProcessorTest extends TestCase {
     
     /**
      * Test a grid with no child components.
