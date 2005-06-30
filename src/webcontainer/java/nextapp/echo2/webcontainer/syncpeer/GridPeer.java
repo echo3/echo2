@@ -214,13 +214,14 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 tdElement.setAttribute("id", elementId + "_td_" + ContainerInstance.getElementId(cell));
                 trElement.appendChild(tdElement);
 
-                int componentIndex = gridProcessor.getComponentIndex(x, y);
-                if (gridProcessor.getXSpan(componentIndex) > 1) {
-                    tdElement.setAttribute("colspan", Integer.toString(gridProcessor.getXSpan(componentIndex)));
+                int xSpan = gridProcessor.getXSpan(x, y);
+                if (xSpan > 1) {
+                    tdElement.setAttribute("colspan", Integer.toString(xSpan));
                 }
                 
-                if (gridProcessor.getYSpan(componentIndex) > 1) {
-                    tdElement.setAttribute("rowspan", Integer.toString(gridProcessor.getYSpan(componentIndex)));
+                int ySpan = gridProcessor.getYSpan(x, y);
+                if (ySpan > 1) {
+                    tdElement.setAttribute("rowspan", Integer.toString(ySpan));
                 }
             
                 CssStyle tdCssStyle = new CssStyle();

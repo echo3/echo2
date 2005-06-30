@@ -1835,7 +1835,7 @@ EchoWindowUpdate.process = function(messagePartElement) {
 EchoWindowUpdate.processSetFocus = function(setFocusElement) {
     var elementId = setFocusElement.getAttribute("element-id");
     var element = document.getElementById(elementId);
-    if (element.focus) {
+    if (element && element.focus) {
         element.focus();
     }
 };

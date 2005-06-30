@@ -61,6 +61,60 @@ public class GridPeerTest extends TestCase {
         }
         new GridProcessor(grid);
     }
+    
+    /**
+     * Tests column reduction to ensure the column #2 is not rendered.
+     * 
+     * Column:
+     *  0  1  2  3
+     *  __ _____ __
+     * |0 |1    |2 |
+     * |__|_____|__|
+     * |3 |4    |5 |
+     * |__|_____|__|
+     */
+    public void testSimpleColumnReduce() {
+        Grid grid = new Grid();
+        grid.setSize(4);
+        for (int i = 0; i < 6; ++i) {
+            Label label = new Label(Integer.toString(i));
+            if (i == 1 || i == 4) {
+                GridLayoutData layoutData = new GridLayoutData();
+                layoutData.setColumnSpan(2);
+                label.setLayoutData(layoutData);
+            }
+            grid.add(label);
+        }
+        new GridProcessor(grid);
+    }
+
+    /**
+     * Tests row reduction to ensure the row #2 is not rendered.
+     * 
+     *  __ __  Row:
+     * |0 |1 |  0
+     * |__|__|
+     * |2 |3 |  1
+     * |  |  |
+     * |  |  |  2
+     * |__|__|
+     * |4 |5 |  3
+     * |__|__|
+     */
+    public void testSimpleRowReduce() {
+        Grid grid = new Grid();
+        grid.setSize(2);
+        for (int i = 0; i < 6; ++i) {
+            Label label = new Label(Integer.toString(i));
+            if (i == 2 || i == 3) {
+                GridLayoutData layoutData = new GridLayoutData();
+                layoutData.setRowSpan(2);
+                label.setLayoutData(layoutData);
+            }
+            grid.add(label);
+        }
+        new GridProcessor(grid);
+    }
 
     /**
      * Tests a grid with a cell spanning two rows:
@@ -68,10 +122,10 @@ public class GridPeerTest extends TestCase {
      * |0 |1 |
      * |__|__|
      * |2 |3 |
-     * |  |__|
-     * |  |4 |
+     * |  |  |
+     * |  |  |
      * |__|__|
-     * |5 |6 |
+     * |4 |5 |
      * |__|__|
      */
     public void testSimpleWithRowSpan() {

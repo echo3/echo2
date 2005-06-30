@@ -27,6 +27,8 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import java.util.BitSet;
+
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.LayoutData;
@@ -47,29 +49,25 @@ import nextapp.echo2.app.layout.GridLayoutData;
  */
 public class GridProcessor {
     
-    private Component[][] componentMatrix;
-
-    private int[][] indexMatrix;
+    private class Cell {
+        
+        private Cell(Component component, int index, int xSpan, int ySpan) {
+            this.component = component;
+            this.index = index;
+            this.xSpan = xSpan;
+            this.ySpan = ySpan;
+        }
+        
+        private int xSpan;
+        private int ySpan;
+        private Component component;
+        private int index;
+    }
+    
+    private Cell[][] cellMatrix;
 
     private int gridXSize;
-
     private int gridYSize;
-
-    /**
-     * Array containing the x-axis span of each child component in the
-     * <code>Grid</code>. The indices of this array correspond to indices of
-     * the <strong>visible</strong> child <code>Component</code>s within the
-     * parent <code>Grid</code>.
-     */
-    private int[] xSpans;
-
-    /**
-     * Array containing the y-axis span of each child component in the
-     * <code>Grid</code>. The indices of this array correspond to indices of
-     * the <strong>visible</strong> child <code>Component</code>s within the
-     * parent <code>Grid</code>.
-     */
-    private int[] ySpans;
 
     /**
      * Creates a new <code>GridProcessor</code> for the specified
@@ -83,23 +81,23 @@ public class GridProcessor {
     public GridProcessor(Grid grid) {
         super();
         Component[] children = grid.getVisibleComponents();
+        Cell[] cells = new Cell[children.length];
 
         int totalArea = 0;
         
-        // Store x-axis and y-axis spans of all child Components.
+        // Create Cell instances for each Component and store them in "cells"
+        // array in child index order.
         boolean horizontalOrientation = grid.getOrientation() != Grid.ORIENTATION_VERTICAL;
-        xSpans = new int[children.length];
-        ySpans = new int[children.length];
         for (int i = 0; i < children.length; ++i) {
             LayoutData layoutData = (LayoutData) children[i].getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
             if (layoutData instanceof GridLayoutData) {
                 GridLayoutData gcLayoutData = (GridLayoutData) layoutData;
-                xSpans[i] = horizontalOrientation ? gcLayoutData.getColumnSpan() : gcLayoutData.getRowSpan();
-                ySpans[i] = horizontalOrientation ? gcLayoutData.getRowSpan() : gcLayoutData.getColumnSpan();
-                totalArea += xSpans[i] * ySpans[i];
+                int xSpan = horizontalOrientation ? gcLayoutData.getColumnSpan() : gcLayoutData.getRowSpan();
+                int ySpan = horizontalOrientation ? gcLayoutData.getRowSpan() : gcLayoutData.getColumnSpan();
+                totalArea += xSpan * ySpan;
+                cells[i] = new Cell(children[i], i, xSpan, ySpan);
             } else {
-                xSpans[i] = 1;
-                ySpans[i] = 1;
+                cells[i] = new Cell(children[i], i, 1, 1);
                 totalArea += 1;
             }
         }
@@ -107,30 +105,29 @@ public class GridProcessor {
         gridXSize = grid.getSize();
         gridYSize = (totalArea / gridXSize) + ((totalArea % gridXSize == 0) ? 0 : 1); // Theoretical maximum
         
-        componentMatrix = new Component[gridYSize][gridXSize];
-        indexMatrix = new int[gridYSize][gridXSize];
+        cellMatrix = new Cell[gridYSize][gridXSize];
 
         int x = 0, y = 0;
-        for (int i = 0; i < children.length; ++i) {
-            if (xSpans[i] > gridXSize - x) {
-                // Limit xSize in case cell has a span greater than remaining
+        for (int componentIndex = 0; componentIndex < children.length; ++componentIndex) {
+            if (cells[componentIndex].xSpan > gridXSize - x) {
+                // Limit xSpan in case cell has a span greater than remaining
                 // space.
-                int oldSize = xSpans[i];
+                int oldSize = cells[componentIndex].xSpan;
                 int newSize = gridXSize - x;
                 totalArea = totalArea - oldSize + newSize;
-                xSpans[i] = newSize;
+                cells[componentIndex].xSpan = newSize;
             }
-            if (xSpans[i] != 1 || ySpans[i] != 1) {
+            if (cells[componentIndex].xSpan != 1 || cells[componentIndex].ySpan != 1) {
                 // Scan to ensure no y-spans are blocking this x-span.
                 // If a y-span is blocking, shorten the x-span to not
                 // interfere.
-                for (int xIndex = 1; xIndex < xSpans[i]; ++xIndex) {
-                    if (componentMatrix[y][x + xIndex] != null) {
+                for (int xIndex = 1; xIndex < cells[componentIndex].xSpan; ++xIndex) {
+                    if (cellMatrix[y][x + xIndex] != null) {
                         // Blocking component found.
-                        int oldSize = xSpans[i];
+                        int oldSize = cells[componentIndex].xSpan;
                         int newSize = xIndex;
                         totalArea = totalArea - oldSize + newSize;
-                        xSpans[i] = newSize;
+                        cells[componentIndex].xSpan = newSize;
                         break;
                     }
                 }
@@ -142,44 +139,49 @@ public class GridProcessor {
                 // (note....if we have to take a "row-reduction" pass....this
                 // method might be
                 // just fine).
-                if (y + ySpans[i] > componentMatrix.length) {
-                    ySpans[i] = componentMatrix.length - y;
+                if (y + cells[componentIndex].ySpan > cellMatrix.length) {
+                    cells[componentIndex].ySpan = cellMatrix.length - y;
                 }
 
-                for (int yIndex = 0; yIndex < ySpans[i]; ++yIndex) {
-                    for (int xIndex = 0; xIndex < xSpans[i]; ++xIndex) {
-                        componentMatrix[y + yIndex][x + xIndex] = children[i];
+                for (int yIndex = 0; yIndex < cells[componentIndex].ySpan; ++yIndex) {
+                    for (int xIndex = 0; xIndex < cells[componentIndex].xSpan; ++xIndex) {
+                        cellMatrix[y + yIndex][x + xIndex] = cells[componentIndex];
                     }
                 }
             }
-            componentMatrix[y][x] = children[i];
-            indexMatrix[y][x] = i;
+            cellMatrix[y][x] = cells[componentIndex];
 
-            if (i < children.length - 1) {
+            if (componentIndex < children.length - 1) {
                 // Move rendering cursor.
                 boolean nextRenderPointFound = false;
                 while (!nextRenderPointFound) {
                     if (x < gridXSize - 1) {
                         ++x;
                     } else {
+                        // Move cursor to next line.
                         x = 0;
                         ++y;
                     }
-                    nextRenderPointFound = componentMatrix[y][x] == null;
+                    nextRenderPointFound = cellMatrix[y][x] == null;
                 }
             }
         }
 
         // Recalculate actual 'y' dimension.
         gridYSize = (totalArea / gridXSize) + ((totalArea % gridXSize == 0) ? 0 : 1);
+        
+        reduceY();
+        reduceX();
     }
-
+    
     public Component getContent(int x, int y) {
-        return componentMatrix[y][x];
+        Cell cell = cellMatrix[y][x];
+        return cell == null ? null : cell.component;
     }
 
     public int getComponentIndex(int x, int y) {
-        return indexMatrix[y][x];
+        Cell cell = cellMatrix[y][x];
+        return cell == null ? -1 : cell.index;
     }
 
     /**
@@ -200,11 +202,63 @@ public class GridProcessor {
         return gridYSize;
     }
 
-    public int getXSpan(int componentIndex) {
-        return xSpans[componentIndex];
+    public int getXSpan(int x, int y) {
+        Cell cell = cellMatrix[y][x];
+        return cell == null ? -1 : cell.xSpan;
     }
 
-    public int getYSpan(int componentIndex) {
-        return ySpans[componentIndex];
+    public int getYSpan(int x, int y) {
+        Cell cell = cellMatrix[y][x];
+        return cell == null ? -1 : cell.ySpan;
+    }
+    
+    private void reduceX() {
+        // Determine duplicate cell sets on x-axis.
+        BitSet xRemoves = new BitSet();
+        int x = 1;
+        while (x  < cellMatrix[0].length) {
+            int y = 0;
+            boolean identical = true;
+            while (y < cellMatrix.length) {
+                if (cellMatrix[y][x] != cellMatrix[y][x - 1]) {
+                    identical = false;
+                    break;
+                }
+                ++y;
+            }
+            if (identical) {
+                xRemoves.set(x, true);
+            }
+            ++x;
+        }
+        if (xRemoves.nextSetBit(0) == -1) {
+            // Do nothing.
+            return;
+        }
+    }
+    
+    private void reduceY() {
+        // Determine duplicate cell sets on y-axis.
+        BitSet yRemoves = new BitSet();
+        int y = 1;
+        while (y  < cellMatrix.length) {
+            int x = 0;
+            boolean identical = true;
+            while (x < cellMatrix[0].length) {
+                if (cellMatrix[y][x] != cellMatrix[y - 1][x]) {
+                    identical = false;
+                    break;
+                }
+                ++x;
+            }
+            if (identical) {
+                yRemoves.set(y, true);
+            }
+            ++y;
+        }
+        if (yRemoves.nextSetBit(0) == -1) {
+            // Do nothing.
+            return;
+        }
     }
 }
