@@ -49,6 +49,8 @@ import nextapp.echo2.app.layout.GridLayoutData;
  */
 public class GridProcessor {
     
+    private static final Cell[][] EMPTY_CELL_MATRIX = new Cell[0][0];
+    
     private class Cell {
         
         private Cell(Component component, int index, int xSpan, int ySpan) {
@@ -81,6 +83,15 @@ public class GridProcessor {
     public GridProcessor(Grid grid) {
         super();
         Component[] children = grid.getVisibleComponents();
+        
+        if (children.length == 0) {
+            // Special case: empty Grid.
+            cellMatrix = EMPTY_CELL_MATRIX;
+            gridXSize = 0;
+            gridYSize = 0;
+            return;
+        }
+        
         Cell[] cells = new Cell[children.length];
 
         int totalArea = 0;
@@ -231,19 +242,18 @@ public class GridProcessor {
             }
             ++x;
         }
+
+        // If no reductions are necessary on the x-axis, do nothing.
         if (xRemoves.nextSetBit(0) == -1) {
-            // Do nothing.
             return;
         }
         
-//        for (int removedX = xRemoves.nextSetBit(0); removedX >= 0; removedX = xRemoves.nextSetBit(removedX + 1)) {
-        
-        for (int removedX = gridXSize - 1; removedX >= 0; --removedX) {
-            if (!xRemoves.get(removedX)) {
-                continue;
-            }
-            
+        for (int removedX = xRemoves.nextSetBit(0); removedX >= 0; removedX = xRemoves.nextSetBit(removedX + 1)) {
             for (int y = 0; y < gridYSize; ++y) {
+                if (y == 0 || cellMatrix[y][removedX - 1] != cellMatrix[y - 1][removedX - 1]) {
+                    // Reduce x-span, taking care not to reduce it multiple times if cell has a y-span.
+                    --cellMatrix[y][removedX - 1].xSpan;
+                }
                 for (x = removedX; x < gridXSize - 1; ++x) {
                     cellMatrix[y][x] = cellMatrix[y][x + 1];
                 }
@@ -271,9 +281,23 @@ public class GridProcessor {
             }
             ++y;
         }
+        
+        // If no reductions are necessary on the y-axis, do nothing.
         if (yRemoves.nextSetBit(0) == -1) {
-            // Do nothing.
             return;
+        }
+
+        for (int removedY = yRemoves.nextSetBit(0); removedY >= 0; removedY = yRemoves.nextSetBit(removedY + 1)) {
+            for (int x = 0; x < gridXSize; ++x) {
+                if (x == 0 || cellMatrix[removedY - 1][x] != cellMatrix[removedY - 1][x - 1]) {
+                    // Reduce y-span, taking care not to reduce it multiple times if cell has a x-span.
+                    --cellMatrix[removedY - 1][x].ySpan;
+                }
+                for (y = removedY; y < gridYSize - 1; ++y) {
+                    cellMatrix[y][x] = cellMatrix[y + 1][x];
+                }
+            }
+            --gridYSize;
         }
     }
 }
