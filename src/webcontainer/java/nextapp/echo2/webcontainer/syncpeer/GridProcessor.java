@@ -248,10 +248,18 @@ public class GridProcessor {
             return;
         }
         
-        for (int removedX = xRemoves.nextSetBit(0); removedX >= 0; removedX = xRemoves.nextSetBit(removedX + 1)) {
+        for (int removedX = gridXSize -1; removedX >= 0; --removedX) {
+            if (!xRemoves.get(removedX)) {
+                continue;
+            }
+
             for (int y = 0; y < gridYSize; ++y) {
                 if (y == 0 || cellMatrix[y][removedX - 1] != cellMatrix[y - 1][removedX - 1]) {
                     // Reduce x-span, taking care not to reduce it multiple times if cell has a y-span.
+                    if (cellMatrix[y][removedX - 1] == null) {
+//BUGBUG. fails without this line:                        
+//                        continue;
+                    }
                     --cellMatrix[y][removedX - 1].xSpan;
                 }
                 for (x = removedX; x < gridXSize - 1; ++x) {
@@ -286,11 +294,19 @@ public class GridProcessor {
         if (yRemoves.nextSetBit(0) == -1) {
             return;
         }
-
-        for (int removedY = yRemoves.nextSetBit(0); removedY >= 0; removedY = yRemoves.nextSetBit(removedY + 1)) {
+            
+        for (int removedY = gridYSize -1; removedY >= 0; --removedY) {
+            if (!yRemoves.get(removedY)) {
+                continue;
+            }
+            
             for (int x = 0; x < gridXSize; ++x) {
                 if (x == 0 || cellMatrix[removedY - 1][x] != cellMatrix[removedY - 1][x - 1]) {
                     // Reduce y-span, taking care not to reduce it multiple times if cell has a x-span.
+                    if (cellMatrix[removedY - 1][x] == null) {
+//                      BUGBUG. fails without this line:                        
+//                        continue;
+                    }
                     --cellMatrix[removedY - 1][x].ySpan;
                 }
                 for (y = removedY; y < gridYSize - 1; ++y) {
