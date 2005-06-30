@@ -90,6 +90,23 @@ public class GridPeerTest extends TestCase {
         assertEquals("vc", ((Label) gridProcessor.getContent(1, 2)).getText());
     }
     
+    public void testOutOfBoundsRowSpan() {
+        Grid grid = new Grid();
+        grid.add(new Label());
+
+        Label label = new Label();
+        GridLayoutData layoutData = new GridLayoutData();
+        layoutData.setRowSpan(4);
+        label.setLayoutData(layoutData);
+        grid.add(label);
+        
+        GridProcessor gridProcessor =  new GridProcessor(grid);
+
+        // Verify Grid size is correct.
+        assertEquals(2, gridProcessor.getGridXSize());
+        assertEquals(1, gridProcessor.getGridYSize());
+    }
+    
     /**
      * Tests column reduction to ensure proper rendering of the following:
      * 
@@ -119,6 +136,7 @@ public class GridPeerTest extends TestCase {
             }
             grid.add(label);
         }
+
         GridProcessor gridProcessor = new GridProcessor(grid);
         
         // Verify Grid size is correct.
@@ -539,7 +557,6 @@ public class GridPeerTest extends TestCase {
         assertEquals(1, gridProcessor.getXSpan(0, 0));
         assertEquals(1, gridProcessor.getYSpan(0, 0));
     }
-    
     
     /**
      * Tests a grid with a cell spanning two rows:

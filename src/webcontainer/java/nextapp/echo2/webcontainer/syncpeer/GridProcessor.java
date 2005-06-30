@@ -305,7 +305,7 @@ public class GridProcessor {
                     // Reduce y-span, taking care not to reduce it multiple times if cell has a x-span.
                     if (cellMatrix[removedY - 1][x] == null) {
 //                      BUGBUG. fails without this line:                        
-//                        continue;
+                        continue;
                     }
                     --cellMatrix[removedY - 1][x].ySpan;
                 }
