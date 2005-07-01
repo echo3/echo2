@@ -211,8 +211,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                         ? gridProcessor.getContent(columnIndex, rowIndex) 
                         : gridProcessor.getContent(rowIndex, columnIndex); 
                 if (cell == null) {
-                    //BUGBUG. breaking out here is a TEMPORARY solution..this cause major breakage for stuff like RTL tables.
-                    break;
+                    Element tdElement = document.createElement("td");
+                    trElement.appendChild(tdElement);
+                    continue;
                 }
                 if (renderedCells.contains(cell)) {
                     // Cell already rendered.
