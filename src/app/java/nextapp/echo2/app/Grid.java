@@ -145,11 +145,13 @@ public class Grid extends Component {
     }
     
     /**
-     * Returns the number of columns or rows in the grid.
-     * If cells are being rendered "across and then down", the "size"
-     * represents the number of columns in the grid.  If the cells
-     * are being rendered "down and then across", the "size" represents
-     * the number of rows in the grid.
+     * Returns the number of columns or rows in the <code>Grid</code>.
+     * If the <code>orientation</code> property is set to 
+     * <code>ORIENTATION_HORIZONTAL</code>, this property represents the
+     * number of columns in the <code>Grid</code>.
+     * If the <code>orientation</code> property is set to 
+     * <code>ORIENTATION_VERTICAL</code>, this property represents the
+     * number of rows in the <code>Grid</code>.
      * 
      * @return the number of columns or rows  
      */
@@ -244,6 +246,12 @@ public class Grid extends Component {
     
     /**
      * Sets the number of columns or rows in the grid.
+     * If the <code>orientation</code> property is set to 
+     * <code>ORIENTATION_HORIZONTAL</code>, this property represents the
+     * number of columns in the <code>Grid</code>.
+     * If the <code>orientation</code> property is set to 
+     * <code>ORIENTATION_VERTICAL</code>, this property represents the
+     * number of rows in the <code>Grid</code>.
      * 
      * @param newValue the number of columns or rows
      * @see #getSize()
