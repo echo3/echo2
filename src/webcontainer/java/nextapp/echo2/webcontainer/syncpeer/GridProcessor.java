@@ -226,84 +226,117 @@ public class GridProcessor {
     }
     
     /**
-     * Returns the child <code>Component</code> at the specified
-     * rendered coordinate.
-     * @param x the "x" coordinate
-     * @param y the "y" coordinate
+     * Returns the <code>Component</code> that should be rendered at the
+     * specified position.
      * 
-     * @return the <code>Component</code>
+     * @param column the column index
+     * @param row the row index
+     * @return the <code>Component</code> (may be null)
      */
-    public Component getContent(int x, int y) {
-        Cell cell = getCellArray(y, false)[x];
-        return cell == null ? null : cell.component;
+    public Component getContent(int column, int row) {
+        if (horizontalOrientation) {
+            Cell cell = getCellArray(row, false)[column];
+            return cell == null ? null : cell.component;
+        } else {
+            Cell cell = getCellArray(column, false)[row];
+            return cell == null ? null : cell.component;
+        }
     }
 
     /**
-     * Returns the component index within the <code>Grid</code> 
-     * of the component at the specified rendered coordinate.
+     * Returns the index of the <code>Component</code> that should be rendered
+     * at the specified position within its parent <code>Grid</code>
+     * container.
      * 
-     * @param x the "x" coordinate
-     * @param y the "y" coordinate
-     * @return the index of the component within the parent <code>Grid</code>
-     *         component, or -1 if no component exists at the specified index.
+     * @param column the column index
+     * @param row the row index
+     * @return the index of the <code>Component</code> within its 
+     *         container.
      */
-    public int getComponentIndex(int x, int y) {
-        Cell cell = getCellArray(y, false)[x];
-        return cell == null ? -1 : cell.index;
-    }
-
-    /**
-     * Returns the x-axis dimension of the <code>Grid</code>
-     * 
-     * @return the x-axis dimension
-     */
-    public int getGridXSize() {
-        return gridXSize;
-    }
-
-    /**
-     * Returns the y-axis dimension of the <code>Grid</code>
-     * 
-     * @return the y-axis dimension
-     */
-    public int getGridYSize() {
-        return gridYSize;
+    public int getComponentIndex(int column, int row) {
+        if (horizontalOrientation) {
+            Cell cell = getCellArray(row, false)[column];
+            return cell == null ? -1 : cell.index;
+        } else {
+            Cell cell = getCellArray(column, false)[row];
+            return cell == null ? -1 : cell.index;
+        }
     }
     
-    public Extent getXExtent(int x) {
-        return (Extent) xExtents.get(x);
-    }
-
-    public Extent getYExtent(int y) {
-        return (Extent) yExtents.get(y);
-    }
-
     /**
-     * Retrieves the x-span of the cell at the specified rendered coordinate.
+     * Returns the number of columns that should be rendered.
      * 
-     * @param x the "x" coordinate
-     * @param y the "y" coordinate
-     * @return the cell x-span, or -1 in the event that no cell exists at the 
-     *         coordinate.
+     * @return the number of rendered columns
      */
-    public int getXSpan(int x, int y) {
-        Cell cell = getCellArray(y, false)[x];
-        return cell == null ? -1 : cell.xSpan;
-    }
-
-    /**
-     * Retrieves the y-span of the cell at the specified rendered coordinate.
-     * 
-     * @param x the "x" coordinate
-     * @param y the "y" coordinate
-     * @return the cell y-span, or -1 in the event that no cell exists at the 
-     *         coordinate.
-     */
-    public int getYSpan(int x, int y) {
-        Cell cell = getCellArray(y, false)[x];
-        return cell == null ? -1 : cell.ySpan;
+    public int getColumnCount() {
+        return horizontalOrientation ? gridXSize : gridYSize;
     }
     
+    /**
+     * Returns the number of rows that should be rendered.
+     * 
+     * @return the number of rendered rows
+     */
+    public int getRowCount() {
+        return horizontalOrientation ? gridYSize : gridXSize;
+    }
+    
+    /**
+     * Returns the width of the specified column index
+     * 
+     * @param column the column index
+     * @return the width
+     */
+    public Extent getColumnWidth(int column) {
+        return (Extent) (horizontalOrientation ? xExtents : yExtents).get(column);
+    }
+    
+    /**
+     * Returns the height of the specified row index
+     * 
+     * @param row the row index
+     * @return the height
+     */
+    public Extent getRowHeight(int row) {
+        return (Extent) (horizontalOrientation ? yExtents : xExtents).get(row);
+    }
+    
+    /**
+     * Returns the column span of the cell at the specified rendered index.
+     * 
+     * @param column the column index
+     * @param row the row index
+     * @return the column span (-1 will be returned in the event that no
+     *         cell exists at the specified index)
+     */
+    public int getColumnSpan(int column, int row) {
+        if (horizontalOrientation) {
+            Cell cell = getCellArray(row, false)[column];
+            return cell == null ? -1 : cell.xSpan;
+        } else {
+            Cell cell = getCellArray(column, false)[row];
+            return cell == null ? -1 : cell.ySpan;
+        }
+    }
+    
+    /**
+     * Returns the row span of the cell at the specified rendered index.
+     * 
+     * @param column the column index
+     * @param row the row index
+     * @return the row span (-1 will be returned in the event that no
+     *         cell exists at the specified index)
+     */
+    public int getRowSpan(int column, int row) {
+        if (horizontalOrientation) {
+            Cell cell = getCellArray(row, false)[column];
+            return cell == null ? -1 : cell.ySpan;
+        } else {
+            Cell cell = getCellArray(column, false)[row];
+            return cell == null ? -1 : cell.xSpan;
+        }
+    }
+
     /**
      * Remove duplicates from the x-axis where all cells simply
      * "span over" a given x-axis coordinate. 

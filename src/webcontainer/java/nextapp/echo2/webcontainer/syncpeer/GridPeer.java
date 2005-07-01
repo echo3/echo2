@@ -189,26 +189,17 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
 
         Set renderedCells = new HashSet();
         
-        Integer orientationValue = (Integer) grid.getRenderProperty(Grid.PROPERTY_ORIENTATION);
-        int orientation = orientationValue == null ? Grid.ORIENTATION_HORIZONTAL : orientationValue.intValue();
-        boolean horizontalOrientation = orientation != Grid.ORIENTATION_VERTICAL;
-        
-        // For horizontal orientations, X represents columns, Y represents rows.
-        // For vertical orientations, X represents rows, Y represents columns.
-        
-        int columnSize = horizontalOrientation ? gridProcessor.getGridXSize() : gridProcessor.getGridYSize();
-        int rowSize = horizontalOrientation ? gridProcessor.getGridYSize() : gridProcessor.getGridXSize();
+        int columnCount = gridProcessor.getColumnCount(); 
+        int rowCount = gridProcessor.getRowCount();
 
-        for (int rowIndex = 0; rowIndex < rowSize; ++rowIndex) {
+        for (int rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
             Element trElement = document.createElement("tr");
             trElement.setAttribute("id", elementId + "_tr_" + rowIndex);
             
             tbodyElement.appendChild(trElement);
             
-            for (int columnIndex = 0; columnIndex < columnSize; ++columnIndex) {
-                Component cell = horizontalOrientation 
-                        ? gridProcessor.getContent(columnIndex, rowIndex) 
-                        : gridProcessor.getContent(rowIndex, columnIndex); 
+            for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex) {
+                Component cell = gridProcessor.getContent(columnIndex, rowIndex); 
                 if (cell == null) {
                     Element tdElement = document.createElement("td");
                     trElement.appendChild(tdElement);
@@ -224,16 +215,12 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 tdElement.setAttribute("id", elementId + "_td_" + ContainerInstance.getElementId(cell));
                 trElement.appendChild(tdElement);
 
-                int columnSpan = horizontalOrientation 
-                        ? gridProcessor.getXSpan(columnIndex, rowIndex)
-                        : gridProcessor.getYSpan(rowIndex, columnIndex);
+                int columnSpan = gridProcessor.getColumnSpan(columnIndex, rowIndex); 
                 if (columnSpan > 1) {
                     tdElement.setAttribute("colspan", Integer.toString(columnSpan));
                 }
                 
-                int rowSpan = horizontalOrientation 
-                        ? gridProcessor.getYSpan(columnIndex, rowIndex)
-                        : gridProcessor.getXSpan(rowIndex, columnIndex);
+                int rowSpan = gridProcessor.getRowSpan(columnIndex, rowIndex); 
                 if (rowSpan > 1) {
                     tdElement.setAttribute("rowspan", Integer.toString(rowSpan));
                 }
