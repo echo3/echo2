@@ -821,4 +821,57 @@ public class GridProcessorTest extends TestCase {
         assertEquals(1, gridProcessor.getYSpan(0, 5));
         assertEquals(-1, gridProcessor.getYSpan(1, 5));
     }
+    
+    /**
+     * Test staggered row-spanned cells:
+     *  __ __
+     * |0 |1 |
+     * |  |__|
+     * |  |2 |
+     * |__|  |
+     * |3 |  |
+     * |__|__|
+     */
+    public void testStaggeredSpans() {
+        Grid grid = new Grid();
+        for (int i = 0; i < 4; ++i) {
+            Label label = new Label();
+            if (i % 2 == 0) {
+                GridLayoutData gridLayoutData = new GridLayoutData();
+                gridLayoutData.setRowSpan(2);
+                label.setLayoutData(gridLayoutData);
+            }
+            grid.add(label);
+        }
+        
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        
+        // Verify Grid size is correct.
+        assertEquals(2, gridProcessor.getGridXSize());
+        assertEquals(3, gridProcessor.getGridYSize());
+        
+        // Verify components are at correct positions.
+        assertEquals(0, gridProcessor.getComponentIndex(0, 0));
+        assertEquals(1, gridProcessor.getComponentIndex(1, 0));
+        assertEquals(0, gridProcessor.getComponentIndex(0, 1));
+        assertEquals(2, gridProcessor.getComponentIndex(1, 1));
+        assertEquals(3, gridProcessor.getComponentIndex(0, 2));
+        assertEquals(2, gridProcessor.getComponentIndex(1, 2));
+        
+        // Verify y-spans were untouched.
+        assertEquals(1, gridProcessor.getXSpan(0, 0));
+        assertEquals(1, gridProcessor.getXSpan(1, 0));
+        assertEquals(1, gridProcessor.getXSpan(0, 1));
+        assertEquals(1, gridProcessor.getXSpan(1, 1));
+        assertEquals(1, gridProcessor.getXSpan(0, 2));
+        assertEquals(1, gridProcessor.getXSpan(1, 2));
+        
+        // Verify y-spans were untouched.
+        assertEquals(2, gridProcessor.getYSpan(0, 0));
+        assertEquals(1, gridProcessor.getYSpan(1, 0));
+        assertEquals(2, gridProcessor.getYSpan(0, 1));
+        assertEquals(2, gridProcessor.getYSpan(1, 1));
+        assertEquals(1, gridProcessor.getYSpan(0, 2));
+        assertEquals(2, gridProcessor.getYSpan(1, 2));
+    }
 }
