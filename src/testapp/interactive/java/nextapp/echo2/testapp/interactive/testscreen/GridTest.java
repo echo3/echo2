@@ -130,6 +130,13 @@ public class GridTest extends SplitPane {
         controlsColumn.add(new Label("Configure Grid"));
         groupContainerColumn.add(controlsColumn);
         
+        controlsColumn.addButton("Swap Orientation", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                grid.setOrientation(grid.getOrientation() == Grid.ORIENTATION_VERTICAL 
+                        ? Grid.ORIENTATION_HORIZONTAL : Grid.ORIENTATION_VERTICAL);
+            }
+        });
+        
         controlsColumn.addButton("[+] Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 grid.setSize(grid.getSize() + 1);

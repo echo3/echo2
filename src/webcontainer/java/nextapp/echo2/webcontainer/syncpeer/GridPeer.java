@@ -189,16 +189,26 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         
         GridProcessor gridProcessor = new GridProcessor(grid);
 
-        int gridXSize = gridProcessor.getGridXSize();
-        int gridYSize = gridProcessor.getGridYSize();
         Set renderedCells = new HashSet();
         
-        for (int y = 0; y < gridYSize; ++y) {
+        Integer orientationValue = (Integer) grid.getRenderProperty(Grid.PROPERTY_ORIENTATION);
+        int orientation = orientationValue == null ? Grid.ORIENTATION_HORIZONTAL : orientationValue.intValue();
+        boolean horizontalOrientation = orientation != Grid.ORIENTATION_VERTICAL;
+        
+        // For horizontal orientations, X represents columns, Y represents rows.
+        // For vertical orientations, X represents rows, Y represents columns.
+        
+        int columnSize = horizontalOrientation ? gridProcessor.getGridXSize() : gridProcessor.getGridYSize();
+        int rowSize = horizontalOrientation ? gridProcessor.getGridYSize() : gridProcessor.getGridXSize();
+
+        for (int rowIndex = 0; rowIndex < rowSize; ++rowIndex) {
             Element trElement = document.createElement("tr");
-            trElement.setAttribute("id", elementId + "_tr_" + y);
+            trElement.setAttribute("id", elementId + "_tr_" + rowIndex);
             tbodyElement.appendChild(trElement);
-            for (int x = 0; x < gridXSize; ++x) {
-                Component cell = gridProcessor.getContent(x, y);
+            for (int columnIndex = 0; columnIndex < columnSize; ++columnIndex) {
+                Component cell = horizontalOrientation 
+                        ? gridProcessor.getContent(columnIndex, rowIndex) 
+                        : gridProcessor.getContent(rowIndex, columnIndex); 
                 if (cell == null) {
                     //BUGBUG. breaking out here is a TEMPORARY solution..this cause major breakage for stuff like RTL tables.
                     break;
@@ -213,14 +223,18 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 tdElement.setAttribute("id", elementId + "_td_" + ContainerInstance.getElementId(cell));
                 trElement.appendChild(tdElement);
 
-                int xSpan = gridProcessor.getXSpan(x, y);
-                if (xSpan > 1) {
-                    tdElement.setAttribute("colspan", Integer.toString(xSpan));
+                int columnSpan = horizontalOrientation 
+                        ? gridProcessor.getXSpan(columnIndex, rowIndex)
+                        : gridProcessor.getYSpan(rowIndex, columnIndex);
+                if (columnSpan > 1) {
+                    tdElement.setAttribute("colspan", Integer.toString(columnSpan));
                 }
                 
-                int ySpan = gridProcessor.getYSpan(x, y);
-                if (ySpan > 1) {
-                    tdElement.setAttribute("rowspan", Integer.toString(ySpan));
+                int rowSpan = horizontalOrientation 
+                        ? gridProcessor.getYSpan(columnIndex, rowIndex)
+                        : gridProcessor.getXSpan(rowIndex, columnIndex);
+                if (rowSpan > 1) {
+                    tdElement.setAttribute("rowspan", Integer.toString(rowSpan));
                 }
             
                 CssStyle tdCssStyle = new CssStyle();

@@ -143,10 +143,11 @@ public class GridProcessor {
         Cell[] cells = new Cell[children.length];
 
         gridXSize = grid.getSize();
+
+        Integer orientationValue = (Integer) grid.getRenderProperty(Grid.PROPERTY_ORIENTATION);
+        int orientation = orientationValue == null ? Grid.ORIENTATION_HORIZONTAL : orientationValue.intValue();
+        boolean horizontalOrientation = orientation != Grid.ORIENTATION_VERTICAL;
         
-        // Create Cell instances for each Component and store them in "cells"
-        // array in child index order.
-        boolean horizontalOrientation = grid.getOrientation() != Grid.ORIENTATION_VERTICAL;
         for (int i = 0; i < children.length; ++i) {
             LayoutData layoutData = (LayoutData) children[i].getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
             if (layoutData instanceof GridLayoutData) {
