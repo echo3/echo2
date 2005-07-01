@@ -241,7 +241,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         itemizedUpdateElement.appendChild(itemElement);
     }
 
-    //BUGBUG StyledListCell behavior is untested.
+    //BUGBUG. StyledListCell behavior is untested.
     /**
      * Renders CSS style information to an item element.
      * This operation is only performed in the event the 
