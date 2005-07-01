@@ -46,7 +46,6 @@ public class Grid extends Component {
     public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_INSETS = "insets";
-    public static final String PROPERTY_ORIGIN = "origin";
     public static final String PROPERTY_ORIENTATION = "orientation";
     public static final String PROPERTY_ROW_HEIGHT = "rowHeight";
     public static final String PROPERTY_SIZE = "size";
@@ -133,16 +132,6 @@ public class Grid extends Component {
     public int getOrientation() {
         Integer orientationValue = (Integer) getProperty(PROPERTY_ORIENTATION);
         return orientationValue == null ? ORIENTATION_HORIZONTAL : orientationValue.intValue();
-    }
-    
-    /**
-     * Returns an <code>Alignment</code> representing the origin of the grid.
-     * 
-     * @return the origin value
-     * @see #setOrigin
-     */
-    public Alignment getOrigin() {
-        return (Alignment) getProperty(PROPERTY_ORIGIN);
     }
     
     /**
@@ -241,19 +230,6 @@ public class Grid extends Component {
      */
     public void setOrientation(int newValue) {
         setProperty(PROPERTY_ORIENTATION, new Integer(newValue));
-    }
-    
-    /**
-     * Sets the origin of the grid.  The origin describes the "starting corner"
-     * from which grid child cells are laid out.  The default origin is 
-     * the leading/top corner.  The provided <code>Alignment</code> must not
-     * specify <code>Alignment.CENTER</code> as either the horizontal or
-     * vertical value.
-     * 
-     * @param newValue the new origin
-     */
-    public void setOrigin(Alignment newValue) {
-        setProperty(PROPERTY_ORIGIN, newValue);
     }
     
     /**

@@ -147,7 +147,6 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         
-//BUGBUG. Render in any direction.
 //BUGBUG. Fill remaining cells.
         
         Grid grid = (Grid) component;
@@ -204,7 +203,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         for (int rowIndex = 0; rowIndex < rowSize; ++rowIndex) {
             Element trElement = document.createElement("tr");
             trElement.setAttribute("id", elementId + "_tr_" + rowIndex);
+            
             tbodyElement.appendChild(trElement);
+            
             for (int columnIndex = 0; columnIndex < columnSize; ++columnIndex) {
                 Component cell = horizontalOrientation 
                         ? gridProcessor.getContent(columnIndex, rowIndex) 

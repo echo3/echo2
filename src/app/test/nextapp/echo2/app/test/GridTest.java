@@ -31,7 +31,6 @@ package nextapp.echo2.app.test;
 
 import junit.framework.TestCase;
 
-import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Grid;
 
 /**
@@ -57,8 +56,6 @@ public class GridTest extends TestCase {
         assertEquals(TestConstants.BORDER_THICK_ORANGE, grid.getBorder());
         grid.setInsets(TestConstants.INSETS_1234);
         assertEquals(TestConstants.INSETS_1234, grid.getInsets());
-        grid.setOrigin(new Alignment(Alignment.TRAILING, Alignment.CENTER));
-        assertEquals(new Alignment(Alignment.TRAILING, Alignment.CENTER), grid.getOrigin());
         grid.setOrientation(Grid.ORIENTATION_VERTICAL);
         assertEquals(Grid.ORIENTATION_VERTICAL, grid.getOrientation());
         grid.setSize(5);
