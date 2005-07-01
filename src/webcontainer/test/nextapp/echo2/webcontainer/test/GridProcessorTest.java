@@ -52,6 +52,7 @@ public class GridProcessorTest extends TestCase {
     
     /** 
      * Test behavior of Grid with very little content.
+     * This is a special case for the <code>GridProcessor</code>.
      *  __ __ __ __
      * |  |XX|XX|XX|
      * |__|XX|XX|XX|
@@ -62,6 +63,34 @@ public class GridProcessorTest extends TestCase {
         grid.setSize(4);
         
         grid.add(new Label());
+        
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        assertEquals(1, gridProcessor.getGridXSize());
+        assertEquals(1, gridProcessor.getGridYSize());
+    }
+    
+    /** 
+     * Test behavior of Grid with very little content and a needless
+     * row span.
+     * This is a special case for the <code>GridProcessor</code>.
+     *  __ __ __ __
+     * |  |XX|XX|XX|
+     * |  |XX|XX|XX|
+     * |  |XX|XX|XX|
+     * |  |XX|XX|XX|
+     * |  |XX|XX|XX|
+     * |__|XX|XX|XX|
+     */
+    
+    public void testLessThanSizeWithRowSpan() {
+        Grid grid = new Grid();
+        grid.setSize(4);
+        
+        Label label = new Label();
+        GridLayoutData gridLayoutData = new GridLayoutData();
+        gridLayoutData.setRowSpan(3);
+        label.setLayoutData(gridLayoutData);
+        grid.add(label);
         
         GridProcessor gridProcessor = new GridProcessor(grid);
         assertEquals(1, gridProcessor.getGridXSize());
@@ -469,6 +498,8 @@ public class GridProcessorTest extends TestCase {
     
     
     /**
+     * Test reduction of symmetric column spans.
+     * 
      *  0  1  2  3  (specified)
      *  ________ __
      * |        |  |
@@ -526,6 +557,8 @@ public class GridProcessorTest extends TestCase {
     }
     
     /**
+     * Test reduction of symmetric row spans.
+     * 
      *  __ __ __  (spec)  (rend)  
      * |  |  |  |     
      * |  |  |  |   0      0       
@@ -583,6 +616,19 @@ public class GridProcessorTest extends TestCase {
 
     /**
      *  Test Grid that consists a single row-spanned and column-spanned cell.
+     *  
+     *  0  1  2
+     *  __ __ __
+     * |0       |  0
+     * |        |
+     * |        |  1
+     * |        |
+     * |        |  2
+     * |        |
+     * |        |  3
+     * |        |
+     * |        |  4
+     * |________|
      */
     public void testReduceColumnAndRowOneBigCell() {
         Grid grid = new Grid();
@@ -651,6 +697,17 @@ public class GridProcessorTest extends TestCase {
 
     /**
      * Test a simple grid consisting of ten cells in default 2 columns and 5 rows.
+     *  __ __
+     * |0 |1 |
+     * |__|__|
+     * |2 |3 |
+     * |__|__|
+     * |4 |5 |
+     * |__|__|
+     * |6 |7 |
+     * |__|__|
+     * |8 |9 |
+     * |__|__|
      */
     public void testSimple() {
         Grid grid = new Grid();

@@ -147,7 +147,6 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         
-//BUGBUG. Eliminate fully spanned over rows/columns.
 //BUGBUG. Render in any direction.
 //BUGBUG. Fill remaining cells.
         

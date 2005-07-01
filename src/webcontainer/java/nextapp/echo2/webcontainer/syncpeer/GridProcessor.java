@@ -46,29 +46,76 @@ import nextapp.echo2.app.layout.GridLayoutData;
  * and the y-axis represents rows. For vertically oriented <code>Grid</code>s,
  * the x-axis represents rows and the y-axis represents columns.
  * <p>
+ * Once a <code>GridProcessor</code> has been instantiated, the rendering
+ * <code>GridPeer</code> can make inquiries to it to determine how the
+ * HTML table representing the Grid should be rendered.  
+ * <p>
+ * Upon instantiation, the dimensions of the grid are calculated, and the
+ * content of each cell within those dimensions is determined.  By specifying
+ * an "x" and "y" coordinate to various getXXX() methods, the renderer can
+ * determine what <code>Component</code> exists at a particular coordinate,
+ * how many rows and columns that <code>Component</code> spans, and the index
+ * of the <code>Component</code> within its parent <code>Grid</code>'s 
+ * children.
+ * <p>
  * This class should not be extended or used by classes outside of the Echo
  * framework.
  */
 public class GridProcessor {
     
+    /**
+     * Internal representation of a rendered cell at a specific coordinate.
+     */
     private class Cell {
         
+        /**
+         * Creates a new <code>Cell</code>.
+         * 
+         * @param component the represented <code>Component</code>
+         * @param index the index of <code>component</code> within the
+         *        parent <code>Grid</code>
+         * @param xSpan the current calculated x-span of the cell
+         * @param ySpan the current calculated y-span of the cell
+         */
         private Cell(Component component, int index, int xSpan, int ySpan) {
+            super();
             this.component = component;
             this.index = index;
             this.xSpan = xSpan;
             this.ySpan = ySpan;
         }
         
+        /** the current calculated x-span of the cell */
         private int xSpan;
+
+        /** the current calculated y-span of the cell */
         private int ySpan;
+
+        /** the represented <code>Component</code> */
         private Component component;
+        
+        /** 
+         * the index of <code>component</code> within the parent 
+         * <code>Grid</code>
+         */
         private int index;
     }
     
+    /**
+     * A <code>List</code> containing arrays of <code>Cell</code>s.
+     * Each contained array of <code>Cell</code>s represents a single point on
+     * the y-axis.  The cell indices represent points on the x-axis.
+     * Individual y-axis entries should be obtained via the 
+     * <code>getCellArray()</code> method.
+     * 
+     * @see #getCellArray(int, boolean)
+     */
     private List cellArrays;
 
+    /** The current calculated  size of the x-axis. */
     private int gridXSize;
+    
+    /** The current calculated  size of the y-axis. */
     private int gridYSize;
 
     /**
@@ -167,6 +214,16 @@ public class GridProcessor {
         trimX();
     }
     
+    /**
+     * Retrieves the array of cells representing a particular coordinate on
+     * the y-axis of the rendered representation.
+     * 
+     * @param y the y-axis index
+     * @param expand a flag indicating whether the <code>CellArray</code> 
+     *        should be expanded in the event the given y-axis does not
+     *        exist.
+     * @see #cellArrays
+     */
     private Cell[] getCellArray(int y, boolean expand) {
         while (expand && y >= cellArrays.size()) {
             cellArrays.add(new Cell[gridXSize]);
@@ -174,11 +231,28 @@ public class GridProcessor {
         return (Cell[]) cellArrays.get(y);
     }
     
+    /**
+     * Returns the child <code>Component</code> at the specified
+     * rendered coordinate.
+     * @param x the "x" coordinate
+     * @param y the "y" coordinate
+     * 
+     * @return the <code>Component</code>
+     */
     public Component getContent(int x, int y) {
         Cell cell = getCellArray(y, false)[x];
         return cell == null ? null : cell.component;
     }
 
+    /**
+     * Returns the component index within the <code>Grid</code> 
+     * of the component at the specified rendered coordinate.
+     * 
+     * @param x the "x" coordinate
+     * @param y the "y" coordinate
+     * @return the index of the component within the parent <code>Grid</code>
+     *         component, or -1 if no component exists at the specified index.
+     */
     public int getComponentIndex(int x, int y) {
         Cell cell = getCellArray(y, false)[x];
         return cell == null ? -1 : cell.index;
@@ -202,16 +276,36 @@ public class GridProcessor {
         return gridYSize;
     }
 
+    /**
+     * Retrieves the x-span of the cell at the specified rendered coordinate.
+     * 
+     * @param x the "x" coordinate
+     * @param y the "y" coordinate
+     * @return the cell x-span, or -1 in the event that no cell exists at the 
+     *         coordinate.
+     */
     public int getXSpan(int x, int y) {
         Cell cell = getCellArray(y, false)[x];
         return cell == null ? -1 : cell.xSpan;
     }
 
+    /**
+     * Retrieves the y-span of the cell at the specified rendered coordinate.
+     * 
+     * @param x the "x" coordinate
+     * @param y the "y" coordinate
+     * @return the cell y-span, or -1 in the event that no cell exists at the 
+     *         coordinate.
+     */
     public int getYSpan(int x, int y) {
         Cell cell = getCellArray(y, false)[x];
         return cell == null ? -1 : cell.ySpan;
     }
     
+    /**
+     * Remove duplicates from the x-axis where all cells simply
+     * "span over" a given x-axis coordinate. 
+     */
     private void reduceX() {
         // Determine duplicate cell sets on x-axis.
         BitSet xRemoves = new BitSet();
@@ -260,7 +354,7 @@ public class GridProcessor {
     }
     
     /**
-     * Remove "duplicate" arrays from the y-axis where all cells simply
+     * Remove duplicates from the y-axis where all cells simply
      * "span over" a given y-axis coordinate. 
      */
     private void reduceY() {
