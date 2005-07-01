@@ -262,6 +262,15 @@ public class AbstractListComponent extends Component {
     }
 
     /**
+     * This component does not support children.
+     *
+     * @see nextapp.echo2.app.Component#isValidChild(nextapp.echo2.app.Component)
+     */
+    public boolean isValidChild(Component child) {
+        return false;
+    }
+
+    /**
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
