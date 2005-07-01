@@ -71,6 +71,8 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 public class GridPeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     
+    //BUGBUG. Render row heights & column widths.
+    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
@@ -146,9 +148,6 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
-        
-//BUGBUG. Fill remaining cells.
-        
         Grid grid = (Grid) component;
         Border border = (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER);
         

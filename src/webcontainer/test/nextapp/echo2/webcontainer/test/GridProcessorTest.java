@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer.test;
 
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.layout.GridLayoutData;
@@ -39,6 +40,43 @@ import junit.framework.TestCase;
  * Unit tests for <code>GridProcessor</code>.
  */
 public class GridProcessorTest extends TestCase {
+    
+    /**
+     * Test retrieving column widths and row heights.
+     */
+    public void testBasicColumnWidthAndRowHeight() {
+        Grid grid = new Grid(3);
+        for (int i = 0; i < 12; ++i) {
+            grid.add(new Label());
+        }
+        for (int i = 0; i < 4; ++i) {
+            grid.setColumnWidth(i, new Extent(i + 1));
+            grid.setRowHeight(i, new Extent((i + 1)* 10));
+        }
+        
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        assertEquals(3, gridProcessor.getGridXSize());
+        assertEquals(4, gridProcessor.getGridYSize());
+        assertEquals(new Extent(1), gridProcessor.getXExtent(0));
+        assertEquals(new Extent(2), gridProcessor.getXExtent(1));
+        assertEquals(new Extent(3), gridProcessor.getXExtent(2));
+        assertEquals(new Extent(10), gridProcessor.getYExtent(0));
+        assertEquals(new Extent(20), gridProcessor.getYExtent(1));
+        assertEquals(new Extent(30), gridProcessor.getYExtent(2));
+        assertEquals(new Extent(40), gridProcessor.getYExtent(3));
+        
+        grid.setOrientation(Grid.ORIENTATION_VERTICAL);
+        gridProcessor = new GridProcessor(grid);
+        assertEquals(4, gridProcessor.getGridYSize());
+        assertEquals(3, gridProcessor.getGridXSize());
+        assertEquals(new Extent(1), gridProcessor.getYExtent(0));
+        assertEquals(new Extent(2), gridProcessor.getYExtent(1));
+        assertEquals(new Extent(3), gridProcessor.getYExtent(2));
+        assertEquals(new Extent(4), gridProcessor.getYExtent(3));
+        assertEquals(new Extent(10), gridProcessor.getXExtent(0));
+        assertEquals(new Extent(20), gridProcessor.getXExtent(1));
+        assertEquals(new Extent(30), gridProcessor.getXExtent(2));
+    }
     
     /**
      * Test a grid with no child components.

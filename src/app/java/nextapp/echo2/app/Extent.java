@@ -40,7 +40,12 @@ implements Comparable, Serializable {
     /**
      * Adds one <code>Extent</code> to another, returning the sum as a new
      * <code>Extent</code>.  Null is returned if the <code>Extent</code>s have
-     * incompatible units. 
+     * incompatible units.  If either provided <code>Extent</code> is null, the
+     * other is returned.
+     * 
+     * @param a the first <code>Extent</code>
+     * @param b the second <code>Extent</code>
+     * @return the sum of the <code>Extent</code>s, if calculable 
      */
     public static Extent add(Extent a, Extent b) {
         if (a == null) {

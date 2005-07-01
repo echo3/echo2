@@ -32,6 +32,7 @@ import java.util.BitSet;
 import java.util.List;
 
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.LayoutData;
 import nextapp.echo2.app.layout.GridLayoutData;
@@ -101,6 +102,8 @@ public class GridProcessor {
         private int index;
     }
     
+    private Grid grid;
+    
     /**
      * A <code>List</code> containing arrays of <code>Cell</code>s.
      * Each contained array of <code>Cell</code>s represents a single point on
@@ -112,12 +115,26 @@ public class GridProcessor {
      */
     private List cellArrays;
 
-    /** The current calculated  size of the x-axis. */
+    /** The current calculated size of the x-axis. */
     private int gridXSize;
     
-    /** The current calculated  size of the y-axis. */
+    /** The current calculated size of the y-axis. */
     private int gridYSize;
 
+    /**
+     * The calculated dimensions of each array of cells on the x-axis.
+     * These values may change as a result of x-axis reductions. 
+     */
+    private List xExtents;
+    
+    /**
+     * The calculated dimensions of each array of cells on the y-axis.
+     * These values may change as a result of y-axis reductions. 
+     */
+    private List yExtents;
+    
+    private boolean horizontalOrientation;
+    
     /**
      * Creates a new <code>GridProcessor</code> for the specified
      * <code>Grid</code>. Creating a new <code>GridProcessor</code> will
@@ -129,25 +146,54 @@ public class GridProcessor {
      */
     public GridProcessor(Grid grid) {
         super();
+        this.grid = grid;
         cellArrays = new ArrayList();
         
-        Component[] children = grid.getVisibleComponents();
+        Integer orientationValue = (Integer) grid.getRenderProperty(Grid.PROPERTY_ORIENTATION);
+        int orientation = orientationValue == null ? Grid.ORIENTATION_HORIZONTAL : orientationValue.intValue();
+        horizontalOrientation = orientation != Grid.ORIENTATION_VERTICAL;
         
-        if (children.length == 0) {
+        Cell[] cells = createCells();
+        if (cells == null) {
             // Special case: empty Grid.
             gridXSize = 0;
             gridYSize = 0;
             return;
         }
+        renderCellMatrix(cells);
         
+        calculateExtents();
+        
+        reduceY();
+        reduceX();
+        trimX();
+    }
+    
+    private void calculateExtents() {
+        String xProperty = horizontalOrientation ? Grid.PROPERTY_COLUMN_WIDTH : Grid.PROPERTY_ROW_HEIGHT;
+        String yProperty = horizontalOrientation ? Grid.PROPERTY_ROW_HEIGHT : Grid.PROPERTY_COLUMN_WIDTH;
+        
+        xExtents = new ArrayList();
+        for (int i = 0; i < gridXSize; ++i) {
+            xExtents.add(grid.getRenderIndexedProperty(xProperty, i));
+        }
+        
+        yExtents = new ArrayList();
+        for (int i = 0; i < gridYSize; ++i) {
+            yExtents.add(grid.getRenderIndexedProperty(yProperty, i));
+        }
+    }
+    
+    private Cell[] createCells() {
+        Component[] children = grid.getVisibleComponents();
+        
+        if (children.length == 0) {
+            // Abort if Grid is empty.
+            return null;
+        }
+
         Cell[] cells = new Cell[children.length];
 
-        gridXSize = grid.getSize();
-
-        Integer orientationValue = (Integer) grid.getRenderProperty(Grid.PROPERTY_ORIENTATION);
-        int orientation = orientationValue == null ? Grid.ORIENTATION_HORIZONTAL : orientationValue.intValue();
-        boolean horizontalOrientation = orientation != Grid.ORIENTATION_VERTICAL;
-        
         for (int i = 0; i < children.length; ++i) {
             LayoutData layoutData = (LayoutData) children[i].getRenderProperty(Grid.PROPERTY_LAYOUT_DATA);
             if (layoutData instanceof GridLayoutData) {
@@ -159,60 +205,7 @@ public class GridProcessor {
                 cells[i] = new Cell(children[i], i, 1, 1);
             }
         }
-        
-        int x = 0, y = 0;
-        Cell[] yCells = getCellArray(y, true);
-        for (int componentIndex = 0; componentIndex < children.length; ++componentIndex) {
-            
-            if (cells[componentIndex].xSpan > gridXSize - x) {
-                // Limit xSpan in case cell has a span greater than remaining
-                // space.
-                cells[componentIndex].xSpan = gridXSize - x;
-            }
-            if (cells[componentIndex].xSpan != 1 || cells[componentIndex].ySpan != 1) {
-                // Scan to ensure no y-spans are blocking this x-span.
-                // If a y-span is blocking, shorten the x-span to not
-                // interfere.
-                for (int xIndex = 1; xIndex < cells[componentIndex].xSpan; ++xIndex) {
-                    if (yCells[x + xIndex] != null) {
-                        // Blocking component found.
-                        cells[componentIndex].xSpan = xIndex;
-                        break;
-                    }
-                }
-                for (int yIndex = 0; yIndex < cells[componentIndex].ySpan; ++yIndex) {
-                    Cell[] yIndexCells = getCellArray(y + yIndex, true);
-                    for (int xIndex = 0; xIndex < cells[componentIndex].xSpan; ++xIndex) {
-                        yIndexCells[x + xIndex] = cells[componentIndex];
-                    }
-                }
-            }
-            yCells[x] = cells[componentIndex];
-
-            if (componentIndex < children.length - 1) {
-                // Move rendering cursor.
-                boolean nextRenderPointFound = false;
-                while (!nextRenderPointFound) {
-                    if (x < gridXSize - 1) {
-                        ++x;
-                    } else {
-                        // Move cursor to next line.
-                        x = 0;
-                        ++y;
-                        yCells = getCellArray(y, true);
-                        
-                    }
-                    nextRenderPointFound = yCells[x] == null;
-                }
-            }
-        }
-
-        // Recalculate actual 'y' dimension.
-        gridYSize = cellArrays.size();
-        
-        reduceY();
-        reduceX();
-        trimX();
+        return cells;
     }
     
     /**
@@ -276,6 +269,14 @@ public class GridProcessor {
     public int getGridYSize() {
         return gridYSize;
     }
+    
+    public Extent getXExtent(int x) {
+        return (Extent) xExtents.get(x);
+    }
+
+    public Extent getYExtent(int y) {
+        return (Extent) yExtents.get(y);
+    }
 
     /**
      * Retrieves the x-span of the cell at the specified rendered coordinate.
@@ -333,7 +334,7 @@ public class GridProcessor {
             return;
         }
         
-        for (int removedX = gridXSize -1; removedX >= 0; --removedX) {
+        for (int removedX = gridXSize - 1; removedX >= 0; --removedX) {
             if (!xRemoves.get(removedX)) {
                 continue;
             }
@@ -350,6 +351,15 @@ public class GridProcessor {
                     getCellArray(y, false)[x] = getCellArray(y, false)[x + 1];
                 }
             }
+            
+            // Calculate Extent-size of merged indices.
+            Extent retainedExtent = (Extent) xExtents.get(removedX - 1);
+            Extent removedExtent = (Extent) xExtents.get(removedX);
+            xExtents.remove(removedX);
+            if (removedExtent != null) {
+                xExtents.set(removedX - 1, Extent.add(removedExtent, retainedExtent));
+            }
+            
             --gridXSize;
         }
     }
@@ -413,9 +423,71 @@ public class GridProcessor {
             // Remove the duplicate cell array.
             cellArrays.remove(removedY);
             
+            // Calculate Extent-size of merged indices.
+            Extent retainedExtent = (Extent) yExtents.get(removedY - 1);
+            Extent removedExtent = (Extent) yExtents.get(removedY);
+            yExtents.remove(removedY);
+            if (removedExtent != null) {
+                yExtents.set(removedY - 1, Extent.add(removedExtent, retainedExtent));
+            }
+
             // Decrement the grid size to reflect cell array removal.
             --gridYSize;
         }
+    }
+    
+    private void renderCellMatrix(Cell[] cells) {
+        gridXSize = grid.getSize();
+        
+        int x = 0, y = 0;
+        Cell[] yCells = getCellArray(y, true);
+        for (int componentIndex = 0; componentIndex < cells.length; ++componentIndex) {
+            
+            if (cells[componentIndex].xSpan > gridXSize - x) {
+                // Limit xSpan in case cell has a span greater than remaining
+                // space.
+                cells[componentIndex].xSpan = gridXSize - x;
+            }
+            if (cells[componentIndex].xSpan != 1 || cells[componentIndex].ySpan != 1) {
+                // Scan to ensure no y-spans are blocking this x-span.
+                // If a y-span is blocking, shorten the x-span to not
+                // interfere.
+                for (int xIndex = 1; xIndex < cells[componentIndex].xSpan; ++xIndex) {
+                    if (yCells[x + xIndex] != null) {
+                        // Blocking component found.
+                        cells[componentIndex].xSpan = xIndex;
+                        break;
+                    }
+                }
+                for (int yIndex = 0; yIndex < cells[componentIndex].ySpan; ++yIndex) {
+                    Cell[] yIndexCells = getCellArray(y + yIndex, true);
+                    for (int xIndex = 0; xIndex < cells[componentIndex].xSpan; ++xIndex) {
+                        yIndexCells[x + xIndex] = cells[componentIndex];
+                    }
+                }
+            }
+            yCells[x] = cells[componentIndex];
+
+            if (componentIndex < cells.length - 1) {
+                // Move rendering cursor.
+                boolean nextRenderPointFound = false;
+                while (!nextRenderPointFound) {
+                    if (x < gridXSize - 1) {
+                        ++x;
+                    } else {
+                        // Move cursor to next line.
+                        x = 0;
+                        ++y;
+                        yCells = getCellArray(y, true);
+                        
+                    }
+                    nextRenderPointFound = yCells[x] == null;
+                }
+            }
+        }
+
+        // Store actual 'y' dimension.
+        gridYSize = cellArrays.size();
     }
     
     /**
