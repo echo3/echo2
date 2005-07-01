@@ -28,14 +28,22 @@
  */
 
 package nextapp.echo2.testapp.interactive.testscreen;
+import nextapp.echo2.app.Button;
+import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.IllegalChildException;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.ListBox;
+import nextapp.echo2.app.PasswordField;
+import nextapp.echo2.app.RadioButton;
+import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
@@ -61,9 +69,114 @@ public class HierarchyTest extends SplitPane {
         }
     }
     
+    private ComponentEntry buttonEntry = new ComponentEntry(){
+        public String getName() {
+            return "Button";
+        }
+
+        public Component newInstance() {
+            Button button = new Button("Button");
+            button.setStyleName("Default");
+            return button;
+        }
+    };
+
+    private ComponentEntry checkBoxEntry = new ComponentEntry(){
+        public String getName() {
+            return "CheckBox";
+        }
+
+        public Component newInstance() {
+            CheckBox checkBox = new CheckBox("CheckBox");
+            checkBox.setStyleName("Default");
+            return checkBox;
+        }
+    };
+
+    private ComponentEntry columnEntry = new ComponentEntry(){
+        public String getName() {
+            return "Column";
+        }
+
+        public Component newInstance() {
+            Column column = new Column();
+            return column;
+        }
+    };
+    
+    private ComponentEntry contentPaneEntry = new ComponentEntry(){
+        public String getName() {
+            return "ContentPane";
+        }
+
+        public Component newInstance() {
+            ContentPane contentPane = new ContentPane();
+            return contentPane;
+        }
+    };
+    
+    private ComponentEntry gridEntry = new ComponentEntry(){
+        public String getName() {
+            return "Grid";
+        }
+
+        public Component newInstance() {
+            Grid grid = new Grid();
+            return grid;
+        }
+    };
+    
+    private ComponentEntry listBoxEntry = new ComponentEntry(){
+        public String getName() {
+            return "ListBox";
+        }
+
+        public Component newInstance() {
+            ListBox listBox = new ListBox(new String[]{"alpha", "bravo", "charlie", "delta"});
+            listBox.setStyleName("Default");
+            return listBox;
+        }
+    };
+
+    private ComponentEntry passwordFieldEntry = new ComponentEntry(){
+        public String getName() {
+            return "PasswordField";
+        }
+
+        public Component newInstance() {
+            PasswordField passwordField = new PasswordField();
+            passwordField.setStyleName("Default");
+            passwordField.setText("Password");
+            return passwordField;
+        }
+    };
+    
+    private ComponentEntry radioButtonEntry = new ComponentEntry(){
+        public String getName() {
+            return "RadioButton";
+        }
+
+        public Component newInstance() {
+            RadioButton radioButton = new RadioButton("RadioButton");
+            radioButton.setStyleName("Default");
+            return radioButton;
+        }
+    };
+    
+    private ComponentEntry rowEntry = new ComponentEntry(){
+        public String getName() {
+            return "Row";
+        }
+
+        public Component newInstance() {
+            Row row = new Row();
+            return row;
+        }
+    };
+
     private ComponentEntry selectFieldEntry = new ComponentEntry(){
         public String getName() {
-            return "Select Field";
+            return "SelectField";
         }
 
         public Component newInstance() {
@@ -73,9 +186,34 @@ public class HierarchyTest extends SplitPane {
         }
     };
 
+    private ComponentEntry splitPaneEntry = new ComponentEntry(){
+        public String getName() {
+            return "SplitPane";
+        }
+
+        public Component newInstance() {
+            SplitPane splitPane = new SplitPane();
+            splitPane.setStyleName("DefaultResizable");
+            return splitPane;
+        }
+    };
+    
+    private ComponentEntry textAreaEntry = new ComponentEntry(){
+        public String getName() {
+            return "TextArea";
+        }
+
+        public Component newInstance() {
+            TextArea textArea = new TextArea();
+            textArea.setStyleName("Default");
+            textArea.setText("TextArea");
+            return textArea;
+        }
+    };
+    
     private ComponentEntry textFieldEntry = new ComponentEntry(){
         public String getName() {
-            return "Text Field";
+            return "TextField";
         }
 
         public Component newInstance() {
@@ -85,7 +223,7 @@ public class HierarchyTest extends SplitPane {
             return textField;
         }
     };
-
+    
     private ComponentEntry windowPaneEntry = new ComponentEntry(){
         public String getName() {
             return "WindowPane";
@@ -99,16 +237,29 @@ public class HierarchyTest extends SplitPane {
     };
     
     private ListModel componentListModel = new DefaultListModel(new Object[]{
-        "(None)",
-        selectFieldEntry,
-        textFieldEntry, 
-        windowPaneEntry
+            "(None)",
+            buttonEntry,
+            checkBoxEntry,
+            columnEntry,
+            contentPaneEntry,
+            gridEntry,
+            listBoxEntry,
+            passwordFieldEntry,
+            radioButtonEntry,
+            rowEntry,
+            selectFieldEntry,
+            splitPaneEntry,
+            textAreaEntry, 
+            textFieldEntry, 
+            windowPaneEntry
     });
-    
+                
+    private Component parentComponentInstance;
+    private Component[] childComponentInstances;
+    private SelectField parentSelectField;
+    private SelectField[] childSelectFields;
     private ContentPane testPane;
-    private SelectField parentSelectField, childSelectField;
-    private Component parentComponentInstance, childComponentInstance;
-    
+
     public HierarchyTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
@@ -136,23 +287,29 @@ public class HierarchyTest extends SplitPane {
         });
         parentSelectColumn.add(parentSelectField);
         
-        Column childSelectColumn = new Column();
-        controlGroupsColumn.add(childSelectColumn);
-        
-        childSelectColumn.add(new Label("Child"));
-                        
-        childSelectField = new SelectField(componentListModel);
-        childSelectField.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (childSelectField.getSelectedItem() instanceof ComponentEntry) {
-                    childComponentInstance = ((ComponentEntry) childSelectField.getSelectedItem()).newInstance();
-                } else {
-                    childComponentInstance = null;
+        childSelectFields = new SelectField[4];
+        childComponentInstances = new Component[4];
+        for (int i = 0; i < childSelectFields.length; ++i) {
+            Column childSelectColumn = new Column();
+            controlGroupsColumn.add(childSelectColumn);
+            
+            childSelectColumn.add(new Label("Child #" + i));
+                            
+            final int childNumber = i;
+            childSelectFields[i] = new SelectField(componentListModel);
+            childSelectFields[i].addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    if (childSelectFields[childNumber].getSelectedItem() instanceof ComponentEntry) {
+                        childComponentInstances[childNumber] 
+                                = ((ComponentEntry) childSelectFields[childNumber].getSelectedItem()).newInstance();
+                    } else {
+                        childComponentInstances[childNumber] = null;
+                    }
+                    update();
                 }
-                update();
-            }
-        });
-        childSelectColumn.add(childSelectField);
+            });
+            childSelectColumn.add(childSelectFields[i]);
+        } 
         
         testPane = new ContentPane();
         add(testPane);
@@ -164,11 +321,13 @@ public class HierarchyTest extends SplitPane {
             return;
         }
         parentComponentInstance.removeAll();
-        if (childComponentInstance != null) {
-            try {
-                parentComponentInstance.add(childComponentInstance);
-            } catch (IllegalChildException ex) {
-                InteractiveApp.getApp().consoleWrite(ex.toString());
+        for (int i = 0; i < childComponentInstances.length; ++i) {
+            if (childComponentInstances[i] != null) {
+                try {
+                    parentComponentInstance.add(childComponentInstances[i]);
+                } catch (IllegalChildException ex) {
+                    InteractiveApp.getApp().consoleWrite(ex.toString());
+                }
             }
         }
         testPane.add(parentComponentInstance);
