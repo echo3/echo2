@@ -240,6 +240,8 @@ public class GridProcessorTest extends TestCase {
      */
     public void testReduceColumnComplex() {
         Grid grid = new Grid();
+        
+        // Configure Grid Content
         grid.setSize(7);
         for (int i = 0; i < 12; ++i) {
             Label label = new Label(Integer.toString(i));
@@ -253,6 +255,15 @@ public class GridProcessorTest extends TestCase {
             }
             grid.add(label);
         }
+        
+        // Set Column Sizes
+        grid.setColumnWidth(0, new Extent(1));
+        grid.setColumnWidth(1, new Extent(2));
+        grid.setColumnWidth(2, new Extent(4));
+        grid.setColumnWidth(3, new Extent(8));
+        grid.setColumnWidth(4, new Extent(16));
+        grid.setColumnWidth(5, new Extent(32));
+        grid.setColumnWidth(6, new Extent(64));
 
         GridProcessor gridProcessor = new GridProcessor(grid);
         
@@ -309,6 +320,13 @@ public class GridProcessorTest extends TestCase {
         assertEquals(1, gridProcessor.getYSpan(2, 2));
         assertEquals(1, gridProcessor.getYSpan(3, 2));
         assertEquals(2, gridProcessor.getYSpan(4, 2));
+        
+        // Verify column sizes were properly combined.
+        assertEquals(new Extent(1), gridProcessor.getXExtent(0));
+        assertEquals(new Extent(6), gridProcessor.getXExtent(1));
+        assertEquals(new Extent(8), gridProcessor.getXExtent(2));
+        assertEquals(new Extent(16), gridProcessor.getXExtent(3));
+        assertEquals(new Extent(96), gridProcessor.getXExtent(4));
     }
     
     /**
@@ -367,6 +385,8 @@ public class GridProcessorTest extends TestCase {
      */
     public void testReduceRowComplex() {
         Grid grid = new Grid();
+        
+        // Configure Grid Content
         grid.setSize(3);
         for (int i = 0; i < 12; ++i) {
             Label label = new Label(Integer.toString(i));
@@ -381,6 +401,15 @@ public class GridProcessorTest extends TestCase {
             grid.add(label);
         }
         
+        // Set Row Sizes
+        grid.setRowHeight(0, new Extent(1));
+        grid.setRowHeight(1, new Extent(2));
+        grid.setRowHeight(2, new Extent(4));
+        grid.setRowHeight(3, new Extent(8));
+        grid.setRowHeight(4, new Extent(16));
+        grid.setRowHeight(5, new Extent(32));
+        grid.setRowHeight(6, new Extent(64));
+
         GridProcessor gridProcessor = new GridProcessor(grid);
         
         // Verify Grid size is correct.
@@ -437,6 +466,13 @@ public class GridProcessorTest extends TestCase {
         assertEquals(1, gridProcessor.getYSpan(0, 4));
         assertEquals(1, gridProcessor.getYSpan(1, 4));
         assertEquals(1, gridProcessor.getYSpan(2, 4));
+        
+        // Verify column sizes were properly combined.
+        assertEquals(new Extent(1), gridProcessor.getYExtent(0));
+        assertEquals(new Extent(6), gridProcessor.getYExtent(1));
+        assertEquals(new Extent(8), gridProcessor.getYExtent(2));
+        assertEquals(new Extent(16), gridProcessor.getYExtent(3));
+        assertEquals(new Extent(96), gridProcessor.getYExtent(4));
     }
     
     /**
