@@ -50,6 +50,13 @@ public class GridProcessorTest extends TestCase {
         assertEquals(0, gridProcessor.getGridYSize());
     }
     
+    /** 
+     * Test behavior of Grid with very little content.
+     *  __ __ __ __
+     * |  |XX|XX|XX|
+     * |__|XX|XX|XX|
+     */
+    
     public void testLessThanSize() {
         Grid grid = new Grid();
         grid.setSize(4);
@@ -57,6 +64,8 @@ public class GridProcessorTest extends TestCase {
         grid.add(new Label());
         
         GridProcessor gridProcessor = new GridProcessor(grid);
+        assertEquals(1, gridProcessor.getGridXSize());
+        assertEquals(1, gridProcessor.getGridYSize());
     }
     
     /**

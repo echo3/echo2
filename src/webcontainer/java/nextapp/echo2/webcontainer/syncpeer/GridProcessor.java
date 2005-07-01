@@ -164,6 +164,7 @@ public class GridProcessor {
         
         reduceY();
         reduceX();
+        trimX();
     }
     
     private Cell[] getCellArray(int y, boolean expand) {
@@ -245,8 +246,10 @@ public class GridProcessor {
             for (int y = 0; y < gridYSize; ++y) {
                 if (y == 0 || getCellArray(y, false)[removedX - 1] != getCellArray(y - 1, false)[removedX - 1]) {
                     // Reduce x-span, taking care not to reduce it multiple times if cell has a y-span.
-//BUGBUG. this is blowing up with NPE
-                    --getCellArray(y, false)[removedX - 1].xSpan;
+                    Cell[] cellArray = getCellArray(y, false);
+                    if (cellArray[removedX - 1] != null) {
+                        --getCellArray(y, false)[removedX - 1].xSpan;
+                    }
                 }
                 for (x = removedX; x < gridXSize - 1; ++x) {
                     getCellArray(y, false)[x] = getCellArray(y, false)[x + 1];
@@ -256,6 +259,10 @@ public class GridProcessor {
         }
     }
     
+    /**
+     * Remove "duplicate" arrays from the y-axis where all cells simply
+     * "span over" a given y-axis coordinate. 
+     */
     private void reduceY() {
         // Determine duplicate cell sets on y-axis.
         BitSet yRemoves = new BitSet();
@@ -313,6 +320,21 @@ public class GridProcessor {
             
             // Decrement the grid size to reflect cell array removal.
             --gridYSize;
+        }
+    }
+    
+    /**
+     * Special case: Trim excess null cells from Grid x-size if the 
+     * Grid y-size is 1.
+     */
+    private void trimX() {
+        if (gridYSize == 1) {
+            Cell[] cellArray = getCellArray(0, false);
+            for (int i = 0; i < gridXSize; ++i) {
+                if (cellArray[i] == null) {
+                    gridXSize = i;
+                }
+            }
         }
     }
 }
