@@ -105,6 +105,7 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         }
         if (item.getAttribute("vertical-scroll")) {
             if (EchoClientProperties.get("quirkIERepaint")) {
+                // Avoid IE quirk where browser will fail to set scroll bar position.
 	            var originalWidth = textComponent.style.width;
 	            var temporaryWidth = parseInt(textComponent.clientWidth) - 1;
 	            textComponent.style.width = temporaryWidth + "px";
@@ -112,6 +113,22 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
             }
             textComponent.scrollTop = parseInt(item.getAttribute("vertical-scroll"));
         }
+        
+        if (EchoClientProperties.get("quirkMozillaTextInputRepaint")) {
+            // Avoid Mozilla quirk where text will be rendered outside of text field
+            // (this appears to be a Mozilla bug).
+            var noValue = !textComponent.value;
+            if (noValue) {
+                textComponent.value = "-";
+            }
+            var currentWidth = textComponent.style.width;
+            textComponent.style.width = "20px";
+            textComponent.style.width = currentWidth;
+            if (noValue) {
+                textComponent.value = "";
+            }
+        }
+        
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(elementId, "focus", "EchoTextComponent.processFocus");
         EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processKeyUp");

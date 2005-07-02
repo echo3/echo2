@@ -78,6 +78,20 @@ implements Serializable {
     public static final String QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY = "quirkDomPerformanceRemoveLargeHierarchy";
 
     /**
+     * A quirk flag describing a Mozilla-specific behavior where the text
+     * contained within text input fields may be drawn outside of text
+     * input component due to the component having shifted its location
+     * on the page.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Mozilla (all platforms)</li>
+     *  <li>Mozilla Firefox ((all platforms)</li>
+     * </ul>
+     */
+    public static final String QUIRK_MOZILLA_TEXT_INPUT_REPAINT = "quirkMozillaTextInputRepaint";
+    
+    /**
      * A quirk flag describing the curious repaint behavior found in Internet 
      * Explorer 6, where repaints may be excessively delayed.  
      * This quirky behavior is most visible when the DOM hierarchy is large and

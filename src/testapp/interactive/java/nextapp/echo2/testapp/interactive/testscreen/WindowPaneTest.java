@@ -36,6 +36,7 @@ import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
@@ -44,6 +45,7 @@ import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.Table;
+import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.button.ButtonGroup;
@@ -249,6 +251,12 @@ public class WindowPaneTest extends SplitPane {
                     windowPane.add(splitPane1);
                 }
             });
+
+            addButton("Add Mozilla TextField Quirk Workaround Test Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    targetContentPane.add(createMozillaTextFieldQuirkTestWindow());
+                }
+            });
         }
     }
 
@@ -261,7 +269,7 @@ public class WindowPaneTest extends SplitPane {
      * Counter used to assign somewhat unique titles.
      */
     private int windowNumber = 0;
-    
+
     public WindowPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
@@ -434,6 +442,49 @@ public class WindowPaneTest extends SplitPane {
         
         return windowPane;
     }
+
+    private WindowPane createMozillaTextFieldQuirkTestWindow() {
+       final WindowPane windowPane = new WindowPane();
+       //positionWindowPane(windowPane);
+       windowPane.setTitle("****Bug F1047 Window #" + windowNumber++);
+       windowPane.setStyleName("Default");
+
+       final Column mainColumn = new Column();
+       
+       Grid grid = new Grid();
+       mainColumn.add(grid);
+       
+       grid.add(new Label("User"));
+       TextField tf = new TextField();
+       tf.setText("This Text will render somewhere");
+       grid.add(tf);
+       grid.add(new Label("Subject"));
+       tf = new TextField();
+       tf.setText("BLANK OUT THIS FIELD!!!");
+       grid.add(tf);
+       grid.add(new Label("Message"));
+       grid.add(new TextArea());
+       grid.add(new Label("Stuff"));
+       grid.add(new ListBox(new Object[]{"one", "two", "three"}));
+       grid.add(new Label("Things"));
+       grid.add(new SelectField(new Object[]{"four", "five", "six"}));
+       
+       Button okButton = new Button("Ok");
+       okButton.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+               Column errorColumn = new Column();
+               errorColumn.add(new Label("Did Mozilla break?"));
+               errorColumn.add(new Label("Did Mozilla break?"));
+               mainColumn.add(errorColumn, 0);
+               //**** UNCOMMENT THE FOLLWOING LINE FOR "FIXING" THIS BUG
+               //windowPane.setHeight(windowPane.getHeight());
+           }
+       });
+       grid.add(okButton);
+       windowPane.add(mainColumn);
+       return windowPane;
+    }    
+    
     
     private WindowPane createSimpleWindow(String name) {
         WindowPane windowPane = new WindowPane();

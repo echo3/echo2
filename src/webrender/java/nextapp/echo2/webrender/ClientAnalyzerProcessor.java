@@ -124,6 +124,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
         }
         if (browserMozilla) {
+            clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_TEXT_INPUT_REPAINT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY, Boolean.TRUE);
         }
     }
