@@ -363,6 +363,60 @@ public class GridTest extends SplitPane {
                 }
             }
         });
+
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Configure Rows/Columns"));
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.addButton("Clear Widths of First 16 Columns", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 16; ++i) {
+                    grid.setColumnWidth(i, null);
+                }
+            }
+        });
+        
+        controlsColumn.addButton("Set First 16 Columns to 100px Width", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Extent width = new Extent(100);
+                for (int i = 0; i < 16; ++i) {
+                    grid.setColumnWidth(i, width);
+                }
+            }
+        });
+        
+        controlsColumn.addButton("Set First 16 Columns to Random Width", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 16; ++i) {
+                    grid.setColumnWidth(i, new Extent( ((int) (Math.random() * 100)) + 50));
+                }
+            }
+        });
+
+        controlsColumn.addButton("Clear Heights of First 16 Rows", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 16; ++i) {
+                    grid.setRowHeight(i, null);
+                }
+            }
+        });
+        
+        controlsColumn.addButton("Set First 16 Rows to 100px Height", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Extent height = new Extent(100);
+                for (int i = 0; i < 16; ++i) {
+                    grid.setRowHeight(i, height);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Set First 16 Rows to Random Height", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 16; ++i) {
+                    grid.setRowHeight(i, new Extent( ((int) (Math.random() * 100)) + 50));
+                }
+            }
+        });
     }
 
     public Button createGridCellButton() {

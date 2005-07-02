@@ -71,8 +71,6 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 public class GridPeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     
-    //BUGBUG. Render row heights & column widths.
-    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
@@ -148,12 +146,14 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
+        Document document = parentNode.getOwnerDocument();
         Grid grid = (Grid) component;
         Border border = (Border) grid.getRenderProperty(Grid.PROPERTY_BORDER);
-        
         String elementId = ContainerInstance.getElementId(grid);
+        GridProcessor gridProcessor = new GridProcessor(grid);
+        int columnCount = gridProcessor.getColumnCount(); 
+        int rowCount = gridProcessor.getRowCount();
         
-        Document document = parentNode.getOwnerDocument();
         Element tableElement = document.createElement("table");
         tableElement.setAttribute("id", elementId);
 
@@ -181,21 +181,37 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         
         parentNode.appendChild(tableElement);
         
+        boolean someColumnsHaveWidths = false;
+        for (int i = 0; i < columnCount; ++i) {
+            if (gridProcessor.getColumnWidth(i) != null) {
+                someColumnsHaveWidths = true;
+            }
+        }
+        if (someColumnsHaveWidths) {
+            Element colGroupElement = document.createElement("colgroup");
+            tableElement.appendChild(colGroupElement);
+            for (int i = 0; i < columnCount; ++i) {
+                Element colElement = document.createElement("col");
+                Extent columnWidth = gridProcessor.getColumnWidth(i);
+                if (columnWidth != null) {
+                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                }
+                colGroupElement.appendChild(colElement);
+            }
+        }
+        
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");
         tableElement.appendChild(tbodyElement);
         
-        GridProcessor gridProcessor = new GridProcessor(grid);
-
         Set renderedCells = new HashSet();
         
-        int columnCount = gridProcessor.getColumnCount(); 
-        int rowCount = gridProcessor.getRowCount();
-
         for (int rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
             Element trElement = document.createElement("tr");
             trElement.setAttribute("id", elementId + "_tr_" + rowIndex);
-            
+            if (gridProcessor.getRowHeight(rowIndex) != null) {
+                trElement.setAttribute("height", ExtentRender.renderCssAttributeValue(gridProcessor.getRowHeight(rowIndex)));
+            }
             tbodyElement.appendChild(trElement);
             
             for (int columnIndex = 0; columnIndex < columnCount; ++columnIndex) {
