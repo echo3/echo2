@@ -316,10 +316,15 @@ public class AbstractListComponent extends Component {
     
     /**
      * Sets the renderer for items.
+     * The renderer may not be null (use <code>DEFAULT_LIST_CELL_RENDERER</code>
+     * for default behavior).
      * 
      * @param newValue the new renderer
      */
     public void setCellRenderer(ListCellRenderer newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("Cell Renderer may not be null.");
+        }
         ListCellRenderer oldValue = listCellRenderer;
         listCellRenderer = newValue;
         firePropertyChange(LIST_CELL_RENDERER_CHANGED_PROPERTY, oldValue, newValue);

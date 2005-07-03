@@ -32,6 +32,7 @@ package nextapp.echo2.testapp.interactive.testscreen;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Grid;
@@ -47,7 +48,10 @@ import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.event.ListDataEvent;
 import nextapp.echo2.app.event.ListDataListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.app.list.AbstractListComponent;
+import nextapp.echo2.app.list.ListCellRenderer;
 import nextapp.echo2.app.list.ListSelectionModel;
+import nextapp.echo2.app.list.StyledListCell;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
@@ -110,6 +114,39 @@ public class ListBoxTest extends SplitPane {
          */
         public void intervalRemoved(ListDataEvent e) {
             ((InteractiveApp) getApplicationInstance()).consoleWrite(e.toString());
+        }
+    };
+    
+    private ListCellRenderer evenOddListCellRenderer = new ListCellRenderer(){
+    
+        private Color foreground1 = new Color(0x007f00);
+        private Color background1 = new Color(0xafffaf);
+        private Color foreground2 = new Color(0x7f0000);
+        private Color background2 = new Color(0xffafaf);
+        private Font font1 = new Font(Font.MONOSPACE, Font.BOLD, null);
+        
+        /**
+         * @see nextapp.echo2.app.list.ListCellRenderer#getListCellRendererComponent(nextapp.echo2.app.Component, java.lang.Object, int)
+         */
+        public Object getListCellRendererComponent(Component list, final Object value, final int index) {
+            return new StyledListCell() {
+            
+                public Color getForeground() {
+                    return index % 2 == 0 ? foreground1 : foreground2;
+                }
+            
+                public Font getFont() {
+                    return index % 2 == 0 ? font1 : null;
+                }
+            
+                public Color getBackground() {
+                    return index % 2 == 0 ? background1 : background2;
+                }
+                
+                public String toString() {
+                    return value == null ? null : value.toString();
+                }
+            };
         }
     };
     
@@ -192,6 +229,18 @@ public class ListBoxTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 listBox1.setEnabled(!listBox1.isEnabled());
                 selectField1.setEnabled(!selectField1.isEnabled());
+            }
+        });
+        controlsColumn.addButton("Set ListCellRenderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox1.setCellRenderer(evenOddListCellRenderer);
+                selectField1.setCellRenderer(evenOddListCellRenderer);
+            }
+        });
+        controlsColumn.addButton("Clear ListCellRenderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox1.setCellRenderer(AbstractListComponent.DEFAULT_LIST_CELL_RENDERER);
+                selectField1.setCellRenderer(AbstractListComponent.DEFAULT_LIST_CELL_RENDERER);
             }
         });
         

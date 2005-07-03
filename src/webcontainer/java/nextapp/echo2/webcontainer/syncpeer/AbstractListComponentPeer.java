@@ -241,7 +241,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         itemizedUpdateElement.appendChild(itemElement);
     }
 
-    //BUGBUG. StyledListCell behavior is untested.
     /**
      * Renders CSS style information to an item element.
      * This operation is only performed in the event the 
@@ -313,6 +312,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
 
         ListModel model = listComponent.getModel();
         ListSelectionModel selectionModel = listComponent.getSelectionModel();
+        ListCellRenderer renderer = listComponent.getCellRenderer();
 
         for (int i = 0; i < model.size(); i++) {
             boolean selected = selectionModel.isSelectedIndex(i);
@@ -322,7 +322,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
             optionElement.setAttribute("id", optionId);
             optionElement.setAttribute("value", optionId);
 
-            ListCellRenderer renderer = listComponent.getCellRenderer();
             Object value = model.get(i);
             Object renderedValue = renderer.getListCellRendererComponent(listComponent, value, i);
             optionElement.appendChild(optionElement.getOwnerDocument().createTextNode(renderedValue.toString()));

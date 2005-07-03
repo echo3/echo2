@@ -35,6 +35,7 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.ListBox;
+import nextapp.echo2.app.list.ListCellRenderer;
 import nextapp.echo2.app.list.ListModel;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -241,16 +242,16 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         listBoxElement.setAttribute("id", elementId);
 
         ListModel model = listBox.getModel();
+        ListCellRenderer renderer = listBox.getCellRenderer();
 
         for (int i = 0; i < model.size(); ++i) {
-
             Element optionElement = parentNode.getOwnerDocument().createElement("div");
             String optionId = getOptionId(elementId, i);
             optionElement.setAttribute("id", optionId);
-            Object renderedValue = model.get(i);
+            Object value = model.get(i);
+            Object renderedValue = renderer.getListCellRendererComponent(listBox, value, i);
             optionElement.appendChild(rc.getServerMessage().getDocument().createTextNode(renderedValue.toString()));
             renderItemStyle(optionElement, renderedValue);
-            
             listBoxElement.appendChild(optionElement);
         }
 
