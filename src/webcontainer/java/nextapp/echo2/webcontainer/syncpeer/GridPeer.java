@@ -172,7 +172,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         
         Extent borderSize = border == null ? null : border.getSize();
         if (borderSize != null) {
-            if (!rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN)) {
+            if (!rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE)) {
                 tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
             }
         }

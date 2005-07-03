@@ -47,9 +47,9 @@ public class ClientAnalyzerProcessor
 implements SynchronizeService.ClientMessagePartProcessor {
 
     /**
-     * Set containing valid properties which may be received from the client.
-     * Property settings received from the client that are not in this set 
-     * are discarded.
+     * <code>Set</code> containing valid properties which may be received from
+     * the client. Property settings received from the client that are not in
+     * this set are discarded.
      */
     private static final Set VALID_PROPERTIES;
     static {
@@ -70,7 +70,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
     }
 
     /**
-     * Analyzes the <code>ClientProperties</code> and adds additional
+     * Analyzes the state of <code>ClientProperties</code> and adds additional
      * inferred data, such as quirk attributes based on browser type.
      * 
      * @param clientProperties the <code>ClientProperties</code> to analyze
@@ -113,7 +113,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED,  Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_REPAINT, Boolean.TRUE);
@@ -121,11 +121,11 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
         }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_TEXT_INPUT_REPAINT, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE, Boolean.TRUE);
         }
     }
     

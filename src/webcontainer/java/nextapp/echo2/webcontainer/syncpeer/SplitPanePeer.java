@@ -357,9 +357,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         
         renderDisposeDirective(rc, (SplitPane) component);
         if (rc.getContainerInstance().getClientProperties()
-                .getBoolean(ClientProperties.QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY)) {
+                .getBoolean(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE)) {
             // Performance Hack for Mozilla/Firefox Browsers:
-            // BUGBUG. this hack needs to get moved to client side.
             if (!update.hasRemovedChild(component)) {
                 DomUpdate.renderElementRemove(rc.getServerMessage(), elementId);
             }

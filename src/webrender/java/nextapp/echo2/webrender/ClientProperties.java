@@ -39,7 +39,28 @@ import java.util.Map;
 public class ClientProperties
 implements Serializable {
     
-    //BUGBUG. Standardize quirk/proprietary names.
+    // General CSS Quirks describing specific out-of-spec behaviors particular to certain browsers.
+    
+    /**
+     * A quirk flag indicating that CSS positioning values do not work correctly when either both 
+     * "top" and "bottom" or "left" and "right" positions are set at the same time.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY = "quirkCssPositioningOneSideOnly";
+    
+    /**
+     * A quirk flag indicating the only means of achieving 0 padding in table cells is to use 0px padding.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING = "quirkCssBorderCollapseFor0Padding";
     
     /**
      * A quirk flag indicating whether the client will incorrectly render CSS 
@@ -51,7 +72,7 @@ implements Serializable {
      *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
      */
-    public static final String QUIRK_CSS_BORDER_COLLAPSE_MARGIN = "quirkCssBorderCollapse1";
+    public static final String QUIRK_CSS_BORDER_COLLAPSE_INSIDE = "quirkCssBorderCollapseInside";
     
     /**
      * A quirk flag indicating that the 'fixed' attribute should be used to
@@ -64,6 +85,8 @@ implements Serializable {
      */
     public static final String QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED = "quirkCssBackgroundAttachmentUseFixed";
     
+    // Mozilla-specific Quirk Behaviors (behaviors that are more likely to be described as bugs)
+    
     /**
      * A quirk flag indicating whether the client has poor performance when
      * attempting to remove large element hierarchies from a DOM.  This quirk can
@@ -75,7 +98,7 @@ implements Serializable {
      *  <li>Mozilla Firefox ((all platforms)</li>
      * </ul>
      */
-    public static final String QUIRK_DOM_PERFORMANCE_REMOVE_LARGE_HIERARCHY = "quirkDomPerformanceRemoveLargeHierarchy";
+    public static final String QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE = "quirkMozillaPerformanceLargeDomRemove";
 
     /**
      * A quirk flag describing a Mozilla-specific behavior where the text
@@ -90,6 +113,30 @@ implements Serializable {
      * </ul>
      */
     public static final String QUIRK_MOZILLA_TEXT_INPUT_REPAINT = "quirkMozillaTextInputRepaint";
+    
+    // Internet Explorer-specific Quirk Behaviors (behaviors that are more likely to be described as bugs)
+    
+    /**
+     * A quirk flag describing the issue of "windowed" select fields in Internet Explorer, which do not
+     * render correctly with regard to z-index value.
+     * See http://support.microsoft.com/kb/q177378/ for an explanation of the underlying issue.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
+    
+    /**
+     * A quirk flag indicating the incorrect parsing of newlines in the content of a 'textarea'.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION = "quirkIETextareaNewlineObliteration";
     
     /**
      * A quirk flag describing the curious repaint behavior found in Internet 
@@ -106,16 +153,6 @@ implements Serializable {
      * </ul>
      */
     public static final String QUIRK_IE_REPAINT = "quirkIERepaint";
-    
-    /**
-     * A quirk flag indicating the only means of achieving 0 padding in table cells is to use 0px padding.
-     * <p>
-     * This quirk occurs with:
-     * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
-     * </ul>
-     */
-    public static final String QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING = "quirkCssBorderCollapseFor0Padding";
     
     /**
      * A quirk flag indicating incorrect calculation of 100% table widths when within a vertically scrolling
@@ -148,6 +185,9 @@ implements Serializable {
      */
     public static final String QUIRK_IE_SELECT_PERCENT_WIDTH = "quirkIESelectPercentWidth";
 
+    // Internet Explorer-specific Proprietary Features
+    // These features are used only to compensate for IE6's lack of proper CSS support.
+    
      /**
      * A proprietary feature flag indicating support for IE-style CSS expressions.
      * <p>
@@ -169,38 +209,7 @@ implements Serializable {
      */
     public static final String PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED = "proprietaryIEPngAlphaFilterRequired";
     
-    /**
-     * A quirk flag indicating that CSS positioning values do not work correctly when either both 
-     * "top" and "bottom" or "left" and "right" positions are set at the same time.
-     * <p>
-     * This quirk occurs with:
-     * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
-     * </ul>
-     */
-    public static final String QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY = "quirkCssPositioningOneSideOnly";
-    
-    /**
-     * A quirk flag describing the issue of "windowed" select fields in Internet Explorer, which do not
-     * render correctly with regard to z-index value.
-     * See http://support.microsoft.com/kb/q177378/ for an explanation of the underlying issue.
-     * <p>
-     * This quirk occurs with:
-     * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
-     * </ul>
-     */
-    public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
-    
-    /**
-     * A quirk flag indicating the incorrect parsing of newlines in the content of a 'textarea'.
-     * <p>
-     * This quirk occurs with:
-     * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
-     * </ul>
-     */
-    public static final String QUIRK_TEXTAREA_NEWLINE_OBLITERATION = "quirkTextareaNewlineObliteration";
+    // General Browser Properties
     
     /**
      * Width of the screen in pixels (integer).

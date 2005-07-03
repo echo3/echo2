@@ -263,7 +263,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
             itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
         }
         if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_TEXTAREA_NEWLINE_OBLITERATION)) {
+                ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION)) {
             String value = textComponent.getText();
             if (value != null) {
                 itemElement.setAttribute("text", value);

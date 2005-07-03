@@ -269,7 +269,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         BorderRender.renderToStyle(tableCssStyle, border);
         if (borderSize != null) {
             if (!rc.getContainerInstance().getClientProperties().getBoolean(
-                    ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_MARGIN)) {
+                    ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE)) {
                 tableCssStyle.setAttribute("margin", ExtentRender.renderCssAttributeValueHalf(borderSize));
             }
         }

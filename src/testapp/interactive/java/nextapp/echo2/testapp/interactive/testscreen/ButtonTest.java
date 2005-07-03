@@ -1145,8 +1145,6 @@ extends SplitPane {
                 });
             }
         });
-        
-    
     }
     
     public void apply(Applicator applicator) {
