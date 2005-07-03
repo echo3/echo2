@@ -35,6 +35,9 @@ package nextapp.echo2.webrender.util;
  */
 public class JavaScriptCompressor {
     
+    //BUGBUG. Disabled JS Compressor until URL mangling fixed.
+    private static final boolean DISABLE_JAVASCRIPT_COMPRESSOR = true;
+    
     private static final char LINE_FEED = '\n';
     private static final char CARRIAGE_RETURN = '\r';    
     private static final char SPACE = ' ';
@@ -48,8 +51,7 @@ public class JavaScriptCompressor {
      *         and white space removed.
      */
     public static String compress(String script) {
-        if (true) {
-            //BUGBUG. Disabled JS Compressor until URL mangling fixed.
+        if (DISABLE_JAVASCRIPT_COMPRESSOR) {
             return script;
         }
         

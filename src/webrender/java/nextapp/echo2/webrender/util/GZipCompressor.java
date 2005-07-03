@@ -27,38 +27,31 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.webrender.service;
+package nextapp.echo2.webrender.util;
 
-import nextapp.echo2.webrender.Service;
-import nextapp.echo2.webrender.ServiceRegistry;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
 
 /**
- * Static instances of the 'core' Web Render Engine <code>Service</code>s.
+ * Utility class for GZip compression.
  */
-public class CoreServices {
-
-    /** Root path to core service <code>CLASSPATH</code> resources. */
-    private static final String RESOURCE_PATH = "/nextapp/echo2/webrender/resource/";
-    
-    /** Client Engine JavaScript code. */
-    public static final Service CLIENT_ENGINE
-            = JavaScriptService.forResource("Echo.ClientEngine", RESOURCE_PATH + "ClientEngine.js");
-    
-    /** Debug window HTML content. */
-    public static final Service DEBUG 
-            = StaticTextService.forResource("Echo.Debug", "text/html", RESOURCE_PATH + "Debug.html");
+public class GZipCompressor {
     
     /**
-     * Installs the core services in the specified 
-     * <code>ServiceRegistry</code>.
+     * Compresses a String.
      * 
-     * services the <code>ServiceRegistry</code>
+     * @param s the String to compress
+     * @return an array of bytes containing GZip-compression output
+     * @throws IOException
      */
-    public static void install(ServiceRegistry services) {
-        services.add(CLIENT_ENGINE);
-        services.add(DEBUG);
+    public static byte[] compress(String s) 
+    throws IOException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        GZIPOutputStream gZipOut = new GZIPOutputStream(byteOut);
+        gZipOut.write(s.getBytes());
+        gZipOut.finish();
+        byteOut.close();
+        return byteOut.toByteArray();
     }
-    
-    /** Non-instantiable class. */
-    private CoreServices() { }
 }
