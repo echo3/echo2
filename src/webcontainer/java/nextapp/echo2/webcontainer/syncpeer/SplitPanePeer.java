@@ -76,8 +76,6 @@ import org.w3c.dom.Node;
  */
 public class SplitPanePeer 
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
-
-    //BUGBUG. SplitPane support for bidirectional is not rendering correctly at moment.
     
     private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
