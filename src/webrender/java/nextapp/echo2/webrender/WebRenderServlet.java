@@ -50,11 +50,32 @@ public abstract class WebRenderServlet extends HttpServlet {
      */
     public static final boolean DISABLE_CACHING = false;
     
+    /**
+     * Request parameter identifying requested <code>Service</code>.
+     */
     public static final String SERVICE_ID_PARAMETER = "serviceId";
     
+    /**
+     * <code>Service</code> identifier of the 'default' service. 
+     * The 'default' service is rendered when a client makes a request
+     * without a service identifier and a session DOES exist.
+     */
     public static final String SERVICE_ID_DEFAULT = "Echo.Default";
+    
+    /**
+     * <code>Service</code> identifier of the 'new instance' service. 
+     * The 'new instance' service is rendered when a client makes a request
+     * without a service identifier and a session DOES NOT exist..
+     */
     public static final String SERVICE_ID_NEW_INSTANCE = "Echo.NewInstance";
-    public static final String SERVICE_ID_SESSION_EXPIRED = "Echo.Expired"; 
+    
+    /**
+     * <code>Service</code> identifier of the 'session expired' service.
+     * The 'session expired' service is rendered when a client makes a
+     * request that has an identifier and is intended for an active session, 
+     * but no session exists. 
+     */
+    public static final String SERVICE_ID_SESSION_EXPIRED = "Echo.Expired";
     
     /**
      * The time delta (in seconds) when cached services will expire.

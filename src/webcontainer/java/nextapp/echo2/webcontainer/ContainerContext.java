@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer;
 
+import java.security.Principal;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -75,6 +76,19 @@ public interface ContainerContext {
      * @return the <code>HttpSession</code>
      */
     public HttpSession getSession();
+    
+    /**
+     * Returns the authenticated user <code>Principal</code>.
+     * 
+     * @return the authenticated user <code>Principal</code>
+     */
+    public Principal getUserPrincipal();
+    
+    /**
+     * Determines if the authenticated user is in the specified logical "role",
+     * by querying the inbound servlet request. 
+     */
+    public boolean isUserInRole(String role);
     
     /**
      * Sets the interval between asynchronous callbacks from the client to check

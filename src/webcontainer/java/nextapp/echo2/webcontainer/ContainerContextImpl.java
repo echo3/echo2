@@ -30,6 +30,7 @@
 package nextapp.echo2.webcontainer;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -74,6 +75,20 @@ implements ContainerContext, Serializable {
      */
     public HttpSession getSession() {
         return containerInstance.getSession();
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#getUserPrincipal()
+     */
+    public Principal getUserPrincipal() {
+        return containerInstance.getUserPrincipal();
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#isUserInRole(java.lang.String)
+     */
+    public boolean isUserInRole(String role) {
+        return containerInstance.isUserInRole(role);
     }
 
     /**

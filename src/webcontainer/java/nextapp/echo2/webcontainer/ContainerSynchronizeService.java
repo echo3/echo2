@@ -182,20 +182,22 @@ public class ContainerSynchronizeService extends SynchronizeService {
     
     /**
      * Performs disposal operations on components which have been removed from
-     * the hierarchy.  Removes any <code>RenderState</code> objects being 
-     * stored in the <code>ContainerInstance</code> for the disposed 
-     * components.  Invokes <code>ComponentSynchronizePeer.renderDispose()</code> such
-     * that the peers of the components can dispose of resources on the client.
+     * the hierarchy. Removes any <code>RenderState</code> objects being
+     * stored in the <code>ContainerInstance</code> for the disposed
+     * components. Invokes <code>ComponentSynchronizePeer.renderDispose()</code>
+     * such that the peers of the components can dispose of resources on the
+     * client.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param componentUpdate the <code>ServerComponentUpdate</code> causing 
+     * @param componentUpdate the <code>ServerComponentUpdate</code> causing
      *        components to be disposed.
      * @param disposedComponents the components to dispose
      */
     private void disposeComponents(RenderContext rc, ServerComponentUpdate componentUpdate, Component[] disposedComponents) {
         ContainerInstance ci = rc.getContainerInstance();
         for (int i = 0; i < disposedComponents.length; ++i) {
-            ComponentSynchronizePeer disposedSyncPeer = SynchronizePeerFactory.getPeerForComponent(disposedComponents[i].getClass());
+            ComponentSynchronizePeer disposedSyncPeer = SynchronizePeerFactory.getPeerForComponent(
+                    disposedComponents[i].getClass());
             disposedSyncPeer.renderDispose(rc, componentUpdate, disposedComponents[i]);
             ci.removeRenderState(disposedComponents[i]);
         }
@@ -301,6 +303,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
         ServerMessage serverMessage = new ServerMessage();
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+        rc.getContainerInstance().setActiveConnection(conn);
         try {
             ApplicationInstance.setActive(applicationInstance);
             processClientMessage(conn, clientMessageDocument);
@@ -327,6 +330,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             return serverMessage;
         } finally {
             ApplicationInstance.setActive(null);
+            rc.getContainerInstance().setActiveConnection(null);
         }
     }
     
@@ -340,6 +344,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
         
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
         
+        rc.getContainerInstance().setActiveConnection(conn);
         try {
             // Mark instance as active.
             ApplicationInstance.setActive(applicationInstance);
@@ -365,6 +370,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             return serverMessage;
         } finally {
+            rc.getContainerInstance().setActiveConnection(null);
             // Mark instance as inactive.
             ApplicationInstance.setActive(null);
         }

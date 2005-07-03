@@ -30,6 +30,7 @@
 package nextapp.echo2.webrender;
 
 import java.io.Serializable;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -58,7 +59,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      * The URI of the servlet.
      */
     private String servletUri;
-
+    
     /**
      * Reference to the <code>HttpSession</code> in which this
      * <code>UserInstance</code> is stored.
@@ -96,7 +97,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
     public ClientProperties getClientProperties() {
         return clientProperties;
     }
-
+    
     /**
      * Determines the URI to invoke the specified <code>Service</code>.
      * 

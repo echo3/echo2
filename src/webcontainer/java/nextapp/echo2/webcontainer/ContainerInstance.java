@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -77,9 +78,10 @@ public class ContainerInstance extends UserInstance {
     
     private ApplicationInstance applicationInstance;
     private Map componentToRenderStateMap = new HashMap();
-    private Map initialParameterMap;
     private Map taskQueueToCallbackIntervalMap;
     private transient IdTable idTable;
+    private Map initialParameterMap;
+    private transient Connection activeConnection;
     
     /**
      * Creates a new <code>ContainerInstance</code>.
@@ -91,8 +93,8 @@ public class ContainerInstance extends UserInstance {
     private ContainerInstance(Connection conn) {
         super(conn);
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
-        applicationInstance = servlet.newApplicationInstance();
         initialParameterMap = new HashMap(conn.getRequest().getParameterMap());
+        applicationInstance = servlet.newApplicationInstance();
         
         applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
                 new ContainerContextImpl(this));
@@ -206,6 +208,22 @@ public class ContainerInstance extends UserInstance {
         return applicationInstance.getUpdateManager();
     }
     
+    public boolean isUserInRole(String role) {
+        if (activeConnection == null) {
+            return false;
+        } else {
+            return activeConnection.getRequest().isUserInRole(role);
+        }
+    }
+    
+    public Principal getUserPrincipal() {
+        if (activeConnection == null) {
+            return null;
+        } else {
+            return activeConnection.getRequest().getUserPrincipal();
+        }
+    }
+    
     /**
      * Removes the <code>RenderState</code> of the specified
      * <code>Component</code>.
@@ -214,6 +232,15 @@ public class ContainerInstance extends UserInstance {
      */
     public void removeRenderState(Component component) {
         componentToRenderStateMap.remove(component);
+    }
+    
+    /**
+     * Sets the active //BUGBUG.
+     * 
+     * @param activeConnection the active <code>Connection</code>
+     */
+    public void setActiveConnection(Connection activeConnection) {
+        this.activeConnection = activeConnection;
     }
     
     /**
