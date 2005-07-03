@@ -60,7 +60,7 @@ implements Serializable {
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
     public static final String MODAL_COMPONENTS_CHANGED_PROPERTY = "modalComponents";
     public static final String WINDOWS_CHANGED_PROPERTY = "windows";
-
+    
     /** 
      * A <code>ThreadLocal</code> reference to the 
      * <code>ApplicationInstance</code> relevant to the current thread.
@@ -487,6 +487,12 @@ implements Serializable {
      *        <code>CHILDREN_CHANGED_PROPERTY</code>)
      */
     void notifyComponentPropertyChange(Component parent, String propertyName, Object oldValue, Object newValue) {
+        // Ensure current thread is a user interface thread.
+        if (this != activeInstance.get()) {
+            throw new IllegalStateException(
+                    "Attempt to update state of application user interface outside of user interface thread.");
+        }
+        
         ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
         if (Component.CHILDREN_CHANGED_PROPERTY.equals(propertyName)) {
             if (newValue == null) {

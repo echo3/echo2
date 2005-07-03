@@ -235,7 +235,7 @@ public class ContainerInstance extends UserInstance {
     }
     
     /**
-     * Sets the active //BUGBUG.
+     * Sets the active //BUGBUG. do we want this...doc
      * 
      * @param activeConnection the active <code>Connection</code>
      */
