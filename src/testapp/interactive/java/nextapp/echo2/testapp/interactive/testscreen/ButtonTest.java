@@ -66,8 +66,16 @@ import nextapp.echo2.testapp.interactive.TestGrid;
 public class ButtonTest 
 extends SplitPane {
 
+    /**
+     * Interface used to apply style information to all test components.
+     */
     private interface Applicator {
         
+        /**
+         * Applies style information.
+         * 
+         * @param button the target button
+         */
         public void apply(AbstractButton button);
     }
     
