@@ -29,6 +29,10 @@
 
 package nextapp.echo2.webcontainer.propertyrender;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.webrender.output.CssStyle;
 
@@ -37,6 +41,21 @@ import nextapp.echo2.webrender.output.CssStyle;
  * properties to CSS.
  */
 public class ExtentRender {
+    
+    private static final Map UNIT_NAMES_TO_VALUES;
+    static {
+        Map m = new HashMap();
+        m.put("cm", new Integer(Extent.CM));
+        m.put("em", new Integer(Extent.EM));
+        m.put("ex", new Integer(Extent.EX));
+        m.put("in", new Integer(Extent.IN));
+        m.put("mm", new Integer(Extent.MM));
+        m.put("pc", new Integer(Extent.PC));
+        m.put("%", new Integer(Extent.PERCENT));
+        m.put("pt", new Integer(Extent.PT));
+        m.put("px", new Integer(Extent.PX));
+        UNIT_NAMES_TO_VALUES = Collections.unmodifiableMap(m);
+    }
     
     /**
      * Determines if the given <code>Extent</code> is of zero length.
@@ -132,6 +151,17 @@ public class ExtentRender {
         }
     }
     
+    private static int getUnitPosition(String s) {
+        int length = s.length();
+        for (int i = 0; i < length; ++i) {
+            char ch = s.charAt(i);
+            if (ch != '-' && (ch < '0' || ch > '9')) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     /**
      * Creates an <code>Extent</code> from the given CSS dimensioned attribute 
      * value.
@@ -144,13 +174,18 @@ public class ExtentRender {
         try {
             if (extentString == null) {
                 return null;
-            } else if (extentString.endsWith("px")) {
-                int position = Integer.parseInt(extentString.substring(0, extentString.length() - 2));
-                return new Extent(position, Extent.PX);
-            } else {
-                //BUGBUG. currently only supports pixel values.
+            }
+            int unitPosition = getUnitPosition(extentString);
+            if (unitPosition == -1) {
                 return null;
             }
+            String unitString = extentString.substring(unitPosition);
+            Integer unitInteger = (Integer) UNIT_NAMES_TO_VALUES.get(unitString);
+            if (unitInteger == null) {
+                return null;
+            }
+            Extent extent = new Extent(Integer.parseInt(extentString.substring(0, unitPosition)), unitInteger.intValue()); 
+            return extent;
         } catch (NumberFormatException ex) {
             return null;
         }

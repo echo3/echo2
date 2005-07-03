@@ -34,10 +34,14 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import junit.framework.TestCase;
 
 /**
- * 
+ * Unit tests for 
+ * <code>nextapp.echo2.webcontainer.propertyrender.ExtentRender</code>.
  */
 public class ExtentRenderTest extends TestCase {
-    
+
+    /**
+     * Test <code>ExtentRender.renderCssAttributeValue()</code>.
+     */
     public void testExtentRender() {
         assertEquals("50cm", ExtentRender.renderCssAttributeValue(new Extent(50, Extent.CM)));
         assertEquals("50em", ExtentRender.renderCssAttributeValue(new Extent(50, Extent.EM)));
@@ -50,4 +54,23 @@ public class ExtentRenderTest extends TestCase {
         assertEquals("50px", ExtentRender.renderCssAttributeValue(new Extent(50, Extent.PX)));
     }
 
+    /**
+     * Test <code>ExtentRender.toExtent()</code>.
+     */
+    public void testToExtent() {
+        assertEquals(new Extent(50, Extent.CM), ExtentRender.toExtent("50cm"));
+        assertEquals(new Extent(50, Extent.EM), ExtentRender.toExtent("50em"));
+        assertEquals(new Extent(50, Extent.EX), ExtentRender.toExtent("50ex"));
+        assertEquals(new Extent(50, Extent.IN), ExtentRender.toExtent("50in"));
+        assertEquals(new Extent(50, Extent.MM), ExtentRender.toExtent("50mm"));
+        assertEquals(new Extent(50, Extent.PERCENT), ExtentRender.toExtent("50%"));
+        assertEquals(new Extent(50, Extent.PC), ExtentRender.toExtent("50pc"));
+        assertEquals(new Extent(50, Extent.PT), ExtentRender.toExtent("50pt"));
+        assertEquals(new Extent(50, Extent.PX), ExtentRender.toExtent("50px"));
+        assertEquals(null, ExtentRender.toExtent(null));
+        assertEquals(null, ExtentRender.toExtent("50foo"));
+        assertEquals(null, ExtentRender.toExtent("50"));
+        assertEquals(null, ExtentRender.toExtent("foo"));
+        assertEquals(null, ExtentRender.toExtent("50m30cm"));
+    }
 }
