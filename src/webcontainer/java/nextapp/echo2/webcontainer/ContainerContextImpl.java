@@ -38,6 +38,12 @@ import javax.servlet.http.HttpSession;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.webrender.ClientProperties;
 
+//BUGBUG. Test isUserInRole()/getUserPrincipal()
+//BUGBUG. Support for retrieving cookies.
+//BUGBUG. Configuration of session expiration behavior.
+//BUGBUG. Configuration of exception behavior.
+//BUGBUG? Forced session invalidation.
+
 /**
  * <code>ContainerContext</code> implementation.
  */
