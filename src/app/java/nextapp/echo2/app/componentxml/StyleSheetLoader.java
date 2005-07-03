@@ -143,7 +143,7 @@ public class StyleSheetLoader {
             }
             
             Element propertiesElement = DomUtil.getChildElementByTagName(styleElements[i], "properties");
-            Style propertyStyle = propertyLoader.getProperties(propertiesElement, type);
+            Style propertyStyle = propertyLoader.createStyle(propertiesElement, type);
             style.addStyleContent(propertyStyle);
 
             Map classToStyleMap = (Map) namedStyleMap.get(name);

@@ -83,16 +83,16 @@ public class PropertyLoader {
     }
     
     /**
-     * Parses a "properties" <code>Element</code> and returns a mapping
-     * between property names and values.
+     * Parses a "properties" <code>Element</code> and returns a
+     * <code>Style</code> mapping between property names and values.
      * 
-     * @param propertiesElement the properties <code>Element</code> to be 
+     * @param propertiesElement the properties <code>Element</code> to be
      *        parsed
      * @param type the fully-qualified component type name
      * @return a style representing the retrieved property names and values
      * @throws ComponentXmlException
      */
-    public Style getProperties(Element propertiesElement, String type)
+    public Style createStyle(Element propertiesElement, String type)
     throws ComponentXmlException {
         MutableStyle propertyStyle = new MutableStyle();
         
@@ -107,7 +107,6 @@ public class PropertyLoader {
         } catch (ClassNotFoundException ex) {
             throw new ComponentXmlException("Unable to introspect component: " + type, ex);
         }
-        
         
         Element[] propertyElements = DomUtil.getChildElementsByTagName(propertiesElement, "property");
         for (int i = 0; i < propertyElements.length; ++i) {

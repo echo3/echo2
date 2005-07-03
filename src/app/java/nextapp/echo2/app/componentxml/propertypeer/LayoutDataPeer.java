@@ -47,12 +47,14 @@ import org.w3c.dom.Element;
 /**
  * <code>PropertyXmlPeer</code> implementation for 
  * <code>nextapp.echo2.app.LayoutData</code>-derived properties.
+ * <p>
+ * This peer will load properties for arbitrary <code>LayoutData</code> 
+ * implementations using class introspection and reflection.  The
+ * implementation does not currently support the setting of indexed
+ * properties.   
  */
 public class LayoutDataPeer 
 implements PropertyXmlPeer {
-    
-    //BUGBUG. cleanup.
-    //BUGBUG. indexed properties.
     
     /**
      * @see nextapp.echo2.app.componentxml.PropertyXmlPeer#getValue(java.lang.ClassLoader, 
@@ -64,18 +66,19 @@ implements PropertyXmlPeer {
             Element layoutDataElement = DomUtil.getChildElementByTagName(propertyElement, "layout-data");
             String type = layoutDataElement.getAttribute("type");
 
-            // Load properties from XML.
+            // Load properties from XML into Style.
             PropertyLoader propertyLoader = PropertyLoader.forClassLoader(classLoader);
             Element propertiesElement = DomUtil.getChildElementByTagName(layoutDataElement, "properties");
-            Style propertyStyle = propertyLoader.getProperties(propertiesElement, type);
+            Style propertyStyle = propertyLoader.createStyle(propertiesElement, type);
             
-            // Instantiate object.
+            // Instantiate LayoutData instance.
             Class propertyClass = Class.forName(type, true, classLoader);
             LayoutData layoutData = (LayoutData) propertyClass.newInstance();
             
+            // Create introspector to analyze LayoutData class.
             ComponentIntrospector ci = ComponentIntrospector.forName(type, classLoader);
-
-            //BUGBUG. probably want to move the real work here into something generic in the componentxml package.
+            
+            // Set property values of LayoutData instance.
             Iterator it = propertyStyle.getPropertyNames();
             while (it.hasNext()) {
                 String propertyName = (String) it.next();
@@ -98,5 +101,4 @@ implements PropertyXmlPeer {
             throw new InvalidPropertyException("Unable to process properties.", ex);
         }
     }
-
 }

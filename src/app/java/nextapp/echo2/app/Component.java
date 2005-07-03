@@ -39,9 +39,6 @@ import java.util.Locale;
 
 import nextapp.echo2.app.event.EventListenerList;
 
-//BUGBUG. Add general documentation for how models work.
-//BUGBUG. Add general documentation for how event/listeners work.
-
 /**
  * A representation of an Echo component. This is an abstract base class from
  * which all Echo components are derived.
@@ -55,6 +52,8 @@ import nextapp.echo2.app.event.EventListenerList;
  * they may be added to. In the event that an application attempts to add a
  * child <code>Component</code> to a parent <code>Component</code> in spite
  * of these requirements, an <code>IllegalChildException</code> is thrown.
+ * 
+ * <h3>Properties and Styles</h3>
  * <p>
  * The state of a single <code>Component</code> is represented by its
  * properties. Properties can be categorized into two types: "style" and
@@ -64,16 +63,16 @@ import nextapp.echo2.app.event.EventListenerList;
  * non-stylistic information such as data models, selection models, and locale.
  * <p>
  * "Style Properties" have a special definition because they may be stored in
- * <code>Style</code> or <code>StyleSheet</code> objects instead of within
- * each component. Property values contained in a relevant <code>Style</code>
- * or <code>StyleSheet</code> will be used for rendering when the property
- * values are not specified by a <code>Component</code> itself. Style
- * properties are identified by the presence of a public static constant name in
- * a <code>Component</code> implementation with the prefix
- * <code>PROPERTY_</code>. In the base <code>Component</code> class itself
- * there are several examples of style properties, such as
- * <code>PROPERTY_BACKGROUND</code>,<code>PROPERTY_FONT</code> and
- * <code>PROPERTY_LAYOUT_DATA</code>. The rendering application container
+ * <code>Style</code> or <code>StyleSheet</code> objects instead of as
+ * properties of a specific <code>Component</code> instance. Property values
+ * contained in a relevant <code>Style</code> or <code>StyleSheet</code>
+ * will be used for rendering when the property values are not specified by a
+ * <code>Component</code> itself. Style properties are identified by the
+ * presence of a public static constant name in a <code>Component</code>
+ * implementation with the prefix <code>PROPERTY_</code>. In the base
+ * <code>Component</code> class itself there are several examples of style
+ * properties, such as <code>PROPERTY_BACKGROUND</code>,<code>PROPERTY_FONT</code>
+ * and <code>PROPERTY_LAYOUT_DATA</code>. The rendering application container
  * will use the <code>Component.getRenderProperty()</code> and
  * <code>Component.getRenderIndexedProperty()</code> to retrieve the values of
  * stylistic properties, in order that that their values might be obtained from
@@ -89,6 +88,22 @@ import nextapp.echo2.app.event.EventListenerList;
  * properties. Only style properties should be stored using these methods;
  * properties such as models should never be stored using the
  * <code>getProperty()</code>/<code>setProperty()</code> interface.
+ * 
+ * <h3>Events</h3>
+ * <p>
+ * Many <code>Component</code>s will provide the capability to register
+ * <code>EventListener</code>s to notify interested parties when various
+ * state changes occur. The base <code>Component</code> class provides an
+ * <code>EventListenerList</code> as a convenient and memory efficient means
+ * of storing such listeners. The internal <code>EventListenerList</code> may
+ * be obtained using the <code>getEventListenerList()</code> method. The
+ * <code>EventListenerList</code> is lazy-created and will only be
+ * instantiated on the first invocation of the
+ * <code>getEventListenerList()</code> method. If the intent is only to
+ * inquire about the state of event listeners without necessarily forcing
+ * instantiation of an <code>EventListenerList</code>, the
+ * <code>hasEventListenerList()</code> should be queried prior to invoking
+ * <code>getEventListenerList()</code>.
  */
 public abstract class Component 
 implements RenderIdSupport, Serializable {
@@ -1229,11 +1244,6 @@ implements RenderIdSupport, Serializable {
         firePropertyChange(LOCALE_CHANGED_PROPERTY, oldValue, newValue);
     }
     
-    //BUGBUG. Currently firing null, null in the event that oldValue = newValue
-    // and propName = layoutData
-    //due to PCS design....perhaps we want to use something other than PCS.
-    //(case where we want prop event fired on equal items: setting attributes of
-    // layout data.)
     /**
      * Sets a generic property of the <code>Component</code>.
      * The value will be stored in this <code>Component</code>'s local style.
@@ -1245,11 +1255,7 @@ implements RenderIdSupport, Serializable {
     public void setProperty(String propertyName, Object newValue) {
         Object oldValue = localStyle.getProperty(propertyName);
         localStyle.setProperty(propertyName, newValue);
-        if (PROPERTY_LAYOUT_DATA.equals(propertyName) && oldValue != null && newValue != null && oldValue.equals(newValue)) {
-            firePropertyChange(propertyName, null, null);
-        } else {
-            firePropertyChange(propertyName, oldValue, newValue);
-        }
+        firePropertyChange(propertyName, oldValue, newValue);
     }
     
     /**

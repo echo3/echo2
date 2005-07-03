@@ -54,7 +54,7 @@ implements Serializable {
     // e.g., locale, modalContext.
 
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.0.beta3";
+    public static final String ID_STRING = "NextApp Echo v2.0.beta3+";
 
     public static final String FOCUSED_COMPONENT_CHANGED_PROPERTY = "focusedComponent";
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
@@ -469,13 +469,13 @@ implements Serializable {
      */
     public abstract Window init();
     
-    //BUGBUG? notifyComponentPropertyChange....
-    //        This is part of the new direct-invocation-of-updates architecture.
-    //        This needs to be carefully looked into in the interest of ensuring
-    //        that this move was not a bad decision.
     /**
-     * Notifies the update manager in response to a component property change 
-     * or child addition/removal.
+     * Notifies the <code>UpdateManager</code> in response to a component 
+     * property change or child addition/removal.
+     * <p>
+     * This method is invoked directly from <code>Component</code>s
+     * (rather than using a <code>PropertyChangeListener</code>) in the interest
+     * of memory efficiency. 
      * 
      * @param parent the parent/updated component
      * @param propertyName the name of the property changed
