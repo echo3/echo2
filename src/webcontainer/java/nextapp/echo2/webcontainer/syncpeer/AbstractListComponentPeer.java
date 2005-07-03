@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -46,6 +47,7 @@ import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
+import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -115,9 +117,9 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         Extent height = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_HEIGHT);
         Insets insets = (Insets) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS, DEFAULT_INSETS);
 
+        BorderRender.renderToStyle(style, (Border) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BORDER));
         FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT));
         InsetsRender.renderToStyle(style, "padding", insets);
-        
         ColorRender.renderToStyle(style, 
                 (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND),
                 (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND));
@@ -137,11 +139,12 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      */
     CssStyle createRolloverCssStyle(AbstractListComponent listComponent) {
         CssStyle style = new CssStyle();
-        Color foregroundRollover = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND, 
+        Color rolloverForeground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND, 
                 DEFAULT_ROLLOVER_FOREGROUND);
-        Color backgroundRollover = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND, 
+        Color rolloverBackground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND, 
                 DEFAULT_ROLLOVER_BACKGROUND);
-        ColorRender.renderToStyle(style, foregroundRollover, backgroundRollover);
+        ColorRender.renderToStyle(style, rolloverForeground, rolloverBackground);
+        FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FONT));
         return style;
     }
 

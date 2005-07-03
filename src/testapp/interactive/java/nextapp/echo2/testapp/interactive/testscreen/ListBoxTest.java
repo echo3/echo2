@@ -126,7 +126,8 @@ public class ListBoxTest extends SplitPane {
         private Font font1 = new Font(Font.MONOSPACE, Font.BOLD, null);
         
         /**
-         * @see nextapp.echo2.app.list.ListCellRenderer#getListCellRendererComponent(nextapp.echo2.app.Component, java.lang.Object, int)
+         * @see nextapp.echo2.app.list.ListCellRenderer#getListCellRendererComponent(nextapp.echo2.app.Component, 
+         *      java.lang.Object, int)
          */
         public Object getListCellRendererComponent(Component list, final Object value, final int index) {
             return new StyledListCell() {
@@ -243,6 +244,18 @@ public class ListBoxTest extends SplitPane {
                 selectField1.setCellRenderer(AbstractListComponent.DEFAULT_LIST_CELL_RENDERER);
             }
         });
+        controlsColumn.addButton("Set Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox1.setBorder(StyleUtil.randomBorder());
+                selectField1.setBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Clear Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox1.setBorder(null);
+                selectField1.setBorder(null);
+            }
+        });
         
         controlsColumn.add(new Label("List Box"));
 
@@ -278,6 +291,11 @@ public class ListBoxTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 listBox1.setRolloverBackground(color);
+            }
+        });
+        controlsColumn.addButton("Set Rollover Font ", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listBox1.setRolloverFont(StyleUtil.randomFont());
             }
         });
         controlsColumn.addButton("Clear Selections", new ActionListener() {
@@ -364,6 +382,11 @@ public class ListBoxTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 selectField1.setRolloverBackground(color);
+            }
+        });
+        controlsColumn.addButton("Set Rollover Font ", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                selectField1.setRolloverFont(StyleUtil.randomFont());
             }
         });
         controlsColumn.addButton("Clear Selections", new ActionListener() {

@@ -31,9 +31,11 @@ package nextapp.echo2.app.list;
 
 import java.util.EventListener;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -41,8 +43,6 @@ import nextapp.echo2.app.event.ChangeEvent;
 import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.app.event.ListDataEvent;
 import nextapp.echo2.app.event.ListDataListener;
-
-//BUGBUG. Add support for rollover fonts, border.
 
 /**
  * An abstract base class for list components.
@@ -60,9 +60,11 @@ public class AbstractListComponent extends Component {
     public static final String SELECTION_MODEL_CHANGED_PROPERTY = "listSelectionModel";
     public static final String SELECTION_CHANGED_PROPERTY = "listSelectionChanged";
 
-	public static final String PROPERTY_HEIGHT = "height";
+	public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_HEIGHT = "height";
 	public static final String PROPERTY_INSETS = "insets";
-	public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
+    public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
+    public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
 	public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
 	public static final String PROPERTY_WIDTH = "width";
 
@@ -181,14 +183,23 @@ public class AbstractListComponent extends Component {
     }
     
     /**
+     * Returns the <code>Border</code> surrounding the list component.
+     * 
+     * @return the border
+     */
+    public Border getBorder() {
+        return (Border) getProperty(PROPERTY_BORDER);
+    }
+    
+    /**
      * Returns the <code>ListCellRenderer</code> used to render items.
      * 
      * @return the renderer
      */
     public ListCellRenderer getCellRenderer() {
-    	return listCellRenderer;
+        return listCellRenderer;
     }
-	
+    
 	/**
      * Returns the height.
      * 
@@ -223,6 +234,15 @@ public class AbstractListComponent extends Component {
      */
     public Color getRolloverBackground() {
         return (Color) getProperty(PROPERTY_ROLLOVER_BACKGROUND);
+    }
+    
+    /**
+     * Returns the rollover font.
+     * 
+     * @return the rollover font
+     */
+    public Font getRolloverFont() {
+        return (Font) getProperty(PROPERTY_ROLLOVER_FONT);
     }
     
     /**
@@ -315,6 +335,15 @@ public class AbstractListComponent extends Component {
     }
     
     /**
+     * Sets the <code>Border</code> surrounding the list component.
+     * 
+     * @param newValue the new <code>Border</code>
+     */
+    public void setBorder(Border newValue) {
+        setProperty(PROPERTY_BORDER, newValue);
+    }
+    
+    /**
      * Sets the renderer for items.
      * The renderer may not be null (use <code>DEFAULT_LIST_CELL_RENDERER</code>
      * for default behavior).
@@ -374,6 +403,15 @@ public class AbstractListComponent extends Component {
      */
     public void setRolloverBackground(Color newValue) {
         setProperty(PROPERTY_ROLLOVER_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the rollover font.
+     * 
+     * @param newValue the new rollover font
+     */
+    public void setRolloverFont(Font newValue) {
+        setProperty(PROPERTY_ROLLOVER_FONT, newValue);
     }
     
     /**

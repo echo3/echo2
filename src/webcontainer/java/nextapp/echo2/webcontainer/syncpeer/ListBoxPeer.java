@@ -29,6 +29,7 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -41,6 +42,7 @@ import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
@@ -63,7 +65,8 @@ import org.w3c.dom.Node;
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
     
-    private final Extent DEFAULT_HEIGHT = new Extent(80);
+    private static final Border DEFAULT_DHTML_BORDER = new Border(2, null, Border.STYLE_INSET);
+    private static final Extent DEFAULT_HEIGHT = new Extent(80);
     
     private static final Color SELECTION_BACKGROUND = new Color(10, 36, 106);
     private static final Color SELECTION_FOREGROUND = Color.WHITE;
@@ -92,7 +95,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param listBox the <code>ListBox</code> instance
      * @return the style
      */
-    private CssStyle createListBoxCssStyle(RenderContext rc, ListBox listBox) {
+    private CssStyle createDhtmlListBoxCssStyle(RenderContext rc, ListBox listBox) {
         CssStyle style = new CssStyle();
 
         ColorRender.renderToStyle(style,
@@ -113,9 +116,9 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         InsetsRender.renderToStyle(style, "padding", insets);
 
         FontRender.renderToStyle(style, (Font) listBox.getRenderProperty(ListBox.PROPERTY_FONT));
+        BorderRender.renderToStyle(style, (Border) listBox.getRenderProperty(ListBox.PROPERTY_BORDER, DEFAULT_DHTML_BORDER));
 
         style.setAttribute("position", "relative");
-        style.setAttribute("border", "2px inset");
         style.setAttribute("overflow", "auto");
         style.setAttribute("cursor", "default");
 
@@ -255,7 +258,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             listBoxElement.appendChild(optionElement);
         }
 
-        CssStyle cssStyle = createListBoxCssStyle(rc, listBox);
+        CssStyle cssStyle = createDhtmlListBoxCssStyle(rc, listBox);
         listBoxElement.setAttribute("style", cssStyle.renderInline());
 
         parentNode.appendChild(listBoxElement);
