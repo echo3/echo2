@@ -36,6 +36,7 @@ import nextapp.echo2.webcontainer.CommandSynchronizePeer;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.command.BrowserOpenWindowCommand;
 import nextapp.echo2.webcontainer.command.BrowserRedirectCommand;
+import nextapp.echo2.webcontainer.command.BrowserSetCookieCommand;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -67,9 +68,21 @@ implements CommandSynchronizePeer {
             renderOpenWindow(rc, (BrowserOpenWindowCommand) command);
         } else if (command instanceof BrowserRedirectCommand) {
             renderRedirect(rc, (BrowserRedirectCommand) command);
+        } else if (command instanceof BrowserSetCookieCommand) {
+            renderSetCookie(rc, (BrowserSetCookieCommand) command);
         } else {
             throw new IllegalArgumentException();
         }
+    }
+    
+    /**
+     * Renders a <code>BrowserSetCookieCommand</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param command the command
+     */
+    private void renderSetCookie(RenderContext rc, BrowserSetCookieCommand command) {
+        rc.getConnection().getResponse().addCookie(command.getCookie());
     }
     
     /**

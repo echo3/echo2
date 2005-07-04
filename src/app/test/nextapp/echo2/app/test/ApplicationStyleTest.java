@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app.test;
 
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Label;
@@ -43,6 +44,8 @@ public class ApplicationStyleTest extends TestCase  {
     
     public void testApplicationStyles() {
         ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        
         app.doInit();
         assertTrue(app.getLabel().isRegistered());
         
@@ -77,5 +80,7 @@ public class ApplicationStyleTest extends TestCase  {
         assertEquals(Color.RED, app.getLabel().getRenderProperty(Label.PROPERTY_FOREGROUND));
         app.setStyleSheet(null);
         assertNull(app.getLabel().getRenderProperty(Label.PROPERTY_FOREGROUND));
+
+        ApplicationInstance.setActive(null);
     }
 }

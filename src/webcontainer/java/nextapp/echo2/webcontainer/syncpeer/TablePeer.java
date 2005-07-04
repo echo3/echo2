@@ -462,8 +462,10 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
-        renderAdd(rc, update, targetId, update.getParent());
+        Table table = (Table) update.getParent();
+        renderDisposeDirective(rc, table);
+        DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(table));
+        renderAdd(rc, update, targetId, table);
         return true;
     }
 }

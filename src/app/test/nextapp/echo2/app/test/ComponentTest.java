@@ -31,6 +31,7 @@ package nextapp.echo2.app.test;
 
 import java.util.Locale;
 
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
@@ -408,25 +409,36 @@ public class ComponentTest extends TestCase {
      */
     public void testRenderId() {
         ColumnApp app1 = new ColumnApp();
+        ApplicationInstance.setActive(app1);
         app1.doInit();
         NullComponent component1 = new NullComponent();
         assertNull(component1.getRenderId());
         app1.getColumn().add(component1);
         assertNotNull(component1.getApplicationInstance());
         assertNotNull(component1.getRenderId());
+        ApplicationInstance.setActive(null);
 
         ColumnApp app2 = new ColumnApp();
+        ApplicationInstance.setActive(app2);
         app2.doInit();
         NullComponent component2 = new NullComponent();
         assertNull(component2.getRenderId());
         app2.getColumn().add(component2);
         assertNotNull(component2.getApplicationInstance());
         assertNotNull(component2.getRenderId());
+        ApplicationInstance.setActive(null);
         
         // This code relies on fact that ids are handed out sequentially, so sequence counters should be at same index.
         assertTrue(component1.getRenderId().equals(component2.getRenderId()));
+        
+        ApplicationInstance.setActive(app1);
         app1.getColumn().remove(component1);
+        ApplicationInstance.setActive(null);
+
+        ApplicationInstance.setActive(app2);
         app2.getColumn().add(component1);
+        ApplicationInstance.setActive(null);
+
         assertFalse(component1.getRenderId().equals(component2.getRenderId()));
     }
     

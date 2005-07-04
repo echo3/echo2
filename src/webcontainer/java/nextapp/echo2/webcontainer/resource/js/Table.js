@@ -113,7 +113,10 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "EchoClientEngine.inputDisabled", true);
         }
 
-        EchoTable.initCellListeners(tableElementId);
+        if (selectionEnabled || rolloverStyle) {
+            // Enable listeners only if table features selection or rollover effects.
+            EchoTable.initCellListeners(tableElementId);
+        }
     }
 };
 
@@ -137,6 +140,9 @@ EchoTable.clearSelected = function(tableElement) {
  */
 EchoTable.disposeCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
+    if (!tableElement) {
+        return;
+    }
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
             var tdElement = tableElement.rows[rowIndex].cells[cellIndex];

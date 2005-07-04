@@ -224,6 +224,10 @@ implements Serializable {
      * @return the default <code>Window</code> of the application
      */
     public Window doInit() {
+        if (this != activeInstance.get()) {
+            throw new IllegalStateException(
+                    "Attempt to update state of application user interface outside of user interface thread.");
+        }
         Window window = init();
         setDefaultWindow(window);
         doValidation();

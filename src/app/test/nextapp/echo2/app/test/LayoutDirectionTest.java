@@ -31,6 +31,7 @@ package nextapp.echo2.app.test;
 
 import java.util.Locale;
 
+import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.LayoutDirection;
 import junit.framework.TestCase;
@@ -52,7 +53,15 @@ public class LayoutDirectionTest extends TestCase {
      */
     public void setUp() {
         app = new ColumnApp();
+        ApplicationInstance.setActive(app);        
         app.doInit();
+    }
+    
+    /**
+     * @see junit.framework.TestCase#tearDown()
+     */
+    public void tearDown() {
+        ApplicationInstance.setActive(null);
     }
     
     public void testApplication() {

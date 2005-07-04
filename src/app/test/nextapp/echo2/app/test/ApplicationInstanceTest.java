@@ -101,6 +101,8 @@ public class ApplicationInstanceTest extends TestCase {
      */
     public void testRegistration() {
         ColumnApp columnApp = new ColumnApp();
+        ApplicationInstance.setActive(columnApp);
+        
         Window window = columnApp.doInit();
         assertTrue(window.isRegistered());
         assertTrue(columnApp.getColumn().isRegistered());
@@ -114,6 +116,8 @@ public class ApplicationInstanceTest extends TestCase {
         assertTrue(label.isRegistered());
         columnApp.getContentPane().remove(columnApp.getColumn());
         assertFalse(label.isRegistered());
+
+        ApplicationInstance.setActive(null);
     }
     
     /**
@@ -121,10 +125,12 @@ public class ApplicationInstanceTest extends TestCase {
      * <code>Component.init()</code> / <code>Component.dispose()</code>.
      */
     public void testRegistrationLifecycle() {
-        RegistrationTestComponent rtc = new RegistrationTestComponent();
         ColumnApp columnApp = new ColumnApp();
+        ApplicationInstance.setActive(columnApp);
         columnApp.doInit();
         Column column = columnApp.getColumn();
+
+        RegistrationTestComponent rtc = new RegistrationTestComponent();
         
         assertFalse(rtc.initialized);
         assertFalse(rtc.disposed);
@@ -138,6 +144,8 @@ public class ApplicationInstanceTest extends TestCase {
         
         assertTrue(rtc.initialized);
         assertTrue(rtc.disposed);
+        
+        ApplicationInstance.setActive(null);
     }
     
     /**
@@ -155,6 +163,9 @@ public class ApplicationInstanceTest extends TestCase {
         };
         
         assertFalse(validatingLabel.valid);
+        
+        ApplicationInstance.setActive(app);
+        
         app.doInit();
         
         // Test for initial validation.
@@ -166,5 +177,7 @@ public class ApplicationInstanceTest extends TestCase {
         // test validation after client update processing.
         app.getUpdateManager().processClientUpdates();
         assertTrue(validatingLabel.valid);
+        
+        ApplicationInstance.setActive(null);
     }
 }

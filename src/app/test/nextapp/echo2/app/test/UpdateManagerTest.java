@@ -71,8 +71,16 @@ public class UpdateManagerTest extends TestCase  {
      */
     public void setUp() {
         columnApp = new ColumnApp();
+        ApplicationInstance.setActive(columnApp);        
         columnApp.doInit();
         manager = columnApp.getUpdateManager();
+    }
+    
+    /**
+     * @see junit.framework.TestCase#tearDown()
+     */
+    public void tearDown() {
+        ApplicationInstance.setActive(null);        
     }
     
     /**
