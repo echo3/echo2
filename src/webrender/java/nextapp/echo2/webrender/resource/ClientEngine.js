@@ -638,7 +638,7 @@ EchoDebugManager.consoleWrite = function(message) {
     if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
         return;
     }
-    EchoDebugManager.debugWindow.EchoDebug.consoleWrite(message);
+    EchoDebugManager.debugWindow.EchoDebug.Console.write(message);
 };
 
 /**
@@ -656,7 +656,7 @@ EchoDebugManager.updateClientMessage = function() {
     if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
         return;
     }
-    EchoDebugManager.debugWindow.EchoDebug.displayClientMessage(EchoClientMessage.messageDocument);
+    EchoDebugManager.debugWindow.EchoDebug.Sync.displayClientMessage(EchoClientMessage.messageDocument);
 };
 
 /**
@@ -666,7 +666,7 @@ EchoDebugManager.updateServerMessage = function() {
     if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
         return;
     }
-    EchoDebugManager.debugWindow.EchoDebug.displayServerMessage(EchoServerMessage.messageDocument);
+    EchoDebugManager.debugWindow.EchoDebug.Sync.displayServerMessage(EchoServerMessage.messageDocument);
 };
 
 // ___________________________

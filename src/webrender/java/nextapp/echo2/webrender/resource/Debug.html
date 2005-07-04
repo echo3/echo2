@@ -52,16 +52,19 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     
     EchoDebug.nextId = 0;
     
-    EchoDebug.consoleClear = function() {
+    EchoDebug.Console = function() { };
+    
+    EchoDebug.Console.clear = function() {
         var outputElement = document.getElementById("consoletab_output");
         while (outputElement.childNodes.length > 0) {
             outputElement.removeChild(outputElement.childNodes[0]);
         }
     };
     
-    EchoDebug.consoleWrite = function(message) {
+    EchoDebug.Console.write = function() {
         var divElement = document.createElement("div");
-        divElement.setAttribute("id", "x_" + ++EchoDebug.nextId);
+        ++EchoDebug.nextId;
+        divElement.setAttribute("id", "x_" + EchoDebug.nextId);
         divElement.style.padding = "4px";
         divElement.style.margin = "0px 0px 4px 0px";
         divElement.style.border = "#4f4f6f 1px inset";
@@ -80,24 +83,121 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         EchoDebug.paneFade(divElement.getAttribute("id"));
     };
     
-    EchoDebug.displayClientMessage = function(clientMessageDocument) {
+    EchoDebug.Dom = function() { };
+    
+    EchoDebug.Dom.introspect = function() {
+        var outputElement = document.getElementById("domtab_output");
+        while (outputElement.childNodes.length > 0) {
+            outputElement.removeChild(outputElement.childNodes[0]);
+        }
+        
+        if (window.opener && window.opener.document) {
+            EchoDebug.displayDocument("domtab_output", window.opener.document);
+        } else {
+            outputElement.appendChild(document.createTextNode("Unable to introspect DOM."));
+        }
+    };
+    
+    EchoDebug.Status = function() { };
+    
+    EchoDebug.Status.addHeader = function(text) {
+        var trElement, tdElement;
+        var outputElement = document.getElementById("statustab_table_body");
+        trElement = document.createElement("tr");
+        tdElement = document.createElement("td");
+        trElement.appendChild(tdElement);
+        tdElement.colSpan = 2;
+        tdElement.className = "info-header";
+        tdElement.appendChild(document.createTextNode(text));
+        outputElement.appendChild(trElement);
+    };
+    
+    EchoDebug.Status.addItem = function(name) {
+        var trElement, tdElement;
+        var outputElement = document.getElementById("statustab_table_body");
+        trElement = document.createElement("tr");
+        outputElement.appendChild(trElement);
+
+        tdElement = document.createElement("td");
+        tdElement.className = "info";
+        tdElement.appendChild(document.createTextNode(name));
+        trElement.appendChild(tdElement);
+
+        tdElement = document.createElement("td");
+        tdElement.className = "info";
+        trElement.appendChild(tdElement);
+
+        return tdElement;
+    };
+    
+    EchoDebug.Status.clear = function() {
+        var outputElement = document.getElementById("statustab_table_body");
+        var childElement = outputElement.firstChild;
+        while (childElement) {
+            var nextChildElement = childElement.nextSibling;
+            if (childElement.getAttribute && childElement.getAttribute("id") != "statustab_table_header") {
+                outputElement.removeChild(childElement);
+            }
+            childElement = nextChildElement;
+        }
+    };
+    
+    EchoDebug.Status.renderError = function() {
+        var outputElement = document.getElementById("statustab_table_body");
+        var trElement = document.createElement("tr");
+        var tdElement = document.createElement("td");
+        trElement.appendChild(tdElement);
+        tdElement.colSpan = 2;
+        tdElement.className = "info-error";
+        tdElement.appendChild(document.createTextNode("Unable to update status."));
+        outputElement.appendChild(trElement);
+    };
+    
+    EchoDebug.Status.renderEventState = function() {
+        EchoDebug.Status.addHeader("EchoEventProcessor Status");
+        var handlerEventTypes = window.opener.EchoEventProcessor.getHandlerEventTypes();
+        for (var i = 0; i < handlerEventTypes.length; ++i) {
+            var tdElement = EchoDebug.Status.addItem(handlerEventTypes[i]);
+            var elementIds = window.opener.EchoEventProcessor.getHandlerElementIds(handlerEventTypes[i]);
+            for (var j = 0; j < elementIds.length; ++j) {
+                var outText = elementIds[j] + ": " 
+                        + window.opener.EchoEventProcessor.getHandler(handlerEventTypes[i], elementIds[j]);
+                tdElement.appendChild(document.createTextNode(outText));
+                tdElement.appendChild(document.createElement("br"));
+            }
+        }
+    };
+    
+    EchoDebug.Status.renderGeneralInformation = function() {
+        EchoDebug.Status.addHeader("General Information");
+        var metaElements = window.opener.document.getElementsByTagName("meta");
+        for (var i = 0; i < metaElements.length; ++i) {
+            if (metaElements[i].getAttribute("name") == "generator") {
+                var tdElement = EchoDebug.Status.addItem("Echo Version");
+                tdElement.appendChild(document.createTextNode(metaElements[i].getAttribute("content")));
+                return;
+            }
+        }
+    };
+    
+    EchoDebug.Status.update = function() {
+        EchoDebug.Status.clear();
+        if (window.opener && window.opener.document) {
+            EchoDebug.Status.renderGeneralInformation();
+            EchoDebug.Status.renderEventState();
+        } else {
+            EchoDebug.Status.renderError();
+        }
+    };
+    
+    EchoDebug.Sync = function() { };
+    
+    EchoDebug.Sync.displayClientMessage = function(clientMessageDocument) {
         EchoDebug.displayDocument("synctab_pane_client", clientMessageDocument);
     };
 
-    EchoDebug.displayServerMessage = function(serverMessageDocument) {
+    EchoDebug.Sync.displayServerMessage = function(serverMessageDocument) {
         EchoDebug.displayDocument("synctab_pane_server", serverMessageDocument);
-    };
-    
-    EchoDebug.displayTab = function(newTabId) {
-        var tabElement = document.getElementById(EchoDebug.activeTabId + "_tab");
-        tabElement.style.backgroundColor = "#4f4f6f";
-        var contentElement = document.getElementById(EchoDebug.activeTabId);
-        contentElement.style.display = "none";
-        EchoDebug.activeTabId = newTabId;
-        tabElement = document.getElementById(newTabId + "_tab");
-        tabElement.style.backgroundColor = "#8f8faf";
-        contentElement = document.getElementById(newTabId);
-        contentElement.style.display = "block";
     };
     
     EchoDebug.displayDocument = function(id, xmlDocument) {
@@ -125,7 +225,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             divElement.style.padding = "0px 0px 0px " + (indent * 10) + "px;";
             var textString = docString.substring(firstIndex, lastIndex);
             docLength += textString.length;
-            docLineCount++;
+            ++docLineCount;
             var divText = document.createTextNode(textString);
             divElement.appendChild(divText);
             if (!(textString.charAt(indent) == "<" && textString.charAt(textString.length - 1) == ">")) {
@@ -146,18 +246,17 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         
         EchoDebug.paneFade(id);
     };
-    
-    EchoDebug.introspectDom = function() {
-        var outputElement = document.getElementById("domtab_output");
-        while (outputElement.childNodes.length > 0) {
-            outputElement.removeChild(outputElement.childNodes[0]);
-        }
-        
-        if (window.opener && window.opener.document) {
-            EchoDebug.displayDocument("domtab_output", window.opener.document);
-        } else {
-            outputElement.appendChild(document.createTextNode("Unable to introspect DOM."));
-        }
+
+    EchoDebug.displayTab = function(newTabId) {
+        var tabElement = document.getElementById(EchoDebug.activeTabId + "_tab");
+        tabElement.style.backgroundColor = "#4f4f6f";
+        var contentElement = document.getElementById(EchoDebug.activeTabId);
+        contentElement.style.display = "none";
+        EchoDebug.activeTabId = newTabId;
+        tabElement = document.getElementById(newTabId + "_tab");
+        tabElement.style.backgroundColor = "#8f8faf";
+        contentElement = document.getElementById(newTabId);
+        contentElement.style.display = "block";
     };
     
     EchoDebug.paneFade = function(id) {
@@ -171,67 +270,11 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     };
     
     EchoDebug.paneFadeStep = function(id, delayTime, backgroundColor) {
-        var execString = "document.getElementById(\"" + id + "\").style.backgroundColor = \"" + backgroundColor + "\";"
-        if (delayTime == 0) {
+        var execString = "document.getElementById(\"" + id + "\").style.backgroundColor = \"" + backgroundColor + "\";";
+        if (delayTime === 0) {
             eval (execString);
         } else {
             setTimeout(execString, delayTime);
-        }
-    };
-    
-    EchoDebug.statusUpdate = function() {
-        var trElement, tdElement;
-        var outputElement = document.getElementById("statustab_table_body");
-        
-        var childElement = outputElement.firstChild;
-        while (childElement) {
-            var nextChildElement = childElement.nextSibling;
-            if (childElement.getAttribute && childElement.getAttribute("id") != "statustab_table_header") {
-                outputElement.removeChild(childElement);
-            }
-            childElement = nextChildElement;
-        }
-
-        if (window.opener && window.opener.document) {
-            trElement = document.createElement("tr");
-            tdElement = document.createElement("td");
-            trElement.appendChild(tdElement);
-            tdElement.colSpan = 2;
-            tdElement.className = "info-header";
-            tdElement.appendChild(document.createTextNode("EchoEventProcessor Status"));
-            outputElement.appendChild(trElement);
-
-            var handlerEventTypes = window.opener.EchoEventProcessor.getHandlerEventTypes();
-            for (var i = 0; i < handlerEventTypes.length; ++i) {
-                trElement = document.createElement("tr");
-                
-                tdElement = document.createElement("td");
-                tdElement.className = "info";
-                tdElement.appendChild(document.createTextNode(handlerEventTypes[i]));
-                trElement.appendChild(tdElement);
-                
-                tdElement = document.createElement("td");
-                tdElement.className = "info";
-                
-                var elementIds = window.opener.EchoEventProcessor.getHandlerElementIds(handlerEventTypes[i]);
-                for (var j = 0; j < elementIds.length; ++j) {
-                    var outText = elementIds[j] + ": " 
-                            + window.opener.EchoEventProcessor.getHandler(handlerEventTypes[i], elementIds[j]);
-                    tdElement.appendChild(document.createTextNode(outText));
-                    tdElement.appendChild(document.createElement("br"));
-                }
-                trElement.appendChild(tdElement);
-                    
-                outputElement.appendChild(trElement);
-            }
-        } else {
-            trElement = document.createElement("tr");
-            tdElement = document.createElement("td");
-            trElement.appendChild(tdElement);
-            tdElement.colSpan = 2;
-            tdElement.className = "info-error";
-            tdElement.appendChild(document.createTextNode("Unable to update status."));
-            outputElement.appendChild(trElement);
         }
     };
     
@@ -239,7 +282,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     
     EchoXmlSourceRender.render = function(xmlDocument) {
         return EchoXmlSourceRender.renderElement(xmlDocument.documentElement, 0);
-    }
+    };
     
     EchoXmlSourceRender.createIndent = function(level) {
         var out = "";
@@ -247,7 +290,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             out += " ";
         }
         return out;
-    }
+    };
     
     EchoXmlSourceRender.renderElement = function(xmlElement, level) {
         var indentString = EchoXmlSourceRender.createIndent(level);
@@ -278,30 +321,8 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         }
         
         return out;
-    }
+    };
     
-    function test() {
-        var clientMessageDocument;
-        if (document.implementation && document.implementation.createDocument) {
-            clientMessageDocument = document.implementation.createDocument("http://www.nextapp.com/products/echo2/climsg",
-                    "clientmessage", null);
-        } else if (window.ActiveXObject) {
-            clientMessageDocument = new ActiveXObject("Microsoft.XMLDOM");
-            var clientMessageElement = clientMessageDocument.createElement("clientmessage");
-            clientMessageDocument.appendChild(clientMessageElement);
-        } else {
-            throw "Unable to instantiate ClientMessage Object: Cannot create client message DOM.";
-        }
-        clientMessageDocument.documentElement.setAttribute("test", "value");
-        clientMessageDocument.documentElement.setAttribute("alpha", "bravo");
-        var messagePartElement = clientMessageDocument.createElement("messagepart");
-        clientMessageDocument.documentElement.appendChild(messagePartElement);
-        messagePartElement.appendChild(clientMessageDocument.createTextNode("test text"));
-        EchoDebug.displayServerMessage(clientMessageDocument);
-        EchoDebug.displayClientMessage(document);
-        
-        EchoDebug.consoleWrite("Test message");
-    }
   </script>
  </head>
   
@@ -339,7 +360,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
        <tbody>
         <tr>
          <td>
-          <div onclick="EchoDebug.introspectDom();" class="button">Introspect DOM</div>
+          <div onclick="EchoDebug.Dom.introspect();" class="button">Introspect DOM</div>
          </td>
         </tr>
        </tbody>
@@ -350,14 +371,13 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
      </div>
     </div>
     
-    
     <div id="consoletab" style="display: none; width: 100%; height: 100%; overflow: auto; color: white; background: #4f4f6f;">
      <div id="consoletab_controls" style="padding: 10px 10px 0px 10px;">
       <table>
        <tbody>
         <tr>
          <td>
-          <div onclick="EchoDebug.consoleClear();" class="button">Clear Console</div>
+          <div onclick="EchoDebug.Console.clear();" class="button">Clear Console</div>
          </td>
         </tr>
        </tbody>
@@ -373,7 +393,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
        <tbody>
         <tr>
          <td>
-          <div onclick="EchoDebug.statusUpdate();" class="button">Update Status</div>
+          <div onclick="EchoDebug.Status.update();" class="button">Update Status</div>
          </td>
         </tr>
        </tbody>
