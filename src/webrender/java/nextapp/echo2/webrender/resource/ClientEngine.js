@@ -1128,6 +1128,50 @@ EchoDomUtil.stopPropagation = function(e) {
  */
 function EchoEventProcessor() { }
 
+/**
+ * Static object/namespace for EchoEventProcessor MessageProcessor 
+ * implementation.
+ */
+EchoEventProcessor.MessageProcessor = function() { };
+
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process
+ */
+EchoEventProcessor.MessageProcessor.process = function(messagePartElement) {
+    var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
+    var adds = messagePartElement.getElementsByTagName("event-add");
+    var removes = messagePartElement.getElementsByTagName("event-remove");
+    for (i = 0; i < adds.length; ++i) {
+    
+        eventTypes = adds[i].getAttribute("type").split(",");
+        handlers = adds[i].getAttribute("handler").split(",");
+        if (handlers.length != eventTypes.length) {
+            throw "Handler count and event type count do not match.";
+        }
+        
+        addItems = adds[i].getElementsByTagName("item");
+        for (j = 0; j < addItems.length; ++j) {
+            elementId = addItems[j].getAttribute("eid");
+            for (k = 0; k < eventTypes.length; ++k) {
+                EchoEventProcessor.addHandler(elementId, eventTypes[k], handlers[k]);
+            }
+        }
+    }
+    for (i = 0; i < removes.length; ++i) {
+        eventTypes = removes[i].getAttribute("type").split(",");
+        removeItems = removes[i].getElementsByTagName("item");
+        for (j = 0; j < removeItems.length; ++j) {
+            elementId = removeItems[j].getAttribute("eid");
+            for (k = 0; k < eventTypes.length; ++k) {
+                EchoEventProcessor.removeHandler(elementId, eventTypes[k]);
+            }
+        }
+    }
+};
+
 EchoEventProcessor.eventTypeToHandlersMap = new Array();
 
 /**
@@ -1248,53 +1292,6 @@ EchoEventProcessor.removeHandler = function(elementId, eventType) {
     }
     if (elementIdToHandlerMap[elementId]) {
         delete elementIdToHandlerMap[elementId];
-    }
-};
-
-// ______________________
-// Object EchoEventUpdate
-
-/* Do not instantiate */
-function EchoEventUpdate() { }
-
-EchoEventUpdate.MessageProcessor = function() { };
-
-/**
- * EchoEventUpdate Message Part Procesor implementation.
- *
- * @param messagePartElement the ServerMessage "messagepart"
- *        element containing event add and remove directives
- *        to process.
- */
-EchoEventUpdate.MessageProcessor.process = function(messagePartElement) {
-    var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
-    var adds = messagePartElement.getElementsByTagName("event-add");
-    var removes = messagePartElement.getElementsByTagName("event-remove");
-    for (i = 0; i < adds.length; ++i) {
-    
-        eventTypes = adds[i].getAttribute("type").split(",");
-        handlers = adds[i].getAttribute("handler").split(",");
-        if (handlers.length != eventTypes.length) {
-            throw "Handler count and event type count do not match.";
-        }
-        
-        addItems = adds[i].getElementsByTagName("item");
-        for (j = 0; j < addItems.length; ++j) {
-            elementId = addItems[j].getAttribute("eid");
-            for (k = 0; k < eventTypes.length; ++k) {
-                EchoEventProcessor.addHandler(elementId, eventTypes[k], handlers[k]);
-            }
-        }
-    }
-    for (i = 0; i < removes.length; ++i) {
-        eventTypes = removes[i].getAttribute("type").split(",");
-        removeItems = removes[i].getElementsByTagName("item");
-        for (j = 0; j < removeItems.length; ++j) {
-            elementId = removeItems[j].getAttribute("eid");
-            for (k = 0; k < eventTypes.length; ++k) {
-                EchoEventProcessor.removeHandler(elementId, eventTypes[k]);
-            }
-        }
     }
 };
 

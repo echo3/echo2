@@ -34,13 +34,13 @@ import nextapp.echo2.webrender.ServerMessage;
 import org.w3c.dom.Element;
 
 /**
- * A utility class to add <code>EchoEventUpdate</code> message parts to the 
- * <code>ServerMessage</code>.  <code>EchoEventUpdate</code> message parts
+ * A utility class to add <code>EchoEventProcessor</code> message parts to the 
+ * <code>ServerMessage</code>.  <code>EchoEventProcessor</code> message parts
  * are used to register/unregister client-side event listeners.
  */
-public class EventUpdate {
+public class EventProcessor {
 
-    private static final String MESSAGE_PART_NAME = "EchoEventUpdate.MessageProcessor";    
+    private static final String MESSAGE_PART_NAME = "EchoEventProcessor.MessageProcessor";    
     private static final String[] EVENT_ADD_KEYS = new String[]{"type", "handler"};
     private static final String[] EVENT_REMOVE_KEYS = new String[]{"type"};
     
