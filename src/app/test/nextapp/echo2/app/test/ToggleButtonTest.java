@@ -32,7 +32,9 @@ package nextapp.echo2.app.test;
 import junit.framework.TestCase;
 import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.CheckBox;
+import nextapp.echo2.app.RadioButton;
 import nextapp.echo2.app.ResourceImageReference;
+import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.button.DefaultButtonModel;
 import nextapp.echo2.app.button.ToggleButtonModel;
 import nextapp.echo2.app.event.ChangeEvent;
@@ -61,6 +63,32 @@ public class ToggleButtonTest extends TestCase {
             lastEvent = e;
             ++eventCount;
         }
+    }
+    
+    /**
+     * Test behavior of <code>ButtonGroup</code>s. 
+     */
+    public void testButtonGroup() {
+        RadioButton radioButton1 = new RadioButton();
+        RadioButton radioButton2 = new RadioButton();
+        RadioButton radioButton3 = new RadioButton();
+        
+        assertFalse(radioButton1.isSelected());
+        radioButton1.setSelected(true);
+        assertTrue(radioButton1.isSelected());
+        radioButton1.setSelected(false);
+        assertFalse(radioButton1.isSelected());
+        
+        ButtonGroup buttonGroup = new ButtonGroup();
+        radioButton1.setGroup(buttonGroup);
+        radioButton2.setGroup(buttonGroup);
+        radioButton3.setGroup(buttonGroup);
+        
+        radioButton1.setSelected(true);
+        assertTrue(radioButton1.isSelected());
+        radioButton2.setSelected(true);
+        assertTrue(radioButton2.isSelected());
+        assertFalse(radioButton1.isSelected());
     }
     
     /**

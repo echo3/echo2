@@ -31,6 +31,7 @@ package nextapp.echo2.app.button;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import nextapp.echo2.app.ApplicationInstance;
@@ -79,6 +80,19 @@ implements RenderIdSupport, Serializable {
      */
     public String getRenderId() {
         return id;
+    }
+    
+    private void setSelectedButton(RadioButton selectedRadioButton) {
+        Iterator buttonIt = buttons.iterator();
+        while (buttonIt.hasNext()) {
+            RadioButton radioButton = (RadioButton) buttonIt.next();
+            if (!radioButton.equals(selectedRadioButton)) {
+                radioButton.setSelected(false);
+            }
+        }
+        if (selectedRadioButton != null) {
+            selectedRadioButton.setSelected(true);
+        }
     }
 
     /**
