@@ -1124,7 +1124,19 @@ EchoDomUtil.stopPropagation = function(e) {
 // Object EchoEventProcessor
 
 /**
- * Static object/namespace to provide event handler management.
+ * Static object/namespace providing higher-level event management.
+ * Echo2 client-side components may optionally register, unregister,
+ * and receive events using the EchoEventProcessor.
+ *
+ * Event handlers registered with the EchoEventProcessor will result
+ * in additional information being sent when events are fired.
+ * This information includes the DOM element on which the
+ * event was actually registered (the "registeredTarget" property) as
+ * well as the target that fired the event (the "target" property).
+ *
+ * Additionally, use of the EchoEventProcessor minimizes "DHTML memory
+ * leaks" and provides a mechanism for inspecting registered event handlers
+ * using the Debug Window.
  */
 function EchoEventProcessor() { }
 
@@ -1172,6 +1184,11 @@ EchoEventProcessor.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * An associative array mapping event types (e.g. "mouseover") to
+ * associate arrays that map DOM element ids to the String names
+ * of event handlers.
+ */
 EchoEventProcessor.eventTypeToHandlersMap = new Array();
 
 /**
@@ -1195,6 +1212,14 @@ EchoEventProcessor.addHandler = function(elementId, eventType, handler) {
     elementIdToHandlerMap[elementId] = handler;
 };
 
+/**
+ * Retrieves the event handler of a specific type for a specific element.
+ *
+ * @param eventType the type of the event (should be specified using 
+ *        DOM level 2 event names, e.g., "mouseover" or "click", without
+ *        the "on" prefix)
+ * @param elementId the elementId the id of the DOM element
+ */
 EchoEventProcessor.getHandler = function(eventType, elementId) {
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
     if (!elementIdToHandlerMap) {
@@ -1219,6 +1244,9 @@ EchoEventProcessor.getHandlerElementIds = function(eventType) {
 
 /**
  * Returns the types of all registered event handlers.
+ *
+ * @return an array of Strings containing the type names of all registered
+ *         event handlers
  */
 EchoEventProcessor.getHandlerEventTypes = function() {
     var handlerTypes = new Array();
@@ -1231,9 +1259,11 @@ EchoEventProcessor.getHandlerEventTypes = function() {
 /**
  * Master event handler for all DOM events.
  * This method is registered as the event handler for all
- * client-side event registrations.  Events are processed,
+ * EchoEventProcessor event registrations.  Events are processed,
  * modified, and then dispatched to the appropriate
  * Echo event handlers by this method.
+ *
+ * @param e the event fired by the DOM
  */
 EchoEventProcessor.processEvent = function(e) {
     e = e ? e : window.event;
@@ -1256,7 +1286,6 @@ EchoEventProcessor.processEvent = function(e) {
     e.registeredTarget = targetElement;
     
     if (!handlerName) {
-        //BUGBUG. IE can hit this case under rapid clicking.  Ensure this is not indicative of a problem.
         return;
     }
 
@@ -1266,7 +1295,6 @@ EchoEventProcessor.processEvent = function(e) {
     } catch (ex) {
         throw "Invalid handler: " + handlerName + " (" + ex + ")";
     }
-    //BUGBUG. above code does not effectively check if handler is invalid.
     
     handler(e);
 };
@@ -1278,7 +1306,6 @@ EchoEventProcessor.processEvent = function(e) {
  * @param eventType the type of the event (should be specified using 
  *        DOM level 2 event names, e.g., "mouseover" or "click", without
  *        the "on" prefix)
- * @param handler the name of the handler, as a String
  */
 EchoEventProcessor.removeHandler = function(elementId, eventType) {
     var element = document.getElementById(elementId);
@@ -1355,7 +1382,7 @@ function EchoHttpConnection(url, method, messageObject, contentType) {
  * The responseHandler property of the connection must be set
  * before the connection is executed.
  * This method will return asynchronously; the <code>responseHandler</code>
- * callback will be invoked when a valid response is received.
+ * callback property will be invoked when a valid response is received.
  */
 EchoHttpConnection.prototype.connect = function() {
     if (!this.responseHandler) {
@@ -1479,9 +1506,9 @@ EchoScriptLibraryManager.libraryLoadStateMap = new Array();
 /**
  * Queries the state of the specified libary.
  *
- * @param serviceId the server service identifier of the library.
+ * @param serviceId the server service identifier of the library
  * @return the load-state of the library, either
- *         <code>STATE_REQUESTED</code> or <code>STATE_LOADED</code>.
+ *         <code>STATE_REQUESTED</code> or <code>STATE_LOADED</code>
  */
 EchoScriptLibraryManager.getState = function(serviceId) {
     return EchoScriptLibraryManager.libraryLoadStateMap[serviceId];
@@ -1489,6 +1516,8 @@ EchoScriptLibraryManager.getState = function(serviceId) {
 
 /**
  * Loads a JavaScript library.
+ *
+ * @param serviceId the server service identifier of the library
  */
 EchoScriptLibraryManager.loadLibrary = function(serviceId) {
     if (EchoScriptLibraryManager.getState(serviceId)) {
@@ -1528,8 +1557,7 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
  * <ul>
  *  <li>Provides an additional barrier to user input (this should not be
  *   be relied upon in any fashion, as components should themselves 
- *   check the state of EchoServerTransaction.active before accepting
- *   input.</li>
+ *   invoke EchoClientEngine.verifyInput() before accepting input.</li>
  *  <li>Displays a "wait" (hourglass) mouse cursor.</li>
  *  <li>Displays a "please wait" message after a time interval has elapsed
  *   during a longer-than-normal server transaction.</li>
