@@ -31,20 +31,17 @@ package nextapp.echo2.app.test;
 
 import junit.framework.TestCase;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Button;
-import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.IllegalChildException;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.button.ButtonModel;
-import nextapp.echo2.app.button.ToggleButtonModel;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.event.ChangeEvent;
-import nextapp.echo2.app.event.ChangeListener;
 
 /**
- * Unit test(s) for the <code>nextapp.echo2.app.AbstractButton</code>-based 
+ * Unit tests for the <code>nextapp.echo2.app.button.AbstractButton</code>-based 
  * components.
  */
 public class ButtonTest extends TestCase {
@@ -63,25 +60,6 @@ public class ButtonTest extends TestCase {
          * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent e) {
-            lastEvent = e;
-            ++eventCount;
-        }
-    }
-    
-    /**
-     * <code>ChangeListener</code> that retains last fired event and counts
-     * events received.
-     */
-    private static class ChangeHandler 
-    implements ChangeListener {
-        
-        int eventCount = 0;
-        ChangeEvent lastEvent;
-        
-        /**
-         * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
-         */
-        public void stateChanged(ChangeEvent e) {
             lastEvent = e;
             ++eventCount;
         }
@@ -119,34 +97,14 @@ public class ButtonTest extends TestCase {
     }
     
     /**
-     * Test behavior of <code>ChangeListener</code>s.
+     * Test default button values.
      */
-    public void testChangeListener() {
-        ChangeHandler buttonChangeListener = new ChangeHandler();
-        ChangeHandler modelChangeListener = new ChangeHandler();
-        CheckBox checkBox = new CheckBox("Test");
-        ToggleButtonModel model = (ToggleButtonModel) checkBox.getModel();
-        checkBox.addChangeListener(buttonChangeListener);
-        model.addChangeListener(modelChangeListener);
-        assertEquals(0, buttonChangeListener.eventCount);
-        assertEquals(0, modelChangeListener.eventCount);
-        checkBox.setSelected(true);
-        assertEquals(1, buttonChangeListener.eventCount);
-        assertEquals(1, modelChangeListener.eventCount);
-        assertEquals(checkBox, buttonChangeListener.lastEvent.getSource());
-        assertEquals(model, modelChangeListener.lastEvent.getSource());
-
-        buttonChangeListener.lastEvent = null;
-        modelChangeListener.lastEvent = null;
-        assertEquals(null, buttonChangeListener.lastEvent);
-        assertEquals(null, modelChangeListener.lastEvent);
-
-        model.setSelected(false);
-        
-        assertEquals(2, buttonChangeListener.eventCount);
-        assertEquals(2, modelChangeListener.eventCount);
-        assertEquals(checkBox, buttonChangeListener.lastEvent.getSource());
-        assertEquals(model, modelChangeListener.lastEvent.getSource());
+    public void testDefaults() {
+        Button button = new Button();
+        assertTrue(button.isLineWrap());
+        assertFalse(button.isPressedEnabled());
+        assertFalse(button.isRolloverEnabled());
+        assertNull(button.getActionCommand());
     }
     
     /**
@@ -178,54 +136,83 @@ public class ButtonTest extends TestCase {
     }
     
     /**
+     * Test pressed-state-related property accessors and mutators.
+     */
+    public void testPressedProperties() {
+        Button button = new Button();
+        
+        button.setPressedBackground(Color.GREEN);
+        button.setPressedBackgroundImage(TestConstants.BACKGROUND_IMAGE);
+        button.setPressedBorder(TestConstants.BORDER_THICK_ORANGE);
+        button.setPressedEnabled(true);
+        button.setPressedFont(TestConstants.TIMES_72);
+        button.setPressedForeground(Color.YELLOW);
+        button.setPressedIcon(TestConstants.PRESSED_ICON);
+        
+        assertEquals(Color.GREEN, button.getPressedBackground());
+        assertEquals(TestConstants.BACKGROUND_IMAGE, button.getPressedBackgroundImage());
+        assertEquals(TestConstants.BORDER_THICK_ORANGE, button.getPressedBorder());
+        assertTrue(button.isPressedEnabled());
+        assertEquals(TestConstants.TIMES_72, button.getPressedFont());
+        assertEquals(Color.YELLOW, button.getPressedForeground());
+        assertEquals(TestConstants.PRESSED_ICON, button.getPressedIcon());
+    }
+    
+    /**
      * Test property accessors and mutators.
      */
     public void testProperties() {
         Button button = new Button();
-
-        button.setRolloverBackground(Color.RED);
-        button.setRolloverForeground(Color.BLUE);
-        button.setRolloverFont(TestConstants.MONOSPACE_12);
-        
-        assertEquals(Color.RED, button.getRolloverBackground());
-        assertEquals(Color.BLUE, button.getRolloverForeground());
-        assertEquals(TestConstants.MONOSPACE_12, button.getRolloverFont());
-
-        button.setPressedBackground(Color.GREEN);
-        button.setPressedForeground(Color.YELLOW);
-        button.setPressedFont(TestConstants.TIMES_72);
-        
-        assertEquals(Color.GREEN, button.getPressedBackground());
-        assertEquals(Color.YELLOW, button.getPressedForeground());
-        assertEquals(TestConstants.TIMES_72, button.getPressedFont());
-
-        button.setRolloverEnabled(true);
-        assertTrue(button.isRolloverEnabled());
-        button.setRolloverEnabled(false);
-        assertFalse(button.isRolloverEnabled());
-
-        button.setPressedEnabled(true);
-        assertTrue(button.isPressedEnabled());
-        button.setPressedEnabled(false);
-        assertFalse(button.isPressedEnabled());
         
         button.setText("Alpha");
         assertEquals("Alpha", button.getText());
         
+        button.setBackgroundImage(TestConstants.BACKGROUND_IMAGE);
+        assertEquals(TestConstants.BACKGROUND_IMAGE, button.getBackgroundImage());
+        
         button.setIcon(TestConstants.ICON);
         assertEquals(TestConstants.ICON, button.getIcon());
+        button.setIconTextMargin(TestConstants.EXTENT_100_PX);
+        assertEquals(TestConstants.EXTENT_100_PX, button.getIconTextMargin());
         
-        button.setRolloverIcon(TestConstants.ROLLOVER_ICON);
-        assertEquals(TestConstants.ROLLOVER_ICON, button.getRolloverIcon());
-        
-        button.setPressedIcon(TestConstants.PRESSED_ICON);
-        assertEquals(TestConstants.PRESSED_ICON, button.getPressedIcon());
-
         button.setBorder(TestConstants.BORDER_THIN_YELLOW);
         assertEquals(TestConstants.BORDER_THIN_YELLOW, button.getBorder());
+        
+        button.setHeight(TestConstants.EXTENT_500_PX);
+        assertEquals(TestConstants.EXTENT_500_PX, button.getHeight());
+        button.setWidth(TestConstants.EXTENT_200_PX);
+        assertEquals(TestConstants.EXTENT_200_PX, button.getWidth());
+        
+        button.setTextAlignment(new Alignment(Alignment.LEADING, Alignment.BOTTOM));
+        assertEquals(new Alignment(Alignment.LEADING, Alignment.BOTTOM), button.getTextAlignment());
+        
+        button.setTextPosition(new Alignment(Alignment.DEFAULT, Alignment.TOP));
+        assertEquals(new Alignment(Alignment.DEFAULT, Alignment.TOP), button.getTextPosition());
+    }
+    
+    /**
+     * Test rollover-state-related property accessors and mutators.
+     */
+    public void testRolloverProperties() {
+        Button button = new Button();
+        
+        button.setRolloverEnabled(true);
+        button.setRolloverBackgroundImage(TestConstants.BACKGROUND_IMAGE);
+        button.setRolloverBackground(Color.RED);
+        button.setRolloverForeground(Color.BLUE);
+        button.setRolloverFont(TestConstants.MONOSPACE_12);
+        button.setRolloverBorder(TestConstants.BORDER_THIN_YELLOW);
+        button.setRolloverIcon(TestConstants.ROLLOVER_ICON);
+        
+        assertTrue(button.isRolloverEnabled());
+        assertEquals(TestConstants.BACKGROUND_IMAGE, button.getRolloverBackgroundImage());
+        assertEquals(Color.RED, button.getRolloverBackground());
+        assertEquals(Color.BLUE, button.getRolloverForeground());
+        assertEquals(TestConstants.MONOSPACE_12, button.getRolloverFont());
+        assertEquals(TestConstants.BORDER_THIN_YELLOW, button.getRolloverBorder());
+        assertEquals(TestConstants.ROLLOVER_ICON, button.getRolloverIcon());
 
-        button.setRolloverBorder(TestConstants.BORDER_THICK_ORANGE);
-        assertEquals(TestConstants.BORDER_THICK_ORANGE, button.getRolloverBorder());
-        assertEquals(TestConstants.BORDER_THIN_YELLOW, button.getBorder());
+        button.setRolloverEnabled(false);
+        assertFalse(button.isRolloverEnabled());
     }
 }
