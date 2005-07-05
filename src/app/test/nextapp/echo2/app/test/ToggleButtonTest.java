@@ -73,16 +73,19 @@ public class ToggleButtonTest extends TestCase {
         RadioButton radioButton2 = new RadioButton();
         RadioButton radioButton3 = new RadioButton();
         
+        // Test selection state of single button prior to setting group.
         assertFalse(radioButton1.isSelected());
         radioButton1.setSelected(true);
         assertTrue(radioButton1.isSelected());
         radioButton1.setSelected(false);
         assertFalse(radioButton1.isSelected());
         
+        // Add Buttons to group.
         ButtonGroup buttonGroup = new ButtonGroup();
         radioButton1.setGroup(buttonGroup);
         radioButton2.setGroup(buttonGroup);
         
+        // Ensure mutual exclusivity between buttons in button group.
         radioButton1.setSelected(true);
         assertTrue(radioButton1.isSelected());
         radioButton2.setSelected(true);
@@ -92,25 +95,34 @@ public class ToggleButtonTest extends TestCase {
         assertTrue(radioButton1.isSelected());
         assertFalse(radioButton2.isSelected());
         
+        // Create selected button independent of button group (no effect).
         radioButton3.setSelected(true);
         assertTrue(radioButton1.isSelected());
         assertFalse(radioButton2.isSelected());
         assertTrue(radioButton3.isSelected());
         
+        // Add selected button to button group: ensure new selected button becomes group selection.
         radioButton3.setGroup(buttonGroup);
         assertFalse(radioButton1.isSelected());
         assertFalse(radioButton2.isSelected());
         assertTrue(radioButton3.isSelected());
         
+        // Remove selected button from button group: ensure no effect other than group removal.
         radioButton3.setGroup(null);
         assertFalse(radioButton1.isSelected());
         assertFalse(radioButton2.isSelected());
         assertTrue(radioButton3.isSelected());
-        
+
+        // Select new button in button group: ensure no effect on button that was removed.
         radioButton2.setSelected(true);
         assertFalse(radioButton1.isSelected());
         assertTrue(radioButton2.isSelected());
         assertTrue(radioButton3.isSelected());
+        
+        // Set model state of button in group to selected: ensure button is selected in group.
+        ((ToggleButtonModel) radioButton1.getModel()).setSelected(true);
+        assertTrue(radioButton1.isSelected());
+        assertFalse(radioButton2.isSelected());
     }
     
     /**
