@@ -30,8 +30,12 @@
 package nextapp.echo2.app;
 
 import nextapp.echo2.app.button.ButtonGroup;
+import nextapp.echo2.app.button.ButtonModel;
 import nextapp.echo2.app.button.DefaultToggleButtonModel;
 import nextapp.echo2.app.button.ToggleButton;
+import nextapp.echo2.app.button.ToggleButtonModel;
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
 
 /**
  * A radio button implementation.
@@ -40,6 +44,21 @@ public class RadioButton extends ToggleButton {
     
     public static final String BUTTON_GROUP_CHANGED_PROPERTY = "buttonGroup";
     
+    /**
+     * Monitors state changes to enforce <code>ButtonGroup</code> behavior.
+     */
+    private ChangeListener changeMonitor = new ChangeListener() {
+
+        /**
+         * @see nextapp.echo2.app.event.ChangeListener#stateChanged(nextapp.echo2.app.event.ChangeEvent)
+         */
+        public void stateChanged(ChangeEvent e) {
+            if (buttonGroup != null) {
+                buttonGroup.updateSelection(RadioButton.this);
+            }
+        }
+    };
+
     private ButtonGroup buttonGroup;
 
     /**
@@ -112,5 +131,20 @@ public class RadioButton extends ToggleButton {
         }
         
         firePropertyChange(BUTTON_GROUP_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * @see nextapp.echo2.app.button.AbstractButton#setModel(nextapp.echo2.app.button.ButtonModel)
+     */
+    public void setModel(ButtonModel newValue) {
+        ButtonModel oldValue = getModel();
+        super.setModel(newValue);
+        if (oldValue != null) {
+            ((ToggleButtonModel) oldValue).removeChangeListener(changeMonitor);
+        }
+        ((ToggleButtonModel) newValue).addChangeListener(changeMonitor);
+        if (buttonGroup != null) {
+            buttonGroup.updateSelection(this);
+        }
     }
 }

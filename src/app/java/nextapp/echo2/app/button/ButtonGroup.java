@@ -52,8 +52,11 @@ implements RenderIdSupport, Serializable {
     
     /**
      * Adds a <code>RadioButton</code> to the group.
+     * Applications should use <code>RadioButton.setGroup()</code> to add
+     * buttons from a group rather than invoking this method.
      * 
      * @param radioButton the <code>RadioButton</code> to add
+     * @see RadioButton#setGroup(ButtonGroup)
      */
     public void addButton(RadioButton radioButton) {
         if (buttons == null) {
@@ -82,27 +85,36 @@ implements RenderIdSupport, Serializable {
         return id;
     }
     
-    private void setSelectedButton(RadioButton selectedRadioButton) {
-        Iterator buttonIt = buttons.iterator();
-        while (buttonIt.hasNext()) {
-            RadioButton radioButton = (RadioButton) buttonIt.next();
-            if (!radioButton.equals(selectedRadioButton)) {
-                radioButton.setSelected(false);
-            }
-        }
-        if (selectedRadioButton != null) {
-            selectedRadioButton.setSelected(true);
-        }
-    }
-
     /**
      * Removes a <code>RadioButton</code> from the group.
+     * Applications should use <code>RadioButton.setGroup()</code> to remove
+     * buttons from a group rather than invoking this method.
      * 
      * @param radioButton the <code>RadioButton</code> to remove
+     * @see RadioButton#setGroup(ButtonGroup)
      */
     public void removeButton(RadioButton radioButton) {
         if (buttons != null) {
             buttons.remove(radioButton);
+        }
+    }
+    
+    /**
+     * Notifies the <code>ButtonGroup</code> that a <code>RadioButton</code>
+     * within its domain may have changed state.
+     * 
+     * @param changedButton the changed <code>RadioButton</code>
+     */
+    public void updateSelection(RadioButton changedButton) {
+        if (buttons == null || !changedButton.isSelected()) {
+            return;
+        }
+        Iterator buttonIt = buttons.iterator();
+        while (buttonIt.hasNext()) {
+            RadioButton button = (RadioButton) buttonIt.next();
+            if (!button.equals(changedButton)) {
+                button.setSelected(false);
+            }
         }
     }
 }
