@@ -303,7 +303,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
         ServerMessage serverMessage = new ServerMessage();
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
-        rc.getContainerInstance().setActiveConnection(conn);
         try {
             ApplicationInstance.setActive(applicationInstance);
             processClientMessage(conn, clientMessageDocument);
@@ -330,7 +329,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
             return serverMessage;
         } finally {
             ApplicationInstance.setActive(null);
-            rc.getContainerInstance().setActiveConnection(null);
         }
     }
     
@@ -344,7 +342,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
         
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
         
-        rc.getContainerInstance().setActiveConnection(conn);
         try {
             // Mark instance as active.
             ApplicationInstance.setActive(applicationInstance);
@@ -370,7 +367,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             return serverMessage;
         } finally {
-            rc.getContainerInstance().setActiveConnection(null);
             // Mark instance as inactive.
             ApplicationInstance.setActive(null);
         }

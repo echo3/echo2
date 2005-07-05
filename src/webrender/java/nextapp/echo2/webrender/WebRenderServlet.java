@@ -43,6 +43,12 @@ import nextapp.echo2.webrender.service.CoreServices;
  */
 public abstract class WebRenderServlet extends HttpServlet {
     
+    /** 
+     * A <code>ThreadLocal</code> reference to the 
+     * <code>Connection</code> relevant to the current thread.
+     */ 
+    private static final ThreadLocal activeConnection = new InheritableThreadLocal();
+    
     /**
      * A flag indicating whether caching should be disabled for all services.
      * This flag is for testing purposes only, and should be disabled for
@@ -112,6 +118,16 @@ public abstract class WebRenderServlet extends HttpServlet {
          */
         public HttpServletRequest getWrappedRequest(HttpServletRequest request)
         throws IOException, ServletException;
+    }
+
+    /**
+     * Returns a reference to the <code>Connection</code> that is 
+     * relevant to the current thread, or null if no connection is relevant.
+     * 
+     * @return the relevant <code>Connection</code>
+     */
+    public static final Connection getActiveConnection() {
+        return (Connection) activeConnection.get();
     }
     
     /**
@@ -227,6 +243,7 @@ public abstract class WebRenderServlet extends HttpServlet {
         Connection conn = null;
         try {
             conn = new Connection(this, request, response);
+            activeConnection.set(conn);
             String serviceId = request.getParameter(SERVICE_ID_PARAMETER);
             Service service = getService(conn.getUserInstance(), serviceId);
             if (service == null) {
@@ -260,6 +277,8 @@ public abstract class WebRenderServlet extends HttpServlet {
                 conn.disposeUserInstance();
             }
             throw(ex);
+        } finally {
+            activeConnection.set(null);
         }
     }
 }

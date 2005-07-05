@@ -19,6 +19,11 @@
       <servlet-class>nextapp.echo2.testapp.serial.SerialServlet</servlet-class>
     </servlet>
 
+    <servlet>
+      <servlet-name>Echo2AuthServlet</servlet-name>
+      <servlet-class>nextapp.echo2.testapp.auth.AuthServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
       <servlet-name>Echo2InteractiveServlet</servlet-name>
       <url-pattern>/ia</url-pattern>
@@ -29,4 +34,30 @@
       <url-pattern>/serial</url-pattern>
     </servlet-mapping>
     
+    <servlet-mapping>
+      <servlet-name>Echo2AuthServlet</servlet-name>
+      <url-pattern>/auth</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Echo2AuthServlet</web-resource-name>
+            <url-pattern>/auth</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>role1</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Default</realm-name>
+    </login-config>
+    
+    <security-role>
+        <role-name>role1</role-name>
+    </security-role>
+
 </web-app>

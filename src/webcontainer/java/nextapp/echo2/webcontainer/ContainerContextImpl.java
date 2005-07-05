@@ -37,6 +37,8 @@ import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.WebRenderServlet;
 
 //BUGBUG. Test isUserInRole()/getUserPrincipal()
 //BUGBUG. Support for retrieving cookies.
@@ -87,14 +89,24 @@ implements ContainerContext, Serializable {
      * @see nextapp.echo2.webcontainer.ContainerContext#getUserPrincipal()
      */
     public Principal getUserPrincipal() {
-        return containerInstance.getUserPrincipal();
+        Connection conn = WebRenderServlet.getActiveConnection();
+        if (conn == null) {
+            return null;
+        } else {
+            return conn.getRequest().getUserPrincipal();
+        }
     }
     
     /**
      * @see nextapp.echo2.webcontainer.ContainerContext#isUserInRole(java.lang.String)
      */
     public boolean isUserInRole(String role) {
-        return containerInstance.isUserInRole(role);
+        Connection conn = WebRenderServlet.getActiveConnection();
+        if (conn == null) {
+            return false;
+        } else {
+            return conn.getRequest().isUserInRole(role);
+        }
     }
 
     /**
