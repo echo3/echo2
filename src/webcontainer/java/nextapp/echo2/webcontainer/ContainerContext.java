@@ -32,6 +32,7 @@ package nextapp.echo2.webcontainer;
 import java.security.Principal;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueueHandle;
@@ -60,6 +61,13 @@ public interface ContainerContext {
      * @return the <code>ClientProperties</code>
      */
     public ClientProperties getClientProperties();
+    
+    /**
+     * Return any <code>Cookie</code>s sent on the current HTTP request. 
+     * 
+     * @return the <code>Cookie</code>s
+     */
+    public Cookie[] getCookies();
     
     /**
      * Returns an immutable <code>Map</code> containing the HTTP form 

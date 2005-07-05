@@ -33,17 +33,23 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+
 import nextapp.echo2.app.ApplicationInstance;
+import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Table;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
 import nextapp.echo2.webcontainer.ContainerContext;
+import nextapp.echo2.webcontainer.command.BrowserSetCookieCommand;
 import nextapp.echo2.webrender.ClientProperties;
 
 /**
@@ -106,15 +112,33 @@ public class ContainerContextTest extends Column {
         add(initialParametersColumn);
         initialParametersColumn.add(new Label("Initial Parameters"));
         initialParametersColumn.add(createInitialParametersTable(containerContext));
+        
+        Column cookiesColumn = new Column();
+        add(cookiesColumn);
+        cookiesColumn.add(new Label("Cookies"));
+        cookiesColumn.add(createCookieTable(containerContext));
+        Button setCookieButton = new Button("Set Cookie");
+        setCookieButton.setStyleName("Default");
+        setCookieButton.addActionListener(new ActionListener() {
+        
+            public void actionPerformed(ActionEvent e) {
+                int value = (int) (Math.random() * 3);
+                Cookie cookie = new Cookie("Test Cookie " + value, "Mmmmm Cookies " + value);
+                BrowserSetCookieCommand command = new BrowserSetCookieCommand(cookie);
+                ApplicationInstance.getActive().enqueueCommand(command);
+            }
+        });
+        cookiesColumn.add(setCookieButton);
     }
     
-    public Table createClientPropertiesTable(ContainerContext containerContext) {
+    private Table createClientPropertiesTable(ContainerContext containerContext) {
         ClientProperties clientProperties = containerContext.getClientProperties();
         String[] propertyNames = clientProperties.getPropertyNames();
         Arrays.sort(propertyNames);
         
         Table table = new Table();
         table.setStyleName("Default");
+        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);
@@ -122,19 +146,38 @@ public class ContainerContextTest extends Column {
             model.insertRow(0, new Object[]{propertyNames[i], clientProperties.getString(propertyNames[i])});
         }
         
-        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
-        
         table.getColumnModel().getColumn(0).setHeaderValue("Property");
         table.getColumnModel().getColumn(1).setHeaderValue("Value");
         
         return table;
     }
     
-    public Table createInitialParametersTable(ContainerContext containerContext) {
+    private Table createCookieTable(ContainerContext containerContext) {
+        Cookie[] cookies = containerContext.getCookies();
+        
+        Table table = new Table();
+        table.setStyleName("Default");
+        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
+        
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setColumnCount(3);
+        for (int i = 0; i < cookies.length; ++i) {
+            model.insertRow(0, new Object[]{cookies[i].getName(), Integer.toString(cookies[i].getMaxAge()), cookies[i].getValue()});
+        }
+        
+        table.getColumnModel().getColumn(0).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setHeaderValue("Max Age");
+        table.getColumnModel().getColumn(2).setHeaderValue("Value");
+
+        return table;
+    }
+    
+    private Table createInitialParametersTable(ContainerContext containerContext) {
         Map initialParameterMap = containerContext.getInitialParameterMap();
         
         Table table = new Table();
         table.setStyleName("Default");
+        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);
@@ -143,8 +186,6 @@ public class ContainerContextTest extends Column {
             String key = (String) it.next();
             model.insertRow(0, new Object[]{key, initialParameterMap.get(key)});
         }
-        
-        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
         
         table.getColumnModel().getColumn(0).setHeaderValue("Property");
         table.getColumnModel().getColumn(1).setHeaderValue("Value");

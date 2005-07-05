@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueueHandle;
@@ -40,8 +41,6 @@ import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.WebRenderServlet;
 
-//BUGBUG. Test isUserInRole()/getUserPrincipal()
-//BUGBUG. Support for retrieving cookies.
 //BUGBUG. Configuration of session expiration behavior.
 //BUGBUG. Configuration of exception behavior.
 //BUGBUG? Forced session invalidation.
@@ -69,6 +68,18 @@ implements ContainerContext, Serializable {
      */
     public ClientProperties getClientProperties() {
         return containerInstance.getClientProperties();
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#getCookies()
+     */
+    public Cookie[] getCookies() {
+        Connection conn = WebRenderServlet.getActiveConnection();
+        if (conn == null) {
+            return null;
+        } else {
+            return conn.getRequest().getCookies();
+        }
     }
     
     /**
