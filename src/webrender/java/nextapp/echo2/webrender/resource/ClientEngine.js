@@ -29,7 +29,6 @@
  
 //BUGBUG. Ensure that various Maps (such as EchoEventProcessor & WindowPane Z-index manager)
 // are not filling memory with nulls.
-//BUGBUG. still missing some JSdocs.
 
 // _____________________________
 // Object EchoAsyncMonitor
@@ -68,7 +67,7 @@ EchoAsyncMonitor.connect = function() {
 };
 
 /**
- * Processes an invalid response to the poll request
+ * Processes an invalid response to the poll request.
  */
 EchoAsyncMonitor.invalidResponseHandler = function() {
     alert("Invalid response from server to asynchronous polling connection.");
@@ -110,127 +109,6 @@ EchoAsyncMonitor.responseHandler = function(conn) {
     }
 };
 
-// _____________________________
-// Object EchoServerDelayMessage
-
- /**
-  * Static object/namespace to manage configuration and activation of the
-  * server-delay message.  
-  * The server-delay message serves the following purposes:
-  * <ul>
-  *  <li>Provides an additional barrier to user input (this should not be
-  *   be relied upon in any fashion, as components should themselves 
-  *   check the state of EchoServerTransaction.active before accepting
-  *   input.</li>
-  *  <li>Displays a "wait" (hourglass) mouse cursor.</li>
-  *  <li>Displays a "please wait" message after a time interval has elapsed
-  *   during a longer-than-normal server transaction.</li>
-  * </ul>
-  */
-function EchoServerDelayMessage() { }
-
-/**
- * MessagePartProcessor implementation for EchoServerDelayMessage.
- */
-EchoServerDelayMessage.MessageProcessor = function() { }
-
-/**
- * MessagePartProcessor process() method implementation.
- */
-EchoServerDelayMessage.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "set-message":
-                EchoServerDelayMessage.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
-                break;
-            }
-        }
-    }
-};
-
-/**
- * ServerMessage parser to handle requests to set delay message text.
- */
-EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    var i;
-    // Remove existing children.
-    for (i = serverDelayMessage.childNodes.length - 1; i >= 0; --i) {
-        serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
-    }
-    // Add new children.
-    var contentElement = setDelayMessageElement.getElementsByTagName("content")[0];
-    for (i = 0; i < contentElement.childNodes.length; ++i) {
-        serverDelayMessage.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
-    }
-};
-
-EchoServerDelayMessage.MESSAGE_ELEMENT_ID = "serverDelayMessage";
-EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID = "serverDelayMessageLong";
-
-/** 
- * Id of HTML element providing "long-running" delay message.  
- * This element is shown/hidden as necessary when long-running delays
- * occur or are completed.
- */
-EchoServerDelayMessage.delayMessageTimeoutId = null;
-
-/** Timeout (in ms) before "long-running" delay message is displayed. */ 
-EchoServerDelayMessage.timeout = 750;
-
-/**
- * Activates/shows the server delay message pane.
- */
-EchoServerDelayMessage.activate = function() {
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    if (!serverDelayMessage) {
-        return;
-    }
-    serverDelayMessage.style.visibility = "visible";
-    EchoServerDelayMessage.delayMessageTimeoutId = window.setTimeout("EchoServerDelayMessage.activateDelayMessage()", 
-            EchoServerDelayMessage.timeout);
-};
-
-/**
- * Activates the "long-running" delay message (requires server delay message
- * to have been previously activated).
- */
-EchoServerDelayMessage.activateDelayMessage = function() {
-    EchoServerDelayMessage.cancelDelayMessageTimeout();
-    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
-    if (!longMessage) {
-        return;
-    }
-    longMessage.style.visibility = "visible";
-};
-
-/**
- * Cancels timeout object that will raise delay message when server
- * transaction is determined to be "long running".
- */
-EchoServerDelayMessage.cancelDelayMessageTimeout = function() {
-    if (EchoServerDelayMessage.delayMessageTimeoutId) {
-        window.clearTimeout(EchoServerDelayMessage.delayMessageTimeoutId);
-        EchoServerDelayMessage.delayMessageTimeoutId = null;
-    }
-};
-
-/**
- * Deactives/hides the server delay message.
- */
-EchoServerDelayMessage.deactivate = function() {
-    EchoServerDelayMessage.cancelDelayMessageTimeout();
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
-    if (serverDelayMessage) {
-        serverDelayMessage.style.visibility = "hidden";
-    }
-    if (longMessage) {
-        longMessage.style.visibility = "hidden";
-    }
-};
-
 // _________________________
 // Object EchoClientAnalyzer
 
@@ -268,8 +146,8 @@ EchoClientAnalyzer.analyze = function() {
 /**
  * Stores a boolean client property in the ClientMessage.
  *
- * @param messagePartElement the XMLElement in which generated property 
- *        XML elements should be stored
+ * @param messagePartElement the <code>message-part</code> element
+ *        in which generated property XML elements should be stored
  * @param propertyName the property name
  * @param propertyValue the property value
  */
@@ -284,8 +162,8 @@ EchoClientAnalyzer.setBooleanProperty = function(messagePartElement, propertyNam
 /**
  * Stores a integer client property in the ClientMessage.
  *
- * @param messagePartElement the XMLElement in which generated property 
- *        XML elements should be stored
+ * @param messagePartElement the <code>message-part</code> element
+ *        in which generated property XML elements should be stored
  * @param propertyName the property name
  * @param propertyValue the property value
  */
@@ -304,8 +182,8 @@ EchoClientAnalyzer.setIntegerProperty = function(messagePartElement, propertyNam
 /**
  * Stores a text client property in the ClientMessage.
  *
- * @param messagePartElement the XMLElement in which generated property 
- *        XML elements should be stored
+ * @param messagePartElement the <code>message-part</code> element
+ *        in which generated property XML elements should be stored
  * @param propertyName the property name
  * @param propertyValue the property value
  */
@@ -321,12 +199,20 @@ EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, 
 // Object EchoClientEngine
 
 /**
-  * Static object/namespace.
-  */
+ * Static object/namespace providing core client engine functionality.
+ */
 function EchoClientEngine() { }
 
+/**
+ * The base URI of the Echo application server.
+ */
 EchoClientEngine.baseServerUri = null;
 
+/**
+ * Initializes the Echo2 Client Engine.
+ *
+ * @param baseServerUri the base URI of the Echo application server
+ */
 EchoClientEngine.init = function(baseServerUri) {
     // Store base URI.
     EchoClientEngine.baseServerUri = baseServerUri;
@@ -347,13 +233,16 @@ EchoClientEngine.init = function(baseServerUri) {
 };
 
 /**
- * Verifies that the given element is eligible to receive input at this time.
- * This method should be invoked before procsesing any user input.
+ * Verifies that the given element is eligible to receive input based on the 
+ * current condition of the user interface.
+ * This method should be invoked by UI listeners before procsesing any user input.
  * This method will ensure that no server transaction is active and the element
  * is within the current modal context.
  * The method will additionally verify that the element does not have the 
  * <code>EchoDomPropertyStore</code> property 
  * <code>EchoClientEngine.inputDisabled</code> set to true.
+ *
+ * @param elementId the id of the element
  */
 EchoClientEngine.verifyInput = function(elementId) {
     if (EchoServerTransaction.active) {
@@ -371,6 +260,9 @@ EchoClientEngine.verifyInput = function(elementId) {
 // ________________________
 // Object EchoClientMessage
 
+/**
+ * Static object/namespace representing the outgoing ClientMessage.
+ */
 function EchoClientMessage() { }
 
 /**
@@ -431,8 +323,6 @@ EchoClientMessage.getMessagePart = function(processor) {
     return messagePartElement;
 };
 
-//BUGBUG. add a getPropertyElement method.
-
 /**
  * Retrieves the value of a string property in the EchoClientMessage.
  *
@@ -452,6 +342,11 @@ EchoClientMessage.getPropertyValue = function(componentId, propertyName) {
     return null;
 };
 
+/**
+ * Resets the state of the ClientMessage.
+ * This method is invoked after a ClientMessage has been sent to the server
+ * and is thus no longer relevant.
+ */
 EchoClientMessage.reset = function() {
     EchoClientMessage.messageDocument = null;
     EchoClientMessage.messageDocument 
@@ -467,7 +362,6 @@ EchoClientMessage.reset = function() {
  * @param actionName The name of the action.
  * @param actionValue The value of the action (optional).
  */
- //BUGBUG. use same design for actions as we do for properties.
 EchoClientMessage.setActionValue = function(componentId, actionName, actionValue) {
     var messagePartElement = EchoClientMessage.getMessagePart("EchoAction");
     var actionElement = messagePartElement.ownerDocument.createElement("action");
@@ -507,12 +401,25 @@ EchoClientMessage.setInitialize = function() {
 // ___________________________
 // Object EchoClientProperties
 
+/**
+ * Static object/namespace providing information about the make/model/version,
+ * capabilities, quirks, and limitations of the browser client.
+ */
 function EchoClientProperties() { }
 
+/**
+ * Associative array mapping client property names to values.
+ */
 EchoClientProperties.propertyMap = new Array();
 
+/**
+ * MessagePartProcessor implementation for EchoClientProperties.
+ */
 EchoClientProperties.MessageProcessor = function() { };
 
+/**
+ * MessagePartProcessor process() method implementation.
+ */
 EchoClientProperties.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
@@ -525,6 +432,12 @@ EchoClientProperties.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Proceses a <code>store</code> message to store ClientProperties information
+ * received from the server.
+ *
+ * @param storeElement the <code>store</code> element to process
+ */
 EchoClientProperties.MessageProcessor.processStore = function(storeElement) {
     var propertyElements = storeElement.getElementsByTagName("property");
     for (var i = 0; i < propertyElements.length; ++i) {
@@ -539,6 +452,12 @@ EchoClientProperties.MessageProcessor.processStore = function(storeElement) {
     }
 };
 
+/**
+ * Returns the specified value from the ClientProperties store.
+ *
+ * @param name the name of the property
+ * @param value the value of the property
+ */
 EchoClientProperties.get = function(name) {
     return EchoClientProperties.propertyMap[name];
 };
@@ -552,6 +471,13 @@ EchoClientProperties.get = function(name) {
  */
 function EchoCssUtil() { }
 
+/**
+ * Updates CSS information about a specific element.
+ * 
+ * @param element the DOM element to update
+ * @param cssText the CSS style text describing the updates to perform to
+ *        the existing CSS information of the element
+ */
 EchoCssUtil.applyStyle = function(element, cssText) {
     var styleProperties = cssText.split(";");
     var styleData = new Array();
@@ -673,13 +599,26 @@ EchoDebugManager.updateServerMessage = function() {
 // Object EchoDomPropertyStore
 
 /**
- * An EchoServerMessage processor object which stores non-rendered property 
- * values in JavaScript HTML element objects.
+ * Static object/namespace which provides storage of non-rendered property values
+ * relevant to specific DOM elements within the DOM elmenets themselves.
+ * Values are stored within associative arrays that are stored in a
+ * 'echoDomPropertyStore' property of a DOM element.
  */
 function EchoDomPropertyStore() { }
 
-EchoDomPropertyStore.MessageProcessor = function() { }
+/**
+ * Static object/namespace for EchoDomPropertyStore MessageProcessor 
+ * implementation.  Provides capability to set EchoDomPropertyStore
+ * properties from ServerMessage directives.
+ */
+EchoDomPropertyStore.MessageProcessor = function() { };
 
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process.
+ */
 EchoDomPropertyStore.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
@@ -692,6 +631,12 @@ EchoDomPropertyStore.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>store-property</code> message to set the state of an
+ * <code>EchoDomPropertyStore</code> property.
+ *
+ * @param storePropertyElement the <code>store-property</code> element to process
+ */
 EchoDomPropertyStore.MessageProcessor.processStoreProperty = function(storePropertyElement) {
     var propertyName = storePropertyElement.getAttribute("name");
     var propertyValue = storePropertyElement.getAttribute("value");
@@ -702,6 +647,13 @@ EchoDomPropertyStore.MessageProcessor.processStoreProperty = function(storePrope
     }
 };
 
+/**
+ * Retrieves the value of a specific <code>EchoDomPropertyStore</code> property.
+ *
+ * @param elementId the id of the DOM element
+ * @param propertyName the name of the property
+ * @return the property value, or null if it is not set
+ */
 EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
     var element = document.getElementById(elementId);
     if (!element) {
@@ -714,6 +666,13 @@ EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
     }
 };
 
+/**
+ * Sets the value of a specific <code>EchoDomPropertyStore</code> property.
+ *
+ * @param elementId the id of the DOM element
+ * @param propertyName the name of the property
+ * @param propertyValue the new value of the property
+ */
 EchoDomPropertyStore.setPropertyValue = function(elementId, propertyName, propertyValue) {
     var element = document.getElementById(elementId);
     if (!element) {
@@ -736,7 +695,7 @@ EchoDomPropertyStore.setPropertyValue = function(elementId, propertyName, proper
  */
 function EchoDomUpdate() { }
 
-EchoDomUpdate.MessageProcessor = function() { }
+EchoDomUpdate.MessageProcessor = function() { };
 
 /**
  *
@@ -852,7 +811,7 @@ EchoDomUpdate.TargetNotFoundException = function(updateType, targetType, targetI
     this.targetId = targetId;
     this.targetType = targetType;
     this.updateType = updateType;
-}
+};
 
 EchoDomUpdate.TargetNotFoundException.prototype.toString = function() {
     return "Failed to perform \"" + this.updateType + "\": " + this.targetType + " element \"" + this.targetId + "\" not found.";
@@ -1255,7 +1214,7 @@ EchoEventProcessor.removeHandler = function(elementId, eventType) {
 /* Do not instantiate */
 function EchoEventUpdate() { }
 
-EchoEventUpdate.MessageProcessor = function() { }
+EchoEventUpdate.MessageProcessor = function() { };
 
 /**
  * EchoEventUpdate Message Part Procesor implementation.
@@ -1302,7 +1261,7 @@ EchoEventUpdate.MessageProcessor.process = function(messagePartElement) {
 /**
  * Static object/namespace to manage component focus.
  */
-function EchoFocusManager() { };
+function EchoFocusManager() { }
 
 /**
  * Sets the focused state of a component.
@@ -1517,6 +1476,127 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
 
     // Mark state as "loaded" so that application will discontinue waiting for library to load.
     EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+};
+
+// _____________________________
+// Object EchoServerDelayMessage
+
+/**
+ * Static object/namespace to manage configuration and activation of the
+ * server-delay message.  
+ * The server-delay message serves the following purposes:
+ * <ul>
+ *  <li>Provides an additional barrier to user input (this should not be
+ *   be relied upon in any fashion, as components should themselves 
+ *   check the state of EchoServerTransaction.active before accepting
+ *   input.</li>
+ *  <li>Displays a "wait" (hourglass) mouse cursor.</li>
+ *  <li>Displays a "please wait" message after a time interval has elapsed
+ *   during a longer-than-normal server transaction.</li>
+ * </ul>
+ */
+function EchoServerDelayMessage() { }
+
+/**
+ * MessagePartProcessor implementation for EchoServerDelayMessage.
+ */
+EchoServerDelayMessage.MessageProcessor = function() { };
+
+/**
+ * MessagePartProcessor process() method implementation.
+ */
+EchoServerDelayMessage.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "set-message":
+                EchoServerDelayMessage.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+/**
+ * ServerMessage parser to handle requests to set delay message text.
+ */
+EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    var i;
+    // Remove existing children.
+    for (i = serverDelayMessage.childNodes.length - 1; i >= 0; --i) {
+        serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
+    }
+    // Add new children.
+    var contentElement = setDelayMessageElement.getElementsByTagName("content")[0];
+    for (i = 0; i < contentElement.childNodes.length; ++i) {
+        serverDelayMessage.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
+    }
+};
+
+EchoServerDelayMessage.MESSAGE_ELEMENT_ID = "serverDelayMessage";
+EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID = "serverDelayMessageLong";
+
+/** 
+ * Id of HTML element providing "long-running" delay message.  
+ * This element is shown/hidden as necessary when long-running delays
+ * occur or are completed.
+ */
+EchoServerDelayMessage.delayMessageTimeoutId = null;
+
+/** Timeout (in ms) before "long-running" delay message is displayed. */ 
+EchoServerDelayMessage.timeout = 750;
+
+/**
+ * Activates/shows the server delay message pane.
+ */
+EchoServerDelayMessage.activate = function() {
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    if (!serverDelayMessage) {
+        return;
+    }
+    serverDelayMessage.style.visibility = "visible";
+    EchoServerDelayMessage.delayMessageTimeoutId = window.setTimeout("EchoServerDelayMessage.activateDelayMessage()", 
+            EchoServerDelayMessage.timeout);
+};
+
+/**
+ * Activates the "long-running" delay message (requires server delay message
+ * to have been previously activated).
+ */
+EchoServerDelayMessage.activateDelayMessage = function() {
+    EchoServerDelayMessage.cancelDelayMessageTimeout();
+    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
+    if (!longMessage) {
+        return;
+    }
+    longMessage.style.visibility = "visible";
+};
+
+/**
+ * Cancels timeout object that will raise delay message when server
+ * transaction is determined to be "long running".
+ */
+EchoServerDelayMessage.cancelDelayMessageTimeout = function() {
+    if (EchoServerDelayMessage.delayMessageTimeoutId) {
+        window.clearTimeout(EchoServerDelayMessage.delayMessageTimeoutId);
+        EchoServerDelayMessage.delayMessageTimeoutId = null;
+    }
+};
+
+/**
+ * Deactives/hides the server delay message.
+ */
+EchoServerDelayMessage.deactivate = function() {
+    EchoServerDelayMessage.cancelDelayMessageTimeout();
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
+    if (serverDelayMessage) {
+        serverDelayMessage.style.visibility = "hidden";
+    }
+    if (longMessage) {
+        longMessage.style.visibility = "hidden";
+    }
 };
 
 // ________________________
