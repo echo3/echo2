@@ -617,7 +617,7 @@ EchoDomPropertyStore.MessageProcessor = function() { };
  * MessageProcessor process() implementation 
  * (invoked by ServerMessage processor).
  *
- * @param messagePartElement the <code>message-part</code> element to process.
+ * @param messagePartElement the <code>message-part</code> element to process
  */
 EchoDomPropertyStore.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
@@ -688,17 +688,22 @@ EchoDomPropertyStore.setPropertyValue = function(elementId, propertyName, proper
 // Object EchoDomUpdate
 
 /**
- * An EchoServerMessage processor object which performs DOM updates to 
- * the HTML document.  
- * This is a static, non-instantiable class.
- * @constructor
+ * Static object/namespace for performing server-directed updates to the
+ * client DOM.
  */
 function EchoDomUpdate() { }
 
+/**
+ * Static object/namespace for EchoDomUpdate MessageProcessor 
+ * implementation.
+ */
 EchoDomUpdate.MessageProcessor = function() { };
 
 /**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
  *
+ * @param messagePartElement the <code>message-part</code> element to process
  */
 EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
@@ -724,6 +729,12 @@ EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
     }
 };
 
+/**
+ * Processes a <code>dom-add</code> directive to append or insert new nodes into
+ * the DOM.
+ *
+ * @param domAddElement the <code>dom-add</code> element to process
+ */
 EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
     var parentId = domAddElement.getAttribute("parent-id");
     var siblingId = domAddElement.getAttribute("sibling-id");
@@ -760,6 +771,13 @@ EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
     }
 };
 
+/**
+ * Processes an <code>attribute-update</code> directive to update an attribute
+ * of a DOM element.
+ *
+ * @param attributeUpdateElement the <code>attribute-update</code> element to 
+ *        process
+ */
 EchoDomUpdate.MessageProcessor.processAttributeUpdate = function(attributeUpdateElement) {
     var targetId = attributeUpdateElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
@@ -769,6 +787,11 @@ EchoDomUpdate.MessageProcessor.processAttributeUpdate = function(attributeUpdate
     targetElement[attributeUpdateElement.getAttribute("name")] = attributeUpdateElement.getAttribute("value");
 };
 
+/**
+ * Processes a <code>dom-remove</code> directive to delete nodes from the DOM.
+ *
+ * @param domRemoveElement the <code>dom-remove</code> element to process
+ */
 EchoDomUpdate.MessageProcessor.processRemove = function(domRemoveElement) {
     var targetId = domRemoveElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
@@ -778,6 +801,13 @@ EchoDomUpdate.MessageProcessor.processRemove = function(domRemoveElement) {
     targetElement.parentNode.removeChild(targetElement);
 };
 
+/**
+ * Processes a <code>dom-remove-children</code> directive to delete all child 
+ * nodes from a specific DOM element.
+ *
+ * @param domRemoveChildrenElement the <code>dom-remove-children</code> element 
+ *        to process
+ */
 EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement) {
     var targetId = domRemoveElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
@@ -792,6 +822,13 @@ EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement
     }
 };
 
+/**
+ * Processes a <code>style-update</code> directive to update an the CSS style
+ * of a DOM element.
+ *
+ * @param styleUpdateElement the <code>style-update</code> element to 
+ *        process
+ */
 EchoDomUpdate.MessageProcessor.processStyleUpdate = function(styleUpdateElement) {
     var targetId = styleUpdateElement.getAttribute("target-id");
     var targetElement = document.getElementById(targetId);
@@ -805,7 +842,12 @@ EchoDomUpdate.MessageProcessor.processStyleUpdate = function(styleUpdateElement)
 // Object EchoDomUpdate.TargetNotFoundException
 
 /**
- * An exception thrown when an <code>EchoDomUpdate</code> opeation fails 
+ * An exception describing a failure of an EchoDomUpdate operation due to a 
+ * target node not existing.
+ * 
+ * @param the type of update, e.g., DomRemove or StyleUpdate
+ * @param targetType the type of target that caused the failure
+ * @param targetId the id of the target
  */
 EchoDomUpdate.TargetNotFoundException = function(updateType, targetType, targetId) {
     this.targetId = targetId;
@@ -813,6 +855,11 @@ EchoDomUpdate.TargetNotFoundException = function(updateType, targetType, targetI
     this.updateType = updateType;
 };
 
+/**
+ * Renders a String representation of the exception.
+ *
+ * @return the String representation
+ */
 EchoDomUpdate.TargetNotFoundException.prototype.toString = function() {
     return "Failed to perform \"" + this.updateType + "\": " + this.targetType + " element \"" + this.targetId + "\" not found.";
 };
@@ -894,7 +941,6 @@ EchoDomUtil.cssAttributeNameToPropertyName = function(attribute) {
     return out;
 };
 
-//BUGBUG. doc....potentially (unlikely) move to separate web-container engine JS object.
 /**
  * Returns the base component id of an extended id.
  * Example: for value "c_333_foo", "c_333" would be returned.
@@ -919,9 +965,9 @@ EchoDomUtil.getComponentId = function(elementId) {
 /**
  * Returns the target of an event, using the client's supported event model.
  * On clients which support the W3C DOM Level 2 event specification,
- * the target property of the event is returned.
+ * the <code>target</code> property of the event is returned.
  * On clients which support only the Internet Explorer event model,
- * the srcElement property of the event is returned.
+ * the <code>srcElement</code> property of the event is returned.
  *
  * @param e the event
  * @return the target
@@ -952,9 +998,6 @@ EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
         return EchoDomUtil.importNodeImpl(targetDocument, sourceNode, importChildren);
     }
 };
-
-//BUGBUG. EchoDomUtil.importNodeImpl() needs to be updated with a translation table between XHTML attribute
-// names and properties.
 
 /**
  * Manual implementation of DOMImplementation.importNode() for clients that do
@@ -1007,7 +1050,7 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
  * @param ancestorNode the potential ancestor node
  * @param descendantNode the potential descendant node
  * @return true if <code>ancestorNode</code> is or is an ancestor of
- *         <code>descendantNode</code>.
+ *         <code>descendantNode</code>
  */
 EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
     var testNode = descendantNode;
@@ -1077,7 +1120,7 @@ EchoDomUtil.stopPropagation = function(e) {
     }
 };
 
-// ________________________
+// _________________________
 // Object EchoEventProcessor
 
 /**
