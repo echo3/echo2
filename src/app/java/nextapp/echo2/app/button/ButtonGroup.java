@@ -63,6 +63,7 @@ implements RenderIdSupport, Serializable {
             buttons = new HashSet();
         }
         buttons.add(radioButton);
+        updateSelection(radioButton);
     }
     
     /**

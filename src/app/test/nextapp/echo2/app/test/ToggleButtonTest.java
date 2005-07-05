@@ -82,13 +82,35 @@ public class ToggleButtonTest extends TestCase {
         ButtonGroup buttonGroup = new ButtonGroup();
         radioButton1.setGroup(buttonGroup);
         radioButton2.setGroup(buttonGroup);
-        radioButton3.setGroup(buttonGroup);
         
         radioButton1.setSelected(true);
         assertTrue(radioButton1.isSelected());
         radioButton2.setSelected(true);
         assertTrue(radioButton2.isSelected());
         assertFalse(radioButton1.isSelected());
+        radioButton1.setSelected(true);
+        assertTrue(radioButton1.isSelected());
+        assertFalse(radioButton2.isSelected());
+        
+        radioButton3.setSelected(true);
+        assertTrue(radioButton1.isSelected());
+        assertFalse(radioButton2.isSelected());
+        assertTrue(radioButton3.isSelected());
+        
+        radioButton3.setGroup(buttonGroup);
+        assertFalse(radioButton1.isSelected());
+        assertFalse(radioButton2.isSelected());
+        assertTrue(radioButton3.isSelected());
+        
+        radioButton3.setGroup(null);
+        assertFalse(radioButton1.isSelected());
+        assertFalse(radioButton2.isSelected());
+        assertTrue(radioButton3.isSelected());
+        
+        radioButton2.setSelected(true);
+        assertFalse(radioButton1.isSelected());
+        assertTrue(radioButton2.isSelected());
+        assertTrue(radioButton3.isSelected());
     }
     
     /**
