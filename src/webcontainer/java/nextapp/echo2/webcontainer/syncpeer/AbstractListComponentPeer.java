@@ -239,8 +239,12 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         if (listComponent.hasActionListeners()) {
             itemElement.setAttribute("server-notify", "true");
         }
-        CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
-        itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
+        
+        Boolean rolloverEnabled = (Boolean) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_ENABLED);
+        if (Boolean.TRUE.equals(rolloverEnabled)) {
+            CssStyle rolloverCssStyle = createRolloverCssStyle(listComponent);
+            itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
+        }
         itemizedUpdateElement.appendChild(itemElement);
     }
 

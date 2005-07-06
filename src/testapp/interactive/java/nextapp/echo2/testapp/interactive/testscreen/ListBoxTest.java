@@ -342,6 +342,24 @@ public class ListBoxTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setRolloverEnabled(true);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Disable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setRolloverEnabled(false);
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("Set Rollover Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Color color = StyleUtil.randomColor();

@@ -64,6 +64,7 @@ public class AbstractListComponent extends Component {
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
+    public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
     public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
     public static final String PROPERTY_WIDTH = "width";
@@ -280,6 +281,16 @@ public class AbstractListComponent extends Component {
     public boolean hasActionListeners() {
         return hasEventListenerList() && getEventListenerList().getListenerCount(ActionListener.class) != 0;
     }
+    
+    /**
+     * Determines if rollover effects are enabled.
+     * 
+     * @return true if rollover effects are enabled
+     */
+    public boolean isRolloverEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_ROLLOVER_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
 
     /**
      * This component does not support children.
@@ -403,6 +414,15 @@ public class AbstractListComponent extends Component {
      */
     public void setRolloverBackground(Color newValue) {
         setProperty(PROPERTY_ROLLOVER_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets whether rollover effects are enabled.
+     * 
+     * @param newValue the new rollover enabled state
+     */
+    public void setRolloverEnabled(boolean newValue) {
+        setProperty(PROPERTY_ROLLOVER_ENABLED, new Boolean(newValue));
     }
     
     /**

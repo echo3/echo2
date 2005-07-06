@@ -186,8 +186,12 @@ public class ListBoxPeer extends AbstractListComponentPeer {
             itemElement.setAttribute("server-notify", "true");
         }
         
-        CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
-        itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
+        Boolean rolloverEnabled = (Boolean) listBox.getRenderProperty(ListBox.PROPERTY_ROLLOVER_ENABLED);
+        if (Boolean.TRUE.equals(rolloverEnabled)) {
+            CssStyle rolloverCssStyle = createRolloverCssStyle(listBox);
+            itemElement.setAttribute("rollover-style", rolloverCssStyle.renderInline());
+        }
+
         itemElement.setAttribute("selection-style", SELECTION_CSS_STYLE_TEXT);
         itemElement.setAttribute("selection-mode", 
                 ListSelectionModel.MULTIPLE_SELECTION == listBox.getSelectionMode() ? "multiple" : "single");
