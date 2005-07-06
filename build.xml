@@ -130,7 +130,24 @@
                 Private="true"/>
     </target>
     
-    <target name="compile.webrender" description="Compile Echo Web Renderer">
+    <target name="compile.webrender" depends="verify.servlet.api,compile.webrender.impl" description="Compile Echo Web Renderer"/>
+    
+    <target name="checkenv">
+        <available property="servlet.api.available" classname="javax.servlet.http.HttpServlet">
+            <classpath>
+                <pathelement path="${servlet.lib.jar}"/>
+            </classpath>
+        </available>
+    </target>
+    
+    <target name="verify.servlet.api" depends="checkenv" unless="servlet.api.available">
+        <echo message="************************************************************"/>
+        <echo message="*         Servlet API not found in build classpath         *"/>
+        <echo message="************************************************************"/>
+        <fail message="${servlet.lib.msg}"/>
+    </target>
+    
+    <target name="compile.webrender.impl" if="servlet.api.available">
         <mkdir dir="${dir.build.webrender}"/>
         <javac srcdir="${dir.src.webrender}" destdir="${dir.build.webrender}" debug="${debug}" deprecation="yes">
             <classpath>
@@ -214,7 +231,7 @@
         </javadoc>
     </target>
     
-    <target name="compile.webcontainer" depends="compile.app, compile.webrender" 
+    <target name="compile.webcontainer" depends="verify.servlet.api, compile.app, compile.webrender" 
             description="Compile Echo Web Application Container">
         <mkdir dir="${dir.build.webcontainer}"/>
         <javac srcdir="${dir.src.webcontainer}" destdir="${dir.build.webcontainer}" debug="${debug}" deprecation="yes">
@@ -468,19 +485,19 @@
         </copy>
 
         <!-- Binary Web Applications: E-Mail Client -->
-    	<antcall target="dist.exampleapp.email"/>
+        <antcall target="dist.exampleapp.email"/>
         <copy todir="${dir.build.release.root}/BinaryApplications">
             <fileset dir="${dir.src.exampleapp.email}/war"/>
         </copy>
-    	<antcall target="clean.exampleapp.email"/>
+        <antcall target="clean.exampleapp.email"/>
 
         <!-- Binary Web Applications: Tutorial Application -->
-    	<antcall target="dist.tutorialapp"/>
+        <antcall target="dist.tutorialapp"/>
         <copy todir="${dir.build.release.root}/BinaryApplications">
             <fileset dir="${dir.src.tutorialapp.numberguess}/war"/>
         </copy>
-    	<antcall target="clean.tutorialapp"/>
-    	
+        <antcall target="clean.tutorialapp"/>
+        
         <!-- Documentation -->
         <copy todir="${dir.build.release.root}/Documentation/api/public">
             <fileset dir="${dir.javadoc.public}"/>
