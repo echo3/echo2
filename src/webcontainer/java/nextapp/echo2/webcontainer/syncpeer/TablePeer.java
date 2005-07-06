@@ -214,6 +214,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        rc.getServerMessage().addLibrary(TABLE_SERVICE.getId());
         renderDisposeDirective(rc, (Table) component);
     }
     

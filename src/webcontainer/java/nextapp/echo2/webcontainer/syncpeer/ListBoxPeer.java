@@ -146,6 +146,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @param component the <code>AbstractListComponent</code> being disposed
      */
     private void renderDhtmlDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        rc.getServerMessage().addLibrary(LIST_COMPONENT_DHTML_SERVICE.getId());
         renderDhtmlDisposeDirective(rc.getServerMessage(), ContainerInstance.getElementId(component));
     }
 

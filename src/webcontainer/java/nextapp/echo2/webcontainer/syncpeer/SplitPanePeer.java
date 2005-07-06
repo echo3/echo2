@@ -351,6 +351,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        rc.getServerMessage().addLibrary(SPLIT_PANE_SERVICE.getId());
         String elementId = ContainerInstance.getElementId(component);
         
         renderDisposeDirective(rc, (SplitPane) component);

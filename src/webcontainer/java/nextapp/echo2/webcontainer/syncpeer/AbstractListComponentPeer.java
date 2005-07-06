@@ -276,6 +276,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      * @param component the <code>AbstractListComponent</code> being disposed
      */
     protected void renderSelectElementDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        rc.getServerMessage().addLibrary(LIST_COMPONENT_SERVICE.getId());
         renderDisposeDirective(rc.getServerMessage(), (AbstractListComponent) component);
     }
     

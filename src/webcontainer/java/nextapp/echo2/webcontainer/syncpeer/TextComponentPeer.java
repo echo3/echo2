@@ -217,6 +217,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
      *      nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        rc.getServerMessage().addLibrary(TEXT_COMPONENT_SERVICE.getId());
         renderDisposeDirective(rc, (TextComponent) component);
     }
 

@@ -434,6 +434,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
+        rc.getServerMessage().addLibrary(WINDOW_PANE_SERVICE.getId());
         renderDisposeDirective(rc, (WindowPane) component);
     }
     

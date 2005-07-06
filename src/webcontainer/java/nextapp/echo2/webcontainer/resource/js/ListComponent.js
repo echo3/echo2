@@ -72,8 +72,10 @@ EchoListComponent.MessageProcessor.process = function(messagePartElement) {
 EchoListComponent.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-//BUGBUG. selectElement was found to be null here once during ghost test.        
         var selectElement = document.getElementById(elementId + "_select");
+        if (!selectElement) {
+            continue;
+        }
         var itemElements = selectElement.options;
         EchoEventProcessor.removeHandler(selectElement.id, "change");
         for (var i = 0; i < itemElements.length; ++i) {

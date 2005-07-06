@@ -84,6 +84,10 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
     EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
 
     var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
+    if (!containerId) {
+        // Disposing window which was never added (legal).
+        return;
+    }
     EchoWindowPane.ZIndexManager.remove(containerId, elementId);
 };
 
