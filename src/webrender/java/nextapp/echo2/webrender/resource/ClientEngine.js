@@ -195,6 +195,35 @@ EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, 
     messagePartElement.appendChild(propertyElement);
 };
 
+// ______________________________
+// Object EchoClientConfiguration
+
+/**
+ * Static/object namespace which provides general-purpose Client Engine
+ * configuration settings.
+ */
+function EchoClientConfiguration() { }
+
+/**
+ * Error message to display in the event a server-side error is encountered.
+ */
+EchoClientConfiguration.serverErrorMessage = "An application error has occurred.  Your session has been reset.";
+
+/**
+ * URI of error page to display in the event a server-side error is encountered.
+ */
+EchoClientConfiguration.serverErrorUri = null;
+
+/**
+ * Error message to display in the event the server-side session expires.
+ */
+EchoClientConfiguration.sessionExpirationMessage = "Your session has been reset due to inactivity.";
+
+/**
+ * URI of error page to display in the event the server-side session expires.
+ */
+EchoClientConfiguration.sessionExpirationUri = null;
+
 // _______________________
 // Object EchoClientEngine
 
@@ -230,6 +259,32 @@ EchoClientEngine.init = function(baseServerUri) {
     
     // Synchronize initial state from server.
     EchoServerTransaction.connect();
+};
+
+/**
+ * Handles the expiration of server-side session information.
+ */
+EchoClientEngine.processSessionExpiration = function() {
+    if (EchoClientConfiguration.sessionExpirationMessage) {
+        alert(EchoClientConfiguration.sessionExpirationMessage);
+    }
+    if (EchoClientConfiguration.sessionExpirationUri) {
+        window.location.href = EchoClientConfiguration.sessionExpirationUri;
+    }
+    window.location.reload();
+};
+
+/**
+ * Handles a server-side error.
+ */
+EchoClientEngine.processServerError = function() {
+    if (EchoClientConfiguration.serverErrorMessage) {
+        alert(EchoClientConfiguration.serverErrorMessage);
+    }
+    if (EchoClientConfiguration.serverErrorUri) {
+        window.location.href = EchoClientConfiguration.serverErrorUri;
+    }
+    window.location.reload();
 };
 
 /**
@@ -1926,7 +1981,13 @@ EchoServerTransaction.connect = function() {
  */
 EchoServerTransaction.invalidResponseHandler = function(conn) {
     EchoServerTransaction.postProcess();
-    alert("Invalid response from server: " + conn.getResponseText());
+    if (conn.xmlHttpRequest.status == 500) {
+        EchoClientEngine.processServerError();
+    } else if (conn.xmlHttpRequest.status == 400) {
+        EchoClientEngine.processSessionExpiration();
+    } else {
+        alert("Invalid/unknown response from server: " + conn.getResponseText());
+    }
 };
 
 /**

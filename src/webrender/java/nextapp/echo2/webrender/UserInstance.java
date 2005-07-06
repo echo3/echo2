@@ -54,7 +54,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      * client.
      */
     private ClientProperties clientProperties;
-
+    
     /**
      * The URI of the servlet.
      */
@@ -87,7 +87,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
     public String getCharacterEncoding() {
         return characterEncoding;
     }
-
+    
     /**
      * Retrieves the <code>ClientProperties</code> object providing
      * information about the client of this instance.

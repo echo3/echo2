@@ -87,5 +87,5 @@ EchoBrowserCommand.MessageProcessor.processOpenWindow = function(openWindowEleme
  */
 EchoBrowserCommand.MessageProcessor.processRedirect = function(redirectElement) {
     var uri = redirectElement.getAttribute("uri");
-    window.location = uri;
+    window.location.href = uri;
 };
