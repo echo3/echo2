@@ -103,8 +103,12 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String IMAGE_ID_ICON = "icon";
     private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
     private static final String IMAGE_ID_ROLLOVER_ICON = "rolloverIcon";
+    private static final String IMAGE_ID_ROLLOVER_STATE_ICON = "rolloverStateIcon";
+    private static final String IMAGE_ID_ROLLOVER_SELECTED_STATE_ICON = "rolloverSelectedStateIcon";
     private static final String IMAGE_ID_PRESSED_BACKGROUND = "pressedBackground";
     private static final String IMAGE_ID_PRESSED_ICON = "pressedIcon";
+    private static final String IMAGE_ID_PRESSED_STATE_ICON = "pressedStateIcon";
+    private static final String IMAGE_ID_PRESSED_SELECTED_STATE_ICON = "pressedSelectedStateIcon";
     private static final String IMAGE_ID_STATE_ICON = "stateIcon";
     private static final String IMAGE_ID_SELECTED_STATE_ICON = "selectedStateIcon";
     
@@ -164,6 +168,18 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             } else {
                 return backgroundImage.getImage();
             }
+        } else if (IMAGE_ID_ROLLOVER_STATE_ICON.equals(imageId)) {
+            ImageReference icon = (ImageReference) component.getRenderProperty(ToggleButton.PROPERTY_ROLLOVER_STATE_ICON);
+            return icon == null ? getStateIcon((ToggleButton) component) : icon; 
+        } else if (IMAGE_ID_ROLLOVER_SELECTED_STATE_ICON.equals(imageId)) {
+            ImageReference icon = (ImageReference) component.getRenderProperty(ToggleButton.PROPERTY_ROLLOVER_SELECTED_STATE_ICON);
+            return icon == null ? getSelectedStateIcon((ToggleButton) component) : icon; 
+        } else if (IMAGE_ID_PRESSED_STATE_ICON.equals(imageId)) {
+            ImageReference icon = (ImageReference) component.getRenderProperty(ToggleButton.PROPERTY_PRESSED_STATE_ICON);
+            return icon == null ? getStateIcon((ToggleButton) component) : icon; 
+        } else if (IMAGE_ID_PRESSED_SELECTED_STATE_ICON.equals(imageId)) {
+            ImageReference icon = (ImageReference) component.getRenderProperty(ToggleButton.PROPERTY_PRESSED_SELECTED_STATE_ICON);
+            return icon == null ? getSelectedStateIcon((ToggleButton) component) : icon; 
         } else {
             return null;
         }
@@ -611,6 +627,22 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             itemElement.setAttribute("state-icon", ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_STATE_ICON));
             itemElement.setAttribute("selected-state-icon", ImageTools.getUri(rc, this, toggleButton, 
                     IMAGE_ID_SELECTED_STATE_ICON));
+            
+            if (rolloverEnabled && toggleButton.getRenderProperty(ToggleButton.PROPERTY_ROLLOVER_STATE_ICON) != null
+                    && toggleButton.getRenderProperty(ToggleButton.PROPERTY_ROLLOVER_SELECTED_STATE_ICON) != null) {
+                itemElement.setAttribute("rollover-state-icon", 
+                        ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_ROLLOVER_STATE_ICON));
+                itemElement.setAttribute("rollover-selected-state-icon", 
+                        ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_ROLLOVER_SELECTED_STATE_ICON));
+            }
+            if (pressedEnabled && toggleButton.getRenderProperty(ToggleButton.PROPERTY_PRESSED_STATE_ICON) != null
+                    && toggleButton.getRenderProperty(ToggleButton.PROPERTY_PRESSED_SELECTED_STATE_ICON) != null) {
+                itemElement.setAttribute("pressed-state-icon", 
+                        ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_PRESSED_STATE_ICON));
+                itemElement.setAttribute("pressed-selected-state-icon", 
+                        ImageTools.getUri(rc, this, toggleButton, IMAGE_ID_PRESSED_SELECTED_STATE_ICON));
+            }
+            
             if (button instanceof RadioButton) {
                 ButtonGroup buttonGroup = ((RadioButton) toggleButton).getGroup();
                 if (buttonGroup != null) {

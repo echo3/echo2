@@ -52,6 +52,19 @@ public class Styles {
     public static final FillImage BG_SHADOW_LIGHT_BLUE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ShadowBackgroundLightBlue.png"), null, null, FillImage.NO_REPEAT);
     
+    public static final ImageReference RG_STATE_ICON = new ResourceImageReference(
+            IMAGE_PATH + "RGStateIcon.gif");
+    public static final ImageReference RG_SELECTED_STATE_ICON = new ResourceImageReference(
+            IMAGE_PATH + "RGSelectedStateIcon.gif");
+    public static final ImageReference RG_ROLLOVER_STATE_ICON = new ResourceImageReference(
+            IMAGE_PATH + "RGRolloverStateIcon.gif");
+    public static final ImageReference RG_ROLLOVER_SELECTED_STATE_ICON = new ResourceImageReference(
+            IMAGE_PATH + "RGRolloverSelectedStateIcon.gif");
+    public static final ImageReference RG_PRESSED_STATE_ICON = new ResourceImageReference(
+            IMAGE_PATH + "RGPressedStateIcon.gif");
+    public static final ImageReference RG_PRESSED_SELECTED_STATE_ICON = new ResourceImageReference(
+            IMAGE_PATH + "RGPressedSelectedStateIcon.gif");
+    
     public static final FillImage BUTTON_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ButtonBackground.png"));
     public static final FillImage BUTTON_PRESSED_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(

@@ -132,13 +132,25 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
         }
         
         if (item.getAttribute("toggle") == "true") {
-            // ToggleButton
+            // ToggleButton-specific properties.
             EchoDomPropertyStore.setPropertyValue(elementId, "toggle", "true");
             EchoDomPropertyStore.setPropertyValue(elementId, "selected", item.getAttribute("selected"));
             EchoDomPropertyStore.setPropertyValue(elementId, "stateIcon", item.getAttribute("state-icon"));
             EchoDomPropertyStore.setPropertyValue(elementId, "selectedStateIcon", item.getAttribute("selected-state-icon"));
             if (item.getAttribute("group")) {
                 EchoButton.setButtonGroup(elementId, item.getAttribute("group"));
+            }
+            if (rolloverStyle) {
+                EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStateIcon", 
+                        item.getAttribute("rollover-state-icon"));
+                EchoDomPropertyStore.setPropertyValue(elementId, "rolloverSelectedStateIcon",
+                        item.getAttribute("rollover-selected-state-icon"));
+            }
+            if (pressedStyle) {
+                EchoDomPropertyStore.setPropertyValue(elementId, "pressedStateIcon", 
+                        item.getAttribute("pressed-state-icon"));
+                EchoDomPropertyStore.setPropertyValue(elementId, "pressedSelectedStateIcon",
+                        item.getAttribute("pressed-selected-state-icon"));
             }
         }
 
@@ -358,6 +370,17 @@ EchoButton.setIcon = function(elementId, newIconUri) {
 };
 
 /**
+ * Sets the displayed state icon of a specific button.
+ *
+ * @param elementId the button element id
+ * @param newStateIconUri the URI of the new state icon to display
+ */
+EchoButton.setStateIcon = function(elementId, newStateIconUri) {
+    var iconElement = document.getElementById(elementId + "_stateicon");
+    iconElement.src = newStateIconUri;
+};
+
+/**
  * Sets the selection state of a toggle button.
  *
  * @param elementId the id of the toggle button
@@ -393,21 +416,32 @@ EchoButton.setVisualState = function(buttonElement, newState) {
         return;
     }
 
-    var newStyle, newIcon;
+    var selectionState = EchoButton.getSelectionState(buttonElement.id);
+    var newStyle, newIcon, newStateIcon;
+    
     switch (newState) {
     case EchoButton.STATE_ROLLOVER:
         newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "rolloverStyle");
         newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "rolloverIcon");
+        newStateIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, 
+                selectionState ? "rolloverSelectedStateIcon" : "rolloverStateIcon");
         break;
     case EchoButton.STATE_PRESSED:
         newStyle = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "pressedStyle");
         newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "pressedIcon");
+        newStateIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, 
+                selectionState ? "pressedSelectedStateIcon" : "pressedStateIcon");
         break;
     default:
         newIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, "defaultIcon");
+        newStateIcon = EchoDomPropertyStore.getPropertyValue(buttonElement.id, 
+                selectionState ? "selectedStateIcon" : "stateIcon");
     }
     if (newIcon) {
         EchoButton.setIcon(buttonElement.id, newIcon);
+    }
+    if (newStateIcon) {
+        EchoButton.setStateIcon(buttonElement.id, newStateIcon);
     }
     EchoCssUtil.restoreOriginalStyle(buttonElement);
     if (newStyle) {

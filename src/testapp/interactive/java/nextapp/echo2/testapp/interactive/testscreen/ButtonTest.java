@@ -891,7 +891,41 @@ extends SplitPane {
                 });
             }
         });
-
+        controlsColumn.addButton("Set Custom State Icons", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ToggleButton toggleButton = (ToggleButton) button;
+                            toggleButton.setStateIcon(Styles.RG_STATE_ICON);
+                            toggleButton.setSelectedStateIcon(Styles.RG_SELECTED_STATE_ICON);
+                            toggleButton.setPressedStateIcon(Styles.RG_PRESSED_STATE_ICON);
+                            toggleButton.setPressedSelectedStateIcon(Styles.RG_PRESSED_SELECTED_STATE_ICON);
+                            toggleButton.setRolloverStateIcon(Styles.RG_ROLLOVER_STATE_ICON);
+                            toggleButton.setRolloverSelectedStateIcon(Styles.RG_ROLLOVER_SELECTED_STATE_ICON);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Custom State Icons", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ToggleButton toggleButton = (ToggleButton) button;
+                            toggleButton.setStateIcon(null);
+                            toggleButton.setSelectedStateIcon(null);
+                            toggleButton.setPressedStateIcon(null);
+                            toggleButton.setPressedSelectedStateIcon(null);
+                            toggleButton.setRolloverStateIcon(null);
+                            toggleButton.setRolloverSelectedStateIcon(null);
+                        }
+                    }
+                });
+            }
+        });
+        
         // ToggleButton State Position
 
         controlsColumn = new ButtonColumn();
@@ -1078,6 +1112,59 @@ extends SplitPane {
                     public void apply(AbstractButton button) {
                         if (button instanceof ToggleButton) {
                             ((ToggleButton) button).setStateAlignment(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
+                        }
+                    }
+                });
+            }
+        });
+
+        
+        // State Margin
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("State Margin"));
+
+        controlsColumn.addButton("StateMargin = default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateMargin(null);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateMargin = 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateMargin(new Extent(0));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateMargin = 10px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateMargin(new Extent(10));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateMargin = 1in", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateMargin(new Extent(1, Extent.IN));
                         }
                     }
                 });
