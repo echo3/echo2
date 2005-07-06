@@ -351,6 +351,39 @@
         <jar jarfile="${dir.dist.testapp.ia}/${warfile.testapp.ia}" basedir="${dir.build.testapp.ia}"/>
     </target>
     
+    <target name="compile.testapp.thousandmonkeys" depends="dist">
+        <mkdir dir="${dir.build.testapp.thousandmonkeys}/WEB-INF/classes"/>
+        <mkdir dir="${dir.build.testapp.thousandmonkeys}/WEB-INF/lib"/>
+        <copy todir="${dir.build.testapp.thousandmonkeys}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.echo.app}"/>
+        <copy todir="${dir.build.testapp.thousandmonkeys}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.echo.webrender}"/>
+        <copy todir="${dir.build.testapp.thousandmonkeys}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+        <copy todir="${dir.build.testapp.thousandmonkeys}/WEB-INF">
+            <fileset dir="${dir.deploy.testapp.thousandmonkeys}"/>
+        </copy>
+        <copy todir="${dir.build.testapp.thousandmonkeys}">
+            <fileset dir="${dir.htdocs.testapp.thousandmonkeys}"/>
+        </copy>
+        <javac srcdir="${dir.src.testapp.thousandmonkeys}" destdir="${dir.build.testapp.thousandmonkeys}/WEB-INF/classes" debug="${debug}" deprecation="yes">
+            <classpath>
+                <pathelement path="${servlet.lib.jar}"/>
+                <pathelement path="${dir.dist.lib}/${jarfile.echo.app}"/>
+                <pathelement path="${dir.dist.lib}/${jarfile.echo.webrender}"/>
+                <pathelement path="${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            </classpath>
+        </javac>
+        <copy todir="${dir.build.testapp.thousandmonkeys}/WEB-INF/classes">
+            <fileset dir="${dir.src.testapp.thousandmonkeys}">
+                <patternset refid="fileset.resources"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="dist.testapp.thousandmonkeys" depends="compile.testapp.thousandmonkeys" 
+            description="Builds a web archive of the interactive test application">
+        <mkdir dir="${dir.dist.testapp.thousandmonkeys}"/>
+        <jar jarfile="${dir.dist.testapp.thousandmonkeys}/${warfile.testapp.thousandmonkeys}" basedir="${dir.build.testapp.thousandmonkeys}"/>
+    </target>
+    
     <target name="compile.testapp.webrender" depends="dist">
         <mkdir dir="${dir.build.testapp.webrender}/WEB-INF/classes"/>
         <mkdir dir="${dir.build.testapp.webrender}/WEB-INF/lib"/>

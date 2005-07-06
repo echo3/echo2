@@ -27,19 +27,19 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webcontainer.WebContainerServlet;
+package nextapp.echo2.testapp.thousandmonkeys;
+
+import nextapp.echo2.app.Component;
 
 /**
- * Interactive Test Application <code>WebContainerServlet</code> implementation.
+ * Interface for <code>Component</code>-generating factories.
  */
-public class InteractiveServlet extends WebContainerServlet {
-
+public interface ComponentFactory {
+    
     /**
-     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
+     * Creates a new randomly-configured <code>Component</code>.
+     * 
+     * @return the <code>Component</code>
      */
-    public ApplicationInstance newApplicationInstance() {
-        return new InteractiveApp();
-    }
+    public Component newInstance();
 }

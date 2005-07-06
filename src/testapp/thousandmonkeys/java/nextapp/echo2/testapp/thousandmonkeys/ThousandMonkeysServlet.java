@@ -27,19 +27,20 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
+package nextapp.echo2.testapp.thousandmonkeys;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.webcontainer.WebContainerServlet;
 
 /**
- * Interactive Test Application <code>WebContainerServlet</code> implementation.
+ * Thousand Monkeys Test Application <code>WebContainerServlet</code> implementation.
  */
-public class InteractiveServlet extends WebContainerServlet {
+public class ThousandMonkeysServlet extends WebContainerServlet {
 
     /**
      * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
      */
     public ApplicationInstance newApplicationInstance() {
-        return new InteractiveApp();
+        return new ThousandMonkeysApp();
     }
 }

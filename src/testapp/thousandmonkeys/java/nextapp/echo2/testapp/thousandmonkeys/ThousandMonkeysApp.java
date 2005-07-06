@@ -27,19 +27,55 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
+package nextapp.echo2.testapp.thousandmonkeys;
+
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webcontainer.WebContainerServlet;
+import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.TaskQueueHandle;
+import nextapp.echo2.app.Window;
+import nextapp.echo2.webcontainer.ContainerContext;
 
 /**
- * Interactive Test Application <code>WebContainerServlet</code> implementation.
+ * Thousand Monkeys <code>ApplicationInstance</code> implementation.
  */
-public class InteractiveServlet extends WebContainerServlet {
+public class ThousandMonkeysApp extends ApplicationInstance {
 
+    private int iteration;
+    private TaskQueueHandle ghostTaskQueue;
+    private Monkey monkey;
+    
     /**
-     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
+     * @see nextapp.echo2.app.ApplicationInstance#init()
      */
-    public ApplicationInstance newApplicationInstance() {
-        return new InteractiveApp();
+    public Window init() {
+        Window window = new Window();
+        window.setTitle("Thousand Monkeys (Start)");
+        ContentPane contentPane = new ContentPane();
+        window.setContent(contentPane);
+        monkey = new Monkey(contentPane);
+        startGhostTask();
+        return window;
+    }
+    
+    /**
+     * Starts the ghost task queue that will push updates to client.
+     */
+    private void startGhostTask() {
+        if (ghostTaskQueue != null) {
+            return;
+        }
+        ghostTaskQueue = createTaskQueue();
+        ContainerContext containerContext = 
+                (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        containerContext.setTaskQueueCallbackInterval(ghostTaskQueue, 0);
+        GhostTask.start(this, ghostTaskQueue);
+    }
+    
+    /**
+     * Performs a single iteration.
+     */
+    void iterate() {
+        monkey.iterate();
+        getDefaultWindow().setTitle("Thousand Monkeys: Iteration #" + ++iteration);
     }
 }

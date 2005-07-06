@@ -88,7 +88,7 @@ implements Runnable {
      * Creates and starts a new <code>GhostTask</code>.
      * 
      * @param app the application to test
-     * @param taskQueue the <code>TaskQueueHandle</codE> to which tasks will be
+     * @param taskQueue the <code>TaskQueueHandle</code> to which tasks will be
      *        added 
      * @param runTime the number of milliseconds the test should run (specify 0
      *        for an indefinite amount of time)

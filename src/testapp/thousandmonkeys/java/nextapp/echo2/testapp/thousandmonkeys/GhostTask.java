@@ -27,19 +27,50 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webcontainer.WebContainerServlet;
+package nextapp.echo2.testapp.thousandmonkeys;
+
+import nextapp.echo2.app.TaskQueueHandle;
 
 /**
- * Interactive Test Application <code>WebContainerServlet</code> implementation.
+ * Note to developers who might use this class as an example:
+ * Don't.  This is a *very unusual* use of asynchronous tasks.
+ * See the documentation for examples of how asynchronous tasks
+ * might normally be used.
  */
-public class InteractiveServlet extends WebContainerServlet {
-
+public class GhostTask 
+implements Runnable {
+    
     /**
-     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
+     * Creates and starts a new <code>GhostTask</code>.
+     * 
+     * @param app the application to test
+     * @param taskQueue the <code>TaskQueueHandle</codE> to which tasks will be
+     *        added 
      */
-    public ApplicationInstance newApplicationInstance() {
-        return new InteractiveApp();
+    static void start(ThousandMonkeysApp app, TaskQueueHandle taskQueue) {
+        app.enqueueTask(taskQueue, new GhostTask(app, taskQueue));
+    }
+    
+    private TaskQueueHandle taskQueue;
+    private ThousandMonkeysApp app;
+    
+    /**
+     * Creates a new <code>GhostTask</code>.
+     * 
+     * @param app the application to test
+     * @param taskQueue the <code>TaskQueueHandle</code> to which tasks will be 
+     *        added
+     */
+    private GhostTask(ThousandMonkeysApp app, TaskQueueHandle taskQueue) {
+        this.taskQueue = taskQueue;
+        this.app = app;
+    }
+    
+    /**
+     * @see java.lang.Runnable#run()
+     */
+    public void run() {
+        app.iterate();
+        app.enqueueTask(taskQueue, this);
     }
 }

@@ -27,19 +27,46 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webcontainer.WebContainerServlet;
+package nextapp.echo2.testapp.thousandmonkeys.factories;
+
+import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Button;
+import nextapp.echo2.app.Insets;
+import nextapp.echo2.testapp.thousandmonkeys.ComponentFactory;
 
 /**
- * Interactive Test Application <code>WebContainerServlet</code> implementation.
+ * <code>ComponentFactory</code> for <code>Button</code>s
  */
-public class InteractiveServlet extends WebContainerServlet {
+public class ButtonFactory 
+implements ComponentFactory{
 
+    private static final Insets INSETS_10_5 = new Insets(10, 5);
+    
+    private int count = 0;
+    
     /**
-     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
+     * @see nextapp.echo2.testapp.thousandmonkeys.ComponentFactory#newInstance()
      */
-    public ApplicationInstance newApplicationInstance() {
-        return new InteractiveApp();
+    public Component newInstance() {
+        Button button = new Button();
+        switch ((int) (Math.random() * 3)) {
+        case 0:
+            button.setText("Button #" + ++count);
+            button.setBackground(new Color((int) (16777216 * Math.random())));
+            break;
+        case 1:
+            button.setText("This is an example button."); 
+            button.setForeground(new Color((int) (16777216 * Math.random()) & 0x7f7f7f));
+            button.setBackground(new Color((int) (16777216 * Math.random()) | 0xb0b0b0));
+            button.setBorder(new Border(1, new Color((int) (16777216 * Math.random()) | 0xb3b3b3), Border.STYLE_OUTSET));
+            button.setInsets(INSETS_10_5);
+            break;
+        case 2:
+            button.setText("Initially Plain Button");
+            break;
+        }
+        return button;
     }
 }

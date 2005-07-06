@@ -27,19 +27,39 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package nextapp.echo2.testapp.interactive;
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.webcontainer.WebContainerServlet;
+package nextapp.echo2.testapp.thousandmonkeys.factories;
+
+import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Label;
+import nextapp.echo2.testapp.thousandmonkeys.ComponentFactory;
 
 /**
- * Interactive Test Application <code>WebContainerServlet</code> implementation.
+ * <code>ComponentFactory</code> for <code>Label</code>s
  */
-public class InteractiveServlet extends WebContainerServlet {
+public class LabelFactory 
+implements ComponentFactory{
 
+    private int count = 0;
+    
     /**
-     * @see nextapp.echo2.webcontainer.WebContainerServlet#newApplicationInstance()
+     * @see nextapp.echo2.testapp.thousandmonkeys.ComponentFactory#newInstance()
      */
-    public ApplicationInstance newApplicationInstance() {
-        return new InteractiveApp();
+    public Component newInstance() {
+        Label label = new Label();
+        switch ((int) (Math.random() * 3)) {
+        case 0:
+            label.setText("Label #" + ++count);
+            label.setBackground(new Color((int) (16777216 * Math.random())));
+            break;
+        case 1:
+            label.setText("The quirk red fox jumps over the lazy brown dog."); 
+            label.setForeground(new Color((int) (16777216 * Math.random())));
+            break;
+        case 2:
+            label.setText("Initially Plain Label");
+            break;
+        }
+        return label;
     }
 }
