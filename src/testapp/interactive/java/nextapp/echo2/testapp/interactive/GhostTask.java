@@ -158,6 +158,7 @@ implements Runnable {
      * @see java.lang.Runnable#run()
      */
     public void run() {
+        //BUGBUG. Potentially enable capability to click multiple times per iteration.
         clickRandomButton();
         if (indefinite || System.currentTimeMillis() < stopTime) {
             ++iteration;

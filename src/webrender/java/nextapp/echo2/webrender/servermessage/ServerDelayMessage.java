@@ -41,6 +41,7 @@ import org.w3c.dom.Element;
  */
 public class ServerDelayMessage {
     
+    //BUGBUG. test/integrate.
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     public static final String ELEMENT_ID_MESSAGE = "serverDelayMessage";
