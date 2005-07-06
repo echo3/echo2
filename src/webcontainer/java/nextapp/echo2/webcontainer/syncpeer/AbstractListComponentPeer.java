@@ -80,8 +80,6 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
     // Default Colors
     static final Color DEFAULT_BACKGROUND = Color.WHITE;
     static final Color DEFAULT_FOREGROUND = Color.BLACK;
-    private static final Color DEFAULT_ROLLOVER_BACKGROUND = new Color(255, 255, 150);
-    private static final Color DEFAULT_ROLLOVER_FOREGROUND = Color.BLACK;
 
     // Default Sizes
     protected static final Extent DEFAULT_WIDTH = new Extent(100, Extent.PERCENT);
@@ -139,10 +137,8 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      */
     CssStyle createRolloverCssStyle(AbstractListComponent listComponent) {
         CssStyle style = new CssStyle();
-        Color rolloverForeground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND, 
-                DEFAULT_ROLLOVER_FOREGROUND);
-        Color rolloverBackground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND, 
-                DEFAULT_ROLLOVER_BACKGROUND);
+        Color rolloverForeground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FOREGROUND);
+        Color rolloverBackground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_BACKGROUND);
         ColorRender.renderToStyle(style, rolloverForeground, rolloverBackground);
         FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_ROLLOVER_FONT));
         return style;
