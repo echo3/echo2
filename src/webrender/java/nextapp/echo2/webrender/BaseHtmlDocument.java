@@ -64,10 +64,10 @@ public class BaseHtmlDocument extends HtmlDocument {
      *        which content should be added, i.e., the FORM element.
      */
     public BaseHtmlDocument(String contentId) {
-	    super(XHTML_1_0_TRANSITIONAL_PUBLIC_ID, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID, XHTML_1_0_NAMESPACE_URI);
+        super(XHTML_1_0_TRANSITIONAL_PUBLIC_ID, XHTML_1_0_TRANSITIONAL_SYSTSEM_ID, XHTML_1_0_NAMESPACE_URI);
         setOutputProperties(OUTPUT_PROPERTIES);
         this.contentId = contentId;
-	    Document document = getDocument();
+        Document document = getDocument();
         
         Element blockingPaneDivElement = document.createElement("div");
         blockingPaneDivElement.setAttribute("id", ServerDelayMessage.ELEMENT_ID_MESSAGE);        
@@ -86,12 +86,12 @@ public class BaseHtmlDocument extends HtmlDocument {
         getBodyElement().appendChild(blockingPaneDivElement);
         blockingPaneDivElement.appendChild(document.createTextNode(" "));
         
-	    Element formElement = document.createElement("form");
+        Element formElement = document.createElement("form");
         formElement.setAttribute("style", "padding:0px;margin:0px;");
         formElement.setAttribute("action", "#");
-	    formElement.setAttribute("id", contentId);
-	    formElement.setAttribute("onsubmit", "return false;");
-	    getBodyElement().appendChild(formElement);
+        formElement.setAttribute("id", contentId);
+        formElement.setAttribute("onsubmit", "return false;");
+        getBodyElement().appendChild(formElement);
     }
     
     /**

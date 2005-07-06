@@ -91,8 +91,8 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
         EchoEventProcessor.removeHandler(elementId, "keypress");
         EchoEventProcessor.removeHandler(elementId, "mousedown");
         EchoEventProcessor.removeHandler(elementId, "mouseout");
-	    EchoEventProcessor.removeHandler(elementId, "mouseover");
-	    EchoEventProcessor.removeHandler(elementId, "mouseup");
+        EchoEventProcessor.removeHandler(elementId, "mouseover");
+        EchoEventProcessor.removeHandler(elementId, "mouseup");
     }
 };
 
@@ -145,9 +145,9 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
         EchoEventProcessor.addHandler(elementId, "click", "EchoButton.processClick");
         EchoEventProcessor.addHandler(elementId, "keypress", "EchoButton.processKeyPressed");
         EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.processPressed");
-	    EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.processRolloverExit");
+        EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.processRolloverExit");
         EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.processRolloverEnter");
-	    EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.processReleased");
+        EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.processReleased");
     }
 };
 
@@ -277,7 +277,7 @@ EchoButton.processKeyPressed = function(echoEvent) {
         return;
     }
     if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
-	    EchoButton.doAction(elementId);
+        EchoButton.doAction(elementId);
     }
 };
 

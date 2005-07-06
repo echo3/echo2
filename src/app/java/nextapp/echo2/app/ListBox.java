@@ -40,7 +40,7 @@ import nextapp.echo2.app.list.ListSelectionModel;
  */
 public class ListBox extends AbstractListComponent {
 
-	public static final Integer DEFAULT_ROW_COUNT = new Integer(5);
+    public static final Integer DEFAULT_ROW_COUNT = new Integer(5);
 
     /**
      * Creates an empty <code>ListBox</code>.
@@ -87,7 +87,7 @@ public class ListBox extends AbstractListComponent {
     public ListBox(Object[] itemArray) {
         super(new DefaultListModel(itemArray), null);
     }
-	 
+     
     /**
      * Returns the maximum selected index.
      *
@@ -112,7 +112,7 @@ public class ListBox extends AbstractListComponent {
      * @return an array containing all the selected indices
      */
     public int[] getSelectedIndices() {
-    	ListModel model = getModel();
+        ListModel model = getModel();
         int min = getMinSelectedIndex();
         if (min == -1) {
             // No indices are selected, return empty array.
@@ -153,7 +153,7 @@ public class ListBox extends AbstractListComponent {
      * @return the selected item
      */
     public Object getSelectedValue() {
-    	ListModel model = getModel();
+        ListModel model = getModel();
         int selectedIndex = getMinSelectedIndex();
         Object value;
         
@@ -172,7 +172,7 @@ public class ListBox extends AbstractListComponent {
      * @return an array containing all the selected items
      */
     public Object[] getSelectedValues() {
-    	ListModel model = getModel();
+        ListModel model = getModel();
         int min = getMinSelectedIndex();
 
         if (min == -1) {
@@ -220,7 +220,7 @@ public class ListBox extends AbstractListComponent {
         return getSelectionModel().getSelectionMode();
     }
     
-	/**
+    /**
      * Determines whether an index is selected.
      *
      * @param index the index
@@ -236,7 +236,7 @@ public class ListBox extends AbstractListComponent {
      * @param index the index
      */
     public void setSelectedIndex(int index) {
-    	ListSelectionModel selectionModel = getSelectionModel();
+        ListSelectionModel selectionModel = getSelectionModel();
         selectionModel.clearSelection();
         selectionModel.setSelectedIndex(index, true);    
     }
@@ -248,7 +248,7 @@ public class ListBox extends AbstractListComponent {
      * @param selected the selection state
      */
     public void setSelectedIndex(int index, boolean selected) {
-    	getSelectionModel().setSelectedIndex(index, selected);    
+        getSelectionModel().setSelectedIndex(index, selected);    
     }
     
     /**
@@ -257,7 +257,7 @@ public class ListBox extends AbstractListComponent {
      * @param indices the indices to be selected
      */
     public void setSelectedIndices(int[] indices) {
-    	ListSelectionModel selectionModel = getSelectionModel();
+        ListSelectionModel selectionModel = getSelectionModel();
         selectionModel.clearSelection();
         for (int i = 0; i < indices.length; ++i) {
             selectionModel.setSelectedIndex(indices[i], true);

@@ -73,13 +73,13 @@ EchoListComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
 //BUGBUG. selectElement was found to be null here once during ghost test.        
-	    var selectElement = document.getElementById(elementId + "_select");
-	    var itemElements = selectElement.options;
+        var selectElement = document.getElementById(elementId + "_select");
+        var itemElements = selectElement.options;
         EchoEventProcessor.removeHandler(selectElement.id, "change");
-	    for (var i = 0; i < itemElements.length; ++i) {
-	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
-	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
-	    }
+        for (var i = 0; i < itemElements.length; ++i) {
+            EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
+            EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
+        }
     }
 };
 
@@ -102,13 +102,13 @@ EchoListComponent.MessageProcessor.processInit = function(initMessageElement) {
         }
         EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
 
-	    var selectElement = document.getElementById(elementId + "_select");
-	    var itemElements = selectElement.options;
+        var selectElement = document.getElementById(elementId + "_select");
+        var itemElements = selectElement.options;
         EchoEventProcessor.addHandler(selectElement.id, "change", "EchoListComponent.processSelection");
-	    for (var i = 0; i < itemElements.length; ++i) {
-	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponent.processRolloverExit");
-	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponent.processRolloverEnter");
-	    }
+        for (var i = 0; i < itemElements.length; ++i) {
+            EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponent.processRolloverExit");
+            EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponent.processRolloverEnter");
+        }
         
         // Store initial selection in DomPropertyStore such that it may be recalled if component is changed
         // when input is disabled.

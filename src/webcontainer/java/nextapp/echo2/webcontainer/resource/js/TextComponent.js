@@ -94,9 +94,9 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
             textComponent.readOnly = true;
             EchoDomPropertyStore.setPropertyValue(textComponent.id, "EchoClientEngine.inputDisabled", true);
         }
-	    if (item.getAttribute("text")) {
+        if (item.getAttribute("text")) {
             textComponent.value = item.getAttribute("text");
-	    }
+        }
         if (item.getAttribute("server-notify")) {
             EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", true);
         }
@@ -106,10 +106,10 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         if (item.getAttribute("vertical-scroll")) {
             if (EchoClientProperties.get("quirkIERepaint")) {
                 // Avoid IE quirk where browser will fail to set scroll bar position.
-	            var originalWidth = textComponent.style.width;
-	            var temporaryWidth = parseInt(textComponent.clientWidth) - 1;
-	            textComponent.style.width = temporaryWidth + "px";
-	            textComponent.style.width = originalWidth;
+                var originalWidth = textComponent.style.width;
+                var temporaryWidth = parseInt(textComponent.clientWidth) - 1;
+                textComponent.style.width = temporaryWidth + "px";
+                textComponent.style.width = originalWidth;
             }
             textComponent.scrollTop = parseInt(item.getAttribute("vertical-scroll"));
         }

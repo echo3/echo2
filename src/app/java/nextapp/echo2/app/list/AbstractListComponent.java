@@ -54,19 +54,19 @@ public class AbstractListComponent extends Component {
     public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
-	public static final String LIST_DATA_CHANGED_PROPERTY = "listData";
-	public static final String LIST_MODEL_CHANGED_PROPERTY = "listModel";
+    public static final String LIST_DATA_CHANGED_PROPERTY = "listData";
+    public static final String LIST_MODEL_CHANGED_PROPERTY = "listModel";
     public static final String LIST_CELL_RENDERER_CHANGED_PROPERTY = "listCellRenderer";
     public static final String SELECTION_MODEL_CHANGED_PROPERTY = "listSelectionModel";
     public static final String SELECTION_CHANGED_PROPERTY = "listSelectionChanged";
 
-	public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_HEIGHT = "height";
-	public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
-	public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
-	public static final String PROPERTY_WIDTH = "width";
+    public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
+    public static final String PROPERTY_WIDTH = "width";
 
     public static final DefaultListCellRenderer DEFAULT_LIST_CELL_RENDERER = new DefaultListCellRenderer();
 
@@ -200,7 +200,7 @@ public class AbstractListComponent extends Component {
         return listCellRenderer;
     }
     
-	/**
+    /**
      * Returns the height.
      * 
      * @return the height
@@ -227,7 +227,7 @@ public class AbstractListComponent extends Component {
         return model;
     }
     
-	/**
+    /**
      * Returns the rollover background.
      * 
      * @return the rollover background
@@ -263,7 +263,7 @@ public class AbstractListComponent extends Component {
         return selectionModel;
     }
     
-	/**
+    /**
      * Returns the width.
      * 
      * @return the width
@@ -271,7 +271,7 @@ public class AbstractListComponent extends Component {
     public Extent getWidth() {
         return (Extent) getProperty(PROPERTY_WIDTH);
     }
-	
+    
     /**
      * Determines the any <code>ActionListener</code>s are registered.
      * 
@@ -358,8 +358,8 @@ public class AbstractListComponent extends Component {
         listCellRenderer = newValue;
         firePropertyChange(LIST_CELL_RENDERER_CHANGED_PROPERTY, oldValue, newValue);
     }
-	
-	/**
+    
+    /**
      * Sets the height.
      * 
      * @param newValue the new height
@@ -393,7 +393,7 @@ public class AbstractListComponent extends Component {
         }
         newValue.addListDataListener(listDataHandler);
         model = newValue;
-    	firePropertyChange(LIST_MODEL_CHANGED_PROPERTY, oldValue, newValue);
+        firePropertyChange(LIST_MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
     
     /**

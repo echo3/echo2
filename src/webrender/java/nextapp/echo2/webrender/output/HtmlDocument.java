@@ -50,15 +50,15 @@ public class HtmlDocument extends XmlDocument {
      * Creates a new <code>HtmlDocument</code>.
      */
     public HtmlDocument(String publicId, String systemId, String namespaceUri) {
-	    super("html", publicId, systemId, namespaceUri);
+        super("html", publicId, systemId, namespaceUri);
         Document document = getDocument();
-	    Element htmlElement = document.getDocumentElement();
-	    Element headElement = document.createElement("head");
-	    Element titleElement = document.createElement("title");
-	    Element bodyElement = document.createElement("body");
-	    htmlElement.appendChild(headElement);
-	    headElement.appendChild(titleElement);
-	    htmlElement.appendChild(bodyElement);
+        Element htmlElement = document.getDocumentElement();
+        Element headElement = document.createElement("head");
+        Element titleElement = document.createElement("title");
+        Element bodyElement = document.createElement("body");
+        htmlElement.appendChild(headElement);
+        headElement.appendChild(titleElement);
+        htmlElement.appendChild(bodyElement);
     }
     
     /**

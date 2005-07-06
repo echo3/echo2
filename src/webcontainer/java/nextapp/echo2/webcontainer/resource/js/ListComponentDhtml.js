@@ -74,13 +74,13 @@ EchoListComponentDhtml.MessageProcessor.process = function(messagePartElement) {
 EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-	    var selectElement = document.getElementById(elementId);
-	    var itemElements = selectElement.getElementsByTagName("div");
-	    for (var i = 0; i < itemElements.length; ++i) {
-	        EchoEventProcessor.removeHandler(itemElements[i].id, "click");
-	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
-	        EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
-	    }
+        var selectElement = document.getElementById(elementId);
+        var itemElements = selectElement.getElementsByTagName("div");
+        for (var i = 0; i < itemElements.length; ++i) {
+            EchoEventProcessor.removeHandler(itemElements[i].id, "click");
+            EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
+            EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
+        }
     }
 };
 
@@ -106,13 +106,13 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
             EchoDomPropertyStore.setPropertyValue(elementId, "serverNotify", true);
         }
 
-	    var selectElement = document.getElementById(elementId);
-	    var itemElements = selectElement.getElementsByTagName("div");
-	    for (i = 0; i < itemElements.length; ++i) {
-	        EchoEventProcessor.addHandler(itemElements[i].id, "click", "EchoListComponentDhtml.processSelection");
-	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponentDhtml.processRolloverExit");
-	        EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponentDhtml.processRolloverEnter");
-	    }
+        var selectElement = document.getElementById(elementId);
+        var itemElements = selectElement.getElementsByTagName("div");
+        for (i = 0; i < itemElements.length; ++i) {
+            EchoEventProcessor.addHandler(itemElements[i].id, "click", "EchoListComponentDhtml.processSelection");
+            EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponentDhtml.processRolloverExit");
+            EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponentDhtml.processRolloverEnter");
+        }
         
         EchoDomPropertyStore.setPropertyValue(elementId, "selectionMode", selectionMode);
         EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
@@ -213,10 +213,10 @@ EchoListComponentDhtml.processSelection = function(echoEvent) {
     }
 
     if (EchoDomPropertyStore.getPropertyValue(componentId, "selectionMode") != "multiple") {
-	    var itemElements = listElement.getElementsByTagName("div");
-	    for (var i = 0; i < itemElements.length; ++i) {
-	        EchoListComponentDhtml.setSelected(itemElements[i], false);
-	    }
+        var itemElements = listElement.getElementsByTagName("div");
+        for (var i = 0; i < itemElements.length; ++i) {
+            EchoListComponentDhtml.setSelected(itemElements[i], false);
+        }
     }
 
     EchoListComponentDhtml.setSelected(itemElement, !EchoListComponentDhtml.isSelected(itemElement));

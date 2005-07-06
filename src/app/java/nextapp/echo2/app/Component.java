@@ -278,7 +278,7 @@ implements RenderIdSupport, Serializable {
         firePropertyChange(CHILDREN_CHANGED_PROPERTY, null, c);
     }
     
-	/**
+    /**
      * Adds a property change listener to this component.
      *
      * @param l the listener to add

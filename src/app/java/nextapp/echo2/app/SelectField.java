@@ -37,8 +37,8 @@ import nextapp.echo2.app.list.ListModel;
  * A drop-down select field.
  */
 public class SelectField extends AbstractListComponent {
-	
-	/**
+
+    /**
      * Creates a new, empty <code>SelectField</code>.
      */
     public SelectField() {

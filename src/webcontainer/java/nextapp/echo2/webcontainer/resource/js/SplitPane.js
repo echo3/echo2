@@ -92,7 +92,7 @@ EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
         
         EchoDomPropertyStore.setPropertyValue(elementId, "topLeftPane", item.getAttribute("top-left-pane"));
         if (resizable) {
-	        EchoEventProcessor.addHandler(elementId + "_separator", "mousedown", "EchoSplitPane.mouseDown");
+            EchoEventProcessor.addHandler(elementId + "_separator", "mousedown", "EchoSplitPane.mouseDown");
         }
     }
 };
@@ -267,10 +267,10 @@ EchoSplitPane.mouseMove = function(e) {
     var newSeparatorBegin, newSeparatorEnd;
     if (EchoSplitPane.verticalDrag) {
         if (EchoSplitPane.topLeftPane == 1) {
-	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
-	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
                     EchoSplitPane.activePaneDiv.clientHeight);
-	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
+            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
             EchoSplitPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
             if (EchoSplitPane.activePane0Div) {
                 EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
@@ -283,28 +283,28 @@ EchoSplitPane.mouseMove = function(e) {
                 }
             }
         } else {
-	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientY - EchoSplitPane.mouseOffset);
-	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientY - EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
                     EchoSplitPane.activePaneDiv.clientHeight);
-	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
-	        EchoSplitPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
-	        if (EchoSplitPane.activePane0Div) {
-	            EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
-	        }
-	        if (EchoSplitPane.activePane1Div) {
-	            EchoSplitPane.activePane1Div.style.top = newSeparatorEnd + "px";
-	            if (EchoSplitPane.activePane1Div.style.setExpression) {
-	                EchoSplitPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
-	                        + EchoSplitPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
-	            }
-	        }
+            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
+            EchoSplitPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
+            if (EchoSplitPane.activePane0Div) {
+                EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
+            }
+            if (EchoSplitPane.activePane1Div) {
+                EchoSplitPane.activePane1Div.style.top = newSeparatorEnd + "px";
+                if (EchoSplitPane.activePane1Div.style.setExpression) {
+                    EchoSplitPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
+                            + EchoSplitPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
+                }
+            }
         }
     } else {
         if (EchoSplitPane.topLeftPane == 1) {
-	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
-	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-	                EchoSplitPane.activePaneDiv.clientWidth);
-	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+                    EchoSplitPane.activePaneDiv.clientWidth);
+            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
             EchoSplitPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
             if (EchoSplitPane.activePane0Div) {
                 EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
@@ -317,21 +317,21 @@ EchoSplitPane.mouseMove = function(e) {
                 }
             }
         } else {
-	        newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientX - EchoSplitPane.mouseOffset);
-	        newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-	                EchoSplitPane.activePaneDiv.clientWidth);
-	        newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
-	        EchoSplitPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
-	        if (EchoSplitPane.activePane0Div) {
-	            EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
-	        }
-	        if (EchoSplitPane.activePane1Div) {
-	            EchoSplitPane.activePane1Div.style.left = newSeparatorEnd + "px";
-	            if (EchoSplitPane.activePane1Div.style.setExpression) {
-	                EchoSplitPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
-	                        + EchoSplitPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
-	            }
-	        }
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientX - EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+                    EchoSplitPane.activePaneDiv.clientWidth);
+            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
+            EchoSplitPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
+            if (EchoSplitPane.activePane0Div) {
+                EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
+            }
+            if (EchoSplitPane.activePane1Div) {
+                EchoSplitPane.activePane1Div.style.left = newSeparatorEnd + "px";
+                if (EchoSplitPane.activePane1Div.style.setExpression) {
+                    EchoSplitPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
+                            + EchoSplitPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
+                }
+            }
         }
     }
 };
@@ -346,17 +346,17 @@ EchoSplitPane.mouseUp = function(e) {
     e = (e) ? e : ((window.event) ? window.event : "");
     
     if (EchoSplitPane.verticalDrag) {
-	    if (EchoSplitPane.topLeftPane == 1) {
-	        EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-	                EchoSplitPane.activePaneSeparatorDiv.style.bottom);
-	    } else {
-	        EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-	                EchoSplitPane.activePaneSeparatorDiv.style.top);
-	    }
+        if (EchoSplitPane.topLeftPane == 1) {
+            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                    EchoSplitPane.activePaneSeparatorDiv.style.bottom);
+        } else {
+            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                    EchoSplitPane.activePaneSeparatorDiv.style.top);
+        }
     } else {
         if (EchoSplitPane.topLeftPane == 1) {
-	        EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-	                EchoSplitPane.activePaneSeparatorDiv.style.right);
+            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                    EchoSplitPane.activePaneSeparatorDiv.style.right);
         } else {
             EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
                     EchoSplitPane.activePaneSeparatorDiv.style.left);

@@ -30,7 +30,6 @@
 //_________________
 // Object EchoTable
 
-
 /**
  * Static object/namespace for Table support.
  * This object/namespace should not be used externally.
@@ -94,9 +93,9 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionEnabled", "true");
             EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selection-mode"));
-	        if (item.getAttribute("server-notify")) {
-	            EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("server-notify"));
-	        }
+            if (item.getAttribute("server-notify")) {
+                EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("server-notify"));
+            }
         }
 
         if (rolloverStyle) {

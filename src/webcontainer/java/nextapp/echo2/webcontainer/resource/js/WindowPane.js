@@ -214,10 +214,10 @@ EchoWindowPane.ZIndexManager.remove = function(containerId, elementId) {
             if (elementIdArray.length == 1) {
                 delete EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
             } else {
-	            if (i < elementIdArray.length - 1) {
-	                elementIdArray[i] = elementIdArray[elementIdArray.length - 1];
-	            }
-	            --elementIdArray.length;
+                if (i < elementIdArray.length - 1) {
+                    elementIdArray[i] = elementIdArray[elementIdArray.length - 1];
+                }
+                --elementIdArray.length;
             }
             return;
         }
@@ -417,10 +417,10 @@ EchoWindowPane.processBorderDragMouseDown = function(echoEvent) {
     var windowPaneElement = document.getElementById(componentId);
 
     if (windowPaneElement != EchoWindowPane.activeElement) {
-	    EchoWindowPane.minimumWidth = isNaN(minimumWidth) ? 100 : minimumWidth;
-	    EchoWindowPane.minimumHeight = isNaN(minimumHeight) ? 100 : minimumHeight;
-	    EchoWindowPane.maximumWidth = isNaN(maximumWidth) ? 800 : maximumWidth;
-	    EchoWindowPane.maximumHeight = isNaN(maximumHeight) ? 600 : maximumHeight;
+        EchoWindowPane.minimumWidth = isNaN(minimumWidth) ? 100 : minimumWidth;
+        EchoWindowPane.minimumHeight = isNaN(minimumHeight) ? 100 : minimumHeight;
+        EchoWindowPane.maximumWidth = isNaN(maximumWidth) ? 800 : maximumWidth;
+        EchoWindowPane.maximumHeight = isNaN(maximumHeight) ? 600 : maximumHeight;
 
         EchoWindowPane.activeElement = windowPaneElement;
         EchoWindowPane.mouseOffsetX = echoEvent.clientX;
@@ -621,9 +621,9 @@ EchoWindowPane.processTitleDragMouseMove = function(e) {
 
     if (EchoClientProperties.get("quirkIERepaint")) {
         // Tickle width to force repaint for IE repaint, resulting in aesthetic performance increase.
-	    var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
-	    EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
-	    EchoWindowPane.activeElement.style.width = initialWidth + "px";
+        var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
+        EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
+        EchoWindowPane.activeElement.style.width = initialWidth + "px";
     }
 };
 
