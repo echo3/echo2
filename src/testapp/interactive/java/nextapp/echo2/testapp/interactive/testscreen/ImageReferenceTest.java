@@ -110,13 +110,13 @@ public class ImageReferenceTest extends TestGrid {
     };
     
     public ImageReferenceTest() {
-        addHeaderCell("ImageReference Types");
+        addHeaderRow("ImageReference Types");
         HttpImageReference httpImageReference = new HttpImageReference("images/two.jpg");
         ResourceImageReference resourceImageReference 
                 = new ResourceImageReference(RESOURCE_IMAGE_LOCATION);
-        addTestCell("AwtImageReference", new Label(AWT_IMAGE_REFERENCE));
-        addTestCell("HttpImageReference", new Label(httpImageReference));
-        addTestCell("ResourceImageReference", new Label(resourceImageReference));
-        addTestCell("StreamImageReference", new Label(streamImageReference));
+        addTestRow("AwtImageReference", new Label(AWT_IMAGE_REFERENCE));
+        addTestRow("HttpImageReference", new Label(httpImageReference));
+        addTestRow("ResourceImageReference", new Label(resourceImageReference));
+        addTestRow("StreamImageReference", new Label(streamImageReference));
     }
 }

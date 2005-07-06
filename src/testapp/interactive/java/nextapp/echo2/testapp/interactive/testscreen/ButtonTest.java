@@ -127,66 +127,66 @@ extends SplitPane {
         buttonList = new ArrayList();
         
         Button button;
-        testGrid.addHeaderCell("Button");
+        testGrid.addHeaderRow("Button");
         
         button = new Button();
-        testGrid.addTestCell("No Content", button);
+        testGrid.addTestRow("No Content", button);
         buttonList.add(button);
 
         button = new Button("Test Button");
-        testGrid.addTestCell("Text", button);
+        testGrid.addTestRow("Text", button);
         buttonList.add(button);
         
         button = new Button(Styles.ICON_LOGO);
-        testGrid.addTestCell("Icon", button);
+        testGrid.addTestRow("Icon", button);
         buttonList.add(button);
         
         button = new Button("Test Button", Styles.ICON_LOGO);
-        testGrid.addTestCell("Text and Icon", button);
+        testGrid.addTestRow("Text and Icon", button);
         buttonList.add(button);
         
         CheckBox checkBox;
-        testGrid.addHeaderCell("CheckBox");
+        testGrid.addHeaderRow("CheckBox");
 
         checkBox = new CheckBox();
-        testGrid.addTestCell("No Content", checkBox);
+        testGrid.addTestRow("No Content", checkBox);
         buttonList.add(checkBox);
 
         checkBox = new CheckBox("Test CheckBox");
-        testGrid.addTestCell("Text", checkBox);
+        testGrid.addTestRow("Text", checkBox);
         buttonList.add(checkBox);
         
         checkBox = new CheckBox(Styles.ICON_LOGO);
-        testGrid.addTestCell("Icon", checkBox);
+        testGrid.addTestRow("Icon", checkBox);
         buttonList.add(checkBox);
         
         checkBox = new CheckBox("Test CheckBox", Styles.ICON_LOGO);
-        testGrid.addTestCell("Text and Icon", checkBox);
+        testGrid.addTestRow("Text and Icon", checkBox);
         buttonList.add(checkBox);
         
         RadioButton radioButton;
-        testGrid.addHeaderCell("RadioButton");
+        testGrid.addHeaderRow("RadioButton");
         
         ButtonGroup buttonGroup = new ButtonGroup();
 
         radioButton = new RadioButton();
         radioButton.setGroup(buttonGroup);
-        testGrid.addTestCell("No Content", radioButton);
+        testGrid.addTestRow("No Content", radioButton);
         buttonList.add(radioButton);
 
         radioButton = new RadioButton("Test RadioButton");
         radioButton.setGroup(buttonGroup);
-        testGrid.addTestCell("Text", radioButton);
+        testGrid.addTestRow("Text", radioButton);
         buttonList.add(radioButton);
         
         radioButton = new RadioButton(Styles.ICON_LOGO);
         radioButton.setGroup(buttonGroup);
-        testGrid.addTestCell("Icon", radioButton);
+        testGrid.addTestRow("Icon", radioButton);
         buttonList.add(radioButton);
         
         radioButton = new RadioButton("Test RadioButton", Styles.ICON_LOGO);
         radioButton.setGroup(buttonGroup);
-        testGrid.addTestCell("Text and Icon", radioButton);
+        testGrid.addTestRow("Text and Icon", radioButton);
         buttonList.add(radioButton);
 
         buttonGroup = new ButtonGroup();
@@ -198,11 +198,11 @@ extends SplitPane {
             radioGrid.add(radioButton);
             buttonList.add(radioButton);
         }
-        testGrid.addTestCell("Separate ButtonGroup", radioGrid);
+        testGrid.addTestRow("Separate ButtonGroup", radioGrid);
         
         radioButton = new RadioButton("Test");
         buttonList.add(radioButton);
-        testGrid.addTestCell("Null ButtonGroup", radioButton);
+        testGrid.addTestRow("Null ButtonGroup", radioButton);
 
         ButtonColumn controlsColumn;
         
