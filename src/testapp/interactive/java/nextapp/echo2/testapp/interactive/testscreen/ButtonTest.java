@@ -456,6 +456,33 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Set Insets = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setInsets(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Insets = 10/5px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setInsets(new Insets(10, 5));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Insets = 30px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setInsets(new Insets(30, 30));
+                    }
+                });
+            }
+        });
 
         // Rollover Effect Settings
 
