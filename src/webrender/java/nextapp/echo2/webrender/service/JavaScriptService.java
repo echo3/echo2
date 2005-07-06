@@ -77,7 +77,7 @@ implements Service {
         this.id = id;
         this.content = JavaScriptCompressor.compress(content);
         try {
-            gzipContent = GZipCompressor.compress(content);
+            gzipContent = GZipCompressor.compress(this.content);
         } catch (IOException ex) {
             // Should not occur.
             throw new RuntimeException("Exception compressing JavaScript source.", ex);
