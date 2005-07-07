@@ -42,8 +42,10 @@ import nextapp.echo2.webrender.WebRenderServlet;
  */
 public class StreamImageService extends AbstractImageService {
 
+    /** <code>Service</code> identifier. */
     private static final String SERVICE_ID = "Echo.StreamImage"; 
     
+    /** Singleton instance of this <code>Service</code>. */
     public static final StreamImageService INSTANCE = new StreamImageService();
 
     static {
