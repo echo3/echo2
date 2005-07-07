@@ -33,7 +33,7 @@ package nextapp.echo2.app;
  * A layout <code>Component</code> which renders its contents in a single 
  * vertical column of cells.
  * <p>
- * <strong>Child LayoutData</code>: Children of this component may provide
+ * <b>Child LayoutData</b>: Children of this component may provide
  * layout information using the 
  * <code>nextapp.echo2.app.layout.ColumnLayoutData</code> layout data object.
  * 
@@ -44,6 +44,13 @@ public class Column extends Component {
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CELL_SPACING = "cellSpacing";
     public static final String PROPERTY_INSETS = "insets";
+    
+    /**
+     * Creates a new <code>Column</code>.
+     */
+    public Column() {
+        super();
+    }
     
     /**
      * Returns the <code>Border</code> that encloses the entire <code>Column</code>.
@@ -64,8 +71,10 @@ public class Column extends Component {
     }
     
     /**
-     * Returns the inset between the border and cells of the <code>Column</code>.
-     *
+     * Returns the default inset between the border and cells of the
+     * <code>Column</code>. This value will be overridden for a child
+     * component if a setting is specified in its <code>ColumnLayoutData</code>.
+     * 
      * @return the inset
      */
     public Insets getInsets() {
@@ -92,6 +101,8 @@ public class Column extends Component {
     
     /**
      * Sets the inset between the border and cells of the <code>Column</code>.
+     * This value will be overridden for a child component if a setting is
+     * specified in its <code>ColumnLayoutData</code>.
      * 
      * @param newValue the new inset
      */

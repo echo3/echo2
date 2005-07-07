@@ -33,7 +33,7 @@ package nextapp.echo2.app;
  * A layout <code>Component</code> which renders its contents in a single 
  * horizontal row of cells.
  * <p>
- * <strong>Child LayoutData</code>: Children of this component may provide
+ * <b>Child LayoutData</b>: Children of this component may provide
  * layout information using the 
  * <code>nextapp.echo2.app.layout.RowLayoutData</code> layout data object.
  * 
@@ -45,6 +45,13 @@ public class Row extends Component {
     public static final String PROPERTY_CELL_SPACING = "cellSpacing";
     public static final String PROPERTY_INSETS = "insets";
     
+    /**
+     * Creates a new <code>Row</code>.
+     */
+    public Row() {
+        super();
+    }
+
     /**
      * Returns the <code>Border</code> that encloses the entire <code>Column</code>.
      * 
