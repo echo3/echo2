@@ -40,10 +40,14 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 
 /**
- * 
+ * Test to initiate a client-server push "loop" that autonomously clicks random
+ * on-screen buttons.
  */
 public class PushGhostTest extends Column {
     
+    /**
+     * Default constructor.
+     */
     public PushGhostTest() {
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(10));

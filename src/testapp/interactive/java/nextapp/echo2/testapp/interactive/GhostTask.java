@@ -29,17 +29,7 @@
 
 package nextapp.echo2.testapp.interactive;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
-import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueueHandle;
-import nextapp.echo2.app.Window;
-import nextapp.echo2.app.button.AbstractButton;
 
 /**
  * Note to developers who might use this class as an example:
@@ -49,40 +39,6 @@ import nextapp.echo2.app.button.AbstractButton;
  */
 public class GhostTask 
 implements Runnable {
-    
-    /**
-     * A <code>Collection</code> containing the text of buttons which should 
-     * not be "clicked" by the ghost task for one reason or another.
-     */
-    private static final Collection BUTTON_BLACKLIST;
-    static {
-        Collection blacklist = new HashSet();
-        
-        // Ghost test is also protected using other means, but no reason to bother with it.
-        blacklist.add("Push (Ghost Test)");
-        
-        // Exception test deliberately throws exceptions...not what we're looking for.
-        blacklist.add("Exception");
-        
-        // Delay test skews ghost-test based performance test results.
-        blacklist.add("Delay");
-        
-        // Command test might do a redirect, killing the ghost test.
-        blacklist.add("Command");
-        
-        // Demo visitors might think the application broke if the style sheet gets set to null.
-        blacklist.add("No Style Sheet");
-        
-        // Image test skews ghost-test based performance test results (AWTImageReference).
-        blacklist.add("Image");
-        
-        // Do not add modal windows.
-        blacklist.add("Add Modal Window");
-        blacklist.add("Add Three Modal Windows");
-        blacklist.add("Add \"Modal Launching\" Component Sampler to Embedded ContentPane");
-        
-        BUTTON_BLACKLIST = Collections.unmodifiableCollection(blacklist);
-    }
     
     /**
      * Creates and starts a new <code>GhostTask</code>.
@@ -123,43 +79,10 @@ implements Runnable {
     }
     
     /**
-     * Retrieves all buttons currently displayed in the user-interface and 
-     * programmatically clicks one.
-     */
-    private void clickRandomButton() {
-        Window window = ApplicationInstance.getActive().getDefaultWindow();
-        List buttonList = new ArrayList();
-        findButtons(buttonList, window);
-        AbstractButton button = (AbstractButton) buttonList.get((int) (buttonList.size() * Math.random()));
-        button.doAction();
-    }
-    
-    /**
-     * Recursively finds <code>Button</code>s in the hierarchy whose parent
-     * is <code>component</code> and adds them to the
-     * <code>foundButtons</code> collection.
-     * 
-     * @param foundButtons the <code>Collection</code> to which
-     *        <code>Button</code>s will be added
-     * @param component the root <code>Component</code> of the hierarchy to
-     *        search
-     */
-    private void findButtons(Collection foundButtons, Component component) {
-        if (component instanceof AbstractButton && !BUTTON_BLACKLIST.contains(((AbstractButton) component).getText())) {
-            foundButtons.add(component);
-        }
-        Component[] children = component.getComponents();
-        for (int i = 0; i < children.length; ++i) {
-            findButtons(foundButtons, children[i]);
-        }
-    }
-    
-    /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        //BUGBUG. Potentially enable capability to click multiple times per iteration.
-        clickRandomButton();
+        RandomClick.clickRandomButton();
         if (indefinite || System.currentTimeMillis() < stopTime) {
             ++iteration;
             app.setGhostIterationWindowTitle(iteration);

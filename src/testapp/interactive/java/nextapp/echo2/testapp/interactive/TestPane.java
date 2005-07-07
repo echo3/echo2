@@ -40,7 +40,8 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
 /**
- * 
+ * Main InteractiveTest <code>ContentPane</code> which displays a menu
+ * of available tests.
  */
 public class TestPane extends ContentPane {
 
@@ -119,6 +120,7 @@ public class TestPane extends ContentPane {
         addTest("Localization", "LocalizationTest");
         addTest("Push (Basic)", "PushTest");
         addTest("Push (Ghost Test)", "PushGhostTest");
+        addTest("Random Click", "RandomClickTest");
         addTest("Row", "RowTest");
         addTest("SplitPane (Basic)", "SplitPaneTest");
         addTest("SplitPane (Nested)", "SplitPaneNestedTest");

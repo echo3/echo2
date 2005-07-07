@@ -431,6 +431,24 @@ public class UpdateManagerTest extends TestCase  {
     /**
      * Another slightly more complex test to ensure that component
      * removes/descendant removes are properly stored.
+     * 
+     * -- Initial State --
+     * [ColumnApp]
+     *  * Window
+     *    * ContentPane
+     *      * Column
+     *        * Column1
+     *          * Column2
+     *            * label
+     * 
+     * -- New State --
+     * [ColumnApp]
+     *  * Window
+     *    * ContentPane
+     *      * Column
+     *        * Column1 
+     *          X Column2 [REMOVED]
+     *            * label [REMOVED DESCENDANT]
      */
     public void testRemove2() {
         Column column1 = new Column();

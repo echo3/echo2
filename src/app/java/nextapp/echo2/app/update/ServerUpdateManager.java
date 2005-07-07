@@ -359,6 +359,9 @@ implements Serializable {
         ServerComponentUpdate update = createComponentUpdate(parent);
         update.removeChild(child);
         
+        // Search updated components for descendants of removed component.
+        // Any found descendants will be removed and added to this update's 
+        // list of removed descendants.
         Iterator it = componentUpdateMap.keySet().iterator();
         while (it.hasNext()) {
             Component testComponent = (Component) it.next();
@@ -391,7 +394,11 @@ implements Serializable {
      * severe change, such as application locale or style sheet.
      */
     public void processFullRefresh() {
-        fullRefreshUpdate  = new ServerComponentUpdate(null);
+        if (fullRefreshUpdate != null) {
+            return;
+        }
+        
+        fullRefreshUpdate = new ServerComponentUpdate(null);
 
         if (applicationInstance.getDefaultWindow() != null) {
             // Default window may be null if an operation is invoked from within the
