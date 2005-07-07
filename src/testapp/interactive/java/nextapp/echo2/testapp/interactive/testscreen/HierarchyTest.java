@@ -126,6 +126,16 @@ public class HierarchyTest extends SplitPane {
         }
     };
     
+    private ComponentEntry labelEntry = new ComponentEntry(){
+        public String getName() {
+            return "Label";
+        }
+
+        public Component newInstance() {
+            return new Label("Label");
+        }
+    };
+
     private ComponentEntry listBoxEntry = new ComponentEntry(){
         public String getName() {
             return "ListBox";
@@ -243,6 +253,7 @@ public class HierarchyTest extends SplitPane {
             columnEntry,
             contentPaneEntry,
             gridEntry,
+            labelEntry,
             listBoxEntry,
             passwordFieldEntry,
             radioButtonEntry,
