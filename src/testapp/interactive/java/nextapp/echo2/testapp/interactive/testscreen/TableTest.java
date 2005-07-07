@@ -175,7 +175,7 @@ public class TableTest extends SplitPane {
         }
     };
     
-    private TableCellRenderer checkerCellRenderer = new TableCellRenderer() {
+    private TableCellRenderer backgroundImageCheckerCellRenderer = new TableCellRenderer() {
         
         /**
          * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
@@ -191,6 +191,21 @@ public class TableTest extends SplitPane {
                 layoutData.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
             }
             label.setLayoutData(layoutData);
+            return label;
+        }
+    };
+    
+    private TableCellRenderer visibilityCheckerCellRenderer = new TableCellRenderer() {
+        
+        /**
+         * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table,
+         *      java.lang.Object, int, int)
+         */
+        public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+            Label label = new Label(value == null ? null : value.toString());
+            if (row % 2 == column % 2) {
+                label.setVisible(false);
+            }
             return label;
         }
     };
@@ -540,9 +555,14 @@ public class TableTest extends SplitPane {
                 testTable.setDefaultRenderer(Object.class, randomizingCellRenderer);
             }
         });
-        controlsColumn.addButton("Checker Cell Renderer", new ActionListener() {
+        controlsColumn.addButton("BackgroundImage Checker Cell Renderer", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testTable.setDefaultRenderer(Object.class, checkerCellRenderer);
+                testTable.setDefaultRenderer(Object.class, backgroundImageCheckerCellRenderer);
+            }
+        });
+        controlsColumn.addButton("Visibility Checker Cell Renderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setDefaultRenderer(Object.class, visibilityCheckerCellRenderer);
             }
         });
         controlsColumn.addButton("Editing Cell Renderer (not bound to model)", new ActionListener() {

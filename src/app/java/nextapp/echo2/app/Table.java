@@ -57,7 +57,7 @@ import nextapp.echo2.app.table.TableModel;
  * @see nextapp.echo2.app.table
  */
 public class Table extends Component {
-
+    
     /**
      * The default renderer for table cells. 
      */
@@ -258,7 +258,6 @@ public class Table extends Component {
      */
     protected void doRender() {
         //BUGBUG. no header rendering yet.
-        //BUGBUG. currently always performs whole re-render.
         removeAll();
         int rowCount = model.getRowCount();
         int columnCount = columnModel.getColumnCount();

@@ -73,9 +73,6 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
-//BUGBUG. sort component visibility with regard to rendered components
-// (may simply want to require returned components be visible (at Table level) and validate this)
-
 /**
  * Synchronization peer for <code>nextapp.echo2.app.Table</code> components.
  * <p>
@@ -84,6 +81,8 @@ import nextapp.echo2.webrender.util.DomUtil;
  */
 public class TablePeer 
 implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor  {
+
+    //TODO: Add full support for partial rendering on row insertions/deletions.
 
     private static final String[] TABLE_INIT_KEYS = new String[]{"rollover-style", "selection-style"};
     
@@ -201,6 +200,10 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      * @param child the child component to render
      */
     private void renderAddChild(RenderContext rc, ServerComponentUpdate update, Element parentElement, Component child) {
+        if (!child.isVisible()) {
+            // Do nothing.
+            return;
+        }
         ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
         if (syncPeer instanceof DomUpdateSupport) {
             ((DomUpdateSupport) syncPeer).renderHtml(rc, update, parentElement, child);
@@ -434,8 +437,6 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         if (rowIndex == Table.HEADER_ROW) {
             trElement.setAttribute("id", elementId + "_tr_header");
         } else {
-            // BUGBUG. using rowIndex for table id may not be adequate, as rows might be added or removed once if
-            // support full table partial table row updates.
             trElement.setAttribute("id", elementId + "_tr_" + rowIndex); 
         }
         tbodyElement.appendChild(trElement);
