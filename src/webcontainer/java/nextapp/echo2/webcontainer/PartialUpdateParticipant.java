@@ -52,7 +52,7 @@ public interface PartialUpdateParticipant {
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> to be 
-     *        processed.
+     *        processed
      */
     public void renderProperty(RenderContext rc, ServerComponentUpdate update);
 }

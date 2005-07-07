@@ -40,10 +40,6 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
  */
 public class PartialUpdateManager {
     
-    //BUGBUG? May wish to add ConditionalPropertyRender objects that report back
-    //whether a specific property update is possible based on prop. name &value
-    //instead of simply assuming the update is possible based on name alone.
-    
     private Map registry = null;
 
     /**
