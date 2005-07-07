@@ -33,6 +33,7 @@ import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.webcontainer.ContainerContext;
+import nextapp.echo2.webrender.ClientConfiguration;
 
 /**
  * Interactive Test Application Instance.
@@ -136,6 +137,11 @@ public class InteractiveApp extends ApplicationInstance {
                 startGhostTask(0, 0, 1);
             }
         }
+        
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setProperty(ClientConfiguration.PROPERTY_SERVER_ERROR_MESSAGE,
+                "KA-BOOM! (test non-default server error message)");
+        cc.setClientConfiguration(clientConfiguration);
         
         return mainWindow;
     }

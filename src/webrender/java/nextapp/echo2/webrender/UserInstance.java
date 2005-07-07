@@ -48,6 +48,12 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      * The default character encoding in which responses should be rendered.
      */
     private String characterEncoding = "UTF-8";
+    
+    /**
+     * <code>ClientConfiguration</code> information containing 
+     * application-specific client behavior settings.
+     */
+    private ClientConfiguration clientConfiguration;
 
     /**
      * A <code>ClientProperties</code> object describing the web browser
@@ -65,6 +71,11 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      * <code>UserInstance</code> is stored.
      */
     private transient HttpSession session;
+    
+    /**
+     * Provides information about updated <code>UserInstance</code> properties.
+     */
+    private UserInstanceUpdateManager updateManager;
 
     /**
      * Creates a new <code>UserInstance</code>.
@@ -74,6 +85,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      */
     public UserInstance(Connection conn) {
         super();
+        updateManager = new UserInstanceUpdateManager();
         conn.initUserInstance(this);
     }
 
@@ -86,6 +98,16 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      */
     public String getCharacterEncoding() {
         return characterEncoding;
+    }
+    
+    /**
+     * Retrieves the <code>ClientConfiguration</code> information containing
+     * application-specific client behavior settings.
+     * 
+     * @return the relevant <code>ClientProperties</code>
+     */
+    public ClientConfiguration getClientConfiguration() {
+        return clientConfiguration;
     }
     
     /**
@@ -149,6 +171,16 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
     }
 
     /**
+     * Returns the <code>UserInstanceUpdateManager</code> providing information
+     * about updated <code>UserInstance</code> properties.
+     * 
+     * @return the <code>UserInstanceUpdateManager</code>
+     */
+    public UserInstanceUpdateManager getUserInstanceUpdateManager() {
+        return updateManager;
+    }
+    
+    /**
      * Returns the <code>HttpSession</code> containing this
      * <code>UserInstance</code>.
      * 
@@ -173,6 +205,16 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
     }
 
     /**
+     * Sets the <code>ClientConfiguration</code> information containing
+     * application-specific client behavior settings.
+     * 
+     * @param clientConfiguration the new <code>ClientConfiguration</code>
+     */
+    public void setClientConfiguration(ClientConfiguration clientConfiguration) {
+        this.clientConfiguration = clientConfiguration;
+    }
+    
+   /**
      * Stores the <code>ClientProperties</code> object that provides
      * information about the client of this instance.
      * 

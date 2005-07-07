@@ -94,8 +94,7 @@ public class ContainerInstance extends UserInstance {
         initialRequestParameterMap = new HashMap(conn.getRequest().getParameterMap());
         applicationInstance = servlet.newApplicationInstance();
         
-        applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
-                new ContainerContextImpl(this));
+        applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, new ContainerContextImpl(this));
         
         try {
             ApplicationInstance.setActive(applicationInstance);

@@ -29,46 +29,43 @@
 
 package nextapp.echo2.webrender.servermessage;
 
-import nextapp.echo2.webrender.ServerMessage;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import nextapp.echo2.webrender.ClientConfiguration;
+import nextapp.echo2.webrender.ServerMessage;
+
 /**
- * A <code>ServerMessage</code>-utility class to render <Code>EchoServerDelayMessage</code>
- * message processor directives to configure the client-side message displayed
- * during short- and long-running server interactions.
+ * Renders <code>ServerMessage</code> directives to store
+ * <code>ClientConfiguration</code> information on the client.
  */
-public class ServerDelayMessage {
-    
-    //BUGBUG. test/integrate.
-    private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-
-    public static final String ELEMENT_ID_MESSAGE = "serverDelayMessage";
-    
-    /**
-     * The element id of the "long delay message" element which will be made 
-     * visible when the blocking pane has been displayed for a set amount
-     * of time. 
-     */
-    public static final String ELEMENT_ID_LONG_MESSAGE = "serverDelayMessageLong";
+public class ClientConfigurationUpdate {
 
     /**
-     * Creates a new <code>setMessage</code> directive.
-     * 
-     * @param serverMessage the relevant <code>ServerMessage</code>
+     * Renders a <code>ServerMessage</code> directive directing the 
+     * client to store the provided <code>ClientConfiguration</code> information.
+     *
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     * @param clientConfiguration the <code>ClientConfiguration</code> information
      */
-    public static void renderSetMessage(ServerMessage serverMessage, Element htmlElement) {
+    public static void renderUpdateDirective(ServerMessage serverMessage, ClientConfiguration clientConfiguration) {
+        if (clientConfiguration == null) {
+            return;
+        }
         Document document = serverMessage.getDocument();
-        
-        Element setMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                "EchoServerDelayMessage.MessageProcessor", "set-message");
-        
-        Element contentContainerElement = serverMessage.getDocument().createElement("content");
-        setMessageElement.appendChild(contentContainerElement);
-        
-        htmlElement = (Element) document.importNode(htmlElement, true); 
-        htmlElement.setAttribute("xmlns", XHTML_NAMESPACE);
-        contentContainerElement.appendChild(htmlElement);
+        Element messagePartElement = serverMessage.addPart(ServerMessage.GROUP_ID_INIT, "EchoClientConfiguration.MessageProcessor");
+        Element storeElement = document.createElement("store");
+        messagePartElement.appendChild(storeElement);
+
+        String[] propertyNames = clientConfiguration.getPropertyNames();
+        for (int i = 0; i < propertyNames.length; ++i) {
+            Element propertyElement = document.createElement("property");
+            storeElement.appendChild(propertyElement);
+            propertyElement.setAttribute("name", propertyNames[i]);
+            propertyElement.setAttribute("value", clientConfiguration.getProperty(propertyNames[i]));
+        }
     }
+    
+    /** Non-instantiable class. */
+    private ClientConfigurationUpdate() { }
 }

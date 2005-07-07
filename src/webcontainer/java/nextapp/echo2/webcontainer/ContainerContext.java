@@ -36,6 +36,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueueHandle;
+import nextapp.echo2.webrender.ClientConfiguration;
 import nextapp.echo2.webrender.ClientProperties;
 
 /**
@@ -97,6 +98,14 @@ public interface ContainerContext {
      * by querying the inbound servlet request. 
      */
     public boolean isUserInRole(String role);
+    
+    /**
+     * Sets the <code>ClientConfiguration</code> describing
+     * application-specific client configuration settings.
+     * 
+     * @param clientConfiguration the new <code>ClientConfiguration</code>
+     */
+    public void setClientConfiguration(ClientConfiguration clientConfiguration);
     
     /**
      * Sets the interval between asynchronous callbacks from the client to check

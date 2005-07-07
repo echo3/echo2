@@ -37,12 +37,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import nextapp.echo2.app.TaskQueueHandle;
+import nextapp.echo2.webrender.ClientConfiguration;
 import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.WebRenderServlet;
 
-//BUGBUG. Configuration of session expiration behavior.
-//BUGBUG. Configuration of exception behavior.
 //BUGBUG? Forced session invalidation.
 
 /**
@@ -118,6 +117,13 @@ implements ContainerContext, Serializable {
         } else {
             return conn.getRequest().isUserInRole(role);
         }
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#setClientConfiguration(nextapp.echo2.webrender.ClientConfiguration)
+     */
+    public void setClientConfiguration(ClientConfiguration clientConfiguration) {
+        containerInstance.setClientConfiguration(clientConfiguration);
     }
 
     /**

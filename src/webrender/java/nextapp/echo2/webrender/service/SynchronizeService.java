@@ -51,6 +51,7 @@ import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.UserInstance;
+import nextapp.echo2.webrender.servermessage.ClientConfigurationUpdate;
 import nextapp.echo2.webrender.servermessage.ClientPropertiesStore;
 import nextapp.echo2.webrender.util.DomUtil;
 
@@ -263,15 +264,16 @@ implements Service {
      * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
      */
     public void service(Connection conn) throws IOException {
-        synchronized(conn.getUserInstance()) {
+        UserInstance userInstance = conn.getUserInstance();
+        synchronized(userInstance) {
             Document clientMessageDocument = parseRequestDocument(conn);
             String messageType = clientMessageDocument.getDocumentElement().getAttribute("type");
             ServerMessage serverMessage;
             
             if ("initialize".equals(messageType)) {
-    //BUGBUG. ClientProperties stuff here is not well done, redo.            
                 serverMessage = renderInit(conn, clientMessageDocument);
-                ClientPropertiesStore.renderStoreDirective(serverMessage, conn.getUserInstance().getClientProperties());
+                ClientPropertiesStore.renderStoreDirective(serverMessage, userInstance.getClientProperties());
+                ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
             } else {
                 serverMessage = renderUpdate(conn, clientMessageDocument);
             }

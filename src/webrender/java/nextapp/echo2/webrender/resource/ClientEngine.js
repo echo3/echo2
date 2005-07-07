@@ -202,24 +202,44 @@ EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, 
 function EchoClientConfiguration() { }
 
 /**
- * Error message to display in the event a server-side error is encountered.
+ * MessagePartProcessor implementation for EchoClientConfiguration.
  */
-EchoClientConfiguration.serverErrorMessage = "An application error has occurred.  Your session has been reset.";
+EchoClientConfiguration.MessageProcessor = function() { };
 
 /**
- * URI of error page to display in the event a server-side error is encountered.
+ * MessagePartProcessor process() method implementation.
  */
-EchoClientConfiguration.serverErrorUri = null;
+EchoClientConfiguration.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "store":
+                EchoClientConfiguration.MessageProcessor.processStore(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
 
 /**
- * Error message to display in the event the server-side session expires.
+ * Proceses a <code>store</code> message to store ClientConfiguration information
+ * received from the server.
+ *
+ * @param storeElement the <code>store</code> element to process
  */
-EchoClientConfiguration.sessionExpirationMessage = "Your session has been reset due to inactivity.";
+EchoClientConfiguration.MessageProcessor.processStore = function(storeElement) {
+    var propertyElements = storeElement.getElementsByTagName("property");
+    for (var i = 0; i < propertyElements.length; ++i) {
+        var name = propertyElements[i].getAttribute("name");
+        var value = propertyElements[i].getAttribute("value");
+        EchoClientConfiguration.propertyMap[name] = value;
+    }
+};
 
-/**
- * URI of error page to display in the event the server-side session expires.
- */
-EchoClientConfiguration.sessionExpirationUri = null;
+EchoClientConfiguration.propertyMap = new Array();
+
+EchoClientConfiguration.propertyMap["serverErrorMessage"] = "An application error has occurred.  Your session has been reset.";
+EchoClientConfiguration.propertyMap["sessionExpirationMessage"] = "Your session has been reset due to inactivity.";
 
 // _______________________
 // Object EchoClientEngine
@@ -262,11 +282,11 @@ EchoClientEngine.init = function(baseServerUri) {
  * Handles the expiration of server-side session information.
  */
 EchoClientEngine.processSessionExpiration = function() {
-    if (EchoClientConfiguration.sessionExpirationMessage) {
-        alert(EchoClientConfiguration.sessionExpirationMessage);
+    if (EchoClientConfiguration.propertyMap["sessionExpirationMessage"]) {
+        alert(EchoClientConfiguration.propertyMap["sessionExpirationMessage"]);
     }
-    if (EchoClientConfiguration.sessionExpirationUri) {
-        window.location.href = EchoClientConfiguration.sessionExpirationUri;
+    if (EchoClientConfiguration.propertyMap["sessionExpirationUri"]) {
+        window.location.href = EchoClientConfiguration.propertyMap["sessionExpirationUri"];
     }
     window.location.reload();
 };
@@ -275,11 +295,11 @@ EchoClientEngine.processSessionExpiration = function() {
  * Handles a server-side error.
  */
 EchoClientEngine.processServerError = function() {
-    if (EchoClientConfiguration.serverErrorMessage) {
-        alert(EchoClientConfiguration.serverErrorMessage);
+    if (EchoClientConfiguration.propertyMap["serverErrorMessage"]) {
+        alert(EchoClientConfiguration.propertyMap["serverErrorMessage"]);
     }
-    if (EchoClientConfiguration.serverErrorUri) {
-        window.location.href = EchoClientConfiguration.serverErrorUri;
+    if (EchoClientConfiguration.propertyMap["serverErrorUri"]) {
+        window.location.href = EchoClientConfiguration.propertyMap["serverErrorUri"];
     }
     window.location.reload();
 };
