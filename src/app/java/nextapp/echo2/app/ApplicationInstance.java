@@ -126,7 +126,7 @@ implements Serializable {
     
     /**
      * Mapping from the render ids of all registered components to the 
-     * component instances themselves.
+     * <code>Component</code> instances themselves.
      */
     private Map renderIdToComponentMap;
     
@@ -149,7 +149,8 @@ implements Serializable {
     
     /**
      * The top-level <code>Window</code>.
-     * Current versions of Echo support only a single top-level window.
+     * Currently only one top-level is supported per 
+     * <code>ApplicationInstance</code>.
      */
     private Window defaultWindow;
     
@@ -159,7 +160,8 @@ implements Serializable {
     private StyleSheet styleSheet;
 
     /**
-     * Collection of modal components.
+     * Collection of modal components, the last index representing the current
+     * modal context.
      */
     private List modalComponents;
     
@@ -215,10 +217,12 @@ implements Serializable {
     }
     
     /**
-     * Initializes the <code>ApplicationInstance</code>.
-     * This method is invoked from the application container.
+     * Initializes the <code>ApplicationInstance</code>. This method is
+     * invoked by the application container.
      * 
      * @return the default <code>Window</code> of the application
+     * @throws IllegalStateException in the event that the current thread is not
+     *         permitted to update the state of the user interface
      */
     public Window doInit() {
         if (this != activeInstance.get()) {
@@ -256,7 +260,7 @@ implements Serializable {
 
     /**
      * Queues the given stateless <code>Command</code> for execution on the 
-     * current client/server interaction.
+     * current client/server synchronization.
      * 
      * @param command the <code>Command</code> to execute
      */
@@ -267,14 +271,13 @@ implements Serializable {
     /**
      * Enqueues a task to be run during the next client/server 
      * synchronization.  The task will be run 
-     * <b>synchronously</b> in the UI processing thread.
+     * <b>synchronously</b> in the user interface update thread.
      * Enqueuing a task in response to an external event will result 
      * in changes being pushed to the client.
      * 
      * @param taskQueue the <code>TaskQueueHandle</code> representing the
      *        queue into which this task should be placed
      * @param task the task to run on client/server synchronization
-     *        
      */
     public void enqueueTask(TaskQueueHandle taskQueue, Runnable task) {
         synchronized (taskQueueMap) {
@@ -336,7 +339,7 @@ implements Serializable {
     public Component getComponentByRenderId(String renderId) {
         return (Component) renderIdToComponentMap.get(renderId);
     }
-    
+
     /**
      * Returns the default window of the application.
      * 
@@ -486,6 +489,8 @@ implements Serializable {
      * @param newValue the new value of the property 
      *        (or the added component in the case of a
      *        <code>CHILDREN_CHANGED_PROPERTY</code>)
+     * @throws IllegalStateException in the event that the current thread is not
+     *         permitted to update the state of the user interface
      */
     void notifyComponentPropertyChange(Component parent, String propertyName, Object oldValue, Object newValue) {
         // Ensure current thread is a user interface thread.
@@ -526,9 +531,9 @@ implements Serializable {
     }
 
     /**
-     * Processes all queued tasks.  This method may only be invoked
-     * from within a UI thread.  Tasks are removed from queues once
-     * they have been processed.
+     * Processes all queued tasks. This method may only be invoked from within a
+     * UI thread by the <code>UpdateManager</code>. Tasks are removed from queues
+     * once they have been processed.
      */
     public void processQueuedTasks() {
         if (taskQueueMap.size() == 0) {
@@ -554,7 +559,7 @@ implements Serializable {
     
     /**
      * Registers a component with the <code>ApplicationInstance</code>.
-     * The component will be assigned a unique render in the event that
+     * The component will be assigned a unique render id in the event that
      * it does not currently have one.
      * <p>
      * This method is invoked by <code>Component.setApplicationInstance()</code>
@@ -591,6 +596,7 @@ implements Serializable {
      * 
      * @param taskQueueHandle the <code>TaskQueueHandle</code> specifying the
      *        task queue to remove
+     * @see #createTaskQueue()
      */
     public void removeTaskQueue(TaskQueueHandle taskQueueHandle) {
         synchronized(taskQueueMap) {
@@ -652,7 +658,7 @@ implements Serializable {
     /**
      * Sets the default locale of the application.
      * 
-     * @param newValue the new locale.
+     * @param newValue the new locale
      */
     public void setLocale(Locale newValue) {
         if (newValue == null) {

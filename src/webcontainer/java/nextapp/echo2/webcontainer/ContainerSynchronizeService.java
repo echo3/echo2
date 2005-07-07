@@ -354,7 +354,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
             processClientMessage(conn, clientMessageDocument);
             
             updateManager.processClientUpdates();
-            applicationInstance.processQueuedTasks();
             
             // Process updates from server.
             processServerUpdates(rc);

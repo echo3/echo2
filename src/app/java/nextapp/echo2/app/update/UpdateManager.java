@@ -80,11 +80,16 @@ implements Serializable {
     }
     
     /**
-     * Processes client updates, purging them automatically at completion.
+     * Processes client updates.
+     * Processes any queued tasks.
      * Validates the component hierarchy for rendering in response to updates.
      */
     public void processClientUpdates() {
+        // Process client state updates.
         clientUpdateManager.process();
+        
+        // Processed queued asynchronous tasks.
+        applicationInstance.processQueuedTasks();
         
         // Validate the state of the hierarchy prior to rendering.
         applicationInstance.doValidation();
