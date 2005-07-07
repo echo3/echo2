@@ -39,6 +39,13 @@ extends Component {
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     
     /**
+     * Creates a new <code>ContentPane</code>.
+     */
+    public ContentPane() {
+        super();
+    }
+    
+    /**
      * Returns the background image.
      * 
      * @return the background image

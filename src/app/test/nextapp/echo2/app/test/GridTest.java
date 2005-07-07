@@ -53,23 +53,23 @@ public class GridTest extends TestCase {
     public void testProperties() {
         Grid grid = new Grid();
         grid.setBorder(TestConstants.BORDER_THICK_ORANGE);
-        assertEquals(TestConstants.BORDER_THICK_ORANGE, grid.getBorder());
         grid.setInsets(TestConstants.INSETS_1234);
-        assertEquals(TestConstants.INSETS_1234, grid.getInsets());
         grid.setOrientation(Grid.ORIENTATION_VERTICAL);
-        assertEquals(Grid.ORIENTATION_VERTICAL, grid.getOrientation());
         grid.setSize(5);
-        assertEquals(5, grid.getSize());
         grid.setWidth(TestConstants.EXTENT_50_PERCENT);
-        assertEquals(TestConstants.EXTENT_50_PERCENT, grid.getWidth());
         grid.setHeight(TestConstants.EXTENT_500_PX);
-        assertEquals(TestConstants.EXTENT_500_PX, grid.getHeight());
         grid.setColumnWidth(0, TestConstants.EXTENT_100_PX);
         grid.setColumnWidth(1, TestConstants.EXTENT_200_PX);
-        assertEquals(TestConstants.EXTENT_100_PX, grid.getColumnWidth(0));
-        assertEquals(TestConstants.EXTENT_200_PX, grid.getColumnWidth(1));
         grid.setRowHeight(0, TestConstants.EXTENT_30_PX);
         grid.setRowHeight(1, TestConstants.EXTENT_500_PX);
+        assertEquals(TestConstants.BORDER_THICK_ORANGE, grid.getBorder());
+        assertEquals(TestConstants.INSETS_1234, grid.getInsets());
+        assertEquals(Grid.ORIENTATION_VERTICAL, grid.getOrientation());
+        assertEquals(5, grid.getSize());
+        assertEquals(TestConstants.EXTENT_50_PERCENT, grid.getWidth());
+        assertEquals(TestConstants.EXTENT_500_PX, grid.getHeight());
+        assertEquals(TestConstants.EXTENT_100_PX, grid.getColumnWidth(0));
+        assertEquals(TestConstants.EXTENT_200_PX, grid.getColumnWidth(1));
         assertEquals(TestConstants.EXTENT_30_PX, grid.getRowHeight(0));
         assertEquals(TestConstants.EXTENT_500_PX, grid.getRowHeight(1));
     }

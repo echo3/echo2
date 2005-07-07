@@ -30,17 +30,33 @@
 package nextapp.echo2.app;
 
 /**
- * A layout component which displays its contents in a grid.  Each component
- * is contained within a "cell" of the grid.  <code>GridLayoutData</code>
- * layout data objects may used to cause cells to expand to fill multiple
- * columns or rows.
+ * A layout <code>Component</code> which renders its contents in a grid. Each
+ * component is contained within a "cell" of the grid.
+ * <code>GridLayoutData</code> layout data objects may used to cause cells to
+ * expand to fill multiple columns or rows.
+ * <p>
+ * <b>Child LayoutData</b>: Children of this component may provide layout
+ * information using the <code>nextapp.echo2.app.layout.GridLayoutData</code>
+ * layout data object.
+ * 
+ * @see nextapp.echo2.app.layout.GridLayoutData
  */
 public class Grid extends Component {
 
-    public static final int ORIENTATION_HORIZONTAL = 0;
-    public static final int ORIENTATION_VERTICAL = 1;
+    private static final int DEFAULT_SIZE = 2;
     
-    public static final int DEFAULT_SIZE = 2;
+    /**
+     * Constant value for <code>orientation</code> property indicating cells 
+     * should be laid out horizontally and then vertically.
+     * <code>ORIENTATION_HORIZONTAL</code> is the default orientation setting.
+     */
+    public static final int ORIENTATION_HORIZONTAL = 0;
+
+    /**
+     * Constant value for <code>orientation</code> property indicating cells 
+     * should be laid out vertically and then horizontally. 
+     */
+    public static final int ORIENTATION_VERTICAL = 1;
     
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
@@ -56,7 +72,7 @@ public class Grid extends Component {
      * default size (2).
      */
     public Grid() {
-        this(2);
+        this(DEFAULT_SIZE);
     }
     
     /**
