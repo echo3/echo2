@@ -40,8 +40,6 @@ import nextapp.echo2.app.list.ListSelectionModel;
  */
 public class ListBox extends AbstractListComponent {
 
-    public static final Integer DEFAULT_ROW_COUNT = new Integer(5);
-
     /**
      * Creates an empty <code>ListBox</code>.
      * A <code>DefaultListModel</code> will be created. 
