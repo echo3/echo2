@@ -46,14 +46,12 @@ import nextapp.echo2.webrender.output.CssStyle;
  */
 public class CellLayoutDataRender {
     
-    //BUGBUG. review.
-    
     private static String IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE = "CellLayoutData.BackgroundImage.";
     private static int IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE_LENGTH = IMAGE_ID_PREFIX_LAYOUT_DATA_BACKGROUND_IMAGE.length();
 
     /**
-     * A delegate method to be invoked by the container <code>Component</code>
-     * 's<code>ComponentSynchronizePeer</code>'s
+     * A delegate method to be invoked by the container <code>Component</code>'s
+     * <code>ComponentSynchronizePeer</code>'s
      * <code>ImageRenderSupport.getImage()</code> implementation. This method
      * will return the appropriate <code>CellLayoutData</code> background
      * image if the identifier corresponds to one, otherwise null is returned.
@@ -117,7 +115,8 @@ public class CellLayoutDataRender {
      * <code>Alignment</code> information will be added to the
      * <code>Element</code> such that block elements contained within it will
      * be properly aligned. All other properties will be rendered using the
-     * <code>CssSyle</code>.
+     * <code>CssSyle</code>.  Use of this method requires a "transitional"
+     * DOCTYPE.
      * 
      * @param element the target <code>Element</code>
      * @param cssStyle the target <code>CssStyle</code>

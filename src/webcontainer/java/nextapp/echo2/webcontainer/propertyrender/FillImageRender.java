@@ -54,7 +54,7 @@ public class FillImageRender {
      * filter should be enabled for Internet Explorer clients that might 
      * "benefit" from it.  Enabling this flag can however have serious   
      * unacceptable side-effects for Internet Explorer clients:
-     * If the flag is enabled, Images will be <strong>SCALED</strong> to span 
+     * If the flag is enabled, Images will be <b>SCALED</b> to span 
      * the entire region.  IE will ignore any positioning/repeat information
      * if this flag is enabled.  Further, the browser may in fact not allow
      * the user to click on any content within the region.
@@ -93,12 +93,7 @@ public class FillImageRender {
         } else {
             cssStyle.setAttribute("background-image", "url(" + imageUri  + ")");
         }
-        
-//BUGBUG. actually, this is still necessary for IE text field backgrounds.
-//        if (!disableFixedMode && fillImage.getAttachment() == FillImage.ATTACHMENT_FIXED) {
-//            cssStyle.setAttribute("background-attachment", "fixed");
-//        }
-        
+
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED)) {
             cssStyle.setAttribute("background-attachment", "fixed");
