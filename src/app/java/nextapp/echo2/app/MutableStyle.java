@@ -38,7 +38,7 @@ import java.util.TreeMap;
  * Note that modifications to the <code>Style</code> will not necessarily be
  * reflected in <code>Component</code>s that use the <code>Style</code>
  * unless the <code>Component</code>s are specifically informed of the changes,
- * i.e., by resetting the shared style of the <code>Component</code>.
+ * i.e., by resetting the shared style of a <code>Component</code>.
  * As such, shared <code>Style</code>s  should not be updated once they are 
  * in use by <code>Component</code>s, as it will result in undefined behavior.
  */
