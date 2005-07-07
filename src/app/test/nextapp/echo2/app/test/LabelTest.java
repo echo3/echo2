@@ -30,6 +30,7 @@
 package nextapp.echo2.app.test;
 
 import junit.framework.TestCase;
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.IllegalChildException;
 import nextapp.echo2.app.Label;
 
@@ -37,6 +38,14 @@ import nextapp.echo2.app.Label;
  * Unit test(s) for the <code>nextapp.echo2.app.Label</code>. 
  */
 public class LabelTest extends TestCase {
+    
+    /**
+     * Test default property values.
+     */
+    public void testDefaults() {
+        Label label = new Label();
+        assertTrue(label.isLineWrap());
+    }
 
     /**
      * Attempt to illegally add children, test for failure.
@@ -51,15 +60,21 @@ public class LabelTest extends TestCase {
         }
         assertTrue(exceptionThrown);
     }
-    
+
     /**
      * Test property accessors and mutators.
      */
     public void testProperties() {
         Label label = new Label();
         label.setText("Label");
-        assertEquals("Label", label.getText());
         label.setIcon(TestConstants.ICON);
+        label.setTextAlignment(new Alignment(Alignment.LEFT, Alignment.TOP));
+        label.setTextPosition(new Alignment(Alignment.DEFAULT, Alignment.BOTTOM));
+        label.setLineWrap(false);
+        assertEquals("Label", label.getText());
         assertEquals(TestConstants.ICON, label.getIcon());
+        assertEquals(new Alignment(Alignment.LEFT, Alignment.TOP), label.getTextAlignment());
+        assertEquals(new Alignment(Alignment.DEFAULT, Alignment.BOTTOM), label.getTextPosition());
+        assertEquals(false, label.isLineWrap());
     }
 }
