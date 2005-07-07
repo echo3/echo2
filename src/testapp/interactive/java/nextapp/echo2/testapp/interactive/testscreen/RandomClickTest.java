@@ -58,8 +58,8 @@ public class RandomClickTest extends Column {
         setCellSpacing(new Extent(20));
         
         add(new Label("This test will randomly click a number of buttons within this application in a single server interaction. " +
-                "The primary purpose of this test is to ensure proper behavior of the ServerUpdateManager.  Durations of greater" +
-                "than 100 clicks are disabled on the live demo server.  Note that the 1,000,000 click test may take one or two" +
+                "The primary purpose of this test is to ensure proper behavior of the ServerUpdateManager.  Durations of greater " +
+                "than 100 clicks are disabled on the live demo server.  Note that the 1,000,000 click test may take one or two " +
                 "minutes to complete depending on the performance of the server."));
         
         addRandomClickButton(1);
