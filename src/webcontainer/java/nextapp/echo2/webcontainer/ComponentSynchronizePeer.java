@@ -43,8 +43,8 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
  * may be used when the client-side rendering of the component may send back
  * information to the server in response to user input.
  * <p>
- * A <strong>single</strong> instance of a given <code>ComponentSynchronizePeer</code> 
- * will be created to synchronize the state of <strong>ALL</strong> instances of 
+ * A <b>single</b> instance of a given <code>ComponentSynchronizePeer</code> 
+ * will be created to synchronize the state of <b>ALL</b> instances of 
  * a particular class of <code>Component</code>.  Thus, it is not possible to
  * store information about a component's state in this object (in contrast
  * to Echo v1.x, where a peer was created for each component instance).  Such 
