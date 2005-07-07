@@ -77,7 +77,7 @@ import org.w3c.dom.Node;
 public class SplitPanePeer 
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
     
-    //TODO Performance can be improved by implementing PartialUpdateManagers.
+    //TODO: Performance can be improved by implementing PartialUpdateManagers.
     
     private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
@@ -545,8 +545,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
                 ? (SplitPaneLayoutData) layoutData : null;
 
         if (splitPaneLayoutData != null) {
-            //BUGBUG. sort whether we want to use renderToElement, i.e., using (transitional) div align attribute....
-            // and if so, apply this elsewhere as well.
             AlignmentRender.renderToElement(paneContentDivElement, splitPaneLayoutData.getAlignment(), paneComponent);
             if (splitPaneLayoutData.getBackground() != null) {
                 paneDivCssStyle.setAttribute("background-color", 

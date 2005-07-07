@@ -159,7 +159,7 @@ public class StyleSheetTest extends Column {
     throws ComponentXmlException {
         InputStream in = null;
         try {
-            //BUGBUG. Not i18n safe.
+            // Not i18n safe.
             in = new ByteArrayInputStream(text.getBytes());
             StyleSheet styleSheet = StyleSheetLoader.load(in, StyleSheetTest.class.getClassLoader());
             return styleSheet;

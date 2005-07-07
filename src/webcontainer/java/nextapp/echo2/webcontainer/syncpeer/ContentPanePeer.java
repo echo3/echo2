@@ -62,6 +62,8 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  */
 public class ContentPanePeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
+
+    //TODO: Performance can be improved by implementing PartialUpdateManagers.
     
     private static final String IMAGE_ID_BACKGROUND = "background";
 
@@ -70,7 +72,6 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      */
     public ContentPanePeer() {
         super();
-        //BUGBUG. add registry property renderers for color, font....
     }
     
     /**
