@@ -40,23 +40,27 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
  */
 public class PartialUpdateManager {
     
+    /**
+     * Mapping between property names and 
+     * <code>PartialUpdateParticipant</code>s.
+     */
     private Map registry = null;
 
     /**
      * Adds a <code>PartialUpdateParticipant</code> to handle a given property.
      * 
      * @param propertyName the name of the property
-     * @param propertyRender the renderer
+     * @param updateParticipant the <code>PartialUpdateParticipant</code>
      */
-    public void add(String propertyName, PartialUpdateParticipant propertyRender) {
+    public void add(String propertyName, PartialUpdateParticipant updateParticipant) {
         if (registry == null) {
             registry = new HashMap();
         }
-        registry.put(propertyName, propertyRender);
+        registry.put(propertyName, updateParticipant);
     }
     
     /**
-     * Determines if this <code>PartialUpdateManager</code> has renderers
+     * Determines if this <code>PartialUpdateManager</code> has participants
      * to update all changed properties specified in <code>update</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -82,8 +86,8 @@ public class PartialUpdateManager {
     
     /**
      * Renders updates to all properties in the provided <code>update</code>.
-     * If the update contains a property for which a renderer does not exist in
-     * this registry, the given property is skipped.
+     * If the update contains a property for which a participant does not 
+     * exist in this registry, the given property is skipped.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the update to process
