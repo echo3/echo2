@@ -33,13 +33,14 @@ package nextapp.echo2.app;
  * A container which displays two components horizontally or vertically
  * adjacent to one another.
  * <p>
- * <strong>Child LayoutData</code>: Children of this component may provide
+ * <b>Child LayoutData</b>: Children of this component may provide
  * layout information using the 
  * <code>nextapp.echo2.app.layout.SplitPaneLayoutData</code> layout data object.
  * 
  * @see nextapp.echo2.app.layout.SplitPaneLayoutData
  */
-public class SplitPane extends Component {
+public class SplitPane extends Component
+implements Pane, PaneContainer {
 
     /**
      * An <code>orientation</code> constant indicating that the 
@@ -248,7 +249,7 @@ public class SplitPane extends Component {
         Boolean value = (Boolean) getProperty(PROPERTY_RESIZABLE);
         return value == null ? false : value.booleanValue();
     }
-    
+
     /**
      * No more than two children may be added.
      * 
@@ -256,6 +257,13 @@ public class SplitPane extends Component {
      */
     public boolean isValidChild(Component component) {
         return getComponentCount() <= 1;
+    }
+
+    /**
+     * @see nextapp.echo2.app.Component#isValidParent(nextapp.echo2.app.Component)
+     */
+    public boolean isValidParent(Component parent) {
+        return parent instanceof PaneContainer;
     }
     
     /**

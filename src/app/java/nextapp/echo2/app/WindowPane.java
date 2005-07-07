@@ -38,11 +38,11 @@ import nextapp.echo2.app.event.WindowPaneListener;
  * A <code>Component</code> which renders its contents in a floating, 
  * movable window.
  * <p>
- * <strong>NOTE:</strong> A <code>WindowPane</code> may only be added to 
+ * <b>NOTE:</b> A <code>WindowPane</code> may only be added to 
  * a <code>ContentPane</code>.
  */
 public class WindowPane extends Component 
-implements ModalSupport {
+implements FloatingPane, ModalSupport, PaneContainer {
 
     public static final String INPUT_CLOSE = "input_close";
     

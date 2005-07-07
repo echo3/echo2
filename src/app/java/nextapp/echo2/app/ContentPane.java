@@ -32,9 +32,16 @@ package nextapp.echo2.app;
 /**
  * A content pane is a high-level container/layout object which provides
  * layout for a content region and floating <code>WindowPane</code>s.
+ * <p>
+ * A <code>ContentPane</code> may only be added to a <code>Component</code> 
+ * which implements <code>PaneContainer</code>.
+ * <p>
+ * At most one <code>Component</code> that does NOT implement 
+ * <code>FloatingPane</code> may be added to a <code>ContentPane</code>.
+ * Any number of <code>FloatingPane</code>s may be added as children. 
  */
-public class ContentPane 
-extends Component {
+public class ContentPane extends Component 
+implements Pane, PaneContainer {
     
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     
@@ -54,6 +61,33 @@ extends Component {
         return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
     }
 
+    /**
+     * @see nextapp.echo2.app.Component#isValidChild(nextapp.echo2.app.Component)
+     */
+    public boolean isValidChild(Component child) {
+        if (child instanceof FloatingPane) {
+            // Allow addition of any number of FloatingPanes.
+            return true;
+        }
+        
+        // allow only one Non-FloatingPane child.
+        int componentCount = getComponentCount();
+        for (int i = 0; i < componentCount; ++i) {
+            if (!(getComponent(i) instanceof FloatingPane)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * @see nextapp.echo2.app.Component#isValidParent(nextapp.echo2.app.Component)
+     */
+    public boolean isValidParent(Component parent) {
+        return parent instanceof PaneContainer || parent instanceof Window;
+    }
+    
     /**
      * Sets the background image.
      * 

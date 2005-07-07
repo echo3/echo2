@@ -279,8 +279,11 @@ public class WindowPaneTest extends SplitPane {
         controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
         
-        final ContentPane contentPane = new ContentPane();
+        ContentPane contentPane = new ContentPane();
         add(contentPane);
+        
+        final Column contentColumn = new Column();
+        contentPane.add(contentColumn);
         
         WindowTestControls windowTestControls;
         windowTestControls = new WindowTestControls("Root Level", InteractiveApp.getApp().getDefaultWindow().getContent());
@@ -298,7 +301,7 @@ public class WindowPaneTest extends SplitPane {
         button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addComponentSampler(contentPane, false);
+                addComponentSampler(contentColumn, false);
             }
         });
         componentSamplerControlsColumn.add(button);
@@ -307,7 +310,7 @@ public class WindowPaneTest extends SplitPane {
         button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addComponentSampler(contentPane, true);
+                addComponentSampler(contentColumn, true);
             }
         });
         componentSamplerControlsColumn.add(button);
@@ -316,13 +319,13 @@ public class WindowPaneTest extends SplitPane {
         button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                contentPane.removeAll();
+                contentColumn.removeAll();
             }
         });
         componentSamplerControlsColumn.add(button);
     }
     
-    private void addComponentSampler(ContentPane contentPane, boolean launchModals) {
+    private void addComponentSampler(Column contentColumn, boolean launchModals) {
         Column componentSamplerColumn = new Column();
         if (launchModals) {
             componentSamplerColumn.setBorder(new Border(new Extent(5, Extent.PX), new Color(0xffafaf), Border.STYLE_INSET));
@@ -331,7 +334,7 @@ public class WindowPaneTest extends SplitPane {
         }
         componentSamplerColumn.setInsets(new Insets(10));
         componentSamplerColumn.setCellSpacing(new Extent(1));
-        contentPane.add(componentSamplerColumn);
+        contentColumn.add(componentSamplerColumn);
         
         for (int i = 1; i <= 3; ++i) {
             Button button = new Button("Button #" + i);
