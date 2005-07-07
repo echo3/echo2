@@ -30,10 +30,13 @@
 package nextapp.echo2.app;
 
 /**
- * An interface for components which support a modal state.
+ * An interface for <code>Component</code>s which support a modal state.
  */
 public interface ModalSupport { 
     
+    /**
+     * Constant for modal state property change notifications.
+     */
     public static final String MODAL_CHANGED_PROPERTY = "modal";
 
     /**
@@ -47,8 +50,6 @@ public interface ModalSupport {
      * Sets the modal state of the <code>Component</code>.
      * 
      * @param newValue the new modal state
-     * @throws UnsupportedOperationException if this component does not  
-     *         implement the <code>ModalSupport</code> marker interface.
      */
     public void setModal(boolean newValue);
 }
