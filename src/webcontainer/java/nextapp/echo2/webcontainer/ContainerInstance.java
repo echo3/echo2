@@ -97,9 +97,6 @@ public class ContainerInstance extends UserInstance {
         applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
                 new ContainerContextImpl(this));
         
-        //BUGBUG. It is probably better if the application is initialized in response to the initial
-        // sync service, rather than on the initial invocation.
-        // Note that this code doesn't necessarily move..just the place from where it's invoked.
         try {
             ApplicationInstance.setActive(applicationInstance);
             applicationInstance.doInit();
