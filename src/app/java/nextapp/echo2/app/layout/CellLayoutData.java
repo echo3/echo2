@@ -104,7 +104,7 @@ implements LayoutData {
     /**
      * Sets the background image of the cell.
      * 
-     * @param newValue the new background image.
+     * @param newValue the new background image
      */
     public void setBackgroundImage(FillImage newValue) {
         backgroundImage = newValue;
