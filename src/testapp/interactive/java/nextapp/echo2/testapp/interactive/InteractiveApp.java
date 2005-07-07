@@ -130,7 +130,11 @@ public class InteractiveApp extends ApplicationInstance {
         
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
         if (!LIVE_DEMO_SERVER && cc.getInitialParameterMap().containsKey("ghost")) {
-            startGhostTask(0, 0);
+            if (cc.getInitialParameterMap().containsKey("clicks")) {
+                startGhostTask(0, 0, Integer.parseInt((String) cc.getInitialParameterMap().get("clicks")));
+            } else {
+                startGhostTask(0, 0, 1);
+            }
         }
         
         return mainWindow;
@@ -152,14 +156,17 @@ public class InteractiveApp extends ApplicationInstance {
     }
     
     /**
-     * Starts the ghost test with the specified callback interval and run-time.
+     * Starts the ghost test with the specified callback interval, run-time,
+     * and clicks-per-iteration.
      * 
      * @param interval the callback interval between ghost actions, in
      *        milliseconds
      * @param runTime the total run-time of the ghost test, in milliseconds;
      *        specifying 0 will run the ghost test indefinitely
+     * @param clicksPerIteration the number of button clicks to perform in a 
+     *        single iteration
      */
-    public void startGhostTask(int interval, long runTime) {
+    public void startGhostTask(int interval, long runTime, int clicksPerIteration) {
         if (ghostTaskQueue != null) {
             return;
         }
@@ -167,7 +174,7 @@ public class InteractiveApp extends ApplicationInstance {
         ContainerContext containerContext = 
                 (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
         containerContext.setTaskQueueCallbackInterval(ghostTaskQueue, interval);
-        GhostTask.start(this, ghostTaskQueue, runTime);
+        GhostTask.start(this, ghostTaskQueue, runTime, clicksPerIteration);
     }
     
     /**

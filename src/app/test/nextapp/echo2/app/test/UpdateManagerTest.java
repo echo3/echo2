@@ -446,9 +446,9 @@ public class UpdateManagerTest extends TestCase  {
      *  * Window
      *    * ContentPane
      *      * Column
-     *        * Column1 
-     *          X Column2 [REMOVED]
-     *            * label [REMOVED DESCENDANT]
+     *        * Column1 [REMOVED]
+     *          X Column2 [REMOVED DESCENDANT]
+     *            X label [REMOVED DESCENDANT]
      */
     public void testRemove2() {
         Column column1 = new Column();
@@ -470,10 +470,12 @@ public class UpdateManagerTest extends TestCase  {
         
         Component[] removedChildren = componentUpdates[0].getRemovedChildren();
         assertEquals(1, removedChildren.length);
+        assertEquals(column1, removedChildren[0]);
         
         Component[] removedDescendants = componentUpdates[0].getRemovedDescendants();
-        assertEquals(1, removedDescendants.length);
-        assertEquals(label, removedDescendants[0]);
+        assertEquals(2, removedDescendants.length);
+        assertTrue(removedDescendants[0].equals(column2) || removedDescendants[1].equals(column2));
+        assertTrue(removedDescendants[0].equals(label) || removedDescendants[1].equals(label));
     }
 
     /**

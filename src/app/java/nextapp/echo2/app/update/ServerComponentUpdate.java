@@ -79,7 +79,7 @@ implements Serializable {
      * as they were children of removed children.
      */
     private Set removedDescendants;
-    
+
     /**
      * The set of child <code>Component</code>s whose <code>LayoutData</code> 
      * was updated. 
@@ -125,7 +125,7 @@ implements Serializable {
     }
     
     /**
-     * Appends the removed descendant components of the given 
+     * Appends the removed child and descendant components of the given 
      * <code>ServerComponentUpdate</code> to this 
      * <code>ServerComponentUpdate</code>'s list of removed descendants.
      * This method is invoked by the <code>ServerUpdateManager</code> when
@@ -139,14 +139,20 @@ implements Serializable {
      *        descendants are to be appended
      */
     public void appendRemovedDescendants(ServerComponentUpdate update) {
-        if (update.removedDescendants == null) {
-            // No removed descendants: do nothing.
-            return;
+        // Append removed descendants.
+        if (update.removedDescendants != null) {
+            if (removedDescendants == null) {
+                removedDescendants = new HashSet();
+            }
+            removedDescendants.addAll(update.removedDescendants);
         }
-        if (removedDescendants == null) {
-            removedDescendants = new HashSet();
+        // Append removed children.
+        if (update.removedChildren != null) {
+            if (removedDescendants == null) {
+                removedDescendants = new HashSet();
+            }
+            removedDescendants.addAll(update.removedChildren);
         }
-        removedDescendants.addAll(update.removedDescendants);
     }
     
     /**

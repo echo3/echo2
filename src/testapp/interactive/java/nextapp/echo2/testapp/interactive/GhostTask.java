@@ -48,14 +48,17 @@ implements Runnable {
      *        added 
      * @param runTime the number of milliseconds the test should run (specify 0
      *        for an indefinite amount of time)
+     * @param clicksPerIteration the number of button clicks to perform in a 
+     *        single iteration.
      */
-    static void start(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
-        app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, runTime));
+    static void start(InteractiveApp app, TaskQueueHandle taskQueue, long runTime, int clicksPerIteration) {
+        app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, runTime, clicksPerIteration));
     }
     
     private int iteration = 0;
     private boolean indefinite;
     private long stopTime;
+    private int clicksPerIteration;
     private TaskQueueHandle taskQueue;
     private InteractiveApp app;
     
@@ -67,10 +70,13 @@ implements Runnable {
      *        added
      * @param runTime the number of milliseconds the test should run (specify 0
      *        for an indefinite amount of time)
+     * @param clicksPerIteration the number of button clicks to perform in a 
+     *        single iteration.
      */
-    private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, long runTime) {
+    private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, long runTime, int clicksPerIteration) {
         this.taskQueue = taskQueue;
         this.app = app;
+        this.clicksPerIteration = clicksPerIteration;
         if (InteractiveApp.LIVE_DEMO_SERVER || runTime > 0) {
             stopTime = System.currentTimeMillis() + runTime;
         } else {
@@ -82,7 +88,9 @@ implements Runnable {
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        RandomClick.clickRandomButton();
+        for (int i = 0; i < clicksPerIteration; ++i) {
+            RandomClick.clickRandomButton();
+        }
         if (indefinite || System.currentTimeMillis() < stopTime) {
             ++iteration;
             app.setGhostIterationWindowTitle(iteration);

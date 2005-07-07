@@ -53,7 +53,7 @@ public class PushGhostTest extends Column {
         splitPaneLayoutData.setInsets(new Insets(10));
         setLayoutData(splitPaneLayoutData);
         
-        setCellSpacing(new Extent(20));
+        setCellSpacing(new Extent(3));
         
         Label label; 
         label = new Label("This test will cause the application to continuously push asynchronous updates "
@@ -71,36 +71,50 @@ public class PushGhostTest extends Column {
             add(label);
         }
         
-        Button oneMinuteStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 500ms)");
-        oneMinuteStartButton.setStyleName("Default");
-        oneMinuteStartButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                app.startGhostTask(500, 20000);
-            }
-        });
-        add(oneMinuteStartButton);
+        addTestButton(500, 20, 1);
         
         if (!InteractiveApp.LIVE_DEMO_SERVER) {
-            Button oneMinuteFastStartButton = new Button("Start Ghost Click Test (Runtime: 20s, Callback interval: 0ms)");
-            oneMinuteFastStartButton.setStyleName("Default");
-            oneMinuteFastStartButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                    app.startGhostTask(0, 20000);
-                }
-            });
-            add(oneMinuteFastStartButton);
-            
-            Button indefiniteStartButton = new Button("Start Ghost Click Test (Runtime: Indefinite, Callback interval: 0ms)");
-            indefiniteStartButton.setStyleName("Default");
-            indefiniteStartButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                    app.startGhostTask(0, 0);
-                }
-            });
-            add(indefiniteStartButton);
+            addTestButton(0, 10, 1);
+            addTestButton(0, 20, 1);
+            addTestButton(0, 60, 1);
+            addTestButton(0, 300, 1);
+            addTestButton(0, 600, 1);
+            addTestButton(0, 3600, 1);
+            addTestButton(0, 0, 1);
+
+            addTestButton(0, 10, 10);
+            addTestButton(0, 20, 10);
+            addTestButton(0, 60, 10);
+            addTestButton(0, 300, 10);
+            addTestButton(0, 600, 10);
+            addTestButton(0, 3600, 10);
+            addTestButton(0, 0, 10);
+
+            addTestButton(0, 10, 100);
+            addTestButton(0, 20, 100);
+            addTestButton(0, 60, 100);
+            addTestButton(0, 300, 100);
+            addTestButton(0, 600, 100);
+            addTestButton(0, 3600, 100);
+            addTestButton(0, 0, 100);
         }
+    }
+    
+    private void addTestButton(final int callbackInterval, final int runTimeInSeconds, final int clicksPerIteration) {
+        StringBuffer text = new StringBuffer("START (Runtime: ");
+        text.append(runTimeInSeconds == 0 ? "Indefinite" : (runTimeInSeconds + "s"));
+        text.append(", Callback interval: ");
+        text.append(callbackInterval);
+        text.append("ms, Clicks Per Iteration: ");
+        text.append(clicksPerIteration);
+        Button startButton = new Button(text.toString());
+        startButton.setStyleName("Default");
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                InteractiveApp app = (InteractiveApp)getApplicationInstance();
+                app.startGhostTask(callbackInterval, runTimeInSeconds * 1000, clicksPerIteration);
+            }
+        });
+        add(startButton);
     }
 }
