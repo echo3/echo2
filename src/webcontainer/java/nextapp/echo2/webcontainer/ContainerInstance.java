@@ -79,7 +79,7 @@ public class ContainerInstance extends UserInstance {
     private Map componentToRenderStateMap = new HashMap();
     private Map taskQueueToCallbackIntervalMap;
     private transient IdTable idTable;
-    private Map initialParameterMap;
+    private Map initialRequestParameterMap;
     
     /**
      * Creates a new <code>ContainerInstance</code>.
@@ -91,7 +91,7 @@ public class ContainerInstance extends UserInstance {
     private ContainerInstance(Connection conn) {
         super(conn);
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
-        initialParameterMap = new HashMap(conn.getRequest().getParameterMap());
+        initialRequestParameterMap = new HashMap(conn.getRequest().getParameterMap());
         applicationInstance = servlet.newApplicationInstance();
         
         applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, 
@@ -178,8 +178,8 @@ public class ContainerInstance extends UserInstance {
      * 
      * @return the initial request parameter map
      */
-    public Map getInitialParameterMap() {
-        return initialParameterMap;
+    public Map getInitialRequestParameterMap() {
+        return initialRequestParameterMap;
     }
     
     /**

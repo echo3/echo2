@@ -173,7 +173,7 @@ public class ContainerContextTest extends Column {
     }
     
     private Table createInitialParametersTable(ContainerContext containerContext) {
-        Map initialParameterMap = containerContext.getInitialParameterMap();
+        Map initialParameterMap = containerContext.getInitialRequestParameterMap();
         
         Table table = new Table();
         table.setStyleName("Default");

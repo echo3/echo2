@@ -70,12 +70,12 @@ public interface ContainerContext {
     public Cookie[] getCookies();
     
     /**
-     * Returns an immutable <code>Map</code> containing the HTTP form 
+     * Returns an immutable <code>Map</code> containing the HTTP request 
      * parameters sent on the initial request to the application.
      * 
      * @return the initial request parameter map
      */
-    public Map getInitialParameterMap();
+    public Map getInitialRequestParameterMap();
     
     /**
      * Returns the <code>HttpSession</code> in which the application is 

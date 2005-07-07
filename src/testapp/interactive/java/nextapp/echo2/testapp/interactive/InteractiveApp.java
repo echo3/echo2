@@ -129,9 +129,9 @@ public class InteractiveApp extends ApplicationInstance {
         mainWindow.setContent(new WelcomePane());
         
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-        if (!LIVE_DEMO_SERVER && cc.getInitialParameterMap().containsKey("ghost")) {
-            if (cc.getInitialParameterMap().containsKey("clicks")) {
-                startGhostTask(0, 0, Integer.parseInt((String) cc.getInitialParameterMap().get("clicks")));
+        if (!LIVE_DEMO_SERVER && cc.getInitialRequestParameterMap().containsKey("ghost")) {
+            if (cc.getInitialRequestParameterMap().containsKey("clicks")) {
+                startGhostTask(0, 0, Integer.parseInt((String) cc.getInitialRequestParameterMap().get("clicks")));
             } else {
                 startGhostTask(0, 0, 1);
             }

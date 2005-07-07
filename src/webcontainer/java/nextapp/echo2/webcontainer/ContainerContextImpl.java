@@ -83,10 +83,10 @@ implements ContainerContext, Serializable {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.ContainerContext#getInitialParameterMap()
+     * @see nextapp.echo2.webcontainer.ContainerContext#getInitialRequestParameterMap()
      */
-    public Map getInitialParameterMap() {
-        return containerInstance.getInitialParameterMap();
+    public Map getInitialRequestParameterMap() {
+        return containerInstance.getInitialRequestParameterMap();
     }
     
     /**
