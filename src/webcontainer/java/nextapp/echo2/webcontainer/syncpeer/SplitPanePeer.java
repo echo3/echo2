@@ -77,6 +77,8 @@ import org.w3c.dom.Node;
 public class SplitPanePeer 
 implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
     
+    //TODO Performance can be improved by implementing PartialUpdateManagers.
+    
     private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
     private static final String IMAGE_ID_PANE_1_BACKGROUND = "pane1Background";
@@ -141,7 +143,6 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     public SplitPanePeer() {
         super();
         partialUpdateManager = new PartialUpdateManager();
-        //BUGBUG. add property renderers to registry.
     }
     
     /**

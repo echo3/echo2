@@ -363,7 +363,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         // Determine if fully replacing the component is required.
         boolean fullReplace = false;
         if (update.hasUpdatedLayoutDataChildren()) {
-            // BUGBUG. performing unnecessary full replace on layout changes.
+            // TODO: Perform fractional update on LayoutData change instead of full replace.
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
             if (!partialUpdateManager.canProcess(rc, update)) {
