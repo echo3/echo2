@@ -51,7 +51,7 @@ public class ServerDelayMessageUpdate {
      * 
      * @param serverMessage the relevant <code>ServerMessage</code>
      */
-    public static void renderSetMessage(ServerMessage serverMessage, ServerDelayMessage serverDelayMessage) {
+    public static void renderUpdateDirective(ServerMessage serverMessage, ServerDelayMessage serverDelayMessage) {
         Document document = serverMessage.getDocument();
         Element setMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_INIT, 
                 "EchoServerDelayMessage.MessageProcessor", "set-message");

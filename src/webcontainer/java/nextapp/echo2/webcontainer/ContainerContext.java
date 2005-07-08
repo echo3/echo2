@@ -38,6 +38,7 @@ import javax.servlet.http.HttpSession;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.webrender.ClientConfiguration;
 import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.ServerDelayMessage;
 
 /**
  * Contextual information about the application container provided to an
@@ -98,7 +99,7 @@ public interface ContainerContext {
      * by querying the inbound servlet request. 
      */
     public boolean isUserInRole(String role);
-    
+
     /**
      * Sets the <code>ClientConfiguration</code> describing
      * application-specific client configuration settings.
@@ -106,6 +107,14 @@ public interface ContainerContext {
      * @param clientConfiguration the new <code>ClientConfiguration</code>
      */
     public void setClientConfiguration(ClientConfiguration clientConfiguration);
+    
+    /**
+     * Sets the <code>ServerDelayMessage</code> displayed during 
+     * client/server-interactions.
+     * 
+     * @param serverDelayMessage the new <code>ServerDelayMessage</code>
+     */
+    public void setServerDelayMessage(ServerDelayMessage serverDelayMessage);
     
     /**
      * Sets the interval between asynchronous callbacks from the client to check

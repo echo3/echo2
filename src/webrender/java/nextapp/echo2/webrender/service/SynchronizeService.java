@@ -276,7 +276,7 @@ implements Service {
                 serverMessage = renderInit(conn, clientMessageDocument);
                 ClientPropertiesStore.renderStoreDirective(serverMessage, userInstance.getClientProperties());
                 ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
-                ServerDelayMessageUpdate.renderSetMessage(serverMessage, userInstance.getServerDelayMessage());
+                ServerDelayMessageUpdate.renderUpdateDirective(serverMessage, userInstance.getServerDelayMessage());
             } else {
                 serverMessage = renderUpdate(conn, clientMessageDocument);
                 processUserInstanceUpdates(userInstance, serverMessage);
@@ -298,6 +298,8 @@ implements Service {
         for (int i = 0; i < updatedPropertyNames.length; ++i) {
             if (UserInstance.PROPERTY_CLIENT_CONFIGURATION.equals(updatedPropertyNames[i])) {
                 ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
+            } else if (UserInstance.PROPERTY_SERVER_DELAY_MESSAGE.equals(updatedPropertyNames[i])) {
+                ServerDelayMessageUpdate.renderUpdateDirective(serverMessage, userInstance.getServerDelayMessage());
             }
         }
         updateManager.purge();
