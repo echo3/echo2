@@ -75,6 +75,9 @@ EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessage
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         var selectElement = document.getElementById(elementId);
+        if (!selectElement) {
+            continue;
+        }
         var itemElements = selectElement.getElementsByTagName("div");
         for (var i = 0; i < itemElements.length; ++i) {
             EchoEventProcessor.removeHandler(itemElements[i].id, "click");
