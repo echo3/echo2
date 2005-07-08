@@ -133,6 +133,9 @@ public class GridProcessor {
      */
     private List yExtents;
     
+    /**
+     * Flag indicating whether grid has a horizontal (or vertical) orientation.
+     */
     private boolean horizontalOrientation;
     
     /**

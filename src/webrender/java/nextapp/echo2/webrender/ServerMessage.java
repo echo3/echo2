@@ -27,11 +27,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-//BUGBUG. This class needs a bit of performance analysis and tweaking.
-//        It won't necessarily yield any visible benefit, but it'd certainly
-//        be nice to know that the ItemizedDirectiveLookupKey hash code
-//        generation is not being done in vein.  AND IT NEEDS DOCS!
-
 package nextapp.echo2.webrender;
 
 import java.util.HashMap;
@@ -52,7 +47,16 @@ import nextapp.echo2.webrender.output.XmlDocument;
  */
 public class ServerMessage extends XmlDocument {
     
+    /**
+     * Constant for the use with <code>setRootLayoutDirection()</code> 
+     * indicating a left-to-right layout direction.
+     */
     public static final int LEFT_TO_RIGHT = 0;
+
+    /**
+     * Constant for the use with <code>setRootLayoutDirection()</code> 
+     * indicating a right-to-left layout direction.
+     */
     public static final int RIGHT_TO_LEFT = 1;
 
     /**
@@ -181,10 +185,17 @@ public class ServerMessage extends XmlDocument {
      */
     public static final String GROUP_ID_POSTUPDATE = "postupdate";
 
+    /** Set of added script libraries. */
     private Set addedLibraries;
 
+    /**
+     * DOM <code>libraries</code> Element to which <code>library</code>
+     * elements are added to represent individual dynamically loaded JavaScript
+     * libraries.
+     */
     private Element librariesElement;
 
+    /** Root DOM <code>server-message</code> element. */
     private Element serverMessageElement;
 
     /**

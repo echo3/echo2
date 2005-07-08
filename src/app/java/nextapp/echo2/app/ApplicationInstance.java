@@ -413,7 +413,7 @@ implements Serializable {
             return styleSheet.getStyle(componentClass, styleName);
         }
     }
-
+    
     /**
      * Retrieves the <code>UpdateManager</code> being used to manage the
      * client/server synchronization of this <code>ApplicationInstance</code>

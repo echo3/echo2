@@ -802,7 +802,6 @@ public class Table extends Component {
      * @param selectedIndices the indices to select
      */
     private void setSelectedIndices(int[] selectedIndices) {
-        //BUGBUG. may want to add this method to model.
         // Temporarily suppress the Tables selection event notifier.
         suppressChangeNotifications = true;
         ListSelectionModel selectionModel = getSelectionModel();
