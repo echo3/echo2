@@ -238,8 +238,10 @@ EchoClientConfiguration.MessageProcessor.processStore = function(storeElement) {
 
 EchoClientConfiguration.propertyMap = new Array();
 
-EchoClientConfiguration.propertyMap["serverErrorMessage"] = "An application error has occurred.  Your session has been reset.";
-EchoClientConfiguration.propertyMap["sessionExpirationMessage"] = "Your session has been reset due to inactivity.";
+EchoClientConfiguration.propertyMap["defaultServerErrorMessage"] 
+        = "An application error has occurred.  Your session has been reset.";
+EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"] 
+        = "Your session has been reset due to inactivity.";
 
 // _______________________
 // Object EchoClientEngine
@@ -282,26 +284,46 @@ EchoClientEngine.init = function(baseServerUri) {
  * Handles the expiration of server-side session information.
  */
 EchoClientEngine.processSessionExpiration = function() {
-    if (EchoClientConfiguration.propertyMap["sessionExpirationMessage"]) {
-        alert(EchoClientConfiguration.propertyMap["sessionExpirationMessage"]);
+    var message = EchoClientConfiguration.propertyMap["sessionExpirationMessage"];
+    var uri = EchoClientConfiguration.propertyMap["sessionExpirationUri"];
+
+    if (message || uri) {
+	    if (message) {
+	        alert(message);
+	    }
+	    if (uri) {
+	        window.location.href = uri;
+	    } else {
+            window.location.reload();
+	    }
+    } else {
+        message = EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"];
+        alert(message);
+        window.location.reload();
     }
-    if (EchoClientConfiguration.propertyMap["sessionExpirationUri"]) {
-        window.location.href = EchoClientConfiguration.propertyMap["sessionExpirationUri"];
-    }
-    window.location.reload();
 };
 
 /**
  * Handles a server-side error.
  */
 EchoClientEngine.processServerError = function() {
-    if (EchoClientConfiguration.propertyMap["serverErrorMessage"]) {
-        alert(EchoClientConfiguration.propertyMap["serverErrorMessage"]);
+    var message = EchoClientConfiguration.propertyMap["serverErrorMessage"];
+    var uri = EchoClientConfiguration.propertyMap["serverErrorUri"];
+
+    if (message || uri) {
+	    if (message) {
+	        alert(message);
+	    }
+	    if (uri) {
+	        window.location.href = uri;
+	    } else {
+            window.location.reload();
+	    }
+    } else {
+        message = EchoClientConfiguration.propertyMap["defaultServerErrorMessage"];
+        alert(message);
+        window.location.reload();
     }
-    if (EchoClientConfiguration.propertyMap["serverErrorUri"]) {
-        window.location.href = EchoClientConfiguration.propertyMap["serverErrorUri"];
-    }
-    window.location.reload();
 };
 
 /**
@@ -1661,11 +1683,20 @@ EchoServerDelayMessage.MessageProcessor.process = function(messagePartElement) {
  * ServerMessage parser to handle requests to set delay message text.
  */
 EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
     var i;
-    // Remove existing children.
-    for (i = serverDelayMessage.childNodes.length - 1; i >= 0; --i) {
-        serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
+    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    if (serverDelayMessage) {
+        // Remove existing children.
+        for (i = serverDelayMessage.childNodes.length - 1; i >= 0; --i) {
+            serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
+        }
+    } else {
+        // Create new root element.
+        serverDelayMessage = document.createElement("div");
+        serverDelayMessage.setAttribute("id", EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+        serverDelayMessage.style.cssText = "position:absolute;top:0px;left:0px;width:100%;height:100%;cursor:wait;"
+                + "margin:0px;padding:0px;visibility:hidden;z-index:10000;";
+        document.getElementsByTagName("body")[0].appendChild(serverDelayMessage);
     }
     // Add new children.
     var contentElement = setDelayMessageElement.getElementsByTagName("content")[0];

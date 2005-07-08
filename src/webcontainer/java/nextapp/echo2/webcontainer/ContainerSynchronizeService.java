@@ -317,9 +317,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             
-            //BUGBUG. This method of setting server delay messages is bogus.
-            ServerDelayMessageConfigurator.configureDefault(rc);
-            
             //BUGBUG. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);
             setFocus(rc, true);

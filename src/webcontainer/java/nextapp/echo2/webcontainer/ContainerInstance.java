@@ -91,6 +91,7 @@ public class ContainerInstance extends UserInstance {
     private ContainerInstance(Connection conn) {
         super(conn);
         WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
+        setServerDelayMessage(DefaultServerDelayMessage.INSTANCE);
         initialRequestParameterMap = new HashMap(conn.getRequest().getParameterMap());
         applicationInstance = servlet.newApplicationInstance();
         

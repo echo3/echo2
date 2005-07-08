@@ -45,6 +45,7 @@ public abstract class UserInstance
 implements HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
     
     public static final String PROPERTY_CLIENT_CONFIGURATION = "clientConfiguration";
+    public static final String PROPERTY_SERVER_DELAY_MESSAGE = "serverDelayMessage";
 
     /**
      * The default character encoding in which responses should be rendered.
@@ -57,6 +58,12 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      */
     private ClientConfiguration clientConfiguration;
 
+    /**
+     * The <code>ServerDelayMessage</code> displayed during 
+     * client/server-interactions.
+     */
+    private ServerDelayMessage serverDelayMessage;
+    
     /**
      * A <code>ClientProperties</code> object describing the web browser
      * client.
@@ -102,7 +109,8 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
         return characterEncoding;
     }
     
-    /**
+    /**the <code>ServerDelayMessage</code> displayed during 
+     * client/server-interactions.
      * Retrieves the <code>ClientConfiguration</code> information containing
      * application-specific client behavior settings.
      * 
@@ -120,6 +128,16 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      */
     public ClientProperties getClientProperties() {
         return clientProperties;
+    }
+    
+    /**
+     * Retrieves the <code>ServerDelayMessage</code> displayed during 
+     * client/server-interactions.
+     * 
+     * @return the <code>ServerDelayMessage</code>
+     */
+    public ServerDelayMessage getServerDelayMessage() {
+        return serverDelayMessage;
     }
     
     /**
@@ -225,6 +243,17 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      */
     void setClientProperties(ClientProperties clientProperties) {
         this.clientProperties = clientProperties;
+    }
+    
+    /**
+     * Sets the <code>ServerDelayMessage</code> displayed during 
+     * client/server-interactions.
+     * 
+     * @param serverDelayMessage the new <code>ServerDelayMessage</code>
+     */
+    public void setServerDelayMessage(ServerDelayMessage serverDelayMessage) {
+        this.serverDelayMessage = serverDelayMessage;
+        updateManager.processPropertyUpdate(PROPERTY_SERVER_DELAY_MESSAGE);
     }
 
     /**

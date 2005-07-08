@@ -54,6 +54,7 @@ import nextapp.echo2.webrender.UserInstance;
 import nextapp.echo2.webrender.UserInstanceUpdateManager;
 import nextapp.echo2.webrender.servermessage.ClientConfigurationUpdate;
 import nextapp.echo2.webrender.servermessage.ClientPropertiesStore;
+import nextapp.echo2.webrender.servermessage.ServerDelayMessageUpdate;
 import nextapp.echo2.webrender.util.DomUtil;
 
 /**
@@ -275,6 +276,7 @@ implements Service {
                 serverMessage = renderInit(conn, clientMessageDocument);
                 ClientPropertiesStore.renderStoreDirective(serverMessage, userInstance.getClientProperties());
                 ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
+                ServerDelayMessageUpdate.renderSetMessage(serverMessage, userInstance.getServerDelayMessage());
             } else {
                 serverMessage = renderUpdate(conn, clientMessageDocument);
                 processUserInstanceUpdates(userInstance, serverMessage);

@@ -31,21 +31,35 @@ package nextapp.echo2.webcontainer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.ServerDelayMessage;
 import nextapp.echo2.webrender.output.CssStyle;
-import nextapp.echo2.webrender.servermessage.ServerDelayMessage;
+import nextapp.echo2.webrender.output.XmlDocument;
 
 /**
- * 
+ * The default Web Container <code>ServerDelayMessage</code>.
  */
-public class ServerDelayMessageConfigurator {
+public class DefaultServerDelayMessage 
+extends ServerDelayMessage {
     
-    public static void configureDefault(RenderContext rc) {
-        ServerMessage serverMessage = rc.getServerMessage();
-        Document document = serverMessage.getDocument();
-        
-        Element tableElement = document.createElement("table");
+    /**
+     * Singleton instance.
+     */
+    public static final ServerDelayMessage INSTANCE = new DefaultServerDelayMessage();
+
+    /**
+     * Message content.
+     */
+    private Node messageNode;
+    
+    /**
+     * Creates the <code>DefaultServerDelayMessage</code>
+     */
+    private DefaultServerDelayMessage() {
+        XmlDocument xmlDocument = new XmlDocument("table", null, null, null);
+        Document document = xmlDocument.getDocument();
+        Element tableElement = document.getDocumentElement();
         CssStyle tableCssStyle = new CssStyle();
         tableCssStyle.setAttribute("width", "100%");
         tableCssStyle.setAttribute("height", "100%");
@@ -76,10 +90,17 @@ public class ServerDelayMessageConfigurator {
         divCssStyle.setAttribute("font-size", "10pt");
         divCssStyle.setAttribute("text-align", "center");
         divElement.setAttribute("style", divCssStyle.renderInline());
-        divElement.setAttribute("id", ServerDelayMessage.ELEMENT_ID_LONG_MESSAGE);
+        divElement.setAttribute("id", ELEMENT_ID_LONG_MESSAGE);
         divElement.appendChild(document.createTextNode("Please wait..."));
         tdElement.appendChild(divElement);
-
-        ServerDelayMessage.renderSetMessage(serverMessage, tableElement);
+        
+        messageNode = tableElement;
+    }
+    
+    /**
+     * @see nextapp.echo2.webrender.ServerDelayMessage#getMessage()
+     */
+    public Node getMessage() {
+        return messageNode;
     }
 }

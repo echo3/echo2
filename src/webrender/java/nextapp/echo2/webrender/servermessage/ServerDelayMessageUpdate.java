@@ -29,46 +29,51 @@
 
 package nextapp.echo2.webrender.servermessage;
 
+import nextapp.echo2.webrender.ServerDelayMessage;
 import nextapp.echo2.webrender.ServerMessage;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * A <code>ServerMessage</code>-utility class to render <Code>EchoServerDelayMessage</code>
  * message processor directives to configure the client-side message displayed
  * during short- and long-running server interactions.
  */
-public class ServerDelayMessage {
+public class ServerDelayMessageUpdate {
     
-    //BUGBUG. test/integrate.
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-
-    public static final String ELEMENT_ID_MESSAGE = "serverDelayMessage";
-    
-    /**
-     * The element id of the "long delay message" element which will be made 
-     * visible when the blocking pane has been displayed for a set amount
-     * of time. 
-     */
-    public static final String ELEMENT_ID_LONG_MESSAGE = "serverDelayMessageLong";
 
     /**
      * Creates a new <code>setMessage</code> directive.
      * 
      * @param serverMessage the relevant <code>ServerMessage</code>
      */
-    public static void renderSetMessage(ServerMessage serverMessage, Element htmlElement) {
+    public static void renderSetMessage(ServerMessage serverMessage, ServerDelayMessage serverDelayMessage) {
         Document document = serverMessage.getDocument();
-        
-        Element setMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+        Element setMessageElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_INIT, 
                 "EchoServerDelayMessage.MessageProcessor", "set-message");
+        if (serverDelayMessage == null) {
+            return;
+        }
         
         Element contentContainerElement = serverMessage.getDocument().createElement("content");
         setMessageElement.appendChild(contentContainerElement);
         
-        htmlElement = (Element) document.importNode(htmlElement, true); 
-        htmlElement.setAttribute("xmlns", XHTML_NAMESPACE);
-        contentContainerElement.appendChild(htmlElement);
+        Node importedMessageNode = document.importNode(serverDelayMessage.getMessage(), true);
+        if (importedMessageNode instanceof Element) {
+            ((Element) importedMessageNode).setAttribute("xmlns", XHTML_NAMESPACE);
+        } else if (importedMessageNode instanceof DocumentFragment) {
+            for (Node childNode = importedMessageNode.getFirstChild(); childNode.getNextSibling() != null; 
+                    childNode = childNode.getNextSibling()) {
+                if (childNode instanceof Element) {
+                    ((Element) childNode).setAttribute("xmlns", XHTML_NAMESPACE);
+                }
+            }
+        }
+        
+        contentContainerElement.appendChild(importedMessageNode);
     }
 }

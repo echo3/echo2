@@ -68,16 +68,12 @@ public class ServerMessage extends XmlDocument {
      * <code>getHashCode()</code> implementation for efficient lookups.
      */
     private class ItemizedDirectiveLookupKey {
+
         String groupId;
-
         String processor;
-
         String directiveName;
-
         String[] keyAttributeNames;
-
         String[] keyAttributeValues;
-
         int hashCode;
 
         /**
