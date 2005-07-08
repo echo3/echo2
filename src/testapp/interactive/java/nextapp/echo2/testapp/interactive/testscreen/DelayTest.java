@@ -93,5 +93,17 @@ public class DelayTest extends Column {
             }
         });
         add(setDefaultButton);
+        
+        Button setCustomDefaultButton = new Button("Set ServerDelayMessage to Custom DefaultServerDelayMessage");
+        setCustomDefaultButton.setStyleName("Default");
+        setCustomDefaultButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ContainerContext containerContext 
+                        = (ContainerContext) getApplicationInstance().getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+                containerContext.setServerDelayMessage(new DefaultServerDelayMessage("Well, this seems to be taking a while.  "
+                        + "Now might be a good time to grab a snack or a nice cold beverage from the kitchen."));
+            }
+        });
+        add(setCustomDefaultButton);
     }
 }

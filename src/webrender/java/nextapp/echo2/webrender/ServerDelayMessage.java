@@ -37,7 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
@@ -92,18 +92,18 @@ public abstract class ServerDelayMessage {
                 try { in.close(); } catch (IOException ex) { } 
             }
         }
-        final Node messageNode = document.getDocumentElement();
+        final Element messageElement = document.getDocumentElement();
         return new ServerDelayMessage() {
-            public Node getMessage() {
-                return messageNode;
+            public Element getMessage() {
+                return messageElement;
             }
         };
     }
     
     /**
-     * Returns the message content as an HTML fragment
+     * Returns the message content as an HTML element
      * 
-     * @return the HTML fragment
+     * @return the HTML element
      */
-    public abstract Node getMessage();
+    public abstract Element getMessage();
  }

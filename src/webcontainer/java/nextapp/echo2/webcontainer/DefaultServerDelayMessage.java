@@ -31,7 +31,6 @@ package nextapp.echo2.webcontainer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import nextapp.echo2.webrender.ServerDelayMessage;
 import nextapp.echo2.webrender.output.CssStyle;
@@ -46,26 +45,32 @@ extends ServerDelayMessage {
     /**
      * Singleton instance.
      */
-    public static final ServerDelayMessage INSTANCE = new DefaultServerDelayMessage();
+    public static final ServerDelayMessage INSTANCE = new DefaultServerDelayMessage("Please wait...");
 
     /**
      * Message content.
      */
-    private Node messageNode;
+    private Element messageElement;
     
     /**
      * Creates the <code>DefaultServerDelayMessage</code>
      */
-    private DefaultServerDelayMessage() {
-        XmlDocument xmlDocument = new XmlDocument("table", null, null, null);
+    public DefaultServerDelayMessage(String messageText) {
+        XmlDocument xmlDocument = new XmlDocument("div", null, null, null);
         Document document = xmlDocument.getDocument();
-        Element tableElement = document.getDocumentElement();
+        Element divElement = document.getDocumentElement();
+        divElement.setAttribute("id", ELEMENT_ID_MESSAGE);
+        divElement.setAttribute("style", "position:absolute;top:0px;left:0px;width:100%;height:100%;cursor:wait;"
+                + "margin:0px;padding:0px;visibility:hidden;z-index:10000;");
+
+        Element tableElement = document.createElement("table");
         CssStyle tableCssStyle = new CssStyle();
         tableCssStyle.setAttribute("width", "100%");
         tableCssStyle.setAttribute("height", "100%");
         tableCssStyle.setAttribute("border", "0px");
         tableCssStyle.setAttribute("padding", "0px");
         tableElement.setAttribute("style", tableCssStyle.renderInline());
+        divElement.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");
         tableElement.appendChild(tbodyElement);
@@ -76,31 +81,21 @@ extends ServerDelayMessage {
         Element tdElement = document.createElement("td");
         trElement.appendChild(tdElement);
         
-        Element divElement = document.createElement("div");
-        CssStyle divCssStyle = new CssStyle();
-        divCssStyle.setAttribute("margin-top", "40px");
-        divCssStyle.setAttribute("margin-left", "auto");
-        divCssStyle.setAttribute("margin-right", "auto");
-        divCssStyle.setAttribute("background-color", "#afafbf");
-        divCssStyle.setAttribute("color", "#000000");
-        divCssStyle.setAttribute("padding", "40px");
-        divCssStyle.setAttribute("width", "200px");
-        divCssStyle.setAttribute("border", "groove 2px #bfbfcf");
-        divCssStyle.setAttribute("font-family", "verdana, arial, helvetica, sans-serif");
-        divCssStyle.setAttribute("font-size", "10pt");
-        divCssStyle.setAttribute("text-align", "center");
-        divElement.setAttribute("style", divCssStyle.renderInline());
-        divElement.setAttribute("id", ELEMENT_ID_LONG_MESSAGE);
-        divElement.appendChild(document.createTextNode("Please wait..."));
-        tdElement.appendChild(divElement);
+        Element longDivElement = document.createElement("div");
+        longDivElement.setAttribute("id", ELEMENT_ID_LONG_MESSAGE);
+        longDivElement.setAttribute("style", "margin-top:40px;margin-left:auto;margin-right:auto;background-color:#afafbf;"
+                + "color:#000000;padding:40px;width:200px;border:groove 2px #bfbfcf;"
+                + "font-family:verdana,arial,helvetica,sans-serif;font-size:10pt;text-align:center;");
+        longDivElement.appendChild(document.createTextNode(messageText));
+        tdElement.appendChild(longDivElement);
         
-        messageNode = tableElement;
+        messageElement = divElement;
     }
     
     /**
      * @see nextapp.echo2.webrender.ServerDelayMessage#getMessage()
      */
-    public Node getMessage() {
-        return messageNode;
+    public Element getMessage() {
+        return messageElement;
     }
 }

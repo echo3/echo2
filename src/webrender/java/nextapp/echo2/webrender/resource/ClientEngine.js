@@ -1696,15 +1696,10 @@ EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDir
         return;
     }
 
-    // Create new root element.
-    serverDelayMessage = document.createElement("div");
-    serverDelayMessage.setAttribute("id", EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    serverDelayMessage.style.cssText = "position:absolute;top:0px;left:0px;width:100%;height:100%;cursor:wait;"
-            + "margin:0px;padding:0px;visibility:hidden;z-index:10000;";
-    document.getElementsByTagName("body")[0].appendChild(serverDelayMessage);
-
+    // Add server message content.
+    var bodyElement = document.getElementsByTagName("body")[0];
     for (i = 0; i < contentElement.childNodes.length; ++i) {
-        serverDelayMessage.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
+        bodyElement.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
     }
 };
 

@@ -33,9 +33,7 @@ import nextapp.echo2.webrender.ServerDelayMessage;
 import nextapp.echo2.webrender.ServerMessage;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * A <code>ServerMessage</code>-utility class to render <Code>EchoServerDelayMessage</code>
@@ -62,18 +60,14 @@ public class ServerDelayMessageUpdate {
         Element contentContainerElement = serverMessage.getDocument().createElement("content");
         setMessageElement.appendChild(contentContainerElement);
         
-        Node importedMessageNode = document.importNode(serverDelayMessage.getMessage(), true);
-        if (importedMessageNode instanceof Element) {
-            ((Element) importedMessageNode).setAttribute("xmlns", XHTML_NAMESPACE);
-        } else if (importedMessageNode instanceof DocumentFragment) {
-            for (Node childNode = importedMessageNode.getFirstChild(); childNode.getNextSibling() != null; 
-                    childNode = childNode.getNextSibling()) {
-                if (childNode instanceof Element) {
-                    ((Element) childNode).setAttribute("xmlns", XHTML_NAMESPACE);
-                }
-            }
+        Element messageElement = (Element) document.importNode(serverDelayMessage.getMessage(), true);
+        messageElement.setAttribute("xmlns", XHTML_NAMESPACE);
+        
+        if (!ServerDelayMessage.ELEMENT_ID_MESSAGE.equals(messageElement.getAttribute("id"))) {
+            throw new IllegalStateException("Invalid ServerDelayMessage: incorrect root element id: " 
+                    + messageElement.getAttribute("id"));
         }
         
-        contentContainerElement.appendChild(importedMessageNode);
+        contentContainerElement.appendChild(messageElement);
     }
 }
