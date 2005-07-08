@@ -41,6 +41,7 @@ import nextapp.echo2.webrender.ClientConfiguration;
 import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.ServerDelayMessage;
+import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 
 /**
@@ -85,6 +86,13 @@ implements ContainerContext, Serializable {
      */
     public Map getInitialRequestParameterMap() {
         return containerInstance.getInitialRequestParameterMap();
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#getServiceUri(nextapp.echo2.webrender.Service)
+     */
+    public String getServiceUri(Service service) {
+        return containerInstance.getServiceUri(service);
     }
     
     /**

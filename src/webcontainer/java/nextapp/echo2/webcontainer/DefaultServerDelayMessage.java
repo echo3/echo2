@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.webrender.ServerDelayMessage;
-import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.output.XmlDocument;
 
 /**
@@ -64,12 +63,7 @@ extends ServerDelayMessage {
                 + "margin:0px;padding:0px;visibility:hidden;z-index:10000;");
 
         Element tableElement = document.createElement("table");
-        CssStyle tableCssStyle = new CssStyle();
-        tableCssStyle.setAttribute("width", "100%");
-        tableCssStyle.setAttribute("height", "100%");
-        tableCssStyle.setAttribute("border", "0px");
-        tableCssStyle.setAttribute("padding", "0px");
-        tableElement.setAttribute("style", tableCssStyle.renderInline());
+        tableElement.setAttribute("style", "width:100%;height:100%;border:0px;padding:0px;");
         divElement.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");

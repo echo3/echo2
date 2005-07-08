@@ -39,6 +39,7 @@ import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.webrender.ClientConfiguration;
 import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerDelayMessage;
+import nextapp.echo2.webrender.Service;
 
 /**
  * Contextual information about the application container provided to an
@@ -78,6 +79,14 @@ public interface ContainerContext {
      * @return the initial request parameter map
      */
     public Map getInitialRequestParameterMap();
+    
+    /**
+     * Returns the URI of the specified <code>Service</code>.
+     * 
+     * @param service the <code>Service</code>
+     * @return the URI
+     */
+    public String getServiceUri(Service service);
     
     /**
      * Returns the <code>HttpSession</code> in which the application is 
