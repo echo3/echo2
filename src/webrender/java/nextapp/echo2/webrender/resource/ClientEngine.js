@@ -1682,24 +1682,27 @@ EchoServerDelayMessage.MessageProcessor.process = function(messagePartElement) {
 /**
  * ServerMessage parser to handle requests to set delay message text.
  */
-EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDelayMessageElement) {
+EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDirectiveElement) {
     var i;
     var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
     if (serverDelayMessage) {
-        // Remove existing children.
-        for (i = serverDelayMessage.childNodes.length - 1; i >= 0; --i) {
-            serverDelayMessage.removeChild(serverDelayMessage.childNodes[i]);
-        }
-    } else {
-        // Create new root element.
-        serverDelayMessage = document.createElement("div");
-        serverDelayMessage.setAttribute("id", EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-        serverDelayMessage.style.cssText = "position:absolute;top:0px;left:0px;width:100%;height:100%;cursor:wait;"
-                + "margin:0px;padding:0px;visibility:hidden;z-index:10000;";
-        document.getElementsByTagName("body")[0].appendChild(serverDelayMessage);
+        // Remove existing message.
+        serverDelayMessage.parentNode.removeChild(serverDelayMessage);
     }
-    // Add new children.
-    var contentElement = setDelayMessageElement.getElementsByTagName("content")[0];
+    
+    var contentElement = setDirectiveElement.getElementsByTagName("content")[0];
+    if (!contentElement) {
+        // Setting message to null.
+        return;
+    }
+
+    // Create new root element.
+    serverDelayMessage = document.createElement("div");
+    serverDelayMessage.setAttribute("id", EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+    serverDelayMessage.style.cssText = "position:absolute;top:0px;left:0px;width:100%;height:100%;cursor:wait;"
+            + "margin:0px;padding:0px;visibility:hidden;z-index:10000;";
+    document.getElementsByTagName("body")[0].appendChild(serverDelayMessage);
+
     for (i = 0; i < contentElement.childNodes.length; ++i) {
         serverDelayMessage.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
     }

@@ -35,6 +35,8 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.webcontainer.ContainerContext;
+import nextapp.echo2.webcontainer.DefaultServerDelayMessage;
 /**
  * A test for handling of long-running server-interactions.
  */
@@ -69,5 +71,27 @@ public class DelayTest extends Column {
             }
         });
         add(blockedButton);
+        
+        Button setNullButton = new Button("Set ServerDelayMessage to None");
+        setNullButton.setStyleName("Default");
+        setNullButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ContainerContext containerContext 
+                        = (ContainerContext) getApplicationInstance().getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+                containerContext.setServerDelayMessage(null);
+            }
+        });
+        add(setNullButton);
+        
+        Button setDefaultButton = new Button("Set ServerDelayMessage to Default");
+        setDefaultButton.setStyleName("Default");
+        setDefaultButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ContainerContext containerContext 
+                        = (ContainerContext) getApplicationInstance().getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+                containerContext.setServerDelayMessage(DefaultServerDelayMessage.INSTANCE);
+            }
+        });
+        add(setDefaultButton);
     }
 }
