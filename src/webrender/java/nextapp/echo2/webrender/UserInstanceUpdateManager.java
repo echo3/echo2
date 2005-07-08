@@ -34,16 +34,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Provides information about updated <code>UserInstance</code> properties.
+ * Provides information about changes to <code>UserInstance</code> properties
+ * of which the client engine needs to be informed.
  */
 public class UserInstanceUpdateManager 
 implements Serializable {
-    
-    //BUGBUG. docs.
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private Set updatedPropertyNames = new HashSet();
     
+    /**
+     * Retrieves the names of updated properties.
+     * This method is queried by the <code>SynchronizeService</code>.
+     * 
+     * @return an array of the updated property names (returns an empty array
+     *         if no properties have changed)
+     */
     public String[] getPropertyUpdateNames() {
         int size = updatedPropertyNames.size(); 
         if (size == 0) {
@@ -52,10 +58,21 @@ implements Serializable {
         return (String[]) updatedPropertyNames.toArray(new String[size]);
     }
     
+    /**
+     * Processes a property update from the <code>UserInstance</code>, storing
+     * the name of the property in the list of properties to be updated.
+     * 
+     * @param name the name of the property
+     */
     void processPropertyUpdate(String name) {
         updatedPropertyNames.add(name);
     }
     
+    /**
+     * Purges list of updated property names.
+     * This method is invoked by the <code>SynchronizeService</code> when it 
+     * has finished rendering the updates to the client.
+     */
     public void purge() {
         updatedPropertyNames.clear();
     }
