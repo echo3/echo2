@@ -65,6 +65,9 @@ public class RandomClick {
         // Delay test skews ghost-test based performance test results.
         blacklist.add("Delay");
         
+        // Contains buttons to deliberately throw exceptions and invalidate sessions.  Not good.
+        blacklist.add("Client Configuration");
+        
         // Command test might do a redirect, killing the ghost test.
         blacklist.add("Command");
         

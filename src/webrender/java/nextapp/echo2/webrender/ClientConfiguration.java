@@ -56,13 +56,13 @@ implements Serializable {
      * Property name indicating the alert message which should be displayed in
      * the event the session expires.
      */
-    public static final String PROPERTY_SESSION_EXPIRED_MESSAGE = "sessionExpiredMessage";
+    public static final String PROPERTY_SESSION_EXPIRATION_MESSAGE = "sessionExpirationMessage";
 
     /**
      * Property name indicating the URI which should be displayed in the event
      * the session expires.
      */
-    public static final String PROPERTY_SESSION_EXPIRED_URI = "sessionExpiredUri";
+    public static final String PROPERTY_SESSION_EXPIRATION_URI = "sessionExpirationUri";
 
     /**
      * Mapping from property names to property values.

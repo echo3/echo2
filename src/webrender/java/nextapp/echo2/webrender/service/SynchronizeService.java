@@ -51,6 +51,7 @@ import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.UserInstance;
+import nextapp.echo2.webrender.UserInstanceUpdateManager;
 import nextapp.echo2.webrender.servermessage.ClientConfigurationUpdate;
 import nextapp.echo2.webrender.servermessage.ClientPropertiesStore;
 import nextapp.echo2.webrender.util.DomUtil;
@@ -276,9 +277,27 @@ implements Service {
                 ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
             } else {
                 serverMessage = renderUpdate(conn, clientMessageDocument);
+                processUserInstanceUpdates(userInstance, serverMessage);
             }
             conn.setContentType(ContentType.TEXT_XML);
             serverMessage.render(conn.getWriter());
         }
+    }
+    
+    /**
+     * Renders updates to <code>UserInstance</code> properties.
+     * 
+     * @param userInstance
+     * @param serverMessage
+     */
+    private void processUserInstanceUpdates(UserInstance userInstance, ServerMessage serverMessage) {
+        UserInstanceUpdateManager updateManager = userInstance.getUserInstanceUpdateManager();
+        String[] updatedPropertyNames = updateManager.getPropertyUpdateNames();
+        for (int i = 0; i < updatedPropertyNames.length; ++i) {
+            if (UserInstance.PROPERTY_CLIENT_CONFIGURATION.equals(updatedPropertyNames[i])) {
+                ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
+            }
+        }
+        updateManager.purge();
     }
 }

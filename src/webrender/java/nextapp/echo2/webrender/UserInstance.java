@@ -43,6 +43,8 @@ import javax.servlet.http.HttpSessionEvent;
  */
 public abstract class UserInstance 
 implements HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
+    
+    public static final String PROPERTY_CLIENT_CONFIGURATION = "clientConfiguration";
 
     /**
      * The default character encoding in which responses should be rendered.
@@ -212,6 +214,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
      */
     public void setClientConfiguration(ClientConfiguration clientConfiguration) {
         this.clientConfiguration = clientConfiguration;
+        updateManager.processPropertyUpdate(PROPERTY_CLIENT_CONFIGURATION);
     }
     
    /**

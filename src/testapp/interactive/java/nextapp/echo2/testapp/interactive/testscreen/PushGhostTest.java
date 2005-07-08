@@ -49,6 +49,7 @@ public class PushGhostTest extends Column {
      * Default constructor.
      */
     public PushGhostTest() {
+        super();
         SplitPaneLayoutData splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setInsets(new Insets(10));
         setLayoutData(splitPaneLayoutData);
