@@ -42,8 +42,6 @@ import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.WebRenderServlet;
 
-//BUGBUG? Forced session invalidation.
-
 /**
  * <code>ContainerContext</code> implementation.
  */
