@@ -257,7 +257,6 @@ public class Table extends Component {
      * Re-renders changed rows.
      */
     protected void doRender() {
-        //BUGBUG. no header rendering yet.
         removeAll();
         int rowCount = model.getRowCount();
         int columnCount = columnModel.getColumnCount();

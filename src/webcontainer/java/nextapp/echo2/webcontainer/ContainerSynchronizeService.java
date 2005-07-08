@@ -50,7 +50,7 @@ import nextapp.echo2.webrender.UserInstance;
 import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
 
-//BUGBUG. Potentially move real work out of the service, notably processServerUpdates()
+//TODO. Potentially move real work out of the service, notably processServerUpdates()
 
 /**
  * A service which synchronizes the state of the client with that of the

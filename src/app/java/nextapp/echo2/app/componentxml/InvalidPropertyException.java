@@ -34,8 +34,6 @@ package nextapp.echo2.app.componentxml;
  */
 public class InvalidPropertyException extends ComponentXmlException {
     
-    //BUGBUG. This exception should detail what specific property caused the failure.
-    
     /**
      * Creates a new <code>InvalidPropertyException</code>.
      * 
