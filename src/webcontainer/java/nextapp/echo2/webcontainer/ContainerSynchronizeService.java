@@ -317,7 +317,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
             String targetId = parentSyncPeer.getContainerId(content);
             syncPeer.renderAdd(rc, componentUpdate, targetId, content);
             
-            //BUGBUG. clean-up how these operations are invoked on init/update.
+            //TODO. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);
             setFocus(rc, true);
             setModalContextRootId(rc);

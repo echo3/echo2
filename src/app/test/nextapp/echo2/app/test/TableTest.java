@@ -33,6 +33,7 @@ import nextapp.echo2.app.CheckBox;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Table;
+import nextapp.echo2.app.table.DefaultTableColumnModel;
 import nextapp.echo2.app.table.DefaultTableModel;
 import nextapp.echo2.app.table.TableCellRenderer;
 import junit.framework.TestCase;
@@ -41,8 +42,25 @@ import junit.framework.TestCase;
  * Unit tests for <code>Table</code> components.
  */
 public class TableTest extends TestCase {
+    
+    private DefaultTableModel createEmployeeTableModel() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnCount(3);
 
-    public void testDefaultTableModel() {
+        model.setColumnName(0, "Employee Name");
+        model.setColumnName(1, "Age");
+        model.setColumnName(2, "Manager");
+        
+        model.insertRow(0, new Object[]{"Bob Johnson", new Integer(32), Boolean.TRUE});
+        model.insertRow(1, new Object[]{"Bill Simmons", new Integer(27), Boolean.TRUE});
+        model.insertRow(2, new Object[]{"Tracy Smith", new Integer(54), Boolean.TRUE});
+        model.insertRow(3, new Object[]{"Cathy Rogers", new Integer(21), Boolean.FALSE});
+        model.insertRow(4, new Object[]{"Xavier Doe", new Integer(77), Boolean.TRUE});
+
+        return model;
+    }
+    
+    public void testDefaultColumnNames() {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnCount(3);
         
@@ -50,19 +68,35 @@ public class TableTest extends TestCase {
         assertEquals("B", model.getColumnName(1));
         assertEquals("C", model.getColumnName(2));
         
-        model.setColumnName(0, "Employee Name");
-        model.setColumnName(1, "Age");
-        model.setColumnName(2, "Manager");
+        model = new DefaultTableModel();
+        model.setColumnCount(1379);
+        
+        assertEquals("A", model.getColumnName(0));
+        assertEquals("B", model.getColumnName(1));
+        assertEquals("C", model.getColumnName(2));
+        assertEquals("Y", model.getColumnName(24));
+        assertEquals("Z", model.getColumnName(25));
+        assertEquals("AA", model.getColumnName(26));
+        assertEquals("AB", model.getColumnName(27));
+        assertEquals("AC", model.getColumnName(28));
+        assertEquals("AY", model.getColumnName(50));
+        assertEquals("AZ", model.getColumnName(51));
+        assertEquals("BA", model.getColumnName(52));
+        assertEquals("ZZ", model.getColumnName(701));
+        assertEquals("AAA", model.getColumnName(702));
+        assertEquals("AAB", model.getColumnName(703));
+        assertEquals("AAC", model.getColumnName(704));
+        assertEquals("ABA", model.getColumnName(728));
+        assertEquals("AZZ", model.getColumnName(1377));
+        assertEquals("BAA", model.getColumnName(1378));
+    }
+
+    public void testDefaultTableModel() {
+        DefaultTableModel model = createEmployeeTableModel();
         
         assertEquals("Employee Name", model.getColumnName(0));
         assertEquals("Age", model.getColumnName(1));
         assertEquals("Manager", model.getColumnName(2));
-        
-        model.insertRow(0, new Object[]{"Bob Johnson", new Integer(32), Boolean.TRUE});
-        model.insertRow(1, new Object[]{"Bill Simmons", new Integer(27), Boolean.TRUE});
-        model.insertRow(2, new Object[]{"Tracy Smith", new Integer(54), Boolean.TRUE});
-        model.insertRow(3, new Object[]{"Cathy Rogers", new Integer(21), Boolean.FALSE});
-        model.insertRow(4, new Object[]{"Xavier Doe", new Integer(77), Boolean.TRUE});
         assertEquals(3, model.getColumnCount());
         assertEquals(5, model.getRowCount());
         assertEquals("Bob Johnson", model.getValueAt(0, 0));
@@ -86,6 +120,34 @@ public class TableTest extends TestCase {
         assertEquals(Boolean.FALSE, model.getValueAt(2, 3));
     }
 
+    public void testColumModelRendering() {
+        Label label;
+        DefaultTableModel model = createEmployeeTableModel();
+        Table table = new Table(model);
+        DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
+        assertEquals(0, columnModel.getColumn(0).getModelIndex());
+        assertEquals(1, columnModel.getColumn(1).getModelIndex());
+        assertEquals(2, columnModel.getColumn(2).getModelIndex());
+        table.setAutoCreateColumnsFromModel(false);
+        table.validate();
+        
+        label = (Label) table.getComponent(4);
+        assertEquals("32", label.getText());
+        label = (Label) table.getComponent(5);
+        assertEquals("true", label.getText());
+        
+        columnModel.getColumn(2).setModelIndex(1);
+        columnModel.getColumn(1).setModelIndex(2);
+        table.setColumnModel(columnModel);
+        table.validate();
+        
+        // Indices should switch.
+        label = (Label) table.getComponent(4);
+        assertEquals("true", label.getText());
+        label = (Label) table.getComponent(5);
+        assertEquals("32", label.getText());
+    }
+    
     public void testEmptyConstructor() {
         Table table = new Table();
         assertNotNull(table.getModel());

@@ -133,7 +133,7 @@ public class Table extends Component {
         /**
          * @see nextapp.echo2.app.event.TableColumnModelListener#columnMoved(nextapp.echo2.app.event.TableColumnModelEvent)
          */
-        public void columnMoved(TableColumnModelEvent e) {
+        public void columnMoved(TableColumnModelEvent e) {            
             invalidate();
         }
 
