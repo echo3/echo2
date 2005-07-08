@@ -38,8 +38,7 @@ import nextapp.echo2.webrender.output.XmlDocument;
 /**
  * The default Web Container <code>ServerDelayMessage</code>.
  */
-public class DefaultServerDelayMessage 
-extends ServerDelayMessage {
+public class DefaultServerDelayMessage extends ServerDelayMessage {
     
     /**
      * Singleton instance.

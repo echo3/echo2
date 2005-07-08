@@ -31,6 +31,7 @@ package nextapp.echo2.webrender;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,7 +46,8 @@ import org.xml.sax.SAXException;
  * Client/server-interaction delay messages are presented to the user
  * while the client is communicating synchronously with the server. 
  */
-public abstract class ServerDelayMessage {
+public abstract class ServerDelayMessage 
+implements Serializable {
 
     /**
      * The element id of the "main delay message" element which will be made

@@ -77,7 +77,7 @@ public class ContainerInstance extends UserInstance {
     
     private ApplicationInstance applicationInstance;
     private Map componentToRenderStateMap = new HashMap();
-    private Map taskQueueToCallbackIntervalMap;
+    private transient Map taskQueueToCallbackIntervalMap;
     private transient IdTable idTable;
     private Map initialRequestParameterMap;
     
