@@ -49,25 +49,7 @@ import nextapp.echo2.app.layout.ColumnLayoutData;
  */
 public class NumberGuessApp extends ApplicationInstance {
 
-    private Window mainWindow;
-    
-    /**
-     * @see nextapp.echo2.app.ApplicationInstance#init()
-     */
-    public Window init() {
-        mainWindow = new Window();
-        mainWindow.setTitle("Echo2 Guess-A-Number");
-        startNewGame();
-        return mainWindow;
-    }
-
-    /**
-     * Starts a new game.
-     */
-    void startNewGame() {
-        // Set the content to be a new GamePane, so the 
-        mainWindow.setContent(new GamePane());
-    }
+    private Window window;
     
     /**
      * Displays a congratulatory message to the user when s/he has guessed
@@ -77,7 +59,26 @@ public class NumberGuessApp extends ApplicationInstance {
      *        correct answer.
      */
     void congratulate(int numberOfTries) {
-        mainWindow.setContent(new CongratulationsPane(numberOfTries));
+        window.setContent(new CongratulationsPane(numberOfTries));
+    }
+    
+    /**
+     * @see nextapp.echo2.app.ApplicationInstance#init()
+     */
+    public Window init() {
+        window = new Window();
+        window.setTitle("Echo2 Guess-A-Number");
+        startNewGame();
+        return window;
+    }
+
+    /**
+     * Starts a new game:
+     * Sets content of Window to a new <code>GamePane</code>.
+     */
+    void startNewGame() {
+        // Set the content to be a new GamePane, so the 
+        window.setContent(new GamePane());
     }
 }
 
@@ -88,16 +89,39 @@ public class NumberGuessApp extends ApplicationInstance {
 class GamePane extends ContentPane 
 implements ActionListener {
 
-    private int randomNumber 
-            = ((int) Math.floor(Math.random() * 100)) + 1;
+    /** Randomly generated number between 1 and 100 inclusive. */
+    private int randomNumber = ((int) Math.floor(Math.random() * 100)) + 1;
+    
+    /** The current lowest sensible guess, based on previous guesses. */
     private int lowerBound = 1;
+
+    /** The current highest sensible guess, based on previous guesses. */
     private int upperBound = 100;
+    
+    /** The number of guesses made in the current game. */
     private int numberOfTries = 0;
+    
+    /** <code>TextField</code> into which guesses are entered. */
     private TextField guessEntryField;
+    
+    /** 
+     * <code>Label</code> displaying the current "status".  Initially blank, 
+     * this label will inform the user whether his/her last guess was too 
+     * high, too low, or simply invalid.
+     */ 
     private Label statusLabel = new Label();
+    
+    /**
+     * <code>Label</code> indicating the total number of guesses made so far.
+     */
     private Label countLabel = new Label("You have made no guesses.");
+    
+    /**
+     * <code>Label</code> prompting the user to enter a new guess.  The text of
+     * this label will change as the user makes guesses to reflect the updated
+     * "sensible" range of possible guesses.
+     */
     private Label promptLabel= new Label("Guess a number between 1 and 100: ");
-    private int guess;
     
     /**
      * Creates a new <code>GamePane</code>.
@@ -155,6 +179,8 @@ implements ActionListener {
             } else {
                 countLabel.setText("You have made " + numberOfTries + " guesses.");
             }
+            
+            int guess;
 
             try {
                 guess = Integer.parseInt(guessEntryField.getDocument().getText());
