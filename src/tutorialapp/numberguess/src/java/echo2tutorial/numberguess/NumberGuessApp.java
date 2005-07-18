@@ -34,6 +34,7 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.Column;
@@ -41,6 +42,7 @@ import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.ColumnLayoutData;
 
 /**
  * Guess-a-number Tutorial Application.
@@ -104,6 +106,7 @@ implements ActionListener {
         super();
         
         Column layoutColumn = new Column();
+        layoutColumn.setInsets(new Insets(30));
         layoutColumn.setCellSpacing(new Extent(10));
         add(layoutColumn);
         
@@ -116,6 +119,9 @@ implements ActionListener {
         
         guessEntryField.setForeground(Color.WHITE);
         guessEntryField.setBackground(Color.BLUE);
+        ColumnLayoutData columnLayoutData = new ColumnLayoutData();
+        columnLayoutData.setInsets(new Insets(20, 0));
+        guessEntryField.setLayoutData(columnLayoutData);
         layoutColumn.add(guessEntryField);
         
         Button submitButton = new Button("Submit Your Guess");
@@ -193,6 +199,7 @@ implements ActionListener {
      */
     CongratulationsPane(int numberOfTries) {
         Column layoutColumn = new Column();
+        layoutColumn.setInsets(new Insets(30));
         layoutColumn.setCellSpacing(new Extent(30));
         add(layoutColumn);
         
