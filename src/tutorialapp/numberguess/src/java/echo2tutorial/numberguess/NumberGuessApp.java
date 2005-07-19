@@ -121,7 +121,7 @@ implements ActionListener {
      * this label will change as the user makes guesses to reflect the updated
      * "sensible" range of possible guesses.
      */
-    private Label promptLabel= new Label("Guess a number between 1 and 100: ");
+    private Label promptLabel = new Label("Guess a number between 1 and 100: ");
     
     /**
      * Creates a new <code>GamePane</code>.
@@ -172,41 +172,53 @@ implements ActionListener {
         if (e.getActionCommand().equals("new game")) {
             ((NumberGuessApp) ApplicationInstance.getActive()).startNewGame();
         } else if (e.getActionCommand().equals("submit guess")) {
-            ++numberOfTries;
-            
-            if (numberOfTries == 1) {
-                countLabel.setText("You have made 1 guess.");
-            } else {
-                countLabel.setText("You have made " + numberOfTries + " guesses.");
-            }
-            
-            int guess;
-
-            try {
-                guess = Integer.parseInt(guessEntryField.getDocument().getText());
-            } catch (NumberFormatException ex) {
-                statusLabel.setText("Your guess was not valid.");
-                return;
-            }
-
-            if (guess == randomNumber) {
-                ((NumberGuessApp) ApplicationInstance.getActive()).congratulate(numberOfTries);
-            } else if (guess < 1 || guess > 100) {
-                statusLabel.setText("Your guess, " + guess  + " was not between 1 and 100.");
-            } else if (guess < randomNumber) {
-                if (guess >= lowerBound) {
-                    lowerBound = guess + 1;
-                }
-                statusLabel.setText("Your guess, " + guess + " was too low.  Try again:");
-            } else if (guess > randomNumber) {
-                statusLabel.setText("Your guess, " + guess + " was too high.  Try again:");
-                if (guess <= upperBound) {
-                    upperBound = guess - 1;
-                }
-            }
-            
-            promptLabel.setText("Guess a number between " + lowerBound + " and " + upperBound + ": ");
+            processGuess();
         }
+    }
+    
+    /**
+     * Processes a user's guess.
+     */
+    private void processGuess() {
+        
+        int guess;
+        try {
+            guess = Integer.parseInt(guessEntryField.getDocument().getText());
+        } catch (NumberFormatException ex) {
+            statusLabel.setText("Your guess was not valid.");
+            return;
+        }
+
+        ++numberOfTries;
+
+        if (guess == randomNumber) {
+            ((NumberGuessApp) ApplicationInstance.getActive()).congratulate(numberOfTries);
+            return;
+        }
+        
+        if (guess < 1 || guess > 100) {
+            statusLabel.setText("Your guess, " + guess  + " was not between 1 and 100.");
+        } else if (guess < randomNumber) {
+            if (guess >= lowerBound) {
+                lowerBound = guess + 1;
+            }
+            statusLabel.setText("Your guess, " + guess + " was too low.  Try again:");
+        } else if (guess > randomNumber) {
+            statusLabel.setText("Your guess, " + guess + " was too high.  Try again:");
+            if (guess <= upperBound) {
+                upperBound = guess - 1;
+            }
+        }
+
+        // Update number of tries label.
+        if (numberOfTries == 1) {
+            countLabel.setText("You have made 1 guess.");
+        } else {
+            countLabel.setText("You have made " + numberOfTries + " guesses.");
+        }
+        
+        // Update the prompt label to reflect the new sensible range of numbers.
+        promptLabel.setText("Guess a number between " + lowerBound + " and " + upperBound + ": ");
     }
 }
 
