@@ -129,5 +129,7 @@ public class WindowPaneTest extends TestCase {
         assertEquals(Color.PINK, windowPane.getTitleForeground());
         windowPane.setWidth(TestConstants.EXTENT_500_PX);
         assertEquals(TestConstants.EXTENT_500_PX, windowPane.getWidth());
+        windowPane.setClosable(false);
+        assertFalse(windowPane.isClosable());
     }
 }

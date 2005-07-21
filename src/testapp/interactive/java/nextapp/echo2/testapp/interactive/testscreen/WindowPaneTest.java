@@ -139,9 +139,10 @@ public class WindowPaneTest extends SplitPane {
                     targetContentPane.add(windowPane);
                 }
             });
-            addButton("Add SplitPane Window", new ActionListener() {
+            addButton("Add SplitPane Window (No Close Icon)", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     final WindowPane windowPane = new WindowPane();
+                    windowPane.setClosable(false);
                     positionWindowPane(windowPane);
                     targetContentPane.add(windowPane);
                     windowPane.setTitle("SplitPane Window #" + windowNumber++);

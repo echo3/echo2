@@ -99,6 +99,7 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
  */
 EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     var elementId = initElement.getAttribute("eid");
+    var closable = initElement.getAttribute("closable") == "true";
     var movable = initElement.getAttribute("movable") == "true";
     var resizable = initElement.getAttribute("resizable") == "true";
     var containerId = initElement.getAttribute("container-id");
@@ -118,9 +119,13 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     
     EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
     EchoWindowPane.ZIndexManager.add(containerId, elementId);
-    EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
+    if (closable) {
+        EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
+    }
     if (movable) {
-        EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
+        if (closable) {
+            EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
+        }
         EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.processTitleMouseDown");
     }
     if (resizable) {

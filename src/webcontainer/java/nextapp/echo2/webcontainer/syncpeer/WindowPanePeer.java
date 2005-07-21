@@ -180,7 +180,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element actionElement) {
-        ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, WindowPane.INPUT_CLOSE, null);
+        WindowPane windowPane = (WindowPane) component;
+        boolean closable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE, Boolean.TRUE)).booleanValue();
+        if (closable) {
+            ci.getUpdateManager().getClientUpdateManager().setComponentAction(component, WindowPane.INPUT_CLOSE, null);
+        }
     }
 
     /**
@@ -612,23 +616,26 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         
         // Add Close Icon.
-        Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS);
-        if (closeIconInsets == null) {
-            closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
+        boolean closable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE, Boolean.TRUE)).booleanValue();
+        if (closable) {
+            Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS);
+            if (closeIconInsets == null) {
+                closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
+            }
+            Element closeIconDivElement = document.createElement("div");
+            closeIconDivElement.setAttribute("id", elementId + "_close");
+            CssStyle closeIconDivCssStyle = new CssStyle();
+            closeIconDivCssStyle.setAttribute("cursor", "pointer");
+            closeIconDivCssStyle.setAttribute("position", "absolute");
+            closeIconDivCssStyle.setAttribute("right", "0px");
+            closeIconDivCssStyle.setAttribute("top", "0px");
+            InsetsRender.renderToStyle(closeIconDivCssStyle, "padding", closeIconInsets);
+            closeIconDivElement.setAttribute("style", closeIconDivCssStyle.renderInline());
+            titleContainerDivElement.appendChild(closeIconDivElement);
+            
+            Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_CLOSE_ICON);
+            closeIconDivElement.appendChild(imgElement);
         }
-        Element closeIconDivElement = document.createElement("div");
-        closeIconDivElement.setAttribute("id", elementId + "_close");
-        CssStyle closeIconDivCssStyle = new CssStyle();
-        closeIconDivCssStyle.setAttribute("cursor", "pointer");
-        closeIconDivCssStyle.setAttribute("position", "absolute");
-        closeIconDivCssStyle.setAttribute("right", "0px");
-        closeIconDivCssStyle.setAttribute("top", "0px");
-        InsetsRender.renderToStyle(closeIconDivCssStyle, "padding", closeIconInsets);
-        closeIconDivElement.setAttribute("style", closeIconDivCssStyle.renderInline());
-        titleContainerDivElement.appendChild(closeIconDivElement);
-        
-        Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_CLOSE_ICON);
-        closeIconDivElement.appendChild(imgElement);
 
         // Create outer content DIV Element.
         Element outerContentDivElement = document.createElement("div");
@@ -684,6 +691,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private void renderInitDirective(RenderContext rc, WindowPane windowPane) {
         String elementId = ContainerInstance.getElementId(windowPane);
         ServerMessage serverMessage = rc.getServerMessage();
+        boolean closable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE, Boolean.TRUE)).booleanValue();
         boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
         boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
         String minimumWidth = ExtentRender.renderCssAttributePixelValue(
@@ -698,6 +706,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
                 "EchoWindowPane.MessageProcessor", "init");
         initElement.setAttribute("eid", elementId);
+        initElement.setAttribute("closable", closable ? "true" : "false");
         initElement.setAttribute("movable", movable ? "true" : "false");
         initElement.setAttribute("resizable", resizable ? "true" : "false");
         initElement.setAttribute("container-id", windowPane.getParent().getRenderId());

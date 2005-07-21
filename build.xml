@@ -91,7 +91,7 @@
 
     <target name="test.app" depends="test.compile.app" description="Test Echo app Framework">
         <mkdir dir="${dir.testoutput.app}"/>
-        <junit printsummary="yes" haltonfailure="yes">
+        <junit printsummary="yes" haltonfailure="no">
             <classpath>
                 <pathelement path="${dir.build.test.app}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.echo.app}"/>

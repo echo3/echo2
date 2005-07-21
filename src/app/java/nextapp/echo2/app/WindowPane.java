@@ -47,6 +47,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
     public static final String INPUT_CLOSE = "input_close";
     
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_CLOSABLE = "closable";
     public static final String PROPERTY_CLOSE_ICON = "closeIcon";
     public static final String PROPERTY_CLOSE_ICON_INSETS = "closeIconInsets";
     public static final String PROPERTY_DEFAULT_CLOSE_OPERATION = "defaultCloseOperation";
@@ -374,6 +375,17 @@ implements FloatingPane, ModalSupport, PaneContainer {
     }
     
     /**
+     * Determines if the window is closable via a provided close button in
+     * the title bar.
+     * 
+     * @return true if the window is closable
+     */
+    public boolean isClosable() {
+        Boolean value = (Boolean) getProperty(PROPERTY_CLOSABLE);
+        return value == null ? true: value.booleanValue();
+    }
+    
+    /**
      * @see nextapp.echo2.app.ModalSupport#isModal()
      */
     public boolean isModal() {
@@ -383,7 +395,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
     /**
      * Determines if the window is movable.
      * 
-     * @return true if the window is movable.
+     * @return true if the window is movable
      */
     public boolean isMovable() {
         Boolean value = (Boolean) getProperty(PROPERTY_MOVABLE);
@@ -393,7 +405,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
     /**
      * Determines if the window is resizable.
      * 
-     * @return true if the window is resizable.
+     * @return true if the window is resizable
      */
     public boolean isResizable() {
         Boolean value = (Boolean) getProperty(PROPERTY_RESIZABLE);
@@ -444,6 +456,16 @@ implements FloatingPane, ModalSupport, PaneContainer {
      */
     public void setBorder(FillImageBorder newValue) {
         setProperty(PROPERTY_BORDER, newValue);
+    }
+    
+    /**
+     * Sets whether the window is closable via a provided close button in
+     * the title bar.
+     * 
+     * @param newValue true if the window is closable
+     */
+    public void setClosable(boolean newValue) {
+        setProperty(PROPERTY_CLOSABLE, new Boolean(newValue));
     }
     
     /**
