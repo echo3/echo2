@@ -61,7 +61,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         }
     };
     
-    EchoDebug.Console.write = function() {
+    EchoDebug.Console.write = function(message) {
         var divElement = document.createElement("div");
         ++EchoDebug.nextId;
         divElement.setAttribute("id", "x_" + EchoDebug.nextId);
