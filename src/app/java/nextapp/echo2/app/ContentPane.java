@@ -131,6 +131,8 @@ implements Pane, PaneContainer {
     /**
      * Sets the horizontal scrollbar position.
      * Values must be in pixel units.
+     * A value of -1px indicates that the scrollbar should be positioned
+     * at the end of the range. 
      * 
      * @param newValue the new horizontal scrollbar position
      */
@@ -141,6 +143,8 @@ implements Pane, PaneContainer {
     /**
      * Sets the vertical scrollbar position.
      * Values must be in pixel units.
+     * A value of -1px indicates that the scrollbar should be positioned
+     * at the end of the range. 
      * 
      * @param newValue the new vertical scrollbar position
      */
