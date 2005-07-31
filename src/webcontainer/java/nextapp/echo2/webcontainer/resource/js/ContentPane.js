@@ -116,6 +116,9 @@ EchoContentPane.MessageProcessor.processInit = function(initMessageElement) {
 EchoContentPane.MessageProcessor.processScroll = function(scrollMessageElement) {
     var elementId = scrollMessageElement.getAttribute("eid");
     var position = parseInt(scrollMessageElement.getAttribute("position"));
+    if (position < 0) {
+        position = 1000000;
+    }
 
     if (scrollMessageElement.nodeName == "scroll-horizontal") {
         document.getElementById(elementId).scrollLeft = position;

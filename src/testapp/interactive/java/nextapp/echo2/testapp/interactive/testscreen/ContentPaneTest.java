@@ -142,6 +142,11 @@ public class ContentPaneTest extends SplitPane {
                 testContentPane.setHorizontalScroll(new Extent(100));
             }
         });
+        controlsColumn.addButton("Set Horizontal Scroll = End (-1)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setHorizontalScroll(new Extent(-1));
+            }
+        });
 
         controlsColumn.addButton("Set Vertical Scroll = null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -161,6 +166,11 @@ public class ContentPaneTest extends SplitPane {
         controlsColumn.addButton("Set Vertical Scroll = 100", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testContentPane.setVerticalScroll(new Extent(100));
+            }
+        });
+        controlsColumn.addButton("Set Vertical Scroll = End (-1)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setVerticalScroll(new Extent(-1));
             }
         });
     }
