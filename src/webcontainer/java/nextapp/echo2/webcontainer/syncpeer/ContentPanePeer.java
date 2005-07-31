@@ -300,6 +300,15 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
         itemizedUpdateElement.appendChild(itemElement);
     }
     
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to update
+     * the scroll bar positions of a <code>ContentPane</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param contentPane the <code>ContentPane</code>
+     * @param horizontal a flag indicating whether the horizontal (true) or 
+     *        vertical (false) scroll bar position should be updated
+     */
     private void renderScrollDirective(RenderContext rc, ContentPane contentPane, boolean horizontal) {
         ServerMessage serverMessage = rc.getServerMessage();
         Element scrollElement = 

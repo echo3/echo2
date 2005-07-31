@@ -44,7 +44,7 @@ import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
 /**
- * 
+ * Interactive test module for <code>SplitPane</code>s.
  */
 public class SplitPaneTest extends SplitPane {
     
