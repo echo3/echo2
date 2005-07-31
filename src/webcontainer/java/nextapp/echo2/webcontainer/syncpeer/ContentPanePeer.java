@@ -360,6 +360,14 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
-        // BUGBUG. not processing yet.
+        if ("horizontalScroll".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {
+            Extent newValue = ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)); 
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    ContentPane.PROPERTY_HORIZONTAL_SCROLL, newValue);
+        } else if ("verticalScroll".equals(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME))) {
+            Extent newValue = ExtentRender.toExtent(propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_VALUE)); 
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    ContentPane.PROPERTY_VERTICAL_SCROLL, newValue);
+        } 
     }
 }

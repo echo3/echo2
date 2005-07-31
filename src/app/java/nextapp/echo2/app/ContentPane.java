@@ -109,6 +109,17 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String inputName, Object inputValue) {
+        if (PROPERTY_HORIZONTAL_SCROLL.equals(inputName)) {
+            setHorizontalScroll((Extent) inputValue);
+        } else if (PROPERTY_VERTICAL_SCROLL.equals(inputName)) {
+            setVerticalScroll((Extent) inputValue);
+        }
+    }
+    
+    /**
      * Sets the background image.
      * 
      * @param newValue the new background image
