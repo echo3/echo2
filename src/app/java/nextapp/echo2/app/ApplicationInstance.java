@@ -430,13 +430,15 @@ implements Serializable {
      * 
      * @return true if the instance has any task queues
      */
-    public boolean hasTaskQueues() {
+    public final boolean hasTaskQueues() {
         return taskQueueMap.size() > 0;
     }
     
     /**
      * Determines if there are any queued tasks in any of the task
      * queues associated with this <code>ApplicationInstance</code>.
+     * This method may be overridden to check to enqueue tasks if
+     * desired.
      * 
      * @return true if any tasks are queued
      */

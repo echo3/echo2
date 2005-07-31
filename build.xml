@@ -51,7 +51,7 @@
     </target>
     
     <!-- Clean -->
-    <target name="clean" depends="clean.tutorialapp, clean.exampleapp.email" 
+    <target name="clean" depends="clean.tutorialapp, clean.exampleapp.email, clean.exampleapp.chat, clean.exampleapp.helloworld" 
             description="Clears all generated files, including build directories, distributables, and documentation">
         <delete dir="${dir.build}"/>
         <delete dir="${dir.dist}"/>
@@ -437,12 +437,38 @@
         </ant>
     </target>
     
+    <target name="clean.exampleapp.chat">
+        <ant dir="${dir.src.exampleapp.chatserver}" target="clean"/>
+        <ant dir="${dir.src.exampleapp.chatclient}" target="clean"/>
+    </target>
+
+    <target name="dist.exampleapp.chat">
+        <ant dir="${dir.src.exampleapp.chatserver}" target="war" inheritAll="false"/>
+        <ant dir="${dir.src.exampleapp.chatclient}" target="war" inheritAll="false">
+            <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
+            <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+        </ant>
+    </target>
+    
     <target name="clean.exampleapp.email">
         <ant dir="${dir.src.exampleapp.email}" target="clean"/>
     </target>
     
     <target name="dist.exampleapp.email">
         <ant dir="${dir.src.exampleapp.email}" target="war" inheritAll="false">
+            <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
+            <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+        </ant>
+    </target>
+    
+    <target name="clean.exampleapp.helloworld">
+        <ant dir="${dir.src.exampleapp.helloworld}" target="clean"/>
+    </target>
+    
+    <target name="dist.exampleapp.helloworld">
+        <ant dir="${dir.src.exampleapp.helloworld}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
             <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
             <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>

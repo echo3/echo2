@@ -27,7 +27,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package echo2example.email;
+package echo2example.chatclient;
 
 import java.util.EventListener;
 
