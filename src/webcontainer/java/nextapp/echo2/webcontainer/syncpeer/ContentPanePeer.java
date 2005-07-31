@@ -37,6 +37,7 @@ import org.w3c.dom.Node;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
@@ -44,15 +45,23 @@ import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
+import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
+import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
+import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.service.JavaScriptService;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.ContentPane</code> components.
@@ -61,17 +70,52 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  * Echo framework.
  */
 public class ContentPanePeer 
-implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
+implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor {
 
-    //TODO: Performance can be improved by implementing PartialUpdateManagers.
+    //TODO: Performance can be improved by implementing MORE PartialUpdateManagers.
+
+    private static final Extent EXTENT_0 = new Extent(0);
     
     private static final String IMAGE_ID_BACKGROUND = "background";
 
+    /**
+     * Service to provide supporting JavaScript library.
+     */
+    private static final Service CONTENT_PANE_SERVICE = JavaScriptService.forResource("Echo.ContentPane",
+            "/nextapp/echo2/webcontainer/resource/js/ContentPane.js");
+
+    static {
+        WebRenderServlet.getServiceRegistry().add(CONTENT_PANE_SERVICE);
+    }
+    
+    private PartialUpdateManager partialUpdateManager; 
+    
     /**
      * Default constructor.
      */
     public ContentPanePeer() {
         super();
+        partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(ContentPane.PROPERTY_HORIZONTAL_SCROLL, new PartialUpdateParticipant() {
+        
+            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+                renderScrollDirective(rc, (ContentPane) update.getParent(), true);
+            }
+        
+            public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+                return true;
+            }
+        });
+        partialUpdateManager.add(ContentPane.PROPERTY_VERTICAL_SCROLL, new PartialUpdateParticipant() {
+        
+            public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+                renderScrollDirective(rc, (ContentPane) update.getParent(), false);
+            }
+        
+            public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+                return true;
+            }
+        });
     }
     
     /**
@@ -171,7 +215,25 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        // Do nothing.
+        rc.getServerMessage().addLibrary(CONTENT_PANE_SERVICE.getId());
+        renderDisposeDirective(rc, (ContentPane) component);
+    }
+    
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * dispose the state of a <code>ContentPane</code>, performing tasks such as
+     * unregistering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param contentPane the <code>ContentPane</code>
+     */
+    private void renderDisposeDirective(RenderContext rc, ContentPane contentPane) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
+                "EchoContentPane.MessageProcessor", "dispose",  new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", ContainerInstance.getElementId(contentPane));
+        itemizedUpdateElement.appendChild(itemElement);
     }
     
     /**
@@ -181,6 +243,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         ContentPane contentPane = (ContentPane) component;
         
+        ServerMessage serverMessage = rc.getServerMessage();
+        serverMessage.addLibrary(CONTENT_PANE_SERVICE.getId());
+
         Document document = parentNode.getOwnerDocument();
         Element divElement = document.createElement("div");
         divElement.setAttribute("id", ContainerInstance.getElementId(component));
@@ -189,6 +254,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         cssStyle.setAttribute("position", "absolute");
         cssStyle.setAttribute("width", "100%");
         cssStyle.setAttribute("height", "100%");
+        cssStyle.setAttribute("overflow", "auto");
         ColorRender.renderToStyle(cssStyle, (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_FOREGROUND),
                 (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) contentPane.getRenderProperty(ContentPane.PROPERTY_FONT));
@@ -197,11 +263,52 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         divElement.setAttribute("style", cssStyle.renderInline());
         
         parentNode.appendChild(divElement);
+
+        // Render initialization directive.
+        renderInitDirective(rc, contentPane);
         
         Component[] children = contentPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
             renderChild(rc, update, divElement, component, children[i]);
         }
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * initialize the state of a <code>ContentPane</code>, performing tasks 
+     * such as registering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param contentPane the <code>ContentPane</code>
+     */
+    private void renderInitDirective(RenderContext rc, ContentPane contentPane) {
+        String elementId = ContainerInstance.getElementId(contentPane);
+        ServerMessage serverMessage = rc.getServerMessage();
+
+        Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
+                "EchoContentPane.MessageProcessor", "init", new String[0], new String[0]);
+        Element itemElement = serverMessage.getDocument().createElement("item");
+        itemElement.setAttribute("eid", elementId);
+        Extent horizontalScroll = (Extent) contentPane.getRenderProperty(ContentPane.PROPERTY_HORIZONTAL_SCROLL);
+        if (horizontalScroll != null && horizontalScroll.getValue() != 0) {
+            itemElement.setAttribute("horizontal-scroll", ExtentRender.renderCssAttributeValue(horizontalScroll));
+        }
+        Extent verticalScroll = (Extent) contentPane.getRenderProperty(ContentPane.PROPERTY_VERTICAL_SCROLL);
+        if (verticalScroll != null && verticalScroll.getValue() != 0) {
+            itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributeValue(verticalScroll));
+        }
+        itemizedUpdateElement.appendChild(itemElement);
+    }
+    
+    private void renderScrollDirective(RenderContext rc, ContentPane contentPane, boolean horizontal) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element scrollElement = 
+                serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, "EchoContentPane.MessageProcessor",
+                horizontal ? "scroll-horizontal" : "scroll-vertical");
+        Extent position = (Extent) contentPane.getRenderProperty(
+                horizontal ? ContentPane.PROPERTY_HORIZONTAL_SCROLL : ContentPane.PROPERTY_VERTICAL_SCROLL, EXTENT_0);
+        scrollElement.setAttribute("eid", ContainerInstance.getElementId(contentPane));
+        scrollElement.setAttribute("position", ExtentRender.renderCssAttributeValue(position));
     }
 
     /**
@@ -229,7 +336,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         if (update.hasUpdatedLayoutDataChildren()) {
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
-            fullReplace = true;
+            if (!partialUpdateManager.canProcess(rc, update)) {
+                fullReplace = true;
+            }
         }
         
         if (fullReplace) {
@@ -238,9 +347,19 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                     ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
+            partialUpdateManager.process(rc, update);
             renderRemoveChildren(rc, update);
             renderAddChildren(rc, update);
         }
         return fullReplace;
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
+     *      nextapp.echo2.webcontainer.ContainerInstance,
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
+        // BUGBUG. not processing yet.
     }
 }

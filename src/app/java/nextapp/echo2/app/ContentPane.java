@@ -44,6 +44,8 @@ public class ContentPane extends Component
 implements Pane, PaneContainer {
     
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
+    public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
+    public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
     
     /**
      * Creates a new <code>ContentPane</code>.
@@ -59,6 +61,24 @@ implements Pane, PaneContainer {
      */
     public FillImage getBackgroundImage() {
         return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the horizontal scrollbar position.
+     * 
+     * @return the horizontal scrollbar position
+     */
+    public Extent getHorizontalScroll() {
+        return (Extent) getProperty(PROPERTY_HORIZONTAL_SCROLL);
+    }
+
+    /**
+     * Returns the vertical scrollbar position.
+     * 
+     * @return the vertical scrollbar position
+     */
+    public Extent getVerticalScroll() {
+        return (Extent) getProperty(PROPERTY_VERTICAL_SCROLL);
     }
 
     /**
@@ -95,5 +115,25 @@ implements Pane, PaneContainer {
      */
     public void setBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets the horizontal scrollbar position.
+     * Values must be in pixel units.
+     * 
+     * @param newValue the new horizontal scrollbar position
+     */
+    public void setHorizontalScroll(Extent newValue) {
+        setProperty(PROPERTY_HORIZONTAL_SCROLL, newValue);
+    }
+
+    /**
+     * Sets the vertical scrollbar position.
+     * Values must be in pixel units.
+     * 
+     * @param newValue the new vertical scrollbar position
+     */
+    public void setVerticalScroll(Extent newValue) {
+        setProperty(PROPERTY_VERTICAL_SCROLL, newValue);
     }
 }

@@ -31,7 +31,9 @@ package nextapp.echo2.testapp.interactive.testscreen;
 
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
@@ -47,32 +49,116 @@ public class ContentPaneTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        final ContentPane contentPane = InteractiveApp.getApp().getDefaultWindow().getContent();
+        final ContentPane rootContentPane = InteractiveApp.getApp().getDefaultWindow().getContent();
+        final Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1 + StyleUtil.QUASI_LATIN_TEXT_1);
         
         ButtonColumn controlsColumn = new ButtonColumn();
         controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
+        
+        final ContentPane testContentPane = new ContentPane();
+        add(testContentPane);
+
+        controlsColumn.add(new Label("Root Content Pane"));
 
         controlsColumn.addButton("Reset", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                contentPane.setBackground(null);
-                contentPane.setForeground(null);
-                contentPane.setFont(null);
+                rootContentPane.setBackground(null);
+                rootContentPane.setForeground(null);
+                rootContentPane.setFont(null);
             }
         });
         controlsColumn.addButton("Change Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                contentPane.setBackground(StyleUtil.randomColor());
+                rootContentPane.setBackground(StyleUtil.randomColor());
             }
         });
         controlsColumn.addButton("Change Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                contentPane.setForeground(StyleUtil.randomColor());
+                rootContentPane.setForeground(StyleUtil.randomColor());
             }
         });
         controlsColumn.addButton("Change Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                contentPane.setFont(StyleUtil.randomFont());
+                rootContentPane.setFont(StyleUtil.randomFont());
+            }
+        });
+        
+        controlsColumn.add(new Label("Test Content Pane"));
+        
+        controlsColumn.addButton("Reset", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setBackground(null);
+                testContentPane.setForeground(null);
+                testContentPane.setFont(null);
+            }
+        });
+        controlsColumn.addButton("Change Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Change Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Change Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setFont(StyleUtil.randomFont());
+            }
+        });
+        
+        controlsColumn.addButton("Add Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.add(contentLabel);
+            }
+        });
+        controlsColumn.addButton("Add WindowPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.add(new WindowPane());
+            }
+        });
+        
+        controlsColumn.addButton("Set Horizontal Scroll = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setHorizontalScroll(null);
+            }
+        });
+        controlsColumn.addButton("Set Horizontal Scroll = 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setHorizontalScroll(new Extent(0));
+            }
+        });
+        controlsColumn.addButton("Set Horizontal Scroll = 50", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setHorizontalScroll(new Extent(50));
+            }
+        });
+        controlsColumn.addButton("Set Horizontal Scroll = 100", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setHorizontalScroll(new Extent(100));
+            }
+        });
+
+        controlsColumn.addButton("Set Vertical Scroll = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setVerticalScroll(null);
+            }
+        });
+        controlsColumn.addButton("Set Vertical Scroll = 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setVerticalScroll(new Extent(0));
+            }
+        });
+        controlsColumn.addButton("Set Vertical Scroll = 50", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setVerticalScroll(new Extent(50));
+            }
+        });
+        controlsColumn.addButton("Set Vertical Scroll = 100", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setVerticalScroll(new Extent(100));
             }
         });
     }

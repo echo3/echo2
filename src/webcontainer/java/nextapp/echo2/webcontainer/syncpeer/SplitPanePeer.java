@@ -367,8 +367,8 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
 
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a split pane, performing tasks such as unregistering
-     * event listeners on the client.
+     * dispose the state of a <code>SplitPane</code>, performing tasks such as
+     * unregistering event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param splitPane the <code>SplitPane</code>
@@ -433,11 +433,11 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * initialize the state of a split pane, performing tasks such as 
-     * registering event listeners on the client.
+     * initialize the state of a <code>SplitPane</code>, performing tasks such
+     * as registering event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param splitPane the <code>WindowPane</code>
+     * @param splitPane the <code>SplitPane</code>
      */
     private void renderInitDirective(RenderContext rc, SplitPane splitPane) {
         String elementId = ContainerInstance.getElementId(splitPane);
