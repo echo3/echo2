@@ -44,8 +44,13 @@ public class Styles {
     public static final String IMAGE_PATH = "/nextapp/echo2/testapp/interactive/resource/image/";
     public static final String STYLE_PATH = "/nextapp/echo2/testapp/interactive/resource/style/";
 
-    public static final ImageReference COMPOSE_MAIL_ICON = new ResourceImageReference(IMAGE_PATH + "Icon24MailCompose.gif"); 
-    public static final ImageReference NO_ICON = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
+    public static final ImageReference ICON_24_MAIL_COMPOSE = new ResourceImageReference(IMAGE_PATH + "Icon24MailCompose.gif"); 
+    public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
+    public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");
+    public static final ImageReference ECHO2_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo2.png");
+    public static final ImageReference INTERACTIVE_TEST_APPLICATION_IMAGE 
+            = new ResourceImageReference(IMAGE_PATH + "InteractiveTestApplication.png");
+    public static final ImageReference NEXTAPP_LOGO = new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
     
     public static final FillImage BG_SHADOW_DARK_BLUE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ShadowBackgroundDarkBlue.png"), null, null, FillImage.NO_REPEAT);
@@ -72,11 +77,12 @@ public class Styles {
     public static final FillImage BUTTON_ROLLOVER_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ButtonRolloverBackground.png"));
     
-    public static final ImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");
+    
+    public static final ImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "Logo.png");
     public static final ImageReference ROLLOVER_ICON_LOGO 
-            = new ResourceImageReference(IMAGE_PATH + "NextAppLogoRollover.png");
+            = new ResourceImageReference(IMAGE_PATH + "LogoRollover.png");
     public static final ImageReference PRESSED_ICON_LOGO 
-            = new ResourceImageReference(IMAGE_PATH + "NextAppLogoPressed.png");
+            = new ResourceImageReference(IMAGE_PATH + "LogoPressed.png");
 
     public static final StyleSheet DEFAULT_STYLE_SHEET;
     public static final StyleSheet GREEN_STYLE_SHEET;

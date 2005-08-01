@@ -196,6 +196,37 @@
    </property>
   </properties>
  </style>
+ <style name="ControlPane.Button" type="nextapp.echo2.app.button.AbstractButton">
+  <properties>
+   <property name="lineWrap" value="false"/>
+   <property name="insets" value="8px 0px"/>
+   <property name="foreground" value="#000000"/>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="rolloverForeground" value="#6f0f0f"/>
+  </properties>
+ </style>
+ <style name="ControlPane" type="nextapp.echo2.app.Row">
+  <properties>
+   <property name="insets" value="10px 0px"/>
+   <property name="cellSpacing" value="3px"/>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="overflow" value="OVERFLOW_HIDDEN"/>
+      <property name="background" value="#cfcfdf"/>
+      <property name="backgroundImage">
+       <fill-image>
+        <image type="nextapp.echo2.app.ResourceImageReference">
+         <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/ControlPaneFill.png"/>
+        </image>
+       </fill-image>
+      </property>
+      <property name="insets" value="2px"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
  <style name="ApplicationControlsColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="layoutData">
@@ -205,7 +236,7 @@
       <property name="backgroundImage">
        <fill-image repeat="none">
         <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackgroundDarkBlue.png"/>
+         <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackgroundDarkBlue.png"/>
         </image>
        </fill-image>
       </property>
@@ -226,7 +257,7 @@
       <property name="backgroundImage">
        <fill-image repeat="none">
         <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackgroundLightBlue.png"/>
+         <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/ShadowBackgroundLightBlue.png"/>
         </image>
        </fill-image>
       </property>
@@ -236,6 +267,32 @@
      </properties>
     </layout-data>
    </property>
+  </properties>
+ </style>
+ <style name="WelcomePane" type="nextapp.echo2.app.ContentPane">
+  <properties>
+   <property name="backgroundImage">
+    <fill-image repeat="vertical">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/WelcomePaneBackground.png"/>
+     </image>
+    </fill-image>
+   </property>
+  </properties>  
+ </style>
+ <style name="WelcomePane.Column" type="nextapp.echo2.app.Column">
+  <properties>
+   <property name="insets" value="245px 0px 0px 0px"/>
+   <property name="cellSpacing" value="40px"/>
+  </properties>
+ </style>
+ <style name="WelcomePane" base-name="Default" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <property name="width" value="550px"/>
+   <property name="height" value="300px"/>
+   <property name="resizable" value="true"/>
+   <property name="positionX" value="160px"/>
+   <property name="positionY" value="300px"/>
   </properties>
  </style>
 </stylesheet>

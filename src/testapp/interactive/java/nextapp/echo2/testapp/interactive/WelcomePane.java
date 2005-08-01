@@ -29,15 +29,16 @@
 
 package nextapp.echo2.testapp.interactive;
 
-import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Button;
-import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Row;
+import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
@@ -51,26 +52,60 @@ public class WelcomePane extends ContentPane {
      * Default constructor.
      */
     public WelcomePane() {
-        Column column = new Column();
-        column.setBorder(new Border(3, new Color(0x4f4f7f), Border.STYLE_OUTSET));
-        column.setBackground(new Color(0x4f4f7f));
-        column.setForeground(Color.WHITE);
-        column.setInsets(new Insets(50));
-        column.setCellSpacing(new Extent(20));
-        add(column);
+        super();
+        setStyleName("WelcomePane");
         
         Label label;
+
+        Column column = new Column();
+        column.setStyleName("WelcomePane.Column");
+        add(column);
         
-        label = new Label("N E X T A P P | E C H O 2");
-        label.setFont(new Font(Font.COURIER_NEW, Font.BOLD, new Extent(32)));
+        label = new Label(Styles.NEXTAPP_LOGO);
         column.add(label);
         
-        label = new Label("Welcome to the NextApp Echo2 Test Application.  "
-                + "This application was built to interactively test components of Echo2 during development.  "
+        label = new Label(Styles.ECHO2_IMAGE);
+        column.add(label);
+        
+        label = new Label(Styles.INTERACTIVE_TEST_APPLICATION_IMAGE);
+        column.add(label);
+        
+        WindowPane loginWindow = new WindowPane();
+        loginWindow.setTitle("Welcome to the NextApp Echo2 Test Application");
+        loginWindow.setStyleName("WelcomePane");
+        loginWindow.setClosable(false);
+        add(loginWindow);
+        
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(32));
+        loginWindow.add(splitPane);
+        
+        Row controlRow = new Row();
+        controlRow.setStyleName("ControlPane");
+        splitPane.add(controlRow);
+        
+        Button button = new Button("Continue", Styles.ICON_24_YES);
+        button.setStyleName("ControlPane.Button");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                InteractiveApp.getApp().displayTestPane();
+            }
+        });
+        controlRow.add(button);
+        
+        Column infoColumn = new Column();
+        infoColumn.setInsets(new Insets(20, 5));
+        infoColumn.setCellSpacing(new Extent(10));
+        splitPane.add(infoColumn);
+        
+        label = new Label("Please read the following before using the test application:");
+        label.setFont(new Font(null, Font.BOLD, null));
+        infoColumn.add(label);
+        
+        label = new Label("This application was built to interactively test components of Echo2 during development.  "
                 + "It is also being (mis)used as a public demonstration of Echo2's capabilities. "
                 + "Note that if this is a development version of Echo, then some "
                 + "of the features and capabilities demonstrated in this application may not be complete.");
-        column.add(label);
+        infoColumn.add(label);
         
         label = new Label("Note that you may watch the AJAX XML messages being sent between the client and server by "
                 + "enabling \"Debug Mode\".  Debug Mode may be enabled "
@@ -78,22 +113,9 @@ public class WelcomePane extends ContentPane {
                 + "\"http://demo.nextapp.com/InteractiveTest/ia?debug\"). "
                 + "Please be aware that Debug Mode will in most cases result in EXTREMELY SLOW PERFORMANCE. "
                 + "You may exit Debug Mode at any time by simply closing the Debug window.");
-        column.add(label);
+        infoColumn.add(label);
 
         label = new Label("Please visit the Echo2 Home Page @ http://www.nextapp.com/products/echo2 for more information.");
-        column.add(label);
-        
-        label = new Label(Styles.ICON_LOGO);
-        column.add(label);
-
-        Button continueButton = new Button("Continue");
-        continueButton.setStyleName("Default");
-        continueButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                InteractiveApp.getApp().displayTestPane();
-            }
-        });
-        column.add(continueButton);
+        infoColumn.add(label);
     }
-
 }
