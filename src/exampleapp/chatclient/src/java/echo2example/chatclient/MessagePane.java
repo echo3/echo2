@@ -31,14 +31,11 @@ package echo2example.chatclient;
 
 import java.text.DateFormat;
 
-import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
-import nextapp.echo2.app.layout.RowLayoutData;
 
 public class MessagePane extends ContentPane {
     

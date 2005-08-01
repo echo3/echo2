@@ -215,6 +215,7 @@
      </properties>
     </layout-data>
    </property>
+   <property name="lineWrap" value="false"/>
   </properties>
  </style>
 
@@ -234,6 +235,23 @@
      </properties>
     </layout-data>
    </property>
+   <property name="lineWrap" value="false"/>
+  </properties>
+ </style>
+
+ <style name="ChatScreen.CurrentUserLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="foreground" value="#00007f"/>
+   <property name="font">
+    <font bold="true"/>
+   </property>
+  </properties>
+ </style>
+
+ <style name="ChatScreen.PostInputRow" type="nextapp.echo2.app.Row">
+  <properties>
+   <property name="insets" value="20px 2px"/>
+   <property name="cellSpacing" value="20px"/>
   </properties>
  </style>
 

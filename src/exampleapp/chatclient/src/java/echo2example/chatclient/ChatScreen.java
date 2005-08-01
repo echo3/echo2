@@ -75,10 +75,12 @@ public class ChatScreen extends ContentPane {
         outerSplitPane.add(mainSplitPane);
         
         Row postInputRow = new Row();
+        postInputRow.setStyleName("ChatScreen.PostInputRow");
         mainSplitPane.add(postInputRow);
 
-        Label userNameLabel = new Label(ChatApp.getApp().getUserName() + ":");
-        postInputRow.add(userNameLabel);
+        Label currentUserLabel = new Label(ChatApp.getApp().getUserName() + ":");
+        currentUserLabel.setStyleName("ChatScreen.CurrentUserLabel");
+        postInputRow.add(currentUserLabel);
         
         postField = new TextArea();
         postField.setStyleName("Default");
