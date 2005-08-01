@@ -71,7 +71,7 @@ public class ChatScreen extends ContentPane {
         });
         controlsRow.add(logoutButton);
         
-        SplitPane mainSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP);
+        SplitPane mainSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(80));
         outerSplitPane.add(mainSplitPane);
         
         Row postInputRow = new Row();
@@ -85,7 +85,7 @@ public class ChatScreen extends ContentPane {
         postField = new TextArea();
         postField.setStyleName("Default");
         postField.setWidth(new Extent(600, Extent.PX));
-        postField.setHeight(new Extent(76, Extent.PX));
+        postField.setHeight(new Extent(70, Extent.PX));
         postField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 postMessage();
