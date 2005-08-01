@@ -142,118 +142,6 @@
    </property>
   </properties>
  </style>
- <style name="MailScreen.TitleColumn" type="nextapp.echo2.app.Column">
-  <properties>
-   <property name="foreground" value="#ffffff"/>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
-     <properties>
-      <property name="background" value="#514c60"/>
-      <property name="insets" value="10px"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="MailScreen.FolderSelectColumn" type="nextapp.echo2.app.Column">
-  <properties>
-   <property name="insets" value="10px 25px 10px 0px"/>
-  </properties>
- </style>
- <style name="MailScreen.OptionButton" type="nextapp.echo2.app.button.AbstractButton">
-  <properties>
-   <property name="height" value="31px"/>
-   <property name="lineWrap" value="false"/>
-   <property name="rolloverEnabled" value="true"/>
-   <property name="pressedEnabled" value="true"/>
-   <property name="backgroundImage">
-    <fill-image repeat="none">
-     <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/echo2example/chatclient/resource/image/OptionButtonDefaultBackground.png"/>
-     </image>
-    </fill-image>
-   </property>
-   <property name="rolloverBackgroundImage">
-    <fill-image repeat="none">
-     <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/echo2example/chatclient/resource/image/OptionButtonRolloverBackground.png"/>
-     </image>
-    </fill-image>
-   </property>
-   <property name="pressedBackgroundImage">
-    <fill-image repeat="none">
-     <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/echo2example/chatclient/resource/image/OptionButtonPressedBackground.png"/>
-     </image>
-    </fill-image>
-   </property>
-  </properties>
- </style>
- <style name="MailScreen.OptionColumn" type="nextapp.echo2.app.Column">
-  <properties>
-   <property name="cellSpacing" value="50px"/>
-   <property name="foreground" value="#ffffff"/>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
-     <properties>
-      <property name="backgroundImage">
-       <fill-image repeat="vertical">
-        <image type="nextapp.echo2.app.ResourceImageReference">
-         <resource-image-reference resource="/echo2example/chatclient/resource/image/OptionPaneBackground.png"/>
-        </image>
-       </fill-image>
-      </property>
-      <property name="background" value="#6f7094"/>
-      <property name="insets" value="0px"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="MessageDialog.ContentLabel" type="nextapp.echo2.app.Label">
-  <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
-     <properties>
-      <property name="insets" value="10px"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="MessageListTable.Table" type="nextapp.echo2.app.Table">
-  <properties>
-   <property name="rolloverBackground" value="#85c1ff"/>
-   <property name="rolloverEnabled" value="true"/>
-   <property name="selectionBackground" value="#f2f3b3"/>
-   <property name="selectionEnabled" value="true"/>
-   <property name="width" value="100%"/>
-  </properties>
- </style>
- <style name="MessageListTable.EvenRowLabel" type="nextapp.echo2.app.Label">
-  <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.TableLayoutData">
-     <properties>
-      <property name="insets" value="8px 1px"/>
-      <property name="background" value="#e1e1e1"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="MessageListTable.OddRowLabel" type="nextapp.echo2.app.Label">
-  <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.TableLayoutData">
-     <properties>
-      <property name="insets" value="8px 1px"/>
-      <property name="background" value="#ffffff"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
  <style name="Default" type="nextapp.echo2.app.text.TextComponent">
   <properties>
    <property name="background" value="#cfdfff"/>
@@ -263,25 +151,6 @@
    <property name="foreground" value="#000000"/>
    <property name="font">
     <font typeface="sans-serif" size="10pt"/>
-   </property>
-  </properties>
- </style>
- <style name="ComposeWindow.MessageField" base-name="Default" type="nextapp.echo2.app.text.TextComponent">
-  <properties>
-   <property name="font">
-    <font typeface="monospace" size="10pt"/>
-   </property>
-  </properties> 
- </style>
- <style name="PageNavigator.PageField" type="nextapp.echo2.app.text.TextComponent">
-  <properties>
-   <property name="background" value="#efefef"/>
-   <property name="border">
-    <border size="2px" style="groove" color="#efefef"/>
-   </property>
-   <property name="foreground" value="#000000"/>
-   <property name="font">
-    <font typeface="sans-serif"/>
    </property>
   </properties>
  </style>
@@ -316,38 +185,56 @@
    </property>
   </properties>
  </style>
- <style name="Message.HeaderGrid" type="nextapp.echo2.app.Grid">
+ 
+ <style name="MessagePane.ListColumn" type="nextapp.echo2.app.Column">
   <properties>
-   <property name="border">
-    <border size="1px" color="#4f4f5f" style="inset"/>
-   </property>
-   <property name="insets" value="5px 1px"/>
+   <property name="cellSpacing" value="3px"/>
+   <property name="insets" value="10px 0px"/>
   </properties>
  </style>
- <style name="Title.Main" type="nextapp.echo2.app.Label">
+ 
+ <style name="MessagePane.MessageRow" type="nextapp.echo2.app.Row">
   <properties>
+   <property name="cellSpacing" value="8px"/>
+  </properties>
+ </style>
+ 
+ <style name="MessagePane.DateLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="foreground" value="#7f0000"/>
    <property name="font">
-    <font size="14px" bold="true" underline="true"/>
+    <font bold="true"/>
    </property>
    <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.ColumnLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.RowLayoutData">
      <properties>
+      <property name="alignment">
+       <alignment vertical="top"/>
+      </property>
+      <property name="width" value="60px"/>
      </properties>
     </layout-data>
    </property>
   </properties>
  </style>
- <style name="Title.Sub" type="nextapp.echo2.app.Label">
+
+ <style name="MessagePane.UserNameLabel" type="nextapp.echo2.app.Label">
   <properties>
+   <property name="foreground" value="#00007f"/>
    <property name="font">
-    <font italic="true"/>
+    <font bold="true"/>
    </property>
    <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.ColumnLayoutData">
+    <layout-data type="nextapp.echo2.app.layout.RowLayoutData">
      <properties>
+      <property name="alignment">
+       <alignment vertical="top"/>
+      </property>
+      <property name="width" value="120px"/>
      </properties>
     </layout-data>
    </property>
   </properties>
  </style>
+
 </stylesheet>

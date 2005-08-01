@@ -29,6 +29,7 @@
 
 package echo2example.chatclient;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
@@ -39,11 +40,18 @@ import nextapp.echo2.app.TextArea;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 
+/**
+ * A screen which displays the current state of the chat room and allow the 
+ * user to submit chat input.
+ */
 public class ChatScreen extends ContentPane {
 
     private TextArea postField;
-    private MessageList messageList;
+    private MessagePane messagePane;
     
+    /**
+     * Creates a new <code>ChatScreen</code>.
+     */
     public ChatScreen() {
         super();
         
@@ -75,6 +83,7 @@ public class ChatScreen extends ContentPane {
         postField = new TextArea();
         postField.setStyleName("Default");
         postField.setWidth(new Extent(600, Extent.PX));
+        postField.setHeight(new Extent(76, Extent.PX));
         postField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 postMessage();
@@ -82,8 +91,8 @@ public class ChatScreen extends ContentPane {
         });
         postInputRow.add(postField);
         
-        Button submitButton = new Button("Submit");
-        submitButton.setStyleName("Default");
+        Button submitButton = new Button("Submit", Styles.ICON_24_RIGHT_ARROW);
+        submitButton.setTextPosition(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 postMessage();
@@ -94,23 +103,29 @@ public class ChatScreen extends ContentPane {
         SplitPane chatAndUsersPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_TRAILING_LEADING);
         mainSplitPane.add(chatAndUsersPane);
         
-        chatAndUsersPane.add(new Label()); // user list.
+        chatAndUsersPane.add(new UserList());
         
-        messageList = new MessageList();
-        chatAndUsersPane.add(messageList);
+        messagePane = new MessagePane();
+        chatAndUsersPane.add(messagePane);
     }
     
+    /**
+     * Updates the list of messages.
+     */
     public void updateMessageList() {
-        messageList.update();
+        messagePane.update();
     }
     
+    /**
+     * Posts the text currently entered as a new message.
+     */
     private void postMessage() {
+        ChatApp app = ChatApp.getApp();
         if (postField.getText().trim().length() != 0) {
-            ChatApp app = ChatApp.getApp();
             app.postMessage(postField.getText());
-            app.setFocusedComponent(postField);
         }
         postField.setText("");
-        messageList.update();
+        app.setFocusedComponent(postField);
+        messagePane.update();
     }
 }

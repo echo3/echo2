@@ -29,38 +29,67 @@
 
 package echo2example.chatclient;
 
+import java.text.DateFormat;
+
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.layout.RowLayoutData;
 
-public class MessageList extends Column {
+public class MessagePane extends ContentPane {
+    
+    private static final DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+    
+    /**
+     * Maximum number of messages to display simultaneously.
+     */
+    private static final int MAX_MESSAGE_COUNT = 100;
+    
+    private static final Extent BOTTOM = new Extent(-1, Extent.PX);
+    
+    private Column listColumn;
+    
+    public MessagePane() {
+        super();
+        listColumn = new Column();
+        listColumn.setStyleName("MessagePane.ListColumn");
+        add(listColumn);
+    }
 
     public void update() {
         ChatApp app = ChatApp.getApp();
         Server.Message[] messages = app.getNewMessages();
-        RowLayoutData infoLayoutData = new RowLayoutData();
-        infoLayoutData.setWidth(new Extent(220, Extent.PX));
         Label label;
         
         for (int i = 0; i < messages.length; ++i) {
             Row row = new Row();
-            row.setCellSpacing(new Extent(20, Extent.PX));
+            row.setStyleName("MessagePane.MessageRow");
             
-            label = new Label(messages[i].getUserName());
-            label.setLayoutData(infoLayoutData);
-            row.add(label);
-            
-            label = new Label(messages[i].getDate().toString());
-            label.setLayoutData(infoLayoutData);
+            label = new Label(dateFormat.format(messages[i].getDate()));
+            label.setStyleName("MessagePane.DateLabel");
             row.add(label);
 
+            label = new Label(messages[i].getUserName());
+            label.setStyleName("MessagePane.UserNameLabel");
+            row.add(label);
+            
             label =  new Label(messages[i].getContent());
             row.add(label);
             
-            add(row);
+            listColumn.add(row);
         }
+        
+        // Remove leading messages greater than MAX_MESSAGE_COUNT.
+        int componentCount = listColumn.getComponentCount();
+        for (int i = MAX_MESSAGE_COUNT; i < componentCount; ++i) {
+            listColumn.remove(0);
+        }
+        
+        setVerticalScroll(BOTTOM);
     }
     
 }
