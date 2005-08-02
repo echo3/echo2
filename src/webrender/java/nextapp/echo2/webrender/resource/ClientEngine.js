@@ -969,6 +969,16 @@ EchoDomUpdate.TargetNotFoundException.prototype.toString = function() {
 function EchoDomUtil() { }
 
 /**
+ * An associative array which maps between HTML attributes and HTMLElement 
+ * property  names.  These values generally match, but multiword attribute
+ * names tend to have "camelCase" property names, e.g., the 
+ * "cellspacing" attribute corresponds to the "cellSpacing" property.
+ * This map is required by the Internet Explorer-specific importNode() 
+ * implementation
+ */
+EchoDomUtil.attributeToPropertyMap = null;
+
+/**
  * Adds an event listener to an object, using the client's supported event 
  * model.
  *
@@ -987,6 +997,37 @@ EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, u
     } else if (eventSource.attachEvent) {
         eventSource.attachEvent("on" + eventType, eventListener);
     }
+};
+
+/**
+ * Initializes the attribute-to-property map required for importing HTML
+ * elements into a DOM in Internet Explorer browsers.
+ */
+EchoDomUtil.initAttributeToPropertyMap = function() {
+    var m = new Array();
+    m["accesskey"] = "accessKey";
+    m["cellpadding"] = "cellPadding";
+    m["cellspacing"] = "cellSpacing";
+    m["class"] = "className";
+    m["codebase"] = "codeBase";
+    m["codetype"] = "codeType";
+    m["colspan"] = "colSpan";
+    m["datetime"] = "dateTime";
+    m["frameborder"] = "frameBorder";
+    m["longDesc"] = "longDesc";
+    m["marginHeight"] = "marginHeight";
+    m["marginWidth"] = "marginWidth";
+    m["maxLength"] = "maxLength";
+    m["noresize"] = "noResize";
+    m["noshade"] = "noShade";
+    m["nowrap"] = "noWrap";
+    m["readonly"] = "readOnly";
+    m["rowspan"] = "rowSpan";
+    m["tabindex"] = "tabIndex";
+    m["useMap"] = "useMap";
+    m["valign"] = "vAlign";
+    m["valueType"] = "valueType";
+    EchoDomUtil.attributeToPropertyMap = m;    
 };
 
 /**
@@ -1112,14 +1153,16 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
             var attribute = sourceNode.attributes[i];
             if ("style" == attribute.name) {
                 targetNode.style.cssText = attribute.value;
-            } else if ("tabindex" == attribute.name) {
-                targetNode.tabIndex = attribute.value;
-            } else if ("colspan" == attribute.name) {
-                targetNode.colSpan = attribute.value;
-            } else if ("rowspan" == attribute.name) {
-                targetNode.rowSpan = attribute.value;
             } else {
-                targetNode[attribute.name] = attribute.value;
+                if (EchoDomUtil.attributeToPropertyMap == null) {
+                    EchoDomUtil.initAttributeToPropertyMap();
+                }
+                var propertyName = EchoDomUtil.attributeToPropertyMap[attribute.name];
+                if (propertyName) {
+                    targetNode[propertyName] = attribute.value;
+                } else {
+                    targetNode[attribute.name] = attribute.value;
+                }
             }
         }
         break;
