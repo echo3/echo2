@@ -44,6 +44,7 @@ import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.ServerDelayMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.output.HtmlDocument;
 import nextapp.echo2.webrender.output.XmlDocument;
 
 /**
@@ -112,7 +113,7 @@ public class CoolDelayMessage extends ServerDelayMessage {
     private Element messageElement;
     
     public CoolDelayMessage(ContainerContext containerContext, String messageText) {
-        XmlDocument xmlDocument = new XmlDocument("div", null, null, null);
+        XmlDocument xmlDocument = new XmlDocument("div", null, null, HtmlDocument.XHTML_1_0_NAMESPACE_URI);
         Document document = xmlDocument.getDocument();
         Element divElement = document.getDocumentElement();
         divElement.setAttribute("id", ELEMENT_ID_MESSAGE);

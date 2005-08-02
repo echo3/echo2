@@ -10,7 +10,7 @@
     </description>
 
     <servlet>
-      <servlet-name>HelloWorld</servlet-name>
+      <servlet-name>HelloWorldServlet</servlet-name>
       <servlet-class>echo2example.helloworld.HelloWorldServlet</servlet-class>
     </servlet>
 

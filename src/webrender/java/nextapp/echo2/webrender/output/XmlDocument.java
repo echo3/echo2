@@ -68,7 +68,6 @@ public class XmlDocument {
         super();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             DOMImplementation dom = builder.getDOMImplementation();
             DocumentType docType = dom.createDocumentType(qualifiedName, publicId, systemId);
@@ -76,7 +75,9 @@ public class XmlDocument {
         } catch (ParserConfigurationException ex) {
             throw new RuntimeException("Cannot create XmlService", ex);
         }
-        document.getDocumentElement().setAttribute("xmlns", namespaceUri);
+        if (namespaceUri != null) {
+            document.getDocumentElement().setAttribute("xmlns", namespaceUri);
+        }
     }
     
     /**

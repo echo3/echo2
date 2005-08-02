@@ -1691,6 +1691,7 @@ EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDir
     }
     
     var contentElement = setDirectiveElement.getElementsByTagName("content")[0];
+    
     if (!contentElement) {
         // Setting message to null.
         return;

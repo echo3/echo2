@@ -78,7 +78,6 @@ implements Serializable {
         InputStream in = null;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             in = ServerDelayMessage.class.getResourceAsStream(resourceName); 
             if (in == null) {
@@ -94,8 +93,13 @@ implements Serializable {
                 try { in.close(); } catch (IOException ex) { } 
             }
         }
+        
         final Element messageElement = document.getDocumentElement();
         return new ServerDelayMessage() {
+        
+            /**
+             * @see nextapp.echo2.webrender.ServerDelayMessage#getMessage()
+             */
             public Element getMessage() {
                 return messageElement;
             }

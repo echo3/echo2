@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.webrender.ServerDelayMessage;
+import nextapp.echo2.webrender.output.HtmlDocument;
 import nextapp.echo2.webrender.output.XmlDocument;
 
 /**
@@ -54,7 +55,7 @@ public class DefaultServerDelayMessage extends ServerDelayMessage {
      * Creates the <code>DefaultServerDelayMessage</code>
      */
     public DefaultServerDelayMessage(String messageText) {
-        XmlDocument xmlDocument = new XmlDocument("div", null, null, null);
+        XmlDocument xmlDocument = new XmlDocument("div", null, null, HtmlDocument.XHTML_1_0_NAMESPACE_URI);
         Document document = xmlDocument.getDocument();
         Element divElement = document.getDocumentElement();
         divElement.setAttribute("id", ELEMENT_ID_MESSAGE);

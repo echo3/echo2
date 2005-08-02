@@ -31,6 +31,7 @@ package nextapp.echo2.webrender.servermessage;
 
 import nextapp.echo2.webrender.ServerDelayMessage;
 import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.output.HtmlDocument;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,8 +43,6 @@ import org.w3c.dom.Element;
  */
 public class ServerDelayMessageUpdate {
     
-    private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-
     /**
      * Creates a new <code>setMessage</code> directive.
      * 
@@ -61,7 +60,7 @@ public class ServerDelayMessageUpdate {
         setMessageElement.appendChild(contentContainerElement);
         
         Element messageElement = (Element) document.importNode(serverDelayMessage.getMessage(), true);
-        messageElement.setAttribute("xmlns", XHTML_NAMESPACE);
+        messageElement.setAttribute("xmlns", HtmlDocument.XHTML_1_0_NAMESPACE_URI);
         
         if (!ServerDelayMessage.ELEMENT_ID_MESSAGE.equals(messageElement.getAttribute("id"))) {
             throw new IllegalStateException("Invalid ServerDelayMessage: incorrect root element id: " 
