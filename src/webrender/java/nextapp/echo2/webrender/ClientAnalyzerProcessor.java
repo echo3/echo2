@@ -92,6 +92,8 @@ implements SynchronizeService.ClientMessagePartProcessor {
         boolean browserFireFox = userAgent.indexOf("firefox") != -1;
         boolean browserInternetExplorer = !deceptiveUserAgent && userAgent.indexOf("msie") != -1;
         
+        int majorVersion = -1, minorVersion = -1;
+        
         // Store browser information.
         if (browserOpera) {
             clientProperties.setProperty(ClientProperties.BROWSER_OPERA, Boolean.TRUE);
@@ -106,22 +108,37 @@ implements SynchronizeService.ClientMessagePartProcessor {
             }
         } else if (browserInternetExplorer) {
             clientProperties.setProperty(ClientProperties.BROWSER_INTERNET_EXPLORER, Boolean.TRUE);
+            if (userAgent.indexOf("msie 6.") != -1) {
+                majorVersion = 6;
+            } else if (userAgent.indexOf("msie 7.") != -1) {
+                majorVersion = 7;
+            }
+        }
+        
+        if (majorVersion != -1) {
+            clientProperties.setProperty(ClientProperties.BROWSER_VERSION_MAJOR, Integer.toString(majorVersion));
+        }
+        
+        if (minorVersion != -1) {
+            clientProperties.setProperty(ClientProperties.BROWSER_VERSION_MINOR, Integer.toString(minorVersion));
         }
         
         // Set quirk flags.
         if (browserInternetExplorer) {
             clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_REPAINT, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED,  Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_REPAINT, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
+            if (majorVersion < 7) {
+                clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
+            }
         }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_TEXT_INPUT_REPAINT, Boolean.TRUE);

@@ -228,7 +228,7 @@ implements Serializable {
     
     /**
      * Flag indicating that the browser is a derivative of the Mozilla 
-     * 1.0-1.8 browser platform. 
+     * 1.0-1.8+ browser platform. 
      */
     public static final String BROWSER_MOZILLA = "browserMozilla";
     
@@ -261,6 +261,16 @@ implements Serializable {
      * browser platform.
      */
     public static final String BROWSER_OPERA = "browserOpera";
+    
+    /**
+     * The major version number of the browser.
+     */
+    public static final String BROWSER_VERSION_MAJOR = "browserVersionMajor";
+    
+    /**
+     * The minor version number of the browser.
+     */
+    public static final String BROWSER_VERSION_MINOR = "browserVersionMinor";
     
     /**
      * The client's navigator.appName property.
