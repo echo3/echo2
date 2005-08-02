@@ -207,7 +207,7 @@
  </style>
  <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
-   <property name="insets" value="10px 0px"/>
+   <property name="insets" value="10px 2px"/>
    <property name="cellSpacing" value="3px"/>
    <property name="layoutData">
     <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">

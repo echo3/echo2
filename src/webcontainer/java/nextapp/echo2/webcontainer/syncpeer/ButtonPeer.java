@@ -87,7 +87,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
 
     private static final Alignment DEFAULT_TEXT_POSITION = new Alignment(Alignment.TRAILING, Alignment.DEFAULT);
     private static final Alignment DEFAULT_STATE_POSITION = new Alignment(Alignment.LEADING, Alignment.DEFAULT);
-    private static final Extent DEFAULT_ICON_TEXT_MARGIN = new Extent(3);
+    private static final Extent DEFAULT_ICON_TEXT_MARGIN = new Extent(5);
     private static final ImageReference DEFAULT_CHECKBOX_ICON
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/CheckBoxOff.gif");
     private static final ImageReference DEFAULT_SELECTED_CHECKBOX_ICON 
