@@ -343,6 +343,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         
         Extent iconTextMargin;
         Alignment textPosition;
+        Element tableElement;
         
         switch (entityCount) {
         case 1:
@@ -363,14 +364,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             if (stateIconElement == null) {
                 // Not rendering a ToggleButton.
                 int orientation = TriCellTableConfigurator.convertIconTextPositionToOrientation(textPosition, button);
-                tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
+                tct = new TriCellTable(rc, document, elementId, orientation, iconTextMargin);
                 
                 renderCellText(tct, textNode, button);
                 renderCellIcon(tct, iconElement, 1);
-                
-                Element tableElement = tct.getTableElement();
-                tableElement.setAttribute("id", elementId + "_table");
-                contentNode = tableElement;
             } else {
                  // Rendering a ToggleButton.
                 Extent stateMargin = (Extent) button.getRenderProperty(ToggleButton.PROPERTY_STATE_MARGIN, 
@@ -378,7 +375,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 Alignment statePosition = (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_POSITION,
                         DEFAULT_STATE_POSITION);
                 int orientation = TriCellTableConfigurator.convertStatePositionToOrientation(statePosition, button);
-                tct = new TriCellTable(document, elementId, orientation, stateMargin);
+                tct = new TriCellTable(rc, document, elementId, orientation, stateMargin);
 
                 if (textNode == null) {
                     renderCellIcon(tct, iconElement, 0);
@@ -386,11 +383,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     renderCellText(tct, textNode, button);
                 }
                 renderCellState(tct, stateIconElement, 1, button);
-                
-                Element tableElement = tct.getTableElement();
-                tableElement.setAttribute("id", elementId + "_table");
-                contentNode = tableElement;
             }
+
+            tct.addCellCssText("padding:0px;");
+            tableElement = tct.getTableElement();
+            tableElement.setAttribute("id", elementId + "_table");
+            tableElement.setAttribute("style", "border:0px none;border-collapse:collapse;");
+            contentNode = tableElement;
             break;
         case 3:
             iconTextMargin = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_ICON_TEXT_MARGIN, 
@@ -403,14 +402,16 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                     DEFAULT_STATE_POSITION);
             int stateOrientation = TriCellTableConfigurator.convertStatePositionToOrientation(statePosition, button);
             int orientation = TriCellTableConfigurator.convertIconTextPositionToOrientation(textPosition, button);
-            tct = new TriCellTable(document, elementId, orientation, iconTextMargin, stateOrientation, stateMargin);
+            tct = new TriCellTable(rc, document, elementId, orientation, iconTextMargin, stateOrientation, stateMargin);
 
             renderCellText(tct, textNode, button);
             renderCellIcon(tct, iconElement, 1);
             renderCellState(tct, stateIconElement, 2, button);
-            
-            Element tableElement = tct.getTableElement();
+
+            tct.addCellCssText("padding:0px;");
+            tableElement = tct.getTableElement();
             tableElement.setAttribute("id", elementId + "_table");
+            tableElement.setAttribute("style", "border:0px none;border-collapse:collapse;");
             contentNode = tableElement;
             break;
         default:
@@ -434,7 +435,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      */
     private void renderCellIcon(TriCellTable tct, Element iconElement, int cellIndex) {
         Element iconTdElement = tct.getTdElement(cellIndex);
-        iconTdElement.setAttribute("style", "padding: 0px");
         iconTdElement.appendChild(iconElement);
     }
     
@@ -451,7 +451,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private void renderCellState(TriCellTable tct, Element stateIconElement, int cellIndex, AbstractButton button) {
         Element stateTdElement = tct.getTdElement(cellIndex);
         CssStyle stateTdCssStyle = new CssStyle();
-        stateTdCssStyle.setAttribute("padding", "0px");
         AlignmentRender.renderToStyle(stateTdCssStyle,  
                 (Alignment) button.getRenderProperty(ToggleButton.PROPERTY_STATE_ALIGNMENT), button);
         stateTdElement.setAttribute("style", stateTdCssStyle.renderInline());
@@ -473,7 +472,6 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (Boolean.FALSE.equals(button.getRenderProperty(AbstractButton.PROPERTY_LINE_WRAP))) {
             textTdCssStyle.setAttribute("white-space", "nowrap");
         }
-        textTdCssStyle.setAttribute("padding", "0px");
         AlignmentRender.renderToStyle(textTdCssStyle, 
                 (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT), button);
         textTdElement.setAttribute("style", textTdCssStyle.renderInline());

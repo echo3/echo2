@@ -30,7 +30,11 @@
 package nextapp.echo2.webcontainer.syncpeer;
 
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webrender.Service;
+import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.service.StaticBinaryService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,6 +51,13 @@ import org.w3c.dom.Element;
  */
 class TriCellTable {
 
+    private static final Service TRANSPARENT_SPACER_IMAGE_SERVICE = StaticBinaryService.forResource(
+            "Echo.TriCellTable.TransparentImage", "image/gif", "/nextapp/echo2/webcontainer/resource/image/Transparent.gif");
+    
+    static {
+        WebRenderServlet.getServiceRegistry().add(TRANSPARENT_SPACER_IMAGE_SERVICE);
+    }
+    
     static final int INVERTED = 1;
     static final int VERTICAL = 2;
     
@@ -60,27 +71,31 @@ class TriCellTable {
     private Element tableElement;
     private Element tbodyElement;
     private Document document;
+    private RenderContext rc;
     
     /**
      * This constructor is called by the non-private constructors to set up 
      * common properties.
      * 
+     * @param rc the relevant <code>RenderContext</code>
      * @param id The id the id upon which the inner elements will be based.
      *        the id of the returned table element is not set and must be
      *        set appropriately by the caller.
      */
-    private TriCellTable(Document document, String id) {
+    private TriCellTable(RenderContext rc, Document document, String id) {
         super();
+        this.rc = rc;
         this.document = document;
         tableElement = document.createElement("table");
         tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", id + "_tbody");
         tableElement.appendChild(tbodyElement);
     }
-
+    
     /**
      * Creates a two-celled <code>TriCellTable</code>.
      * 
+     * @param rc the relevant <code>RenderContext</code>
      * @param document the outgoing XML document
      * @param id the id of the root element
      * @param orientation0_1 The orientation of Element 0 with respect to 
@@ -93,23 +108,26 @@ class TriCellTable {
      *        </ul>
      * @param margin0_1 The margin size between element 0 and element 1.
      */
-    TriCellTable(Document document, String id, int orientation0_1, Extent margin0_1) {
-        this(document, id);
+    TriCellTable(RenderContext rc, Document document, String id, int orientation0_1, Extent margin0_1) {
+        this(rc, document, id);
         
         marginTdElements = new Element[1];
         tdElements = new Element[2];
         tdElements[0] = document.createElement("td");
         tdElements[0].setAttribute("id", id + "_td_0");
         tdElements[1] = document.createElement("td");
-        tdElements[0].setAttribute("id", id + "_td_1");
+        tdElements[1].setAttribute("id", id + "_td_1");
         
         if (margin0_1 != null && margin0_1.getValue() > 0) {
             marginTdElements[0] = document.createElement("td");
             marginTdElements[0].setAttribute("id", id + "_tdmargin_0_1");
+            int size = ExtentRender.toPixels(margin0_1, 1);
             if ((orientation0_1 & VERTICAL) == 0) {
-                marginTdElements[0].setAttribute("style", "width:" + ExtentRender.renderCssAttributeValue(margin0_1));
+                marginTdElements[0].setAttribute("style", "width:" +  size + "px;");
+                addSpacer(marginTdElements[0], size, false);
             } else {
-                marginTdElements[0].setAttribute("style", "height:" + ExtentRender.renderCssAttributeValue(margin0_1));
+                marginTdElements[0].setAttribute("style", "height:" + size + "px;");
+                addSpacer(marginTdElements[0], size, true);
             }
         }
                 
@@ -148,6 +166,7 @@ class TriCellTable {
     /**
      * Creates a three-celled <code>TriCellTable</code>.
      * 
+     * @param rc the relevant <code>RenderContext</code>
      * @param document the outgoing XML document
      * @param id the id of the root element
      * @param orientation0_1 The orientation of Element 0 with respect to 
@@ -171,8 +190,9 @@ class TriCellTable {
      * @param margin01_2 The margin size between the combination
      *        of elements 0 and 1 and element 2.
      */
-    TriCellTable(Document document, String id, int orientation0_1, Extent margin0_1, int orientation01_2, Extent margin01_2) {
-        this(document, id);
+    TriCellTable(RenderContext rc, Document document, String id, int orientation0_1, Extent margin0_1, int orientation01_2,
+            Extent margin01_2) {
+        this(rc, document, id);
         
         Element trElement;
         
@@ -190,19 +210,27 @@ class TriCellTable {
             if (margin0_1 != null && margin0_1.getValue() > 0) {
                 marginTdElements[0] = document.createElement("td");
                 marginTdElements[0].setAttribute("id", id + "_tdmargin_0_1");
+                
+                int size = ExtentRender.toPixels(margin0_1, 1);
                 if ((orientation0_1 & VERTICAL) == 0) {
-                    marginTdElements[0].setAttribute("style", "width:" + ExtentRender.renderCssAttributeValue(margin0_1));
+                    marginTdElements[0].setAttribute("style", "width:" +  size + "px;");
+                    addSpacer(marginTdElements[0], size, false);
                 } else {
-                    marginTdElements[0].setAttribute("style", "height:" + ExtentRender.renderCssAttributeValue(margin0_1));
+                    marginTdElements[0].setAttribute("style", "height:" + size + "px;");
+                    addSpacer(marginTdElements[0], size, true);
                 }
             }
             if (margin01_2 != null && margin01_2.getValue() > 0) {
                 marginTdElements[1] = document.createElement("td");
                 marginTdElements[1].setAttribute("id", id + "_tdmargin_01_2");
+
+                int size = ExtentRender.toPixels(margin01_2, 1);
                 if ((orientation01_2 & VERTICAL) == 0) {
-                    marginTdElements[1].setAttribute("style", "width:" + ExtentRender.renderCssAttributeValue(margin01_2));
+                    marginTdElements[1].setAttribute("style", "width:" +  size + "px;");
+                    addSpacer(marginTdElements[1], size, false);
                 } else {
-                    marginTdElements[1].setAttribute("style", "height:" + ExtentRender.renderCssAttributeValue(margin01_2));
+                    marginTdElements[1].setAttribute("style", "height:" + size + "px;");
+                    addSpacer(marginTdElements[1], size, true);
                 }
             }
         }
@@ -358,19 +386,27 @@ class TriCellTable {
     }
     
     /**
-     * Adds an attribute to every table cell in the rendered table.
-     *
-     * @param name The name of the attribute.
-     * @param value The value of the attribute.
+     * Appends CSS text to the 'style' attribute of each table cell 'td' 
+     * element.
+     * 
+     * @param cssText the CSS text to add 
      */
-    void addGlobalAttribute(String name, String value) {
-        for (int index = 0; index < tdElements.length; ++index) {
-            tdElements[index].setAttribute(name, value);
+    void addCellCssText(String cssText) {
+        for (int i = 0; i < tdElements.length; ++i) {
+            if (tdElements[i].hasAttribute("style")) {
+                tdElements[i].setAttribute("style", tdElements[i].getAttribute("style") + cssText);
+            } else {
+                tdElements[i].setAttribute("style", cssText);
+            }
         }
         if (marginTdElements != null) {
-            for (int index = 0; index < marginTdElements.length; ++index) {
-                if (marginTdElements[index] != null) {
-                    marginTdElements[index].setAttribute(name, value);
+            for (int i = 0; i < marginTdElements.length; ++i) {
+                if (marginTdElements[i] != null) {
+                    if (marginTdElements[i].hasAttribute("style")) {
+                        marginTdElements[i].setAttribute("style", marginTdElements[i].getAttribute("style") + cssText);
+                    } else {
+                        marginTdElements[i].setAttribute("style", cssText);
+                    }
                 }
             }
         }
@@ -392,6 +428,28 @@ class TriCellTable {
         }
     }
     
+    /**
+     * Adds a spacer element containing a transparent GIF image.
+     * These are unfortunately necessary to prevent spacer cells
+     * from collapsing in circumstances where horizontal real-estate
+     * is not available.
+     * 
+     * @param parentElement the <code>Element</code> to which the spacer image
+     *        is to be appended
+     * @param size the size of the spacer cell, in pixels
+     * @param vertical a flag indicating the direction; specify 
+     *        <code>true</code> for a vertical spacer or <code>false</code> for
+     *        a horizontal spacer.
+     */
+    private void addSpacer(Element parentElement, int size, boolean vertical) {
+        Element imgElement = document.createElement("img");
+        imgElement.setAttribute("src", rc.getContainerInstance().getServiceUri(TRANSPARENT_SPACER_IMAGE_SERVICE));
+        imgElement.setAttribute("alt", "");
+        imgElement.setAttribute("width", vertical ? "1" : Integer.toString(size));
+        imgElement.setAttribute("height", vertical ? Integer.toString(size) : "1");
+        parentElement.appendChild(imgElement);
+    }
+
     /**
      * Returns the created table element.
      * 

@@ -160,21 +160,21 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         String elementId = ContainerInstance.getElementId(label);
         
         int orientation = TriCellTableConfigurator.convertIconTextPositionToOrientation(textPosition, label);
-        TriCellTable tct = new TriCellTable(document, elementId, orientation, iconTextMargin);
+        TriCellTable tct = new TriCellTable(rc, document, elementId, orientation, iconTextMargin);
+        tct.addCellCssText("padding:0px;");
         
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
-        textTdCssStyle.setAttribute("padding", "0px");
+        textTdCssStyle.setAttribute("border", "0px none");
         if (Boolean.FALSE.equals(label.getRenderProperty(Label.PROPERTY_LINE_WRAP))) {
             textTdCssStyle.setAttribute("white-space", "nowrap");
         }
         AlignmentRender.renderToStyle(textTdCssStyle, (Alignment) label.getRenderProperty(Label.PROPERTY_TEXT_ALIGNMENT), label);
-        textTdElement.setAttribute("style", textTdCssStyle.renderInline());
+        textTdElement.setAttribute("style", textTdElement.getAttribute("style") + textTdCssStyle.renderInline());
         DomUtil.setElementText(textTdElement, text);
  
         Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, label, IMAGE_ID_ICON);
         Element iconTdElement = tct.getTdElement(1);
-        iconTdElement.setAttribute("style", "padding: 0px");
         iconTdElement.appendChild(imgElement);
         
         Element tableElement = tct.getTableElement();
@@ -185,7 +185,7 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         ColorRender.renderToStyle(cssStyle, (Color) label.getRenderProperty(Label.PROPERTY_FOREGROUND), 
                 (Color) label.getRenderProperty(Label.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) label.getRenderProperty(Label.PROPERTY_FONT));
-        cssStyle.setAttribute("padding", "0px");
+        cssStyle.setAttribute("border", "0px none");
         cssStyle.setAttribute("border-collapse", "collapse");
         tableElement.setAttribute("style", cssStyle.renderInline());
         

@@ -915,6 +915,24 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("IconTextMargin = 1px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setIconTextMargin(new Extent(1));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 2px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setIconTextMargin(new Extent(2));
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("IconTextMargin = 10px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
@@ -1215,6 +1233,28 @@ extends SplitPane {
                     public void apply(AbstractButton button) {
                         if (button instanceof ToggleButton) {
                             ((ToggleButton) button).setStateMargin(new Extent(0));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateMargin = 1px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateMargin(new Extent(1));
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("StateMargin = 2px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button instanceof ToggleButton) {
+                            ((ToggleButton) button).setStateMargin(new Extent(2));
                         }
                     }
                 });

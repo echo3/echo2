@@ -373,6 +373,51 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("IconTextMargin = 1px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setIconTextMargin(new Extent(1));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 2px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setIconTextMargin(new Extent(2));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 3px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setIconTextMargin(new Extent(3));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 4px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setIconTextMargin(new Extent(4));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("IconTextMargin = 5px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        label.setIconTextMargin(new Extent(5));
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("IconTextMargin = 10px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {
