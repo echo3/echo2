@@ -162,7 +162,8 @@
  </style>
  <style name="MailScreen.OptionButton" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
-   <property name="height" value="31px"/>
+   <property name="insets" value="4px 3px"/>
+   <property name="height" value="25px"/>
    <property name="lineWrap" value="false"/>
    <property name="rolloverEnabled" value="true"/>
    <property name="pressedEnabled" value="true"/>
@@ -296,7 +297,7 @@
  </style>
  <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
-   <property name="insets" value="10px 0px"/>
+   <property name="insets" value="10px 2px"/>
    <property name="cellSpacing" value="3px"/>
    <property name="layoutData">
     <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">

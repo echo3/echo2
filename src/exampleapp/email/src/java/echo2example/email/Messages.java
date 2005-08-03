@@ -45,7 +45,7 @@ import nextapp.echo2.app.ApplicationInstance;
  */
 public class Messages {
                                                
-    private static final String BUNDLE_NAME = "echo2example.chatclient.resource.localization.Messages";
+    private static final String BUNDLE_NAME = "echo2example.email.resource.localization.Messages";
     
     /**
      * A map which contains <code>DateFormat</code> objects for various 
