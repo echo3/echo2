@@ -326,6 +326,109 @@ public class ComponentTest extends TestCase {
     }
     
     /**
+     * Tests invocation of the <code>init()</code>/<code>dispose</code>
+     * life-cycle methods with a single <code>Component</code>.
+     */
+    public void testLifecycleSingleComponent() {
+        ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        app.doInit();
+        
+        LifecycleTestComponent ltc1 = new LifecycleTestComponent();
+        assertEquals(0, ltc1.getInitCount());
+        assertEquals(0, ltc1.getDisposeCount());
+        app.getColumn().add(ltc1);
+        assertEquals(1, ltc1.getInitCount());
+        assertEquals(0, ltc1.getDisposeCount());
+        app.getColumn().remove(ltc1);
+        assertEquals(1, ltc1.getInitCount());
+        assertEquals(1, ltc1.getDisposeCount());
+        app.getColumn().add(ltc1);
+        assertEquals(2, ltc1.getInitCount());
+        assertEquals(1, ltc1.getDisposeCount());
+        app.getColumn().add(ltc1);
+        assertEquals(3, ltc1.getInitCount());
+        assertEquals(2, ltc1.getDisposeCount());
+        app.getColumn().remove(ltc1);
+        assertEquals(3, ltc1.getInitCount());
+        assertEquals(3, ltc1.getDisposeCount());
+        app.getColumn().remove(ltc1);
+        assertEquals(3, ltc1.getInitCount());
+        assertEquals(3, ltc1.getDisposeCount());
+        
+        ApplicationInstance.setActive(null);
+    }
+    
+    /**
+     * Tests invocation of the <code>init()</code>/<code>dispose</code>
+     * life-cycle methods with a <code>Component</code> hierarchy.
+     */
+    public void testLifecycleComponentHierarchy() {
+        ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        app.doInit();
+        
+        LifecycleTestComponent ltc1 = new LifecycleTestComponent();
+        LifecycleTestComponent ltc2 = new LifecycleTestComponent();
+
+        assertEquals(0, ltc1.getInitCount());
+        assertEquals(0, ltc1.getDisposeCount());
+        assertEquals(0, ltc2.getInitCount());
+        assertEquals(0, ltc2.getDisposeCount());
+        
+        ltc1.add(ltc2);
+        
+        assertEquals(0, ltc1.getInitCount());
+        assertEquals(0, ltc1.getDisposeCount());
+        assertEquals(0, ltc2.getInitCount());
+        assertEquals(0, ltc2.getDisposeCount());
+        
+        app.getColumn().add(ltc1);
+        
+        assertEquals(1, ltc1.getInitCount());
+        assertEquals(0, ltc1.getDisposeCount());
+        assertEquals(1, ltc2.getInitCount());
+        assertEquals(0, ltc2.getDisposeCount());
+
+        app.getColumn().remove(ltc1);
+        
+        assertEquals(1, ltc1.getInitCount());
+        assertEquals(1, ltc1.getDisposeCount());
+        assertEquals(1, ltc2.getInitCount());
+        assertEquals(1, ltc2.getDisposeCount());
+        
+        app.getColumn().add(ltc1);
+        
+        assertEquals(2, ltc1.getInitCount());
+        assertEquals(1, ltc1.getDisposeCount());
+        assertEquals(2, ltc2.getInitCount());
+        assertEquals(1, ltc2.getDisposeCount());
+
+        app.getColumn().add(ltc1);
+        
+        assertEquals(3, ltc1.getInitCount());
+        assertEquals(2, ltc1.getDisposeCount());
+        assertEquals(3, ltc2.getInitCount());
+        assertEquals(2, ltc2.getDisposeCount());
+
+        app.getColumn().remove(ltc1);
+        
+        assertEquals(3, ltc1.getInitCount());
+        assertEquals(3, ltc1.getDisposeCount());
+        assertEquals(3, ltc2.getInitCount());
+        assertEquals(3, ltc2.getDisposeCount());
+
+        app.getColumn().remove(ltc1);
+        
+        assertEquals(3, ltc1.getInitCount());
+        assertEquals(3, ltc1.getDisposeCount());
+        assertEquals(3, ltc2.getInitCount());
+        assertEquals(3, ltc2.getDisposeCount());
+
+        ApplicationInstance.setActive(null);
+    }
+    
+    /**
      * Test <code>layoutData</code> property.
      */
     public void testLayoutData() {

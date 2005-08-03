@@ -567,7 +567,7 @@ implements Serializable {
      * This method is invoked by <code>Component.setApplicationInstance()</code>
      * 
      * @param component the component to register
-     * @see Component#setApplicationInstance(ApplicationInstance)
+     * @see Component#register(ApplicationInstance)
      */
     void registerComponent(Component component) {
         String renderId = component.getRenderId();
@@ -636,7 +636,7 @@ implements Serializable {
         }
 
         defaultWindow = window;
-        window.setApplicationInstance(this);
+        window.register(this);
         firePropertyChange(WINDOWS_CHANGED_PROPERTY, null, window);
     }
     
@@ -724,7 +724,7 @@ implements Serializable {
      * This method is invoked by <code>Component.setApplicationInstance()</code>.
      * 
      * @param component the component to unregister
-     * @see Component#setApplicationInstance(ApplicationInstance)
+     * @see Component#register(ApplicationInstance)
      */
     void unregisterComponent(Component component) {
         renderIdToComponentMap.remove(component.getRenderId());

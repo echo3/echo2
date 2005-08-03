@@ -103,7 +103,6 @@ public class MessageStore {
      * @param messageContent
      */
     public synchronized void post(String userName, String messageContent) {
-System.err.println("Posting message: " + messageContent);        
         int messageIndex = (firstMessageIndex + messageCount) % MAX_MESSAGES;
         
         Message message = new Message(userName, messageContent);

@@ -253,11 +253,6 @@ implements RenderIdSupport, Serializable {
             c.parent.remove(c);
         }
         
-        // Flag child as registered.
-        if (applicationInstance != null) {
-            c.setApplicationInstance(applicationInstance);
-        }
-        
         // Lazy-create child collection if necessary.
         if (children == null) {
             children = new ArrayList(CHILD_LIST_CAPACITY);
@@ -271,9 +266,11 @@ implements RenderIdSupport, Serializable {
             children.add(n, c);
         }
         
-        // Invoke registration life-cycle method.
-        c.init();
-
+        // Flag child as registered.
+        if (applicationInstance != null) {
+            c.register(applicationInstance);
+        }
+        
         // Notify PropertyChangeListeners of change.
         firePropertyChange(CHILDREN_CHANGED_PROPERTY, null, c);
     }
@@ -294,6 +291,8 @@ implements RenderIdSupport, Serializable {
      * Life-cycle method invoked when the <code>Component</code> is removed 
      * from a registered hierarchy.  Implementations should always invoke
      * <code>super.dispose()</code>.
+     * Modifications to the component hierarchy are not allowed within this 
+     * method.
      */
     public void dispose() { }
     
@@ -884,6 +883,8 @@ implements RenderIdSupport, Serializable {
      * Life-cycle method invoked when the <code>Component</code> is added 
      * to a registered hierarchy.  Implementations should always invoke
      * <code>super.init()</code>.
+     * Modifications to the component hierarchy are not allowed within this 
+     * method.
      */
     public void init() { }
     
@@ -1023,21 +1024,64 @@ implements RenderIdSupport, Serializable {
             // Do-nothing if component is not a child.
             return;
         }
-        
-        // Invoke disposal life-cycle method.
-        c.dispose();
 
+        // Deregister child.
+        if (isRegistered()) {
+            c.register(null);
+        }
+        
         // Dissolve references between parent and child.
         children.remove(c);
         c.parent = null;
 
-        // Deregister child.
-        if (isRegistered()) {
-            c.setApplicationInstance(null);
-        }
-        
         // Notify PropertyChangeListeners of change.
         firePropertyChange(CHILDREN_CHANGED_PROPERTY, c, null);
+    }
+    
+    /**
+     * Sets the <code>ApplicationInstance</code> to which this component is
+     * registered.
+     * <p>
+     * The <code>ApplicationInstance</code> to which a component is registered
+     * may not be changed directly from one to another, i.e., if the component
+     * is registered to instance "A" and an attempt is made to set it to
+     * instance "B", an <code>IllegalStateException</code> will be thrown. In
+     * order to change the instance to which a component is registered, the
+     * instance must first be set to null.
+     * 
+     * @param newValue the new <code>ApplicationInstance</code>
+     */
+    void register(ApplicationInstance newValue) {
+        if (applicationInstance != null && newValue != null 
+                && !applicationInstance.equals(newValue)) {
+            throw new IllegalStateException("Cannot reassign ApplicationInstance.");
+        }
+        
+        if (newValue == null && applicationInstance != null) { // unregistering
+            if (children != null) {
+                Iterator it = children.iterator();
+                while (it.hasNext()) {
+                    ((Component) it.next()).register(null); // Recursively unregister children.
+                }
+            }
+            
+            dispose();
+            applicationInstance.unregisterComponent(this);
+        }
+        
+        applicationInstance = newValue;
+        
+        if (newValue != null) { // registering
+            applicationInstance.registerComponent(this);
+            init();
+
+            if (children != null) {
+                Iterator it = children.iterator();
+                while (it.hasNext()) {
+                    ((Component) it.next()).register(newValue); // Recursively register children.
+                }
+            }
+        }
     }
     
     /**
@@ -1074,43 +1118,6 @@ implements RenderIdSupport, Serializable {
     public void removePropertyChangeListener(PropertyChangeListener l) {
         if (propertyChangeSupport != null) {
             propertyChangeSupport.removePropertyChangeListener(l);
-        }
-    }
-    
-    /**
-     * Sets the <code>ApplicationInstance</code> to which this component is
-     * registered.
-     * <p>
-     * The <code>ApplicationInstance</code> to which a component is registered
-     * may not be changed directly from one to another, i.e., if the component
-     * is registered to instance "A" and an attempt is made to set it to
-     * instance "B", an <code>IllegalStateException</code> will be thrown. In
-     * order to change the instance to which a component is registered, the
-     * instance must first be set to null.
-     * 
-     * @param newValue the new <code>ApplicationInstance</code>
-     */
-    void setApplicationInstance(ApplicationInstance newValue) {
-        if (applicationInstance != null && newValue != null 
-                && !applicationInstance.equals(newValue)) {
-            throw new IllegalStateException("Cannot reassign ApplicationInstance.");
-        }
-        
-        if (newValue == null && applicationInstance != null) {
-            applicationInstance.unregisterComponent(this);
-        }
-        
-        applicationInstance = newValue;
-        
-        if (newValue != null) {
-            applicationInstance.registerComponent(this);
-        }
-        
-        if (children != null) {
-            Iterator it = children.iterator();
-            while (it.hasNext()) {
-                ((Component) it.next()).setApplicationInstance(newValue);
-            }
         }
     }
     
