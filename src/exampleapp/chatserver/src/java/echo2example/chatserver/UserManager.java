@@ -56,11 +56,23 @@ public class UserManager {
      *         null if it is not
      */
     public String add(String userName) {
+        // Ensure no leading/trailing spaces are present in user name.
+        if (userName.length() != userName.trim().length()) {
+            return null; 
+        }
+        
+        // Ensure user name is at least two characters in length.
+        if (userName.length() < 2) {
+            return null; 
+        }
+        
         User user = null;
         synchronized (userMap) {
+            // Ensure user name is available.
             if (userMap.containsKey(userName)) {
                 return null;
             }
+            
             user = new User(userName);
             userMap.put(userName, user);
         }
