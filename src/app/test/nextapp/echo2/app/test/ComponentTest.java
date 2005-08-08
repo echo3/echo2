@@ -429,6 +429,60 @@ public class ComponentTest extends TestCase {
     }
     
     /**
+     * Ensure <code>IllegalStateException</code> is thrown if an attempt is
+     * made to remove a <code>Component</code> from its hierarchy during the
+     * execution of the <code>Component.init()</code> method.
+     */
+    public void testLifecycleRemoveDuringInit() {
+        ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        app.doInit();
+        
+        LifecycleTestComponent special = new LifecycleTestComponent(){
+        
+            public void init() {
+                super.init();
+                getParent().remove(this);
+            }
+        };
+        
+        try {
+            app.getColumn().add(special);
+            fail("Did not throw IllegalStateException as expected.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+    }
+    
+    /**
+     * Ensure <code>IllegalStateException</code> is thrown if an attempt is
+     * made to add a <code>Component</code> back to a hierarchy during the
+     * execution of the <code>Component.dispose()</code> method.
+     */
+    public void testLifecycleAddDuringDispose() {
+        ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        app.doInit();
+        
+        LifecycleTestComponent special = new LifecycleTestComponent(){
+        
+            public void dispose() {
+                super.init();
+                getParent().add(this);
+            }
+        };
+        
+        app.getColumn().add(special);
+
+        try {
+            app.getColumn().remove(special);
+            fail("Did not throw IllegalStateException as expected.");
+        } catch (IllegalStateException ex) {
+            // Expected.
+        }
+    }
+    
+    /**
      * Test <code>layoutData</code> property.
      */
     public void testLayoutData() {

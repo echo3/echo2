@@ -42,17 +42,17 @@ import junit.framework.TestCase;
 public class ApplicationInstanceTest extends TestCase {
     
     private class RegistrationTestComponent extends Component {
-        boolean initialized = false;
-        boolean disposed = false;
+        int initCount = 0;
+        int disposeCount = 0;
         
         public void dispose() {
             super.dispose();
-            disposed = true;
+            ++disposeCount;
         }
 
         public void init() {
             super.init();
-            initialized = true;
+            ++initCount;
         }
     }  
 
@@ -132,18 +132,46 @@ public class ApplicationInstanceTest extends TestCase {
 
         RegistrationTestComponent rtc = new RegistrationTestComponent();
         
-        assertFalse(rtc.initialized);
-        assertFalse(rtc.disposed);
+        assertEquals(0, rtc.initCount);
+        assertEquals(0, rtc.disposeCount);
         
         column.add(rtc);
         
-        assertTrue(rtc.initialized);
-        assertFalse(rtc.disposed);
+        assertEquals(1, rtc.initCount);
+        assertEquals(0, rtc.disposeCount);
         
         column.remove(rtc);
         
-        assertTrue(rtc.initialized);
-        assertTrue(rtc.disposed);
+        assertEquals(1, rtc.initCount);
+        assertEquals(1, rtc.disposeCount);
+        
+        ApplicationInstance.setActive(null);
+    }
+    
+    /**
+     * Test component-application registration life-cycle methods, i.e.,
+     * <code>Component.init()</code> / <code>Component.dispose()</code>
+     * with regard to initial hierarchy.
+     */
+    public void testRegistrationLifecycleInitialHierarchy() {
+        final RegistrationTestComponent rtc = new RegistrationTestComponent();
+
+        assertEquals(0, rtc.initCount);
+        assertEquals(0, rtc.disposeCount);
+        
+        ColumnApp columnApp = new ColumnApp(){
+        
+            public Window init() {
+                Window window = super.init();
+                getColumn().add(rtc);
+                return window;
+            }
+        };
+        ApplicationInstance.setActive(columnApp);
+        columnApp.doInit();
+
+        assertEquals(1, rtc.initCount);
+        assertEquals(0, rtc.disposeCount);
         
         ApplicationInstance.setActive(null);
     }
