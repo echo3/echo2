@@ -306,7 +306,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             for (int i = 0; i < columnCount; ++i) {
                 Element colElement = document.createElement("col");
                 Extent columnWidth = columnModel.getColumn(i).getWidth();
-                if (width != null) {
+                if (columnWidth != null) {
                     colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
                 }
                 colGroupElement.appendChild(colElement);
