@@ -90,7 +90,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         public Component lastChild;
     }
     
-    protected PartialUpdateManager partialUpdateManager;
+    private PartialUpdateManager partialUpdateManager;
     
     /**
      * Default constructor.
