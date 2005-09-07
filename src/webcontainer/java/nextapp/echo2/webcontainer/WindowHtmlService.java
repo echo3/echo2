@@ -31,10 +31,7 @@ package nextapp.echo2.webcontainer;
 
 import java.io.IOException;
 
-import org.w3c.dom.Element;
-
 import nextapp.echo2.app.ApplicationInstance;
-import nextapp.echo2.app.Window;
 import nextapp.echo2.webrender.BaseHtmlDocument;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.ContentType;
@@ -52,6 +49,11 @@ implements Service {
     
     public static final WindowHtmlService INSTANCE = new WindowHtmlService();
 
+    /**
+     * Root element identifier.
+     */
+    public static final String ROOT_ID = "c_root";
+    
     /**
      * @see nextapp.echo2.webrender.Service#getId()
      */
@@ -71,18 +73,16 @@ implements Service {
      */
     public void service(Connection conn) throws IOException {
         ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
-        ApplicationInstance app = ci.getApplicationInstance();
-        
-        Window window = app.getDefaultWindow();
         conn.setContentType(ContentType.TEXT_HTML);
-        BaseHtmlDocument baseDoc = new BaseHtmlDocument(ContainerInstance.getElementId(window));
-        baseDoc.setTitle(window.getTitle());
+
+        BaseHtmlDocument baseDoc = new BaseHtmlDocument(ROOT_ID);
         baseDoc.setGenarator(ApplicationInstance.ID_STRING);
-        
         baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.CLIENT_ENGINE));
-        
+
+        // Add initialization directive.
         baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getServletUri() + "');");
         
+        // Set body element CSS style.
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("position", "absolute");
         cssStyle.setAttribute("font-family", "verdana, arial, helvetica, sans-serif");
@@ -93,12 +93,8 @@ implements Service {
         cssStyle.setAttribute("margin", "0px");
         cssStyle.setAttribute("overflow", "hidden");
         baseDoc.getBodyElement().setAttribute("style", cssStyle.renderInline());
-        Element debugElement = baseDoc.getDocument().createElement("a");
-        debugElement.setAttribute("accesskey", "d");
-        debugElement.setAttribute("href", "javascript:EchoDebugManager.launch();");
-        debugElement.appendChild(baseDoc.getDocument().createTextNode(""));
-        baseDoc.getBodyElement().appendChild(debugElement);
         
+        // Render.
         baseDoc.render(conn.getWriter());
     }
 }

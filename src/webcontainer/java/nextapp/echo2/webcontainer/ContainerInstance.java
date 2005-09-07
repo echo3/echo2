@@ -31,6 +31,7 @@ package nextapp.echo2.webcontainer;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -39,6 +40,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webcontainer.util.IdTable;
+import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.UserInstance;
 
@@ -77,9 +79,10 @@ public class ContainerInstance extends UserInstance {
     
     private ApplicationInstance applicationInstance;
     private Map componentToRenderStateMap = new HashMap();
-    private transient Map taskQueueToCallbackIntervalMap;
     private transient IdTable idTable;
+    private boolean initialized = false;
     private Map initialRequestParameterMap;
+    private transient Map taskQueueToCallbackIntervalMap;
     
     /**
      * Creates a new <code>ContainerInstance</code>.
@@ -90,21 +93,10 @@ public class ContainerInstance extends UserInstance {
      */
     private ContainerInstance(Connection conn) {
         super(conn);
-        WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
         setServerDelayMessage(DefaultServerDelayMessage.INSTANCE);
         initialRequestParameterMap = new HashMap(conn.getRequest().getParameterMap());
-        applicationInstance = servlet.newApplicationInstance();
-        
-        applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, new ContainerContextImpl(this));
-        
-        try {
-            ApplicationInstance.setActive(applicationInstance);
-            applicationInstance.doInit();
-        } finally {
-            ApplicationInstance.setActive(null);
-        }
     }
-
+    
     /**
      * Returns the corresponding <code>ApplicationInstance</code>
      * for this user instance.
@@ -114,7 +106,7 @@ public class ContainerInstance extends UserInstance {
     public ApplicationInstance getApplicationInstance() {
         return applicationInstance;
     }
-    
+
     //BUGBUG. current method of iterating weak-keyed map of task queues
     // is not adequate.  If the application were to for whatever reason hold on
     // to a dead task queue, its interval setting would effect the
@@ -201,6 +193,43 @@ public class ContainerInstance extends UserInstance {
      */
     public UpdateManager getUpdateManager() {
         return applicationInstance.getUpdateManager();
+    }
+    
+    /**
+     * Initializes the <code>ContainerInstance</code>, creating an instance
+     * of the target <code>ApplicationInstance</code> and initializing the state
+     * of the application.
+     *
+     * @param conn the relevant <code>Connection</code>
+     */
+    public void init(Connection conn) {
+        if (initialized) {
+            throw new IllegalStateException("Attempt to invoke ContainerInstance.init() on initialized instance.");
+        }
+        WebContainerServlet servlet = (WebContainerServlet) conn.getServlet();
+        applicationInstance = servlet.newApplicationInstance();
+        
+        ContainerContext containerContext = new ContainerContextImpl(this);
+        applicationInstance.setContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME, containerContext);
+        
+        try {
+            ApplicationInstance.setActive(applicationInstance);
+            applicationInstance.setLocale((Locale) containerContext.getClientProperties().get(ClientProperties.LOCALE));
+            applicationInstance.doInit();
+        } finally {
+            ApplicationInstance.setActive(null);
+        }
+        initialized = true;
+    }
+    
+    /**
+     * Determines if the <code>ContainerInstance</code> has been initialized, 
+     * i.e., whether its <code>init()</code> method has been invoked.
+     * 
+     * @return true if the <code>ContainerInstance</code> is initialized
+     */
+    boolean isInitialized() {
+        return initialized;
     }
     
     /**

@@ -87,4 +87,11 @@ implements Serializable {
     public boolean isLeftToRight() {
         return leftToRight;
     }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return leftToRight ? "LTR" : "RTL";
+    }
 }

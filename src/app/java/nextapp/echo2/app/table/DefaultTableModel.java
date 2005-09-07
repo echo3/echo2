@@ -106,6 +106,15 @@ public class DefaultTableModel extends AbstractTableModel {
     }
     
     /**
+     * Adds a row containing the provided data to the end of the model.
+     *
+     * @param rowData the row data
+     */
+    public void addRow(Object[] rowData) {
+        insertRow(rows.size(), rowData);
+    }
+    
+    /**
      * Deletes the specified row.
      *
      * @param row the row to delete

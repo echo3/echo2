@@ -273,6 +273,11 @@ implements Serializable {
     public static final String BROWSER_VERSION_MINOR = "browserVersionMinor";
     
     /**
+     * The <code>Locale</code> of the client, derived from the language property.
+     */
+    public static final String LOCALE = "locale";
+    
+    /**
      * The client's navigator.appName property.
      */
     public static final String NAVIGATOR_APP_NAME = "navigatorAppName";
@@ -324,6 +329,16 @@ implements Serializable {
      */
     public ClientProperties() {
         super();
+    }
+    
+    /**
+     * Returns the value of the specified property as an <code>Object</code>.
+     *
+     * @param propertyName the property name
+     * @return the property value 
+     */
+    public Object get(String propertyName) {
+        return data.get(propertyName);
     }
     
     /**

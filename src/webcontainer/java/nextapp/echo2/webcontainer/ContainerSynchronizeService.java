@@ -302,10 +302,17 @@ public class ContainerSynchronizeService extends SynchronizeService {
     protected ServerMessage renderInit(Connection conn, Document clientMessageDocument) {
         ServerMessage serverMessage = new ServerMessage();
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
-        ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+        ContainerInstance containerInstance = rc.getContainerInstance();
         try {
-            ApplicationInstance.setActive(applicationInstance);
             processClientMessage(conn, clientMessageDocument);
+
+            if (!containerInstance.isInitialized()) {
+                containerInstance.init(conn);
+            }
+            
+            ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+            ApplicationInstance.setActive(applicationInstance);
+            
             applicationInstance.getUpdateManager().purge();
 
             Window window = applicationInstance.getDefaultWindow();

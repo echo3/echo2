@@ -113,6 +113,11 @@ public class ContainerContextTest extends Column {
         initialParametersColumn.add(new Label("Initial Parameters"));
         initialParametersColumn.add(createInitialParametersTable(containerContext));
         
+        Column applicationPropertiesColumn = new Column();
+        add(applicationPropertiesColumn);
+        applicationPropertiesColumn.add(new Label("ApplicationInstance Properties"));
+        applicationPropertiesColumn.add(createApplicationPropertiesTable(app));
+        
         Column cookiesColumn = new Column();
         add(cookiesColumn);
         cookiesColumn.add(new Label("Cookies"));
@@ -131,6 +136,23 @@ public class ContainerContextTest extends Column {
         cookiesColumn.add(setCookieButton);
     }
     
+    private Table createApplicationPropertiesTable(ApplicationInstance app) {
+        Table table = new Table();
+        table.setStyleName("Default");
+        table.setDefaultRenderer(Object.class, new PropertyTableCellRenderer());
+        
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setColumnCount(2);
+
+        table.getColumnModel().getColumn(0).setHeaderValue("Property");
+        table.getColumnModel().getColumn(1).setHeaderValue("Value");
+        
+        model.addRow(new Object[]{"Locale", app.getLocale()});
+        model.addRow(new Object[]{"Layout Direction", app.getLayoutDirection()});
+        
+        return table;
+    }
+
     private Table createClientPropertiesTable(ContainerContext containerContext) {
         ClientProperties clientProperties = containerContext.getClientProperties();
         String[] propertyNames = clientProperties.getPropertyNames();
@@ -142,12 +164,13 @@ public class ContainerContextTest extends Column {
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);
-        for (int i = 0; i < propertyNames.length; ++i) {
-            model.insertRow(0, new Object[]{propertyNames[i], clientProperties.getString(propertyNames[i])});
-        }
-        
+
         table.getColumnModel().getColumn(0).setHeaderValue("Property");
         table.getColumnModel().getColumn(1).setHeaderValue("Value");
+
+        for (int i = 0; i < propertyNames.length; ++i) {
+            model.addRow(new Object[]{propertyNames[i], clientProperties.getString(propertyNames[i])});
+        }
         
         return table;
     }
@@ -161,14 +184,15 @@ public class ContainerContextTest extends Column {
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(3);
-        for (int i = 0; i < cookies.length; ++i) {
-            model.insertRow(0, new Object[]{cookies[i].getName(), Integer.toString(cookies[i].getMaxAge()), cookies[i].getValue()});
-        }
-        
+
         table.getColumnModel().getColumn(0).setHeaderValue("Name");
         table.getColumnModel().getColumn(1).setHeaderValue("Max Age");
         table.getColumnModel().getColumn(2).setHeaderValue("Value");
 
+        for (int i = 0; i < cookies.length; ++i) {
+            model.addRow(new Object[]{cookies[i].getName(), Integer.toString(cookies[i].getMaxAge()), cookies[i].getValue()});
+        }
+        
         return table;
     }
     
@@ -181,14 +205,15 @@ public class ContainerContextTest extends Column {
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnCount(2);
+
+        table.getColumnModel().getColumn(0).setHeaderValue("Property");
+        table.getColumnModel().getColumn(1).setHeaderValue("Value");
+        
         Iterator it = initialParameterMap.keySet().iterator();
         while (it.hasNext()) {
             String key = (String) it.next();
-            model.insertRow(0, new Object[]{key, initialParameterMap.get(key)});
+            model.addRow(new Object[]{key, initialParameterMap.get(key)});
         }
-        
-        table.getColumnModel().getColumn(0).setHeaderValue("Property");
-        table.getColumnModel().getColumn(1).setHeaderValue("Value");
         
         return table;
     }

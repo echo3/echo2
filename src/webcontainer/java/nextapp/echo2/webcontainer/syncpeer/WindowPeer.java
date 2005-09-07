@@ -32,13 +32,13 @@ package nextapp.echo2.webcontainer.syncpeer;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.ServerComponentUpdate;
-import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RootSynchronizePeer;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.WindowHtmlService;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.servermessage.WindowUpdate;
 
@@ -94,7 +94,7 @@ implements RootSynchronizePeer {
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return ContainerInstance.getElementId(child.getParent());
+        return WindowHtmlService.ROOT_ID;
     }
     
     /**
@@ -111,12 +111,11 @@ implements RootSynchronizePeer {
      */
     public void renderRefresh(RenderContext rc, ServerComponentUpdate update, Component component) {
         Window window = (Window) component;
-        String elementId = ContainerInstance.getElementId(window);
-        DomUpdate.renderElementRemoveChildren(rc.getServerMessage(), elementId);
+        DomUpdate.renderElementRemoveChildren(rc.getServerMessage(), WindowHtmlService.ROOT_ID);
         Component[] addedChildren = window.getVisibleComponents();
         for (int i = 0; i < addedChildren.length; ++i) {
             ComponentSynchronizePeer childSyncPeer = SynchronizePeerFactory.getPeerForComponent(addedChildren[i].getClass());
-            childSyncPeer.renderAdd(rc, update, elementId, addedChildren[i]);
+            childSyncPeer.renderAdd(rc, update, WindowHtmlService.ROOT_ID, addedChildren[i]);
         }
     }
 
