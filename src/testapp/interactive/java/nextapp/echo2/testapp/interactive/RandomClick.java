@@ -68,6 +68,9 @@ public class RandomClick {
         // Contains buttons to deliberately throw exceptions and invalidate sessions.  Not good.
         blacklist.add("Client Configuration");
         
+        // Client exceptions are bad too.
+        blacklist.add("Client Exception");
+
         // Command test might do a redirect, killing the ghost test.
         blacklist.add("Command");
         

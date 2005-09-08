@@ -281,6 +281,15 @@ EchoClientEngine.init = function(baseServerUri) {
 };
 
 /**
+ * Handles a client-side error.
+ */
+EchoClientEngine.processClientError = function(ex) {
+    alert("The following client application error has occurred:\n\n" 
+            + "---------------------------------\n" + ex + "\n---------------------------------\n\n"
+            + "Please contact your server administrator.\n\n");
+};
+
+/**
  * Handles the expiration of server-side session information.
  */
 EchoClientEngine.processSessionExpiration = function() {
@@ -1971,6 +1980,9 @@ EchoServerMessage.processMessageParts = function() {
             processor.process(messagePartElement);
         }
         complete = true;
+    } catch (ex) {
+        EchoClientEngine.processClientError("Cannot process ServerMessage.");
+        throw ex;
     } finally {
         EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
                 : EchoServerMessage.STATUS_PROCESSING_FAILED;
