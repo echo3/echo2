@@ -283,9 +283,20 @@ EchoClientEngine.init = function(baseServerUri) {
 /**
  * Handles a client-side error.
  */
-EchoClientEngine.processClientError = function(ex) {
+EchoClientEngine.processClientError = function(message, ex) {
+    var errorText;
+    if (ex instanceof Error) {
+        errorText = "Error Name: " + ex.name + "\n"
+                + "Error Message: " + ex.message;
+    } else {
+        errorText = "Error: " + ex;
+    }
+
     alert("The following client application error has occurred:\n\n" 
-            + "---------------------------------\n" + ex + "\n---------------------------------\n\n"
+            + "---------------------------------\n" 
+            + message + "\n\n" 
+            + errorText + "\n"
+            + "---------------------------------\n\n"
             + "Please contact your server administrator.\n\n");
 };
 
@@ -1693,7 +1704,7 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
 	    // Mark state as "loaded" so that application will discontinue waiting for library to load.
 	    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
     } catch (ex) {
-        EchoClientEngine.processClientError("Cannot load script module \"" + conn.serviceId + "\":\n" + ex);
+        EchoClientEngine.processClientError("Cannot load script module \"" + conn.serviceId + "\"", ex);
         throw ex;
     }
 };
@@ -2008,7 +2019,7 @@ EchoServerMessage.processPhase1 = function() {
 	        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
 	    }
     } catch (ex) {
-        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1):\n" + ex);
+        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1)", ex);
         throw ex;
     }
 };
@@ -2029,7 +2040,7 @@ EchoServerMessage.processPhase2 = function() {
 		}
 		EchoServerMessage.processAsyncConfig();
     } catch (ex) {
-        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2):\n" + ex);
+        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2)", ex);
         throw ex;
     }
 };
