@@ -1163,7 +1163,7 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
             if ("style" == attribute.name) {
                 targetNode.style.cssText = attribute.value;
             } else {
-                if (EchoDomUtil.attributeToPropertyMap == null) {
+                if (EchoDomUtil.attributeToPropertyMap === null) {
                     EchoDomUtil.initAttributeToPropertyMap();
                 }
                 var propertyName = EchoDomUtil.attributeToPropertyMap[attribute.name];
@@ -1686,11 +1686,16 @@ EchoScriptLibraryManager.loadLibrary = function(serviceId) {
  * @param conn the EchoHttpConnection containing the response information.
  */
 EchoScriptLibraryManager.responseHandler = function(conn) {
-    // Execute library code.
-    eval(conn.getResponseText());
-
-    // Mark state as "loaded" so that application will discontinue waiting for library to load.
-    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+    try {
+	    // Execute library code.
+	    eval(conn.getResponseText());
+	
+	    // Mark state as "loaded" so that application will discontinue waiting for library to load.
+	    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+    } catch (ex) {
+        EchoClientEngine.processClientError("Cannot load script module \"" + conn.serviceId + "\":\n" + ex);
+        throw ex;
+    }
 };
 
 // _____________________________
@@ -1980,9 +1985,6 @@ EchoServerMessage.processMessageParts = function() {
             processor.process(messagePartElement);
         }
         complete = true;
-    } catch (ex) {
-        EchoClientEngine.processClientError("Cannot process ServerMessage.");
-        throw ex;
     } finally {
         EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
                 : EchoServerMessage.STATUS_PROCESSING_FAILED;
@@ -1997,12 +1999,17 @@ EchoServerMessage.processMessageParts = function() {
  * before the second phase of processing is invoked.
  */
 EchoServerMessage.processPhase1 = function() {
-    EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
-    EchoServerMessage.loadLibraries();
-    if (EchoServerMessage.isLibraryLoadComplete()) {
-        EchoServerMessage.processPhase2();
-    } else {
-        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
+    try {
+	    EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
+	    EchoServerMessage.loadLibraries();
+	    if (EchoServerMessage.isLibraryLoadComplete()) {
+	        EchoServerMessage.processPhase2();
+	    } else {
+	        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
+	    }
+    } catch (ex) {
+        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1):\n" + ex);
+        throw ex;
     }
 };
 
@@ -2014,12 +2021,17 @@ EchoServerMessage.processPhase1 = function() {
  * state and asynchoronous serevr polling configurations are established.
  */
 EchoServerMessage.processPhase2 = function() {
-    EchoServerMessage.processMessageParts();
-    EchoServerMessage.processApplicationProperties();
-    if (EchoServerMessage.processingCompleteListener) {
-        EchoServerMessage.processingCompleteListener();
+    try {
+		EchoServerMessage.processMessageParts();
+		EchoServerMessage.processApplicationProperties();
+		if (EchoServerMessage.processingCompleteListener) {
+		    EchoServerMessage.processingCompleteListener();
+		}
+		EchoServerMessage.processAsyncConfig();
+    } catch (ex) {
+        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2):\n" + ex);
+        throw ex;
     }
-    EchoServerMessage.processAsyncConfig();
 };
 
 /**
