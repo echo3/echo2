@@ -258,6 +258,23 @@ public class WindowPaneTest extends SplitPane {
                     targetContentPane.add(createMozillaTextFieldQuirkTestWindow());
                 }
             });
+            
+            addButton("Add init() bug-fix test Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    WindowPane windowPane = new WindowPane();
+                    windowPane.add(new Column() {
+                        public void init() {
+                            super.init();
+                            add(new Label("Test"));
+                        }
+                        public void dispose() {
+                            removeAll();
+                            super.dispose();
+                        }
+                    });
+                    targetContentPane.add(windowPane);
+                }
+            });
         }
     }
 

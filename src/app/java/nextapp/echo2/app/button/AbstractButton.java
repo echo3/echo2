@@ -55,6 +55,7 @@ public abstract class AbstractButton extends Component {
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";
+    public static final String PROPERTY_ALIGNMENT = "alignment";
     public static final String PROPERTY_ICON_TEXT_MARGIN = "iconTextMargin";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_LINE_WRAP = "lineWrap";
@@ -138,6 +139,15 @@ public abstract class AbstractButton extends Component {
         return getModel().getActionCommand();
     }
     
+    /**
+     * Returns the alignment of the button's content.
+     * 
+     * @return the alignment
+     */
+    public Alignment getAlignment() {
+        return (Alignment) getProperty(PROPERTY_ALIGNMENT);
+    }
+
     /**
      * Returns the background image of the button.
      * 
@@ -443,6 +453,15 @@ public abstract class AbstractButton extends Component {
         getModel().setActionCommand(newValue);
     }
     
+    /**
+     * Sets the alignment of the button's content.
+     * 
+     * @param newValue the new alignment
+     */
+    public void setAlignment(Alignment newValue) {
+        setProperty(PROPERTY_ALIGNMENT, newValue);
+    }
+
     /**
      * Sets the background image of the button.
      * 

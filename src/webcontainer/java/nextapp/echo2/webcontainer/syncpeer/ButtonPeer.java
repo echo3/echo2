@@ -112,6 +112,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final String IMAGE_ID_STATE_ICON = "stateIcon";
     private static final String IMAGE_ID_SELECTED_STATE_ICON = "selectedStateIcon";
     
+    private static final String CONTAINER_TABLE_CSS_TEXT_DEFAULT = "border:0px none;border-collapse:collapse;";
+    private static final String CONTAINER_TABLE_CSS_TEXT_LEFT = "border:0px none;border-collapse:collapse; margin: 0 auto 0 0";
+    private static final String CONTAINER_TABLE_CSS_TEXT_CENTER = "border:0px none;border-collapse:collapse; margin: 0 auto;";
+    private static final String CONTAINER_TABLE_CSS_TEXT_RIGHT = "border:0px none;border-collapse:collapse; margin: 0 0 0 auto;";
+    
     /**
      * Service to provide supporting JavaScript library.
      */
@@ -120,6 +125,23 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
 
     static {
         WebRenderServlet.getServiceRegistry().add(BUTTON_SERVICE);
+    }
+    
+    //BUGBUG. Not yet working with RTL langs.
+    private static String getContainerTableCssText(AbstractButton button) {
+        Alignment alignment = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT);
+        if (alignment != null) {
+            int horizontal = AlignmentRender.getRenderedHorizontal(alignment, button);
+            switch (horizontal) {
+            case Alignment.LEFT:
+                return CONTAINER_TABLE_CSS_TEXT_LEFT;
+            case Alignment.CENTER:
+                return CONTAINER_TABLE_CSS_TEXT_CENTER;
+            case Alignment.RIGHT:
+                return CONTAINER_TABLE_CSS_TEXT_RIGHT;
+            }
+        }
+        return CONTAINER_TABLE_CSS_TEXT_DEFAULT;
     }
     
     /**
@@ -295,6 +317,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, 
                 FillImageRender.FLAG_DISABLE_FIXED_MODE);
         
+        AlignmentRender.renderToStyle(cssStyle,
+                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT), button);
+        
         divElement.setAttribute("style", cssStyle.renderInline());
         parentNode.appendChild(divElement);
         return divElement;
@@ -388,7 +413,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             tct.addCellCssText("padding:0px;");
             tableElement = tct.getTableElement();
             tableElement.setAttribute("id", elementId + "_table");
-            tableElement.setAttribute("style", "border:0px none;border-collapse:collapse;");
+            tableElement.setAttribute("style", getContainerTableCssText(button));
             contentNode = tableElement;
             break;
         case 3:
@@ -411,7 +436,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             tct.addCellCssText("padding:0px;");
             tableElement = tct.getTableElement();
             tableElement.setAttribute("id", elementId + "_table");
-            tableElement.setAttribute("style", "border:0px none;border-collapse:collapse;");
+            tableElement.setAttribute("style", getContainerTableCssText(button));
             contentNode = tableElement;
             break;
         default:

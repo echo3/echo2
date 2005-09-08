@@ -299,9 +299,14 @@ implements RenderIdSupport, Serializable {
         if (applicationInstance != null) {
             c.register(applicationInstance);
         }
-        
+
         // Notify PropertyChangeListeners of change.
         firePropertyChange(CHILDREN_CHANGED_PROPERTY, null, c);
+
+        // Initialize component.
+        if (applicationInstance != null) {
+            c.doInit();
+        }
     }
     
     /**
@@ -324,6 +329,34 @@ implements RenderIdSupport, Serializable {
      * method.
      */
     public void dispose() { }
+    
+    /**
+     * Recursively executes the <code>dispose()</code> life-cycle methods of 
+     * this <code>Component</code> and its descendants.
+     */
+    void doDispose() {
+        if (children != null) {
+            Iterator it = children.iterator();
+            while (it.hasNext()) {
+                ((Component) it.next()).doDispose();
+            }
+        }
+        dispose();
+    }
+    
+    /**
+     * Recursively executes the <code>init()</code> life-cycle methods of 
+     * this <code>Component</code> and its descendants.
+     */
+    void doInit() {
+        init();
+        if (children != null) {
+            Iterator it = children.iterator();
+            while (it.hasNext()) {
+                ((Component) it.next()).doInit();
+            }
+        }
+    }
     
     /**
      * Reports a bound property change to <code>PropertyChangeListener</code>s
@@ -1054,12 +1087,14 @@ implements RenderIdSupport, Serializable {
      *         operation.
      */
     void register(ApplicationInstance newValue) {
+        // Verifying 'registering' flag is not set.
         if ((flags & FLAG_REGISTERING) != 0) {
             throw new IllegalStateException(
                     "Illegal attempt to register/unregister Component from within invocation of registration change " +
                     "life-cycle method.");
         }
         try {
+            // Set 'registering' flag.
             flags |= FLAG_REGISTERING;
             
             if (applicationInstance == newValue) {
@@ -1080,7 +1115,6 @@ implements RenderIdSupport, Serializable {
                     }
                 }
                 
-                dispose();
                 applicationInstance.unregisterComponent(this);
             }
             
@@ -1088,7 +1122,6 @@ implements RenderIdSupport, Serializable {
             
             if (newValue != null) { // registering
                 applicationInstance.registerComponent(this);
-                init();
     
                 if (children != null) {
                     Iterator it = children.iterator();
@@ -1098,6 +1131,7 @@ implements RenderIdSupport, Serializable {
                 }
             }
         } finally {
+            // Clear 'registering' flag.
             flags &= ~FLAG_REGISTERING;
         }
     }
@@ -1120,9 +1154,10 @@ implements RenderIdSupport, Serializable {
             // Do-nothing if component is not a child.
             return;
         }
-
+        
         // Deregister child.
-        if (isRegistered()) {
+        if (applicationInstance != null) {
+            c.doDispose();
             c.register(null);
         }
         
