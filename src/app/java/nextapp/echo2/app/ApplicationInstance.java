@@ -224,7 +224,7 @@ implements Serializable {
      * @throws IllegalStateException in the event that the current thread is not
      *         permitted to update the state of the user interface
      */
-    public Window doInit() {
+    public final Window doInit() {
         if (this != activeInstance.get()) {
             throw new IllegalStateException(
                     "Attempt to update state of application user interface outside of user interface thread.");
@@ -638,6 +638,7 @@ implements Serializable {
         defaultWindow = window;
         window.register(this);
         firePropertyChange(WINDOWS_CHANGED_PROPERTY, null, window);
+        window.doInit();
     }
     
     /**

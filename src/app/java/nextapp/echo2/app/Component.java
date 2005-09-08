@@ -141,6 +141,10 @@ implements RenderIdSupport, Serializable {
      */
     private static final int FLAG_REGISTERING = 0x8;
     
+    private static final int FLAG_INIT_IN_PROGRESS = 0x10;
+
+    private static final int FLAG_DISPOSE_IN_PROGRESS = 0x10;
+    
     /**
      * Flag mask of bits used for storage of focus traversal index.
      */
@@ -304,9 +308,7 @@ implements RenderIdSupport, Serializable {
         firePropertyChange(CHILDREN_CHANGED_PROPERTY, null, c);
 
         // Initialize component.
-        if (applicationInstance != null) {
-            c.doInit();
-        }
+        c.doInit();
     }
     
     /**
@@ -335,13 +337,24 @@ implements RenderIdSupport, Serializable {
      * this <code>Component</code> and its descendants.
      */
     void doDispose() {
-        if (children != null) {
-            Iterator it = children.iterator();
-            while (it.hasNext()) {
-                ((Component) it.next()).doDispose();
+        if (applicationInstance != null) {
+            if ((flags & (FLAG_INIT_IN_PROGRESS | FLAG_DISPOSE_IN_PROGRESS)) != 0) {
+                throw new IllegalStateException(
+                        "Attempt to dispose component when initialize or dispose operation already in progress.");
+            }
+            flags |= FLAG_DISPOSE_IN_PROGRESS;
+            try {
+                if (children != null) {
+                    Iterator it = children.iterator();
+                    while (it.hasNext()) {
+                        ((Component) it.next()).doDispose();
+                    }
+                }
+                dispose();
+            } finally {
+                flags &= ~FLAG_DISPOSE_IN_PROGRESS;
             }
         }
-        dispose();
     }
     
     /**
@@ -349,11 +362,22 @@ implements RenderIdSupport, Serializable {
      * this <code>Component</code> and its descendants.
      */
     void doInit() {
-        init();
-        if (children != null) {
-            Iterator it = children.iterator();
-            while (it.hasNext()) {
-                ((Component) it.next()).doInit();
+        if (applicationInstance != null) {
+            if ((flags & (FLAG_INIT_IN_PROGRESS | FLAG_DISPOSE_IN_PROGRESS)) != 0) {
+                throw new IllegalStateException(
+                        "Attempt to initialize component when initialize or dispose operation already in progress.");
+            }
+            flags |= FLAG_INIT_IN_PROGRESS;
+            try {
+                init();
+                if (children != null) {
+                    Iterator it = children.iterator();
+                    while (it.hasNext()) {
+                        ((Component) it.next()).doInit();
+                    }
+                }
+            } finally {
+                flags &= ~FLAG_INIT_IN_PROGRESS;
             }
         }
     }
@@ -1154,10 +1178,11 @@ implements RenderIdSupport, Serializable {
             // Do-nothing if component is not a child.
             return;
         }
+
+        c.doDispose();
         
         // Deregister child.
         if (applicationInstance != null) {
-            c.doDispose();
             c.register(null);
         }
         
