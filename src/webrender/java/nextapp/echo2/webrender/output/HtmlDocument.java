@@ -55,6 +55,7 @@ public class HtmlDocument extends XmlDocument {
         Element htmlElement = document.getDocumentElement();
         Element headElement = document.createElement("head");
         Element titleElement = document.createElement("title");
+        titleElement.appendChild(document.createTextNode(" "));
         Element bodyElement = document.createElement("body");
         htmlElement.appendChild(headElement);
         headElement.appendChild(titleElement);
