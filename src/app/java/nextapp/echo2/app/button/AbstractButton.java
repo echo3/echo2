@@ -141,6 +141,7 @@ public abstract class AbstractButton extends Component {
     
     /**
      * Returns the alignment of the button's content.
+     * Only horizontal alignments are supported.
      * 
      * @return the alignment
      */
@@ -455,6 +456,7 @@ public abstract class AbstractButton extends Component {
     
     /**
      * Sets the alignment of the button's content.
+     * Only horizontal alignments are supported.
      * 
      * @param newValue the new alignment
      */

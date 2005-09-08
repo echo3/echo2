@@ -127,7 +127,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         WebRenderServlet.getServiceRegistry().add(BUTTON_SERVICE);
     }
     
-    //BUGBUG. Not yet working with RTL langs.
+    /**
+     * Determines the CSS text which should be placed in the 'style' attribute
+     * of the button's container TABLE element.
+     * 
+     * @param button the rendering <code>AbstractButton</code>
+     * @return the CSS text
+     */
     private static String getContainerTableCssText(AbstractButton button) {
         Alignment alignment = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT);
         if (alignment != null) {
