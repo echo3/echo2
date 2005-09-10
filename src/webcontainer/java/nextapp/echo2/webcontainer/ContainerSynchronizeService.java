@@ -38,12 +38,12 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Command;
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Window;
 import nextapp.echo2.app.update.PropertyUpdate;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.update.ServerUpdateManager;
 import nextapp.echo2.app.update.UpdateManager;
+import nextapp.echo2.webcontainer.syncpeer.WindowPeer;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.UserInstance;
@@ -227,6 +227,20 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
+     * Executes queued <code>Command</code>s.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     */
+    private void processQueuedCommands(RenderContext rc) {
+        ServerUpdateManager serverUpdateManager = rc.getContainerInstance().getUpdateManager().getServerUpdateManager();
+        Command[] commands = serverUpdateManager.getCommands();
+        for (int i = 0; i < commands.length; i++) {
+            CommandSynchronizePeer peer = SynchronizePeerFactory.getPeerForCommand(commands[i].getClass()); 
+            peer.render(rc, commands[i]);
+        }
+    }
+    
+    /**
      * Processes updates from the application, generating an outgoing
      * <code>ServerMessage</code>.
      * 
@@ -286,13 +300,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 }
             }
         }
-
-        // Execute queued commands.
-        Command[] commands = serverUpdateManager.getCommands();
-        for (int i = 0; i < commands.length; i++) {
-            CommandSynchronizePeer peer = SynchronizePeerFactory.getPeerForCommand(commands[i].getClass()); 
-            peer.render(rc,commands[i]);
-        }
     }
     
     /**
@@ -312,23 +319,22 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
             ApplicationInstance.setActive(applicationInstance);
-            
-            applicationInstance.getUpdateManager().purge();
 
             Window window = applicationInstance.getDefaultWindow();
-            ContentPane content = window.getContent();
             
-            ServerComponentUpdate componentUpdate = new ServerComponentUpdate(content);
-            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(content.getClass());
-            ComponentSynchronizePeer parentSyncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
-            String targetId = parentSyncPeer.getContainerId(content);
-            syncPeer.renderAdd(rc, componentUpdate, targetId, content);
+            ServerComponentUpdate componentUpdate = new ServerComponentUpdate(window);
+            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
+            ((WindowPeer) syncPeer).renderRefresh(rc, componentUpdate, window);
             
             //TODO. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);
             setFocus(rc, true);
             setModalContextRootId(rc);
             setRootLayoutDirection(rc);
+
+            processQueuedCommands(rc);
+            
+            applicationInstance.getUpdateManager().purge();
             
             return serverMessage;
         } finally {
@@ -366,6 +372,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
             setFocus(rc, false);
             setModalContextRootId(rc);
             
+            processQueuedCommands(rc);
+
             updateManager.purge();
             
             return serverMessage;

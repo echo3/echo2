@@ -111,6 +111,12 @@ implements RootSynchronizePeer {
      */
     public void renderRefresh(RenderContext rc, ServerComponentUpdate update, Component component) {
         Window window = (Window) component;
+        
+        String title = (String) window.getRenderProperty(Window.PROPERTY_TITLE);
+        if (title != null) {
+            WindowUpdate.renderSetWindowTitle(rc.getServerMessage(), title);
+        }
+        
         DomUpdate.renderElementRemoveChildren(rc.getServerMessage(), WindowHtmlService.ROOT_ID);
         Component[] addedChildren = window.getVisibleComponents();
         for (int i = 0; i < addedChildren.length; ++i) {
