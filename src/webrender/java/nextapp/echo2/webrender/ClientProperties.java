@@ -275,7 +275,7 @@ implements Serializable {
     /**
      * The <code>Locale</code> of the client, derived from the language property.
      */
-    public static final String LOCALE = "locale";
+    public static final String LOCALES = "locales";
     
     /**
      * The client's navigator.appName property.

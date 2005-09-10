@@ -214,7 +214,11 @@ public class ContainerInstance extends UserInstance {
         
         try {
             ApplicationInstance.setActive(applicationInstance);
-            applicationInstance.setLocale((Locale) containerContext.getClientProperties().get(ClientProperties.LOCALE));
+            
+            Locale[] locales = (Locale[]) containerContext.getClientProperties().get(ClientProperties.LOCALES);
+            if (locales != null && locales.length > 0) {
+                applicationInstance.setLocale(locales[0]);
+            }
             applicationInstance.doInit();
         } finally {
             ApplicationInstance.setActive(null);

@@ -70,12 +70,12 @@ public class ContainerContextTest extends Column {
          */
         public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
             String labelValue;
-            if (value instanceof String[]) {
-                String[] stringArray = (String[]) value;
+            if (value instanceof Object[]) {
+                Object[] array = (Object[]) value;
                 StringBuffer out = new StringBuffer();
-                for (int i = 0; i < stringArray.length; ++i) {
-                    out.append(stringArray[i]);
-                    if (i < stringArray.length - 1) {
+                for (int i = 0; i < array.length; ++i) {
+                    out.append(array[i]);
+                    if (i < array.length - 1) {
                         out.append(",");
                     }
                 }
@@ -169,7 +169,8 @@ public class ContainerContextTest extends Column {
         table.getColumnModel().getColumn(1).setHeaderValue("Value");
 
         for (int i = 0; i < propertyNames.length; ++i) {
-            model.addRow(new Object[]{propertyNames[i], clientProperties.getString(propertyNames[i])});
+            Object propertyValue = clientProperties.get(propertyNames[i]);
+            model.addRow(new Object[]{propertyNames[i], propertyValue});
         }
         
         return table;

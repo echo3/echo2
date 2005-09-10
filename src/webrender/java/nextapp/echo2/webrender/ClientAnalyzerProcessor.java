@@ -29,11 +29,13 @@
 
 package nextapp.echo2.webrender;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
@@ -70,37 +72,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
         set.add(ClientProperties.UTC_OFFSET);
         VALID_PROPERTIES = Collections.unmodifiableSet(set);
     }
-
-    /**
-     * Derives a <code>Locale</code> instance from the browser language property 
-     * string.
-     * 
-     * @param localeString the language property string, e.g. "en-US".
-     * @return the generated <code>Locale</code>
-     */
-    public static Locale parseLocaleString(String localeString) {
-        if (localeString == null || localeString.trim().length() == 0) {
-            return null;
-        }
-
-        StringTokenizer st = new StringTokenizer(localeString, "-");
-        String language = "";
-        String country = "";
-        String variant = "";
-
-        if (st.hasMoreTokens()) {
-            language = st.nextToken();
-        }
-        if (st.hasMoreTokens()) {
-            country = st.nextToken();
-        }
-        if (st.hasMoreTokens()) {
-            variant = st.nextToken();
-        }
-        
-        return new Locale(language, country, variant);
-    }
-
+    
     /**
      * Analyzes the state of <code>ClientProperties</code> and adds additional
      * inferred data, such as quirk attributes based on browser type.
@@ -109,10 +81,14 @@ implements SynchronizeService.ClientMessagePartProcessor {
      *        and update
      */
     private void analyze(ClientProperties clientProperties) {
-        Locale locale = parseLocaleString(clientProperties.getString(ClientProperties.NAVIGATOR_LANGUAGE));
-        if (locale != null) {
-            clientProperties.setProperty(ClientProperties.LOCALE, locale);
+        Connection conn = WebRenderServlet.getActiveConnection();
+        
+        Enumeration localeEnum = conn.getRequest().getLocales();
+        List localeList = new ArrayList();
+        while (localeEnum.hasMoreElements()) {
+            localeList.add(localeEnum.nextElement());
         }
+        clientProperties.setProperty(ClientProperties.LOCALES, localeList.toArray(new Locale[localeList.size()]));
     
         String userAgent = clientProperties.getString(ClientProperties.NAVIGATOR_USER_AGENT).toLowerCase();
         
