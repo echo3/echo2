@@ -1651,9 +1651,20 @@ EchoScriptLibraryManager.STATE_REQUESTED = 1;
 
 /**
  * Library load-state constant indicating a library has been successfully
- * retrieved and installed from the server.
+ * retrieved from the server.
  */
 EchoScriptLibraryManager.STATE_LOADED = 2;
+
+/**
+ * Library load-state constant indicating a library has been successfully
+ * installed.
+ */
+EchoScriptLibraryManager.STATE_INSTALLED = 3;
+
+/**
+ * Associative array mapping library service ids to library source code.
+ */
+EchoScriptLibraryManager.librarySourceMap = new Array();
 
 /**
  * Associative array mapping library service ids to load-states.
@@ -1672,7 +1683,36 @@ EchoScriptLibraryManager.getState = function(serviceId) {
 };
 
 /**
- * Loads a JavaScript library.
+ * Installs a previously loaded JavaScript library.
+ *
+ * @param serviceId the server service identifier of the library
+ */
+EchoScriptLibraryManager.installLibrary = function(serviceId) {
+    if (EchoScriptLibraryManager.getState(serviceId) == EchoScriptLibraryManager.STATE_INSTALLED) {
+        // Library already installed.
+        return;
+    }
+
+    try {
+        // Obtain source.
+	    var source = EchoScriptLibraryManager.librarySourceMap[serviceId];
+
+	    // Execute library code.
+        eval(source);
+        
+        // Clear source.
+        EchoScriptLibraryManager.librarySourceMap[serviceId] = null;
+
+        // Mark state as installed.
+        EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_INSTALLED;
+    } catch (ex) {
+        EchoClientEngine.processClientError("Cannot load script module \"" + conn.serviceId + "\"", ex);
+        throw ex;
+    }
+};
+
+/**
+ * Loads a JavaScript library and stores it for execution.
  *
  * @param serviceId the server service identifier of the library
  */
@@ -1697,16 +1737,8 @@ EchoScriptLibraryManager.loadLibrary = function(serviceId) {
  * @param conn the EchoHttpConnection containing the response information.
  */
 EchoScriptLibraryManager.responseHandler = function(conn) {
-    try {
-	    // Execute library code.
-	    eval(conn.getResponseText());
-	
-	    // Mark state as "loaded" so that application will discontinue waiting for library to load.
-	    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
-    } catch (ex) {
-        EchoClientEngine.processClientError("Cannot load script module \"" + conn.serviceId + "\"", ex);
-        throw ex;
-    }
+    EchoScriptLibraryManager.librarySourceMap[conn.serviceId] = conn.getResponseText();
+    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
 };
 
 // _____________________________
@@ -1907,7 +1939,9 @@ EchoServerMessage.isLibraryLoadComplete = function() {
         var returnValue = true;
         for (var i = 0; i < libraryElements.length; ++i) {
             var serviceId = libraryElements.item(i).getAttribute("service-id");
-            if (EchoScriptLibraryManager.getState(serviceId) != EchoScriptLibraryManager.STATE_LOADED) {
+            var libraryState = EchoScriptLibraryManager.getState(serviceId)
+            if (libraryState != EchoScriptLibraryManager.STATE_LOADED 
+                    && libraryState != EchoScriptLibraryManager.STATE_INSTALLED) {
                 // A library that requires immediate loading is not yet available.
                 returnValue = false;
                 break;
@@ -1938,6 +1972,22 @@ EchoServerMessage.loadLibraries = function() {
     for (var i = 0; i < libraryElements.length; ++i) {
         var serviceId = libraryElements.item(i).getAttribute("service-id");
         EchoScriptLibraryManager.loadLibrary(serviceId);
+    }
+};
+
+/**
+ * Installs the dynamically retrieved JavaScript libraries.
+ */
+EchoServerMessage.installLibraries = function() {
+    var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
+    var headElement = document.getElementsByTagName("head").item(0);
+    if (!librariesElement) {
+        return;
+    }
+    var libraryElements = librariesElement.getElementsByTagName("library");
+    for (var i = 0; i < libraryElements.length; ++i) {
+        var serviceId = libraryElements.item(i).getAttribute("service-id");
+        EchoScriptLibraryManager.installLibrary(serviceId);
     }
 };
 
@@ -2033,6 +2083,7 @@ EchoServerMessage.processPhase1 = function() {
  */
 EchoServerMessage.processPhase2 = function() {
     try {
+        EchoServerMessage.installLibraries();
 		EchoServerMessage.processMessageParts();
 		EchoServerMessage.processApplicationProperties();
 		if (EchoServerMessage.processingCompleteListener) {
