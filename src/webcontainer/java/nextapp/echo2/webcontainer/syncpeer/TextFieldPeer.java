@@ -74,6 +74,12 @@ implements DomUpdateSupport {
             inputElement.setAttribute("value", value);
         }
         
+        if (textField.isFocusTraversalParticipant()) {
+            inputElement.setAttribute("tabindex", Integer.toString(textField.getFocusTraversalIndex()));
+        } else {
+            inputElement.setAttribute("tabindex", "-1");
+        }
+        
         CssStyle cssStyle = createBaseCssStyle(rc, textField);
         if (cssStyle.hasAttributes()) {
             inputElement.setAttribute("style", cssStyle.renderInline());

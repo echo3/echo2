@@ -313,6 +313,12 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
         if (multiple) {
             listComponentElement.setAttribute("multiple", "multiple");
         }
+        
+        if (listComponent.isFocusTraversalParticipant()) {
+            listComponentElement.setAttribute("tabindex", Integer.toString(listComponent.getFocusTraversalIndex()));
+        } else {
+            listComponentElement.setAttribute("tabindex", "-1");
+        }
 
         ListModel model = listComponent.getModel();
         ListSelectionModel selectionModel = listComponent.getSelectionModel();

@@ -63,6 +63,12 @@ public class TextAreaPeer extends TextComponentPeer {
         Element textAreaElement = parentNode.getOwnerDocument().createElement("textarea");
         textAreaElement.setAttribute("id", elementId);
         
+        if (textArea.isFocusTraversalParticipant()) {
+            textAreaElement.setAttribute("tabindex", Integer.toString(textArea.getFocusTraversalIndex()));
+        } else {
+            textAreaElement.setAttribute("tabindex", "-1");
+        }
+        
         String value = textArea.getText();
         if (value != null) {
             if (!rc.getContainerInstance().getClientProperties().getBoolean(
