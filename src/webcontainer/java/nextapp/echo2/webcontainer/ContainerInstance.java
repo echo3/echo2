@@ -31,7 +31,6 @@ package nextapp.echo2.webcontainer;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -40,7 +39,6 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webcontainer.util.IdTable;
-import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.UserInstance;
 
@@ -214,11 +212,6 @@ public class ContainerInstance extends UserInstance {
         
         try {
             ApplicationInstance.setActive(applicationInstance);
-            
-            Locale[] locales = (Locale[]) containerContext.getClientProperties().get(ClientProperties.LOCALES);
-            if (locales != null && locales.length > 0) {
-                applicationInstance.setLocale(locales[0]);
-            }
             applicationInstance.doInit();
         } finally {
             ApplicationInstance.setActive(null);
