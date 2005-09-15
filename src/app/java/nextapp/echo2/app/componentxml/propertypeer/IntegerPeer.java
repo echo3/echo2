@@ -68,6 +68,10 @@ implements PropertyXmlPeer {
     throws InvalidPropertyException {
         try {
             ComponentIntrospector ci = ComponentIntrospector.forName(objectClass.getName(), classLoader);
+            if (value.startsWith(objectClass.getName())) {
+                // Remove class name if required.
+                value = value.substring(objectClass.getName().length() + 1);
+            }
             Object constantValue = ci.getConstantValue(value);
             if (constantValue instanceof Integer) {
                 return (Integer) constantValue;
