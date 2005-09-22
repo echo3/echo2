@@ -46,7 +46,6 @@ public class SplitPaneTest extends TestCase {
      */
     public void testEmptyConstructor() {
         SplitPane splitPane = new SplitPane();
-        assertEquals(SplitPane.ORIENTATION_HORIZONTAL, splitPane.getOrienation());
         assertNull(splitPane.getSeparatorPosition());
         assertFalse(splitPane.isResizable());
     }

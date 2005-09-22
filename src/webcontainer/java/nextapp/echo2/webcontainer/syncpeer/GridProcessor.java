@@ -64,6 +64,8 @@ import nextapp.echo2.app.layout.GridLayoutData;
  */
 public class GridProcessor {
     
+    private static final Integer DEFAULT_SIZE = new Integer(Grid.DEFAULT_SIZE);
+    
     /**
      * Internal representation of a rendered cell at a specific coordinate.
      */
@@ -473,7 +475,7 @@ public class GridProcessor {
     }
     
     private void renderCellMatrix(Cell[] cells) {
-        gridXSize = grid.getSize();
+        gridXSize = ((Integer) grid.getRenderProperty(Grid.PROPERTY_SIZE, DEFAULT_SIZE)).intValue();
         
         int x = 0, y = 0;
         Cell[] yCells = getCellArray(y, true);

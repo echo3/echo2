@@ -50,7 +50,6 @@ public class TextFieldTest extends TestCase {
         TextField textField = new TextField();
         assertNotNull(textField.getDocument());
         assertEquals(StringDocument.class, textField.getDocument().getClass());
-        assertEquals(new Extent(20, Extent.EX), textField.getWidth());
     }
     
     /**

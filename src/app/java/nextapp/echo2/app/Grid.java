@@ -43,7 +43,7 @@ package nextapp.echo2.app;
  */
 public class Grid extends Component {
 
-    private static final int DEFAULT_SIZE = 2;
+    public static final int DEFAULT_SIZE = 2;
     
     /**
      * Constant value for <code>orientation</code> property indicating cells 
@@ -72,7 +72,7 @@ public class Grid extends Component {
      * default size (2).
      */
     public Grid() {
-        this(DEFAULT_SIZE);
+        super();
     }
     
     /**

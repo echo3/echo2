@@ -112,7 +112,7 @@ implements Pane, PaneContainer {
      * orientation.
      */
     public SplitPane() {
-        this(ORIENTATION_HORIZONTAL, null);
+        super();
     }
     
     /**
@@ -132,7 +132,8 @@ implements Pane, PaneContainer {
      *        </ul>
      */
     public SplitPane(int orientation) {
-        this(orientation, null);
+        super();
+        setOrientation(orientation);
     }
     
     /**

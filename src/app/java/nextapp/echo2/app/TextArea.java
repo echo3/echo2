@@ -44,7 +44,17 @@ public class TextArea extends TextComponent {
      * height settings.
      */
     public TextArea() {
-        this(new StringDocument(), null, 20, 4);
+        super(new StringDocument());
+    }
+    
+    /**
+     * Creates a new <code>TextArea</code> with the specified
+     * <code>Document</code> model.
+     * 
+     * @param document the document
+     */
+    public TextArea(Document document) {
+        super(document);
     }
     
     /**

@@ -44,7 +44,17 @@ public class TextField extends TextComponent {
      * setting.
      */
     public TextField() {
-        this(new StringDocument(), null, 20);
+        super(new StringDocument());
+    }
+    
+    /**
+     * Creates a new <code>TextField</code> with the specified
+     * <code>Document</code> model.
+     * 
+     * @param document the document
+     */
+    public TextField(Document document) {
+        super(document);
     }
     
     /**
