@@ -60,7 +60,8 @@ public class StyleSheetLoader {
      *        <code>CLASSPATH</code> containing the XML data
      * @param classLoader the <code>ClassLoader</code> with which to 
      *        instantiate property objects
-     * @return the created <code>StyleSheet</code>
+     * @return the created <code>StyleSheet</code> or null if the resource 
+     *         does not exist
      * @throws ComponentXmlException if parsing/instantiation errors occur
      */
     public static StyleSheet load(String resourceName, ClassLoader classLoader)
@@ -68,6 +69,9 @@ public class StyleSheetLoader {
         InputStream in = null;
         try {
             in = classLoader.getResourceAsStream(resourceName);
+            if (in == null) {
+                return null;
+            }
             return load(in, classLoader);
         } finally {
             if (in != null) { try { in.close(); } catch (IOException ex) { } }
