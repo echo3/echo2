@@ -337,12 +337,18 @@ EchoClientEngine.processServerError = function() {
 	    if (uri) {
 	        window.location.href = uri;
 	    } else {
-            window.location.reload();
+	        if (EchoServerMessage.transactionCount > 0) {
+	            // Only reload if not on first transaction to avoid infinite crash loop.
+                window.location.reload();
+	        }
 	    }
     } else {
         message = EchoClientConfiguration.propertyMap["defaultServerErrorMessage"];
         alert(message);
-        window.location.reload();
+        if (EchoServerMessage.transactionCount > 0) {
+            // Only reload if not on first transaction to avoid infinite crash loop.
+            window.location.reload();
+        }
     }
 };
 
@@ -1883,6 +1889,11 @@ EchoServerMessage.STATUS_PROCESSING_COMPLETE = 2;
 EchoServerMessage.STATUS_PROCESSING_FAILED = 3;
 
 /**
+ * Count of successfully processed server messages.
+ */
+EchoServerMessage.transactionCount = 0;
+
+/**
  * DOM of the ServerMessage.
  */
 EchoServerMessage.messageDocument = null;
@@ -2094,6 +2105,8 @@ EchoServerMessage.processPhase2 = function() {
         EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2)", ex);
         throw ex;
     }
+    
+    ++EchoServerMessage.transactionCount;
 };
 
 /**

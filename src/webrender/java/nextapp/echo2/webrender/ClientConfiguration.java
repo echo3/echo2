@@ -88,7 +88,7 @@ implements Serializable {
         Set propertyNames = propertyMap.keySet();
         return (String[]) propertyNames.toArray(new String[propertyNames.size()]);
     }
-     
+         
     /**
      * Sets a property.
      * 

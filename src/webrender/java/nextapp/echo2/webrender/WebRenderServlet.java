@@ -91,7 +91,14 @@ public abstract class WebRenderServlet extends HttpServlet {
     /** A convenience for setting the cache header */
     private static final String CACHE_MAX_AGE = "max-age=" + CACHED_SERVICE_TIMEOUT;
 
+    /**
+     * Global handler for multipart/form-data encoded HTTP requests.
+     */
     private static MultipartRequestWrapper multipartRequestWrapper;
+    
+    /**
+     * Global <code>ServiceRegistry</code>.
+     */
     private static final ServiceRegistry services = new ServiceRegistry();
 
     static {
