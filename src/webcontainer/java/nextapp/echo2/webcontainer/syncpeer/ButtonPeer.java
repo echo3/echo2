@@ -326,6 +326,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         AlignmentRender.renderToStyle(cssStyle,
                 (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT), button);
         
+        String toolTipText = (String) button.getRenderProperty(AbstractButton.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            divElement.setAttribute("title", toolTipText);
+        }
+        
         divElement.setAttribute("style", cssStyle.renderInline());
         parentNode.appendChild(divElement);
         return divElement;

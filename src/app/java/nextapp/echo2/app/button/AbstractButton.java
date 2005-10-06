@@ -77,6 +77,7 @@ public abstract class AbstractButton extends Component {
     public static final String PROPERTY_TEXT = "text";
     public static final String PROPERTY_TEXT_ALIGNMENT = "textAlignment";
     public static final String PROPERTY_TEXT_POSITION = "textPosition";
+    public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     public static final String PROPERTY_WIDTH = "width";
 
     /**
@@ -355,6 +356,16 @@ public abstract class AbstractButton extends Component {
      */
     public Alignment getTextPosition() {
         return (Alignment) getProperty(PROPERTY_TEXT_POSITION);
+    }
+    
+    /**
+     * Returns the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @return the tool tip text
+     */
+    public String getToolTipText() {
+        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
     }
     
     /**
@@ -715,6 +726,16 @@ public abstract class AbstractButton extends Component {
      */
     public void setTextPosition(Alignment newValue) {
         setProperty(PROPERTY_TEXT_POSITION, newValue);
+    }
+    
+    /**
+     * Sets the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @param newValue the new tool tip text
+     */
+    public void setToolTipText(String newValue) {
+        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
     }
 
     /**
