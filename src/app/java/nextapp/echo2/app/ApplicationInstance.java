@@ -393,7 +393,14 @@ implements Serializable {
         if (modalComponents == null || modalComponents.size() == 0) {
             return null;
         } else {
-            return (Component) modalComponents.get(modalComponents.size() - 1);
+            for (int i = modalComponents.size() - 1; i >= 0; --i) {
+                Component component = (Component) modalComponents.get(i);
+                // Ignore invisible components.
+                if (component.isRenderVisible()) {
+                    return component;
+                }
+            }
+            return null;  
         }
     }
     
