@@ -675,7 +675,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             if (syncPeer instanceof DomUpdateSupport) {
                 ((DomUpdateSupport) syncPeer).renderHtml(rc, update, contentDivElement, child);
             } else {
-                syncPeer.renderAdd(rc, update, elementId, child);
+                syncPeer.renderAdd(rc, update, getContainerId(child), child);
             }
         }
     }
