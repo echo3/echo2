@@ -40,6 +40,88 @@ import nextapp.echo2.webrender.output.CssStyle;
 public class FontRender {
 
     /**
+     * Renders a 'font-family' CSS attribute value based on the specified 
+     * <code>Font.Typeface</code>.
+     * 
+     * @param typeface the typeface
+     * @return the CSS attribute value
+     */
+    public static String renderFontFamilyCssAttributeValue(Font.Typeface typeface) {
+        StringBuffer out = new StringBuffer(typeface.getName());
+        typeface = typeface.getAlternate();
+        while (typeface != null) {
+            out.append(",");
+            out.append(typeface.getName());
+            typeface = typeface.getAlternate();
+        }
+        return out.toString();
+    }
+    
+    /**
+     * Renders a 'font-style' CSS attribute value for the specified 
+     * <code>Font</code>.
+     * 
+     * @param font the font
+     * @return the CSS attribute value
+     */
+    public static String renderFontStyleCssAttributeValue(Font font) {
+        return font.isItalic() ? "italic" : "normal";
+    }
+    
+    /**
+     * Renders a 'font-weight' CSS attribute value for the specified
+     * <code>Font</code>.
+     * 
+     * @param font the font
+     * @return the CSS attribute value
+     */
+    public static String renderFontWeightCssAttributeValue(Font font) {
+        return font.isBold() ? "bold" : "normal";
+    }
+    
+    /**
+     * Renders a 'text-decoration' CSS attribute value based on the specified
+     * <code>Font</code>
+     * 
+     * @param font the font
+     * @return the CSS attribute value
+     */
+    public static String renderTextDecorationCssAttributeValue(Font font) {
+        StringBuffer out = new StringBuffer();
+        if (font.isUnderline()) {
+            out.append("underline");
+        }
+        if (font.isOverline()) {
+            if (out.length() > 0) {
+                out.append(" ");
+            }
+            out.append("overline");
+        }
+        if (font.isLineThrough()) {
+            if (out.length() > 0) {
+                out.append(" ");
+            }
+            out.append("line-through");
+        }
+        if (out.length() == 0) {
+            return "none";
+        } else {
+            return out.toString();
+        }
+    }
+    
+    /**
+     * Renders the <code>Font</code> properties of the provided 
+     * <code>Component</code> to a CSS style.
+     * 
+     * @param cssStyle the target <code>CssStyle</code>
+     * @param component the component
+     */
+    public static void renderToStyle(CssStyle cssStyle, Component component) {
+        renderToStyle(cssStyle, (Font) component.getRenderProperty(Component.PROPERTY_FONT));
+    }
+    
+    /**
      * Renders a <code>Font</code> property to the given CSS style.
      * Null property values are ignored.
      * 
@@ -50,16 +132,9 @@ public class FontRender {
         if (font == null) {
             return;
         }
-        Font.Typeface typeFace = font.getTypeface();
-        if (typeFace != null) {
-            StringBuffer out = new StringBuffer(typeFace.getName());
-            typeFace = typeFace.getAlternate();
-            while (typeFace != null) {
-                out.append(",");
-                out.append(typeFace.getName());
-                typeFace = typeFace.getAlternate();
-            }
-            cssStyle.setAttribute("font-family", out.toString());
+        Font.Typeface typeface = font.getTypeface();
+        if (typeface != null) {
+            cssStyle.setAttribute("font-family", renderFontFamilyCssAttributeValue(typeface));
         }
         if (font.getSize() != null) {
             cssStyle.setAttribute("font-size", ExtentRender.renderCssAttributeValue(font.getSize()));
@@ -91,17 +166,6 @@ public class FontRender {
                 cssStyle.setAttribute("text-decoration", out.toString()); 
             }
         }
-    }
-
-    /**
-     * Renders the <code>Font</code> properties of the provided 
-     * <code>Component</code> to a CSS style.
-     * 
-     * @param cssStyle the target <code>CssStyle</code>
-     * @param component the component
-     */
-    public static void renderToStyle(CssStyle cssStyle, Component component) {
-        renderToStyle(cssStyle, (Font) component.getRenderProperty(Component.PROPERTY_FONT));
     }
     
     /** Non-instantiable class. */
