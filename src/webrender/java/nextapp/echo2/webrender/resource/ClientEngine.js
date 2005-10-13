@@ -487,7 +487,8 @@ EchoClientMessage.setActionValue = function(componentId, actionName, actionValue
     var actionElement = messagePartElement.ownerDocument.createElement("action");
     actionElement.setAttribute("component-id", componentId);
     actionElement.setAttribute("name", actionName);
-    if (actionValue) {
+    if (actionValue != undefined) {
+        // Only set value if argument is provided.
         actionElement.setAttribute("value", actionValue);
     }
     messagePartElement.appendChild(actionElement);
