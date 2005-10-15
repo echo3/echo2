@@ -257,16 +257,22 @@ function EchoClientEngine() { }
 EchoClientEngine.baseServerUri = null;
 
 /**
+ * Flag indicating whether debugging options (e.g., Debug Pane) are enabled.
+ */
+EchoClientEngine.debugEnabled;
+
+/**
  * Initializes the Echo2 Client Engine.
  *
  * @param baseServerUri the base URI of the Echo application server
  */
-EchoClientEngine.init = function(baseServerUri) {
-    // Store base URI.
+EchoClientEngine.init = function(baseServerUri, debugEnabled) {
     EchoClientEngine.baseServerUri = baseServerUri;
+    EchoClientEngine.debugEnabled = debugEnabled;
     
     // Launch debug window if requested in URI.
-    if (window.location.search && window.location.search.toLowerCase().indexOf("debug") != -1) {
+    if (EchoClientEngine.debugEnabled && 
+            window.location.search && window.location.search.toLowerCase().indexOf("debug") != -1) {
         EchoDebugManager.launch();
     }
 

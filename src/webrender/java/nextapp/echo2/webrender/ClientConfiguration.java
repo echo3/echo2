@@ -41,25 +41,25 @@ public class ClientConfiguration
 implements Serializable {
     
     /**
-     * Property name indicating the alert message which should be displayed in
+     * Property name constant for the alert message which should be displayed in
      * the event that a server error occurs.
      */
     public static final String PROPERTY_SERVER_ERROR_MESSAGE = "serverErrorMessage";
 
     /**
-     * Property name indicating the URI which should be displayed in the event
+     * Property name constant for the URI which should be displayed in the event
      * that a server error occurs.
      */
     public static final String PROPERTY_SERVER_ERROR_URI = "serverErrorUri";
 
     /**
-     * Property name indicating the alert message which should be displayed in
+     * Property name constant for the alert message which should be displayed in
      * the event the session expires.
      */
     public static final String PROPERTY_SESSION_EXPIRATION_MESSAGE = "sessionExpirationMessage";
 
     /**
-     * Property name indicating the URI which should be displayed in the event
+     * Property name constant for the URI which should be displayed in the event
      * the session expires.
      */
     public static final String PROPERTY_SESSION_EXPIRATION_URI = "sessionExpirationUri";

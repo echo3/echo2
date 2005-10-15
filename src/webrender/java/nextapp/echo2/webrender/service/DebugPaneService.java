@@ -30,30 +30,24 @@
 package nextapp.echo2.webrender.service;
 
 import nextapp.echo2.webrender.Service;
-import nextapp.echo2.webrender.ServiceRegistry;
+import nextapp.echo2.webrender.util.Resource;
 
 /**
- * Static instances of the 'core' Web Render Engine <code>Service</code>s.
+ * <code>Service</code> which renders HTML content of Debug Pane.
  */
-public class CoreServices {
+public class DebugPaneService extends StaticTextService {
 
-    /** Root path to core service <code>CLASSPATH</code> resources. */
-    private static final String RESOURCE_PATH = "/nextapp/echo2/webrender/resource/";
-    
-    /** Client Engine JavaScript code. */
-    public static final Service CLIENT_ENGINE
-            = JavaScriptService.forResource("Echo.ClientEngine", RESOURCE_PATH + "ClientEngine.js");
+    private static final String SERVICE_ID = "Echo.Debug";
     
     /**
-     * Installs the core services in the specified 
-     * <code>ServiceRegistry</code>.
-     * 
-     * services the <code>ServiceRegistry</code>
+     * Singleton instance.
      */
-    public static void install(ServiceRegistry services) {
-        services.add(CLIENT_ENGINE);
-    }
+    public static final Service INSTANCE = new DebugPaneService();
     
-    /** Non-instantiable class. */
-    private CoreServices() { }
+    /**
+     * Creates a new <code>DebugPaneService</code>.
+     */
+    private DebugPaneService() {
+        super(SERVICE_ID, "text/html", Resource.getResourceAsString("/nextapp/echo2/webrender/resource/Debug.html"));
+    }
 }

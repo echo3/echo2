@@ -74,13 +74,16 @@ implements Service {
     public void service(Connection conn) throws IOException {
         ContainerInstance ci = (ContainerInstance) conn.getUserInstance();
         conn.setContentType(ContentType.TEXT_HTML);
+        
+        boolean debug = !("false".equals(conn.getServlet().getInitParameter("echo2.debug")));
 
         BaseHtmlDocument baseDoc = new BaseHtmlDocument(ROOT_ID);
         baseDoc.setGenarator(ApplicationInstance.ID_STRING);
         baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.CLIENT_ENGINE));
 
         // Add initialization directive.
-        baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getServletUri() + "');");
+        baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getServletUri() + "', " 
+                + debug + ");");
         
         // Set body element CSS style.
         CssStyle cssStyle = new CssStyle();

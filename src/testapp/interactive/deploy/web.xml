@@ -12,6 +12,10 @@
     <servlet>
       <servlet-name>Echo2InteractiveServlet</servlet-name>
       <servlet-class>nextapp.echo2.testapp.interactive.InteractiveServlet</servlet-class>
+      <init-param>
+        <param-name>echo2.debug</param-name>
+        <param-value>false</param-value>
+      </init-param>
     </servlet>
 
     <servlet>

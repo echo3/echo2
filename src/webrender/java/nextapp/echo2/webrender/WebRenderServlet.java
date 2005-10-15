@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nextapp.echo2.webrender.service.CoreServices;
+import nextapp.echo2.webrender.service.DebugPaneService;
 
 /**
  * Echo <code>HttpServlet</code> implementation.
@@ -103,6 +104,7 @@ public abstract class WebRenderServlet extends HttpServlet {
 
     static {
         CoreServices.install(services);
+        services.add(DebugPaneService.INSTANCE);
     }
     
     /**
