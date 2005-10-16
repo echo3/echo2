@@ -80,6 +80,11 @@ implements DomUpdateSupport {
             inputElement.setAttribute("tabindex", "-1");
         }
         
+        String toolTipText = (String) textField.getRenderProperty(TextField.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            inputElement.setAttribute("title", toolTipText);
+        }
+
         CssStyle cssStyle = createBaseCssStyle(rc, textField);
         if (cssStyle.hasAttributes()) {
             inputElement.setAttribute("style", cssStyle.renderInline());

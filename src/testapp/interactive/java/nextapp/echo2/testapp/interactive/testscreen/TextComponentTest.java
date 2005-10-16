@@ -133,7 +133,19 @@ public class TextComponentTest extends SplitPane {
                 textArea.getDocument().setText(text);
             }
         });
-        
+        controlsColumn.addButton("Toggle ToolTip Text", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                if (textField.getToolTipText() == null) {
+                    textField.setToolTipText("This is a tool tip.");
+                    passwordField.setToolTipText("This is a tool tip.");
+                    textArea.setToolTipText("This is a tool tip.");
+                } else {
+                    textField.setToolTipText(null);
+                    passwordField.setToolTipText(null);
+                    textArea.setToolTipText(null);
+                }
+            }
+        });
         controlsColumn.addButton("Add ActionListener", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.addActionListener(actionListener);

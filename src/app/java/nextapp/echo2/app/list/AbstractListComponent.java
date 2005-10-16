@@ -67,6 +67,7 @@ public class AbstractListComponent extends Component {
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
     public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
+    public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     public static final String PROPERTY_WIDTH = "width";
 
     public static final DefaultListCellRenderer DEFAULT_LIST_CELL_RENDERER = new DefaultListCellRenderer();
@@ -262,6 +263,16 @@ public class AbstractListComponent extends Component {
      */
     public ListSelectionModel getSelectionModel() {
         return selectionModel;
+    }
+    
+    /**
+     * Returns the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @return the tool tip text
+     */
+    public String getToolTipText() {
+        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
     }
     
     /**
@@ -462,6 +473,16 @@ public class AbstractListComponent extends Component {
         firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
     
+    /**
+     * Sets the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @param newValue the new tool tip text
+     */
+    public void setToolTipText(String newValue) {
+        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
+    }
+
     /**
      * Sets the width.
      *

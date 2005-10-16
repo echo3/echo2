@@ -249,6 +249,11 @@ public class ListBoxPeer extends AbstractListComponentPeer {
         Element listBoxElement = parentNode.getOwnerDocument().createElement("div");
         listBoxElement.setAttribute("id", elementId);
 
+        String toolTipText = (String) listBox.getRenderProperty(ListBox.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            listBoxElement.setAttribute("title", toolTipText);
+        }
+
         ListModel model = listBox.getModel();
         ListCellRenderer renderer = listBox.getCellRenderer();
 

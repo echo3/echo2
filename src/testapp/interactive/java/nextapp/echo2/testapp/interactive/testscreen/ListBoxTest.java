@@ -342,6 +342,19 @@ public class ListBoxTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Toggle ToolTip Text", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        if (listComponent.getToolTipText() == null) {
+                            listComponent.setToolTipText("This is a tool tip.");
+                        } else {
+                            listComponent.setToolTipText(null);
+                        }
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {

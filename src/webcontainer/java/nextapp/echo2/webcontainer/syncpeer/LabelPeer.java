@@ -137,6 +137,12 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, label, IMAGE_ID_ICON);
         imgElement.setAttribute("id", ContainerInstance.getElementId(label));
         imgElement.setAttribute("style", "border:0px none;");
+
+        String toolTipText = (String) label.getRenderProperty(Label.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            imgElement.setAttribute("title", toolTipText);
+        }
+        
         parentNode.appendChild(imgElement);
     }
     
@@ -180,6 +186,11 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
         Element tableElement = tct.getTableElement();
         tableElement.setAttribute("id", elementId);
         
+        String toolTipText = (String) label.getRenderProperty(Label.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            tableElement.setAttribute("title", toolTipText);
+        }
+        
         CssStyle cssStyle = new CssStyle();
         LayoutDirectionRender.renderToStyle(cssStyle, label.getLayoutDirection(), label.getLocale());
         ColorRender.renderToStyle(cssStyle, (Color) label.getRenderProperty(Label.PROPERTY_FOREGROUND), 
@@ -217,6 +228,11 @@ implements DomUpdateSupport, ImageRenderSupport, ComponentSynchronizePeer {
             spanElement.setAttribute("style", cssStyle.renderInline());
         }
 
+        String toolTipText = (String) label.getRenderProperty(Label.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            spanElement.setAttribute("title", toolTipText);
+        }
+        
         parentNode.appendChild(spanElement);
     }
     

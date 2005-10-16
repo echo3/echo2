@@ -69,6 +69,11 @@ public class TextAreaPeer extends TextComponentPeer {
             textAreaElement.setAttribute("tabindex", "-1");
         }
         
+        String toolTipText = (String) textArea.getRenderProperty(TextArea.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            textAreaElement.setAttribute("title", toolTipText);
+        }
+
         String value = textArea.getText();
         if (value != null) {
             if (!rc.getContainerInstance().getClientProperties().getBoolean(

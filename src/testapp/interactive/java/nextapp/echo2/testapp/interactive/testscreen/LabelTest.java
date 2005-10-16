@@ -204,6 +204,19 @@ public class LabelTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Toggle ToolTip Text", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(Label label) {
+                        if (label.getToolTipText() == null) {
+                            label.setToolTipText("This is a tool tip.");
+                        } else {
+                            label.setToolTipText(null);
+                        }
+                    }
+                });
+            }
+        });
 
         // Alignment & Positioning
 

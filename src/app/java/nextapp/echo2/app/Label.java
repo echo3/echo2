@@ -40,6 +40,7 @@ public class Label extends Component {
     public static final String PROPERTY_TEXT = "text";
     public static final String PROPERTY_TEXT_ALIGNMENT = "textAlignment";
     public static final String PROPERTY_TEXT_POSITION = "textPosition";
+    public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
 
     /**
      * Creates a label with no text or icon.
@@ -127,6 +128,16 @@ public class Label extends Component {
     }
 
     /**
+     * Returns the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @return the tool tip text
+     */
+    public String getToolTipText() {
+        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
+    }
+    
+    /**
      * Determines if the text of the label should wrap in the event that 
      * horizontal space is limited.  Default value is true.
      * 
@@ -205,5 +216,15 @@ public class Label extends Component {
      */
     public void setTextPosition(Alignment newValue) {
         setProperty(PROPERTY_TEXT_POSITION, newValue);
+    }
+
+    /**
+     * Sets the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @param newValue the new tool tip text
+     */
+    public void setToolTipText(String newValue) {
+        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
     }
 }

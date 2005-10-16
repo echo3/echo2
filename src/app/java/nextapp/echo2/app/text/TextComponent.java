@@ -57,6 +57,7 @@ extends Component {
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
     public static final String PROPERTY_WIDTH = "width";
     
@@ -202,6 +203,16 @@ extends Component {
      */
     public String getText() {
         return document.getText();
+    }
+    
+    /**
+     * Returns the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @return the tool tip text
+     */
+    public String getToolTipText() {
+        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
     }
     
     /**
@@ -362,6 +373,16 @@ extends Component {
         getDocument().setText(newValue);
     }
     
+    /**
+     * Sets the tool tip text (displayed when the mouse cursor is hovered 
+     * over the component).
+     * 
+     * @param newValue the new tool tip text
+     */
+    public void setToolTipText(String newValue) {
+        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
+    }
+
     /**
      * Sets the vertical scroll bar position.
      * 

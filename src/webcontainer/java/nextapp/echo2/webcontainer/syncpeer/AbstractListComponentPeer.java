@@ -320,6 +320,11 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
             listComponentElement.setAttribute("tabindex", "-1");
         }
 
+        String toolTipText = (String) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_TOOL_TIP_TEXT);
+        if (toolTipText != null) {
+            listComponentElement.setAttribute("title", toolTipText);
+        }
+        
         ListModel model = listComponent.getModel();
         ListSelectionModel selectionModel = listComponent.getSelectionModel();
         ListCellRenderer renderer = listComponent.getCellRenderer();
