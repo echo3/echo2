@@ -180,7 +180,7 @@ public class ListBoxPeer extends AbstractListComponentPeer {
                 "EchoListComponentDhtml.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
-        if (!listBox.isEnabled()) {
+        if (!listBox.isRenderEnabled()) {
             itemElement.setAttribute("enabled", "false");
         }
         if (listBox.hasActionListeners()) {

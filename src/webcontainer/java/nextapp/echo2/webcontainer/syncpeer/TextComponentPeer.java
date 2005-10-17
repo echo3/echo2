@@ -270,7 +270,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
                 itemElement.setAttribute("text", value);
             }
         }
-        if (!textComponent.isEnabled()) {
+        if (!textComponent.isRenderEnabled()) {
             itemElement.setAttribute("enabled", "false");
         }
         if (textComponent.hasActionListeners()) {

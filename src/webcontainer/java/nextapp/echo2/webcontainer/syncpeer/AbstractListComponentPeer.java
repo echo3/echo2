@@ -229,7 +229,7 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
                 "EchoListComponent.MessageProcessor", "init",  new String[0], new String[0]);
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", ContainerInstance.getElementId(listComponent));
-        if (!listComponent.isEnabled()) {
+        if (!listComponent.isRenderEnabled()) {
             itemElement.setAttribute("enabled", "false");
         }
         if (listComponent.hasActionListeners()) {

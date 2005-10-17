@@ -1025,6 +1025,26 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
+     * Determines whether this <code>Component</code> should be rendered with
+     * an enabled state.
+     * Disabled<code>Component</code>s are not eligible to receive user input.
+     * The application container may render disabled components with an altered
+     * appearance. 
+     * 
+     * @return true if the component should be rendered enabled.
+     */
+    public boolean isRenderEnabled() {
+        Component component = this;
+        while (component != null) {
+            if ((component.flags & FLAG_ENABLED) == 0) {
+                return false;
+            }
+            component = component.parent;
+        }
+        return true;
+    }
+    
+    /**
      * Determines if the <code>Component</code> and all of its parents are
      * visible.
      * 

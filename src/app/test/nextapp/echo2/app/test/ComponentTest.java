@@ -600,6 +600,62 @@ public class ComponentTest extends TestCase {
     }
     
     /**
+     * Test render-enabled state.
+     */
+    public void testRenderEnabled() {
+        ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        app.doInit();
+        assertTrue(app.getContentPane().isRenderEnabled());
+        assertTrue(app.getColumn().isRenderEnabled());
+        assertTrue(app.getLabel().isRenderEnabled());
+        app.getColumn().setEnabled(false);
+        assertTrue(app.getContentPane().isRenderEnabled());
+        assertFalse(app.getColumn().isRenderEnabled());
+        assertFalse(app.getLabel().isRenderEnabled());
+        app.getLabel().setEnabled(false);
+        assertTrue(app.getContentPane().isRenderEnabled());
+        assertFalse(app.getColumn().isRenderEnabled());
+        assertFalse(app.getLabel().isRenderEnabled());
+        app.getColumn().setEnabled(true);
+        assertTrue(app.getContentPane().isRenderEnabled());
+        assertTrue(app.getColumn().isRenderEnabled());
+        assertFalse(app.getLabel().isRenderEnabled());
+        app.getLabel().setEnabled(true);
+        assertTrue(app.getContentPane().isRenderEnabled());
+        assertTrue(app.getColumn().isRenderEnabled());
+        assertTrue(app.getLabel().isRenderEnabled());
+    }
+    
+    /**
+     * Test render-visible state.
+     */
+    public void testRenderVisible() {
+        ColumnApp app = new ColumnApp();
+        ApplicationInstance.setActive(app);
+        app.doInit();
+        assertTrue(app.getContentPane().isRenderVisible());
+        assertTrue(app.getColumn().isRenderVisible());
+        assertTrue(app.getLabel().isRenderVisible());
+        app.getColumn().setVisible(false);
+        assertTrue(app.getContentPane().isRenderVisible());
+        assertFalse(app.getColumn().isRenderVisible());
+        assertFalse(app.getLabel().isRenderVisible());
+        app.getLabel().setVisible(false);
+        assertTrue(app.getContentPane().isRenderVisible());
+        assertFalse(app.getColumn().isRenderVisible());
+        assertFalse(app.getLabel().isRenderVisible());
+        app.getColumn().setVisible(true);
+        assertTrue(app.getContentPane().isRenderVisible());
+        assertTrue(app.getColumn().isRenderVisible());
+        assertFalse(app.getLabel().isRenderVisible());
+        app.getLabel().setVisible(true);
+        assertTrue(app.getContentPane().isRenderVisible());
+        assertTrue(app.getColumn().isRenderVisible());
+        assertTrue(app.getLabel().isRenderVisible());
+    }
+    
+    /**
      * Test <code>visible</code> property.
      */
     public void testVisible() {

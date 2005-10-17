@@ -651,7 +651,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (!button.hasActionListeners()) {
             itemElement.setAttribute("server-notify", "false");
         }
-        if (!button.isEnabled()) {
+        if (!button.isRenderEnabled()) {
             itemElement.setAttribute("enabled", "false");
         }
 

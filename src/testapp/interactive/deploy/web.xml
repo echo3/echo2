@@ -14,7 +14,7 @@
       <servlet-class>nextapp.echo2.testapp.interactive.InteractiveServlet</servlet-class>
       <init-param>
         <param-name>echo2.debug</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
       </init-param>
     </servlet>
 

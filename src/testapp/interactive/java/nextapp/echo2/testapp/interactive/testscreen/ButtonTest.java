@@ -325,6 +325,11 @@ extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Toggle Enabled State (Container)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testGrid.setEnabled(!testGrid.isEnabled());
+            }
+        });
 
         controlsColumn = new ButtonColumn();
         controlGroupsColumn.add(controlsColumn);

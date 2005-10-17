@@ -410,7 +410,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             }
         }
         
-        if (!table.isEnabled()) {
+        if (!table.isRenderEnabled()) {
             itemElement.setAttribute("enabled", "false");
         }
 
