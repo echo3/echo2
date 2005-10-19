@@ -71,6 +71,7 @@ implements Command {
     public BrowserOpenWindowCommand(String uri, String name, String features, boolean replace) {
         super();
         this.uri = uri;
+        this.name = name;
         this.features = features;
     }
     
