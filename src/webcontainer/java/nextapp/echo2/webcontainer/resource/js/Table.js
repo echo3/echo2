@@ -72,7 +72,11 @@ EchoTable.MessageProcessor.process = function(messagePartElement) {
 EchoTable.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-        EchoTable.disposeCellListeners(tableElementId);
+	    var selectionEnabled = "true" == EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionEnabled");
+	    var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
+	    if (rolloverStyle || selectionEnabled) {
+            EchoTable.disposeCellListeners(tableElementId);
+	    }
     }
 };
 
