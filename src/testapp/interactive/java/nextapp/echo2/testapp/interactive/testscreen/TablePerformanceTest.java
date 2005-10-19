@@ -97,6 +97,10 @@ public class TablePerformanceTest extends SplitPane {
         splitPaneLayoutData.setInsets(new Insets(10, 5));
         testColumn.setLayoutData(splitPaneLayoutData);
         add(testColumn);
+        
+        testTable = new Table();
+        testTable.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
+        testColumn.add(testTable);
 
         ButtonColumn controlsColumn;
         
@@ -159,8 +163,41 @@ public class TablePerformanceTest extends SplitPane {
             }
         });
         
-        testTable = new Table();
-        testTable.setBorder(new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID));
-        testColumn.add(testTable);
+        controlsColumn = new ButtonColumn();
+        groupContainerColumn.add(controlsColumn);
+
+        controlsColumn.add(new Label("Rollover/Selection"));
+        
+        controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverBackground(Color.BLUE);
+                testTable.setRolloverForeground(Color.WHITE);
+                testTable.setRolloverEnabled(true);
+            }
+        });
+        
+        controlsColumn.addButton("Disable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setRolloverBackground(null);
+                testTable.setRolloverForeground(null);
+                testTable.setRolloverEnabled(false);
+            }
+        });
+        
+        controlsColumn.addButton("Enable Selection Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionBackground(Color.GREEN);
+                testTable.setSelectionForeground(Color.BLUE);
+                testTable.setSelectionEnabled(true);
+            }
+        });
+        
+        controlsColumn.addButton("Disable Selection Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setSelectionBackground(null);
+                testTable.setSelectionForeground(null);
+                testTable.setSelectionEnabled(false);
+            }
+        });        
     }
 }
