@@ -128,6 +128,7 @@ public class TestPane extends ContentPane {
         addTest("SplitPane (Nested)", "SplitPaneNestedTest");
         addTest("StyleSheet", "StyleSheetTest");
         addTest("Table", "TableTest");
+        addTest("Table (Performance)", "TablePerformanceTest");
         addTest("TextComponent", "TextComponentTest");
         addTest("Visibility", "VisibilityTest");
         addTest("Window", "WindowTest");

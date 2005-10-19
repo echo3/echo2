@@ -436,7 +436,7 @@ implements RenderIdSupport, Serializable {
      * @return the <code>Component</code> at index <code>n</code>
      * @throws IndexOutOfBoundsException when the index is invalid
      */
-    public Component getComponent(int n) {
+    public final Component getComponent(int n) {
         if (children == null) {
             throw new IndexOutOfBoundsException();
         }
@@ -455,7 +455,7 @@ implements RenderIdSupport, Serializable {
      * @return the component with the specified id, if it either is this
      *         component or is a descendant of it, or null otherwise
      */
-    public Component getComponent(String id) {
+    public final Component getComponent(String id) {
         if (id.equals(this.id)) {
             return this;
         }
@@ -478,7 +478,7 @@ implements RenderIdSupport, Serializable {
      *
      * @return the number of immediate child <code>Component</code>s
      */
-    public int getComponentCount() {
+    public final int getComponentCount() {
         if (children == null) {
             return 0;
         } else {
@@ -491,7 +491,7 @@ implements RenderIdSupport, Serializable {
      *
      * @return an array of all immediate child <code>Component</code>s
      */
-    public Component[] getComponents() {
+    public final Component[] getComponents() {
         if (children == null) {
             return EMPTY_COMPONENT_ARRAY;
         } else {
@@ -522,7 +522,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return the focus traversal index, a value between 0 and 32767
      */
-    public int getFocusTraversalIndex() {
+    public final int getFocusTraversalIndex() {
         return (flags & FLAGS_FOCUS_TRAVERSAL_INDEX) >> 16;
     }
     
@@ -575,7 +575,7 @@ implements RenderIdSupport, Serializable {
      * @param propertyIndex the property index
      * @return the property value
      */
-    public Object getIndexedProperty(String propertyName, int propertyIndex) {
+    public final Object getIndexedProperty(String propertyName, int propertyIndex) {
         return localStyle.getIndexedProperty(propertyName, propertyIndex);
     }
     
@@ -621,7 +621,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return the parent component, or null if this component has no parent
      */
-    public Component getParent() {
+    public final Component getParent() {
         return parent;
     }
     
@@ -638,7 +638,7 @@ implements RenderIdSupport, Serializable {
      * @param propertyName the property name
      * @return the property value
      */
-    public Object getProperty(String propertyName) {
+    public final Object getProperty(String propertyName) {
         return localStyle.getProperty(propertyName);
     }
     
@@ -677,7 +677,7 @@ implements RenderIdSupport, Serializable {
      * @param propertyName the name of the property
      * @return the rendered property value
      */
-    public Object getRenderIndexedProperty(String propertyName, int propertyIndex) {
+    public final Object getRenderIndexedProperty(String propertyName, int propertyIndex) {
         return getRenderIndexedProperty(propertyName, propertyIndex, null);
     }
     
@@ -698,7 +698,7 @@ implements RenderIdSupport, Serializable {
      * @param defaultValue the value to be returned if the property is not set
      * @return the property state
      */ 
-    public Object getRenderIndexedProperty(String propertyName, int propertyIndex, Object defaultValue) {
+    public final Object getRenderIndexedProperty(String propertyName, int propertyIndex, Object defaultValue) {
         if (localStyle.isIndexedPropertySet(propertyName, propertyIndex)) {
             // Return local style value.
             return localStyle.getIndexedProperty(propertyName, propertyIndex);
@@ -723,7 +723,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return the layout direction of this component
      */
-    public LayoutDirection getRenderLayoutDirection() {
+    public final LayoutDirection getRenderLayoutDirection() {
         if (layoutDirection == null) { 
             if (locale == null) {
                 if (parent == null) {
@@ -755,7 +755,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return the locale for this component
      */
-    public Locale getRenderLocale() {
+    public final Locale getRenderLocale() {
         if (locale == null) {
             if (parent == null) {
                 if (applicationInstance == null) {
@@ -791,10 +791,10 @@ implements RenderIdSupport, Serializable {
      * @param propertyName the name of the property
      * @return the rendered property value
      */
-    public Object getRenderProperty(String propertyName) {
+    public final Object getRenderProperty(String propertyName) {
         return getRenderProperty(propertyName, null);
     }
-        
+
     /**
      * Determines the &quot;rendered state&quot; of a property.
      * The rendered state is determined by first determining if the given
@@ -812,7 +812,7 @@ implements RenderIdSupport, Serializable {
      * @param defaultValue the value to be returned if the property is not set
      * @return the property state
      */ 
-    public Object getRenderProperty(String propertyName, Object defaultValue) {
+    public final Object getRenderProperty(String propertyName, Object defaultValue) {
         Object propertyValue = localStyle.getProperty(propertyName);
         if (propertyValue != null) {
             return propertyValue;
@@ -873,7 +873,7 @@ implements RenderIdSupport, Serializable {
      * @return the <code>Component</code> at index <code>n</code>
      * @throws IndexOutOfBoundsException when the index is invalid
      */
-    public Component getVisibleComponent(int n) {
+    public final Component getVisibleComponent(int n) {
         if (children == null) {
             throw new IndexOutOfBoundsException(Integer.toString(n));
         }
@@ -899,7 +899,7 @@ implements RenderIdSupport, Serializable {
      * @return the number of <strong>visible</strong> immediate child 
      *         <code>Component</code>s
      */
-    public int getVisibleComponentCount() {
+    public final int getVisibleComponentCount() {
         if (children == null) {
             return 0;
         } else {
@@ -922,7 +922,7 @@ implements RenderIdSupport, Serializable {
      * @return an array of all <strong>visible</strong> immediate child 
      *         <code>Component</code>s
      */
-    public Component[] getVisibleComponents() {
+    public final Component[] getVisibleComponents() {
         if (children == null) {
             return EMPTY_COMPONENT_ARRAY;
         } else {
@@ -998,7 +998,7 @@ implements RenderIdSupport, Serializable {
      * @return true if the component is enabled
      * @see #verifyInput(java.lang.String, java.lang.Object)
      */
-    public boolean isEnabled() {
+    public final boolean isEnabled() {
         return (flags & FLAG_ENABLED) != 0;
     }
     
@@ -1033,7 +1033,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return true if the component should be rendered enabled.
      */
-    public boolean isRenderEnabled() {
+    public final boolean isRenderEnabled() {
         Component component = this;
         while (component != null) {
             if ((component.flags & FLAG_ENABLED) == 0) {
@@ -1050,7 +1050,7 @@ implements RenderIdSupport, Serializable {
      * 
      * @return true if the <code>Component</code> is recursively visible
      */
-    public boolean isRenderVisible() {
+    public final boolean isRenderVisible() {
         Component component = this;
         while (component != null) {
             if ((component.flags & FLAG_VISIBLE) == 0) {

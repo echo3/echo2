@@ -143,12 +143,10 @@ EchoTable.disposeCellListeners = function(tableElementId) {
         return;
     }
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
-        for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
-            var tdElement = tableElement.rows[rowIndex].cells[cellIndex];
-            EchoEventProcessor.removeHandler(tdElement.id, "click");
-            EchoEventProcessor.removeHandler(tdElement.id, "mouseover");
-            EchoEventProcessor.removeHandler(tdElement.id, "mouseout");
-        }
+        var trElement = tableElement.rows[rowIndex];
+        EchoEventProcessor.removeHandler(trElement.id, "click");
+        EchoEventProcessor.removeHandler(trElement.id, "mouseover");
+        EchoEventProcessor.removeHandler(trElement.id, "mouseout");
     }
 };
 
@@ -180,12 +178,10 @@ EchoTable.drawRowStyle = function(trElement) {
 EchoTable.initCellListeners = function(tableElementId) {
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
-        for (var cellIndex = 0; cellIndex < tableElement.rows[rowIndex].cells.length; ++cellIndex) {
-            var tdElement = tableElement.rows[rowIndex].cells[cellIndex];
-            EchoEventProcessor.addHandler(tdElement.id, "click", "EchoTable.processClick");
-            EchoEventProcessor.addHandler(tdElement.id, "mouseover", "EchoTable.processRolloverEnter");
-            EchoEventProcessor.addHandler(tdElement.id, "mouseout", "EchoTable.processRolloverExit");
-        }
+        var trElement = tableElement.rows[rowIndex];
+        EchoEventProcessor.addHandler(trElement.id, "click", "EchoTable.processClick");
+        EchoEventProcessor.addHandler(trElement.id, "mouseover", "EchoTable.processRolloverEnter");
+        EchoEventProcessor.addHandler(trElement.id, "mouseout", "EchoTable.processRolloverExit");
     }
 };
 
@@ -206,13 +202,12 @@ EchoTable.isSelected = function(trElement) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.processClick = function(echoEvent) {
-    var sourceTdElement = echoEvent.registeredTarget;
-    var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
+    var trElement = echoEvent.registeredTarget;
+    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
     if (!EchoClientEngine.verifyInput(tableElementId)) {
         return;
     }
 
-    var trElement = sourceTdElement.parentNode;
     if (trElement.id.indexOf("_header") != -1) {
         return;
     }
@@ -247,13 +242,12 @@ EchoTable.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.processRolloverEnter = function(echoEvent) {
-    var sourceTdElement = echoEvent.registeredTarget;
-    var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
+    var trElement = echoEvent.registeredTarget;
+    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
     if (!EchoClientEngine.verifyInput(tableElementId)) {
         return;
     }
     
-    var trElement = sourceTdElement.parentNode;
     if (trElement.id.indexOf("_header") != -1) {
         return;
     }
@@ -273,13 +267,12 @@ EchoTable.processRolloverEnter = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.processRolloverExit = function(echoEvent) {
-    var sourceTdElement = echoEvent.registeredTarget;
-    var tableElementId = EchoDomUtil.getComponentId(sourceTdElement.id);
+    var trElement = echoEvent.registeredTarget;
+    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
     if (!EchoClientEngine.verifyInput(tableElementId)) {
         return;
     }
 
-    var trElement = sourceTdElement.parentNode;
     if (trElement.id.indexOf("_header") != -1) {
         return;
     }
