@@ -224,6 +224,8 @@ implements FloatingPane, ModalSupport, PaneContainer {
     
     /**
      * Returns the inset of the window content.
+     * This property is not rendered when the content is a <code>Pane</code>
+     * component.
      * 
      * @return the inset
      */
@@ -532,6 +534,8 @@ implements FloatingPane, ModalSupport, PaneContainer {
     
     /**
      * Sets the inset of the window content.
+     * This property is not rendered when the content is a <code>Pane</code>
+     * component.
      * 
      * @param newValue the new inset
      */

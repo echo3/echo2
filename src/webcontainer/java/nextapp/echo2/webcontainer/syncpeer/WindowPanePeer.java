@@ -42,6 +42,7 @@ import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -476,6 +477,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         boolean renderSizeExpression = !renderPositioningBothSides
                 && rc.getContainerInstance().getClientProperties().getBoolean(
                         ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
+        Component child = null;
+        if (windowPane.getComponentCount() != 0) {
+            child = windowPane.getComponent(0);
+        }
 
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(WINDOW_PANE_SERVICE.getId());
@@ -660,8 +665,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element contentDivElement = document.createElement("div");
         contentDivElement.setAttribute("id", elementId + "_content");
         CssStyle contentDivCssStyle = new CssStyle();
-        InsetsRender
-                .renderToStyle(contentDivCssStyle, "padding", (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_INSETS));
+        if (!(child instanceof Pane)) {
+            // Render inset padding only if pane content is not itself a Pane.
+            InsetsRender.renderToStyle(contentDivCssStyle, "padding", 
+                    (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_INSETS));
+        }
         contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
         outerContentDivElement.appendChild(contentDivElement);
 
@@ -669,8 +677,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         renderInitDirective(rc, windowPane);
         
         // Render child.
-        if (windowPane.getComponentCount() != 0) {
-            Component child = windowPane.getComponent(0);
+        if (child != null) {
             ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
             if (syncPeer instanceof DomUpdateSupport) {
                 ((DomUpdateSupport) syncPeer).renderHtml(rc, update, contentDivElement, child);

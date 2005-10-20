@@ -37,6 +37,7 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.LayoutData;
+import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -568,7 +569,10 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             }
 
             CssStyle paneContentDivCssStyle = new CssStyle();
-            InsetsRender.renderToStyle(paneContentDivCssStyle, "padding", splitPaneLayoutData.getInsets());
+            if (!(paneComponent instanceof Pane)) {
+                // Render inset padding only if pane content is not itself a Pane.
+                InsetsRender.renderToStyle(paneContentDivCssStyle, "padding", splitPaneLayoutData.getInsets());
+            }
             if (paneContentDivCssStyle.hasAttributes()) {
                 paneContentDivElement.setAttribute("style", paneContentDivCssStyle.renderInline());
             }

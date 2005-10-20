@@ -85,6 +85,8 @@ implements LayoutData {
     
     /**
      * Returns the inset margins of the containing pane.
+     * This property is not rendered when the <code>SplitPaneLayoutData</code>
+     * instance is attached to a <code>Pane</code> component.
      * 
      * @return the inset margins
      */
@@ -155,6 +157,8 @@ implements LayoutData {
     
     /**
      * Sets the inset margins of the containing pane.
+     * This property is not rendered when the <code>SplitPaneLayoutData</code>
+     * instance is attached to a <code>Pane</code> component.
      * 
      * @param newValue the new inset margins
      */
