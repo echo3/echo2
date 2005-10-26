@@ -31,8 +31,16 @@ package nextapp.echo2.app;
 import java.io.Serializable;
 
 /**
- * A representation of a linear distance with units.
- * <code>Extent</code> objects are immutable once constructed.
+ * A representation of a linear distance with units. <code>Extent</code>
+ * objects are immutable once constructed.
+ * <p>
+ * <strong>WARNING:</strong> Many <code>Component</code>s will have
+ * <code>Extent</code>-based properties that allow only certain types of
+ * units. Make certain to verify the API specification of any
+ * <code>Component</code> to ensure that you are using <code>Extent</code>s
+ * correctly with it. The <code>Extent</code>-based <code>getXXX()</code>
+ * and <code>setXXX()</code> property methods of a <code>Component</code>
+ * will explain what types of <code>Extent</code>s are allowed.
  */
 public class Extent 
 implements Comparable, Serializable {
