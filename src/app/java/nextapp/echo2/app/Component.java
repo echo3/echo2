@@ -142,8 +142,10 @@ implements RenderIdSupport, Serializable {
     private static final int FLAG_REGISTERING = 0x8;
     
     private static final int FLAG_INIT_IN_PROGRESS = 0x10;
-
-    private static final int FLAG_DISPOSE_IN_PROGRESS = 0x10;
+    
+    private static final int FLAG_DISPOSE_IN_PROGRESS = 0x20;
+    
+    private static final int FLAG_INITIALIZED = 0x40;
     
     /**
      * Flag mask of bits used for storage of focus traversal index.
@@ -337,23 +339,29 @@ implements RenderIdSupport, Serializable {
      * this <code>Component</code> and its descendants.
      */
     void doDispose() {
-        if (applicationInstance != null) {
-            if ((flags & (FLAG_INIT_IN_PROGRESS | FLAG_DISPOSE_IN_PROGRESS)) != 0) {
-                throw new IllegalStateException(
-                        "Attempt to dispose component when initialize or dispose operation already in progress.");
-            }
-            flags |= FLAG_DISPOSE_IN_PROGRESS;
-            try {
-                if (children != null) {
-                    Iterator it = children.iterator();
-                    while (it.hasNext()) {
-                        ((Component) it.next()).doDispose();
-                    }
+        if (applicationInstance == null) {
+            return;
+        }
+        if ((flags & (FLAG_INIT_IN_PROGRESS | FLAG_DISPOSE_IN_PROGRESS)) != 0) {
+            throw new IllegalStateException(
+                    "Attempt to dispose component when initialize or dispose operation already in progress.");
+        }
+        flags |= FLAG_DISPOSE_IN_PROGRESS;
+        try {
+            if (children != null) {
+                Iterator it = children.iterator();
+                while (it.hasNext()) {
+                    ((Component) it.next()).doDispose();
                 }
-                dispose();
-            } finally {
-                flags &= ~FLAG_DISPOSE_IN_PROGRESS;
             }
+            if ((flags & FLAG_INITIALIZED) == 0) {
+                // Component already disposed.
+                return;
+            }
+            dispose();
+            flags &= ~FLAG_INITIALIZED;
+        } finally {
+            flags &= ~FLAG_DISPOSE_IN_PROGRESS;
         }
     }
     
@@ -362,23 +370,30 @@ implements RenderIdSupport, Serializable {
      * this <code>Component</code> and its descendants.
      */
     void doInit() {
-        if (applicationInstance != null) {
-            if ((flags & (FLAG_INIT_IN_PROGRESS | FLAG_DISPOSE_IN_PROGRESS)) != 0) {
-                throw new IllegalStateException(
-                        "Attempt to initialize component when initialize or dispose operation already in progress.");
-            }
-            flags |= FLAG_INIT_IN_PROGRESS;
-            try {
-                init();
-                if (children != null) {
-                    Iterator it = children.iterator();
-                    while (it.hasNext()) {
-                        ((Component) it.next()).doInit();
-                    }
+        if (applicationInstance == null) {
+            return;
+        }
+        if ((flags & FLAG_INITIALIZED) != 0) {
+            // Component already initialized.
+            return;
+        }
+        
+        if ((flags & (FLAG_INIT_IN_PROGRESS | FLAG_DISPOSE_IN_PROGRESS)) != 0) {
+            throw new IllegalStateException(
+                    "Attempt to initialize component when initialize or dispose operation already in progress.");
+        }
+        flags |= FLAG_INIT_IN_PROGRESS;
+        try {
+            init();
+            flags |= FLAG_INITIALIZED;
+            if (children != null) {
+                Iterator it = children.iterator();
+                while (it.hasNext()) {
+                    ((Component) it.next()).doInit();
                 }
-            } finally {
-                flags &= ~FLAG_INIT_IN_PROGRESS;
             }
+        } finally {
+            flags &= ~FLAG_INIT_IN_PROGRESS;
         }
     }
     
