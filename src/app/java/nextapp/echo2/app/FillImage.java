@@ -71,9 +71,11 @@ implements Serializable {
      *        region.
      *        Negative values indicate an offset from the right side of the 
      *        region.
+     *        Both fixed and percentage units are supported.
      * @param verticalOffset the vertical offset of the fill image:
      *        Positive values indicate an offset from the top of the region.
      *        Negative values indicate an offset from the bottom of the region.
+     *        Both fixed and percentage units are supported.
      * @param repeat the repeat mode of the image, one of the following values:
      *        <ul>
      *         <li><code>NO_REPEAT</code></li>

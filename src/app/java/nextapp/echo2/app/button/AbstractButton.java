@@ -170,6 +170,8 @@ public abstract class AbstractButton extends Component {
     
     /**
      * Returns the height of the button.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the height
      */
@@ -190,6 +192,8 @@ public abstract class AbstractButton extends Component {
      * Returns the margin size between the icon and the text.
      * The margin will only be displayed if the button has both
      * icon and text properties set.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the margin size 
      */
@@ -370,6 +374,8 @@ public abstract class AbstractButton extends Component {
     
     /**
      * Returns the width of the button.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @return the width
      */
@@ -495,6 +501,8 @@ public abstract class AbstractButton extends Component {
 
     /**
      * Sets the height of the button.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the new height
      */
@@ -515,6 +523,8 @@ public abstract class AbstractButton extends Component {
      * Sets the margin size between the icon and the text.
      * The margin will only be displayed if the button has both
      * icon and text properties set.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the margin size 
      */
@@ -740,6 +750,8 @@ public abstract class AbstractButton extends Component {
 
     /**
      * Sets the width of the button.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @param newValue the new width
      */

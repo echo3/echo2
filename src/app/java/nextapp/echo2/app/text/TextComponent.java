@@ -170,6 +170,8 @@ extends Component {
 
     /**
      * Returns the height of the text component.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the height
      */
@@ -226,6 +228,8 @@ extends Component {
     
     /**
      * Returns the width of the text component.
+     * This property supports <code>Extent</code>s with
+     * either fixed or percentage-based units.
      * 
      * @return the width
      */
@@ -339,6 +343,8 @@ extends Component {
     
     /**
      * Sets the height of the text component.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the new height
      */
@@ -348,6 +354,7 @@ extends Component {
     
     /**
      * Sets the horizontal scroll bar position.
+     * The provided <code>Extent</code> value must be in pixel units.
      * 
      * @param newValue the new scroll bar position
      */
@@ -385,6 +392,7 @@ extends Component {
 
     /**
      * Sets the vertical scroll bar position.
+     * The provided <code>Extent</code> value must be in pixel units.
      * 
      * @param newValue the new scroll bar position
      */
@@ -394,6 +402,8 @@ extends Component {
     
     /**
      * Sets the width of the text component.
+     * This property supports <code>Extent</code>s with
+     * either fixed or percentage-based units.
      * 
      * @param newValue the new width
      */

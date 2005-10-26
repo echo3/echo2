@@ -94,7 +94,7 @@ implements Serializable {
     /**
      * Creates a new <code>Border</code> with a pixel-based size.
      * 
-     * @param sizePx the size of the border, in pixels.
+     * @param sizePx the size of the border, in pixels
      * @param color the color of the border
      * @param style the style of the border, one of the following constant values:
      *        <ul>
@@ -116,19 +116,21 @@ implements Serializable {
     /**
      * Creates a new <code>Border</code>.
      * 
-     * @param size the size of the border
+     * @param size the size of the border (this property only supports
+     *        <code>Extent</code>s with fixed (i.e., not percent) units)
      * @param color the color of the border
-     * @param style the style of the border, one of the following constant values:
+     * @param style the style of the border, one of the following constant
+     *        values:
      *        <ul>
-     *         <li><code>STYLE_NONE</code></li>
-     *         <li><code>STYLE_SOLID</code></li>
-     *         <li><code>STYLE_INSET</code></li>
-     *         <li><code>STYLE_OUTSET</code></li>
-     *         <li><code>STYLE_GROOVE</code></li>
-     *         <li><code>STYLE_RIDGE</code></li>
-     *         <li><code>STYLE_DOUBLE</code></li>
-     *         <li><code>STYLE_DOTTED</code></li>
-     *         <li><code>STYLE_DASHED</code></li>
+     *        <li><code>STYLE_NONE</code></li>
+     *        <li><code>STYLE_SOLID</code></li>
+     *        <li><code>STYLE_INSET</code></li>
+     *        <li><code>STYLE_OUTSET</code></li>
+     *        <li><code>STYLE_GROOVE</code></li>
+     *        <li><code>STYLE_RIDGE</code></li>
+     *        <li><code>STYLE_DOUBLE</code></li>
+     *        <li><code>STYLE_DOTTED</code></li>
+     *        <li><code>STYLE_DASHED</code></li>
      *        </ul>
      */
     public Border(Extent size, Color color, int style) {
@@ -184,6 +186,8 @@ implements Serializable {
     
     /**
      * Returns the border size.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the size
      */

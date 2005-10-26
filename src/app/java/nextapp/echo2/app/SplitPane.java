@@ -152,7 +152,8 @@ implements Pane, PaneContainer {
      *         <li><code>ORIENTATION_VERTICAL_TOP_BOTTOM</code></li>
      *         <li><code>ORIENTATION_VERTICAL_BOTTOM_TOP</code></li>
      *        </ul>
-     * @param separatorPosition the initial position of the separator
+     * @param separatorPosition the initial position of the separator 
+     *        (in pixel units)
      */
     public SplitPane(int orientation, Extent separatorPosition) {
         super();
@@ -195,6 +196,8 @@ implements Pane, PaneContainer {
     /**
      * Returns the height of the pane separator.  This value is relevant only 
      * when the <code>SplitPane</code> has a vertical orientation.
+     * This property only supports <code>Extent</code>s with
+     * pixel units.
      * 
      * @return the separator width
      */
@@ -214,6 +217,8 @@ implements Pane, PaneContainer {
     
     /**
      * Returns the position of the pane separator.
+     * This property only supports <code>Extent</code>s with
+     * pixel units.
      * 
      * @return the separator position
      */
@@ -234,6 +239,8 @@ implements Pane, PaneContainer {
     /**
      * Returns the width of the pane separator.  This value is relevant only 
      * when the <code>SplitPane</code> has a horizontal orientation.
+     * This property only supports <code>Extent</code>s with
+     * pixel units.
      * 
      * @return the separator width
      */
@@ -319,7 +326,8 @@ implements Pane, PaneContainer {
     /**
      * Sets the height of the pane separator.  This value is only relevant
      * when the <code>SplitPane</code> has a vertical orientation.
-     * Values must be in pixel units.
+     * This property only supports <code>Extent</code>s with
+     * pixel units.
      * 
      * @param newValue the new height
      */
@@ -340,7 +348,8 @@ implements Pane, PaneContainer {
 
     /**
      * Sets the position of the pane separator.
-     * Values must be in pixel units.
+     * This property only supports <code>Extent</code>s with
+     * pixel units.
      * 
      * @param newValue the new position
      */
@@ -365,7 +374,8 @@ implements Pane, PaneContainer {
     /**
      * Sets the width of the pane separator.  This value is only relevant
      * when the <code>SplitPane</code> has a horizontal orientation.
-     * Values must be in pixel units.
+     * This property only supports <code>Extent</code>s with
+     * pixel units.
      * 
      * @param newValue the new width
      */

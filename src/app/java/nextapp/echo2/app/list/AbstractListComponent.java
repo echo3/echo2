@@ -204,6 +204,8 @@ public class AbstractListComponent extends Component {
     
     /**
      * Returns the height.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the height
      */
@@ -277,6 +279,8 @@ public class AbstractListComponent extends Component {
     
     /**
      * Returns the width.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @return the width
      */
@@ -383,6 +387,8 @@ public class AbstractListComponent extends Component {
     
     /**
      * Sets the height.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the new height
      */
@@ -485,6 +491,8 @@ public class AbstractListComponent extends Component {
 
     /**
      * Sets the width.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      *
      * @param newValue the new width 
      */

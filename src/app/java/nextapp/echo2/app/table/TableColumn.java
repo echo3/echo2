@@ -169,6 +169,8 @@ implements Serializable {
     
     /** 
      * Returns the width of the column.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      *
      * @return the width
      */
@@ -257,6 +259,8 @@ implements Serializable {
     
     /** 
      * Sets the width of the column.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      *
      * @param newValue the new width
      */

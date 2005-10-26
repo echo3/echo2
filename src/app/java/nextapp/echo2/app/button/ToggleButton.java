@@ -167,6 +167,8 @@ public abstract class ToggleButton extends AbstractButton {
      * toggle button's icon and/or text.  The margin will only
      * be displayed in the case where icon and/or text are
      * present.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the margin size 
      */
@@ -306,6 +308,8 @@ public abstract class ToggleButton extends AbstractButton {
      * toggle button's icon and/or text.  The margin will only
      * be displayed in the case where icon and/or text are
      * present.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the new margin size 
      */

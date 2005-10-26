@@ -505,6 +505,8 @@ public class Table extends Component {
     
     /**
      * Returns the overall width of the grid.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @return the width
      */
@@ -879,6 +881,8 @@ public class Table extends Component {
     
     /**
      * Sets the overall width of the grid.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @param newValue the new width
      */

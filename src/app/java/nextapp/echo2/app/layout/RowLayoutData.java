@@ -41,6 +41,8 @@ public class RowLayoutData extends CellLayoutData {
     
     /**
      * Returns the width of the cell.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the cell width
      */
@@ -50,6 +52,8 @@ public class RowLayoutData extends CellLayoutData {
     
     /**
      * Sets the width of the cell.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param width The cell height
      */

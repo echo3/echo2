@@ -175,6 +175,8 @@ implements Serializable {
     /**
      * Sets the inset of the border images, thus defining the width and 
      * height of the border images.
+     * The provided <code>Insets</code> value must only contain margins defined
+     * in pixel units.
      * 
      * @param borderInsets the new border inset
      */
@@ -200,6 +202,8 @@ implements Serializable {
      * than the the border inset, the content will be rendered partially on top
      * of the border.  A null value for this property specifies that the
      * content should be drawn at the border inset.
+     * The provided <code>Insets</code> value must only contain margins defined
+     * in pixel units.
      * 
      * @param contentInsets the new content inset
      */

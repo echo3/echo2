@@ -98,6 +98,8 @@ public class Grid extends Component {
 
     /**
      * Returns the width of the specified column.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @param columnIndex the column index
      * @return the width
@@ -108,6 +110,8 @@ public class Grid extends Component {
     
     /**
      * Returns the overall height.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the height
      */
@@ -152,9 +156,11 @@ public class Grid extends Component {
     
     /**
      * Returns the height of the specified row.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param rowIndex the row index
-     * @return the width
+     * @return the height
      */
     public Extent getRowHeight(int rowIndex) {
         return (Extent) getIndexedProperty(PROPERTY_ROW_HEIGHT, rowIndex);
@@ -182,6 +188,8 @@ public class Grid extends Component {
     
     /**
      * Returns the overall width of the grid.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @return the width
      */
@@ -200,6 +208,8 @@ public class Grid extends Component {
     
     /**
      * Sets the width of the specified column.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @param columnIndex the column index
      * @param newValue the new width
@@ -210,6 +220,8 @@ public class Grid extends Component {
     
     /**
      * Sets the overall height of the grid.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the new height
      */
@@ -252,6 +264,8 @@ public class Grid extends Component {
     
     /**
      * Sets the height of the specified row.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param rowIndex the row index
      * @param newValue the new height
@@ -278,6 +292,8 @@ public class Grid extends Component {
     
     /**
      * Sets the overall width of the grid.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
      * 
      * @param newValue the new width
      */

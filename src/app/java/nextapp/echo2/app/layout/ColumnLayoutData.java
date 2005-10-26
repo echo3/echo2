@@ -41,6 +41,8 @@ public class ColumnLayoutData extends CellLayoutData {
     
     /**
      * Returns the height of the cell.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the cell height
      */
@@ -50,6 +52,8 @@ public class ColumnLayoutData extends CellLayoutData {
     
     /**
      * Sets the height of the cell.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param height The cell height
      */

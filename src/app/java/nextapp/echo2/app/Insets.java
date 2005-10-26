@@ -62,6 +62,8 @@ implements Serializable {
     
     /**
      * Creates a new Insets object with the given margin sizes.
+     * <code>Insets</code> only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      *
      * @param left the size of the left margin
      * @param top the size of the top margin
@@ -90,6 +92,8 @@ implements Serializable {
     /**
      * Creates a new Insets object, defining all margins to be the provided 
      * value.
+     * <code>Insets</code> only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      *
      * @param size the margin size
      */
@@ -144,6 +148,8 @@ implements Serializable {
     
     /**
      * Returns the size of the bottom margin.
+     * <code>Insets</code> only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      *
      * @return the size of the bottom margin
      */
@@ -153,6 +159,8 @@ implements Serializable {
     
     /**
      * Returns the size of the left margin.
+     * <code>Insets</code> only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      *
      * @return the size of the left margin
      */
@@ -162,6 +170,8 @@ implements Serializable {
     
     /**
      * Returns the size of the right margin.
+     * <code>Insets</code> only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      *
      * @return the size of the right margin
      */
@@ -171,6 +181,8 @@ implements Serializable {
 
     /**
      * Returns the size of the top margin.
+     * <code>Insets</code> only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      *
      * @return the size of the top margin
      */

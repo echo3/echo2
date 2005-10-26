@@ -63,6 +63,8 @@ public class Row extends Component {
     
     /**
      * Returns the spacing between individual cells of the <code>Column</code>.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @return the cell spacing
      */
@@ -90,6 +92,8 @@ public class Row extends Component {
     
     /**
      * Sets the spacing between individual cells of the <code>Column</code>.
+     * This property only supports <code>Extent</code>s with
+     * fixed (i.e., not percent) units.
      * 
      * @param newValue the new spacing
      */
