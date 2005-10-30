@@ -429,7 +429,7 @@
         <ant dir="${dir.src.tutorialapp.numberguess}" target="clean"/>
     </target>
     
-    <target name="dist.tutorialapp">
+    <target name="dist.tutorialapp" depends="dist" description="Builds a web archive of the tutorial applications.">
         <ant dir="${dir.src.tutorialapp.numberguess}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
             <property name="echo2.webcontainer.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>

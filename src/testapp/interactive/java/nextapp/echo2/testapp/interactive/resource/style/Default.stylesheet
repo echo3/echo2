@@ -6,7 +6,7 @@
    <property name="separatorHeight" value="1px"/>
    <property name="separatorColor" value="#1d1d1d"/>
   </properties>
- </style> 
+ </style>
  <style name="Default" type="nextapp.echo2.app.Table">
   <properties>
    <property name="insets" value="5px 2px"/>
