@@ -100,6 +100,9 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         if (item.getAttribute("server-notify")) {
             EchoDomPropertyStore.setPropertyValue(textComponent.id, "serverNotify", true);
         }
+        if (item.getAttribute("maximum-length")) {
+            EchoDomPropertyStore.setPropertyValue(textComponent.id, "maximumLength", item.getAttribute("maximum-length"));
+        }
         if (item.getAttribute("horizontal-scroll")) {
             textComponent.scrollLeft = parseInt(item.getAttribute("horizontal-scroll"));
         }
@@ -215,6 +218,13 @@ EchoTextComponent.processKeyUp = function(echoEvent) {
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }
+    if (EchoDomPropertyStore.getPropertyValue(textComponent.id, "maximumLength")) {
+        var maximumLength = EchoDomPropertyStore.getPropertyValue(textComponent.id, "maximumLength");
+        if (textComponent.value && textComponent.value.length > maximumLength) {
+            textComponent.value = textComponent.value.substring(0, maximumLength);
+        }
+    }
+    
     EchoTextComponent.updateClientMessage(textComponent);
 };
 

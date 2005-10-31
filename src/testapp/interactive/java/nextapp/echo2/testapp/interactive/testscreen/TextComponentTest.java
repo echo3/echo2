@@ -284,6 +284,20 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBackground(null);
             }
         });
+        controlsColumn.addButton("Set MaximumLength=10", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setMaximumLength(10);
+                passwordField.setMaximumLength(10);
+                textArea.setMaximumLength(10);
+            }
+        });
+        controlsColumn.addButton("Clear MaximumLength", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setMaximumLength(-1);
+                passwordField.setMaximumLength(-1);
+                textArea.setMaximumLength(-1);
+            }
+        });
         controlsColumn.addButton("Insets -> null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setInsets(null);

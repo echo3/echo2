@@ -85,6 +85,16 @@ public class TextFieldTest extends TestCase {
     }
     
     /**
+     * Ensure large text is trimmed if MaximumLength property is et. 
+     */
+    public void testMaxLengthTrim() {
+        TextField textField = new TextField();
+        textField.setMaximumLength(5);
+        textField.setText("abcdefghijkl");
+        assertEquals("abcde", textField.getText());
+    }
+    
+    /**
      * Test property accessors and mutators.
      */
     public void testProperties() {
@@ -100,6 +110,12 @@ public class TextFieldTest extends TestCase {
         textField.setWidth(TestConstants.EXTENT_100_PX);
         assertEquals(TestConstants.EXTENT_100_PX, textField.getWidth());
         textField.setBackgroundImage(TestConstants.BACKGROUND_IMAGE);
+
         assertEquals(TestConstants.BACKGROUND_IMAGE, textField.getBackgroundImage());
+        assertEquals(-1, textField.getMaximumLength());
+        textField.setMaximumLength(20);
+        assertEquals(20, textField.getMaximumLength());
+        textField.setMaximumLength(-1);
+        assertEquals(-1, textField.getMaximumLength());
     }
 }

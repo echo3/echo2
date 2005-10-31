@@ -263,6 +263,12 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
         if (verticalScroll != null && verticalScroll.getValue() != 0) {
             itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
         }
+        if (textComponent instanceof TextArea) {
+            Integer maximumLength = (Integer) textComponent.getProperty(TextComponent.PROPERTY_MAXIMUM_LENGTH);
+            if (maximumLength != null) {
+                itemElement.setAttribute("maximum-length", maximumLength.toString());
+            }
+        }
         if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION)) {
             String value = textComponent.getText();

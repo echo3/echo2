@@ -57,6 +57,7 @@ extends Component {
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_MAXIMUM_LENGTH = "maximumLength";
     public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
     public static final String PROPERTY_WIDTH = "width";
@@ -195,6 +196,17 @@ extends Component {
      */
     public Insets getInsets() {
         return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
+    /**
+     * Returns the maximum length (in characters) of the text which may be
+     * entered into the component.
+     * 
+     * @return the maximum length, or -1 if no value is specified
+     */
+    public int getMaximumLength() {
+        Integer value = (Integer) getProperty(PROPERTY_MAXIMUM_LENGTH);
+        return value == null ? -1 : value.intValue();
     }
     
     /**
@@ -372,12 +384,33 @@ extends Component {
     }
     
     /**
+     * Sets the maximum length (in characters) of the text which may be
+     * entered into the component.
+     * 
+     * @param newValue the new maximum length, or -1 if to specify an 
+     *        unlimited length
+     */
+    public void setMaximumLength(int newValue) {
+        if (newValue < 0) {
+            setProperty(PROPERTY_MAXIMUM_LENGTH, null);
+        } else {
+            setProperty(PROPERTY_MAXIMUM_LENGTH, new Integer(newValue));
+        }
+    }
+    
+    /**
      * Sets the text of document model of this text component.
      * 
      * @param newValue the new text
      */
     public void setText(String newValue) {
-        getDocument().setText(newValue);
+        Integer maxLength = (Integer) getProperty(PROPERTY_MAXIMUM_LENGTH);
+        if (newValue != null && maxLength != null && maxLength.intValue() > 0 
+                && newValue.length() > maxLength.intValue()) {
+            getDocument().setText(newValue.substring(0, maxLength.intValue()));
+        } else {
+            getDocument().setText(newValue);
+        }
     }
     
     /**

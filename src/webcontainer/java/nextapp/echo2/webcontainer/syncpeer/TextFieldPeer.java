@@ -84,6 +84,11 @@ implements DomUpdateSupport {
         if (toolTipText != null) {
             inputElement.setAttribute("title", toolTipText);
         }
+        
+        Integer maximumLength = (Integer) textField.getRenderProperty(TextField.PROPERTY_MAXIMUM_LENGTH);
+        if (maximumLength != null) {
+            inputElement.setAttribute("maxlength", maximumLength.toString());
+        }
 
         CssStyle cssStyle = createBaseCssStyle(rc, textField);
         if (cssStyle.hasAttributes()) {
