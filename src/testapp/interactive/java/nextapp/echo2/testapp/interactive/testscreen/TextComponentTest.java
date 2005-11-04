@@ -218,6 +218,9 @@ public class TextComponentTest extends SplitPane {
         controlsColumn.addButton("Change Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = textField.getBorder();
+                if (border == null) {
+                    return;
+                }
                 border = new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle());
                 textField.setBorder(border);
                 passwordField.setBorder(border);
@@ -227,6 +230,9 @@ public class TextComponentTest extends SplitPane {
         controlsColumn.addButton("Change Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.nextBorderSize(textField.getBorder());
+                if (border == null) {
+                    return;
+                }
                 textField.setBorder(border);
                 passwordField.setBorder(border);
                 textArea.setBorder(border);
@@ -235,6 +241,9 @@ public class TextComponentTest extends SplitPane {
         controlsColumn.addButton("Change Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.nextBorderStyle(textField.getBorder());
+                if (border == null) {
+                    return;
+                }
                 textField.setBorder(border);
                 passwordField.setBorder(border);
                 textArea.setBorder(border);
@@ -295,6 +304,9 @@ public class TextComponentTest extends SplitPane {
         controlsColumn.addButton("Change Disabled Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = textField.getDisabledBorder();
+                if (border == null) {
+                    return;
+                }
                 border = new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle());
                 textField.setDisabledBorder(border);
                 passwordField.setDisabledBorder(border);
@@ -304,6 +316,9 @@ public class TextComponentTest extends SplitPane {
         controlsColumn.addButton("Change Disabled Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.nextBorderSize(textField.getDisabledBorder());
+                if (border == null) {
+                    return;
+                }
                 textField.setDisabledBorder(border);
                 passwordField.setDisabledBorder(border);
                 textArea.setDisabledBorder(border);
@@ -312,6 +327,9 @@ public class TextComponentTest extends SplitPane {
         controlsColumn.addButton("Change Disabled Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = StyleUtil.nextBorderStyle(textField.getDisabledBorder());
+                if (border == null) {
+                    return;
+                }
                 textField.setDisabledBorder(border);
                 passwordField.setDisabledBorder(border);
                 textArea.setDisabledBorder(border);
