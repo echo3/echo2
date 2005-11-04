@@ -1207,7 +1207,9 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
     if (importChildren && sourceNode.hasChildNodes()) {
         for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
             var targetChildNode = EchoDomUtil.importNodeImpl(targetDocument, sourceChildNode, true);
-            targetNode.appendChild(targetChildNode);
+            if (targetChildNode) {
+	            targetNode.appendChild(targetChildNode);
+            }
         }
     }
     return targetNode;
