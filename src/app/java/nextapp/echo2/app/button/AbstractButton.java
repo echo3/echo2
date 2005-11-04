@@ -53,6 +53,12 @@ public abstract class AbstractButton extends Component {
     public static final String INPUT_CLICK = "input_click";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
+    public static final String PROPERTY_DISABLED_BACKGROUND_IMAGE = "disabledBackgroundImage";
+    public static final String PROPERTY_DISABLED_BORDER = "disabledBorder";
+    public static final String PROPERTY_DISABLED_FONT = "disabledFont";
+    public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
+    public static final String PROPERTY_DISABLED_ICON = "disabledIcon";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_ICON = "icon";
     public static final String PROPERTY_ALIGNMENT = "alignment";
@@ -168,6 +174,62 @@ public abstract class AbstractButton extends Component {
         return (Border) getProperty(PROPERTY_BORDER);
     }
     
+    /**
+     * Returns the background color of the button when the button is disabled.
+     * 
+     * @return the color
+     */
+    public Color getDisabledBackground() {
+        return (Color) getProperty(PROPERTY_DISABLED_BACKGROUND);
+    }
+
+    /**
+     * Returns the background image displayed when the button is disabled. 
+     * 
+     * @return the background image
+     */
+    public FillImage getDisabledBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Returns the border displayed around the button when the button is
+     * disabled.
+     * 
+     * @return the border
+     */
+    public Border getDisabledBorder() {
+        return (Border) getProperty(PROPERTY_DISABLED_BORDER);
+    }
+
+    /**
+     * Returns the font of the button when the button is disabled.
+     * 
+     * @return the font
+     */
+    public Font getDisabledFont() {
+        return (Font) getProperty(PROPERTY_DISABLED_FONT);
+    }
+
+    /**
+     * Returns the foreground color of the button when the button is disabled.
+     * 
+     * @return the color
+     */
+    public Color getDisabledForeground() {
+        return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
+    }
+
+    /**
+     * Returns the icon of the button that is displayed when the button is
+     * disabled.
+     * 
+     * @return the icon
+     */
+    public ImageReference getDisabledIcon() {
+        return (ImageReference) getProperty(PROPERTY_DISABLED_ICON);
+    }
+
     /**
      * Returns the height of the button.
      * This property only supports <code>Extent</code>s with
@@ -497,6 +559,61 @@ public abstract class AbstractButton extends Component {
      */
     public void setBorder(Border newValue) {
         setProperty(PROPERTY_BORDER, newValue);
+    }
+
+    /**
+     * Sets the background color of the button when the button is disabled.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setDisabledBackground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the background image displayed when the button is disabled.
+     * 
+     * @param newValue the new background image
+     */
+    public void setDisabledBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets the border displayed around the button when the button is disabled.
+     * 
+     * @param newValue the new border
+     */
+    public void setDisabledBorder(Border newValue) {
+        setProperty(PROPERTY_DISABLED_BORDER, newValue);
+    }
+
+    /**
+     * Sets the font of the button when the button is disabled.
+     * 
+     * @param newValue the new <code>Font</code>
+     */
+    public void setDisabledFont(Font newValue) {
+        setProperty(PROPERTY_DISABLED_FONT, newValue);
+    }
+
+    /**
+     * Sets the foreground color of the button when the button is disabled.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setDisabledForeground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
+    }
+
+    /**
+     * Sets the icon of the button that is displayed when the button is 
+     * disabled.
+     * 
+     * @param newValue the new icon
+     */
+    public void setDisabledIcon(ImageReference newValue) {
+        setProperty(PROPERTY_DISABLED_ICON, newValue);
     }
 
     /**

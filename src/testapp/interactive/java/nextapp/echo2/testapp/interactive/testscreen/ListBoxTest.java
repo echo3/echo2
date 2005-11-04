@@ -342,6 +342,64 @@ public class ListBoxTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Set Disabled Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Border border = StyleUtil.randomBorder();
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setDisabledBorder(border);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setDisabledBorder(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setDisabledForeground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setDisabledBackground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Font font = StyleUtil.randomFont();
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setDisabledFont(font);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setDisabledFont(null);
+                    }
+                });
+            }
+        });
         controlsColumn.addButton("Toggle ToolTip Text", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator() {

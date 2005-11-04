@@ -284,6 +284,83 @@ public class TextComponentTest extends SplitPane {
                 textArea.setBackground(null);
             }
         });
+        controlsColumn.addButton("Change Disabled Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = StyleUtil.randomBorder();
+                textField.setDisabledBorder(border);
+                passwordField.setDisabledBorder(border);
+                textArea.setDisabledBorder(border);
+            }
+        });
+        controlsColumn.addButton("Change Disabled Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = textField.getDisabledBorder();
+                border = new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle());
+                textField.setDisabledBorder(border);
+                passwordField.setDisabledBorder(border);
+                textArea.setDisabledBorder(border);
+            }
+        });
+        controlsColumn.addButton("Change Disabled Border Size", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = StyleUtil.nextBorderSize(textField.getDisabledBorder());
+                textField.setDisabledBorder(border);
+                passwordField.setDisabledBorder(border);
+                textArea.setDisabledBorder(border);
+            }
+        });
+        controlsColumn.addButton("Change Disabled Border Style", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = StyleUtil.nextBorderStyle(textField.getDisabledBorder());
+                textField.setDisabledBorder(border);
+                passwordField.setDisabledBorder(border);
+                textArea.setDisabledBorder(border);
+            }
+        });
+        controlsColumn.addButton("Toggle Disabled Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FillImage backgroundImage = textField.getDisabledBackgroundImage();
+                if (backgroundImage == null) {
+                    textField.setDisabledBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                    passwordField.setDisabledBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                    textArea.setDisabledBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                } else {
+                    textField.setDisabledBackgroundImage(null);
+                    passwordField.setDisabledBackgroundImage(null);
+                    textArea.setDisabledBackgroundImage(null);
+                }
+            }
+        });
+        controlsColumn.addButton("Set Disabled Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color color = StyleUtil.randomColor();
+                textField.setDisabledForeground(color);
+                passwordField.setDisabledForeground(color);
+                textArea.setDisabledForeground(color);
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setDisabledForeground(null);
+                passwordField.setDisabledForeground(null);
+                textArea.setDisabledForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Disabled Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color color = StyleUtil.randomColor();
+                textField.setDisabledBackground(color);
+                passwordField.setDisabledBackground(color);
+                textArea.setDisabledBackground(color);
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                textField.setDisabledBackground(null);
+                passwordField.setDisabledBackground(null);
+                textArea.setDisabledBackground(null);
+            }
+        });
         controlsColumn.addButton("Set MaximumLength=10", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textField.setMaximumLength(10);

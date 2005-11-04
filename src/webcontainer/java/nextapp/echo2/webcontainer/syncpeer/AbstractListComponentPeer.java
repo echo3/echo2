@@ -103,29 +103,61 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      * @param listComponent the <code>nextapp.echo2.app.AbstractListComponent</code>
      */
     private CssStyle createListComponentCssStyle(RenderContext rc, AbstractListComponent listComponent) {
-        CssStyle style = new CssStyle();
+        CssStyle cssStyle = new CssStyle();
 
+        boolean renderEnabled = listComponent.isRenderEnabled();
+
+        Border border;
+        Color foreground, background;
+        Font font;
+        if (!renderEnabled) {
+            // Retrieve disabled style information.
+            background = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_DISABLED_BACKGROUND);
+            border = (Border) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_DISABLED_BORDER);
+            font = (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_DISABLED_FONT);
+            foreground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_DISABLED_FOREGROUND);
+
+            // Fallback to normal styles.
+            if (background == null) {
+                background = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BACKGROUND,
+                        DEFAULT_BACKGROUND);
+            }
+            if (border == null) {
+                border = (Border) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BORDER);
+            }
+            if (font == null) {
+                font = (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT);
+            }
+            if (foreground == null) {
+                foreground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FOREGROUND,
+                        DEFAULT_FOREGROUND);
+            }
+        } else {
+            border = (Border) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BORDER);
+            foreground = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND);
+            background = (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND);
+            font = (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT);
+        }
+        
+        BorderRender.renderToStyle(cssStyle, border);
+        ColorRender.renderToStyle(cssStyle, foreground, background);
+        FontRender.renderToStyle(cssStyle, font);
+        
         Extent width = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_WIDTH, DEFAULT_WIDTH);
         if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH)
                 && width.getUnits() == Extent.PERCENT) {
             // Render default width. 
             width = null;
         }
-        
         Extent height = (Extent) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_HEIGHT);
         Insets insets = (Insets) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_INSETS, DEFAULT_INSETS);
 
-        BorderRender.renderToStyle(style, (Border) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BORDER));
-        FontRender.renderToStyle(style, (Font) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FONT));
-        InsetsRender.renderToStyle(style, "padding", insets);
-        ColorRender.renderToStyle(style, 
-                (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND),
-                (Color) listComponent.getRenderProperty(AbstractListComponent.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND));
-        ExtentRender.renderToStyle(style, "width", width);
-        ExtentRender.renderToStyle(style, "height", height);
-        style.setAttribute("position", "relative");
+        InsetsRender.renderToStyle(cssStyle, "padding", insets);
+        ExtentRender.renderToStyle(cssStyle, "width", width);
+        ExtentRender.renderToStyle(cssStyle, "height", height);
+        cssStyle.setAttribute("position", "relative");
 
-        return style;
+        return cssStyle;
     }
 
     /**

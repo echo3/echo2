@@ -119,21 +119,60 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
      * @return the style
      */
     protected CssStyle createBaseCssStyle(RenderContext rc, TextComponent textComponent) {
-        Extent width = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_WIDTH);
-        Extent height = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HEIGHT);
-        FillImage backgroundImage = (FillImage) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
-
         CssStyle cssStyle = new CssStyle();
 
-        BorderRender.renderToStyle(cssStyle, (Border) textComponent.getRenderProperty(TextComponent.PROPERTY_BORDER));
-        ColorRender.renderToStyle(cssStyle, (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_FOREGROUND),
-                (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND));
-        FontRender.renderToStyle(cssStyle, (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT));
-        if (backgroundImage != null) {
-            FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, backgroundImage, 
-                    FillImageRender.FLAG_DISABLE_FIXED_MODE);
+        boolean renderEnabled = textComponent.isRenderEnabled();
+
+        Border border;
+        Color foreground, background;
+        Font font;
+        FillImage backgroundImage;
+        if (!renderEnabled) {
+            // Retrieve disabled style information.
+            background = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_DISABLED_BACKGROUND);
+            backgroundImage = (FillImage) textComponent.getRenderProperty(TextComponent.PROPERTY_DISABLED_BACKGROUND_IMAGE);
+            border = (Border) textComponent.getRenderProperty(TextComponent.PROPERTY_DISABLED_BORDER);
+            font = (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_DISABLED_FONT);
+            foreground = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_DISABLED_FOREGROUND);
+
+            // Fallback to normal styles.
+            if (background == null) {
+                background = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND);
+                if (backgroundImage == null) {
+                    // Special case:
+                    // Disabled background without disabled background image will render disabled background instead of
+                    // normal background image.
+                    backgroundImage = (FillImage) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+                }
+            }
+            if (border == null) {
+                border = (Border) textComponent.getRenderProperty(TextComponent.PROPERTY_BORDER);
+            }
+            if (font == null) {
+                font = (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT);
+            }
+            if (foreground == null) {
+                foreground = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_FOREGROUND);
+            }
+        } else {
+            border = (Border) textComponent.getRenderProperty(TextComponent.PROPERTY_BORDER);
+            foreground = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_FOREGROUND);
+            background = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND);
+            font = (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT);
+            backgroundImage = (FillImage) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
         }
+        
+        BorderRender.renderToStyle(cssStyle, border);
+        ColorRender.renderToStyle(cssStyle, foreground, background);
+        FontRender.renderToStyle(cssStyle, font);
+        FillImageRender.renderToStyle(cssStyle, rc, this, textComponent, IMAGE_ID_BACKGROUND, backgroundImage, 
+                FillImageRender.FLAG_DISABLE_FIXED_MODE);
+        
         InsetsRender.renderToStyle(cssStyle, "padding", (Insets) textComponent.getRenderProperty(TextComponent.PROPERTY_INSETS));
+        
+        Extent width = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_WIDTH);
+        Extent height = (Extent) textComponent.getRenderProperty(TextComponent.PROPERTY_HEIGHT);
+
         if (width != null) {
             cssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
@@ -157,7 +196,15 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
      */
     public ImageReference getImage(Component component, String imageId) {
         if (IMAGE_ID_BACKGROUND.equals(imageId)) {
-            FillImage backgroundImage = (FillImage) component.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+            FillImage backgroundImage;
+            if (component.isRenderEnabled()) {
+                backgroundImage = (FillImage) component.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+            } else {
+                backgroundImage = (FillImage) component.getRenderProperty(TextComponent.PROPERTY_DISABLED_BACKGROUND_IMAGE);
+                if (backgroundImage == null) {
+                    backgroundImage = (FillImage) component.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+                }
+            }
             if (backgroundImage == null) {
                 return null;
             } else {

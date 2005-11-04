@@ -32,10 +32,12 @@ package nextapp.echo2.app.text;
 import java.util.EventListener;
 
 import nextapp.echo2.app.Alignment;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -54,6 +56,11 @@ extends Component {
     public static final String PROPERTY_ALIGNMENT = "alignment";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
+    public static final String PROPERTY_DISABLED_BACKGROUND_IMAGE = "disabledBackgroundImage";
+    public static final String PROPERTY_DISABLED_BORDER = "disabledBorder";
+    public static final String PROPERTY_DISABLED_FONT = "disabledFont";
+    public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
     public static final String PROPERTY_INSETS = "insets";
@@ -160,6 +167,56 @@ extends Component {
         return (Border) getProperty(PROPERTY_BORDER);
     }
     
+    /**
+     * Returns the background color displayed when the text component is 
+     * disabled.
+     * 
+     * @return the color
+     */
+    public Color getDisabledBackground() {
+        return (Color) getProperty(PROPERTY_DISABLED_BACKGROUND);
+    }
+
+    /**
+     * Returns the background image displayed when the text component is 
+     * disabled.
+     * 
+     * @return the background image
+     */
+    public FillImage getDisabledBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Returns the border displayed when the text component is 
+     * disabled.
+     * 
+     * @return the border
+     */
+    public Border getDisabledBorder() {
+        return (Border) getProperty(PROPERTY_DISABLED_BORDER);
+    }
+
+    /**
+     * Returns the font displayed when the text component is 
+     * disabled.
+     * 
+     * @return the font
+     */
+    public Font getDisabledFont() {
+        return (Font) getProperty(PROPERTY_DISABLED_FONT);
+    }
+
+    /**
+     * Returns the foreground color displayed when the text component is 
+     * disabled.
+     * 
+     * @return the color
+     */
+    public Color getDisabledForeground() {
+        return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
+    }
+
     /**
      * Returns the model associated with this <code>TextComponent</code>.
      * 
@@ -334,6 +391,51 @@ extends Component {
      */
     public void setBorder(Border newValue) {
         setProperty(PROPERTY_BORDER, newValue);
+    }
+
+    /**
+     * Sets the background color displayed when the component is disabled.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setDisabledBackground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the background image displayed when the component is disabled.
+     * 
+     * @param newValue the new background image
+     */
+    public void setDisabledBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets the border displayed when the component is disabled.
+     * 
+     * @param newValue the new border
+     */
+    public void setDisabledBorder(Border newValue) {
+        setProperty(PROPERTY_DISABLED_BORDER, newValue);
+    }
+
+    /**
+     * Sets the font displayed when the component is disabled.
+     * 
+     * @param newValue the new <code>Font</code>
+     */
+    public void setDisabledFont(Font newValue) {
+        setProperty(PROPERTY_DISABLED_FONT, newValue);
+    }
+
+    /**
+     * Sets the foreground color displayed when the component is disabled.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setDisabledForeground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
     }
 
     /**

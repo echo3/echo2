@@ -96,33 +96,64 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      * @return the style
      */
     private CssStyle createDhtmlListBoxCssStyle(RenderContext rc, ListBox listBox) {
-        CssStyle style = new CssStyle();
+        CssStyle cssStyle = new CssStyle();
+        
+        boolean renderEnabled = listBox.isRenderEnabled();
 
-        ColorRender.renderToStyle(style,
-                (Color) listBox.getRenderProperty(ListBox.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND),
-                (Color) listBox.getRenderProperty(ListBox.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND));
+        Border border;
+        Color foreground, background;
+        Font font;
+        if (!renderEnabled) {
+            // Retrieve disabled style information.
+            background = (Color) listBox.getRenderProperty(ListBox.PROPERTY_DISABLED_BACKGROUND);
+            border = (Border) listBox.getRenderProperty(ListBox.PROPERTY_DISABLED_BORDER);
+            font = (Font) listBox.getRenderProperty(ListBox.PROPERTY_DISABLED_FONT);
+            foreground = (Color) listBox.getRenderProperty(ListBox.PROPERTY_DISABLED_FOREGROUND);
+
+            // Fallback to normal styles.
+            if (background == null) {
+                background = (Color) listBox.getRenderProperty(ListBox.PROPERTY_BACKGROUND,
+                        DEFAULT_BACKGROUND);
+            }
+            if (border == null) {
+                border = (Border) listBox.getRenderProperty(ListBox.PROPERTY_BORDER, DEFAULT_DHTML_BORDER);
+            }
+            if (font == null) {
+                font = (Font) listBox.getRenderProperty(ListBox.PROPERTY_FONT);
+            }
+            if (foreground == null) {
+                foreground = (Color) listBox.getRenderProperty(ListBox.PROPERTY_FOREGROUND,
+                        DEFAULT_FOREGROUND);
+            }
+        } else {
+            border = (Border) listBox.getRenderProperty(ListBox.PROPERTY_BORDER, DEFAULT_DHTML_BORDER);
+            foreground = (Color) listBox.getRenderProperty(ListBox.PROPERTY_FOREGROUND, DEFAULT_FOREGROUND);
+            background = (Color) listBox.getRenderProperty(ListBox.PROPERTY_BACKGROUND, DEFAULT_BACKGROUND);
+            font = (Font) listBox.getRenderProperty(ListBox.PROPERTY_FONT);
+        }
+        
+        BorderRender.renderToStyle(cssStyle, border);
+        ColorRender.renderToStyle(cssStyle, foreground, background);
+        FontRender.renderToStyle(cssStyle, font);
         
         Extent height = (Extent) listBox.getRenderProperty(ListBox.PROPERTY_HEIGHT, DEFAULT_HEIGHT);
-        style.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
+        cssStyle.setAttribute("height", ExtentRender.renderCssAttributeValue(height));
 
         Extent width = (Extent) listBox.getRenderProperty(ListBox.PROPERTY_WIDTH, DEFAULT_WIDTH);
         if (!width.equals(DEFAULT_WIDTH) || !isDhtmlComponentRequired(rc)) {
             // For components using DHTML list box implementation, there is no reason to set width to 100%.
             // This also conveniently avoids another IE bug.
-            style.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
+            cssStyle.setAttribute("width", ExtentRender.renderCssAttributeValue(width));
         }
 
         Insets insets = (Insets) listBox.getRenderProperty(ListBox.PROPERTY_INSETS, DEFAULT_INSETS);
-        InsetsRender.renderToStyle(style, "padding", insets);
+        InsetsRender.renderToStyle(cssStyle, "padding", insets);
 
-        FontRender.renderToStyle(style, (Font) listBox.getRenderProperty(ListBox.PROPERTY_FONT));
-        BorderRender.renderToStyle(style, (Border) listBox.getRenderProperty(ListBox.PROPERTY_BORDER, DEFAULT_DHTML_BORDER));
+        cssStyle.setAttribute("position", "relative");
+        cssStyle.setAttribute("overflow", "auto");
+        cssStyle.setAttribute("cursor", "default");
 
-        style.setAttribute("position", "relative");
-        style.setAttribute("overflow", "auto");
-        style.setAttribute("cursor", "default");
-
-        return style;
+        return cssStyle;
     }
     
     /**

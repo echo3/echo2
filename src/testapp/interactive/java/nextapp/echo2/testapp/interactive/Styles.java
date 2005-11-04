@@ -74,11 +74,14 @@ public class Styles {
             IMAGE_PATH + "ButtonBackground.png"));
     public static final FillImage BUTTON_PRESSED_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ButtonPressedBackground.png"));
+    public static final FillImage BUTTON_DISABLED_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
+            IMAGE_PATH + "ButtonDisabledBackground.png"));
     public static final FillImage BUTTON_ROLLOVER_BACKGROUND_IMAGE = new FillImage(new ResourceImageReference(
             IMAGE_PATH + "ButtonRolloverBackground.png"));
     
     
     public static final ImageReference ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "Logo.png");
+    public static final ImageReference DISABLED_ICON_LOGO =  new ResourceImageReference(IMAGE_PATH + "LogoDisabled.png");
     public static final ImageReference ROLLOVER_ICON_LOGO 
             = new ResourceImageReference(IMAGE_PATH + "LogoRollover.png");
     public static final ImageReference PRESSED_ICON_LOGO 

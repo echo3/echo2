@@ -61,6 +61,10 @@ public class AbstractListComponent extends Component {
     public static final String SELECTION_CHANGED_PROPERTY = "listSelectionChanged";
 
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
+    public static final String PROPERTY_DISABLED_BORDER = "disabledBorder";
+    public static final String PROPERTY_DISABLED_FONT = "disabledFont";
+    public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
     public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
@@ -202,6 +206,46 @@ public class AbstractListComponent extends Component {
         return listCellRenderer;
     }
     
+    /**
+     * Returns the background color displayed when the component is 
+     * disabled.
+     * 
+     * @return the color
+     */
+    public Color getDisabledBackground() {
+        return (Color) getProperty(PROPERTY_DISABLED_BACKGROUND);
+    }
+
+    /**
+     * Returns the border displayed when the component is 
+     * disabled.
+     * 
+     * @return the border
+     */
+    public Border getDisabledBorder() {
+        return (Border) getProperty(PROPERTY_DISABLED_BORDER);
+    }
+
+    /**
+     * Returns the font displayed when the component is 
+     * disabled.
+     * 
+     * @return the font
+     */
+    public Font getDisabledFont() {
+        return (Font) getProperty(PROPERTY_DISABLED_FONT);
+    }
+
+    /**
+     * Returns the foreground color displayed when the component is 
+     * disabled.
+     * 
+     * @return the color
+     */
+    public Color getDisabledForeground() {
+        return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
+    }
+
     /**
      * Returns the height.
      * This property only supports <code>Extent</code>s with
@@ -385,6 +429,42 @@ public class AbstractListComponent extends Component {
         firePropertyChange(LIST_CELL_RENDERER_CHANGED_PROPERTY, oldValue, newValue);
     }
     
+    /**
+     * Sets the background color displayed when the component is disabled.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setDisabledBackground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the border displayed when the component is disabled.
+     * 
+     * @param newValue the new border
+     */
+    public void setDisabledBorder(Border newValue) {
+        setProperty(PROPERTY_DISABLED_BORDER, newValue);
+    }
+
+    /**
+     * Sets the font displayed when the component is disabled.
+     * 
+     * @param newValue the new <code>Font</code>
+     */
+    public void setDisabledFont(Font newValue) {
+        setProperty(PROPERTY_DISABLED_FONT, newValue);
+    }
+
+    /**
+     * Sets the foreground color displayed when the component is disabled.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setDisabledForeground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
+    }
+
     /**
      * Sets the height.
      * This property only supports <code>Extent</code>s with

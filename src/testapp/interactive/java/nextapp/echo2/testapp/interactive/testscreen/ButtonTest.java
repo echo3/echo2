@@ -749,6 +749,111 @@ extends SplitPane {
             }
         });
         
+        // Disabled Effect Settings
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Disabled Effects"));
+
+        controlsColumn.addButton("Set Disabled Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getIcon() != null) {
+                            button.setDisabledIcon(Styles.DISABLED_ICON_LOGO);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        if (button.getIcon() != null) {
+                            button.setDisabledIcon(null);
+                        }
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledForeground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledForeground(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Color color = StyleUtil.randomColor();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledBackground(color);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledBackground(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Font font = StyleUtil.randomFont();
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledFont(font);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledFont(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Set Disabled Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledBackgroundImage(Styles.BUTTON_DISABLED_BACKGROUND_IMAGE);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Clear Disabled Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setDisabledBackgroundImage(null);
+                    }
+                });
+            }
+        });
+        
         // Text Position
 
         controlsColumn = new ButtonColumn();

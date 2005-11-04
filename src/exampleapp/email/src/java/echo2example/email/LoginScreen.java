@@ -104,7 +104,7 @@ public class LoginScreen extends ContentPane {
         label = new Label(Messages.getString("LoginScreen.PromptEmailAddress"));
         label.setStyleName("LoginScreen.Prompt");
         layoutGrid.add(label);
-        
+
         emailAddressField = new TextField();
         emailAddressField.setWidth(PX_300);
         emailAddressField.setStyleName("Default");
