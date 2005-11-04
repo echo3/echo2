@@ -259,7 +259,7 @@ EchoClientEngine.baseServerUri = null;
 /**
  * Flag indicating whether debugging options (e.g., Debug Pane) are enabled.
  */
-EchoClientEngine.debugEnabled;
+EchoClientEngine.debugEnabled = true;
 
 /**
  * Initializes the Echo2 Client Engine.
@@ -493,7 +493,7 @@ EchoClientMessage.setActionValue = function(componentId, actionName, actionValue
     var actionElement = messagePartElement.ownerDocument.createElement("action");
     actionElement.setAttribute("component-id", componentId);
     actionElement.setAttribute("name", actionName);
-    if (actionValue != undefined) {
+    if (actionValue !== undefined) {
         // Only set value if argument is provided.
         actionElement.setAttribute("value", actionValue);
     }
@@ -1719,7 +1719,7 @@ EchoScriptLibraryManager.installLibrary = function(serviceId) {
         // Mark state as installed.
         EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_INSTALLED;
     } catch (ex) {
-        EchoClientEngine.processClientError("Cannot load script module \"" + conn.serviceId + "\"", ex);
+        EchoClientEngine.processClientError("Cannot load script module \"" + serviceId + "\"", ex);
         throw ex;
     }
 };
@@ -1957,7 +1957,7 @@ EchoServerMessage.isLibraryLoadComplete = function() {
         var returnValue = true;
         for (var i = 0; i < libraryElements.length; ++i) {
             var serviceId = libraryElements.item(i).getAttribute("service-id");
-            var libraryState = EchoScriptLibraryManager.getState(serviceId)
+            var libraryState = EchoScriptLibraryManager.getState(serviceId);
             if (libraryState != EchoScriptLibraryManager.STATE_LOADED 
                     && libraryState != EchoScriptLibraryManager.STATE_INSTALLED) {
                 // A library that requires immediate loading is not yet available.
