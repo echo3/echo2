@@ -89,8 +89,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             = "nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder";
     
     private static final Insets DEFAULT_CONTENT_INSETS = new Insets(3);
+    private static final Insets DEFAULT_TITLE_INSETS = new Insets(4);
     private static final FillImageBorder DEFAULT_BORDER 
             = new FillImageBorder(new Color(0x00007f), new Insets(20), DEFAULT_CONTENT_INSETS);
+    private static final Color DEFAULT_TITLE_BACKGROUND = new Color(0x005faf);
+    private static final Color DEFAULT_TITLE_FOREGROUND = Color.WHITE;
     private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
     private static final Extent DEFAULT_POSITION_Y = new Extent(64, Extent.PX);
     private static final String DEFAULT_WIDTH = "512px";
@@ -269,6 +272,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Element borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_tl");
         CssStyle borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("top", "0px");
@@ -287,6 +291,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_t");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("top", "0px");
@@ -310,6 +315,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_tr");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("top", "0px");
@@ -328,6 +334,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_l");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("top", borderTopPixels + "px");
@@ -352,6 +359,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_r");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("top", borderTopPixels + "px");
@@ -376,6 +384,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_bl");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("bottom", "0px");
@@ -394,6 +403,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_b");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("bottom", "0px");
@@ -418,6 +428,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         borderDivElement = document.createElement("div");
         borderDivElement.setAttribute("id", elementId + "_border_br");
         borderCssStyle = new CssStyle();
+        borderCssStyle.setAttribute("font-size", "1px");
         ColorRender.renderToStyle(borderCssStyle, null, borderColor);
         borderCssStyle.setAttribute("position", "absolute");
         borderCssStyle.setAttribute("bottom", "0px");
@@ -567,8 +578,8 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             titleContainerDivCssStyle.setAttribute("cursor", "move");
         }
         ColorRender.renderToStyle(titleContainerDivCssStyle, 
-                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND, Color.WHITE), 
-                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, Color.BLUE));
+                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND, DEFAULT_TITLE_FOREGROUND), 
+                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, DEFAULT_TITLE_BACKGROUND));
         FontRender.renderToStyle(titleContainerDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
         FillImageRender.renderToStyle(titleContainerDivCssStyle, rc, this, component, IMAGE_ID_TITLE_BACKGROUND,
                 (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE), 0);
@@ -580,12 +591,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         titleContainerDivElement.setAttribute("style", titleContainerDivCssStyle.renderInline());
         windowBodyDivElement.appendChild(titleContainerDivElement);
         
+        Insets titleInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS, DEFAULT_TITLE_INSETS);
+        
         // Add Title Icon.
         if (icon != null) {
-            Insets titleIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON_INSETS);
-            if (titleIconInsets == null) {
-                titleIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
-            }
+            Insets titleIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON_INSETS, titleInsets);
             Element titleIconDivElement = document.createElement("div");
             CssStyle titleIconDivCssStyle = new CssStyle();
             titleIconDivCssStyle.setAttribute("position", "absolute");
@@ -611,8 +621,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             titleTextDivCssStyle.setAttribute("top", "0px");
             titleTextDivCssStyle.setAttribute("white-space", "nowrap");
             titleTextDivCssStyle.setAttribute("overflow", "hidden");
-            InsetsRender.renderToStyle(titleTextDivCssStyle, "padding", 
-                    (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS));
+            InsetsRender.renderToStyle(titleTextDivCssStyle, "padding", titleInsets);
             titleTextDivElement.setAttribute("style", titleTextDivCssStyle.renderInline());
             if (title != null) {
                 DomUtil.setElementText(titleTextDivElement, title);
@@ -623,10 +632,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         // Add Close Icon.
         boolean closable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE, Boolean.TRUE)).booleanValue();
         if (closable) {
-            Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS);
-            if (closeIconInsets == null) {
-                closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
-            }
+            Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS, titleInsets);
             Element closeIconDivElement = document.createElement("div");
             closeIconDivElement.setAttribute("id", elementId + "_close");
             CssStyle closeIconDivCssStyle = new CssStyle();
