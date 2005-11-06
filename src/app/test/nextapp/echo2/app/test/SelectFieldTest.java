@@ -50,6 +50,15 @@ public class SelectFieldTest extends TestCase {
     }
     
     /**
+     * Ensures that invoking <code>getSelectedItem</code> on a 
+     * <code>SelectField</code> with no selected items returns null.
+     */
+    public void testGetSelectedItemNull() {
+        SelectField selectField = new SelectField();
+        assertNull(selectField.getSelectedItem());
+    }
+    
+    /**
      * Test Adding/Removing <code>ActionListener</code>s and
      * receiving events.
      */
