@@ -32,6 +32,7 @@ package nextapp.echo2.webcontainer.syncpeer;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
@@ -55,6 +56,7 @@ import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.partialupdate.BorderUpdate;
 import nextapp.echo2.webcontainer.partialupdate.ColorUpdate;
 import nextapp.echo2.webcontainer.partialupdate.InsetsUpdate;
+import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -160,6 +162,22 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
             background = (Color) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND);
             font = (Font) textComponent.getRenderProperty(TextComponent.PROPERTY_FONT);
             backgroundImage = (FillImage) textComponent.getRenderProperty(TextComponent.PROPERTY_BACKGROUND_IMAGE);
+        }
+        
+        Alignment alignment = (Alignment) textComponent.getRenderProperty(TextComponent.PROPERTY_ALIGNMENT);
+        if (alignment != null) {
+            int horizontalAlignment = AlignmentRender.getRenderedHorizontal(alignment, textComponent);
+            switch (horizontalAlignment) {
+            case Alignment.LEFT:
+                cssStyle.setAttribute("text-align", "left");
+                break;
+            case Alignment.CENTER:
+                cssStyle.setAttribute("text-align", "center");
+                break;
+            case Alignment.RIGHT:
+                cssStyle.setAttribute("text-align", "right");
+                break;
+            }
         }
         
         BorderRender.renderToStyle(cssStyle, border);
