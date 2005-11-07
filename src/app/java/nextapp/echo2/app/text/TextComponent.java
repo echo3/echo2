@@ -47,7 +47,7 @@ import nextapp.echo2.app.event.DocumentListener;
 /**
  * Abstract base class for text-entry components.
  */
-public class TextComponent 
+public abstract class TextComponent 
 extends Component {
     
     public static final String INPUT_ACTION = "action";
