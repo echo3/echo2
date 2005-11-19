@@ -589,6 +589,46 @@ EchoClientProperties.get = function(name) {
     return EchoClientProperties.propertyMap[name];
 };
 
+// _________________________
+// Object EchoCollectionsMap
+
+EchoCollectionsMap = function() {
+    this.removeCount = 0;
+    this.garbageCollectionInterval = 250;
+    this.associations = new Array();
+};
+
+EchoCollectionsMap.prototype.get = function(key) {
+    return this.associations[key];
+};
+
+EchoCollectionsMap.prototype.put = function(key, value) {
+    if (value == null) {
+        this.remove(key);
+        return;
+    }
+    this.associations[key] = value;
+};
+
+EchoCollectionsMap.prototype.garbageCollect = function() {
+    this.removeCount = 0;
+    var newAssociations = new Array();
+    var i = 0;
+    for (var key in this.associations) {
+        newAssociations[key] = this.associations[key];
+        ++i;
+    }
+    this.associations = newAssociations;
+};
+
+EchoCollectionsMap.prototype.remove = function(key) {
+    delete this.associations[key];
+    ++this.removeCount;
+    if (this.removeCount >= this.garbageCollectionInterval) {
+        this.garbageCollect();
+    }
+};
+
 // __________________
 // Object EchoCssUtil
 
@@ -1361,7 +1401,7 @@ EchoEventProcessor.MessageProcessor.process = function(messagePartElement) {
  * associate arrays that map DOM element ids to the String names
  * of event handlers.
  */
-EchoEventProcessor.eventTypeToHandlersMap = new Array();
+EchoEventProcessor.eventTypeToHandlersMap = new EchoCollectionsMap();
 
 /**
  * Registers an event handler.
@@ -1376,12 +1416,12 @@ EchoEventProcessor.addHandler = function(elementId, eventType, handler) {
     var element = document.getElementById(elementId);
     EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
     
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
+    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
     if (!elementIdToHandlerMap) {
-        elementIdToHandlerMap = new Array();
-        EchoEventProcessor.eventTypeToHandlersMap[eventType] = elementIdToHandlerMap;
+        elementIdToHandlerMap = new EchoCollectionsMap();
+        EchoEventProcessor.eventTypeToHandlersMap.put(eventType, elementIdToHandlerMap);
     }
-    elementIdToHandlerMap[elementId] = handler;
+    elementIdToHandlerMap.put(elementId, handler);
 };
 
 /**
@@ -1393,11 +1433,11 @@ EchoEventProcessor.addHandler = function(elementId, eventType, handler) {
  * @param elementId the elementId the id of the DOM element
  */
 EchoEventProcessor.getHandler = function(eventType, elementId) {
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
+    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
     if (!elementIdToHandlerMap) {
         return null;
     }
-    return elementIdToHandlerMap[elementId];
+    return elementIdToHandlerMap.get(elementId);
 };
 
 /**
@@ -1405,9 +1445,9 @@ EchoEventProcessor.getHandler = function(eventType, elementId) {
  */
 EchoEventProcessor.getHandlerElementIds = function(eventType) {
     var elementIds = new Array();
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
+    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
     if (elementIdToHandlerMap) {
-        for (var elementId in elementIdToHandlerMap) {
+        for (var elementId in elementIdToHandlerMap.associations) {
             elementIds.push(elementId);
         }
     }
@@ -1422,7 +1462,7 @@ EchoEventProcessor.getHandlerElementIds = function(eventType) {
  */
 EchoEventProcessor.getHandlerEventTypes = function() {
     var handlerTypes = new Array();
-    for (var eventType in EchoEventProcessor.eventTypeToHandlersMap) {
+    for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
         handlerTypes.push(eventType);
     }
     return handlerTypes;
@@ -1485,13 +1525,11 @@ EchoEventProcessor.removeHandler = function(elementId, eventType) {
         EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
     }
 
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap[eventType];
+    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
     if (!elementIdToHandlerMap) {
         return;
     }
-    if (elementIdToHandlerMap[elementId]) {
-        delete elementIdToHandlerMap[elementId];
-    }
+    elementIdToHandlerMap.remove(elementId);
 };
 
 // _______________________
