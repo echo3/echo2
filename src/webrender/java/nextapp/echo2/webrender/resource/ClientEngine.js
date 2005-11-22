@@ -592,24 +592,51 @@ EchoClientProperties.get = function(name) {
 // _________________________
 // Object EchoCollectionsMap
 
+/**
+ * Class which provides associative mapping between keys and values.
+ * Implmentation is based on an associative array.
+ * Array is periodically recreated after a significant number of
+ * element removals to eliminate side effects from memory management 
+ * flaws with Internet Explorer.
+ * Null values are not permitted as keys.  Setting a key to a null value
+ * will result in the key being removed.
+ */
 EchoCollectionsMap = function() {
     this.removeCount = 0;
     this.garbageCollectionInterval = 250;
     this.associations = new Array();
 };
 
+/**
+ * Retrieves the value referenced by the spcefied key.
+ *
+ * @param key the key
+ * @return the value, or null if no value is referenced
+ */
 EchoCollectionsMap.prototype.get = function(key) {
     return this.associations[key];
 };
 
+/**
+ * Stores a value referenced by the specified key.
+ *
+ * @param key the key
+ * @param value the value
+ */
 EchoCollectionsMap.prototype.put = function(key, value) {
-    if (value == null) {
+    if (value === null) {
         this.remove(key);
         return;
     }
     this.associations[key] = value;
 };
 
+/**
+ * Performs 'garbage-collection' operations, recreating the array.
+ * This operation is necessary due to Internet Explorer memory leak
+ * issues.  It will be called automatically--there is no reason to
+ * directly invoke this method.
+ */
 EchoCollectionsMap.prototype.garbageCollect = function() {
     this.removeCount = 0;
     var newAssociations = new Array();
@@ -621,6 +648,11 @@ EchoCollectionsMap.prototype.garbageCollect = function() {
     this.associations = newAssociations;
 };
 
+/**
+ * Removes the value referenced by the specified key.
+ *
+ * @param key the key
+ */
 EchoCollectionsMap.prototype.remove = function(key) {
     delete this.associations[key];
     ++this.removeCount;
