@@ -237,7 +237,7 @@ implements Serializable {
      *
      * @param newValue The new identifier for this column.
      */
-    public void setIdentifer(Object newValue) {
+    public void setIdentifier(Object newValue) {
         Object oldValue = identifier;
         identifier = newValue;
         pcs.firePropertyChange(IDENTIFIER_CHANGED_PROPERTY, oldValue, newValue);
