@@ -1621,6 +1621,11 @@ function EchoHttpConnection(url, method, messageObject, contentType) {
 }
 
 /**
+ * Empty method assigned to onreadystatechange handler to avoid IE memory leaks.
+ */
+EchoHttpConnection.cancelReadyStateChange = function() { };
+
+/**
  * Executes the HTTP connection.
  * The responseHandler property of the connection must be set
  * before the connection is executed.
@@ -1643,14 +1648,14 @@ EchoHttpConnection.prototype.connect = function() {
 
     var instance = this;
     this.xmlHttpRequest.onreadystatechange = function() { 
-        var complete = false;
+        if (!instance) {
+            return;
+        }
         try {
-            if (instance.processReadyStateChange()) {
-                instance = null;
-            }
-            complete = true;
+            instance.processReadyStateChange();
         } finally {
-            if (!complete) {
+            if (instance.disposed) {
+                // Release instance reference to allow garbage collection.
                 instance = null;
             }
         }
@@ -1693,8 +1698,6 @@ EchoHttpConnection.prototype.getResponseXml = function() {
     return this.xmlHttpRequest ? this.xmlHttpRequest.responseXML : null;
 };
 
-EchoHttpConnection.prototype.cancelReadyStateChange = function() { };
-
 /**
  * Event listener for <code>readystatechange</code> events received from
  * the <code>XMLHttpRequest</code>.
@@ -1706,22 +1709,22 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
     if (this.xmlHttpRequest.readyState == 4) {
         if (this.xmlHttpRequest.status == 200) {
             if (!this.responseHandler) {
+                this.dispose();
                 throw "EchoHttpConnection response handler not set.";
             }
             this.responseHandler(this);
             this.dispose();
-            return true;
         } else {
             if (this.invalidResponseHandler) {
                 this.invalidResponseHandler(this);
                 this.dispose();
-                return true;
             } else {
+                var statusValue = this.xmlHttpRequest.status;
+                this.dispose();
                 throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
             }
         }
     }
-    return false;
 };
 
 // _______________________
