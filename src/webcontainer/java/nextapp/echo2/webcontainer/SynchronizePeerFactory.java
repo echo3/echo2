@@ -38,7 +38,7 @@ public class SynchronizePeerFactory {
 
     private static final String RESOURCE_NAME = "META-INF/nextapp/echo2/SynchronizePeerBindings.properties";
     private static final PeerFactory peerFactory 
-            = new PeerFactory(RESOURCE_NAME, SynchronizePeerFactory.class.getClassLoader());
+            = new PeerFactory(RESOURCE_NAME, Thread.currentThread().getContextClassLoader());
     
     /**
      * Retrieves the appropriate <code>CommandSynchronizePeer</code> for a given 

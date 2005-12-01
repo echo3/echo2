@@ -1617,6 +1617,7 @@ function EchoHttpConnection(url, method, messageObject, contentType) {
     this.messageObject = messageObject;
     this.responseHandler = null;
     this.invalidResponseHandler = null;
+    this.disposed = false;
 }
 
 /**
@@ -1639,13 +1640,37 @@ EchoHttpConnection.prototype.connect = function() {
     } else {
         throw "Connect failed: Cannot create XMLHttpRequest.";
     }
+
     var instance = this;
-    this.xmlHttpRequest.onreadystatechange = function() { instance.processReadyStateChange(); };
+    this.xmlHttpRequest.onreadystatechange = function() { 
+        var complete = false;
+        try {
+            if (instance.processReadyStateChange()) {
+                instance = null;
+            }
+            complete = true;
+        } finally {
+            if (!complete) {
+                instance = null;
+            }
+        }
+    };
+    
     this.xmlHttpRequest.open(this.method, this.url, true);
     if (this.contentType && (usingActiveXObject || this.xmlHttpRequest.setRequestHeader)) {
         this.xmlHttpRequest.setRequestHeader("Content-Type", this.contentType);
     }
     this.xmlHttpRequest.send(this.messageObject ? this.messageObject : null);
+};
+
+EchoHttpConnection.prototype.dispose = function() {
+this.onreadystatechange
+    this.onreadystatechange = this.cancelReadyStateChange;
+    this.messageObject = null;
+    this.responseHandler = null;
+    this.invalidResponseHandler = null;
+    this.xmlHttpRequest = null;
+    this.disposed = true;
 };
 
 /**
@@ -1668,25 +1693,35 @@ EchoHttpConnection.prototype.getResponseXml = function() {
     return this.xmlHttpRequest ? this.xmlHttpRequest.responseXML : null;
 };
 
+EchoHttpConnection.prototype.cancelReadyStateChange = function() { };
+
 /**
  * Event listener for <code>readystatechange</code> events received from
  * the <code>XMLHttpRequest</code>.
  */
 EchoHttpConnection.prototype.processReadyStateChange = function() {
+    if (this.disposed) {
+        return;
+    }
     if (this.xmlHttpRequest.readyState == 4) {
         if (this.xmlHttpRequest.status == 200) {
             if (!this.responseHandler) {
                 throw "EchoHttpConnection response handler not set.";
             }
             this.responseHandler(this);
+            this.dispose();
+            return true;
         } else {
             if (this.invalidResponseHandler) {
                 this.invalidResponseHandler(this);
+                this.dispose();
+                return true;
             } else {
                 throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
             }
         }
     }
+    return false;
 };
 
 // _______________________

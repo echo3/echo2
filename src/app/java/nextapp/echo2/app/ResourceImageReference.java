@@ -218,7 +218,7 @@ extends StreamImageReference {
         int bytesRead = 0;
         
         try {
-            in = ResourceImageReference.class.getResourceAsStream(resource);
+            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
             if (in == null) {
                 throw new IllegalArgumentException("Specified resource does not exist: " + resource + ".");
             }
