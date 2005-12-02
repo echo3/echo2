@@ -109,6 +109,9 @@ public class ChatScreen extends ContentPane {
         
         messagePane = new MessagePane();
         chatAndUsersPane.add(messagePane);
+        
+        ChatApp app = ChatApp.getApp();
+        app.setFocusedComponent(postField);
     }
     
     /**

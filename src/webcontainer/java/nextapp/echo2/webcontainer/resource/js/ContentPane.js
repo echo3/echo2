@@ -134,10 +134,11 @@ EchoContentPane.MessageProcessor.processScroll = function(scrollMessageElement) 
  *        <code>EchoEventProcessor</code>
  */
 EchoContentPane.scroll = function(echoEvent) {
+    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget.id)) {
+        return;
+    }
     EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "horizontalScroll",  
             echoEvent.registeredTarget.scrollLeft + "px");
     EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "verticalScroll",  
             echoEvent.registeredTarget.scrollTop + "px");
 };
-
- 
