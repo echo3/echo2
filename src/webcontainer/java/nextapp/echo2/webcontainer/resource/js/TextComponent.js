@@ -58,6 +58,9 @@ EchoTextComponent.MessageProcessor.process = function(messagePartElement) {
             case "dispose":
                 EchoTextComponent.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
                 break;
+            case "set-text":
+                EchoTextComponent.MessageProcessor.processSetText(messagePartElement.childNodes[i]);
+                break;
             }
         }
     }
@@ -76,6 +79,22 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
         EchoEventProcessor.removeHandler(elementId, "focus");
         EchoEventProcessor.removeHandler(elementId, "keypress");
         EchoEventProcessor.removeHandler(elementId, "keyup");
+    }
+};
+
+
+/**
+ * Processes a <code>set-text</code> message to update the text displayed in a
+ * Text Component.
+ *
+ * @param setTextMessageElement the <code>set-text</code> element to process
+ */
+EchoTextComponent.MessageProcessor.processSetText = function(setTextMessageElement) {
+    for (var item = setTextMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        var text = item.getAttribute("text");
+        var textComponent = document.getElementById(elementId);
+        textComponent.value = text;
     }
 };
 

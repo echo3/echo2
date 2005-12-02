@@ -49,6 +49,7 @@ import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.FocusSupport;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
@@ -94,6 +95,39 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
     static {
         WebRenderServlet.getServiceRegistry().add(TEXT_COMPONENT_SERVICE);
     }
+    
+    /**
+     * A <code>PartialUpdateParticipant</code> to update the text of
+     * a text component.
+     */
+    private class TextUpdate
+    implements PartialUpdateParticipant {
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, 
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+            return true;
+        }
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(
+         *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+            TextComponent textComponent = (TextComponent) update.getParent();
+            String elementId = ContainerInstance.getElementId(textComponent);
+            ServerMessage serverMessage = rc.getServerMessage();
+            Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE,
+                    "EchoTextComponent.MessageProcessor", "set-text", new String[0], new String[0]);
+            Element itemElement = serverMessage.getDocument().createElement("item");
+            itemElement.setAttribute("eid", elementId);
+            itemElement.setAttribute("text", textComponent.getText());
+            itemizedUpdateElement.appendChild(itemElement);
+            
+        }
+    }
 
     private PartialUpdateManager partialUpdateManager;
 
@@ -110,6 +144,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
                 new BorderUpdate(TextComponent.PROPERTY_BORDER, null, BorderUpdate.CSS_BORDER));
         partialUpdateManager.add(TextComponent.PROPERTY_INSETS,
                 new InsetsUpdate(TextComponent.PROPERTY_INSETS, null, InsetsUpdate.CSS_PADDING));
+        partialUpdateManager.add(TextComponent.TEXT_CHANGED_PROPERTY, new TextUpdate());
     }
 
     /**
