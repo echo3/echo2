@@ -108,6 +108,8 @@ extends StreamImageReference {
      * Creates a <code>ResourceImageReference</code>.
      * 
      * @param resource the resource name containing the binary image data
+     *        (all resource names will be treated as absolute, it is 
+     *        unnecessary to prepend a leading slash to the resource name)
      * @param contentType the content type of the image (or null to 
      *        automatically determine the content type based on the resource
      *        extension)
@@ -121,6 +123,8 @@ extends StreamImageReference {
      * The content type will be automatically determined.
      * 
      * @param resource the resource name containing the binary image data
+     *        (all resource names will be treated as absolute, it is 
+     *        unnecessary to prepend a leading slash to the resource name)
      * @param width the width of the image
      * @param height the height of the image
      */
@@ -132,6 +136,8 @@ extends StreamImageReference {
      * Creates a <code>ResourceImageReference</code>.
      * 
      * @param resource the resource name containing the binary image data
+     *        (all resource names will be treated as absolute, it is 
+     *        unnecessary to prepend a leading slash to the resource name)
      * @param contentType the content type of the image (or null to 
      *        automatically determine the content type based on the resource
      *        extension)
@@ -141,7 +147,13 @@ extends StreamImageReference {
     public ResourceImageReference(String resource, String contentType, Extent width, Extent height) {
         super();
         
-        this.resource = resource;
+        // Drop leading slash as all resource paths are absolute.
+        if (resource.charAt(0) == '/') {
+            this.resource = resource.substring(1);
+        } else {
+            this.resource = resource;
+        }
+        
         this.contentType = contentType == null ? getContentType(resource) : contentType;
         this.width = width;
         this.height = height;

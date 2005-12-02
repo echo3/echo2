@@ -73,7 +73,7 @@ public class FillImageBorderPeerTest extends TestCase {
         ImageReference imageReference = topLeftFillImage.getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
-        assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
+        assertEquals("nextapp/echo2/test/componentxml/BackgroundImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
         assertEquals(FillImage.REPEAT_HORIZONTAL, topLeftFillImage.getRepeat());
         assertEquals(new Extent(50), topLeftFillImage.getHorizontalOffset());

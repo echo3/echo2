@@ -7,14 +7,14 @@
      <border-part position="top-left">
       <fill-image horizontal="50px" vertical="-30%" repeat="horizontal" attachment="fixed">
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+        <resource-image-reference resource="nextapp/echo2/test/componentxml/BackgroundImage.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="top">
       <fill-image horizontal="50px" vertical="-30%" repeat="horizontal" attachment="fixed">
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/test/componentxml/BackgroundImage.png"/>
+        <resource-image-reference resource="nextapp/echo2/test/componentxml/BackgroundImage.png"/>
        </image>
       </fill-image>
      </border-part>

@@ -60,21 +60,21 @@ public class ImageReferencePeerTest extends TestCase {
         Style alphaStyle = styleSheet.getStyle(Button.class, "alpha");
         assertTrue(alphaStyle.getProperty(Button.PROPERTY_ICON) instanceof ResourceImageReference);
         ResourceImageReference icon = (ResourceImageReference) alphaStyle.getProperty(Button.PROPERTY_ICON);
-        assertEquals("/nextapp.echo2/test/componentxml/Alpha.png", icon.getResource());
+        assertEquals("nextapp.echo2/test/componentxml/Alpha.png", icon.getResource());
     }
     
     public void testResourceImageReferencePlain() {
         Style bravoStyle = styleSheet.getStyle(Button.class, "bravo");
         assertTrue(bravoStyle.getProperty(Button.PROPERTY_ICON) instanceof ResourceImageReference);
         ResourceImageReference icon = (ResourceImageReference) bravoStyle.getProperty(Button.PROPERTY_ICON);
-        assertEquals("/nextapp.echo2/test/componentxml/Bravo.png", icon.getResource());
+        assertEquals("nextapp.echo2/test/componentxml/Bravo.png", icon.getResource());
     }
     
     public void testResourceImageReferenceDimensioned() {
         Style charlieStyle = styleSheet.getStyle(Button.class, "charlie");
         assertTrue(charlieStyle.getProperty(Button.PROPERTY_ICON) instanceof ResourceImageReference);
         ResourceImageReference icon = (ResourceImageReference) charlieStyle.getProperty(Button.PROPERTY_ICON);
-        assertEquals("/nextapp.echo2/test/componentxml/Charlie.png", icon.getResource());
+        assertEquals("nextapp.echo2/test/componentxml/Charlie.png", icon.getResource());
         assertEquals(new Extent(20), icon.getWidth());
         assertEquals(new Extent(30), icon.getHeight());
     }
@@ -83,7 +83,7 @@ public class ImageReferencePeerTest extends TestCase {
         Style deltaStyle = styleSheet.getStyle(Button.class, "delta");
         assertTrue(deltaStyle.getProperty(Button.PROPERTY_ICON) instanceof ResourceImageReference);
         ResourceImageReference icon = (ResourceImageReference) deltaStyle.getProperty(Button.PROPERTY_ICON);
-        assertEquals("/nextapp.echo2/test/componentxml/Delta.whoknows", icon.getResource());
+        assertEquals("nextapp.echo2/test/componentxml/Delta.whoknows", icon.getResource());
         assertEquals("image/gif", icon.getContentType());
         assertEquals(new Extent(30), icon.getWidth());
         assertNull(icon.getHeight());

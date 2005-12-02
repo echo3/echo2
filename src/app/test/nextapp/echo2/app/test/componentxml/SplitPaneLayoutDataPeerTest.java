@@ -69,7 +69,7 @@ public class SplitPaneLayoutDataPeerTest extends TestCase {
         ImageReference imageReference = layoutData.getBackgroundImage().getImage();
         assertNotNull(imageReference);
         assertTrue(imageReference instanceof ResourceImageReference);
-        assertEquals("/nextapp/echo2/test/componentxml/BackgroundImage.png", 
+        assertEquals("nextapp/echo2/test/componentxml/BackgroundImage.png", 
                 ((ResourceImageReference) imageReference).getResource());
     }
 }

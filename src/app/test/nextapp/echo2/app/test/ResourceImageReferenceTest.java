@@ -55,4 +55,12 @@ public class ResourceImageReferenceTest extends TestCase {
         assertFalse(image1.equals(new Object()));
         assertFalse(image1.equals(null));
     }
+    
+    /**
+     * Ensure leading slashes are dropped from resource names.
+     */
+    public void testLeadingSlashes() {
+        assertEquals("test/image1.png", new ResourceImageReference("test/image1.png").getResource());
+        assertEquals("test/image1.png", new ResourceImageReference("/test/image1.png").getResource());
+    }
 }
