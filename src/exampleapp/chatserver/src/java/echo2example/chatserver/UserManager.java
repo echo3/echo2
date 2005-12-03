@@ -76,6 +76,8 @@ public class UserManager {
             user = new User(userName);
             userMap.put(userName, user);
         }
+System.err.println("-----------------");        
+System.err.println(toString());        
         return user.getAuthToken();
     }
     
@@ -109,5 +111,35 @@ public class UserManager {
                 }
             }
         }
+    }
+
+    /**
+     * Removes the specified user.
+     * 
+     * @param userName the user's name
+     */
+    public void remove(String userName) {
+        synchronized (userMap) {
+            userMap.remove(userName);
+        }
+System.err.println("-----------------");        
+System.err.println(toString());        
+    }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        StringBuffer out = new StringBuffer();
+        synchronized (userMap) {
+            Iterator it = userMap.keySet().iterator();
+            while (it.hasNext()) {
+                out.append(it.next());
+                if (it.hasNext()) {
+                    out.append(", ");
+                }
+            }
+        }
+        return out.toString();
     }
 }

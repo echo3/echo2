@@ -124,6 +124,16 @@ public class Server {
         }
     }
     
+    public void dispose() 
+    throws IOException {
+        Document requestDocument = createRequestDocument();
+        Element userRemoveElement = requestDocument.createElement("user-remove");
+        userRemoveElement.setAttribute("name", userName);
+        userRemoveElement.setAttribute("auth-token", authToken);
+        requestDocument.getDocumentElement().appendChild(userRemoveElement);
+        XmlHttpConnection.send(serviceUrl, requestDocument);
+    }
+    
     public Message[] getNewMessages() {
         Message[] messages = (Message[]) newMessages.toArray(new Message[newMessages.size()]);
         newMessages.clear();
@@ -165,7 +175,7 @@ public class Server {
         for (int i = 0; i < length; ++i) {
             Element messageElement = (Element) newMessageElements.item(i);
             lastRetrievedId = messageElement.getAttribute("id");
-            String userName = messageElement.getAttribute("user-name");
+            String userName = messageElement.hasAttribute("user-name") ? messageElement.getAttribute("user-name") : null;
             NodeList childNodes = messageElement.getChildNodes();
             String content = null;
             for (int j = 0; j < childNodes.getLength(); ++j) {

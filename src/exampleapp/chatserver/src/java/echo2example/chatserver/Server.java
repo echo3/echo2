@@ -56,7 +56,11 @@ public class Server {
      *         null if it was not (e.g., due to the name already being in use)
      */
     public String addUser(String userName) {
-        return userManager.add(userName);
+        String token = userManager.add(userName);
+        if (token != null) {
+            messageStore.post(null, "User \"" + userName + "\" has joined the chat.");
+        }
+        return token;
     }
     
     /**
@@ -78,6 +82,16 @@ public class Server {
      */
     public Message[] getRecentMessages() {
         return messageStore.getRecentMessages();
+    }
+    
+    public boolean removeUser(String userName, String authToken) {
+        if (userManager.authenticate(userName, authToken)) {
+            userManager.remove(userName);
+            messageStore.post(null, "User \"" + userName + "\" has exited the chat.");
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /**

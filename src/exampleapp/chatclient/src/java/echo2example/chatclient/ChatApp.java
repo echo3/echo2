@@ -89,12 +89,17 @@ public class ChatApp extends ApplicationInstance {
      * Displays the <code>LoginScreen</code>.
      */
     public void disconnect() {
-        server = null;
-        if (incomingMessageQueue != null) {
-            removeTaskQueue(incomingMessageQueue);
-            incomingMessageQueue = null;
+        try {
+            server.dispose();
+            server = null;
+            if (incomingMessageQueue != null) {
+                removeTaskQueue(incomingMessageQueue);
+                incomingMessageQueue = null;
+            }
+            getDefaultWindow().setContent(new LoginScreen());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
-        getDefaultWindow().setContent(new LoginScreen());
     }
     
     /**

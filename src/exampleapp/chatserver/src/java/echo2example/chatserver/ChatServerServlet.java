@@ -72,6 +72,7 @@ public class ChatServerServlet extends HttpServlet {
         Document inputDocument = loadInputDocument(request);
         Document outputDocument = createOutputDocument();
         processUserAdd(inputDocument, outputDocument);
+        processUserRemove(inputDocument, outputDocument);
         processPostMessage(inputDocument, outputDocument);
         processGetMessages(inputDocument, outputDocument);
         renderOutputDocument(response, outputDocument);
@@ -123,7 +124,9 @@ public class ChatServerServlet extends HttpServlet {
         for (int i = 0; i < messages.length; ++i) {
             Element messageElement = outputDocument.createElement("message");
             messageElement.setAttribute("id", Long.toString(messages[i].getId()));
-            messageElement.setAttribute("user-name", messages[i].getUserName());
+            if (messages[i].getUserName() != null) {
+                messageElement.setAttribute("user-name", messages[i].getUserName());
+            }
             messageElement.setAttribute("time", Long.toString(messages[i].getPostTime()));
             messageElement.appendChild(outputDocument.createTextNode(messages[i].getContent()));
             outputDocument.getDocumentElement().appendChild(messageElement);
@@ -166,6 +169,19 @@ public class ChatServerServlet extends HttpServlet {
             userAuthElement.setAttribute("auth-token", authToken);
         }
         outputDocument.getDocumentElement().appendChild(userAuthElement);
+    }
+    
+    private void processUserRemove(Document inputDocument, Document outputDocument) {
+        NodeList userRemoveNodes = inputDocument.getDocumentElement().getElementsByTagName("user-remove");
+        if (userRemoveNodes.getLength() == 0) {
+            return;
+        }
+        
+        Element userRemoveElement = (Element) userRemoveNodes.item(0);
+        String userName = userRemoveElement.getAttribute("name");
+        String authToken = userRemoveElement.getAttribute("auth-token");
+        
+        server.removeUser(userName, authToken);
     }
     
     private void renderOutputDocument(HttpServletResponse response, Document outputDocument) 

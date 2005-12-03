@@ -70,12 +70,18 @@ public class MessagePane extends ContentPane {
             label.setStyleName("MessagePane.DateLabel");
             row.add(label);
 
-            label = new Label(messages[i].getUserName());
-            label.setStyleName("MessagePane.UserNameLabel");
-            row.add(label);
-            
-            label =  new Label(messages[i].getContent());
-            row.add(label);
+            if (messages[i].getUserName() != null) {
+                label = new Label(messages[i].getUserName());
+                label.setStyleName("MessagePane.UserNameLabel");
+                row.add(label);
+                
+                label =  new Label(messages[i].getContent());
+                row.add(label);
+            } else {
+                label =  new Label(messages[i].getContent());
+                label.setStyleName("MessagePane.SystemMessageLabel");
+                row.add(label);
+            }
             
             listColumn.add(row);
         }

@@ -239,6 +239,15 @@
   </properties>
  </style>
 
+ <style name="MessagePane.SystemMessageLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="foreground" value="#007f00"/>
+   <property name="font">
+    <font bold="true"/>
+   </property>
+  </properties>
+ </style>
+
  <style name="ChatScreen.CurrentUserLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="foreground" value="#00007f"/>
