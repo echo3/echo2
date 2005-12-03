@@ -170,6 +170,7 @@ EchoTextComponent.doAction = function(textComponent) {
     if (!EchoDomPropertyStore.getPropertyValue(textComponent.id, "serverNotify")) {
         return;
     }
+    EchoTextComponent.updateClientMessage(textComponent);
     EchoClientMessage.setActionValue(textComponent.id, "action");
     EchoServerTransaction.connect();
 };
@@ -222,7 +223,6 @@ EchoTextComponent.processKeyPress = function(echoEvent) {
         EchoTextComponent.doAction(textComponent);
     }
 };
-
 
 /**
  * Processes a key up event:
