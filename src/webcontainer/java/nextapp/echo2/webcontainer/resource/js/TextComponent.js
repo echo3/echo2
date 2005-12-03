@@ -187,6 +187,7 @@ EchoTextComponent.processBlur = function(echoEvent) {
     if (!EchoClientEngine.verifyInput(textComponent.id)) {
         return;
     }
+    
     EchoTextComponent.updateClientMessage(textComponent);
     EchoFocusManager.setFocusedState(textComponent.id, false);
 };
