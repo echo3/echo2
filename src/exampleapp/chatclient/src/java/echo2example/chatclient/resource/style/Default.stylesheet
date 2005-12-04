@@ -199,6 +199,18 @@
   </properties>
  </style>
  
+ <style name="MessagePane.MessageRow.Announcement" base-name="MessagePane.MessageRow" type="nextapp.echo2.app.Row">
+  <properties>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.ColumnLayoutData">
+     <properties>
+      <property name="background" value="#bfffcf"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+ 
  <style name="MessagePane.DateLabel" type="nextapp.echo2.app.Label">
   <properties>
    <property name="foreground" value="#007f3f"/>
