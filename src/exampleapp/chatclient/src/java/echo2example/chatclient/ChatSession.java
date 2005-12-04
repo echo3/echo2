@@ -190,7 +190,7 @@ public class ChatSession {
             this.chatServerUri = chatServerUri;
         } else {
             this.chatServerUri = (conn.getRequest().isSecure() ? "https" : "http") 
-                    + "://localhost:" + conn.getRequest().getServerPort() + "/ChatServer/app";
+                    + "://" + conn.getRequest().getServerName() + ":" + conn.getRequest().getServerPort() + "/ChatServer/app";
         }
     }
     
