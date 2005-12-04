@@ -41,6 +41,7 @@ import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.GridLayoutData;
 
 /**
  * Login screen <code>ContentPane</code>.
@@ -98,6 +99,20 @@ public class LoginScreen extends ContentPane {
         Grid layoutGrid = new Grid();
         layoutGrid.setStyleName("LoginScreen.LayoutGrid");
         splitPane.add(layoutGrid);
+
+        Column warningColumn = new Column();
+        GridLayoutData gridLayoutData = new GridLayoutData();
+        gridLayoutData.setColumnSpan(2);
+        warningColumn.setLayoutData(gridLayoutData);
+        layoutGrid.add(warningColumn);
+        
+        label = new Label(Messages.getString("LoginScreen.WarningTitle"));
+        label.setStyleName("LoginScreen.WarningTitle");
+        warningColumn.add(label);
+        
+        label = new Label(Messages.getString("LoginScreen.WarningMessage"));
+        label.setStyleName("LoginScreen.WarningMessage");
+        warningColumn.add(label);
 
         label = new Label(Messages.getString("LoginScreen.PromptUserName"));
         label.setStyleName("LoginScreen.Prompt");

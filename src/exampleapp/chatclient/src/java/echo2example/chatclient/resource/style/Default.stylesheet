@@ -130,13 +130,28 @@
   </properties>
  </style>
  
+ <style name="LoginScreen.WarningTitle" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="font">
+    <font bold="true"/>
+   </property>
+   <property name="foreground" value="#7f0000"/>
+  </properties>
+ </style>
+ 
+ <style name="LoginScreen.WarningMessage" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="foreground" value="#7f0000"/>
+  </properties>
+ </style>
+ 
  <style name="LoginScreen.LoginWindow" base-name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <property name="resizable" value="false"/>
    <property name="positionX" value="160px"/>
-   <property name="positionY" value="320px"/>
+   <property name="positionY" value="240px"/>
    <property name="width" value="450px"/>
-   <property name="height" value="160px"/>
+   <property name="height" value="300px"/>
   </properties>  
  </style>
  
