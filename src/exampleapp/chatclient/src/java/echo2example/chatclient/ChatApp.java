@@ -34,6 +34,7 @@ import java.io.IOException;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
+import nextapp.echo2.webcontainer.ContainerContext;
 
 /**
  * Chat Client <code>ApplicationInstance</code> implementation.
@@ -51,6 +52,40 @@ public class ChatApp extends ApplicationInstance {
     
     private ChatSession chatSession;
     private TaskQueueHandle incomingMessageQueue;
+    
+    private long lastActionTime;
+    private long lastPostTime;
+    private int pollingInterval = 1000;
+    
+    /**
+     * Calculates the appropriate client-server polling interval based on the
+     * delta between the current time and the last interesting event (i.e.
+     * posted message in the chat) which occurred.
+     * 
+     * @return the appropriate polling interval
+     */
+    private int calculatePollingInterval() {
+        long delta = System.currentTimeMillis() - lastActionTime;
+        if (delta < 10 * 1000) {
+            // Last action 0-10 seconds ago: 1 second poll update intervals.
+            return 1000;
+        } else if (delta < 20 * 1000) {
+            // Last action 10-20 seconds ago: 2 second poll update intervals.
+            return 2000;
+        } else if (delta < 30 * 1000) {
+            // Last action 20-30 seconds ago: 3 second poll update intervals.
+            return 3000;
+        } else if (delta < 60 * 1000) {
+            // Last action 30-60 seconds ago: 5 second poll update intervals.
+            return 5000;
+        } else if (delta < 120 * 1000) {
+            // Last action 1-2 minutes ago: 10 second poll update intervals.
+            return 10000;
+        } else {
+            // Last action > 120 seconds ago: 20 second poll update intervals.
+            return 20000;
+        }
+    }
     
     /**
      * Attempts to connect to the chat server with the specified user name.
@@ -74,6 +109,8 @@ public class ChatApp extends ApplicationInstance {
                 throw new IllegalStateException();
             }
             incomingMessageQueue = createTaskQueue();
+            updatePollingInterval(true);
+            
             getDefaultWindow().setContent(new ChatScreen());
             return true;
         }
@@ -127,6 +164,17 @@ public class ChatApp extends ApplicationInstance {
             enqueueTask(incomingMessageQueue, new Runnable(){
                 public void run() {
                     chatScreen.updateMessageList();
+                    updatePollingInterval(true);
+                }
+            });
+        }
+        
+        // Determine if the polling interval should be updated, and if 
+        // necessary, queue a task to update it.
+        if (pollingInterval != calculatePollingInterval()) {
+            enqueueTask(incomingMessageQueue, new Runnable() {
+                public void run() {
+                    updatePollingInterval(false);
                 }
             });
         }
@@ -171,8 +219,29 @@ public class ChatApp extends ApplicationInstance {
     public void postMessage(String content) {
         try {
             chatSession.postMessage(content);
+            updatePollingInterval(true);
+            lastPostTime = System.currentTimeMillis();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+    
+    /**
+     * Updates the client-server polling interval based on the time since 
+     * the last event of interest.  The interval is increased when nothing 
+     * interesting appears to be occurring.
+     * 
+     * @param reset flag indicating whether an action has occurred, if true,
+     *        the current time will be marked as the time of the last action
+     *        and used in future calculations of polling interval.
+     */
+    private void updatePollingInterval(boolean reset) {
+        if (reset) {
+            lastActionTime = System.currentTimeMillis();
+        }
+        pollingInterval = calculatePollingInterval();
+        ContainerContext containerContext = (ContainerContext) getContextProperty(
+                ContainerContext.CONTEXT_PROPERTY_NAME);
+        containerContext.setTaskQueueCallbackInterval(incomingMessageQueue, pollingInterval);
     }
 }
