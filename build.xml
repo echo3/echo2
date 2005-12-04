@@ -517,6 +517,14 @@
         </copy>
         <antcall target="clean.exampleapp.email"/>
 
+        <!-- Binary Web Applications: E-Mail Client -->
+        <antcall target="dist.exampleapp.chat"/>
+        <copy todir="${dir.build.release.root}/BinaryApplications">
+            <fileset dir="${dir.src.exampleapp.chatclient}/war"/>
+            <fileset dir="${dir.src.exampleapp.chatserver}/war"/>
+        </copy>
+        <antcall target="clean.exampleapp.chat"/>
+
         <!-- Binary Web Applications: Tutorial Application -->
         <antcall target="dist.tutorialapp"/>
         <copy todir="${dir.build.release.root}/BinaryApplications">
