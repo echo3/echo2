@@ -47,8 +47,20 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+/**
+ * Utility class to POST XML messages (represented as DOM <code>Document</code>
+ * objects) to web services and retrieve XML response messages (again 
+ * represented as DOM <code>Document</code> objects).
+ */
 public class XmlHttpConnection {
     
+    /**
+     * POSTs an XML message to a web service.
+     * 
+     * @param url the URL of the service
+     * @param requestDocument the DOM document to POST
+     * @return the XML response
+     */
     public static Document send(String url, Document requestDocument) 
     throws IOException {
         try {

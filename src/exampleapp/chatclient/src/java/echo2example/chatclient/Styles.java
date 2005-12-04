@@ -74,10 +74,6 @@ public class Styles {
             = new ResourceImageReference(IMAGE_PATH + "Icon24ArrowLightCyanRight.gif");
     public static final ImageReference ICON_24_EXIT
             = new ResourceImageReference(IMAGE_PATH + "Icon24Exit.gif");
-    public static final ImageReference ICON_24_MAIL_REPLY 
-            = new ResourceImageReference(IMAGE_PATH + "Icon24MailReply.gif");
-    public static final ImageReference ICON_24_MAIL_COMPOSE 
-            = new ResourceImageReference(IMAGE_PATH + "Icon24MailCompose.gif");
     public static final ImageReference ICON_24_NO
             = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif");
     public static final ImageReference ICON_24_YES

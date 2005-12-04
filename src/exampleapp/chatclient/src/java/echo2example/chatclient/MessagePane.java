@@ -37,8 +37,15 @@ import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 
+/**
+ * A <code>ContentPane</code> which displays the messages which have been posted
+ * in the chat.
+ */
 public class MessagePane extends ContentPane {
     
+    /**
+     * <code>DateFormat</code> object to render post times.
+     */
     private static final DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
     
     /**
@@ -46,11 +53,17 @@ public class MessagePane extends ContentPane {
      */
     private static final int MAX_MESSAGE_COUNT = 100;
     
+    /**
+     * Extent specifying the 'scroll-to-bottom' position (-1px).
+     */
     private static final Extent BOTTOM = new Extent(-1, Extent.PX);
     
     private Column listColumn;
     private String userName;
     
+    /**
+     * Creates a new <code>MessagePane</code>.
+     */
     public MessagePane() {
         super();
         listColumn = new Column();
@@ -59,6 +72,10 @@ public class MessagePane extends ContentPane {
         userName = ChatApp.getApp().getUserName();
     }
 
+    /**
+     * Updates the state of the <code>MessagePane</code> based on new messages
+     * by querying the <code>ChatApp</code> for new messages.
+     */
     public void update() {
         ChatApp app = ChatApp.getApp();
         ChatSession.Message[] messages = app.getNewMessages();
@@ -99,5 +116,4 @@ public class MessagePane extends ContentPane {
         
         setVerticalScroll(BOTTOM);
     }
-    
 }
