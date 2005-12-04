@@ -30,7 +30,8 @@
 package echo2example.chatserver;
 
 /**
- * Utility to log posted messages and users entering and leaving chat room.
+ * Primitive utility to log posted messages and users entering and leaving 
+ * chat room.
  */
 public class Log {
 
@@ -55,13 +56,13 @@ public class Log {
         String logMessage;
         switch (action) {
         case ACTION_POST:
-            logMessage = "POST: remoteHost=" + remoteHost + ", userName=" + userName + ", message=" + message;
+            logMessage = "ECHO2CHAT: POST: remoteHost=" + remoteHost + ", userName=" + userName + ", message=" + message;
             break;
         case ACTION_AUTH:
-            logMessage = "AUTH: remoteHost=" + remoteHost + ", userName=" + userName;
+            logMessage = "ECHO2CHAT: AUTH: remoteHost=" + remoteHost + ", userName=" + userName;
             break;
         case ACTION_EXIT:
-            logMessage = "EXIT: remoteHost=" + remoteHost + ", userName=" + userName;
+            logMessage = "ECHO2CHAT: EXIT: remoteHost=" + remoteHost + ", userName=" + userName;
             break;
         default:
             throw new IllegalArgumentException("Invalid action.");

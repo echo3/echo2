@@ -40,6 +40,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import nextapp.echo2.webcontainer.ContainerContext;
 import nextapp.echo2.webrender.ClientProperties;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.WebRenderServlet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -145,7 +147,7 @@ public class ChatSession {
     /**
      * The URI of the chat server's web service.
      */
-    private String serviceUrl = "http://localhost:8080/ChatServer/app"; 
+    private String chatServerUri;
     
     /**
      * Creates a new <code>ChatSession</code>.
@@ -158,6 +160,7 @@ public class ChatSession {
     throws IOException {
         super();
         this.userName = userName;
+        loadServerUri();
         
         Document requestDocument = createRequestDocument();
         
@@ -165,7 +168,7 @@ public class ChatSession {
         userAddElement.setAttribute("name", userName);
         requestDocument.getDocumentElement().appendChild(userAddElement);
         
-        Document responseDocument = XmlHttpConnection.send(serviceUrl, requestDocument);
+        Document responseDocument = XmlHttpConnection.send(this.chatServerUri, requestDocument);
         NodeList userAuthNodes = responseDocument.getElementsByTagName("user-auth");
         if (userAuthNodes.getLength() != 1) {
             throw new IOException("Unexpected response.");
@@ -177,6 +180,20 @@ public class ChatSession {
         }
     }
 
+    /**
+     * Determines the URI of the chat server based on either 
+     */
+    private void loadServerUri() {
+        Connection conn = WebRenderServlet.getActiveConnection();
+        String chatServerUri = conn.getServlet().getInitParameter("ChatServerURI");
+        if (chatServerUri != null && chatServerUri.trim().length() > 0) {
+            this.chatServerUri = chatServerUri;
+        } else {
+            this.chatServerUri = (conn.getRequest().isSecure() ? "https" : "http") 
+                    + "://localhost:" + conn.getRequest().getServerPort() + "/ChatServer/app";
+        }
+    }
+    
     /**
      * Creates an XML DOM for a request to the Chat Server's Web Service.
      * The returned DOM will contain a 'chat-server-request' document element.
@@ -222,7 +239,7 @@ public class ChatSession {
         userRemoveElement.setAttribute("name", userName);
         userRemoveElement.setAttribute("auth-token", authToken);
         requestDocument.getDocumentElement().appendChild(userRemoveElement);
-        XmlHttpConnection.send(serviceUrl, requestDocument);
+        XmlHttpConnection.send(chatServerUri, requestDocument);
     }
     
     /**
@@ -263,7 +280,7 @@ public class ChatSession {
     public void pollServer() 
     throws IOException {
         Document requestDocument = createRequestDocument();
-        Document responseDocument = XmlHttpConnection.send(serviceUrl, requestDocument);
+        Document responseDocument = XmlHttpConnection.send(chatServerUri, requestDocument);
         updateLocalMessages(responseDocument);
     }
     
@@ -283,7 +300,7 @@ public class ChatSession {
         postMessageElement.appendChild(requestDocument.createTextNode(content));
         requestDocument.getDocumentElement().appendChild(postMessageElement);
         
-        Document responseDocument = XmlHttpConnection.send(serviceUrl, requestDocument);
+        Document responseDocument = XmlHttpConnection.send(chatServerUri, requestDocument);
         updateLocalMessages(responseDocument);
     }
     
