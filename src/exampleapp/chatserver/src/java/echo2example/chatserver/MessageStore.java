@@ -99,8 +99,8 @@ public class MessageStore {
     /**
      * Posts a message.
      * 
-     * @param userName
-     * @param messageContent
+     * @param userName the name of the user
+     * @param messageContent the message content to post
      */
     public synchronized void post(String userName, String messageContent) {
         int messageIndex = (firstMessageIndex + messageCount) % MAX_MESSAGES;

@@ -69,16 +69,22 @@ public class ChatServerServlet extends HttpServlet {
             throw new ServletException("Request from invalid host.");
         }
         
-        Document inputDocument = loadInputDocument(request);
-        Document outputDocument = createOutputDocument();
-        processUserAdd(inputDocument, outputDocument);
-        processUserRemove(inputDocument, outputDocument);
-        processPostMessage(inputDocument, outputDocument);
-        processGetMessages(inputDocument, outputDocument);
-        renderOutputDocument(response, outputDocument);
+        Document requestDocument = loadrequestDocument(request);
+        Document responseDocument = createresponseDocument();
+        processUserAdd(requestDocument, responseDocument);
+        processUserRemove(requestDocument, responseDocument);
+        processPostMessage(requestDocument, responseDocument);
+        processGetMessages(requestDocument, responseDocument);
+        renderResponseDocument(response, responseDocument);
     }
     
-    private Document createOutputDocument() 
+    /**
+     * Creates the response DOM document, containing a 'chat-server-response' 
+     * document element.
+     * 
+     * @return the response document
+     */
+    private Document createresponseDocument() 
     throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -92,7 +98,14 @@ public class ChatServerServlet extends HttpServlet {
         }
     }
     
-    private Document loadInputDocument(HttpServletRequest request) 
+    /**
+     * Retrieves the request DOM document from an incoming 
+     * <code>httpServletRequest</code>. 
+     * 
+     * @param request the <code>HttpServletRequest</code>
+     * @return the request DOM document
+     */
+    private Document loadrequestDocument(HttpServletRequest request) 
     throws IOException {
         InputStream in = null;
         try {
@@ -112,8 +125,15 @@ public class ChatServerServlet extends HttpServlet {
         }
     }
     
-    private void processGetMessages(Document inputDocument, Document outputDocument) {
-        String lastRetrievedIdString = inputDocument.getDocumentElement().getAttribute("last-retrieved-id");
+    /**
+     * Retrieves new messages posted with id values higher than the
+     * request document's specified 'last-retrieved-id' value.
+     * 
+     * @param requestDocument the request DOM document
+     * @param responseDocument the response DOM document
+     */
+    private void processGetMessages(Document requestDocument, Document responseDocument) {
+        String lastRetrievedIdString = requestDocument.getDocumentElement().getAttribute("last-retrieved-id");
         Message[] messages;
         if (lastRetrievedIdString == null || lastRetrievedIdString.trim().length() == 0) {
             messages = server.getRecentMessages();
@@ -122,24 +142,32 @@ public class ChatServerServlet extends HttpServlet {
             messages = server.getMessages(lastRetrievedId);
         }
         for (int i = 0; i < messages.length; ++i) {
-            Element messageElement = outputDocument.createElement("message");
+            Element messageElement = responseDocument.createElement("message");
             messageElement.setAttribute("id", Long.toString(messages[i].getId()));
             if (messages[i].getUserName() != null) {
                 messageElement.setAttribute("user-name", messages[i].getUserName());
             }
             messageElement.setAttribute("time", Long.toString(messages[i].getPostTime()));
-            messageElement.appendChild(outputDocument.createTextNode(messages[i].getContent()));
-            outputDocument.getDocumentElement().appendChild(messageElement);
+            messageElement.appendChild(responseDocument.createTextNode(messages[i].getContent()));
+            responseDocument.getDocumentElement().appendChild(messageElement);
         }
     }
     
-    private void processPostMessage(Document inputDocument, Document outputDocument) {
-        NodeList postMessageNodes = inputDocument.getDocumentElement().getElementsByTagName("post-message");
+    /**
+     * Processes a request (if applicable) to post a message to the chat
+     * server.
+     * 
+     * @param requestDocument the request DOM document
+     * @param responseDocument the response DOM document
+     */
+    private void processPostMessage(Document requestDocument, Document responseDocument) {
+        NodeList postMessageNodes = requestDocument.getDocumentElement().getElementsByTagName("post-message");
         if (postMessageNodes.getLength() == 0) {
+            // Posting not requested.
             return;
         }
         
-        String remoteHost = inputDocument.getDocumentElement().getAttribute("remote-host");
+        String remoteHost = requestDocument.getDocumentElement().getAttribute("remote-host");
 
         Element postMessageElement = (Element) postMessageNodes.item(0);
         String userName = postMessageElement.getAttribute("user-name");
@@ -153,31 +181,45 @@ public class ChatServerServlet extends HttpServlet {
         }
     }
     
-    private void processUserAdd(Document inputDocument, Document outputDocument) {
-        NodeList userAddNodes = inputDocument.getDocumentElement().getElementsByTagName("user-add");
+    /**
+     * Process a request (if applicable) to add a user to the chat.
+     * 
+     * @param requestDocument the request DOM document
+     * @param responseDocument the response DOM document
+     */
+    private void processUserAdd(Document requestDocument, Document responseDocument) {
+        NodeList userAddNodes = requestDocument.getDocumentElement().getElementsByTagName("user-add");
         if (userAddNodes.getLength() == 0) {
+            // User add not requested.
             return;
         }
 
-        String remoteHost = inputDocument.getDocumentElement().getAttribute("remote-host");
+        String remoteHost = requestDocument.getDocumentElement().getAttribute("remote-host");
         
         // Attempt to authenticate.
         Element userAddElement = (Element) userAddNodes.item(0);
         String userName = userAddElement.getAttribute("name");
         String authToken = server.addUser(userName, remoteHost);
         
-        Element userAuthElement = outputDocument.createElement("user-auth");
+        Element userAuthElement = responseDocument.createElement("user-auth");
         if (authToken == null) {
             userAuthElement.setAttribute("failed", "true");
         } else {
             userAuthElement.setAttribute("auth-token", authToken);
         }
-        outputDocument.getDocumentElement().appendChild(userAuthElement);
+        responseDocument.getDocumentElement().appendChild(userAuthElement);
     }
     
-    private void processUserRemove(Document inputDocument, Document outputDocument) {
-        NodeList userRemoveNodes = inputDocument.getDocumentElement().getElementsByTagName("user-remove");
+    /**
+     * Process a request (if applicable) to remove a user from the chat.
+     * 
+     * @param requestDocument the request DOM document
+     * @param responseDocument the response DOM document
+     */
+    private void processUserRemove(Document requestDocument, Document responseDocument) {
+        NodeList userRemoveNodes = requestDocument.getDocumentElement().getElementsByTagName("user-remove");
         if (userRemoveNodes.getLength() == 0) {
+            // User remove not requested.
             return;
         }
         
@@ -185,17 +227,24 @@ public class ChatServerServlet extends HttpServlet {
         String userName = userRemoveElement.getAttribute("name");
         String authToken = userRemoveElement.getAttribute("auth-token");
         
-        String remoteHost = inputDocument.getDocumentElement().getAttribute("remote-host");
+        String remoteHost = requestDocument.getDocumentElement().getAttribute("remote-host");
 
         server.removeUser(userName, authToken, remoteHost);
     }
     
-    private void renderOutputDocument(HttpServletResponse response, Document outputDocument) 
+    /**
+     * Renders the response DOM document to the 
+     * <code>HttpServletResponse</code>.
+     * 
+     * @param response the outgoing <code>HttpServletResponse</code>
+     * @param responseDocument the response DOM document
+     */
+    private void renderResponseDocument(HttpServletResponse response, Document responseDocument) 
     throws IOException {
         try {
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
-            DOMSource source = new DOMSource(outputDocument);
+            DOMSource source = new DOMSource(responseDocument);
             StreamResult result = new StreamResult(response.getWriter());
             transformer.transform(source, result);
         } catch (TransformerException ex) {
