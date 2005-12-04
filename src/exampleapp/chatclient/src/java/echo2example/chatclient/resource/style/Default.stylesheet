@@ -1,4 +1,18 @@
 <stylesheet>
+
+ <style name="Default" type="nextapp.echo2.app.text.TextComponent">
+  <properties>
+   <property name="background" value="#cfdfff"/>
+   <property name="border">
+    <border size="2px" style="groove" color="#cfdfff"/>
+   </property>
+   <property name="foreground" value="#000000"/>
+   <property name="font">
+    <font typeface="sans-serif" size="10pt"/>
+   </property>
+  </properties>
+ </style>
+
  <style name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
@@ -75,94 +89,7 @@
    </property>
   </properties>
  </style>
- <style name="LoginScreen.Column" type="nextapp.echo2.app.Column">
-  <properties>
-   <property name="insets" value="245px 0px 0px 0px"/>
-   <property name="cellSpacing" value="40px"/>
-  </properties>
- </style>
- <style name="LoginScreen.LoginWindow" base-name="Default" type="nextapp.echo2.app.WindowPane">
-  <properties>
-   <property name="resizable" value="false"/>
-   <property name="positionX" value="160px"/>
-   <property name="positionY" value="320px"/>
-   <property name="width" value="450px"/>
-   <property name="height" value="160px"/>
-  </properties>  
- </style>
- <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
-  <properties>
-   <property name="backgroundImage">
-    <fill-image repeat="vertical">
-     <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/echo2example/chatclient/resource/image/LoginBackground.png"/>
-     </image>
-    </fill-image>
-   </property>
-  </properties>  
- </style>
- <style name="LoginScreen.LayoutGrid" type="nextapp.echo2.app.Grid">
-  <properties>
-   <property name="insets" value="5px"/>
-   <property name="size" value="2"/>
-  </properties>  
- </style>
- <style name="LoginScreen.Prompt" type="nextapp.echo2.app.Label">
-  <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
-     <properties>
-      <property name="alignment">
-       <alignment horizontal="right"/>
-      </property>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="LoginScreen.Continue" type="nextapp.echo2.app.Button">
-  <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
-     <properties>
-      <property name="columnSpan" value="2"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="LoginScreen.WelcomeLabel" type="nextapp.echo2.app.Label">
-  <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
-     <properties>
-      <property name="columnSpan" value="2"/>
-     </properties>
-    </layout-data>
-   </property>
-  </properties>
- </style>
- <style name="Default" type="nextapp.echo2.app.text.TextComponent">
-  <properties>
-   <property name="background" value="#cfdfff"/>
-   <property name="border">
-    <border size="2px" style="groove" color="#cfdfff"/>
-   </property>
-   <property name="foreground" value="#000000"/>
-   <property name="font">
-    <font typeface="sans-serif" size="10pt"/>
-   </property>
-  </properties>
- </style>
- <style name="ControlPane.Button" type="nextapp.echo2.app.button.AbstractButton">
-  <properties>
-   <property name="lineWrap" value="false"/>
-   <property name="insets" value="8px 0px"/>
-   <property name="foreground" value="#000000"/>
-   <property name="rolloverEnabled" value="true"/>
-   <property name="rolloverForeground" value="#6f0f0f"/>
-  </properties>
- </style>
+ 
  <style name="ControlPane" type="nextapp.echo2.app.Row">
   <properties>
    <property name="insets" value="10px 2px"/>
@@ -186,6 +113,143 @@
   </properties>
  </style>
  
+ <style name="ControlPane.Button" type="nextapp.echo2.app.button.AbstractButton">
+  <properties>
+   <property name="lineWrap" value="false"/>
+   <property name="insets" value="8px 0px"/>
+   <property name="foreground" value="#000000"/>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="rolloverForeground" value="#6f0f0f"/>
+  </properties>
+ </style>
+ 
+ <style name="LoginScreen.Column" type="nextapp.echo2.app.Column">
+  <properties>
+   <property name="insets" value="245px 0px 0px 0px"/>
+   <property name="cellSpacing" value="40px"/>
+  </properties>
+ </style>
+ 
+ <style name="LoginScreen.LoginWindow" base-name="Default" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <property name="resizable" value="false"/>
+   <property name="positionX" value="160px"/>
+   <property name="positionY" value="320px"/>
+   <property name="width" value="450px"/>
+   <property name="height" value="160px"/>
+  </properties>  
+ </style>
+ 
+ <style name="LoginScreen.ContentPane" type="nextapp.echo2.app.ContentPane">
+  <properties>
+   <property name="backgroundImage">
+    <fill-image repeat="vertical">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/echo2example/chatclient/resource/image/LoginBackground.png"/>
+     </image>
+    </fill-image>
+   </property>
+  </properties>  
+ </style>
+ 
+ <style name="LoginScreen.LayoutGrid" type="nextapp.echo2.app.Grid">
+  <properties>
+   <property name="insets" value="5px"/>
+   <property name="size" value="2"/>
+  </properties>  
+ </style>
+ 
+ <style name="LoginScreen.Prompt" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
+     <properties>
+      <property name="alignment">
+       <alignment horizontal="right"/>
+      </property>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+ 
+ <style name="LoginScreen.Continue" type="nextapp.echo2.app.Button">
+  <properties>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
+     <properties>
+      <property name="columnSpan" value="2"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+ 
+ <style name="LoginScreen.WelcomeLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.GridLayoutData">
+     <properties>
+      <property name="columnSpan" value="2"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+
+ <style name="ChatScreen.SplitPane" type="nextapp.echo2.app.SplitPane">
+  <properties>
+   <property name="separatorHeight" value="1px"/>
+  </properties>
+ </style>
+ 
+ <style name="ChatScreen.SubmitPostButton" type="nextapp.echo2.app.Button">
+  <properties>
+   <property name="font">
+    <font bold="true"/>
+   </property>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="insets" value="10px"/>
+      <property name="overflow" value="OVERFLOW_HIDDEN"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+ 
+ <style name="ChatScreen.CurrentUserLabel" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="foreground" value="#7f0000"/>
+   <property name="font">
+    <font bold="true"/>
+   </property>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="alignment">
+       <alignment horizontal="right" vertical="center"/>
+      </property>
+      <property name="insets" value="10px"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+
+ <style name="ChatScreen.PostField" base-name="Default" type="nextapp.echo2.app.TextArea">
+  <properties>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="overflow" value="OVERFLOW_HIDDEN"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
+
  <style name="MessagePane.ListColumn" type="nextapp.echo2.app.Column">
   <properties>
    <property name="cellSpacing" value="3px"/>
@@ -276,20 +340,16 @@
    </property>
   </properties>
  </style>
-
- <style name="ChatScreen.CurrentUserLabel" type="nextapp.echo2.app.Label">
+ 
+ <style name="MessageDialog.ContentLabel" type="nextapp.echo2.app.Label">
   <properties>
-   <property name="foreground" value="#7f0000"/>
-   <property name="font">
-    <font bold="true"/>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="insets" value="8px 2px"/>
+     </properties>
+    </layout-data>
    </property>
-  </properties>
- </style>
-
- <style name="ChatScreen.PostInputRow" type="nextapp.echo2.app.Row">
-  <properties>
-   <property name="insets" value="20px 2px"/>
-   <property name="cellSpacing" value="20px"/>
   </properties>
  </style>
 

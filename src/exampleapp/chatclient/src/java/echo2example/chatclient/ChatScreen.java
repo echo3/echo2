@@ -56,6 +56,7 @@ public class ChatScreen extends ContentPane {
         super();
         
         SplitPane outerSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, new Extent(32));
+        outerSplitPane.setStyleName("ChatScreen.SplitPane");
         add(outerSplitPane);
         
         Row controlsRow = new Row();
@@ -71,37 +72,41 @@ public class ChatScreen extends ContentPane {
         });
         controlsRow.add(logoutButton);
         
-        SplitPane mainSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(80));
+        SplitPane mainSplitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(90));
+        mainSplitPane.setStyleName("ChatScreen.SplitPane");
         outerSplitPane.add(mainSplitPane);
         
-        Row postInputRow = new Row();
-        postInputRow.setStyleName("ChatScreen.PostInputRow");
-        mainSplitPane.add(postInputRow);
+        SplitPane inputAreaSplitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_LEADING_TRAILING, new Extent(150));
+        mainSplitPane.add(inputAreaSplitPane);
 
         Label currentUserLabel = new Label(ChatApp.getApp().getUserName() + ":");
         currentUserLabel.setStyleName("ChatScreen.CurrentUserLabel");
-        postInputRow.add(currentUserLabel);
+        inputAreaSplitPane.add(currentUserLabel);
         
+        SplitPane postSplitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_TRAILING_LEADING, new Extent(100));
+        inputAreaSplitPane.add(postSplitPane);
+
+        Button submitPostButton = new Button("Submit", Styles.ICON_24_RIGHT_ARROW);
+        submitPostButton.setStyleName("ChatScreen.SubmitPostButton");
+        submitPostButton.setTextPosition(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+        submitPostButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                postMessage();
+            }
+        });
+        postSplitPane.add(submitPostButton);
+
         postField = new TextArea();
-        postField.setStyleName("Default");
-        postField.setWidth(new Extent(600, Extent.PX));
+        postField.setStyleName("ChatScreen.PostField");
+        postField.setWidth(new Extent(97, Extent.PERCENT));
         postField.setHeight(new Extent(70, Extent.PX));
         postField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 postMessage();
             }
         });
-        postInputRow.add(postField);
+        postSplitPane.add(postField);
         
-        Button submitButton = new Button("Submit", Styles.ICON_24_RIGHT_ARROW);
-        submitButton.setTextPosition(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
-        submitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                postMessage();
-            }
-        });
-        postInputRow.add(submitButton);
-
         messagePane = new MessagePane();
         mainSplitPane.add(messagePane);
         

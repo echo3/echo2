@@ -35,13 +35,8 @@ import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
 
-//TODO Remove under-development flag on completion.
-
 /**
  * Chat Client <code>ApplicationInstance</code> implementation.
- * 
- * NOTE: The chat client is currently under development.
- * Some features/components may be incomplete or missing.
  */
 public class ChatApp extends ApplicationInstance {
 
