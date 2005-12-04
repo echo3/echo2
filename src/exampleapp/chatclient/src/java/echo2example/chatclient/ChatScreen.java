@@ -86,7 +86,7 @@ public class ChatScreen extends ContentPane {
         SplitPane postSplitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_TRAILING_LEADING, new Extent(100));
         inputAreaSplitPane.add(postSplitPane);
 
-        Button submitPostButton = new Button("Submit", Styles.ICON_24_RIGHT_ARROW);
+        Button submitPostButton = new Button(Messages.getString("ChatScreen.SubmitPostButton"), Styles.ICON_24_RIGHT_ARROW);
         submitPostButton.setStyleName("ChatScreen.SubmitPostButton");
         submitPostButton.setTextPosition(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
         submitPostButton.addActionListener(new ActionListener() {
