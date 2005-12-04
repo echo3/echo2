@@ -201,10 +201,7 @@
  
  <style name="MessagePane.DateLabel" type="nextapp.echo2.app.Label">
   <properties>
-   <property name="foreground" value="#7f0000"/>
-   <property name="font">
-    <font bold="true"/>
-   </property>
+   <property name="foreground" value="#007f3f"/>
    <property name="layoutData">
     <layout-data type="nextapp.echo2.app.layout.RowLayoutData">
      <properties>
@@ -219,9 +216,29 @@
   </properties>
  </style>
 
- <style name="MessagePane.UserNameLabel" type="nextapp.echo2.app.Label">
+ <style name="MessagePane.UserNameLabel.Other" type="nextapp.echo2.app.Label">
   <properties>
    <property name="foreground" value="#00007f"/>
+   <property name="font">
+    <font bold="true"/>
+   </property>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.RowLayoutData">
+     <properties>
+      <property name="alignment">
+       <alignment vertical="top"/>
+      </property>
+      <property name="width" value="120px"/>
+     </properties>
+    </layout-data>
+   </property>
+   <property name="lineWrap" value="false"/>
+  </properties>
+ </style>
+
+ <style name="MessagePane.UserNameLabel.Yourself" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="foreground" value="#7f0000"/>
    <property name="font">
     <font bold="true"/>
    </property>
@@ -250,7 +267,7 @@
 
  <style name="ChatScreen.CurrentUserLabel" type="nextapp.echo2.app.Label">
   <properties>
-   <property name="foreground" value="#00007f"/>
+   <property name="foreground" value="#7f0000"/>
    <property name="font">
     <font bold="true"/>
    </property>

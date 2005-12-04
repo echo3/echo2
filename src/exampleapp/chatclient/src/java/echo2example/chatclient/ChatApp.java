@@ -54,11 +54,11 @@ public class ChatApp extends ApplicationInstance {
         return (ChatApp) getActive();
     }
     
-    private Server server;
+    private ChatSession chatSession;
     private TaskQueueHandle incomingMessageQueue;
     
     /**
-     * Attempts to connects to the chat server with the specified user name.
+     * Attempts to connect to the chat server with the specified user name.
      * Displays a <code>ChatScreen</code> for the user if the user
      * is successfully connected.  Performs no action if the user is not
      * successfully connected.
@@ -68,11 +68,11 @@ public class ChatApp extends ApplicationInstance {
      */
     public boolean connect(String userName) {
         try {
-            server = Server.forUserName(userName);
+            chatSession = ChatSession.forUserName(userName);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        if (server == null) {
+        if (chatSession == null) {
             return false;
         } else {
             if (incomingMessageQueue != null) {
@@ -90,8 +90,8 @@ public class ChatApp extends ApplicationInstance {
      */
     public void disconnect() {
         try {
-            server.dispose();
-            server = null;
+            chatSession.dispose();
+            chatSession = null;
             if (incomingMessageQueue != null) {
                 removeTaskQueue(incomingMessageQueue);
                 incomingMessageQueue = null;
@@ -103,14 +103,15 @@ public class ChatApp extends ApplicationInstance {
     }
     
     /**
-     * Retrieves new messages from the server.  Once the new messages are
-     * deleted they are removed from the queue of 'new' messages.
+     * Retrieves new messages from the <code>ChatSession</code>.  
+     * Once the new messages are deleted they are removed from the queue of 
+     * 'new' messages.
      * Invoking this method thus alters the state of the new message queue.
      * 
      * @return an array of new messages 
      */
-    public Server.Message[] getNewMessages() {
-        return server.getNewMessages();
+    public ChatSession.Message[] getNewMessages() {
+        return chatSession.getNewMessages();
     }
     
     /**
@@ -119,7 +120,7 @@ public class ChatApp extends ApplicationInstance {
      * @return the user name
      */
     public String getUserName() {
-        return server == null ? null : server.getUserName();
+        return chatSession == null ? null : chatSession.getUserName();
     }
     
     /**
@@ -156,12 +157,12 @@ public class ChatApp extends ApplicationInstance {
      * @return true if any new messages are present
      */
     private boolean pollServer() {
-        if (server == null) {
+        if (chatSession == null) {
             return false;
         }
         try {
-            server.pollServer();
-            return server.hasNewMessages();
+            chatSession.pollServer();
+            return chatSession.hasNewMessages();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -174,7 +175,7 @@ public class ChatApp extends ApplicationInstance {
      */
     public void postMessage(String content) {
         try {
-            server.postMessage(content);
+            chatSession.postMessage(content);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

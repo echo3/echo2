@@ -49,17 +49,19 @@ public class MessagePane extends ContentPane {
     private static final Extent BOTTOM = new Extent(-1, Extent.PX);
     
     private Column listColumn;
+    private String userName;
     
     public MessagePane() {
         super();
         listColumn = new Column();
         listColumn.setStyleName("MessagePane.ListColumn");
         add(listColumn);
+        userName = ChatApp.getApp().getUserName();
     }
 
     public void update() {
         ChatApp app = ChatApp.getApp();
-        Server.Message[] messages = app.getNewMessages();
+        ChatSession.Message[] messages = app.getNewMessages();
         Label label;
         
         for (int i = 0; i < messages.length; ++i) {
@@ -72,7 +74,8 @@ public class MessagePane extends ContentPane {
 
             if (messages[i].getUserName() != null) {
                 label = new Label(messages[i].getUserName());
-                label.setStyleName("MessagePane.UserNameLabel");
+                label.setStyleName(userName.equals(messages[i].getUserName()) 
+                        ? "MessagePane.UserNameLabel.Yourself" : "MessagePane.UserNameLabel.Other");
                 row.add(label);
                 
                 label =  new Label(messages[i].getContent());

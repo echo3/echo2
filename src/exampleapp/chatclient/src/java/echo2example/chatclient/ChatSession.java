@@ -43,14 +43,30 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-public class Server {
+/**
+ * Representation of a chat-room session for a single user.
+ * This object handles life-cycle of a user in the chat room and provides
+ * capability to post messages and retrieve messages from the chat room.
+ */
+public class ChatSession {
     
+    /**
+     * A representation of a single message posted in the chat session.
+     */
     public static class Message {
         
         private String content;
         private Date date;
         private String userName;
         
+        /**
+         * Creates a new <code>Message</code>.
+         * 
+         * @param userName the name of the user posting the message
+         *        (null for system announcements)
+         * @param date the time the message was posted
+         * @param content the content of the message
+         */
         private Message(String userName, Date date, String content) {
             super();
             this.userName = userName;
@@ -58,32 +74,84 @@ public class Server {
             this.content = content;
         }
         
+        /**
+         * Returns the content of the message.
+         * 
+         * @return the content
+         */
         public String getContent() {
             return content;
         }
         
+        /**
+         * Returns the time the message was posted
+         * 
+         * @return the post time
+         */
         public Date getDate() {
             return date;
         }
 
+        /**
+         * Returns the name of the user who posted the message
+         * 
+         * @return the name of the user, or null in the case of a system 
+         *         announcement
+         */
         public String getUserName() {
             return userName;
         }
     }
     
-    public static Server forUserName(String userName) 
+    /**
+     * Factory method to create a new <code>ChatSession</code> for a user.
+     * 
+     * @param userName the desired user name
+     * @return the <code>ChatSession</code> if one could be created or null
+     *         otherwise (e.g., in the case the user name was taken)
+     */
+    public static ChatSession forUserName(String userName) 
     throws IOException {
-        Server server = new Server(userName);
-        return server.authToken == null ? null : server;
+        ChatSession chatSession = new ChatSession(userName);
+        return chatSession.authToken == null ? null : chatSession;
     }
 
+    /**
+     * The id of the last retrieved chat message.
+     */
     private String lastRetrievedId;
+    
+    /**
+     * The authentication token associated with the user name.  This token is
+     * used to authenticate in order to post messages with the user name and
+     * release the user name.
+     */
     private String authToken;
+    
+    /**
+     * The name of the user.
+     */
     private String userName;
+    
+    /**
+     * List of new messages recently retrieved from the chat server which have 
+     * not yet been retrieved by the application.
+     */
     private List newMessages = new ArrayList();
+    
+    /**
+     * The URI of the chat server's web service.
+     */
     private String serviceUrl = "http://localhost:8080/ChatServer/app"; 
     
-    private Server(String userName) 
+    /**
+     * Creates a new <code>ChatSession</code>.
+     * Attempts to connect to chat server and obtain lock / authentication token
+     * for user name.
+     * 
+     * @param userName the desired user name for the session
+     */
+    private ChatSession(String userName) 
     throws IOException {
         super();
         this.userName = userName;
@@ -106,6 +174,12 @@ public class Server {
         }
     }
 
+    /**
+     * Creates an XML DOM for a request to the Chat Server's Web Service.
+     * The returned DOM will contain a 'chat-server-request' document element.
+     * 
+     * @return the created DOM
+     */
     private Document createRequestDocument() 
     throws IOException {
         try {
@@ -124,6 +198,11 @@ public class Server {
         }
     }
     
+    /**
+     * Disposes of the <code>ChatSession</code>.
+     * This operation will make a request to the chat server to release the
+     * user name being used by the session.
+     */
     public void dispose() 
     throws IOException {
         Document requestDocument = createRequestDocument();
@@ -134,20 +213,41 @@ public class Server {
         XmlHttpConnection.send(serviceUrl, requestDocument);
     }
     
+    /**
+     * Retrieves new messages that have been posted to the server but which 
+     * were not previously retrieved.
+     * 
+     * @return the new <code>Message</code>s
+     */
     public Message[] getNewMessages() {
         Message[] messages = (Message[]) newMessages.toArray(new Message[newMessages.size()]);
         newMessages.clear();
         return messages;
     }
     
+    /**
+     * Determines if any new messages have been posted to the chat server.
+     * 
+     * @return true if any messages have been posted.
+     */
     public boolean hasNewMessages() {
         return newMessages.size() != 0;
     }
     
+    /**
+     * Returns the name of the user.
+     * 
+     * @return the name of the user
+     */
     public String getUserName() {
         return userName;
     }
     
+    /**
+     * Contacts the chat server's web service and loads new messages.
+     * 
+     * @throws IOException
+     */
     public void pollServer() 
     throws IOException {
         Document requestDocument = createRequestDocument();
@@ -155,6 +255,12 @@ public class Server {
         updateLocalMessages(responseDocument);
     }
     
+    /**
+     * Posts a message to the chat server.
+     * Local messages will also be updated.
+     * 
+     * @param content the content of the message
+     */
     public void postMessage(String content) 
     throws IOException {
         Document requestDocument = createRequestDocument();
@@ -169,7 +275,13 @@ public class Server {
         updateLocalMessages(responseDocument);
     }
     
-    public void updateLocalMessages(Document responseDocument) {
+    /**
+     * Retrieves messages from the chat's server's web service's response 
+     * message and stores them in the chat session.
+     * 
+     * @param responseDocument the response DOM from the web service
+     */
+    private void updateLocalMessages(Document responseDocument) {
         NodeList newMessageElements = responseDocument.getDocumentElement().getElementsByTagName("message");
         int length = newMessageElements.getLength();
         for (int i = 0; i < length; ++i) {
