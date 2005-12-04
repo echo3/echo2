@@ -102,13 +102,8 @@ public class ChatScreen extends ContentPane {
         });
         postInputRow.add(submitButton);
 
-        SplitPane chatAndUsersPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_TRAILING_LEADING);
-        mainSplitPane.add(chatAndUsersPane);
-        
-        chatAndUsersPane.add(new UserList());
-        
         messagePane = new MessagePane();
-        chatAndUsersPane.add(messagePane);
+        mainSplitPane.add(messagePane);
         
         ChatApp app = ChatApp.getApp();
         app.setFocusedComponent(postField);
