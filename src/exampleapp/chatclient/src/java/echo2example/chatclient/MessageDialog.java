@@ -89,6 +89,7 @@ public class MessageDialog extends WindowPane {
     public MessageDialog(String title, String message, int type, int controlConfiguration) {
         super(title, new Extent(320), new Extent(240));
         setStyleName("Default");
+        setClosable(false);
         setModal(true);
 
         SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(32));

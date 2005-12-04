@@ -34,6 +34,8 @@ import java.io.IOException;
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.TaskQueueHandle;
 import nextapp.echo2.app.Window;
+import nextapp.echo2.app.event.ActionEvent;
+import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.webcontainer.ContainerContext;
 
 /**
@@ -53,9 +55,15 @@ public class ChatApp extends ApplicationInstance {
     private ChatSession chatSession;
     private TaskQueueHandle incomingMessageQueue;
     
+    // Auto-logout times set very short for demonstration purposes.
+    private static final int POST_INTERVAL_AUTO_LOGOUT_WARNING = 2 * 60 * 1000; // 2 minutes
+    private static final int POST_INTERVAL_AUTO_LOGOUT = 3 * 60 * 1000;         // 3 minutes
+    
     private long lastActionTime;
     private long lastPostTime;
     private int pollingInterval = 1000;
+    
+    private MessageDialog logoutWarningDialog;
     
     /**
      * Calculates the appropriate client-server polling interval based on the
@@ -78,12 +86,9 @@ public class ChatApp extends ApplicationInstance {
         } else if (delta < 60 * 1000) {
             // Last action 30-60 seconds ago: 5 second poll update intervals.
             return 5000;
-        } else if (delta < 120 * 1000) {
-            // Last action 1-2 minutes ago: 10 second poll update intervals.
-            return 10000;
         } else {
-            // Last action > 120 seconds ago: 20 second poll update intervals.
-            return 20000;
+            // Last action > 60 seconds ago: 10 second poll update intervals.
+            return 10000;
         }
     }
     
@@ -110,6 +115,7 @@ public class ChatApp extends ApplicationInstance {
             }
             incomingMessageQueue = createTaskQueue();
             updatePollingInterval(true);
+            lastPostTime = System.currentTimeMillis();
             
             getDefaultWindow().setContent(new ChatScreen());
             return true;
@@ -128,6 +134,7 @@ public class ChatApp extends ApplicationInstance {
                 removeTaskQueue(incomingMessageQueue);
                 incomingMessageQueue = null;
             }
+            logoutWarningDialog = null;
             getDefaultWindow().setContent(new LoginScreen());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -156,10 +163,18 @@ public class ChatApp extends ApplicationInstance {
     }
     
     /**
+     * The <code>hasQueuedTasks()</code> method has been overridden such that we
+     * can perform checks at every polling interval.  Alternatively tasks could
+     * be added using threads running in the background, but for compliance 
+     * with earlier versions of the J2EE specification which do not allow 
+     * multi-threading, such work is accomplished in this method. 
+     * 
      * @see nextapp.echo2.app.ApplicationInstance#hasQueuedTasks()
      */
     public boolean hasQueuedTasks() {
+        // Poll server and determine if any new messages have been posted.
         if (pollServer()) {
+            // Add new messages to ChatScreen.
             final ChatScreen chatScreen = (ChatScreen) getDefaultWindow().getContent();
             enqueueTask(incomingMessageQueue, new Runnable(){
                 public void run() {
@@ -175,6 +190,42 @@ public class ChatApp extends ApplicationInstance {
             enqueueTask(incomingMessageQueue, new Runnable() {
                 public void run() {
                     updatePollingInterval(false);
+                }
+            });
+        }
+        
+        if (System.currentTimeMillis() - lastPostTime > POST_INTERVAL_AUTO_LOGOUT) {
+            // If the user has not posted any messages in a period of
+            // time, automatically log the user out.
+            enqueueTask(incomingMessageQueue, new Runnable() {
+                public void run() {
+                    disconnect();
+                }
+            });
+        } else if (System.currentTimeMillis() - lastPostTime > POST_INTERVAL_AUTO_LOGOUT_WARNING) {
+            // If the user has not posted any messages in a period of
+            // time, raise a dialog box to warn him/her that s/he may
+            // soon be automatically logged out.
+            enqueueTask(incomingMessageQueue, new Runnable() {
+                public void run() {
+                    if (logoutWarningDialog == null) {
+                        logoutWarningDialog = new MessageDialog(Messages.getString("AutoLogoutWarningDialog.Title"),
+                                Messages.getString("AutoLogoutWarningDialog.Message"), MessageDialog.TYPE_CONFIRM, 
+                                MessageDialog.CONTROLS_OK);
+                        getDefaultWindow().getContent().add(logoutWarningDialog);
+                        logoutWarningDialog.addActionListener(new ActionListener() {
+                        
+                            /**
+                             * Reset last post time if user engages the dialog.
+                             * 
+                             * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
+                             */
+                            public void actionPerformed(ActionEvent e) {
+                                lastPostTime = System.currentTimeMillis();
+                                logoutWarningDialog = null;
+                            }
+                        });
+                    }
                 }
             });
         }
