@@ -318,6 +318,13 @@ implements Serializable {
     public static final String NAVIGATOR_USER_AGENT = "navigatorUserAgent";
 
     /**
+     * The client host.  Note this is the original host address used when the 
+     * <code>ClientProperties</code> object was created, which is not 
+     * necessarily the same as that making the current HTTP request. 
+     */
+    public static final String REMOTE_HOST = "remoteHost";
+    
+    /**
      * The client's time offset from UTC in minutes.
      */
     public static final String UTC_OFFSET = "utcOffset";

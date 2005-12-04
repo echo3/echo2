@@ -139,6 +139,8 @@ public class ChatServerServlet extends HttpServlet {
             return;
         }
         
+        String remoteHost = inputDocument.getDocumentElement().getAttribute("remote-host");
+
         Element postMessageElement = (Element) postMessageNodes.item(0);
         String userName = postMessageElement.getAttribute("user-name");
         String authToken = postMessageElement.getAttribute("auth-token");
@@ -146,7 +148,7 @@ public class ChatServerServlet extends HttpServlet {
         int length = postMessageContentNodes.getLength();
         for (int i = 0; i < length; ++i) {
             if (postMessageContentNodes.item(i) instanceof Text) {
-                server.postMessage(userName, authToken, ((Text) postMessageContentNodes.item(i)).getNodeValue());
+                server.postMessage(userName, authToken, remoteHost, ((Text) postMessageContentNodes.item(i)).getNodeValue());
             }
         }
     }
@@ -156,11 +158,13 @@ public class ChatServerServlet extends HttpServlet {
         if (userAddNodes.getLength() == 0) {
             return;
         }
+
+        String remoteHost = inputDocument.getDocumentElement().getAttribute("remote-host");
         
         // Attempt to authenticate.
         Element userAddElement = (Element) userAddNodes.item(0);
         String userName = userAddElement.getAttribute("name");
-        String authToken = server.addUser(userName);
+        String authToken = server.addUser(userName, remoteHost);
         
         Element userAuthElement = outputDocument.createElement("user-auth");
         if (authToken == null) {
@@ -181,7 +185,9 @@ public class ChatServerServlet extends HttpServlet {
         String userName = userRemoveElement.getAttribute("name");
         String authToken = userRemoveElement.getAttribute("auth-token");
         
-        server.removeUser(userName, authToken);
+        String remoteHost = inputDocument.getDocumentElement().getAttribute("remote-host");
+
+        server.removeUser(userName, authToken, remoteHost);
     }
     
     private void renderOutputDocument(HttpServletResponse response, Document outputDocument) 

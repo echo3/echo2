@@ -89,6 +89,8 @@ implements SynchronizeService.ClientMessagePartProcessor {
             localeList.add(localeEnum.nextElement());
         }
         clientProperties.setProperty(ClientProperties.LOCALES, localeList.toArray(new Locale[localeList.size()]));
+        
+        clientProperties.setProperty(ClientProperties.REMOTE_HOST, conn.getRequest().getRemoteHost());
     
         String userAgent = clientProperties.getString(ClientProperties.NAVIGATOR_USER_AGENT).toLowerCase();
         

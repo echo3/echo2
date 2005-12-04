@@ -37,25 +37,26 @@ import junit.framework.TestCase;
  * Unit tests for the chat server.
  */
 public class ServerTest extends TestCase {
+   
+    private static final String REMOTE_HOST = "192.168.0.20";
     
     public void testAuthenticationAndPosting() {
         Server server = new Server();
-        String bobAuthToken = server.addUser("Bob.Smith");
+        String bobAuthToken = server.addUser("Bob.Smith", REMOTE_HOST);
         assertNotNull(bobAuthToken);
-        String sallyAuthToken = server.addUser("Sally.Jones");
+        String sallyAuthToken = server.addUser("Sally.Jones", REMOTE_HOST);
         assertNotNull(sallyAuthToken);
-        assertNull(server.addUser("Bob.Smith"));
-        assertTrue(server.postMessage("Bob.Smith", bobAuthToken, "Hi, everyone!"));
-        assertFalse(server.postMessage("Bob.Smith", sallyAuthToken, "Hi, everyone!"));
-        assertFalse(server.postMessage("Bob.Smith", null, "Hi, everyone!"));
-        assertFalse(server.postMessage("Bob.Smith", bobAuthToken + "x", "Hi, everyone!"));
-        assertTrue(server.postMessage("Sally.Jones", sallyAuthToken, "Hi, Bob!"));
+        assertNull(server.addUser("Bob.Smith", REMOTE_HOST));
+        assertTrue(server.postMessage("Bob.Smith", bobAuthToken, REMOTE_HOST, "Hi, everyone!"));
+        assertFalse(server.postMessage("Bob.Smith", sallyAuthToken, REMOTE_HOST, "Hi, everyone!"));
+        assertFalse(server.postMessage("Bob.Smith", null, REMOTE_HOST, "Hi, everyone!"));
+        assertFalse(server.postMessage("Bob.Smith", bobAuthToken + "x", REMOTE_HOST, "Hi, everyone!"));
+        assertTrue(server.postMessage("Sally.Jones", sallyAuthToken, REMOTE_HOST, "Hi, Bob!"));
     }
     
     public void testMessageRetrieval() 
     throws InterruptedException {
         Server server = new Server();
-        String bobAuthToken = server.addUser("Bob.Smith");
         Message[] messages;
         long lastRetrievedId;
 
@@ -63,30 +64,36 @@ public class ServerTest extends TestCase {
         messages = server.getRecentMessages();
         assertEquals(0, messages.length);
         
+        String bobAuthToken = server.addUser("Bob.Smith", REMOTE_HOST);
+
+        // Retrieve authentication message.
+        messages = server.getRecentMessages();
+        assertEquals(1, messages.length);
+        
         // Post ten messages.
         for (int i = 0; i < 10; ++i) {
-            server.postMessage("Bob.Smith", bobAuthToken, Integer.toString(i));
+            server.postMessage("Bob.Smith", bobAuthToken, REMOTE_HOST, Integer.toString(i));
         }
         
         // Retrieve all messages.
         messages = server.getMessages(-1);
-        assertEquals(10, messages.length);
-        assertEquals("0", messages[0].getContent());
-        assertEquals("1", messages[1].getContent());
-        assertEquals("9", messages[9].getContent());
+        assertEquals(11, messages.length);
+        assertEquals("0", messages[1].getContent());
+        assertEquals("1", messages[2].getContent());
+        assertEquals("9", messages[10].getContent());
         
-        lastRetrievedId = messages[9].getId();
+        lastRetrievedId = messages[10].getId();
         
         // Retrieve recent messages.
         messages = server.getRecentMessages();
-        assertEquals(10, messages.length);
-        assertEquals("0", messages[0].getContent());
-        assertEquals("1", messages[1].getContent());
-        assertEquals("9", messages[9].getContent());
+        assertEquals(11, messages.length);
+        assertEquals("0", messages[1].getContent());
+        assertEquals("1", messages[2].getContent());
+        assertEquals("9", messages[10].getContent());
         
         // Post ten messages.
         for (int i = 10; i < 20; ++i) {
-            server.postMessage("Bob.Smith", bobAuthToken, Integer.toString(i));
+            server.postMessage("Bob.Smith", bobAuthToken, REMOTE_HOST, Integer.toString(i));
         }
         
         // Retrieve messages.
@@ -100,7 +107,7 @@ public class ServerTest extends TestCase {
 
         // Post one thousand messages.
         for (int i = 20; i < 1020; ++i) {
-            server.postMessage("Bob.Smith", bobAuthToken, Integer.toString(i));
+            server.postMessage("Bob.Smith", bobAuthToken, REMOTE_HOST, Integer.toString(i));
         }
         
         // Retrieve messages.

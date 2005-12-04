@@ -52,13 +52,15 @@ public class Server {
      * Adds a user.
      * 
      * @param userName the user name
+     * @param remoteHost the remote host requesting the operation
      * @return an authentication token if the user was successfully added or
      *         null if it was not (e.g., due to the name already being in use)
      */
-    public String addUser(String userName) {
+    public String addUser(String userName, String remoteHost) {
         String token = userManager.add(userName);
         if (token != null) {
             messageStore.post(null, "User \"" + userName + "\" has joined the chat.");
+            Log.log(Log.ACTION_AUTH, remoteHost, userName, null);
         }
         return token;
     }
@@ -84,10 +86,20 @@ public class Server {
         return messageStore.getRecentMessages();
     }
     
-    public boolean removeUser(String userName, String authToken) {
+    /**
+     * Removes a user from the chat room.
+     * 
+     * @param userName the name of the user
+     * @param authToken the authentication token provided to the
+     *        user when s/he was authenticated
+     * @param remoteHost the remote host requesting the operation
+     * @return true if the user was successfully removed
+     */
+    public boolean removeUser(String userName, String authToken, String remoteHost) {
         if (userManager.authenticate(userName, authToken)) {
             userManager.remove(userName);
             messageStore.post(null, "User \"" + userName + "\" has exited the chat.");
+            Log.log(Log.ACTION_EXIT, remoteHost, userName, null);
             return true;
         } else {
             return false;
@@ -100,12 +112,14 @@ public class Server {
      * @param userName the name of the posting user
      * @param authToken the authentication token provided to the posting
      *        user when s/he was authenticated
+     * @param remoteHost the remote host requesting the operation
      * @param messageContent the content of the message to post
      * @return true if the message was successfully posted
      */
-    public boolean postMessage(String userName, String authToken, String messageContent) {
+    public boolean postMessage(String userName, String authToken, String remoteHost, String messageContent) {
         if (userManager.authenticate(userName, authToken)) {
             messageStore.post(userName, messageContent);
+            Log.log(Log.ACTION_POST, remoteHost, userName, messageContent);
             return true;
         } else {
             return false;

@@ -38,6 +38,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nextapp.echo2.webcontainer.ContainerContext;
+import nextapp.echo2.webrender.ClientProperties;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -188,6 +191,15 @@ public class ChatSession {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.newDocument();
             Element rootElement = document.createElement("chat-server-request");
+            
+            ChatApp chatApp = ChatApp.getApp();
+            if (chatApp != null) {
+                ContainerContext containerContext = (ContainerContext) chatApp.getContextProperty(
+                        ContainerContext.CONTEXT_PROPERTY_NAME);
+                String remoteHost = containerContext.getClientProperties().getString(ClientProperties.REMOTE_HOST);
+                rootElement.setAttribute("remote-host", remoteHost);
+            }
+            
             if (lastRetrievedId != null) {
                 rootElement.setAttribute("last-retrieved-id", lastRetrievedId);
             }

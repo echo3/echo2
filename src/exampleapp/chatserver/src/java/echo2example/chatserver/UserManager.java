@@ -76,8 +76,6 @@ public class UserManager {
             user = new User(userName);
             userMap.put(userName, user);
         }
-System.err.println("-----------------");        
-System.err.println(toString());        
         return user.getAuthToken();
     }
     
@@ -122,8 +120,6 @@ System.err.println(toString());
         synchronized (userMap) {
             userMap.remove(userName);
         }
-System.err.println("-----------------");        
-System.err.println(toString());        
     }
     
     /**
