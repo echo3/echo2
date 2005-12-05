@@ -1541,6 +1541,7 @@ EchoEventProcessor.processEvent = function(e) {
     }
     
     handler(e);
+    EchoDomUtil.stopPropagation(e);
 };
 
 /**
