@@ -79,6 +79,9 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
         EchoEventProcessor.removeHandler(elementId, "focus");
         EchoEventProcessor.removeHandler(elementId, "keypress");
         EchoEventProcessor.removeHandler(elementId, "keyup");
+
+        // Remove any updates to text component that occurred during client/server transaction.
+        EchoClientMessage.removePropertyElement(elementId, "text");
     }
 };
 
@@ -95,6 +98,9 @@ EchoTextComponent.MessageProcessor.processSetText = function(setTextMessageEleme
         var text = item.getAttribute("text");
         var textComponent = document.getElementById(elementId);
         textComponent.value = text;
+        
+        // Remove any updates to text component that occurred during client/server transaction.
+        EchoClientMessage.removePropertyElement(textComponent.id, "text");
     }
 };
 
@@ -170,6 +176,13 @@ EchoTextComponent.doAction = function(textComponent) {
     if (!EchoDomPropertyStore.getPropertyValue(textComponent.id, "serverNotify")) {
         return;
     }
+    
+    if (!EchoClientEngine.verifyInput(textComponent.id, false)) {
+        // Don't process actions when client/server transaction in progress.
+        EchoDomUtil.preventEventDefault(echoEvent);
+        return;
+    }
+    
     EchoTextComponent.updateClientMessage(textComponent);
     EchoClientMessage.setActionValue(textComponent.id, "action");
     EchoServerTransaction.connect();
@@ -217,8 +230,9 @@ EchoTextComponent.processFocus = function(echoEvent) {
  */
 EchoTextComponent.processKeyPress = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
-    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+    if (!EchoClientEngine.verifyInput(textComponent.id, true)) {
         EchoDomUtil.preventEventDefault(echoEvent);
+        return;
     }
     if (echoEvent.keyCode == 13) {
         EchoTextComponent.doAction(textComponent);
@@ -234,7 +248,7 @@ EchoTextComponent.processKeyPress = function(echoEvent) {
  */
 EchoTextComponent.processKeyUp = function(echoEvent) {
     var textComponent = echoEvent.registeredTarget;
-    if (!EchoClientEngine.verifyInput(textComponent.id)) {
+    if (!EchoClientEngine.verifyInput(textComponent.id, true)) {
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }

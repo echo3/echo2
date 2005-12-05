@@ -368,10 +368,25 @@ EchoClientEngine.processServerError = function() {
  * <code>EchoDomPropertyStore</code> property 
  * <code>EchoClientEngine.inputDisabled</code> set to true.
  *
+ * The 'allowInputDuringTransaction' flag (default value = false) may be used to
+ * allow input while client/server transactions are being processed.  This flag
+ * should be used with extreme caution, as you'll then need to handle scenarios
+ * such as when the user makes an input during a server transaction, and, during
+ * that server transaction, the server manipulates the state of the component to
+ * be incompatible with the new client state.  This flag is used for components
+ * such as text-entry fields where blocking user input during server 
+ * transactions has significant negative consequences for the user experience.
+ * For example, were it not for this capability, if a server-pushed 
+ * synchronization occurred while the user were typing text into a field, some
+ * of the his/her entered characters would be silently dropped.
+ *
  * @param elementId the id of the element
+ * @param allowInputDuringTransaction flag indicating that input should be 
+ *        allowed during client/server transactions (Use of this flag is
+ *        recommended against in MOST situations, see above)
  */
-EchoClientEngine.verifyInput = function(elementId) {
-    if (EchoServerTransaction.active) {
+EchoClientEngine.verifyInput = function(elementId, allowInputDuringTransaction) {
+    if (!allowInputDuringTransaction && EchoServerTransaction.active) {
         return false;
     }
     if (!EchoModalManager.isElementInModalContext(elementId)) {
@@ -466,6 +481,29 @@ EchoClientMessage.getPropertyValue = function(componentId, propertyName) {
         }
     }
     return null;
+};
+
+/**
+ * Removes a property element (if present) from the EchoClientMessage.
+ *
+ * @param componentId the id of the component
+ * @param propertyName the name of the property
+ */
+EchoClientMessage.removePropertyElement = function(componentId, propertyName) {
+    var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
+    var propertyElements = messagePartElement.getElementsByTagName("property");
+    var propertyElement = null;
+
+    for (var i = 0; i < propertyElements.length; ++i) {
+        if (componentId == propertyElements[i].getAttribute("component-id") &&
+                propertyName == propertyElements[i].getAttribute("name")) {
+            propertyElement = propertyElements[i];
+            break;
+        } 
+    }
+    if (propertyElement) {
+        messagePartElement.removeChild(propertyElement);
+    }
 };
 
 /**

@@ -130,6 +130,7 @@ public class TestPane extends ContentPane {
         addTest("Table", "TableTest");
         addTest("Table (Performance)", "TablePerformanceTest");
         addTest("TextComponent", "TextComponentTest");
+        addTest("Text Sync", "TextSyncTest");
         addTest("Visibility", "VisibilityTest");
         addTest("Window", "WindowTest");
         addTest("WindowPane", "WindowPaneTest");
