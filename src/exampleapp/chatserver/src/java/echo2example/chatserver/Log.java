@@ -29,12 +29,17 @@
 
 package echo2example.chatserver;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
  * Primitive utility to log posted messages and users entering and leaving 
  * chat room.
  */
 public class Log {
 
+    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+    
     public static final int ACTION_POST = 1; 
     public static final int ACTION_AUTH = 2; 
     public static final int ACTION_EXIT = 3; 
@@ -53,16 +58,18 @@ public class Log {
      * @param message the posted message content, if applicable
      */
     public static final void log(int action, String remoteHost, String userName, String message) {
+        String time = DATE_FORMAT.format(new Date());
         String logMessage;
         switch (action) {
         case ACTION_POST:
-            logMessage = "ECHO2CHAT: POST: remoteHost=" + remoteHost + ", userName=" + userName + ", message=" + message;
+            logMessage = "ECHO2CHAT[" + time + "] POST: remoteHost=" + remoteHost + ", userName=" + userName 
+                    + ", message=" + message;
             break;
         case ACTION_AUTH:
-            logMessage = "ECHO2CHAT: AUTH: remoteHost=" + remoteHost + ", userName=" + userName;
+            logMessage = "ECHO2CHAT[" + time + "] AUTH: remoteHost=" + remoteHost + ", userName=" + userName;
             break;
         case ACTION_EXIT:
-            logMessage = "ECHO2CHAT: EXIT: remoteHost=" + remoteHost + ", userName=" + userName;
+            logMessage = "ECHO2CHAT[" + time + "] EXIT: remoteHost=" + remoteHost + ", userName=" + userName;
             break;
         default:
             throw new IllegalArgumentException("Invalid action.");
