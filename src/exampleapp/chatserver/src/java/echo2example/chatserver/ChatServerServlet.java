@@ -56,7 +56,6 @@ import org.xml.sax.SAXException;
  */
 public class ChatServerServlet extends HttpServlet {
     
-    private static final String LOCALHOST = "127.0.0.1";
     private static final Server server = new Server();
     
     /**
@@ -64,11 +63,6 @@ public class ChatServerServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
     throws ServletException, IOException {
-        
-        if (! LOCALHOST.equals(request.getRemoteHost())) {
-            throw new ServletException("Request from invalid host.");
-        }
-        
         Document requestDocument = loadrequestDocument(request);
         Document responseDocument = createresponseDocument();
         processUserAdd(requestDocument, responseDocument);
