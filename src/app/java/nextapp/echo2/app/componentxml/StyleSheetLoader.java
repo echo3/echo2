@@ -125,26 +125,7 @@ public class StyleSheetLoader {
                 throw new ComponentXmlException("Cannot load component class: " + type, ex);
             }
             
-            DerivedMutableStyle style;
-            if (styleElements[i].hasAttribute("base-name")) {
-                String baseName = styleElements[i].getAttribute("base-name");
-                
-                Map classToStyleMap = (Map) namedStyleMap.get(baseName);
-                if (classToStyleMap == null) {
-                    throw new ComponentXmlException("Invalid base style name for style name " + name + ".", null);
-                }
-                Style baseStyle = (Style) classToStyleMap.get(componentClass);
-                while (baseStyle == null && componentClass != Object.class) {
-                    componentClass = componentClass.getSuperclass();
-                    baseStyle = (Style) classToStyleMap.get(componentClass);
-                }
-                if (baseStyle == null) {
-                    throw new ComponentXmlException("Invalid base style name for style name " + name + ".", null);
-                }
-                style = new DerivedMutableStyle(baseStyle);
-            } else {
-                style = new DerivedMutableStyle();
-            }
+            DerivedMutableStyle style  = new DerivedMutableStyle();
             
             Element propertiesElement = DomUtil.getChildElementByTagName(styleElements[i], "properties");
             Style propertyStyle = propertyLoader.createStyle(propertiesElement, type);
@@ -158,6 +139,39 @@ public class StyleSheetLoader {
             classToStyleMap.put(componentClass, style); 
             
             styleSheet.addStyle(componentClass, name, style);
+        }
+        
+        for (int i = 0; i < styleElements.length; ++i) {
+            if (styleElements[i].hasAttribute("base-name")) {
+                String name = styleElements[i].getAttribute("name");
+                String type = styleElements[i].getAttribute("type");
+                Class componentClass;
+                try {
+                    componentClass = Class.forName(type, true, classLoader);
+                } catch (ClassNotFoundException ex) {
+                    throw new ComponentXmlException("Cannot load component class: " + type, ex);
+                }
+
+                Map classToStyleMap = (Map) namedStyleMap.get(name);
+                DerivedMutableStyle style = (DerivedMutableStyle) classToStyleMap.get(componentClass); 
+                
+                String baseName = styleElements[i].getAttribute("base-name");
+                
+                classToStyleMap = (Map) namedStyleMap.get(baseName);
+                if (classToStyleMap == null) {
+                    throw new ComponentXmlException("Invalid base style name for style name " + name + ".", null);
+                }
+                Style baseStyle = (Style) classToStyleMap.get(componentClass);
+                while (baseStyle == null && componentClass != Object.class) {
+                    componentClass = componentClass.getSuperclass();
+                    baseStyle = (Style) classToStyleMap.get(componentClass);
+                }
+                if (baseStyle == null) {
+                    throw new ComponentXmlException("Invalid base style name for style name " + name + ".", null);
+                }
+                
+                style.setParentStyle(baseStyle);
+            }
         }
         
         return styleSheet;
