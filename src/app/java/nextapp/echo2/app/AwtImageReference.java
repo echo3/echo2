@@ -96,7 +96,7 @@ implements ImageReference {
         if (image == null) {
             return null;
         }
-        int height = image.getWidth(null);
+        int height = image.getHeight(null);
         if (height > 0) {
             return new Extent(height, Extent.PX);
         } else {
