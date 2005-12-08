@@ -131,5 +131,12 @@ public class ServerTest extends TestCase {
         assertEquals("1005", messages[0].getContent());
         assertEquals("1006", messages[1].getContent());
         assertEquals("1019", messages[14].getContent());
+        
+        lastRetrievedId = messages[14].getId();
+        
+        // Post message with UTF-8 characters.
+        server.postMessage("Bob.Smith", bobAuthToken, REMOTE_HOST, "\u0416\u066f");
+        messages = server.getMessages(lastRetrievedId);
+        assertEquals("\u0416\u066f", messages[0].getContent());
     }
 }

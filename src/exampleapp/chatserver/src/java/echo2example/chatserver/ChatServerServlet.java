@@ -63,8 +63,8 @@ public class ChatServerServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
     throws ServletException, IOException {
-        Document requestDocument = loadrequestDocument(request);
-        Document responseDocument = createresponseDocument();
+        Document requestDocument = loadRequestDocument(request);
+        Document responseDocument = createResponseDocument();
         processUserAdd(requestDocument, responseDocument);
         processUserRemove(requestDocument, responseDocument);
         processPostMessage(requestDocument, responseDocument);
@@ -78,7 +78,7 @@ public class ChatServerServlet extends HttpServlet {
      * 
      * @return the response document
      */
-    private Document createresponseDocument() 
+    private Document createResponseDocument() 
     throws IOException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -99,10 +99,11 @@ public class ChatServerServlet extends HttpServlet {
      * @param request the <code>HttpServletRequest</code>
      * @return the request DOM document
      */
-    private Document loadrequestDocument(HttpServletRequest request) 
+    private Document loadRequestDocument(HttpServletRequest request) 
     throws IOException {
         InputStream in = null;
         try {
+            request.setCharacterEncoding("UTF-8");
             in = request.getInputStream();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -235,6 +236,7 @@ public class ChatServerServlet extends HttpServlet {
      */
     private void renderResponseDocument(HttpServletResponse response, Document responseDocument) 
     throws IOException {
+        response.setContentType("text/xml; charset=UTF-8");
         try {
             TransformerFactory tFactory = TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
