@@ -1760,7 +1760,7 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
             } else {
                 var statusValue = this.xmlHttpRequest.status;
                 this.dispose();
-                throw "Invalid HTTP Response code (" + this.xmlHttpRequest.status + ") and no handler set.";
+                throw "Invalid HTTP Response code (" + statusValue + ") and no handler set.";
             }
         }
     }
