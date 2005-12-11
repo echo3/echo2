@@ -29,6 +29,7 @@
 
 package echo2example.chatserver.test;
 
+import echo2example.chatserver.Log;
 import echo2example.chatserver.Message;
 import echo2example.chatserver.Server;
 import junit.framework.TestCase;
@@ -41,6 +42,7 @@ public class ServerTest extends TestCase {
     private static final String REMOTE_HOST = "192.168.0.20";
     
     public void testAuthenticationAndPosting() {
+        Log.setLogStream(null);
         Server server = new Server();
         String bobAuthToken = server.addUser("Bob.Smith", REMOTE_HOST);
         assertNotNull(bobAuthToken);

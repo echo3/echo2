@@ -29,6 +29,7 @@
 
 package echo2example.chatserver;
 
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -42,7 +43,18 @@ public class Log {
     
     public static final int ACTION_POST = 1; 
     public static final int ACTION_AUTH = 2; 
-    public static final int ACTION_EXIT = 3; 
+    public static final int ACTION_EXIT = 3;
+    
+    private static PrintStream logStream = System.err;
+    
+    /**
+     * Sets the <code>PrintStream</code> to which log messages will be written.
+     * 
+     * @param logStream the log <code>PrintStream</code>
+     */
+    public static final void setLogStream(PrintStream logStream) {
+        Log.logStream = logStream;
+    }
     
     /**
      * Logs a chat operation.
@@ -58,6 +70,10 @@ public class Log {
      * @param message the posted message content, if applicable
      */
     public static final void log(int action, String remoteHost, String userName, String message) {
+        if (logStream == null) {
+            // Do nothing.
+            return;
+        }
         String time = DATE_FORMAT.format(new Date());
         String logMessage;
         switch (action) {
@@ -74,6 +90,6 @@ public class Log {
         default:
             throw new IllegalArgumentException("Invalid action.");
         }
-        System.err.println(logMessage);
+        logStream.println(logMessage);
     }
 }
