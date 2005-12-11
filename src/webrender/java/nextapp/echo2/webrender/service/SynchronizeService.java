@@ -277,6 +277,11 @@ implements Service {
                 ClientPropertiesStore.renderStoreDirective(serverMessage, userInstance.getClientProperties());
                 ClientConfigurationUpdate.renderUpdateDirective(serverMessage, userInstance.getClientConfiguration());
                 ServerDelayMessageUpdate.renderUpdateDirective(serverMessage, userInstance.getServerDelayMessage());
+                
+                // Add "test attribute" used by ClientEngine to determine if browser is correctly (un)escaping
+                // attribute values.  Safari does not do this correctly and a workaround is thus employed if such
+                // bugs are detected.
+                serverMessage.getDocument().getDocumentElement().setAttribute("xml-attr-test", "x&y");
             } else {
                 serverMessage = renderUpdate(conn, clientMessageDocument);
                 processUserInstanceUpdates(userInstance, serverMessage);

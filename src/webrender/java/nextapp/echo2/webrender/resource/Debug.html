@@ -169,15 +169,21 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     };
     
     EchoDebug.Status.renderGeneralInformation = function() {
+        var tdElement;
+    
         EchoDebug.Status.addHeader("General Information");
         var metaElements = window.opener.document.getElementsByTagName("meta");
         for (var i = 0; i < metaElements.length; ++i) {
             if (metaElements[i].getAttribute("name") == "generator") {
-                var tdElement = EchoDebug.Status.addItem("Echo Version");
+                tdElement = EchoDebug.Status.addItem("Echo Version");
                 tdElement.appendChild(document.createTextNode(metaElements[i].getAttribute("content")));
-                return;
+                break;
             }
         }
+        
+        tdElement = EchoDebug.Status.addItem("Safari DOM Attribute Fix");
+        tdElement.appendChild(document.createTextNode(
+                window.opener.EchoServerMessage.enableFixSafariAttrs ? "Enabled" : "Disabled"));
     };
     
     EchoDebug.Status.update = function() {

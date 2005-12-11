@@ -1220,6 +1220,32 @@ EchoDomUtil.cssAttributeNameToPropertyName = function(attribute) {
 };
 
 /**
+ * Recursively fixes broken element attributes in a Safari DOM.
+ * Safari2 does not properly unescape attributes when retrieving
+ * them from an XMLHttpRequest's response DOM.  For example, the attribute
+ * abc="x&y" would return the value "X&#38;y" in Safari2.  This simply scans
+ * the DOM for any attributes containing "&#38;" and replaces instances of it
+ * with a simple ampersand ("&").  This method should be invoked once per DOM
+ * if it has been determined that a version of Safari that suffers this bug is
+ * in use.
+ *
+ * @param node the starting node whose attributes are to be fixed (child 
+ *        elements will be fixed recursively)
+ */
+EchoDomUtil.fixSafariAttrs = function(node) {
+    if (node.nodeType == 1) {
+        for (i = 0; i < node.attributes.length; ++i) {
+            var attribute = node.attributes[i];
+            node.setAttribute(attribute.name, attribute.value.replace("\x26\x2338\x3B", "&"));
+        }
+    }
+    
+    for (var childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
+        EchoDomUtil.fixSafariAttrs(childNode);
+    }
+};
+
+/**
  * Returns the base component id of an extended id.
  * Example: for value "c_333_foo", "c_333" would be returned.
  *
@@ -2060,6 +2086,8 @@ EchoServerMessage.messageDocument = null;
  */
 EchoServerMessage.backgroundIntervalId = null;
 
+EchoServerMessage.enableFixSafariAttrs = false;
+
 /**
  * Callback to invoke when ServerMessage processing has completed.
  * Set via init() method.
@@ -2164,7 +2192,29 @@ EchoServerMessage.installLibraries = function() {
  * the processing has been completed.
  */
 EchoServerMessage.process = function() {
+    EchoServerMessage.prepare();
     EchoServerMessage.processPhase1();
+};
+
+/**
+ * Prepares the ServerMessage for prcocessing.
+ *
+ * This step presently only fixes Safari2's defective DOM attribute 
+ * values (if required).
+ */
+EchoServerMessage.prepare = function() {
+    // Test to determine if the document element contains a "XML Attribute Test" attribute.
+    // The attribute should have a value of "x&y" if the browser is working properly.
+    // The attribute will return the value of "x&#38;y" in the case of Safari2's broken DOM.
+    if (EchoServerMessage.messageDocument.documentElement.getAttribute("xml-attr-test") == "x&#38;y") {
+        // If attributes are broken, set flag.
+        EchoServerMessage.enableFixSafariAttrs = true;
+    }
+    
+    // If broken attribute flag has been set, run workaround code.
+    if (EchoServerMessage.enableFixSafariAttrs) {
+        EchoDomUtil.fixSafariAttrs(EchoServerMessage.messageDocument.documentElement);
+    }
 };
 
 /**
