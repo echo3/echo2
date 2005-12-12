@@ -77,8 +77,12 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
         var elementId = item.getAttribute("eid");
         EchoEventProcessor.removeHandler(elementId, "blur");
         EchoEventProcessor.removeHandler(elementId, "focus");
-        EchoEventProcessor.removeHandler(elementId, "keypress");
         EchoEventProcessor.removeHandler(elementId, "keyup");
+
+        var textComponent = document.getElementById(elementId);
+        if (textComponent) {
+            EchoDomUtil.removeEventListener(textComponent, "keypress", EchoTextComponent.processKeyPress, false);
+        }
 
         // Remove any updates to text component that occurred during client/server transaction.
         EchoClientMessage.removePropertyElement(elementId, "text");
@@ -160,7 +164,8 @@ EchoTextComponent.MessageProcessor.processInit = function(initMessageElement) {
         EchoEventProcessor.addHandler(elementId, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(elementId, "focus", "EchoTextComponent.processFocus");
         EchoEventProcessor.addHandler(elementId, "keyup", "EchoTextComponent.processKeyUp");
-        EchoEventProcessor.addHandler(elementId, "keypress", "EchoTextComponent.processKeyPress");
+        
+        EchoDomUtil.addEventListener(textComponent, "keypress", EchoTextComponent.processKeyPress, false);
     }
 };
 
@@ -225,16 +230,16 @@ EchoTextComponent.processFocus = function(echoEvent) {
  * Initiates an action in the event that the key pressed was the
  * ENTER key.
  *
- * @param echoEvent the event, preprocessed by the 
- *        <code>EchoEventProcessor</code>
+ * @param e the DOM Level 2 event, if avaialable
  */
-EchoTextComponent.processKeyPress = function(echoEvent) {
-    var textComponent = echoEvent.registeredTarget;
+EchoTextComponent.processKeyPress = function(e) {
+    e = e ? e : window.event;
+    var textComponent = e.target ? e.target : e.srcElement;
     if (!EchoClientEngine.verifyInput(textComponent.id, true)) {
-        EchoDomUtil.preventEventDefault(echoEvent);
+        EchoDomUtil.preventEventDefault(e);
         return;
     }
-    if (echoEvent.keyCode == 13) {
+    if (e.keyCode == 13) {
         EchoTextComponent.doAction(textComponent);
     }
 };
