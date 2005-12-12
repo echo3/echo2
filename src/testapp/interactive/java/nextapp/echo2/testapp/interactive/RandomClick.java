@@ -80,6 +80,9 @@ public class RandomClick {
         // Image test skews ghost-test based performance test results (AWTImageReference).
         blacklist.add("Image");
         
+        // Text Sync has delay buttons.
+        blacklist.add("Text Sync");
+        
         // Do not add modal windows.
         blacklist.add("Add Modal Window");
         blacklist.add("Add Three Modal Windows");
