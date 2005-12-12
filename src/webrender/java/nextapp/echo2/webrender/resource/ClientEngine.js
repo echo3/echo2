@@ -744,8 +744,8 @@ EchoCssUtil.applyStyle = function(element, cssText) {
 EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     // Set original style if not already set.
     if (!EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle")) {
-        if (element.style.cssText) {
-            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", element.style.cssText);
+        if (element.getAttribute("style")) {
+            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", EchoDomUtil.getCssText(element));
         } else {
             // Flag that no original CSS text existed.
             EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", "-");
@@ -773,7 +773,7 @@ EchoCssUtil.restoreOriginalStyle = function(element) {
     }
 
     // Reset original style on element.
-    element.style.cssText = originalStyle == "-" ? "" : originalStyle;
+    EchoDomUtil.setCssText(element, originalStyle == "-" ? "" : originalStyle);
     
     // Clear original style from EchoDomPropertyStore.
     EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", null);
@@ -1267,6 +1267,20 @@ EchoDomUtil.getComponentId = function(elementId) {
 };
 
 /**
+ * Cross-platform method to retrieve the CSS text of a DOM element.
+ *
+ * @param element the element
+ * @return cssText the CSS text
+ */
+EchoDomUtil.getCssText = function(element) {
+    if (EchoClientProperties.get("quirkOperaNoCssText")) {
+        return element.getAttribute("style");
+    } else {
+        return element.style.cssText;
+    }
+}
+
+/**
  * Returns the target of an event, using the client's supported event model.
  * On clients which support the W3C DOM Level 2 event specification,
  * the <code>target</code> property of the event is returned.
@@ -1407,6 +1421,20 @@ EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener
         eventSource.removeEventListener(eventType, eventListener, useCapture);
     } else if (eventSource.detachEvent) {
         eventSource.detachEvent("on" + eventType, eventListener);
+    }
+};
+
+/**
+ * Cross-platform method to set the CSS text of a DOM element.
+ *
+ * @param element the element
+ * @param cssText the new CSS text
+ */
+EchoDomUtil.setCssText = function(element, cssText) {
+    if (EchoClientProperties.get("quirkOperaNoCssText")) {
+	    element.setAttribute("style", cssText);
+    } else {
+	    element.style.cssText = cssText;
     }
 };
 

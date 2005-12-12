@@ -114,6 +114,17 @@ implements Serializable {
      */
     public static final String QUIRK_MOZILLA_TEXT_INPUT_REPAINT = "quirkMozillaTextInputRepaint";
     
+    /**
+     * A quirk flag describing an Opera-specific issue where the 
+     * CSSStyleDeclaration.cssText property is unsupported.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Opera</li>
+     * </ul>
+     */
+    public static final String QUIRK_OPERA_NO_CSS_TEXT = "quirkOperaNoCssText";
+    
     // Internet Explorer-specific Quirk Behaviors (behaviors that are more likely to be described as bugs)
     
     /**

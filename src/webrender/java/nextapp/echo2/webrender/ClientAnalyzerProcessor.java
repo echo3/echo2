@@ -155,6 +155,9 @@ implements SynchronizeService.ClientMessagePartProcessor {
                 clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
             }
         }
+        if (browserOpera) {
+            clientProperties.setProperty(ClientProperties.QUIRK_OPERA_NO_CSS_TEXT, Boolean.TRUE);
+        }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_TEXT_INPUT_REPAINT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE, Boolean.TRUE);
