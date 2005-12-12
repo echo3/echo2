@@ -294,8 +294,8 @@ implements Service {
     /**
      * Renders updates to <code>UserInstance</code> properties.
      * 
-     * @param userInstance
-     * @param serverMessage
+     * @param userInstance the relevant <code>UserInstance</code>
+     * @param serverMessage the <code>ServerMessage</code> containing the updates
      */
     private void processUserInstanceUpdates(UserInstance userInstance, ServerMessage serverMessage) {
         UserInstanceUpdateManager updateManager = userInstance.getUserInstanceUpdateManager();
