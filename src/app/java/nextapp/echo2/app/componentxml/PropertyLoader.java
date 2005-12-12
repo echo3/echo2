@@ -29,8 +29,8 @@
 
 package nextapp.echo2.app.componentxml;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import nextapp.echo2.app.MutableStyle;
 import nextapp.echo2.app.Style;
@@ -47,7 +47,10 @@ public class PropertyLoader {
     
     private static final String PROPERTY_XML_PEERS_PATH = "META-INF/nextapp/echo2/PropertyXmlPeers.properties";
     
-    private static final Map classLoaderToPropertyLoaderMap = new WeakHashMap();
+    /**
+     * Map of <code>ClassLoader</code>s to <code>PropertyLoader</code>s.
+     */
+    private static final Map classLoaderToPropertyLoaderMap = new HashMap();
     
     /**
      * Creates or retrieves a <code>PropertyLoader</code>.
@@ -66,7 +69,7 @@ public class PropertyLoader {
             return propertyLoader;
         }
     }
-
+    
     private ClassLoader classLoader;
     private PeerFactory propertyXmlPeerFactory;
     

@@ -40,7 +40,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * Provides introspection into Echo components.
@@ -58,9 +57,10 @@ public class ComponentIntrospector {
     private static final int CONSTANT_MODIFERS = Modifier.STATIC | Modifier.PUBLIC | Modifier.FINAL;
     
     /**
-     * A map containing weak references from class loaders to ComponentIntrospector caches.
+     * A map containing references from <code>ClassLoader</code> to 
+     * <code>ComponentIntrospector</code> caches.
      */
-    private static final Map classLoaderCache = new WeakHashMap();
+    private static final Map classLoaderCache = new HashMap();
     
     /**
      * Creates a new <code>ComponentIntrospector</code> for a type of
