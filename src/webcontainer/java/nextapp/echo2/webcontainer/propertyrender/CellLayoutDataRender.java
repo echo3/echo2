@@ -71,7 +71,8 @@ public class CellLayoutDataRender {
             for (int i = 0; i < childCount; ++i) {
                 Component child = component.getComponent(i);
                 if (child.getRenderId().equals(childRenderId)) {
-                    return ((CellLayoutData) child.getProperty(Component.PROPERTY_LAYOUT_DATA)).getBackgroundImage().getImage();
+                    return ((CellLayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA))
+                            .getBackgroundImage().getImage();
                 }
             }
         }
@@ -100,7 +101,7 @@ public class CellLayoutDataRender {
      */
     public static void renderBackgroundImageToStyle(CssStyle cssStyle, RenderContext rc, ImageRenderSupport irs,
             Component parent, Component child) {
-        CellLayoutData layoutData = (CellLayoutData) child.getProperty(Component.PROPERTY_LAYOUT_DATA);
+        CellLayoutData layoutData = (CellLayoutData) child.getRenderProperty(Component.PROPERTY_LAYOUT_DATA);
         if (layoutData == null || layoutData.getBackgroundImage() == null) {
             return;
         }
