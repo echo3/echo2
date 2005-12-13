@@ -29,37 +29,14 @@
 
 package nextapp.echo2.app.layout;
 
-import nextapp.echo2.app.FillImage;
-import nextapp.echo2.app.Color;
-
 /**
  * A <code>LayoutData</code> object used to describe how a 
  * <code>Component</code> is rendered within a <code>Grid</code>. 
  */
 public class GridLayoutData extends CellLayoutData {
     
-    private Color background = null;
-    private FillImage backgroundImage = null;
     private int columnSpan = 1;
     private int rowSpan = 1;
-    
-    /**
-     * Returns the background color of the cell.
-     * 
-     * @return the background color
-     */
-    public Color getBackground() {
-        return background;
-    }
-    
-    /**
-     * Returns the background image of the cell.
-     * 
-     * @return the background image
-     */
-    public FillImage getBackgroundImage() {
-        return backgroundImage;
-    }
     
     /**
      * Returns the column span of the cell.
@@ -77,24 +54,6 @@ public class GridLayoutData extends CellLayoutData {
      */
     public int getRowSpan() {
         return rowSpan;
-    }
-    
-    /**
-     * Sets the background color of the cell.
-     * 
-     * @param newValue the new background color
-     */
-    public void setBackground(Color newValue) {
-        background = newValue;
-    }
-    
-    /**
-     * Sets the background image of the cell.
-     * 
-     * @param newValue the new background image
-     */
-    public void setBackgroundImage(FillImage newValue) {
-        backgroundImage = newValue;
     }
     
     /**
