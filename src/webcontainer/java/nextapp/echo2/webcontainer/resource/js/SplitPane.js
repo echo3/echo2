@@ -343,23 +343,25 @@ EchoSplitPane.mouseMove = function(e) {
  * @param e The event (only provided when using DOM Level 2 Event Model)
  */
 EchoSplitPane.mouseUp = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
+    if (EchoSplitPane.activePaneId) {
+        e = (e) ? e : ((window.event) ? window.event : "");
     
-    if (EchoSplitPane.verticalDrag) {
-        if (EchoSplitPane.topLeftPane == 1) {
-            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                    EchoSplitPane.activePaneSeparatorDiv.style.bottom);
+        if (EchoSplitPane.verticalDrag) {
+            if (EchoSplitPane.topLeftPane == 1) {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.bottom);
+            } else {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.top);
+            }
         } else {
-            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                    EchoSplitPane.activePaneSeparatorDiv.style.top);
-        }
-    } else {
-        if (EchoSplitPane.topLeftPane == 1) {
-            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                    EchoSplitPane.activePaneSeparatorDiv.style.right);
-        } else {
-            EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                    EchoSplitPane.activePaneSeparatorDiv.style.left);
+            if (EchoSplitPane.topLeftPane == 1) {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.right);
+            } else {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.left);
+            }
         }
     }
     
