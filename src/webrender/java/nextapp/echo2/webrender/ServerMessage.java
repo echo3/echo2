@@ -168,6 +168,7 @@ public class ServerMessage extends XmlDocument {
      * Constant for the "remove" message part group. Message parts in this group
      * are processed after the "init" and "preremove" groups. Message parts in
      * this group are processed before the "update" and "postupdate" groups.
+     * This group is used for removing elements from the DOM.
      */
     public static final String GROUP_ID_REMOVE = "remove";
 
@@ -175,6 +176,7 @@ public class ServerMessage extends XmlDocument {
      * Constant for the "update" message part group. Message parts in this group
      * are processed after the "init", "preremove" and "remove" groups.
      * Message parts in this group are processed before the "postupdate" group.
+     * This group is used for adding elements to the DOM.
      */
     public static final String GROUP_ID_UPDATE = "update";
 
@@ -331,7 +333,14 @@ public class ServerMessage extends XmlDocument {
      * method with equivalent values of all parameters will result in the same
      * directive being returned each time.
      * 
-     * @param groupId the identifier of the target message part group
+     * This method should only be used for adding directives to the 
+     * <code>GROUP_ID_PREREMOVE</code> and <code>GROUP_ID_POSTUPDATE</code>
+     * groups as itemized directives will not be executed in-order, which
+     * will cause problems if they are used for to manipulate the DOM.
+     * 
+     * @param groupId the identifier of the target message part group,
+     *        either <code>GROUP_ID_PREREMOVE</code> or 
+     *        <code>GROUP_ID_POSTUPDATE</code>
      * @param processor the name of the client-side processor object which will
      *        process the message part containing the directive, e.g.,
      *        "EchoEventUpdate", or "EchoDomUpdate"

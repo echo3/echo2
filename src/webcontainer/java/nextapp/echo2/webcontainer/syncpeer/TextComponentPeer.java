@@ -119,7 +119,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
             TextComponent textComponent = (TextComponent) update.getParent();
             String elementId = ContainerInstance.getElementId(textComponent);
             ServerMessage serverMessage = rc.getServerMessage();
-            Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_UPDATE,
+            Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
                     "EchoTextComponent.MessageProcessor", "set-text", new String[0], new String[0]);
             Element itemElement = serverMessage.getDocument().createElement("item");
             itemElement.setAttribute("eid", elementId);
