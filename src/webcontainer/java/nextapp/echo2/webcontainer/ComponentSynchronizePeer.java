@@ -94,6 +94,9 @@ public interface ComponentSynchronizePeer {
      * <code>renderUpdate()</code> method being invoked, and thus 
      * implementations SHOULD NOT redundantly attempt
      * to remove the HTML in this method.
+     * Implementations must handle the condition where the component to be
+     * disposed is not present in the client DOM, as this method may be invoked
+     * under such a condition.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param update the <code>ServerComponentUpdate</code> for which this
