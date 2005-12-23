@@ -29,6 +29,10 @@
 
 package nextapp.echo2.webcontainer.util;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -45,10 +49,12 @@ import nextapp.echo2.app.RenderIdSupport;
  * being weakly referenced (i.e., the fact that they are held within this table
  * will not prevent them from being garbage collected).
  */
-public class IdTable {
+public class IdTable 
+implements Serializable {
     
-    private Map idToReferenceMap = new HashMap();
-    private ReferenceQueue referenceQueue = new ReferenceQueue();
+    private boolean hasHardReferences = false;
+    private transient Map idToReferenceMap = new HashMap();
+    private transient ReferenceQueue referenceQueue = new ReferenceQueue();
     
     /**
      * Registers an object with the <code>IdTable</code>
@@ -92,8 +98,26 @@ public class IdTable {
      * <code>IdTable</code>.
      */
     private void purge() {
+        // Convert any hard references to weak references.
+        if (hasHardReferences) {
+            synchronized (idToReferenceMap) {
+                Iterator idIt = idToReferenceMap.keySet().iterator();
+                while (idIt.hasNext()) {
+                    String id = (String) idIt.next();
+                    Object object = idToReferenceMap.get(id); 
+                    if (!(object instanceof WeakReference)) {
+                        WeakReference weakReference = new WeakReference(object, referenceQueue);
+                        idToReferenceMap.put(id, weakReference);
+                    }
+                }
+                hasHardReferences = false;
+            }
+        }
+        
+        // Purge weak references that are no longer hard referenced elsewhere.
         Reference reference = referenceQueue.poll();
         if (reference == null) {
+            // No such references exist.
             return;
         }
         Set referenceSet = new HashSet();
@@ -102,7 +126,7 @@ public class IdTable {
             reference = referenceQueue.poll();
         }
         
-        synchronized(idToReferenceMap) {
+        synchronized (idToReferenceMap) {
             Iterator idIt = idToReferenceMap.keySet().iterator();
             while (idIt.hasNext()) {
                 String id = (String) idIt.next();
@@ -111,5 +135,53 @@ public class IdTable {
                 }
             }
         }
+    }
+
+    /**
+     * @see java.io.Serializable
+     * 
+     * Writes objects directly into values of Map as straight references.
+     * The values will be changed to <code>WeakReference</code>s when 
+     * purge() is called.
+     */
+    private void readObject(ObjectInputStream in)
+    throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
+        idToReferenceMap = new HashMap();
+        referenceQueue = new ReferenceQueue();
+       
+        String id = (String) in.readObject();
+        if (id != null) {
+            // Hard references will be written.
+            hasHardReferences = true;
+
+            // Load map and store objects as hard references.
+            while (id != null) {
+                RenderIdSupport object = (RenderIdSupport) in.readObject();
+                idToReferenceMap.put(id, object);
+                id = (String) in.readObject();
+            }
+        }
+    }
+
+    /**
+     * @see java.io.Serializable
+     */
+    private void writeObject(ObjectOutputStream out) 
+    throws IOException {
+        out.defaultWriteObject();
+        Iterator it = idToReferenceMap.keySet().iterator();
+        while (it.hasNext()) {
+            String id = (String) it.next();
+            out.writeObject(id);
+            Object object = idToReferenceMap.get(id);
+            if (object instanceof WeakReference) {
+                object = ((WeakReference) object).get();
+            }
+            out.writeObject(object);
+        }
+        // Write null to specify end of object.
+        out.writeObject(null);
     }
 }

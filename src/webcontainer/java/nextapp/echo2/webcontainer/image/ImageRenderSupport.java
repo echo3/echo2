@@ -42,6 +42,14 @@ public interface ImageRenderSupport {
     /**
      * Retrieves the image identified by the given <code>imageId</code> value
      * for the given <code>Component</code>.
+     * <p>
+     * <strong>Note:</strong> A reference to any images to be rendered must be
+     * maintained throughout the rendering process, due to the fact that the
+     * image rendering subsystem creates a weak-keyed cache of images to be
+     * rendered.  This method therefore may not simply return a new, 
+     * otherwise-unreferenced image.  In the event that this presents a problem,
+     * the recommended workaround is to simply store such otherwise unreferenced 
+     * <code>ImageReference</code>s using a <code>RenderState</code> object.
      * 
      * @param component the component 
      * @param imageId the id of the image

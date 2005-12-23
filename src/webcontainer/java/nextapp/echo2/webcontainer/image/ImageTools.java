@@ -42,7 +42,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 public class ImageTools {
     
     /**
-     * Retrieves the URI to render an image for a component
+     * Retrieves the URI to render an image for a component.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param irs the <code>ImageRenderSupport</code>-implementing 

@@ -121,7 +121,7 @@ implements ImageReference {
      */
     public Image getImage() {
         return image;
-    }    
+    }
     
     /**
      * @see nextapp.echo2.app.ImageReference#getWidth()

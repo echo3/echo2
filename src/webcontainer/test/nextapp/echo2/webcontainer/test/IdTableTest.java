@@ -29,6 +29,12 @@
 
 package nextapp.echo2.webcontainer.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.RenderIdSupport;
 import nextapp.echo2.webcontainer.util.IdTable;
@@ -40,7 +46,7 @@ import junit.framework.TestCase;
 public class IdTableTest extends TestCase {
 
     private static class TestObject 
-    implements RenderIdSupport {
+    implements RenderIdSupport, Serializable {
         
         public String id = ApplicationInstance.generateSystemId();
         
@@ -64,14 +70,52 @@ public class IdTableTest extends TestCase {
         String id = testObject.getRenderId();
         idManager.register(testObject);
         assertNotNull(idManager.getObject(id));
+        
         testObject = null;
-        System.gc();
-        System.gc();
-        System.gc();
-        System.gc();
-        System.gc();
-        System.gc();
+        for (int i = 0; i < 10; ++i) {
+            System.gc();
+        }
+        
         assertNull(idManager.getObject(id));
-        assertNull(idManager.getObject(id));
+    }
+    
+    /**
+     * Tests serialization of an <code>IdTable</code>.
+     */
+    public void testSerialization() 
+    throws Exception {
+        IdTable idTable = new IdTable();
+        TestObject testObject = new TestObject();
+        String id = testObject.getRenderId();
+        idTable.register(testObject);
+        
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream objectOut = new ObjectOutputStream(byteOut);
+        objectOut.writeObject(idTable);
+        objectOut.close();
+        
+        byte[] data = byteOut.toByteArray();
+        
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
+        ObjectInputStream objectIn = new ObjectInputStream(byteIn);
+        IdTable newIdTable = (IdTable) objectIn.readObject();
+        TestObject newTestObject = (TestObject) newIdTable.getObject(id);
+        assertEquals(id, newTestObject.getRenderId());
+        objectIn.close();
+        
+        testObject = null;
+        for (int i = 0; i < 10; ++i) {
+            System.gc();
+        }
+        
+        assertNull(idTable.getObject(id));
+        assertNotNull(newIdTable.getObject(id));
+        
+        newTestObject = null;
+        for (int i = 0; i < 10; ++i) {
+            System.gc();
+        }
+
+        assertNull(newIdTable.getObject(id));
     }
 }
