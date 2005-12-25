@@ -72,11 +72,17 @@ public class StreamImageService extends AbstractImageService {
      */
     public void renderImage(Connection conn, ImageReference imageReference) 
     throws IOException {
-        if (!(imageReference instanceof StreamImageReference)) {
-            throw new IOException("Image is not a StreamImageReference.");
+        try {
+            if (!(imageReference instanceof StreamImageReference)) {
+                throw new IOException("Image is not a StreamImageReference.");
+            }
+            StreamImageReference streamImageReference = (StreamImageReference) imageReference;
+            conn.setContentType(new ContentType(streamImageReference.getContentType(), true));
+            streamImageReference.render(conn.getOutputStream());
+        } catch (IOException ex) {
+            // Internet Explorer appears to enjoy making half-hearted requests for images, wherein it resets the connection
+            // leaving us with an IOException.  This exception is silently eaten.
+            ex.printStackTrace();
         }
-        StreamImageReference streamImageReference = (StreamImageReference) imageReference;
-        conn.setContentType(new ContentType(streamImageReference.getContentType(), true));
-        streamImageReference.render(conn.getOutputStream());
     }
 }

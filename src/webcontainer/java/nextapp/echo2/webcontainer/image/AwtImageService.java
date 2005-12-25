@@ -77,12 +77,9 @@ public class AwtImageService extends AbstractImageService {
             conn.setContentType(ContentType.IMAGE_PNG);
             encoder.encode(conn.getOutputStream());
         } catch (IOException ex) {
+            // Internet Explorer appears to enjoy making half-hearted requests for images, wherein it resets the connection
+            // leaving us with an IOException.  This exception is silently eaten.
             ex.printStackTrace();
-            //BUGBUG. Socket exceptions (wrapped in Tomcat ClientAbortException (an IO Exception)) when "rapid clicking" in 
-            // Internet Explorer in test application....source is PNG renderer.
-            // this may be an issue we have to deal with globally that is only manifesting itself here.
-            // Or it might be a tomcat bug (was testing w/ 4.1.31).
-            // Research this issue and solve&doc.
         }
     }
 }
