@@ -286,9 +286,10 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
+        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, targetId, htmlFragment);
     }
 
     /**
@@ -300,6 +301,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
      * @param update the update
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
+        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
         SplitPane splitPane = (SplitPane) update.getParent();
         String elementId = ContainerInstance.getElementId(splitPane);
         ContainerInstance ci = rc.getContainerInstance();
@@ -309,14 +311,14 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
             if (currentRenderState.pane0 != null) {
                 DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                 renderPane(rc, update, htmlFragment, splitPane, 0);
-                DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, elementId + "_separator", htmlFragment);
+                DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, elementId, elementId + "_separator", htmlFragment);
             }
         }
         if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
             if (currentRenderState.pane1 != null) {
                 DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                 renderPane(rc, update, htmlFragment, splitPane, 1);
-                DomUpdate.renderElementAdd(rc.getServerMessage(), elementId, htmlFragment);
+                DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, elementId, htmlFragment);
             }
         }
     }

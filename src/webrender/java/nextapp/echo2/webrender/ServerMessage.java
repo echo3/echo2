@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import nextapp.echo2.webrender.output.XmlDocument;
@@ -309,16 +308,13 @@ public class ServerMessage extends XmlDocument {
         Element messagePartElement = null;
         Element groupElement = getPartGroup(groupId);
 
-        for (Node node = groupElement.getFirstChild(); node != null; node = node.getNextSibling()) {
-            if (processor.equals(((Element) node).getAttribute("processor"))) {
-                messagePartElement = (Element) node;
-                break;
-            }
-        }
-        if (messagePartElement == null) {
+        Element lastChild = (Element) groupElement.getLastChild();
+        if (lastChild != null && processor.equals(lastChild.getAttribute("processor"))) {
+            messagePartElement = lastChild;
+        } else {
             messagePartElement = addPart(groupId, processor);
         }
-
+        
         Element directiveElement = getDocument().createElement(directiveName);
         messagePartElement.appendChild(directiveElement);
         return directiveElement;

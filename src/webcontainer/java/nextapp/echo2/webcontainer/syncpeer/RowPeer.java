@@ -149,9 +149,10 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
+        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, targetId, htmlFragment);
     }
     
     /**
@@ -179,6 +180,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      * @param update the update
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
+        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
         Row row = (Row) update.getParent();
         String elementId = ContainerInstance.getElementId(row);
         String trElementId = elementId + "_tr";
@@ -193,9 +195,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                     renderChild(rc, update, htmlFragment, row, components[componentIndex]);
                     if (componentIndex == components.length - 1) {
-                        DomUpdate.renderElementAdd(rc.getServerMessage(), trElementId, htmlFragment);
+                        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, trElementId, htmlFragment);
                     } else {
-                        DomUpdate.renderElementAdd(rc.getServerMessage(), trElementId, 
+                        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, trElementId, 
                                 elementId + "_cell_" + ContainerInstance.getElementId(components[componentIndex + 1]), 
                                 htmlFragment);
                     }
@@ -223,7 +225,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 if (!lastChildMoved) {
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
                     renderSpacingCell(htmlFragment, row, renderState.lastChild);
-                    DomUpdate.renderElementAdd(rc.getServerMessage(), trElementId,
+                    DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, trElementId,
                             elementId + "_cell_" + ContainerInstance.getElementId(components[previousLastChildIndex + 1]),
                             htmlFragment);
                 }

@@ -227,9 +227,10 @@ implements ActionProcessor, DomUpdateSupport, PropertyUpdateProcessor, Component
      *      nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
+        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
+        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, targetId, htmlFragment);
     }
 
     /**

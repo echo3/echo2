@@ -973,38 +973,41 @@ EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
  * @param domAddElement the <code>dom-add</code> element to process
  */
 EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
-    var parentId = domAddElement.getAttribute("parent-id");
-    var siblingId = domAddElement.getAttribute("sibling-id");
-    var parentElement = document.getElementById(parentId);
-    var siblingElement = null;
-    if (siblingId) {
-        siblingElement = document.getElementById(siblingId);
-        if (!siblingElement) {
-            throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
-        }
-    }
-    if (!parentElement) {
-         throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
-    }
-    var contentElement = domAddElement.getElementsByTagName("content")[0];
-    for (var i = 0; i < contentElement.childNodes.length; ++i) {
-        var importedNode = EchoDomUtil.importNode(parentElement.ownerDocument, contentElement.childNodes[i], true);
-        
-        var newElementId = importedNode.getAttribute("id");
-        if (!newElementId) {
-            throw "Cannot add element without id attribute.";
-        }
-        if (document.getElementById(newElementId)) {
-            throw "Element " + newElementId + " already exists in document; cannot add.";
-        }
-        
-        if (siblingElement) {
-            // If sibling specified, perform insert operation.
-            parentElement.insertBefore(importedNode, siblingElement);
-        } else {
-            // Perform append operation.
-            parentElement.appendChild(importedNode);
-        }
+    var contentElements = domAddElement.getElementsByTagName("content");
+    for (var i = 0; i < contentElements.length; ++i) {
+        var parentId = contentElements[i].getAttribute("parent-id");
+	    var siblingId = contentElements[i].getAttribute("sibling-id");
+	    var parentElement = document.getElementById(parentId);
+	    var siblingElement = null;
+	    if (siblingId) {
+	        siblingElement = document.getElementById(siblingId);
+	        if (!siblingElement) {
+	            throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
+	        }
+	    }
+	    if (!parentElement) {
+	         throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
+	    }
+
+	    for (var j = 0; j < contentElements[i].childNodes.length; ++j) {
+	        var importedNode = EchoDomUtil.importNode(parentElement.ownerDocument, contentElements[i].childNodes[j], true);
+	        
+	        var newElementId = importedNode.getAttribute("id");
+	        if (!newElementId) {
+	            throw "Cannot add element without id attribute.";
+	        }
+	        if (document.getElementById(newElementId)) {
+	            throw "Element " + newElementId + " already exists in document; cannot add.";
+	        }
+	        
+	        if (siblingElement) {
+	            // If sibling specified, perform insert operation.
+	            parentElement.insertBefore(importedNode, siblingElement);
+	        } else {
+	            // Perform append operation.
+	            parentElement.appendChild(importedNode);
+	        }
+	    }
     }
 };
 

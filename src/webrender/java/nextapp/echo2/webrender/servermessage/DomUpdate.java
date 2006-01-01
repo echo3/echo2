@@ -58,7 +58,7 @@ public class DomUpdate {
      */
     public static void renderAttributeUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
             String attributeValue) {
-        //BUGUG. support nulls for deletion.
+        //BUGBUG. support nulls for deletion.
         Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 MESSAGE_PART_NAME, "attribute-update");
         element.setAttribute("target-id", targetId);
@@ -67,19 +67,39 @@ public class DomUpdate {
     }
     
     /**
+     * Prepares a <code>dom-add</code> operation by immediately appending an 
+     * empty <code>dom-add</code> element to the end of the 
+     * <code>ServerMessage</code>'s 'update' group.
+     * Content is added to the <code>dom-add</code> element by invoking
+     * <code>renderElementAddContent()</code>.
+     * 
+     * @param serverMessage the <code>ServerMessage</code>
+     * @return the created <code>dom-add</code> <code>Element</code>.
+     */
+    public static Element renderElementAdd(ServerMessage serverMessage) {
+        Element domAddElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                MESSAGE_PART_NAME, "dom-add");
+        return domAddElement;
+    }
+
+    /**
      * Creates a <code>dom-add</code> operation to append HTML content to the 
      * end of the element identified by <code>parentId</code>.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
      * @param parentId the id of the element the HTML code will be appended to
      * @param htmlFragment the HTML fragment to add to the DOM
+     * @deprecated use of this method can result in DOM modifications
+     *             being performed in improper order 
+     *             (instead use <code>renderElementAdd(ServerMessage)</code> followed by
+     *             <code>renderElementAddContent()</code>)
      */
     public static void renderElementAdd(ServerMessage serverMessage, String parentId, DocumentFragment htmlFragment) {
         renderElementAdd(serverMessage, parentId, null, htmlFragment);
     }
 
     /**
-     * Creates a <code>dom-add</code> operation to insert HTML content int the 
+     * Creates a <code>dom-add</code> operation to insert HTML content in the 
      * element identified by <code>parentId</code>.
      * 
      * @param serverMessage the outgoing <code>ServerMessage</code>
@@ -89,17 +109,63 @@ public class DomUpdate {
      *        <strong>before</strong> (this element must be an immediate child
      *        of the element specified by <code>parentId</code>)
      * @param htmlFragment the HTML fragment to add to the DOM
+     * @deprecated use of this method can result in DOM modifications
+     *             being performed in improper order 
+     *             (instead use <code>renderElementAdd(ServerMessage)</code> followed by
+     *             <code>renderElementAddContent()</code>)
      */
     public static void renderElementAdd(ServerMessage serverMessage, String parentId, String siblingId, 
             DocumentFragment htmlFragment) {
         setContentNamespace(htmlFragment);
         Element domAddElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 MESSAGE_PART_NAME, "dom-add");
-        domAddElement.setAttribute("parent-id", parentId);
-        if (siblingId != null) {
-            domAddElement.setAttribute("sibling-id", siblingId);
-        }
         Element contentElement = domAddElement.getOwnerDocument().createElement("content");
+        contentElement.setAttribute("parent-id", parentId);
+        if (siblingId != null) {
+            contentElement.setAttribute("sibling-id", siblingId);
+        }
+        domAddElement.appendChild(contentElement);
+        contentElement.appendChild(htmlFragment);
+    }
+    
+    /**
+     * Adds content to be added to an existing <code>dom-add</code> operation.
+     * The content will be appended to the end of the DOM element identified by
+     * <code>parentId</code>
+     * 
+     * @param serverMessage the <code>ServerMessage</code>
+     * @param domAddElement the <code>dom-add</code> element created by a 
+     *        previous invocation of <code>renderAdd(ServerMessage)</code>
+     * @param parentId the id of the element the HTML code will be appended to
+     * @param htmlFragment the HTML fragment to add to the DOM
+     */
+    public static void renderElementAddContent(ServerMessage serverMessage, Element domAddElement, String parentId,
+            DocumentFragment htmlFragment) {
+        renderElementAddContent(serverMessage, domAddElement, parentId, null, htmlFragment);
+    }
+    
+    /**
+     * Adds content to be added to an existing <code>dom-add</code> operation.
+     * The content will be inserted into the DOM element identified by
+     * <code>parentId</code> before the specified <code>siblingId</code>.
+     * 
+     * @param serverMessage the <code>ServerMessage</code>
+     * @param domAddElement the <code>dom-add</code> element created by a 
+     *        previous invocation of <code>renderAdd(ServerMessage)</code>
+     * @param parentId the id of the element the HTML code will be appended to
+     * @param siblingId The id of the element which the content will be inserted
+     *        <strong>before</strong> (this element must be an immediate child
+     *        of the element specified by <code>parentId</code>)
+     * @param htmlFragment the HTML fragment to add to the DOM
+     */
+    public static void renderElementAddContent(ServerMessage serverMessage, Element domAddElement, String parentId, 
+            String siblingId, DocumentFragment htmlFragment) {
+        setContentNamespace(htmlFragment);
+        Element contentElement = domAddElement.getOwnerDocument().createElement("content");
+        contentElement.setAttribute("parent-id", parentId);
+        if (siblingId != null) {
+            contentElement.setAttribute("sibling-id", siblingId);
+        }
         domAddElement.appendChild(contentElement);
         contentElement.appendChild(htmlFragment);
     }
@@ -144,7 +210,7 @@ public class DomUpdate {
      */
     public static void renderStyleUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
             String attributeValue) {
-        //BUGUG. support nulls for deletion.
+        //BUGBUG. support nulls for deletion.
         Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "style-update");
         element.setAttribute("target-id", targetId);
         element.setAttribute("name", attributeName);
