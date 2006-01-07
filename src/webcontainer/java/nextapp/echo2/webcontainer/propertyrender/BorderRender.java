@@ -45,7 +45,7 @@ public class BorderRender {
      * @param style the style constant
      * @return the CSS style value
      */
-    private static final String getStyleValue(int style) {
+    public static final String getStyleValue(int style) {
         switch (style) {
         case Border.STYLE_NONE:
             return "none";
