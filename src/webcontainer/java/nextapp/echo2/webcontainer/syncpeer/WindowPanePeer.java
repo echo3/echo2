@@ -301,7 +301,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (renderPositioningBothSides) {
             borderCssStyle.setAttribute("right", borderRightPixels + "px");
         } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').clientWidth-"
+            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').offsetWidth-"
                     + (borderHorizontalPixels) + ")+'px')");
         }
         if (resizable) {
@@ -344,7 +344,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (renderPositioningBothSides) {
             borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
         } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').clientHeight-"
+            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').offsetHeight-"
                     + (borderVerticalPixels) + ")+'px')");
 
         }
@@ -369,7 +369,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (renderPositioningBothSides) {
             borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
         } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').clientHeight-"
+            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').offsetHeight-"
                     + (borderVerticalPixels) + ")+'px')");
 
         }
@@ -413,7 +413,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         if (renderPositioningBothSides) {
             borderCssStyle.setAttribute("right", borderRightPixels + "px");
         } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').clientWidth-"
+            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').offsetWidth-"
                     + (borderHorizontalPixels) + ")+'px')");
 
         }
@@ -550,9 +550,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
             windowBodyDivCssStyle.setAttribute("right", right + "px");
         } else if (renderSizeExpression) {
-            windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').clientHeight-"
+            windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').offsetHeight-"
                     + (top + bottom) + ")+'px')");
-            windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').clientWidth-"
+            windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').offsetWidth-"
                     + (left + right) + ")+'px')");
         }
         windowBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
@@ -663,7 +663,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
         if (renderSizeExpression) {
             outerContentDivCssStyle.setAttribute("height", "expression((document.getElementById('" + bodyElementId
-                    + "').clientHeight-" + titleHeightPixels + ")+'px')");
+                    + "').offsetHeight-" + titleHeightPixels + ")+'px')");
         }
         outerContentDivElement.setAttribute("style", outerContentDivCssStyle.renderInline());
         windowBodyDivElement.appendChild(outerContentDivElement);

@@ -343,10 +343,10 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
     private void renderCssPositionExpression(CssStyle cssStyle, String parentElementId, int position, boolean vertical) {
         if (vertical) {
             cssStyle.setAttribute("height", 
-                    "expression((document.getElementById('" + parentElementId + "').clientHeight-" + position + ")+'px')");
+                    "expression((document.getElementById('" + parentElementId + "').offsetHeight-" + position + ")+'px')");
         } else {
             cssStyle.setAttribute("width", 
-                    "expression((document.getElementById('" + parentElementId + "').clientWidth-" + position + ")+'px')");
+                    "expression((document.getElementById('" + parentElementId + "').offsetWidth-" + position + ")+'px')");
         }
     }
     
