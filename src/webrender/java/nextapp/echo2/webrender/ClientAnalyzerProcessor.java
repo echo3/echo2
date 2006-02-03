@@ -142,7 +142,6 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserInternetExplorer) {
             clientProperties.setProperty(ClientProperties.QUIRK_IE_REPAINT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
@@ -151,6 +150,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
             
             if (majorVersion < 7) {
                 clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
