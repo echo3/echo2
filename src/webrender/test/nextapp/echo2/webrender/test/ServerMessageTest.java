@@ -71,7 +71,7 @@ public class ServerMessageTest extends TestCase {
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "SomethingElse", "thing");
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-remove");
         message.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, "DomUpdate", "dom-add");
-        assertEquals(2, message.getDocument().getElementsByTagName("message-part").getLength());
+        assertEquals(3, message.getDocument().getElementsByTagName("message-part").getLength());
     }
 
     /**
