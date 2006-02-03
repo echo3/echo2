@@ -80,6 +80,10 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 
         var outputElement = document.getElementById("consoletab_output");
         outputElement.appendChild(divElement);
+        
+        var consoleElement = document.getElementById("consoletab");
+        consoleElement.scrollTop = 99 * 1000 * 1000;
+        
         EchoDebug.paneFade(divElement.getAttribute("id"));
     };
     
