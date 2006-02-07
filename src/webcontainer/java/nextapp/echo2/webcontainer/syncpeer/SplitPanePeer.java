@@ -604,6 +604,7 @@ implements DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, Compon
         int fixedPaneNumber = getTopLeftPaneNumber(splitPane);
         
         CssStyle separatorDivCssStyle = new CssStyle();
+        separatorDivCssStyle.setAttribute("z-index", "2");
         // font-size/line-height styles correct for IE minimum DIV height rendering issue.
         separatorDivCssStyle.setAttribute("font-size", "1px");
         separatorDivCssStyle.setAttribute("line-height", "0px");

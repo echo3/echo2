@@ -263,7 +263,94 @@ EchoSplitPane.mouseMove = function(e) {
         EchoSplitPane.dispose();
         return;
     }
+
+    // Redraw separator only for IE (low performance), redraw entire
+    // SplitPane for other browsers.
+	if (EchoClientProperties.get("broswerInternetExplorer")) {
+	    EchoSplitPane.redrawSeparator(e);
+	} else {
+	    EchoSplitPane.redrawContent(e);
+	}
+};
+
+/**
+ * Event handler for "MouseUp" events.
+ * Registered when drag is initiated, deregistered when drag is complete.
+ *
+ * @param e The event (only provided when using DOM Level 2 Event Model)
+ */
+EchoSplitPane.mouseUp = function(e) {
+    if (EchoSplitPane.activePaneId) {
+        e = (e) ? e : ((window.event) ? window.event : "");
     
+        EchoSplitPane.redrawContent(e);
+    
+        if (EchoSplitPane.verticalDrag) {
+            if (EchoSplitPane.topLeftPane == 1) {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.bottom);
+            } else {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.top);
+            }
+        } else {
+            if (EchoSplitPane.topLeftPane == 1) {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.right);
+            } else {
+                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
+                        EchoSplitPane.activePaneSeparatorDiv.style.left);
+            }
+        }
+    }
+    
+    EchoSplitPane.dispose();
+};
+
+/**
+ * Redraws the Separator of the split pane in the new position specified
+ * by the mouse event.
+ * This type of redrawing is used for IE browsers for performance reasons.
+ *
+ * @param e the MouseEvent.
+ */
+EchoSplitPane.redrawSeparator = function(e) {
+    var newSeparatorBegin, newSeparatorEnd;
+    if (EchoSplitPane.verticalDrag) {
+        if (EchoSplitPane.topLeftPane == 1) {
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+                    EchoSplitPane.activePaneDiv.clientHeight);
+            EchoSplitPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
+        } else {
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientY - EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+                    EchoSplitPane.activePaneDiv.clientHeight);
+            EchoSplitPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
+        }
+    } else {
+        if (EchoSplitPane.topLeftPane == 1) {
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+                    EchoSplitPane.activePaneDiv.clientWidth);
+            EchoSplitPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
+        } else {
+            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientX - EchoSplitPane.mouseOffset);
+            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
+                    EchoSplitPane.activePaneDiv.clientWidth);
+            EchoSplitPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
+        }
+    }
+};
+
+/**
+ * Redraws the SplitPane based on the new position specified by the mouse event.
+ * This method is invoked when the SplitPane is dragged on non-IE browsers.  It is
+ * invoked when the mouse is released on all browsers.
+ *
+ * @param e the MouseEvent.
+ */
+EchoSplitPane.redrawContent = function(e) {
     var newSeparatorBegin, newSeparatorEnd;
     if (EchoSplitPane.verticalDrag) {
         if (EchoSplitPane.topLeftPane == 1) {
@@ -334,38 +421,7 @@ EchoSplitPane.mouseMove = function(e) {
             }
         }
     }
-};
 
-/**
- * Event handler for "MouseUp" events.
- * Registered when drag is initiated, deregistered when drag is complete.
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoSplitPane.mouseUp = function(e) {
-    if (EchoSplitPane.activePaneId) {
-        e = (e) ? e : ((window.event) ? window.event : "");
-    
-        if (EchoSplitPane.verticalDrag) {
-            if (EchoSplitPane.topLeftPane == 1) {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.bottom);
-            } else {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.top);
-            }
-        } else {
-            if (EchoSplitPane.topLeftPane == 1) {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.right);
-            } else {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.left);
-            }
-        }
-    }
-    
-    EchoSplitPane.dispose();
 };
 
 /**
