@@ -2456,14 +2456,9 @@ EchoServerTransaction.responseHandler = function(conn) {
  * of support for setting 'left' and 'right' or 'top' and 'bottom' positions
  * simultaneously on a single document element.
  *
- * To use the Virtual Position capability, an element should be rendered with
- * one horizontal and/or vertical side positioned traditionally, e.g., by 
- * setting the "top" or "left" properties of its CSSStyleDeclaration.  The 
- * opposite side should be set using the EchoVirtualPosition object, e.g., by
- * invoking EchoVirtualPosition.setRight() and/or 
- * EchoVirtualPosition.setBottom() on the element.  Note that when the element 
- * is disposed the EchoVirtualPosition.clear() method MUST be invoked with the
- * removed element id or RESOURCES WILL BE LEAKED.
+ * To use the virtual positioning system, you must first register any elements
+ * that have should be drawn using it.  To do this, invoke the register() method
+ * with the id of the element. 
  *
  * When the HTML rendering of a component that may contain other components 
  * CHANGES IN SIZE, the EchoVirtualPosition.redraw() method MUST be invoked, or
@@ -2477,93 +2472,114 @@ EchoServerTransaction.responseHandler = function(conn) {
  */
 EchoVirtualPosition = function() { };
 
-// Position constants - internal use only.
-EchoVirtualPosition.BOTTOM = 1;
-EchoVirtualPosition.LEFT = 2;
-EchoVirtualPosition.RIGHT = 3;
-EchoVirtualPosition.TOP = 4;
-
-EchoVirtualPosition.positionMap = new EchoCollectionsMap();
+/** Array containing ids of elements registered with the virtual positioning system. */
 EchoVirtualPosition.elementIdList = new Array();
 
 /** Flag indicating whether virtual positioning is required/enabled. */
-EchoVirtualPosition.enabled = true;
+EchoVirtualPosition.enabled = false;
 
 /** 
- * Calculates the appropriate height setting for an element to simulate the 
- * specified top/bottom settings.  The calculation makes allowances for padding
- * and margins.
+ * Determines if the specified value contains a pixel dimension, e.g., "20px"
+ * Returns false if the value is null/whitespace/undefined.
+ *
+ * @param value the value to evaluate
+ * @return true if the value is a pixel dimension, false if it is not
+ */
+EchoVirtualPosition.verifyPixelValue = function(value) {
+    if (value == null || value == "" || value == undefined) {
+        return false;
+    }
+    var valueString = value.toString();
+    return valueString == "0" || valueString.indexOf("px") != -1;
+};
+
+/** 
+ * Determines if the specified value contains a pixel dimension, e.g., "20px"
+ * Returns true if the value is null/whitespace/undefined.
+ *
+ * @param value the value to evaluate
+ * @return true if the value is null or a pixel dimension, false if it is not
+ */
+EchoVirtualPosition.verifyPixelOrUndefinedValue = function(value) {
+    if (value == null || value == "" || value == undefined) {
+        return true;
+    }
+    var valueString = value.toString();
+    return valueString == "0" || valueString.indexOf("px") != -1;
+};
+
+/** 
+ * Adjusts the style.height attribute of an element to simulate its specified
+ * top/bottom settings.  The calculation makes allowances for padding
+ * and margin.
  *
  * @param element the element whose height setting is to be calculated
- * @param virtualPositionSide a position constant, either 
- *        EchoVirtualPosition.BOTTOM or EchoVirtualPosition.TOP, specifying
- *        which side uses virtual positioning.
  *
  * This method is for internal use only by EchoVirtualPosition.
  */
-EchoVirtualPosition.calculateHeight = function(element, virtualPositionSide) {
+EchoVirtualPosition.adjustHeight = function(element) {
+    if (!EchoVirtualPosition.verifyPixelValue(element.style.top)
+            || !EchoVirtualPosition.verifyPixelValue(element.style.bottom)) {
+        // Positioning on one side only or non-pixel-based positions: do nothing.
+        return;
+    }
+    if (!EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)) {
+        // Element has non-pixel padding or margins: do nothing.
+        return;
+    }
     var parentHeight = element.parentNode.offsetHeight;
-    var elementData = EchoVirtualPosition.positionMap.get(element.id);
-    var virtualSidePixels = virtualPositionSide == EchoVirtualPosition.TOP ? elementData.top : elementData.bottom;
-    var otherSidePixels = EchoVirtualPosition.parsePx(
-            virtualPositionSide == EchoVirtualPosition.TOP ? element.style.bottom : element.style.top);
-    var paddingPixels = EchoVirtualPosition.parsePx(element.style.paddingTop) 
-            + EchoVirtualPosition.parsePx(element.style.paddingBottom);
-    var marginPixels = EchoVirtualPosition.parsePx(element.style.marginTop) 
-            + EchoVirtualPosition.parsePx(element.style.marginBottom);
-    var calculatedHeight = parentHeight - virtualSidePixels - otherSidePixels - paddingPixels - marginPixels;
+    var topPixels = parseInt(element.style.top);
+    var bottomPixels = parseInt(element.style.bottom);
+    var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) 
+            + EchoVirtualPosition.toInteger(element.style.paddingBottom);
+    var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
+            + EchoVirtualPosition.toInteger(element.style.marginBottom);
+    var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels;
     if (calculatedHeight <= 0) {
-        return 0;
+        element.style.height = 0;
     } else {
-        return calculatedHeight + "px";
+        element.style.height = calculatedHeight + "px";
     }
 };
 
 /** 
- * Calculates the appropriate width setting for an element to simulate the 
- * specified left/right settings.  The calculation makes allowances for padding
- * and margins.
+ * Adjusts the style.width attribute of an element to simulate its specified
+ * left/right settings.  The calculation makes allowances for padding
+ * and margin.
  *
  * @param element the element whose height setting is to be calculated
- * @param virtualPositionSide a position constant, either 
- *        EchoVirtualPosition.RIGHT or EchoVirtualPosition.LEFT, specifying
- *        which side uses virtual positioning.
  *
  * This method is for internal use only by EchoVirtualPosition.
  */
-EchoVirtualPosition.calculateWidth = function(element, virtualPositionSide) {
+EchoVirtualPosition.adjustWidth = function(element) {
+    if (!EchoVirtualPosition.verifyPixelValue(element.style.left)
+            || !EchoVirtualPosition.verifyPixelValue(element.style.right)) {
+        // Positioning on one side only or non-pixel-based positions: do nothing.
+        return;
+    }
+    if (!EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)) {
+        // Element has non-pixel padding or margins: do nothing.
+        return;
+    }
     var parentWidth = element.parentNode.offsetWidth;
-    var elementData = EchoVirtualPosition.positionMap.get(element.id);
-    var virtualSidePixels = virtualPositionSide == EchoVirtualPosition.LEFT ? elementData.left : elementData.right;
-    var otherSidePixels = EchoVirtualPosition.parsePx(
-            virtualPositionSide == EchoVirtualPosition.LEFT ? element.style.right : element.style.left);
-    var paddingPixels = EchoVirtualPosition.parsePx(element.style.paddingLeft) 
-            + EchoVirtualPosition.parsePx(element.style.paddingRight);
-    var marginPixels = EchoVirtualPosition.parsePx(element.style.marginLeft) 
-            + EchoVirtualPosition.parsePx(element.style.marginRight);
-    var calculatedWidth = parentWidth - virtualSidePixels - otherSidePixels - paddingPixels - marginPixels;
+    var leftPixels = parseInt(element.style.left);
+    var rightPixels = parseInt(element.style.right);
+    var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) 
+            + EchoVirtualPosition.toInteger(element.style.paddingRight);
+    var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
+            + EchoVirtualPosition.toInteger(element.style.marginRight);
+    var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels;
     if (calculatedWidth <= 0) {
-        return 0;
+        element.style.width = 0;
     } else {
-        return calculatedWidth + "px";
+        element.style.width = calculatedWidth + "px";
     }
-};
-
-/**
- * Creates or retrieves the ElementData object corresponding to a specific
- * element id.
- *
- * @param the elementId the id of the element
- * @return the retrieved/created ElementData
- */
-EchoVirtualPosition.createOrRetrieveElementData = function(elementId) {
-    var elementData = EchoVirtualPosition.positionMap.get(elementId);
-    if (!elementData) {
-        elementData = new EchoVirtualPosition.ElementData();
-        EchoVirtualPosition.positionMap.put(elementId, elementData);
-        EchoVirtualPosition.elementIdList.push(elementId);
-    }
-    return elementData;
 };
 
 /**
@@ -2574,128 +2590,80 @@ EchoVirtualPosition.init = function() {
     EchoDomUtil.addEventListener(window, "resize", EchoVirtualPosition.resizeListener, false);
 };
 
-EchoVirtualPosition.parsePx = function(value) {
+/**
+ * Parses the specified value as an integer, returning 0 in the event the
+ * specified value cannot be expressed as a number.
+ *
+ * @param value the value to parse, e.g., "20px"
+ * @return the value as a integer, e.g., '20'
+ */
+EchoVirtualPosition.toInteger = function(value) {
     value = parseInt(value);
     return isNaN(value) ? 0 : value;
 };
 
-EchoVirtualPosition.redraw = function(elementId) {
+/**
+ * Redraws elements registered with the virtual positioning system.
+ *
+ * @param element (optional) the element to redraw; if unspecified, 
+ *        all elements will be redrawn.
+ */
+EchoVirtualPosition.redraw = function(element) {
     if (!EchoVirtualPosition.enabled) {
         return;
     }
-    for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
-        var elementId = EchoVirtualPosition.elementIdList[i];
-        EchoVirtualPosition.redrawElement(elementId);
+    
+    var removedIds = null;
+    
+    if (element != undefined) {
+        EchoVirtualPosition.adjustWidth(element);
+        EchoVirtualPosition.adjustHeight(element);
+    } else {
+        for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+            element = document.getElementById(EchoVirtualPosition.elementIdList[i]);
+            if (element) {
+                EchoVirtualPosition.adjustWidth(element);
+                EchoVirtualPosition.adjustHeight(element);
+            } else {
+                if (removedIds == null) {
+                    removedIds = new Array();
+                }
+                removedIds.push(EchoVirtualPosition.elementIdList[i]);
+            }
+        }
+        
+        if (removedIds != null) {
+            //RECREATE LIST OF IDS.....currently this is a client-side memory leak.
+        }
     }
 }
 
-EchoVirtualPosition.redrawElement = function(elementId) {
+/**
+ * Registers an element to be drawn using the virtual positioning system.
+ * The element must meet the following criteria:
+ * <ul>
+ *  <li>Margins and paddings, if set, must be set in pixel units.
+ *  <li>Top, bottom, left, and right coordinates, if set, must be set in pixel 
+ *   units.</li>
+ * </ul>
+ *
+ * @param elementId the elementId to register
+ */
+EchoVirtualPosition.register = function(elementId) {
     if (!EchoVirtualPosition.enabled) {
         return;
     }
-    var element = document.getElementById(elementId);
-    if (!element) {
-        return;
-    }
-    var elementData = EchoVirtualPosition.positionMap.get(elementId);
-    if (elementData.bottom != null) {
-        element.style.height = EchoVirtualPosition.calculateHeight(element, EchoVirtualPosition.BOTTOM);
-    } else if (elementData.top != null) {
-        element.style.height = EchoVirtualPosition.calculateHeight(element, EchoVirtualPosition.TOP);
-    }
-    if (elementData.right != null) {
-        element.style.width = EchoVirtualPosition.calculateWidth(element, EchoVirtualPosition.RIGHT);
-    } else if (elementData.left != null) {
-        element.style.width = EchoVirtualPosition.calculateWidth(element, EchoVirtualPosition.LEFT);
-    }
+    EchoVirtualPosition.elementIdList.push(elementId);
 };
 
+/**
+ * Lisetener to receive "resize" events from containing browser window.
+ * 
+ * @param e the DOM2 resize event
+ */
 EchoVirtualPosition.resizeListener = function(e) {
     e = e ? e : window.event;
     EchoVirtualPosition.redraw();
-};
-
-EchoVirtualPosition.clear = function(elementId) {
-    if (!EchoVirtualPosition.enabled) {
-        return;
-    }
-
-    var i, index = null;
-
-    // Remove element from mapping.
-    EchoVirtualPosition.positionMap.remove(elementId);
-
-    // Find index of elementId in elementIdList
-    for (i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
-        if (EchoVirtualPosition.elementIdList[i] == elementId) {
-            index = i;
-            break;
-        }
-    }
-    if (index == null) {
-        return;
-    }
-    
-    // Remove index from elementIdList
-    for (i = index; i < EchoVirtualPosition.elementIdList.length - 1; ++i) {
-        EchoVirtualPosition.elementIdList[i] = EchoVirtualPosition.elementIdList[i + 1];
-    }
-    EchoVirtualPosition.elementIdList.length = EchoVirtualPosition.elementIdList.length - 1;
-};
-
-EchoVirtualPosition.setBottom = function(element, bottomPixels) {
-    if (EchoVirtualPosition.enabled) {
-        // IE6 browser.
-        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
-        elementData.bottom = bottomPixels;
-    } else {
-        // Normal browser.
-        element.style.bottom = bottomPixels + "px";
-    }
-};
-
-EchoVirtualPosition.setLeft = function(element, leftPixels) {
-    if (EchoVirtualPosition.enabled) {
-        // IE6 browser.
-        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
-        elementData.left = leftPixels;
-    } else {
-        // Normal browser.
-        element.style.left = leftPixels + "px";
-    }
-};
-
-EchoVirtualPosition.setRight = function(element, rightPixels) {
-    if (EchoVirtualPosition.enabled) {
-        // IE6 browser.
-        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
-        elementData.right = rightPixels;
-    } else {
-        // Normal browser.
-        element.style.right = rightPixels + "px";
-    }
-};
-
-EchoVirtualPosition.setTop = function(element, topPixels) {
-    if (EchoVirtualPosition.enabled) {
-        // IE6 browser.
-        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
-        elementData.top = topPixels;
-    } else {
-        // Normal browser.
-        element.style.top = topPixels + "px";
-    }
-};
-    
-EchoVirtualPosition.ElementData = function() {
-    this.top = null;
-    this.bottom = null;
-    this.left = null;
-    this.right = null;
-};
-
-EchoVirtualPosition.ElementData.prototype.toString = function() {
-    return this.top + " " + this.right + " " + this.bottom + " "  + this.left + " ";
 };
 
 // _______________________

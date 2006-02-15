@@ -114,16 +114,16 @@ EchoSplitPane.prototype.create = function() {
     case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
         paneDivElements[0].style.top = "0px";
         paneDivElements[0].style.left = "0px";
-        EchoVirtualPosition.setRight(paneDivElements[0], 0);
+        paneDivElements[0].style.right = "0px";
         
-        EchoVirtualPosition.setBottom(paneDivElements[1], 0);
+        paneDivElements[1].style.bottom = "0px";
         paneDivElements[1].style.left = "0px";
-        EchoVirtualPosition.setRight(paneDivElements[1], 0);
+        paneDivElements[1].style.right = "0px";
         
         if (separatorDivElement) {
             separatorDivElement.style.height = this.separatorSize + "px";
             separatorDivElement.style.left = "0px";
-            EchoVirtualPosition.setRight(separatorDivElement, 0);
+            separatorDivElement.style.right = "0px";
             if (this.resizable) {
                 separatorDivElement.style.cursor = "n-resize";
             }
@@ -132,16 +132,16 @@ EchoSplitPane.prototype.create = function() {
     case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
         paneDivElements[0].style.bottom = "0px";
         paneDivElements[0].style.left = "0px";
-        EchoVirtualPosition.setRight(paneDivElements[0], 0);
+        paneDivElements[0].style.right = "0px";
 
-        EchoVirtualPosition.setTop(paneDivElements[1], 0);
+        paneDivElements[1].style.top = "0px";
         paneDivElements[1].style.left = "0px";
-        EchoVirtualPosition.setRight(paneDivElements[1], 0);
+        paneDivElements[1].style.right = "0px";
         
         if (separatorDivElement) {
             separatorDivElement.style.height = this.separatorSize + "px";
             separatorDivElement.style.left = "0px";
-            EchoVirtualPosition.setRight(separatorDivElement, 0);
+            separatorDivElement.style.right = "0px";
             if (this.resizable) {
                 separatorDivElement.style.cursor = "s-resize";
             }
@@ -149,17 +149,17 @@ EchoSplitPane.prototype.create = function() {
         break;
     case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
         paneDivElements[0].style.top = "0px";
-        EchoVirtualPosition.setBottom(paneDivElements[0], 0);
+        paneDivElements[0].style.bottom = "0px";
         paneDivElements[0].style.left = "0px";
         
-        EchoVirtualPosition.setRight(paneDivElements[1], 0);
         paneDivElements[1].style.top = "0px";
-        EchoVirtualPosition.setBottom(paneDivElements[1], 0);
+        paneDivElements[1].style.bottom = "0px";
+        paneDivElements[1].style.right = "0px";
         
         if (separatorDivElement) {
             separatorDivElement.style.width = this.separatorSize + "px";
             separatorDivElement.style.top = "0px";
-            EchoVirtualPosition.setBottom(separatorDivElement, 0);
+            separatorDivElement.style.bottom = "0px";
             if (this.resizable) {
                 separatorDivElement.style.cursor = "w-resize";
             }
@@ -167,17 +167,17 @@ EchoSplitPane.prototype.create = function() {
         break;
     case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
         paneDivElements[0].style.top = "0px";
-        EchoVirtualPosition.setBottom(paneDivElements[0], 0);
+        paneDivElements[0].style.bottom = "0px";
         paneDivElements[0].style.right = "0px";
         
-        EchoVirtualPosition.setLeft(paneDivElements[1], 0);
         paneDivElements[1].style.top = "0px";
-        EchoVirtualPosition.setBottom(paneDivElements[1], 0);
+        paneDivElements[1].style.bottom = "0px";
+        paneDivElements[1].style.left = "0px";
         
         if (separatorDivElement) {
             separatorDivElement.style.width = this.separatorSize + "px";
             separatorDivElement.style.top = "0px";
-            EchoVirtualPosition.setBottom(separatorDivElement, 0);
+            separatorDivElement.style.bottom = "0px";
             if (this.resizable) {
                 separatorDivElement.style.cursor = "e-resize";
             }
@@ -197,6 +197,12 @@ EchoSplitPane.prototype.create = function() {
     
     containerElement.appendChild(splitPaneDivElement);
     
+    EchoVirtualPosition.register(paneDivElements[0].id);
+    EchoVirtualPosition.register(paneDivElements[1].id);
+    if (separatorDivElement) {
+        EchoVirtualPosition.register(separatorDivElement.id);
+    }
+    
     EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
     
     if (separatorDivElement && this.resizable) {
@@ -205,10 +211,6 @@ EchoSplitPane.prototype.create = function() {
 };
 
 EchoSplitPane.prototype.dispose = function() {
-    EchoVirtualPosition.clear(this.elementId + "_pane0");
-    EchoVirtualPosition.clear(this.elementId + "_pane1");
-    EchoVirtualPosition.clear(this.elementId + "_separator");
-
     EchoEventProcessor.removeHandler(this.elementId + "_separator", "mousedown");
     EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);

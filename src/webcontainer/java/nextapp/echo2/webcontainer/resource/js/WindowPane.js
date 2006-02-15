@@ -387,9 +387,9 @@ EchoWindowPane.prototype.create = function() {
     }
     contentDivElement.style.top = (this.border.contentInsets.top + this.titleHeight) + "px";
     contentDivElement.style.left = this.border.contentInsets.left + "px";
-
-    EchoVirtualPosition.setRight(contentDivElement, this.border.contentInsets.right);    
-    EchoVirtualPosition.setBottom(contentDivElement, this.border.contentInsets.bottom);    
+    contentDivElement.style.right = this.border.contentInsets.right + "px";
+    contentDivElement.style.bottom = this.border.contentInsets.bottom + "px";
+    EchoVirtualPosition.register(contentDivElement.id);
     
     contentDivElement.style.overflow = "auto";
     if (this.insets != null) {
@@ -428,7 +428,6 @@ EchoWindowPane.prototype.create = function() {
 };
 
 EchoWindowPane.prototype.dispose = function() {
-    EchoVirtualPosition.clear(this.elementId + "_content");
     EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
     EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
@@ -605,7 +604,9 @@ EchoWindowPane.prototype.redraw = function() {
     borderLDivElement.style.height = borderSideHeight + "px";
     borderRDivElement.style.height = borderSideHeight + "px";
     
-    EchoVirtualPosition.redrawElement(this.elementId + "_content");
+    var contentElement = document.getElementById(this.elementId + "_content");
+    
+    EchoVirtualPosition.redraw(contentElement);
 }
 
 EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
