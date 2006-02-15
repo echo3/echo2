@@ -75,7 +75,7 @@ EchoWindowPane = function(elementId, containerElementId) {
     this.width = EchoWindowPane.DEFAULT_WIDTH;
 };
 
-EchoWindowPane.activeDragElementId = null;
+EchoWindowPane.activeInstance = null;
 
 /**
  * Id suffixes of border elements.
@@ -462,7 +462,7 @@ EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
     }
     EchoDomUtil.preventEventDefault(echoEvent);
     this.raise();
-    EchoWindowPane.activeDragElementId = this.elementId;
+    EchoWindowPane.activeInstance = this;
     this.resizingBorderElementId = echoEvent.registeredTarget.id;
     this.dragInitPositionX = this.positionX;
     this.dragInitPositionY = this.positionY;
@@ -525,7 +525,7 @@ EchoWindowPane.prototype.processBorderMouseUp = function(e) {
     EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
     this.resizingBorderElementId = null;
-    EchoWindowPane.activeDragElementId = null;
+    EchoWindowPane.activeInstance = null;
     
     EchoClientMessage.setPropertyValue(this.elementId, "positionX", this.positionX + "px");
     EchoClientMessage.setPropertyValue(this.elementId, "positionY", this.positionY + "px");
@@ -548,7 +548,7 @@ EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
         return;
     }
     this.raise();
-    EchoWindowPane.activeDragElementId = this.elementId;
+    EchoWindowPane.activeInstance = this;
     var windowPaneDivElement = document.getElementById(this.elementId);
     this.dragInitPositionX = this.positionX;
     this.dragInitPositionY = this.positionY;
@@ -567,7 +567,7 @@ EchoWindowPane.prototype.processTitleBarMouseMove = function(e) {
 EchoWindowPane.prototype.processTitleBarMouseUp = function(e) {
     EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
-    EchoWindowPane.activeDragElementId = null;
+    EchoWindowPane.activeInstance = null;
     
     EchoClientMessage.setPropertyValue(this.elementId, "positionX", this.positionX + "px");
     EchoClientMessage.setPropertyValue(this.elementId, "positionY", this.positionY + "px");
@@ -668,17 +668,15 @@ EchoWindowPane.processBorderMouseDown = function(echoEvent) {
 
 EchoWindowPane.processBorderMouseMove = function(e) {
     e = e ? e : window.event;
-    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
-    if (windowPane) {
-	    windowPane.processBorderMouseMove(e);
+    if (EchoWindowPane.activeInstance) {
+	    EchoWindowPane.activeInstance.processBorderMouseMove(e);
     }
 };
 
 EchoWindowPane.processBorderMouseUp = function(e) {
     e = e ? e : window.event;
-    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
-    if (windowPane) {
-        windowPane.processBorderMouseUp(e);
+    if (EchoWindowPane.activeInstance) {
+        EchoWindowPane.activeInstance.processBorderMouseUp(e);
     }
 };
 
@@ -704,17 +702,15 @@ EchoWindowPane.processTitleBarMouseDown = function(echoEvent) {
 
 EchoWindowPane.processTitleBarMouseMove = function(e) {
     e = e ? e : window.event;
-    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
-    if (windowPane) {
-        windowPane.processTitleBarMouseMove(e);
+    if (EchoWindowPane.activeInstance) {
+        EchoWindowPane.activeInstance.processTitleBarMouseMove(e);
     }
 };
 
 EchoWindowPane.processTitleBarMouseUp = function(e) {
     e = e ? e : window.event;
-    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
-    if (windowPane) {
-        windowPane.processTitleBarMouseUp(e);
+    if (EchoWindowPane.activeInstance) {
+        EchoWindowPane.activeInstance.processTitleBarMouseUp(e);
     }
 };
 

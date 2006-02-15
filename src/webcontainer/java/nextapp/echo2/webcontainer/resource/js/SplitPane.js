@@ -48,6 +48,8 @@ EchoSplitPane = function(elementId, containerElementId, orientation, position) {
     this.paneData = new Array(new EchoSplitPane.PaneData(), new EchoSplitPane.PaneData());
 };
 
+EchoSplitPane.activeInstance = null;
+
 EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM = 0;
 EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP = 1;
 EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT = 2;
@@ -208,8 +210,8 @@ EchoSplitPane.prototype.dispose = function() {
     EchoVirtualPosition.clear(this.elementId + "_separator");
 
     EchoEventProcessor.removeHandler(this.elementId + "_separator", "mousedown");
-    EchoEventProcessor.removeHandler(this.elementId, "mousemove");
-    EchoEventProcessor.removeHandler(this.elementId, "mouseup");
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
 };
 
 EchoSplitPane.prototype.isOrientationVertical = function() {
@@ -218,39 +220,42 @@ EchoSplitPane.prototype.isOrientationVertical = function() {
 };
 
 EchoSplitPane.prototype.processSeparatorMouseDown = function(echoEvent) {
+    EchoSplitPane.activeInstance = this;
     this.dragInitPosition = this.position;
     if (this.isOrientationVertical()) {
         this.dragInitMouseOffset = echoEvent.clientY;
     } else {
         this.dragInitMouseOffset = echoEvent.clientX;
     }
-    EchoEventProcessor.addHandler(this.elementId, "mousemove", "EchoSplitPane.processSeparatorMouseMove");
-    EchoEventProcessor.addHandler(this.elementId, "mouseup", "EchoSplitPane.processSeparatorMouseUp");
+    
+    EchoDomUtil.addEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
+    EchoDomUtil.addEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
 };
 
-EchoSplitPane.prototype.processSeparatorMouseUp = function(echoEvent) {
-    EchoEventProcessor.removeHandler(this.elementId, "mousemove");
-    EchoEventProcessor.removeHandler(this.elementId, "mouseup");
-    EchoClientMessage.setPropertyValue(this.elementId, "separatorPosition",  this.position + "px");
-    EchoVirtualPosition.redraw();
-};
-
-EchoSplitPane.prototype.processSeparatorMouseMove = function(echoEvent) {
+EchoSplitPane.prototype.processSeparatorMouseMove = function(e) {
     switch (this.orientation) {
     case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
-        this.setPosition(this.dragInitPosition + echoEvent.clientY - this.dragInitMouseOffset);
+        this.setPosition(this.dragInitPosition + e.clientY - this.dragInitMouseOffset);
         break;
     case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
-        this.setPosition(this.dragInitPosition - echoEvent.clientY + this.dragInitMouseOffset);
+        this.setPosition(this.dragInitPosition - e.clientY + this.dragInitMouseOffset);
         break;
     case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
-        this.setPosition(this.dragInitPosition + echoEvent.clientX - this.dragInitMouseOffset);
+        this.setPosition(this.dragInitPosition + e.clientX - this.dragInitMouseOffset);
         break;
     case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
-        this.setPosition(this.dragInitPosition - echoEvent.clientX + this.dragInitMouseOffset);
+        this.setPosition(this.dragInitPosition - e.clientX + this.dragInitMouseOffset);
         break;
     }
     this.update();
+};
+
+EchoSplitPane.prototype.processSeparatorMouseUp = function(e) {
+    EchoSplitPane.activeInstance = null;
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+    EchoClientMessage.setPropertyValue(this.elementId, "separatorPosition",  this.position + "px");
+    EchoVirtualPosition.redraw();
 };
 
 EchoSplitPane.prototype.resetPane = function(index) {
@@ -272,11 +277,11 @@ EchoSplitPane.prototype.setPosition = function(newValue) {
     var vertical = this.isOrientationVertical();
     var totalSize = vertical ? divElement.offsetHeight : divElement.offsetWidth;
     
-    if (this.paneData[0].minimumSize != -1 && newValue < this.paneData[0].minimumSize) {
+    if (newValue < this.paneData[0].minimumSize) {
 	    this.position = this.paneData[0].minimumSize;
     } else if (this.paneData[0].maximumSize != -1 && newValue > this.paneData[0].maximumSize) {
 	    this.position = this.paneData[0].maximumSize;
-    } else if (this.paneData[1].minimumSize != -1 && newValue > totalSize - this.paneData[1].minimumSize - this.separatorSize) {
+    } else if (newValue > totalSize - this.paneData[1].minimumSize - this.separatorSize) {
 	    this.position = totalSize - this.paneData[1].minimumSize - this.separatorSize
     } else if (this.paneData[1].maximumSize != -1 && newValue < totalSize - this.paneData[1].maximumSize - this.separatorSize) {
 	    this.position = totalSize - this.paneData[1].maximumSize - this.separatorSize;
@@ -348,16 +353,18 @@ EchoSplitPane.processSeparatorMouseDown = function(echoEvent) {
     splitPane.processSeparatorMouseDown(echoEvent);
 };
 
-EchoSplitPane.processSeparatorMouseMove = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var splitPane = EchoSplitPane.getComponent(componentId);
-    splitPane.processSeparatorMouseMove(echoEvent);
+EchoSplitPane.processSeparatorMouseMove = function(e) {
+    e = e ? e : window.event;
+    if (EchoSplitPane.activeInstance) {
+	    EchoSplitPane.activeInstance.processSeparatorMouseMove(e);
+    }
 };
 
-EchoSplitPane.processSeparatorMouseUp = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var splitPane = EchoSplitPane.getComponent(componentId);
-    splitPane.processSeparatorMouseUp(echoEvent);
+EchoSplitPane.processSeparatorMouseUp = function(e) {
+    e = e ? e : window.event;
+    if (EchoSplitPane.activeInstance) {
+	    EchoSplitPane.activeInstance.processSeparatorMouseUp(e);
+    }
 };
 
 /**
@@ -546,7 +553,7 @@ EchoSplitPane.PaneData = function() {
     this.background = null;
     this.backgroundImage = null;
     this.insets = null;
-    this.minimumSize = -1;
+    this.minimumSize = 0;
     this.maximumSize = -1;
     this.overflow = null;
 };
