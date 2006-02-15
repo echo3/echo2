@@ -185,6 +185,10 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
             }
         }
         
+        tdElement = EchoDebug.Status.addItem("Virtual CSS Positioning");
+        tdElement.appendChild(document.createTextNode(
+                window.opener.EchoVirtualPosition.enabled ? "Enabled" : "Disabled (Browser Supports CSS Positiioning Natively)"));
+
         tdElement = EchoDebug.Status.addItem("Safari DOM Attribute Fix");
         tdElement.appendChild(document.createTextNode(
                 window.opener.EchoServerMessage.enableFixSafariAttrs ? "Enabled" : "Disabled"));

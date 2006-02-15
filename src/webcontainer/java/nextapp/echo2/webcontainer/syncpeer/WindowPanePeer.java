@@ -29,45 +29,39 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
+import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
-import nextapp.echo2.webcontainer.DomUpdateSupport;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
-import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
-import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
+import nextapp.echo2.webcontainer.image.ImageTools;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
-import nextapp.echo2.webcontainer.propertyrender.ImageReferenceRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
-import nextapp.echo2.webrender.util.DomUtil;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.app.WindowPane</code>
@@ -76,8 +70,8 @@ import nextapp.echo2.webrender.util.DomUtil;
  * This class should not be extended or used by classes outside of the Echo
  * framework.
  */
-public class WindowPanePeer 
-implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
+public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
+        PropertyUpdateProcessor, ComponentSynchronizePeer {
 
     /**
      * A boolean property which may be assigned to <code>WindowPane</code>s
@@ -88,19 +82,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public static final String PROPERTY_IE_ALPHA_RENDER_BORDER
             = "nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder";
     
-    private static final Insets DEFAULT_CONTENT_INSETS = new Insets(3);
-    private static final Insets DEFAULT_TITLE_INSETS = new Insets(4);
-    private static final FillImageBorder DEFAULT_BORDER 
-            = new FillImageBorder(new Color(0x00007f), new Insets(20), DEFAULT_CONTENT_INSETS);
-    private static final Color DEFAULT_TITLE_BACKGROUND = new Color(0x005faf);
-    private static final Color DEFAULT_TITLE_FOREGROUND = Color.WHITE;
-    private static final Extent DEFAULT_POSITION_X = new Extent(64, Extent.PX);
-    private static final Extent DEFAULT_POSITION_Y = new Extent(64, Extent.PX);
-    private static final String DEFAULT_WIDTH = "512px";
-    private static final String DEFAULT_HEIGHT = "256px";
     private static final String IMAGE_ID_TITLE_BACKGROUND = "titleBackground";
     private static final String IMAGE_ID_CLOSE_ICON = "close";
     private static final String IMAGE_ID_ICON = "icon";
+    private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_BORDER_TOP_LEFT = "borderTopLeft";
     private static final String IMAGE_ID_BORDER_TOP = "borderTop";
     private static final String IMAGE_ID_BORDER_TOP_RIGHT = "borderTopRight";
@@ -113,6 +98,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final ImageReference DEFAULT_CLOSE_ICON = new ResourceImageReference(
             "/nextapp/echo2/webcontainer/resource/image/DefaultCloseButton.gif");
 
+    private static final String[] FILL_IMAGE_NAMES = {"tl", "t", "tr", "l", "r", "bl", "b", "br"};
+    private static final String[] FILL_IMAGE_IDS = {
+            IMAGE_ID_BORDER_TOP_LEFT, IMAGE_ID_BORDER_TOP, IMAGE_ID_BORDER_TOP_RIGHT, IMAGE_ID_BORDER_LEFT,
+            IMAGE_ID_BORDER_RIGHT, IMAGE_ID_BORDER_BOTTOM_LEFT, IMAGE_ID_BORDER_BOTTOM, IMAGE_ID_BORDER_BOTTOM_RIGHT };
+    
     /**
      * Service to provide supporting JavaScript library.
      */
@@ -123,13 +113,33 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         WebRenderServlet.getServiceRegistry().add(WINDOW_PANE_SERVICE);
     }
 
+    private static void renderPixelProperty(WindowPane windowPane, String propertyName, Element element, String attributeName) {
+        String pixelValue;
+        Extent extent = (Extent) windowPane.getRenderProperty(propertyName);
+        if (extent != null) {
+            pixelValue = ExtentRender.renderCssAttributePixelValue(extent);
+            if (pixelValue != null) {
+                element.setAttribute(attributeName, pixelValue);
+            }
+        }
+    }
+    
+    private PartialUpdateManager partialUpdateManager;
+
+    /**
+     * Default constructor.
+     */
+    public WindowPanePeer() {
+        super();
+        partialUpdateManager = new PartialUpdateManager();    }
+    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         return ContainerInstance.getElementId(child.getParent()) + "_content";
     }
-
+    
     /**
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component,
      *      java.lang.String)
@@ -137,6 +147,9 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     public ImageReference getImage(Component component, String imageId) {
         if (IMAGE_ID_TITLE_BACKGROUND.equals(imageId)) {
             FillImage backgroundImage = (FillImage) component.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE);
+            return backgroundImage == null ? null : backgroundImage.getImage();
+        } else if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(WindowPane.PROPERTY_BACKGROUND_IMAGE);
             return backgroundImage == null ? null : backgroundImage.getImage();
         } else if (IMAGE_ID_ICON.equals(imageId)) {
             return (ImageReference) component.getRenderProperty(WindowPane.PROPERTY_ICON);
@@ -227,222 +240,23 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         }
     }
 
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String,
      *      nextapp.echo2.app.Component)
      */
-    public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
-        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-        renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, targetId, htmlFragment);
-    }
-
-    /**
-     * Renders the <code>FillImageBorder</code> as HTML.
-     * 
-     * @param rc the relevant <code>RenderContext</code>
-     * @param windowDivElement the main DIV element of the window
-     * @param windowPane the <code>WindowPane</code> instance
-     */
-    private void renderBorder(RenderContext rc, Element windowDivElement, WindowPane windowPane) {
-        FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
-        Color borderColor = border.getColor();
-        Insets borderInsets = border.getBorderInsets() == null ? new Insets(0) : border.getBorderInsets();
-        Document document = rc.getServerMessage().getDocument();
-        String elementId = ContainerInstance.getElementId(windowPane);
-        boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
-
-        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
-        boolean renderSizeExpression = !renderPositioningBothSides
-                && rc.getContainerInstance().getClientProperties().getBoolean(
-                        ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
-        int borderTopPixels = ExtentRender.toPixels(borderInsets.getTop(), 0);
-        int borderLeftPixels = ExtentRender.toPixels(borderInsets.getLeft(), 0);
-        int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
-        int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
-        int borderVerticalPixels = borderTopPixels + borderBottomPixels;
-        int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
-        
-        int fillImageRenderFlags = ((Boolean) windowPane.getRenderProperty(PROPERTY_IE_ALPHA_RENDER_BORDER, 
-                Boolean.FALSE)).booleanValue() ? FillImageRender.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
-
-        // Top Left Corner
-        Element borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_tl");
-        CssStyle borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", "0px");
-        borderCssStyle.setAttribute("left", "0px");
-        borderCssStyle.setAttribute("height", borderTopPixels + "px");
-        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "nw-resize");
+    public void renderAdd(RenderContext rc, ServerComponentUpdate update,
+            String targetId, Component component) {
+        ServerMessage serverMessage = rc.getServerMessage();
+        serverMessage.addLibrary(WINDOW_PANE_SERVICE.getId());
+        WindowPane windowPane = (WindowPane) component;
+        renderInitDirective(rc, windowPane, targetId);
+        Component[] children = windowPane.getVisibleComponents();
+        if (children.length != 0) {
+            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(children[0].getClass());
+            syncPeer.renderAdd(rc, update, getContainerId(children[0]), children[0]);
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP_LEFT, border
-                .getFillImage(FillImageBorder.TOP_LEFT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Top Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_t");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", "0px");
-        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
-        borderCssStyle.setAttribute("height", borderTopPixels + "px");
-        if (renderPositioningBothSides) {
-            borderCssStyle.setAttribute("right", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').offsetWidth-"
-                    + (borderHorizontalPixels) + ")+'px')");
-        }
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "n-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP, border
-                .getFillImage(FillImageBorder.TOP), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Top Right Corner
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_tr");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", "0px");
-        borderCssStyle.setAttribute("right", "0px");
-        borderCssStyle.setAttribute("height", borderTopPixels + "px");
-        borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "ne-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_TOP_RIGHT, border
-                .getFillImage(FillImageBorder.TOP_RIGHT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Left Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_l");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", borderTopPixels + "px");
-        borderCssStyle.setAttribute("left", "0px");
-        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        if (renderPositioningBothSides) {
-            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').offsetHeight-"
-                    + (borderVerticalPixels) + ")+'px')");
-
-        }
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "w-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_LEFT, border
-                .getFillImage(FillImageBorder.LEFT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Right Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_r");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", borderTopPixels + "px");
-        borderCssStyle.setAttribute("right", "0px");
-        borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        if (renderPositioningBothSides) {
-            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').offsetHeight-"
-                    + (borderVerticalPixels) + ")+'px')");
-
-        }
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "e-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_RIGHT, border
-                .getFillImage(FillImageBorder.RIGHT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Bottom Left Corner
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_bl");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("bottom", "0px");
-        borderCssStyle.setAttribute("left", "0px");
-        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "sw-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM_LEFT, border
-                .getFillImage(FillImageBorder.BOTTOM_LEFT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Bottom Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_b");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("bottom", "0px");
-        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
-        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-        if (renderPositioningBothSides) {
-            borderCssStyle.setAttribute("right", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').offsetWidth-"
-                    + (borderHorizontalPixels) + ")+'px')");
-
-        }
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "s-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM, border
-                .getFillImage(FillImageBorder.BOTTOM), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Bottom Right Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_br");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("bottom", "0px");
-        borderCssStyle.setAttribute("right", "0px");
-        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-        borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        if (resizable) {
-            borderCssStyle.setAttribute("cursor", "se-resize");
-        }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, windowPane, IMAGE_ID_BORDER_BOTTOM_RIGHT, border
-                .getFillImage(FillImageBorder.BOTTOM_RIGHT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
     }
 
     /**
@@ -450,301 +264,202 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.app.update.ServerComponentUpdate,
      *      nextapp.echo2.app.Component)
      */
-    public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        rc.getServerMessage().addLibrary(WINDOW_PANE_SERVICE.getId());
-        renderDisposeDirective(rc, (WindowPane) component);
-    }
-    
-    /**
-     * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * dispose the state of a window pane, performing tasks such as unregistering
-     * event listeners on the client.
-     * 
-     * @param rc the relevant <code>RenderContext</code>
-     * @param windowPane the <code>WindowPane</code>
-     */
-    private void renderDisposeDirective(RenderContext rc, WindowPane windowPane) {
-        ServerMessage serverMessage = rc.getServerMessage();
-        Element disposeElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_PREREMOVE,
-                "EchoWindowPane.MessageProcessor", "dispose");
-        disposeElement.setAttribute("eid", ContainerInstance.getElementId(windowPane));
-    }
-
-    /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
-     */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
-        WindowPane windowPane = (WindowPane) component;
-        String elementId = ContainerInstance.getElementId(windowPane);
-        String bodyElementId = elementId + "_body";
-        ImageReference icon = (ImageReference) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON);
-        String title = (String) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE);
-        Extent width = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_WIDTH);
-        Extent height = (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_HEIGHT);
-        int titleHeightPixels = ExtentRender.toPixels((Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_HEIGHT), 28);
-        boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
-        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
-        boolean renderSizeExpression = !renderPositioningBothSides
-                && rc.getContainerInstance().getClientProperties().getBoolean(
-                        ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
-        Component child = null;
-        if (windowPane.getComponentCount() != 0) {
-            child = windowPane.getComponent(0);
-        }
-
+    public void renderDispose(RenderContext rc, ServerComponentUpdate update,
+            Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(WINDOW_PANE_SERVICE.getId());
-        Document document = serverMessage.getDocument();
-        Element windowDivElement = document.createElement("div");
-        windowDivElement.setAttribute("id", elementId);
-
-        // Create main window DIV element.
-        CssStyle windowDivCssStyle = new CssStyle();
-        windowDivCssStyle.setAttribute("z-index", Integer.toString(windowPane.getZIndex()));
-        windowDivCssStyle.setAttribute("padding", "0px");
-        windowDivCssStyle.setAttribute("position", "absolute");
-        windowDivCssStyle.setAttribute("top", ExtentRender.renderCssAttributePixelValue((Extent) windowPane.getRenderProperty(
-                WindowPane.PROPERTY_POSITION_Y, DEFAULT_POSITION_Y)));
-        windowDivCssStyle.setAttribute("left", ExtentRender.renderCssAttributePixelValue((Extent) windowPane.getRenderProperty(
-                WindowPane.PROPERTY_POSITION_X, DEFAULT_POSITION_X)));
-        if (width == null) {
-            windowDivCssStyle.setAttribute("width", DEFAULT_WIDTH);
-        } else {
-            windowDivCssStyle.setAttribute("width", ExtentRender.renderCssAttributePixelValue(width));
-        }
-        if (height == null) {
-            windowDivCssStyle.setAttribute("height", DEFAULT_HEIGHT);
-        } else {
-            windowDivCssStyle.setAttribute("height", ExtentRender.renderCssAttributePixelValue(height));
-        }
-        windowDivElement.setAttribute("style", windowDivCssStyle.renderInline());
-        parentNode.appendChild(windowDivElement);
-
-        // Render window border.
-        renderBorder(rc, windowDivElement, windowPane);
-
-        // Create window body DIV element (container of title and content
-        // areas).
-        Element windowBodyDivElement = document.createElement("div");
-        windowBodyDivElement.setAttribute("id", bodyElementId);
-        CssStyle windowBodyDivCssStyle = new CssStyle();
-        ColorRender.renderToStyle(windowBodyDivCssStyle, (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_FOREGROUND),
-                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_BACKGROUND));
-        FontRender.renderToStyle(windowBodyDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_FONT));
-        if (windowBodyDivCssStyle.getAttribute("background-color") == null) {
-            windowBodyDivCssStyle.setAttribute("background-color", "white");
-        }
-        windowBodyDivCssStyle.setAttribute("position", "absolute");
-        windowBodyDivCssStyle.setAttribute("z-index", "2");
-        FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER, DEFAULT_BORDER);
-        Insets contentInsets = border.getContentInsets() == null ? new Insets(0) : border.getContentInsets();
-        int left = ExtentRender.toPixels(contentInsets.getLeft(), 0);
-        int right = ExtentRender.toPixels(contentInsets.getRight(), 0);
-        int top = ExtentRender.toPixels(contentInsets.getTop(), 0);
-        int bottom = ExtentRender.toPixels(contentInsets.getBottom(), 0);
-        windowBodyDivCssStyle.setAttribute("top", top + "px");
-        windowBodyDivCssStyle.setAttribute("left", left + "px");
-        if (renderPositioningBothSides) {
-            windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
-            windowBodyDivCssStyle.setAttribute("right", right + "px");
-        } else if (renderSizeExpression) {
-            windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').offsetHeight-"
-                    + (top + bottom) + ")+'px')");
-            windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').offsetWidth-"
-                    + (left + right) + ")+'px')");
-        }
-        windowBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
-        windowDivElement.appendChild(windowBodyDivElement);
-
-        // Create Internet Explorer Select-Element blocking IFRAME (if required).
-        if (rc.getContainerInstance().getClientProperties().getBoolean(ClientProperties.QUIRK_IE_SELECT_Z_INDEX)) {
-            Element iframeQuirkDivElement = document.createElement("div");
-            // Reuse/modify windowBodyDivCssStyle.
-            windowBodyDivCssStyle.setAttribute("z-index", "1");
-            iframeQuirkDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
-            windowDivElement.appendChild(iframeQuirkDivElement);
-            Element iframeQuirkIframeElement = document.createElement("iframe");
-            iframeQuirkIframeElement.setAttribute("width", "100%");
-            iframeQuirkIframeElement.setAttribute("height", "100%");
-            iframeQuirkDivElement.appendChild(iframeQuirkIframeElement);
-        }
-
-        // Create title DIV container element.
-        Element titleContainerDivElement = document.createElement("div");
-        titleContainerDivElement.setAttribute("id", elementId + "_title");
-        CssStyle titleContainerDivCssStyle = new CssStyle();
-        if (movable) {
-            titleContainerDivCssStyle.setAttribute("cursor", "move");
-        }
-        ColorRender.renderToStyle(titleContainerDivCssStyle, 
-                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND, DEFAULT_TITLE_FOREGROUND), 
-                (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND, DEFAULT_TITLE_BACKGROUND));
-        FontRender.renderToStyle(titleContainerDivCssStyle, (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FONT));
-        FillImageRender.renderToStyle(titleContainerDivCssStyle, rc, this, component, IMAGE_ID_TITLE_BACKGROUND,
-                (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE), 0);
-        titleContainerDivCssStyle.setAttribute("position", "absolute");
-        titleContainerDivCssStyle.setAttribute("top", "0px");
-        titleContainerDivCssStyle.setAttribute("height", titleHeightPixels + "px");
-        titleContainerDivCssStyle.setAttribute("width", "100%");
-        titleContainerDivCssStyle.setAttribute("overflow", "hidden");
-        titleContainerDivElement.setAttribute("style", titleContainerDivCssStyle.renderInline());
-        windowBodyDivElement.appendChild(titleContainerDivElement);
-        
-        Insets titleInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS, DEFAULT_TITLE_INSETS);
-        
-        // Add Title Icon.
-        if (icon != null) {
-            Insets titleIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON_INSETS, titleInsets);
-            Element titleIconDivElement = document.createElement("div");
-            CssStyle titleIconDivCssStyle = new CssStyle();
-            titleIconDivCssStyle.setAttribute("position", "absolute");
-            titleIconDivCssStyle.setAttribute("left", "0px");
-            titleIconDivCssStyle.setAttribute("top", "0px");
-            titleIconDivCssStyle.setAttribute("white-space", "nowrap");
-            titleIconDivCssStyle.setAttribute("overflow", "hidden");
-            InsetsRender.renderToStyle(titleIconDivCssStyle, "padding", titleIconInsets);
-            titleIconDivElement.setAttribute("style", titleIconDivCssStyle.renderInline());
-            titleContainerDivElement.appendChild(titleIconDivElement);
-
-            Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_ICON);
-            titleIconDivElement.appendChild(imgElement);
-        }
-        
-        // Add Title Text.
-        if (title != null) {
-            int titlePosition = icon == null ? 0 : 32;
-            Element titleTextDivElement = document.createElement("div");
-            CssStyle titleTextDivCssStyle = new CssStyle();
-            titleTextDivCssStyle.setAttribute("position", "absolute");
-            titleTextDivCssStyle.setAttribute("left", titlePosition + "px");
-            titleTextDivCssStyle.setAttribute("top", "0px");
-            titleTextDivCssStyle.setAttribute("white-space", "nowrap");
-            titleTextDivCssStyle.setAttribute("overflow", "hidden");
-            InsetsRender.renderToStyle(titleTextDivCssStyle, "padding", titleInsets);
-            titleTextDivElement.setAttribute("style", titleTextDivCssStyle.renderInline());
-            if (title != null) {
-                DomUtil.setElementText(titleTextDivElement, title);
-            }
-            titleContainerDivElement.appendChild(titleTextDivElement);
-        }
-        
-        // Add Close Icon.
-        boolean closable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE, Boolean.TRUE)).booleanValue();
-        if (closable) {
-            Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS, titleInsets);
-            Element closeIconDivElement = document.createElement("div");
-            closeIconDivElement.setAttribute("id", elementId + "_close");
-            CssStyle closeIconDivCssStyle = new CssStyle();
-            closeIconDivCssStyle.setAttribute("cursor", "pointer");
-            closeIconDivCssStyle.setAttribute("position", "absolute");
-            closeIconDivCssStyle.setAttribute("right", "0px");
-            closeIconDivCssStyle.setAttribute("top", "0px");
-            InsetsRender.renderToStyle(closeIconDivCssStyle, "padding", closeIconInsets);
-            closeIconDivElement.setAttribute("style", closeIconDivCssStyle.renderInline());
-            titleContainerDivElement.appendChild(closeIconDivElement);
-            
-            Element imgElement = ImageReferenceRender.renderImageReferenceElement(rc, this, windowPane, IMAGE_ID_CLOSE_ICON);
-            closeIconDivElement.appendChild(imgElement);
-        }
-
-        // Create outer content DIV Element.
-        Element outerContentDivElement = document.createElement("div");
-        outerContentDivElement.setAttribute("id", elementId + "_outercontent");
-        CssStyle outerContentDivCssStyle = new CssStyle();
-        outerContentDivCssStyle.setAttribute("overflow", "auto");
-        outerContentDivCssStyle.setAttribute("padding", "0px");
-        outerContentDivCssStyle.setAttribute("position", "absolute");
-        outerContentDivCssStyle.setAttribute("width", "100%");
-        outerContentDivCssStyle.setAttribute("top", titleHeightPixels + "px");
-        if (renderPositioningBothSides) {
-            outerContentDivCssStyle.setAttribute("bottom", "0px");
-        }
-        if (renderSizeExpression) {
-            outerContentDivCssStyle.setAttribute("height", "expression((document.getElementById('" + bodyElementId
-                    + "').offsetHeight-" + titleHeightPixels + ")+'px')");
-        }
-        outerContentDivElement.setAttribute("style", outerContentDivCssStyle.renderInline());
-        windowBodyDivElement.appendChild(outerContentDivElement);
-
-        // Create inset content DIV Element.
-        Element contentDivElement = document.createElement("div");
-        contentDivElement.setAttribute("id", elementId + "_content");
-        CssStyle contentDivCssStyle = new CssStyle();
-        if (!(child instanceof Pane)) {
-            // Render inset padding only if pane content is not itself a Pane.
-            InsetsRender.renderToStyle(contentDivCssStyle, "padding", 
-                    (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_INSETS));
-        }
-        contentDivElement.setAttribute("style", contentDivCssStyle.renderInline());
-        outerContentDivElement.appendChild(contentDivElement);
-
-        // Render initialization directive.
-        renderInitDirective(rc, windowPane);
-        
-        // Render child.
-        if (child != null) {
-            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
-            if (syncPeer instanceof DomUpdateSupport) {
-                ((DomUpdateSupport) syncPeer).renderHtml(rc, update, contentDivElement, child);
-            } else {
-                syncPeer.renderAdd(rc, update, getContainerId(child), child);
-            }
-        }
+        renderDisposeDirective(rc, (WindowPane) component);
     }
 
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * initialize the state of a window pane, performing tasks such as 
-     * registering event listeners on the client.
+     * dispose the state of a <code>WindowPane</code>, performing tasks such as
+     * unregistering event listeners on the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>SplitPane</code>
+     */
+    private void renderDisposeDirective(RenderContext rc, WindowPane windowPane) {
+        String elementId = ContainerInstance.getElementId(windowPane);
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_PREREMOVE, 
+                "EchoWindowPane.MessageProcessor", "dispose");
+        initElement.setAttribute("eid", elementId);
+    }
+
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * render and intialize the state of a <code>WindowPane</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param windowPane the <code>WindowPane</code>
+     * @param targetId the id of the container element
      */
-    private void renderInitDirective(RenderContext rc, WindowPane windowPane) {
+    private void renderInitDirective(RenderContext rc, WindowPane windowPane, String targetId) {
         String elementId = ContainerInstance.getElementId(windowPane);
         ServerMessage serverMessage = rc.getServerMessage();
-        boolean closable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE, Boolean.TRUE)).booleanValue();
-        boolean movable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE, Boolean.TRUE)).booleanValue();
-        boolean resizable = ((Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE, Boolean.TRUE)).booleanValue();
-        String minimumWidth = ExtentRender.renderCssAttributePixelValue(
-                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MINIMUM_WIDTH));
-        String minimumHeight = ExtentRender.renderCssAttributePixelValue(
-                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MINIMUM_HEIGHT));
-        String maximumWidth = ExtentRender.renderCssAttributePixelValue(
-                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MAXIMUM_WIDTH));
-        String maximumHeight = ExtentRender.renderCssAttributePixelValue(
-                (Extent) windowPane.getRenderProperty(WindowPane.PROPERTY_MAXIMUM_HEIGHT));
-        
-        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                "EchoWindowPane.MessageProcessor", "init");
+        Element partElement = serverMessage.addPart(ServerMessage.GROUP_ID_UPDATE, "EchoWindowPane.MessageProcessor");
+        Element initElement = serverMessage.getDocument().createElement("init");
+        initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
-        initElement.setAttribute("closable", closable ? "true" : "false");
-        initElement.setAttribute("movable", movable ? "true" : "false");
-        initElement.setAttribute("resizable", resizable ? "true" : "false");
-        initElement.setAttribute("container-id", windowPane.getParent().getRenderId());
-        if (minimumWidth != null) {
-            initElement.setAttribute("minimum-width", minimumWidth);
-        }
-        if (minimumHeight != null) {
-            initElement.setAttribute("minimum-height", minimumHeight);
-        }
-        if (maximumWidth != null) {
-            initElement.setAttribute("maximum-width", maximumWidth);
-        }
-        if (maximumHeight != null) {
-            initElement.setAttribute("maximum-height", maximumHeight);
-        }
-    }
 
+        if (!windowPane.isRenderEnabled()) {
+            initElement.setAttribute("enabled", "false");
+        }
+        
+        // Content Appearance
+        Insets insets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_INSETS);
+        if (insets != null) {
+            initElement.setAttribute("insets", InsetsRender.renderCssAttributeValue(insets));
+        }
+        Color background = (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_BACKGROUND);
+        if (background != null) {
+            initElement.setAttribute("background", ColorRender.renderCssAttributeValue(background));
+        }
+        FillImage backgroundImage = (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_BACKGROUND_IMAGE);
+        if (backgroundImage != null) {
+            CssStyle backgroundImageCssStyle = new CssStyle();
+            FillImageRender.renderToStyle(backgroundImageCssStyle, rc, this, windowPane, IMAGE_ID_BACKGROUND, 
+                    backgroundImage, 0);
+            initElement.setAttribute("background-image", backgroundImageCssStyle.renderInline());
+        }
+        Color foreground = (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_FOREGROUND);
+        if (foreground != null) {
+            initElement.setAttribute("foreground", ColorRender.renderCssAttributeValue(foreground));
+        }
+        Font font = (Font) windowPane.getRenderProperty(WindowPane.PROPERTY_FONT);
+        if (font != null) {
+            CssStyle fontCssStyle = new CssStyle();
+            FontRender.renderToStyle(fontCssStyle, font);
+            initElement.setAttribute("font", fontCssStyle.renderInline());
+        }
+
+        // Positioning
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_POSITION_X, initElement, "position-x");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_POSITION_Y, initElement, "position-y");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_WIDTH, initElement, "width");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_HEIGHT, initElement, "height");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_MINIMUM_WIDTH, initElement, "minimum-width");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_MINIMUM_HEIGHT, initElement, "minimum-height");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_MAXIMUM_WIDTH, initElement, "maximum-width");
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_MAXIMUM_HEIGHT, initElement, "maximum-height");
+        
+        // Title-related
+        if (windowPane.getRenderProperty(WindowPane.PROPERTY_ICON) != null) {
+            initElement.setAttribute("icon", ImageTools.getUri(rc, this, windowPane, IMAGE_ID_ICON));
+            Insets iconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_ICON_INSETS);
+            if (iconInsets != null) {
+                initElement.setAttribute("icon-insets", InsetsRender.renderCssAttributeValue(iconInsets));
+            }
+        }
+        String title = (String) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE);
+        if (title != null) {
+            initElement.setAttribute("title", title);
+            Insets titleInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_INSETS);
+            Color titleForeground = (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_FOREGROUND);
+            if (titleForeground != null) {
+                initElement.setAttribute("title-foreground", ColorRender.renderCssAttributeValue(titleForeground));
+            }
+            if (titleInsets != null) {
+                initElement.setAttribute("title-insets", InsetsRender.renderCssAttributeValue(titleInsets));
+            }
+        }
+        renderPixelProperty(windowPane, WindowPane.PROPERTY_TITLE_HEIGHT, initElement, "title-height");
+        Color titleBackground = (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND);
+        if (titleBackground != null) {
+            initElement.setAttribute("title-background", ColorRender.renderCssAttributeValue(titleBackground));
+        }
+        FillImage titleBackgroundImage = (FillImage) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND_IMAGE);
+        if (titleBackgroundImage != null) {
+            CssStyle titleBackgroundImageCssStyle = new CssStyle();
+            FillImageRender.renderToStyle(titleBackgroundImageCssStyle, rc, this, windowPane, IMAGE_ID_TITLE_BACKGROUND, 
+                    titleBackgroundImage, 0);
+            initElement.setAttribute("title-background-image", titleBackgroundImageCssStyle.renderInline());
+        }
+        
+        // Move/Close/Resize
+        Boolean resizableBoolean = (Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_RESIZABLE);
+        boolean resizable = resizableBoolean == null ? true : resizableBoolean.booleanValue();
+        initElement.setAttribute("resizable", resizable ? "true" : "false");
+        Boolean closableBoolean = (Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSABLE);
+        boolean closable = closableBoolean == null ? true : closableBoolean.booleanValue();
+        initElement.setAttribute("closable", closable ? "true" : "false");
+        if (closable) {
+            if (getImage(windowPane, IMAGE_ID_CLOSE_ICON) != null) {
+                initElement.setAttribute("close-icon", ImageTools.getUri(rc, this, windowPane, IMAGE_ID_CLOSE_ICON));
+                Insets closeIconInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_CLOSE_ICON_INSETS);
+                if (closeIconInsets != null) {
+                    initElement.setAttribute("close-icon-insets", InsetsRender.renderCssAttributeValue(closeIconInsets));
+                }
+            }
+        }
+        Boolean movableBoolean = (Boolean) windowPane.getRenderProperty(WindowPane.PROPERTY_MOVABLE);
+        boolean movable = movableBoolean == null ? true : movableBoolean.booleanValue();
+        initElement.setAttribute("movable", movable ? "true" : "false");
+
+        // Border
+        FillImageBorder border = (FillImageBorder) windowPane.getRenderProperty(WindowPane.PROPERTY_BORDER);
+        if (border != null && border.getBorderInsets() != null && border.getContentInsets() != null) {
+            Element borderElement = serverMessage.getDocument().createElement("border");
+            if (border.getColor() != null) {
+                borderElement.setAttribute("color", ColorRender.renderCssAttributeValue(border.getColor()));
+            }
+            borderElement.setAttribute("border-insets", InsetsRender.renderCssAttributeValue(border.getBorderInsets()));
+            borderElement.setAttribute("content-insets", InsetsRender.renderCssAttributeValue(border.getContentInsets()));
+            int fillImageRenderFlags = ((Boolean) windowPane.getRenderProperty(PROPERTY_IE_ALPHA_RENDER_BORDER, 
+                    Boolean.FALSE)).booleanValue() ? FillImageRender.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+            for (int i = 0; i < 8; ++i) {
+                FillImage fillImage = border.getFillImage(i);
+                if (fillImage != null) {
+                    Element imageElement = serverMessage.getDocument().createElement("image");
+                    imageElement.setAttribute("name", FILL_IMAGE_NAMES[i]);
+                    CssStyle fillImageCssStyle = new CssStyle();
+                    FillImageRender.renderToStyle(fillImageCssStyle, rc, this, windowPane, FILL_IMAGE_IDS[i], fillImage, 
+                            fillImageRenderFlags);
+                    imageElement.setAttribute("value", fillImageCssStyle.renderInline());
+                    borderElement.appendChild(imageElement);
+                }
+            }
+            initElement.appendChild(borderElement);
+        }
+        
+        partElement.appendChild(initElement);
+    }
+    
+    private void renderSetContent(RenderContext rc, ServerComponentUpdate update) {
+        //TODO. implement
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
-    public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
-        renderAdd(rc, update, targetId, update.getParent());
-        return true;
+    public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update,
+            String targetId) {
+        boolean fullReplace = false;
+        if (update.hasUpdatedLayoutDataChildren()) {
+            fullReplace = true;
+        } else if (update.hasUpdatedProperties()) {
+            if (!partialUpdateManager.canProcess(rc, update)) {
+                fullReplace = true;
+            }
+        }
+
+        //TODO. Temp fix. 
+        fullReplace = true;
+        
+        if (fullReplace) {
+            // Perform full update.
+            renderDisposeDirective(rc, (WindowPane) update.getParent());
+            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+            renderAdd(rc, update, targetId, update.getParent());
+        } else {
+            partialUpdateManager.process(rc, update);
+            if (update.hasAddedChildren() || update.hasRemovedChildren()) {
+                renderSetContent(rc, update);
+            }
+        }
+        
+        return fullReplace;
     }
 }

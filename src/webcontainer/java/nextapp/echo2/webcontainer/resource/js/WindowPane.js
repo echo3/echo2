@@ -27,14 +27,696 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-// _____________________
-// Object EchoWindowPane
+EchoWindowPane = function(elementId, containerElementId) {
+    this.elementId = elementId;
+    this.containerElementId = containerElementId;
+    this.containerComponentElementId = EchoDomUtil.getComponentId(containerElementId);
+    
+    this.resizingBorderElementId = null;
+    
+    this.dragOriginX = null;
+    this.dragOriginY = null;
+    this.dragInitPositionX = null;
+    this.dragInitPositionY = null;
+    this.dragInitWidth = null;
+    this.dragInitHeight = null;
+    this.resizeX = 0;
+    this.resizeY = 0;
+    
+    this.background = EchoWindowPane.DEFAULT_BACKGROUND;
+    this.backgroundImage = null;
+    this.border = EchoWindowPane.DEFAULT_BORDER;
+    this.closable = true;
+    this.closeIcon = null;
+    this.closeIconInsets = EchoWindowPane.DEFAULT_CLOSE_ICON_INSETS;
+    this.enabled = true;
+    this.font = null;
+    this.foreground = null;
+    this.height = EchoWindowPane.DEFAULT_HEIGHT;
+    this.icon = null;
+    this.iconInsets = EchoWindowPane.DEFAULT_ICON_INSETS;
+    this.insets = null;
+    this.maximumWidth = null;
+    this.maximumHeight = null;
+    this.minimumWidth = 100;
+    this.minimumHeight = 100;
+    this.movable = true;
+    this.overflow = "auto";
+    this.positionX = null;
+    this.positionY = null;
+    this.resizable = true;
+    this.title = null;
+    this.titleBackground = EchoWindowPane.DEFAULT_TITLE_BACKGROUND;
+    this.titleBackgroundImage = null;
+    this.titleFont = null;
+    this.titleForeground = EchoWindowPane.DEFAULT_TITLE_FOREGROUND;
+    this.titleHeight = EchoWindowPane.DEFAULT_TITLE_HEIGHT;
+    this.titleInsets = EchoWindowPane.DEFAULT_TITLE_INSETS;
+    this.width = EchoWindowPane.DEFAULT_WIDTH;
+};
+
+EchoWindowPane.activeDragElementId = null;
 
 /**
- * Static object/namespace for WindowPane support.
- * This object/namespace should not be used externally.
+ * Id suffixes of border elements.
  */
-EchoWindowPane = function() { };
+EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES = new Array("_border_tl", "_border_t", "_border_tr",
+        "_border_l", "_border_r", "_border_bl", "_border_b", "_border_br");
+
+EchoWindowPane.DEFAULT_CLOSE_ICON_INSETS = "4px";
+EchoWindowPane.DEFAULT_ICON_INSETS = "4px";
+EchoWindowPane.DEFAULT_TITLE_INSETS = "4px";
+EchoWindowPane.DEFAULT_WIDTH = 400;
+EchoWindowPane.DEFAULT_BACKGROUND = "#ffffff";
+EchoWindowPane.DEFAULT_TITLE_BACKGROUND = "#005faf";
+EchoWindowPane.DEFAULT_TITLE_FOREGROUND = "#ffffff";
+EchoWindowPane.DEFAULT_TITLE_HEIGHT = 28;
+EchoWindowPane.DEFAULT_HEIGHT = 300;
+EchoWindowPane.DEFAULT_BORDER = new EchoCoreProperties.FillImageBorder("#00007f", new EchoCoreProperties.Insets(20), 
+        new EchoCoreProperties.Insets(3));
+
+EchoWindowPane.prototype.create = function() {
+    var containerElement = document.getElementById(this.containerElementId);
+    var windowPaneDivElement = document.createElement("div");
+    windowPaneDivElement.id = this.elementId;
+    windowPaneDivElement.style.position = "absolute";
+    windowPaneDivElement.style.zIndex = "1";
+    
+    if (this.positionX == null) {
+        this.positionX = Math.round((containerElement.offsetWidth - this.width) / 2);
+        if (this.positionX < 0) {
+            this.positionX = 0;
+        }
+    }
+    if (this.positionY == null) {
+        this.positionY = Math.round((this.getContainerHeight() - this.height) / 2);
+        if (this.positionY < 0) {
+            this.positionY = 0;
+        }
+    }
+    windowPaneDivElement.style.left = this.positionX + "px";
+    windowPaneDivElement.style.top = this.positionY + "px";
+    windowPaneDivElement.style.width = this.width + "px";
+    windowPaneDivElement.style.height = this.height + "px";
+    
+    var borderSideWidth = this.width - this.border.borderInsets.left - this.border.borderInsets.right;
+    var borderSideHeight = this.height - this.border.borderInsets.top - this.border.borderInsets.bottom;
+    
+    // Render top row
+    if (this.border.borderInsets.top > 0) {
+        // Render top left corner
+        if (this.border.borderInsets.left > 0) {
+            var borderTLDivElement = document.createElement("div");
+            borderTLDivElement.id = this.elementId + "_border_tl";
+            borderTLDivElement.style.position = "absolute";
+            borderTLDivElement.style.left = "0px";
+            borderTLDivElement.style.top = "0px";
+            borderTLDivElement.style.width = this.border.borderInsets.left + "px";
+            borderTLDivElement.style.height = this.border.borderInsets.top + "px";
+            if (this.border.color != null) {
+                borderTLDivElement.style.backgroundColor = this.border.color;
+            }
+            if (this.resizable) {
+                borderTLDivElement.style.cursor = "nw-resize";
+            }
+            if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TL]) {
+                EchoCssUtil.applyStyle(borderTLDivElement, 
+                        this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TL]);
+            }
+            windowPaneDivElement.appendChild(borderTLDivElement);
+        }
+        
+        // Render top side
+        var borderTDivElement = document.createElement("div");
+        borderTDivElement.id = this.elementId + "_border_t";
+        borderTDivElement.style.position = "absolute";
+        borderTDivElement.style.left = this.border.borderInsets.left + "px";
+        borderTDivElement.style.top = "0px";
+        borderTDivElement.style.width = borderSideWidth + "px";
+        borderTDivElement.style.height = this.border.borderInsets.top + "px";
+        if (this.border.color != null) {
+            borderTDivElement.style.backgroundColor = this.border.color;
+        }
+        if (this.resizable) {
+            borderTDivElement.style.cursor = "n-resize";
+        }
+        if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_T]) {
+            EchoCssUtil.applyStyle(borderTDivElement, 
+                    this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_T]);
+        }
+        windowPaneDivElement.appendChild(borderTDivElement);
+
+        // Render top right corner
+        if (this.border.borderInsets.right > 0) {
+            var borderTRDivElement = document.createElement("div");
+            borderTRDivElement.id = this.elementId + "_border_tr";
+            borderTRDivElement.style.position = "absolute";
+            borderTRDivElement.style.right = "0px";
+            borderTRDivElement.style.top = "0px";
+            borderTRDivElement.style.width = this.border.borderInsets.right + "px";
+            borderTRDivElement.style.height = this.border.borderInsets.top + "px";
+            if (this.border.color != null) {
+                borderTRDivElement.style.backgroundColor = this.border.color;
+            }
+            if (this.resizable) {
+                borderTRDivElement.style.cursor = "ne-resize";
+            }
+            if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TR]) {
+                EchoCssUtil.applyStyle(borderTRDivElement,
+                        this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TR]);
+            }
+            windowPaneDivElement.appendChild(borderTRDivElement);
+        }
+    }
+    
+    // Render left side
+    if (this.border.borderInsets.left > 0) {
+        // Render top side
+        var borderLDivElement = document.createElement("div");
+        borderLDivElement.id = this.elementId + "_border_l";
+        borderLDivElement.style.position = "absolute";
+        borderLDivElement.style.left = "0px";
+        borderLDivElement.style.top = this.border.borderInsets.top + "px";
+        borderLDivElement.style.width = this.border.borderInsets.left + "px";
+        borderLDivElement.style.height = borderSideHeight + "px";
+        if (this.border.color != null) {
+            borderLDivElement.style.backgroundColor = this.border.color;
+        }
+        if (this.resizable) {
+            borderLDivElement.style.cursor = "w-resize";
+        }
+        if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_L]) {
+            EchoCssUtil.applyStyle(borderLDivElement,
+                    this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_L]);
+        }
+        windowPaneDivElement.appendChild(borderLDivElement);
+    }
+    
+    // Render right side
+    if (this.border.borderInsets.right > 0) {
+        // Render top side
+        var borderRDivElement = document.createElement("div");
+        borderRDivElement.id = this.elementId + "_border_r";
+        borderRDivElement.style.position = "absolute";
+        borderRDivElement.style.right = "0px";
+        borderRDivElement.style.top = this.border.borderInsets.top + "px";
+        borderRDivElement.style.width = this.border.borderInsets.right + "px";
+        borderRDivElement.style.height = borderSideHeight + "px";
+        if (this.border.color != null) {
+            borderRDivElement.style.backgroundColor = this.border.color;
+        }
+        if (this.resizable) {
+            borderRDivElement.style.cursor = "e-resize";
+        }
+        if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_R]) {
+            EchoCssUtil.applyStyle(borderRDivElement,
+                    this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_R]);
+        }
+        windowPaneDivElement.appendChild(borderRDivElement);
+    }
+    
+    // Render bottom row
+    if (this.border.borderInsets.bottom > 0) {
+        // Render bottom left corner
+        if (this.border.borderInsets.left > 0) {
+            var borderBLDivElement = document.createElement("div");
+            borderBLDivElement.id = this.elementId + "_border_bl";
+            borderBLDivElement.style.position = "absolute";
+            borderBLDivElement.style.left = "0px";
+            borderBLDivElement.style.bottom = "0px";
+            borderBLDivElement.style.width = this.border.borderInsets.left + "px";
+            borderBLDivElement.style.height = this.border.borderInsets.bottom + "px";
+            if (this.border.color != null) {
+                borderBLDivElement.style.backgroundColor = this.border.color;
+            }
+            if (this.resizable) {
+                borderBLDivElement.style.cursor = "sw-resize";
+            }
+            if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BL]) {
+                EchoCssUtil.applyStyle(borderBLDivElement, 
+                        this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BL]);
+            }
+            windowPaneDivElement.appendChild(borderBLDivElement);
+        }
+
+        // Render bottom side
+        var borderBDivElement = document.createElement("div");
+        borderBDivElement.id = this.elementId + "_border_b";
+        borderBDivElement.style.position = "absolute";
+        borderBDivElement.style.left = this.border.borderInsets.left + "px";
+        borderBDivElement.style.bottom = "0px";
+        borderBDivElement.style.width = borderSideWidth + "px";
+        borderBDivElement.style.height = this.border.borderInsets.bottom + "px";
+        if (this.border.color != null) {
+            borderBDivElement.style.backgroundColor = this.border.color;
+        }
+        if (this.resizable) {
+            borderBDivElement.style.cursor = "s-resize";
+        }
+        if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_B]) {
+            EchoCssUtil.applyStyle(borderBDivElement, 
+                    this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_B]);
+        }
+        windowPaneDivElement.appendChild(borderBDivElement);
+        
+        // Render bottom right corner
+        if (this.border.borderInsets.right > 0) {
+            var borderBRDivElement = document.createElement("div");
+            borderBRDivElement.id = this.elementId + "_border_br";
+            borderBRDivElement.style.position = "absolute";
+            borderBRDivElement.style.right = "0px";
+            borderBRDivElement.style.bottom = "0px";
+            borderBRDivElement.style.width = this.border.borderInsets.right + "px";
+            borderBRDivElement.style.height = this.border.borderInsets.bottom + "px";
+            if (this.border.color != null) {
+                borderBRDivElement.style.backgroundColor = this.border.color;
+            }
+            if (this.resizable) {
+                borderBRDivElement.style.cursor = "se-resize";
+            }
+            if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BR]) {
+                EchoCssUtil.applyStyle(borderBRDivElement, 
+                        this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BR]);
+            }
+            windowPaneDivElement.appendChild(borderBRDivElement);
+        }
+    }
+    
+    // Render Title Bar
+    var titleBarDivElement = document.createElement("div");
+    titleBarDivElement.id = this.elementId + "_titlebar";
+    titleBarDivElement.style.position = "absolute";
+    titleBarDivElement.style.zIndex = 2;
+    titleBarDivElement.style.backgroundColor = this.titleBackground;
+    if (this.titleBackgroundImage) {
+       EchoCssUtil.applyStyle(titleBarDivElement, this.titleBackgroundImage);
+    }
+    titleBarDivElement.style.color = this.titleForeground;
+    titleBarDivElement.style.top = this.border.contentInsets.top + "px";
+    titleBarDivElement.style.left = this.border.contentInsets.left + "px";
+    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
+    titleBarDivElement.style.height = this.titleHeight + "px";
+    titleBarDivElement.style.overflow = "hidden";
+    if (this.movable) {
+        titleBarDivElement.style.cursor = "move";
+    }
+    
+    if (this.icon) {
+        var titleIconDivElement = document.createElement("div");
+        titleIconDivElement.style.position = "absolute";
+        if (this.iconInsets != null) {
+            titleIconDivElement.style.padding = this.iconInsets;
+        }
+        titleBarDivElement.appendChild(titleIconDivElement);
+        var iconImgElement = document.createElement("img");
+        iconImgElement.setAttribute("src", this.icon);
+        titleIconDivElement.appendChild(iconImgElement);
+    }
+    
+    if (this.title) {
+        var titleTextDivElement = document.createElement("div");
+        titleTextDivElement.id = this.elementId + "_titletext";
+        titleTextDivElement.style.position = "absolute";
+        if (this.icon) {
+            titleTextDivElement.style.left = "32px";
+        }
+        titleTextDivElement.style.whiteSpace = "nowrap";
+        if (this.titleInsets != null) {
+            titleTextDivElement.style.padding = this.titleInsets;
+        }
+        titleTextDivElement.appendChild(document.createTextNode(this.title));
+        titleBarDivElement.appendChild(titleTextDivElement);
+    }
+
+    if (this.closable) {
+        var closeDivElement = document.createElement("div");
+        closeDivElement.id = this.elementId + "_close";
+        closeDivElement.style.position = "absolute";
+        closeDivElement.style.right = "0px";
+        closeDivElement.style.cursor = "pointer";
+        if (this.closeIconInsets) {
+            closeDivElement.style.padding = this.closeIconInsets;
+        }
+        if (this.closeIcon) {
+            var closeImgElement = document.createElement("img");
+            closeImgElement.setAttribute("src", this.closeIcon);
+            closeDivElement.appendChild(closeImgElement);
+        } else {
+            closeDivElement.appendChild(document.createTextNode("[X]"));
+        }
+        titleBarDivElement.appendChild(closeDivElement);
+    }
+
+    windowPaneDivElement.appendChild(titleBarDivElement);
+    
+    // Render Content Area
+    
+    var contentDivElement = document.createElement("div");
+    contentDivElement.id = this.elementId + "_content";
+    contentDivElement.style.position = "absolute";
+    contentDivElement.style.zIndex = 1;
+    contentDivElement.style.backgroundColor = this.background;
+    if (this.foreground) {
+        contentDivElement.style.color = this.foreground;
+    }
+    if (this.backgroundImage) {
+        EchoCssUtil.applyStyle(contentDivElement, this.backgroundImage);
+    }
+    if (this.font) {
+        EchoCssUtil.applyStyle(contentDivElement, this.font);
+    }
+    contentDivElement.style.top = (this.border.contentInsets.top + this.titleHeight) + "px";
+    contentDivElement.style.left = this.border.contentInsets.left + "px";
+
+    EchoVirtualPosition.setRight(contentDivElement, this.border.contentInsets.right);    
+    EchoVirtualPosition.setBottom(contentDivElement, this.border.contentInsets.bottom);    
+    
+    contentDivElement.style.overflow = "auto";
+    if (this.insets != null) {
+        contentDivElement.style.padding = this.insets;
+    }
+    windowPaneDivElement.appendChild(contentDivElement);
+    
+    containerElement.appendChild(windowPaneDivElement);
+
+    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
+    
+    if (this.movable) {
+        EchoEventProcessor.addHandler(this.elementId + "_titlebar", "mousedown", 
+                "EchoWindowPane.processTitleBarMouseDown");
+    }
+
+    if (this.resizable) {
+        for (var i = 0; i < EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES.length; ++i) {
+            var borderElementId = this.elementId + EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES[i];
+            EchoEventProcessor.addHandler(borderElementId, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        }
+    }
+    
+    if (this.closable) {
+        // MouseDown event handler is added to avoid initiating a title-bar drag when close button is clicked.
+        EchoEventProcessor.addHandler(closeDivElement.id, "mousedown", "EchoWindowPane.nullEventHandler");
+        EchoEventProcessor.addHandler(closeDivElement.id, "click", "EchoWindowPane.processClose");
+    }
+
+    //BUGBUG.
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
+
+    EchoWindowPane.ZIndexManager.add(this.containerComponentElementId, this.elementId);
+};
+
+EchoWindowPane.prototype.dispose = function() {
+    EchoVirtualPosition.clear(this.elementId + "_content");
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    EchoEventProcessor.removeHandler(this.elementId + "_close", "mousedown");
+    EchoEventProcessor.removeHandler(this.elementId + "_close", "click");
+    EchoEventProcessor.removeHandler(this.elementId + "_titlebar", "mousedown");
+    for (var i = 0; i < EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES.length; ++i) {
+        var borderElementId = this.elementId + EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES[i];
+        EchoEventProcessor.removeHandler(borderElementId, "mousedown");
+    }
+    if (EchoClientProperties.get("browserIntenetExplorer")) {
+        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
+    
+    EchoWindowPane.ZIndexManager.remove(this.containerComponentElementId, this.elementId);
+};
+
+EchoWindowPane.prototype.getContainerHeight = function() {
+    var containerElement = document.getElementById(this.containerElementId);
+    var height = containerElement.offsetHeight;
+    if (height == 0) {
+        height = containerElement.parentNode.offsetHeight;
+    }
+    return height;
+};
+
+EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+    EchoDomUtil.preventEventDefault(echoEvent);
+    this.raise();
+    EchoWindowPane.activeDragElementId = this.elementId;
+    this.resizingBorderElementId = echoEvent.registeredTarget.id;
+    this.dragInitPositionX = this.positionX;
+    this.dragInitPositionY = this.positionY;
+    this.dragInitWidth = this.width;
+    this.dragInitHeight = this.height;
+    this.dragOriginX = echoEvent.clientX;
+    this.dragOriginY = echoEvent.clientY;
+    
+    var directionId = this.resizingBorderElementId.substring(this.resizingBorderElementId.lastIndexOf("_") + 1);
+    switch(directionId) {
+    case "tl": this.resizeX = -1; this.resizeY = -1; break;
+    case "t":  this.resizeX =  0; this.resizeY = -1; break;
+    case "tr": this.resizeX =  1; this.resizeY = -1; break;
+    case "l":  this.resizeX = -1; this.resizeY =  0; break;
+    case "r":  this.resizeX =  1; this.resizeY =  0; break;
+    case "bl": this.resizeX = -1; this.resizeY =  1; break;
+    case "b":  this.resizeX =  0; this.resizeY =  1; break;
+    case "br": this.resizeX =  1; this.resizeY =  1; break;
+    }
+
+    EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
+    EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+};
+
+EchoWindowPane.prototype.processBorderMouseMove = function(e) {
+    var width = this.width;
+    var height = this.height;
+    var positionX = this.positionX;
+    var positionY = this.positionY;
+    
+    if (this.resizeX == -1) {
+        width = this.dragInitWidth - (e.clientX - this.dragOriginX);
+    } else if (this.resizeX ==1 ) {
+        width = this.dragInitWidth + e.clientX - this.dragOriginX;
+    }
+    if (this.resizeY == -1) {
+        height = this.dragInitHeight - (e.clientY - this.dragOriginY);
+    } else if (this.resizeY ==1) {
+        height = this.dragInitHeight + e.clientY - this.dragOriginY;
+    }
+
+    this.setSize(width, height);
+    
+    // If Resizing Up or Left, calculate new position based on new width/height such that
+    // bottom right corner remains stationary.  This is done with this.width/this.height
+    // in case width or height setting was bounded by setSize().
+    if (this.resizeX == -1) {
+        positionX = this.dragInitPositionX + this.dragInitWidth - this.width;
+    }
+    if (this.resizeY == -1) {
+        positionY = this.dragInitPositionY + this.dragInitHeight - this.height;
+    }
+    
+    this.setPosition(positionX, positionY);
+    
+    this.redraw();
+};
+
+EchoWindowPane.prototype.processBorderMouseUp = function(e) {
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    this.resizingBorderElementId = null;
+    EchoWindowPane.activeDragElementId = null;
+    
+    EchoClientMessage.setPropertyValue(this.elementId, "positionX", this.positionX + "px");
+    EchoClientMessage.setPropertyValue(this.elementId, "positionY", this.positionY + "px");
+    EchoClientMessage.setPropertyValue(this.elementId, "width", this.width + "px");
+    EchoClientMessage.setPropertyValue(this.elementId, "height", this.height + "px");
+    
+    EchoVirtualPosition.redraw();
+};
+
+EchoWindowPane.prototype.processClose = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+    EchoClientMessage.setActionValue(this.elementId, "close");
+    EchoServerTransaction.connect();
+};
+
+EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+    this.raise();
+    EchoWindowPane.activeDragElementId = this.elementId;
+    var windowPaneDivElement = document.getElementById(this.elementId);
+    this.dragInitPositionX = this.positionX;
+    this.dragInitPositionY = this.positionY;
+    this.dragOriginX = echoEvent.clientX;
+    this.dragOriginY = echoEvent.clientY;
+    EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
+    EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+};
+
+EchoWindowPane.prototype.processTitleBarMouseMove = function(e) {
+    this.setPosition(this.dragInitPositionX + e.clientX - this.dragOriginX,
+            this.dragInitPositionY + e.clientY - this.dragOriginY);
+    this.redraw();
+};
+
+EchoWindowPane.prototype.processTitleBarMouseUp = function(e) {
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    EchoWindowPane.activeDragElementId = null;
+    
+    EchoClientMessage.setPropertyValue(this.elementId, "positionX", this.positionX + "px");
+    EchoClientMessage.setPropertyValue(this.elementId, "positionY", this.positionY + "px");
+    
+    EchoVirtualPosition.redraw();
+};
+
+EchoWindowPane.prototype.raise = function() {
+    var zIndex = EchoWindowPane.ZIndexManager.raise(this.containerComponentElementId, this.elementId);
+    EchoClientMessage.setPropertyValue(this.elementId, "zIndex",  zIndex);
+};
+
+EchoWindowPane.prototype.redraw = function() {
+    var windowPaneDivElement = document.getElementById(this.elementId);
+
+    var titleBarDivElement = document.getElementById(this.elementId + "_titlebar");
+
+    var borderTDivElement = document.getElementById(this.elementId + "_border_t");
+    var borderBDivElement = document.getElementById(this.elementId + "_border_b");
+    var borderLDivElement = document.getElementById(this.elementId + "_border_l");
+    var borderRDivElement = document.getElementById(this.elementId + "_border_r");
+
+    var borderSideWidth = this.width - this.border.borderInsets.left - this.border.borderInsets.right;
+    var borderSideHeight = this.height - this.border.borderInsets.top - this.border.borderInsets.bottom;
+
+    windowPaneDivElement.style.left = this.positionX + "px";
+    windowPaneDivElement.style.top = this.positionY + "px";
+    windowPaneDivElement.style.width = this.width + "px";
+    windowPaneDivElement.style.height = this.height + "px";
+
+    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
+
+    borderTDivElement.style.width = borderSideWidth + "px";
+    borderBDivElement.style.width = borderSideWidth + "px";
+    borderLDivElement.style.height = borderSideHeight + "px";
+    borderRDivElement.style.height = borderSideHeight + "px";
+    
+    EchoVirtualPosition.redrawElement(this.elementId + "_content");
+}
+
+EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
+    var windowPaneDivElement = document.getElementById(this.elementId);
+
+    if (positionX < 0) {
+        positionX = 0;
+    } else if (positionX > windowPaneDivElement.parentNode.offsetWidth - this.width) {
+        positionX = windowPaneDivElement.parentNode.offsetWidth - this.width;
+    }
+    if (positionY < 0) {
+        positionY = 0;
+    } else {
+        var containerHeight = this.getContainerHeight();
+        if (containerHeight > 0 && positionY > containerHeight - this.height) {
+            positionY = containerHeight - this.height;
+        }
+    }
+
+    this.positionX = positionX;
+    this.positionY = positionY;
+};
+
+EchoWindowPane.prototype.setSize = function(width, height) {
+    if (this.minimumWidth != null && width < this.minimumWidth) {
+        width = this.minimumWidth;
+    } else if (this.maximumWidth != null && width > this.maximumWidth) {
+        width = this.maximumWidth;
+    }
+    if (this.minimumHeight != null && height < this.minimumHeight) {
+        height = this.minimumHeight;
+    } else if (this.maximumHeight != null && height > this.maximumHeight) {
+        height = this.maximumHeight;
+    }
+    this.width = width;
+    this.height = height;
+};
+
+/**
+ * Returns the WindowPane data object instance based on the root element id
+ * of the WindowPane.
+ *
+ * @param componentId the root element id of the WindowPane
+ * @return the relevant WindowPane instance
+ */
+EchoWindowPane.getComponent = function(componentId) {
+    return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+};
+
+/**
+ * Do-nothing event handler.
+ */
+EchoWindowPane.nullEventHandler = function(echoEvent) { };
+
+EchoWindowPane.processBorderMouseDown = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var windowPane = EchoWindowPane.getComponent(componentId);
+    windowPane.processBorderMouseDown(echoEvent);
+};
+
+EchoWindowPane.processBorderMouseMove = function(e) {
+    e = e ? e : window.event;
+    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
+    if (windowPane) {
+	    windowPane.processBorderMouseMove(e);
+    }
+};
+
+EchoWindowPane.processBorderMouseUp = function(e) {
+    e = e ? e : window.event;
+    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
+    if (windowPane) {
+        windowPane.processBorderMouseUp(e);
+    }
+};
+
+EchoWindowPane.processClose = function(echoEvent) { 
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var windowPane = EchoWindowPane.getComponent(componentId);
+    windowPane.processClose(echoEvent);
+};
+
+/**
+ * Event handler for "SelectStart" events to disable selection while dragging
+ * the Window.  (Internet Explorer specific)
+ */
+EchoWindowPane.selectStart = function() {
+    EchoDomUtil.preventEventDefault(window.event);
+};
+
+EchoWindowPane.processTitleBarMouseDown = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var windowPane = EchoWindowPane.getComponent(componentId);
+    windowPane.processTitleBarMouseDown(echoEvent);
+};
+
+EchoWindowPane.processTitleBarMouseMove = function(e) {
+    e = e ? e : window.event;
+    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
+    if (windowPane) {
+        windowPane.processTitleBarMouseMove(e);
+    }
+};
+
+EchoWindowPane.processTitleBarMouseUp = function(e) {
+    e = e ? e : window.event;
+    var windowPane = EchoWindowPane.getComponent(EchoWindowPane.activeDragElementId);
+    if (windowPane) {
+        windowPane.processTitleBarMouseUp(e);
+    }
+};
 
 /**
  * Static object/namespace for WindowPane MessageProcessor 
@@ -71,24 +753,10 @@ EchoWindowPane.MessageProcessor.process = function(messagePartElement) {
  */
 EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
     var elementId = disposeElement.getAttribute("eid");
-    EchoEventProcessor.removeHandler(elementId + "_close", "click");
-    EchoEventProcessor.removeHandler(elementId + "_close", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_title", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_tl", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_t", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_tr", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_l", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_r", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_bl", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_b", "mousedown");
-    EchoEventProcessor.removeHandler(elementId + "_border_br", "mousedown");
-
-    var containerId = EchoDomPropertyStore.getPropertyValue(elementId, "containerId");
-    if (!containerId) {
-        // Disposing window which was never added (legal).
-        return;
+    var windowPane = EchoWindowPane.getComponent(elementId);
+    if (windowPane) {
+        windowPane.dispose();
     }
-    EchoWindowPane.ZIndexManager.remove(containerId, elementId);
 };
 
 /**
@@ -99,45 +767,115 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
  */
 EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     var elementId = initElement.getAttribute("eid");
-    var closable = initElement.getAttribute("closable") == "true";
-    var movable = initElement.getAttribute("movable") == "true";
-    var resizable = initElement.getAttribute("resizable") == "true";
-    var containerId = initElement.getAttribute("container-id");
+    var containerElementId = initElement.getAttribute("container-eid");
     
-    if (initElement.getAttribute("minimum-width")) {
-        EchoDomPropertyStore.setPropertyValue(elementId, "minimumWidth", initElement.getAttribute("minimum-width"));
+    var windowPane = new EchoWindowPane(elementId, containerElementId);
+    
+    windowPane.enabled = initElement.getAttribute("enabled") != "false";
+
+    windowPane.closable = initElement.getAttribute("closable") == "true";
+    windowPane.movable = initElement.getAttribute("movable") == "true";
+    windowPane.resizable = initElement.getAttribute("resizable") == "true";
+    
+    if (initElement.getAttribute("background")) {
+        windowPane.background = initElement.getAttribute("background");
     }
-    if (initElement.getAttribute("maximum-width")) {
-        EchoDomPropertyStore.setPropertyValue(elementId, "maximumWidth", initElement.getAttribute("maximum-width"));
+    if (initElement.getAttribute("background-image")) {
+        windowPane.backgroundImage = initElement.getAttribute("background-image");
     }
-    if (initElement.getAttribute("minimum-height")) {             
-        EchoDomPropertyStore.setPropertyValue(elementId, "minimumHeight", initElement.getAttribute("minimum-height"));
+    if (initElement.getAttribute("close-icon")) {
+        windowPane.closeIcon = initElement.getAttribute("close-icon");
+    }
+    if (initElement.getAttribute("close-icon-insets")) {
+        windowPane.closeIconInsets = initElement.getAttribute("close-icon-insets");
+    }
+    if (initElement.getAttribute("font")) {
+        windowPane.font = initElement.getAttribute("font");
+    }
+    if (initElement.getAttribute("foreground")) {
+        windowPane.foreground = initElement.getAttribute("foreground");
+    }
+    if (initElement.getAttribute("height")) {
+        windowPane.height = parseInt(initElement.getAttribute("height"));
+    }
+    if (initElement.getAttribute("icon")) {
+        windowPane.icon = initElement.getAttribute("icon");
+    }
+    if (initElement.getAttribute("icon-insets")) {
+        windowPane.iconInsets = initElement.getAttribute("icon-insets");
+    }
+    if (initElement.getAttribute("insets")) {
+        windowPane.insets = initElement.getAttribute("insets");
     }
     if (initElement.getAttribute("maximum-height")) {
-        EchoDomPropertyStore.setPropertyValue(elementId, "maximumHeight", initElement.getAttribute("maximum-height"));
+        windowPane.maximumHeight = parseInt(initElement.getAttribute("maximum-height"));
+    }
+    if (initElement.getAttribute("maximum-width")) {
+        windowPane.maximumWidth = parseInt(initElement.getAttribute("maximum-width"));
+    }
+    if (initElement.getAttribute("minimum-height")) {             
+        windowPane.minimumHeight = parseInt(initElement.getAttribute("minimum-height"));
+    }
+    if (initElement.getAttribute("minimum-width")) {
+        windowPane.minimumWidth = parseInt(initElement.getAttribute("minimum-width"));
+    }
+    if (initElement.getAttribute("position-x")) {
+        windowPane.positionX = parseInt(initElement.getAttribute("position-x"));
+    }
+    if (initElement.getAttribute("position-y")) {
+        windowPane.positionY = parseInt(initElement.getAttribute("position-y"));
+    }
+    if (initElement.getAttribute("title")) {
+        windowPane.title = initElement.getAttribute("title");
+    }
+    if (initElement.getAttribute("title-background")) {
+        windowPane.titleBackground = initElement.getAttribute("title-background");
+    }
+    if (initElement.getAttribute("title-background-image")) {
+        windowPane.titleBackgroundImage = initElement.getAttribute("title-background-image");
+    }
+    if (initElement.getAttribute("title-foreground")) {
+        windowPane.titleForeground = initElement.getAttribute("title-foreground");
+    }
+    if (initElement.getAttribute("title-height")) {
+        windowPane.titleHeight = parseInt(initElement.getAttribute("title-height"));
+    }
+    if (initElement.getAttribute("title-insets")) {
+        windowPane.titleInsets = initElement.getAttribute("title-insets");
+    }
+    if (initElement.getAttribute("width")) {
+        windowPane.width = parseInt(initElement.getAttribute("width"));
     }
     
-    EchoDomPropertyStore.setPropertyValue(elementId, "containerId", containerId);
-    EchoWindowPane.ZIndexManager.add(containerId, elementId);
-    if (closable) {
-        EchoEventProcessor.addHandler(elementId + "_close", "click", "EchoWindowPane.processCloseClick");
-    }
-    if (movable) {
-        if (closable) {
-            EchoEventProcessor.addHandler(elementId + "_close", "mousedown", "EchoWindowPane.processCloseMouseDown");
+    var borderElements = initElement.getElementsByTagName("border");
+    if (borderElements.length != 0) {
+        var borderElement = borderElements[0];
+        var color = borderElement.getAttribute("color");
+        var borderInsets = new EchoCoreProperties.Insets(borderElement.getAttribute("border-insets"));
+        var contentInsets = new EchoCoreProperties.Insets(borderElement.getAttribute("content-insets"));
+        var imageElements = borderElement.childNodes;
+        var images = new Array(8);
+        var index;
+        for (var i = 0; i < imageElements.length; ++i) {
+            if (imageElements[i].nodeName != "image") {
+                continue;
+            }
+            switch(imageElements[i].getAttribute("name")) {
+            case "tl": index = EchoCoreProperties.FillImageBorder.IMAGE_TL; break;
+            case "t":  index = EchoCoreProperties.FillImageBorder.IMAGE_T;  break;
+            case "tr": index = EchoCoreProperties.FillImageBorder.IMAGE_TR; break;
+            case "l":  index = EchoCoreProperties.FillImageBorder.IMAGE_L;  break;
+            case "r":  index = EchoCoreProperties.FillImageBorder.IMAGE_R;  break;
+            case "bl": index = EchoCoreProperties.FillImageBorder.IMAGE_BL; break;
+            case "b":  index = EchoCoreProperties.FillImageBorder.IMAGE_B;  break;
+            case "br": index = EchoCoreProperties.FillImageBorder.IMAGE_BR; break;
+            }
+            images[index] = imageElements[i].getAttribute("value");
         }
-        EchoEventProcessor.addHandler(elementId + "_title", "mousedown", "EchoWindowPane.processTitleMouseDown");
+        windowPane.border = new EchoCoreProperties.FillImageBorder(color, borderInsets, contentInsets, images);
     }
-    if (resizable) {
-        EchoEventProcessor.addHandler(elementId + "_border_tl", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_t", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_tr", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_l", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_r", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_bl", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_b", "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(elementId + "_border_br", "mousedown", "EchoWindowPane.processBorderMouseDown");
-    }
+    
+    windowPane.create();
 };
 
 /**
@@ -149,7 +887,7 @@ EchoWindowPane.ZIndexManager = function() { };
 /**
  * Associative array mapping container ids to arrays of element ids.
  */
-EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap = new Array();
+EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap = new EchoCollectionsMap();
 
 /**
  * Adds a WindowPane to be managed by the ZIndexManager.
@@ -158,10 +896,10 @@ EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap = new Array();
  * @param elementId the id of the WindowPane
  */
 EchoWindowPane.ZIndexManager.add = function(containerId, elementId) {
-    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.get(containerId);
     if (!elementIdArray) {
         elementIdArray = new Array();
-        EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId] = elementIdArray;
+        EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.put(containerId, elementIdArray);
     }
     var containsElement = false;
     for (var i = 0; i < elementIdArray.length; ++i) {
@@ -184,9 +922,9 @@ EchoWindowPane.ZIndexManager.add = function(containerId, elementId) {
 EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
     var windowElement = document.getElementById(elementId);
 
-    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.get(containerId);
     if (!elementIdArray) {
-        throw "Invalid container id.";
+        throw new Error("Invalid container id.");
     }
 
     var raiseIndex = 0;
@@ -204,24 +942,25 @@ EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
     }
 
     windowElement.style.zIndex = raiseIndex;
+    
     return raiseIndex;
 };
 
 /**
- * Remvoes a WindowPane from being managed by the ZIndexManager.
+ * Removes a WindowPane from being managed by the ZIndexManager.
  *
  * @param containerId the id of the Element containing the WindowPane
  * @param elementId the id of the WindowPane
  */
 EchoWindowPane.ZIndexManager.remove = function(containerId, elementId) {
-    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+    var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.get(containerId);
     if (!elementIdArray) {
-        throw "ZIndexManager.remove: no data for container with id \"" + containerId + "\".";
+        throw new Error("ZIndexManager.remove: no data for container with id \"" + containerId + "\".");
     }
     for (var i = 0; i < elementIdArray.length; ++i) {
         if (elementIdArray[i] == elementId) {
             if (elementIdArray.length == 1) {
-                delete EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap[containerId];
+                EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.remove(containerId);
             } else {
                 if (i < elementIdArray.length - 1) {
                     elementIdArray[i] = elementIdArray[elementIdArray.length - 1];
@@ -231,476 +970,6 @@ EchoWindowPane.ZIndexManager.remove = function(containerId, elementId) {
             return;
         }
     }
-    throw "ZIndexManager.remove: Element with id \"" + elementId + 
-            "\" does not exist in container with id \"" + containerId + "\".";
-};
-
-/** The initial horizontal position of the WindowPane being moved/resized. */
-EchoWindowPane.initialWindowX = -1;
-
-/** The initial vertical position of the WindowPane being moved/resized. */
-EchoWindowPane.initialWindowY = -1;
-
-/** The initial width of the WindowPane being moved/resized. */
-EchoWindowPane.initialWidth = -1;
-
-/** The initial height of the WindowPane being moved/resized. */
-EchoWindowPane.initialHeight = -1;
-
-/** The horizontal drag position of the mouse relative to the WindowPane. */
-EchoWindowPane.mouseOffsetX = -1;
-
-/** The vertical drag position of the mouse relative to the WindowPane. */
-EchoWindowPane.mouseOffsetY = -1;
-
-/** The DIV element of the WindowPane being moved/resized. */
-EchoWindowPane.activeElement = null;
-
-/**
- * Indicates the direction (if any) that the current WindowPane is being
- * resized in the horizontal direction.  This value may be one of
- * the following values:
- * <ul>
- *  <lil>-1: the WindowPane is being resized by its left border</li>
- *  <lil> 0: the WindowPane is not being resized horizontally</li>
- *  <lil> 1: the WindowPane is being resized by its right border</li>
- * </ul>
- */
-EchoWindowPane.resizeModeHorizontal = 0;
-
-/**
- * Indicates the direction (if any) that the current WindowPane is being
- * resized in the vertical direction.  This value may be one of
- * the following values:
- * <ul>
- *  <lil>-1: the WindowPane is being resized by its top border</li>
- *  <lil> 0: the WindowPane is not being resized vertically</li>
- *  <lil> 1: the WindowPane is being resized by its bottom border</li>
- * </ul>
- */
-EchoWindowPane.resizeModeVertical = 0;
-
-/** The minimum width of the WindowPane currently being resized */
-EchoWindowPane.minimumWidth = -1;
-
-/** The minimum height of the WindowPane  currently being resized */
-EchoWindowPane.minimumHeight = -1;
-
-/** The maximum width of the WindowPane  currently being resized */
-EchoWindowPane.maximumWidth= -1;
-
-/** The maximum height of the WindowPane  currently being resized */
-EchoWindowPane.maximumHeight = -1;
-
-/** 
- * The maximum allowed horizontal position of the upper-left corner of 
- * the WindowPane currently being moved/resized.  This value is calculated
- * based on the available movement area.
- */
-EchoWindowPane.maxX = -1;
-
-/** 
- * The maximum allowed vertical position of the upper-left corner of 
- * the WindowPane currently being moved/resized.  This value is calculated
- * based on the available movement area.
- */
-EchoWindowPane.maxY = -1;
-
-/**
- * Calculates the height of region in which window may be moved.
- *
- * @param element the container element within which the window may
- *        be moved
- * @return the width of the region
- */
-EchoWindowPane.getClientHeight = function(element) {
-    if (element.clientHeight && element.clientHeight > 0) {
-        return element.clientHeight;
-    } else if (element.parentNode) {
-        return EchoWindowPane.getClientHeight(element.parentNode);
-    }
-    return 0;
-};
-
-//BUGBUG. getBorderHeight/Width need to be redone.
-
-/**
- * Determines the height of the floating window's border.
- * This method currently only calculates the size correctly for
- * elements which have equal borders on every side.
- *
- * @param element the window's DIV element
- * @return the height of the border
- */
-EchoWindowPane.getBorderHeight = function(element) {
-    var sizeData = element.style.borderWidth;
-    var heightValue = parseInt(sizeData);
-    return isNaN(heightValue) ? 5 : heightValue;
-};
-
-/**
- * Determines the width of the floating window's border.
- * This method currently only calculates the size correctly for
- * elements which have equal borders on every side.
- *
- * @param element the window's DIV element
- * @return the width of the border
- */
-EchoWindowPane.getBorderWidth = function(element) {
-    var sizeData = element.style.borderWidth;
-    var widthValue = parseInt(sizeData);
-    return isNaN(widthValue) ? 5 : widthValue;
-};
-
-/**
- * Calculates width of the region in which window may be moved.
- *
- * @param element the container element within which the window may
- *        be moved
- * @return the width of the region
- */
-EchoWindowPane.getClientWidth = function(element) {
-    if (element.clientWidth && element.clientWidth > 0) {
-        return element.clientWidth;
-    } else if (element.parentNode) {
-        return EchoWindowPane.getClientWidth(element.parentNode);
-    }
-    return 0;
-};
-
-/**
- * Processes a mouse down event within the border region of a WindowPane.
- * This handler first raises the window and then delegates border
- * dragging work to <code>processBorderDragMouseDown()</code>.
- * This event listener is permanently registered to the window border
- * elements using the EchoEventProcessor.
- *
- * @param echoEvent the event, preprocessed by the 
- *        <code>EchoEventProcessor</code>
- */
-EchoWindowPane.processBorderMouseDown = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-    var componentId = EchoDomUtil.getComponentId(elementId);
-    EchoWindowPane.raise(componentId);
-    EchoWindowPane.processBorderDragMouseDown(echoEvent);
-};
-
-/**
- * Configures a window border for resizing in response to a mousedown
- * event within the border region of a WindowPane.
- *
- * @param echoEvent the event, preprocessed by the 
- *        <code>EchoEventProcessor</code>
- */
-EchoWindowPane.processBorderDragMouseDown = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    
-    var lastUnderscoreIndex = elementId.lastIndexOf("_");
-    if (lastUnderscoreIndex == -1) {
-        // Should not occur.
-        throw "Invalid element id: " + elementId;
-    }
-    var directionName = elementId.substring(lastUnderscoreIndex + 1);
-    var verticalMode, horizontalMode;
-    switch(directionName) {
-    case "tl": EchoWindowPane.resizeModeHorizontal = -1; EchoWindowPane.resizeModeVertical = -1; break;
-    case "t":  EchoWindowPane.resizeModeHorizontal =  0; EchoWindowPane.resizeModeVertical = -1; break;
-    case "tr": EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical = -1; break;
-    case "l":  EchoWindowPane.resizeModeHorizontal = -1; EchoWindowPane.resizeModeVertical =  0; break;
-    case "r":  EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical =  0; break;
-    case "bl": EchoWindowPane.resizeModeHorizontal = -1; EchoWindowPane.resizeModeVertical =  1; break;
-    case "b":  EchoWindowPane.resizeModeHorizontal =  0; EchoWindowPane.resizeModeVertical =  1; break;
-    case "br": EchoWindowPane.resizeModeHorizontal =  1; EchoWindowPane.resizeModeVertical =  1; break;
-    default: throw "Invalid direction name: " + directionName;
-    }
-
-    var componentId = EchoDomUtil.getComponentId(elementId);
-    var minimumWidth = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "minimumWidth"));
-    var minimumHeight = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "minimumHeight"));
-    var maximumWidth = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "maximumWidth"));
-    var maximumHeight = parseInt(EchoDomPropertyStore.getPropertyValue(componentId, "maximumHeight"));
-    var windowPaneElement = document.getElementById(componentId);
-
-    if (windowPaneElement != EchoWindowPane.activeElement) {
-        EchoWindowPane.minimumWidth = isNaN(minimumWidth) ? 100 : minimumWidth;
-        EchoWindowPane.minimumHeight = isNaN(minimumHeight) ? 100 : minimumHeight;
-        EchoWindowPane.maximumWidth = isNaN(maximumWidth) ? 800 : maximumWidth;
-        EchoWindowPane.maximumHeight = isNaN(maximumHeight) ? 600 : maximumHeight;
-
-        EchoWindowPane.activeElement = windowPaneElement;
-        EchoWindowPane.mouseOffsetX = echoEvent.clientX;
-        EchoWindowPane.mouseOffsetY = echoEvent.clientY;
-        EchoWindowPane.initialWindowX = parseInt(EchoWindowPane.activeElement.style.left);
-        EchoWindowPane.initialWindowY = parseInt(EchoWindowPane.activeElement.style.top);
-        EchoWindowPane.initialWindowWidth = parseInt(EchoWindowPane.activeElement.style.width);
-        EchoWindowPane.initialWindowHeight = parseInt(EchoWindowPane.activeElement.style.height);
-
-        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderDragMouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderDragMouseUp, true);
-        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
-    }
-};
-
-/**
- * Processes a mouse move event when the user is resizing a 
- * WindowPane.  Adjusts the size of the WindowPane
- * based on the user's mouse position.
- *
- * This event listener is temporarily registered by the 
- * <code>processBorderDragMouseDown()</code> method when the user begins
- * resizing a WindowPane by dragging its border.  The event listener is 
- * unregistered when the user releases the mouse and
- * <code>processBorderDragMouseUp()</code> is invoked.
- *
- * @param e the event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.processBorderDragMouseMove = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-
-    if (EchoWindowPane.resizeModeHorizontal !== 0) {
-        var newWidth = (EchoWindowPane.initialWindowWidth + 
-                (e.clientX - EchoWindowPane.mouseOffsetX) * EchoWindowPane.resizeModeHorizontal);
-        if (newWidth < EchoWindowPane.minimumWidth) {
-            newWidth = EchoWindowPane.minimumWidth;
-        } else if (newWidth > EchoWindowPane.maximumWidth) {
-            newWidth = EchoWindowPane.maximumWidth;
-        }
-        EchoWindowPane.activeElement.style.width = newWidth + "px";
-        if (EchoWindowPane.resizeModeHorizontal === -1) {
-            var newX = EchoWindowPane.initialWindowX + EchoWindowPane.initialWindowWidth - newWidth;
-            EchoWindowPane.activeElement.style.left = newX + "px";
-        }
-    }
-
-    if (EchoWindowPane.resizeModeVertical !== 0) {
-        var newHeight = (EchoWindowPane.initialWindowHeight + 
-                (e.clientY - EchoWindowPane.mouseOffsetY) * EchoWindowPane.resizeModeVertical);
-        if (newHeight < EchoWindowPane.minimumHeight) {
-            newHeight = EchoWindowPane.minimumHeight;
-        } else if (newHeight > EchoWindowPane.maximumHeight) {
-            newHeight = EchoWindowPane.maximumHeight;
-        }
-        EchoWindowPane.activeElement.style.height = newHeight + "px";
-        if (EchoWindowPane.resizeModeVertical === -1) {
-            var newY = EchoWindowPane.initialWindowY + EchoWindowPane.initialWindowHeight - newHeight;
-            EchoWindowPane.activeElement.style.top = newY + "px";
-        }
-
-        if (EchoClientProperties.get("quirkIERepaint")) {
-            // Tickle window width because Internet Explorer will only recompute size of hidden IFRAME
-            // on *WIDTH* adjustments, not height adjustments (this is a bug in IE).
-            // This only need be applied when vertical resizes can be performed.
-            var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
-            EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
-            EchoWindowPane.activeElement.style.width = initialWidth + "px";
-        }
-    }
-};
-
-/**
- * Processes a mouse button release event when the user is resizing a 
- * WindowPane.  Stores the updated state of the WindowPane in
- * the ClientMessage.
- *
- * This method will automatically unregister the
- * temporarily set mouse move/release listeners as its invocation indicates
- * the completion of a window resize operation.
- * This event listener is temporarily registered by the 
- * <code>processBorderDragMouseDown()</code> method when the user begins
- * resizing a WindowPane by dragging its border.  
- *
- * @param e the event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.processBorderDragMouseUp = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-
-    var id = EchoWindowPane.activeElement.getAttribute("id");
-    EchoClientMessage.setPropertyValue(id, "positionX",  EchoWindowPane.activeElement.style.left);
-    EchoClientMessage.setPropertyValue(id, "positionY",  EchoWindowPane.activeElement.style.top);
-    EchoClientMessage.setPropertyValue(id, "width",  EchoWindowPane.activeElement.style.width);
-    EchoClientMessage.setPropertyValue(id, "height",  EchoWindowPane.activeElement.style.height);
-
-    EchoWindowPane.activeElement = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderDragMouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderDragMouseUp, true);
-    EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
-};
-
-/**
- * Event handler for mouse click events on the close button.
- * Notifies server of user action.
- *
- * @param echoEvent the event
- */
-EchoWindowPane.processCloseClick = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-    var componentId = EchoDomUtil.getComponentId(elementId);
-    EchoClientMessage.setActionValue(componentId, "close");
-    EchoServerTransaction.connect();
-};
-
-/**
- * Event handler for mouse down events on the close button.
- * Prevents close button mouse-down clicks from being processed by drag 
- * initiation handler.
- *
- * @param echoEvent the event
- */
-EchoWindowPane.processCloseMouseDown = function(echoEvent) {
-    EchoDomUtil.preventEventDefault(echoEvent);
-};
-
-/**
- * Configures a WindowPane for dragging in response to a mousedown
- * event within the title region of a WindowPane.
- *
- * @param echoEvent the event, preprocessed by the 
- *        <code>EchoEventProcessor</code>
- */
-EchoWindowPane.processTitleDragMouseDown = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
-    EchoDomUtil.preventEventDefault(echoEvent);
-    var windowPaneElement = document.getElementById(componentId);
-    
-    if (windowPaneElement != EchoWindowPane.activeElement) {
-        EchoWindowPane.activeElement = windowPaneElement;
-        EchoWindowPane.mouseOffsetX = echoEvent.clientX;
-        EchoWindowPane.mouseOffsetY = echoEvent.clientY;
-        EchoWindowPane.initialWindowX = parseInt(EchoWindowPane.activeElement.style.left);
-        EchoWindowPane.initialWindowY = parseInt(EchoWindowPane.activeElement.style.top);
-        
-        var borderWidth = 2 * EchoWindowPane.getBorderWidth(EchoWindowPane.activeElement);
-        var borderHeight = 2 * EchoWindowPane.getBorderHeight(EchoWindowPane.activeElement);
-        
-        var containerWidth = EchoWindowPane.getClientWidth(EchoWindowPane.activeElement.parentNode);
-        if (containerWidth === 0) {
-            containerWidth = 800;
-        }
-        EchoWindowPane.maxX = containerWidth - EchoWindowPane.activeElement.clientWidth - borderWidth;
-        if (EchoWindowPane.maxX < 0) {
-            EchoWindowPane.maxX = 0;
-        }
-
-        var containerHeight = EchoWindowPane.getClientHeight(EchoWindowPane.activeElement.parentNode);
-        if (containerHeight === 0) {
-            containerHeight = 600;
-        }
-        EchoWindowPane.maxY = containerHeight - EchoWindowPane.activeElement.clientHeight - borderHeight;
-        if (EchoWindowPane.maxY < 0) {
-            EchoWindowPane.maxY = 0;
-        }
-        
-        EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleDragMouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleDragMouseUp, true);
-        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
-    }
-};
-
-/**
- * Processes a mouse move event when the user is dragging a 
- * WindowPane.  Adjusts the position of the WindowPane
- * based on the user's mouse position.
- *
- * This event listener is temporarily registered by the 
- * <code>processBorderDragMouseDown()</code> method when the user begins
- * dragging a WindowPane by dragging its title.  The event listener is 
- * unregistered when the user releases the mouse and
- * <code>processTitleDragMouseUp()</code> is invoked.
- *
- * @param e the event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.processTitleDragMouseMove = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-    var newX = (EchoWindowPane.initialWindowX + e.clientX - EchoWindowPane.mouseOffsetX);
-    var newY = (EchoWindowPane.initialWindowY + e.clientY - EchoWindowPane.mouseOffsetY);
-    
-    newX = newX >= 0 ? newX : 0;
-    newX = newX <= EchoWindowPane.maxX ? newX : EchoWindowPane.maxX;
-    newY = newY >= 0 ? newY : 0;
-    newY = newY <= EchoWindowPane.maxY ? newY : EchoWindowPane.maxY;
-    EchoWindowPane.activeElement.style.left = newX + "px";
-    EchoWindowPane.activeElement.style.top = newY + "px";
-
-    if (EchoClientProperties.get("quirkIERepaint")) {
-        // Tickle width to force repaint for IE repaint, resulting in aesthetic performance increase.
-        var initialWidth = parseInt(EchoWindowPane.activeElement.style.width);
-        EchoWindowPane.activeElement.style.width = (initialWidth + 1) + "px";
-        EchoWindowPane.activeElement.style.width = initialWidth + "px";
-    }
-};
-
-/**
- * Processes a mouse button release event when the user is dragging a 
- * WindowPane.  Stores the updated state of the WindowPane in
- * the ClientMessage.
- *
- * This method will automatically unregister the
- * temporarily set mouse move/release listeners as its invocation indicates
- * the completion of a window drag operation.
- * This event listener is temporarily registered by the 
- * <code>processTitleDragMouseDown()</code> method when the user begins
- * dragging a WindowPane by dragging its title.
- *
- * @param e the event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.processTitleDragMouseUp = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-    
-    var id = EchoWindowPane.activeElement.getAttribute("id");
-    EchoClientMessage.setPropertyValue(id, "positionX",  EchoWindowPane.activeElement.style.left);
-    EchoClientMessage.setPropertyValue(id, "positionY",  EchoWindowPane.activeElement.style.top);
-    
-    EchoWindowPane.activeElement = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleDragMouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleDragMouseUp, true);
-    EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, true);
-};
-
-/**
- * Processes a mouse down event within the title region of a WindowPane.
- * This handler first raises the window and then delegates window
- * dragging work to <code>processTitleDragMouseDown()</code>.
- * This event listener is permanently registered to the window border
- * elements using the EchoEventProcessor.
- *
- * @param echoEvent the event, preprocessed by the 
- *        <code>EchoEventProcessor</code>
- */
-EchoWindowPane.processTitleMouseDown = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.getAttribute("id"));
-    EchoWindowPane.raise(componentId);
-    EchoWindowPane.processTitleDragMouseDown(echoEvent);
-};
-
-/**
- * Raises the specified WindowPane to the top.
- *
- * @param windowComponentId the id of the WindowPane
- */
-EchoWindowPane.raise = function(windowComponentId) {
-    var containerId = EchoDomPropertyStore.getPropertyValue(windowComponentId, "containerId");
-    var zIndex = EchoWindowPane.ZIndexManager.raise(containerId, windowComponentId);
-    EchoClientMessage.setPropertyValue(windowComponentId, "zIndex",  zIndex);
-};
-
-/**
- * Event handler for "SelectStart" events to disable selection while dragging
- * the Window.  (Internet Explorer specific)
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoWindowPane.selectStart = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-    EchoDomUtil.preventEventDefault(e);
+    throw new Error("ZIndexManager.remove: Element with id \"" + elementId + 
+            "\" does not exist in container with id \"" + containerId + "\".");
 };

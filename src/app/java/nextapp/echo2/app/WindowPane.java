@@ -46,6 +46,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
 
     public static final String INPUT_CLOSE = "input_close";
     
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CLOSABLE = "closable";
     public static final String PROPERTY_CLOSE_ICON = "closeIcon";
@@ -151,6 +152,15 @@ implements FloatingPane, ModalSupport, PaneContainer {
         for (int i = 0; i < listeners.length; ++i) {
             ((WindowPaneListener) listeners[i]).windowPaneClosing(e);
         }
+    }
+    
+    /**
+     * Returns the background image of the <code>WindowPane</code>.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
     }
     
     /**
@@ -449,6 +459,15 @@ implements FloatingPane, ModalSupport, PaneContainer {
         } else if (Z_INDEX_CHANGED_PROPERTY.equals(inputName)) {
             setZIndex(((Integer) inputValue).intValue());
         }
+    }
+    
+    /**
+     * Sets the background image of the <code>WindowPane</code>.
+     * 
+     * @param newValue the new background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     
     /**

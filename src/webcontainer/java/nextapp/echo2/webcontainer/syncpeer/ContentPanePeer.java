@@ -39,6 +39,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.FloatingPane;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.button.AbstractButton;
@@ -203,6 +204,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
         Element containerDivElement = parentNode.getOwnerDocument().createElement("div");
         String containerId = getContainerId(child);
         containerDivElement.setAttribute("id", containerId);
+        if (!(child instanceof FloatingPane)) {
+            containerDivElement.setAttribute("style", "position:absolute;width:100%;height:100%;overflow:auto;");
+        }
         parentNode.appendChild(containerDivElement);
         ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
         if (syncPeer instanceof DomUpdateSupport) {
@@ -256,7 +260,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
         cssStyle.setAttribute("position", "absolute");
         cssStyle.setAttribute("width", "100%");
         cssStyle.setAttribute("height", "100%");
-        cssStyle.setAttribute("overflow", "auto");
+        cssStyle.setAttribute("overflow", "hidden");
         ColorRender.renderToStyle(cssStyle, (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_FOREGROUND),
                 (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) contentPane.getRenderProperty(ContentPane.PROPERTY_FONT));

@@ -262,6 +262,14 @@ EchoClientEngine.baseServerUri = null;
 EchoClientEngine.debugEnabled = true;
 
 /**
+ * Configures browser-specific settings based on ClientProperties results.
+ * Invoked when ClientProperties are stored.
+ */
+EchoClientEngine.configure = function() {
+    EchoVirtualPosition.enabled = EchoClientProperties.get("browserInternetExplorer") ? true : false;
+};
+
+/**
  * Initializes the Echo2 Client Engine.
  *
  * @param baseServerUri the base URI of the Echo application server
@@ -269,6 +277,8 @@ EchoClientEngine.debugEnabled = true;
 EchoClientEngine.init = function(baseServerUri, debugEnabled) {
     EchoClientEngine.baseServerUri = baseServerUri;
     EchoClientEngine.debugEnabled = debugEnabled;
+    
+    EchoVirtualPosition.init();
     
     // Launch debug window if requested in URI.
     if (EchoClientEngine.debugEnabled && 
@@ -615,6 +625,7 @@ EchoClientProperties.MessageProcessor.processStore = function(storeElement) {
         }
         EchoClientProperties.propertyMap[name] = value;
     }
+    EchoClientEngine.configure();
 };
 
 /**
@@ -2277,7 +2288,7 @@ EchoServerMessage.processApplicationProperties = function() {
 };
 
 /**
- * Processes all of the 'messagepart' directives contained in the ServerMessage.
+ * Processes all of the 'message-part' directives contained in the ServerMessage.
  */
 EchoServerMessage.processMessageParts = function() {
     // 'complete' flag is used to set status to 'failed' in the event of an exception.
@@ -2343,6 +2354,7 @@ EchoServerMessage.processPhase2 = function() {
         throw ex;
     }
     
+    EchoVirtualPosition.redraw();
     ++EchoServerMessage.transactionCount;
 };
 
@@ -2433,6 +2445,228 @@ EchoServerTransaction.postProcess = function() {
 EchoServerTransaction.responseHandler = function(conn) {
     EchoServerMessage.init(conn.getResponseXml(), EchoServerTransaction.postProcess);
     EchoServerMessage.process();
+};
+
+// __________________________
+// Object EchoVirtualPosition
+
+EchoVirtualPosition = function() { };
+
+EchoVirtualPosition.BOTTOM = 1;
+EchoVirtualPosition.LEFT = 2;
+EchoVirtualPosition.RIGHT = 3;
+EchoVirtualPosition.TOP = 4;
+
+EchoVirtualPosition.positionMap = new EchoCollectionsMap();
+EchoVirtualPosition.elementIdList = new Array();
+
+EchoVirtualPosition.enabled = true;
+
+EchoVirtualPosition.calculateHeight = function(element, pixels, position) {
+    var parentHeight = element.parentNode.offsetHeight;
+    var otherSidePixels = EchoVirtualPosition.parsePx(
+            position == EchoVirtualPosition.TOP ? element.style.bottom : element.style.top);
+    var paddingPixels = EchoVirtualPosition.parsePx(element.style.paddingTop) 
+            + EchoVirtualPosition.parsePx(element.style.paddingBottom);
+    var marginPixels = EchoVirtualPosition.parsePx(element.style.marginTop) 
+            + EchoVirtualPosition.parsePx(element.style.marginBottom);
+    var calculatedHeight = parentHeight - pixels - otherSidePixels - paddingPixels - marginPixels;
+    if (calculatedHeight <= 0) {
+        return 0;
+    } else {
+        return calculatedHeight + "px";
+    }
+};
+
+EchoVirtualPosition.calculateWidth = function(element, pixels, position) {
+    var parentWidth = element.parentNode.offsetWidth;
+    var otherSidePixels = EchoVirtualPosition.parsePx(
+            position == EchoVirtualPosition.LEFT ? element.style.right : element.style.left);
+    var paddingPixels = EchoVirtualPosition.parsePx(element.style.paddingLeft) 
+            + EchoVirtualPosition.parsePx(element.style.paddingRight);
+    var marginPixels = EchoVirtualPosition.parsePx(element.style.marginLeft) 
+            + EchoVirtualPosition.parsePx(element.style.marginRight);
+    var calculatedWidth = parentWidth - pixels - otherSidePixels - paddingPixels - marginPixels;
+    if (calculatedWidth <= 0) {
+        return 0;
+    } else {
+        return calculatedWidth + "px";
+    }
+};
+
+EchoVirtualPosition.createOrRetrieveElementData = function(elementId) {
+    var elementData = EchoVirtualPosition.positionMap.get(elementId);
+    if (!elementData) {
+        elementData = new EchoVirtualPosition.ElementData();
+        EchoVirtualPosition.positionMap.put(elementId, elementData);
+        EchoVirtualPosition.elementIdList.push(elementId);
+    }
+    return elementData;
+};
+
+EchoVirtualPosition.init = function() {
+    if (!EchoVirtualPosition.enabled) {
+        return;
+    }
+    EchoDomUtil.addEventListener(window, "resize", EchoVirtualPosition.resizeListener, false);
+};
+
+EchoVirtualPosition.parsePx = function(value) {
+    value = parseInt(value);
+    return isNaN(value) ? 0 : value;
+};
+
+EchoVirtualPosition.redraw = function(elementId) {
+    if (!EchoVirtualPosition.enabled) {
+        return;
+    }
+    for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+        var elementId = EchoVirtualPosition.elementIdList[i];
+        EchoVirtualPosition.redrawElement(elementId);
+    }
+}
+
+EchoVirtualPosition.redrawElement = function(elementId) {
+    if (!EchoVirtualPosition.enabled) {
+        return;
+    }
+    var elementData = EchoVirtualPosition.positionMap.get(elementId);
+    if (elementData.bottom != null) {
+        EchoVirtualPosition.redrawBottom(elementId);
+    } 
+    if (elementData.top != null) {
+        EchoVirtualPosition.redrawTop(elementId);
+    }
+    if (elementData.left != null) {
+        EchoVirtualPosition.redrawLeft(elementId);
+    }
+    if (elementData.right != null) {
+        EchoVirtualPosition.redrawRight(elementId);
+    }
+};
+
+EchoVirtualPosition.redrawBottom = function(elementId) {
+    var element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+    var bottomPixels = EchoVirtualPosition.positionMap.get(elementId).bottom;
+    element.style.height = EchoVirtualPosition.calculateHeight(element, bottomPixels, EchoVirtualPosition.BOTTOM);
+};
+
+EchoVirtualPosition.redrawLeft = function(elementId) {
+    var element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+    var leftPixels = EchoVirtualPosition.positionMap.get(elementId).left;
+    element.style.width = EchoVirtualPosition.calculateWidth(element, leftPixels, EchoVirtualPosition.LEFT);
+};
+
+EchoVirtualPosition.redrawRight = function(elementId) {
+    var element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+    var rightPixels = EchoVirtualPosition.positionMap.get(elementId).right;
+    element.style.width = EchoVirtualPosition.calculateWidth(element, rightPixels, EchoVirtualPosition.RIGHT);
+};
+
+EchoVirtualPosition.redrawTop = function(elementId) {
+    var element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+    var topPixels = EchoVirtualPosition.positionMap.get(elementId).top;
+    element.style.height = EchoVirtualPosition.calculateHeight(element, topPixels, EchoVirtualPosition.TOP);
+};
+
+EchoVirtualPosition.resizeListener = function(e) {
+    e = e ? e : window.event;
+    EchoVirtualPosition.redraw();
+};
+
+EchoVirtualPosition.clear = function(elementId) {
+    if (!EchoVirtualPosition.enabled) {
+        return;
+    }
+
+    var i, index = null;
+
+    // Remove element from mapping.
+    EchoVirtualPosition.positionMap.remove(elementId);
+
+    // Find index of elementId in elementIdList
+    for (i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+        if (EchoVirtualPosition.elementIdList[i] == elementId) {
+            index = i;
+            break;
+        }
+    }
+    if (index == null) {
+        return;
+    }
+    
+    // Remove index from elementIdList
+    for (i = index; i < EchoVirtualPosition.elementIdList.length - 1; ++i) {
+        EchoVirtualPosition.elementIdList[i] = EchoVirtualPosition.elementIdList[i + 1];
+    }
+    EchoVirtualPosition.elementIdList.length = EchoVirtualPosition.elementIdList.length - 1;
+};
+
+EchoVirtualPosition.setBottom = function(element, bottomPixels) {
+    if (EchoVirtualPosition.enabled) {
+        // IE6 browser.
+        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
+        elementData.bottom = bottomPixels;
+    } else {
+        // Normal browser.
+        element.style.bottom = bottomPixels + "px";
+    }
+};
+
+EchoVirtualPosition.setLeft = function(element, leftPixels) {
+    if (EchoVirtualPosition.enabled) {
+        // IE6 browser.
+        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
+        elementData.left = leftPixels;
+    } else {
+        // Normal browser.
+        element.style.left = leftPixels + "px";
+    }
+};
+
+EchoVirtualPosition.setRight = function(element, rightPixels) {
+    if (EchoVirtualPosition.enabled) {
+        // IE6 browser.
+        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
+        elementData.right = rightPixels;
+    } else {
+        // Normal browser.
+        element.style.right = rightPixels + "px";
+    }
+};
+
+EchoVirtualPosition.setTop = function(element, topPixels) {
+    if (EchoVirtualPosition.enabled) {
+        // IE6 browser.
+        var elementData = EchoVirtualPosition.createOrRetrieveElementData(element.id);
+        elementData.top = topPixels;
+    } else {
+        // Normal browser.
+        element.style.top = topPixels + "px";
+    }
+};
+    
+EchoVirtualPosition.ElementData = function() {
+    this.top = null;
+    this.bottom = null;
+    this.left = null;
+    this.right = null;
+};
+
+EchoVirtualPosition.ElementData.prototype.toString = function() {
+    return this.top + " " + this.right + " " + this.bottom + " "  + this.left + " ";
 };
 
 // _______________________

@@ -27,14 +27,338 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-// ____________________
-// Object EchoSplitPane
+EchoSplitPane = function(elementId, containerElementId, orientation, position) {
+    this.elementId = elementId;
+    this.containerElementId = containerElementId;
+    this.orientation = orientation;
+    this.position = position;
+    
+    this.background = null;
+    this.foreground = null;
+    this.font = null;
+    
+    this.dragInitMouseOffset = null;
+    this.dragInitPosition = position;
+    
+    this.separatorSize = 4;
+    this.separatorColor = "#3f3f4f";
+    this.separatorImage = null;
+    this.resizable = true;
+    
+    this.paneData = new Array(new EchoSplitPane.PaneData(), new EchoSplitPane.PaneData());
+};
+
+EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM = 0;
+EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP = 1;
+EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT = 2;
+EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT = 3;
+
+EchoSplitPane.getPaddingHeight = function(pane) {
+    return pane.insets ? pane.insets.top + pane.insets.bottom : 0;
+};
+
+EchoSplitPane.getPaddingWidth = function(pane) {
+    return pane.insets ? pane.insets.left + pane.insets.right : 0;
+};
 
 /**
- * Static object/namespace for SplitPane support.
- * This object/namespace should not be used externally.
+ * Renders the SplitPane to the DOM, beneath its previously specified
+ * container element.
+ *
+ * Note: When the split pane is destroyed,  the dispose() method must be invoked
+ * to release resources allocated by this method.
  */
-EchoSplitPane = function() { };
+EchoSplitPane.prototype.create = function() {
+    var containerElement = document.getElementById(this.containerElementId);
+    var splitPaneDivElement = document.createElement("div");
+    splitPaneDivElement.id = this.elementId;
+    splitPaneDivElement.style.position = "absolute";
+    splitPaneDivElement.style.overflow = "hidden";
+    splitPaneDivElement.style.width = "100%";
+    splitPaneDivElement.style.height = "100%";
+    if (this.background != null) {
+        splitPaneDivElement.style.background = this.background;
+    }
+    if (this.foreground != null) {
+        splitPaneDivElement.style.foreground = this.foreground;
+    }
+    if (this.font != null) {
+        EchoCssUtil.applyStyle(splitPaneDivElement, this.font);
+    }
+    
+    var paneDivElements = new Array();
+    for (var i = 0; i < 2; ++i) {
+        paneDivElements[i] = document.createElement("div");
+        paneDivElements[i].id = this.elementId + "_pane" + i;
+        paneDivElements[i].style.position = "absolute";
+        paneDivElements[i].style.overflow = "auto";
+        this.paneData[i].applyStyle(paneDivElements[i]);
+    }
+    
+    var separatorDivElement = null;
+    if (this.separatorSize > 0) {
+        separatorDivElement = document.createElement("div");
+        separatorDivElement.id = this.elementId + "_separator";
+        separatorDivElement.style.position = "absolute";
+        separatorDivElement.style.backgroundColor = this.separatorColor;
+        separatorDivElement.style.fontSize = "1px";
+        separatorDivElement.style.lineHeight = "0";
+        if (this.separatorImage != null) {
+            EchoCssUtil.applyStyle(separatorDivElement, this.separatorImage);
+        }
+    }
+    
+    switch (this.orientation) {
+    case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
+        paneDivElements[0].style.top = "0px";
+        paneDivElements[0].style.left = "0px";
+        EchoVirtualPosition.setRight(paneDivElements[0], 0);
+        
+        EchoVirtualPosition.setBottom(paneDivElements[1], 0);
+        paneDivElements[1].style.left = "0px";
+        EchoVirtualPosition.setRight(paneDivElements[1], 0);
+        
+        if (separatorDivElement) {
+            separatorDivElement.style.height = this.separatorSize + "px";
+            separatorDivElement.style.left = "0px";
+            EchoVirtualPosition.setRight(separatorDivElement, 0);
+            if (this.resizable) {
+                separatorDivElement.style.cursor = "n-resize";
+            }
+        }
+        break;
+    case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
+        paneDivElements[0].style.bottom = "0px";
+        paneDivElements[0].style.left = "0px";
+        EchoVirtualPosition.setRight(paneDivElements[0], 0);
+
+        EchoVirtualPosition.setTop(paneDivElements[1], 0);
+        paneDivElements[1].style.left = "0px";
+        EchoVirtualPosition.setRight(paneDivElements[1], 0);
+        
+        if (separatorDivElement) {
+            separatorDivElement.style.height = this.separatorSize + "px";
+            separatorDivElement.style.left = "0px";
+            EchoVirtualPosition.setRight(separatorDivElement, 0);
+            if (this.resizable) {
+                separatorDivElement.style.cursor = "s-resize";
+            }
+        }
+        break;
+    case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
+        paneDivElements[0].style.top = "0px";
+        EchoVirtualPosition.setBottom(paneDivElements[0], 0);
+        paneDivElements[0].style.left = "0px";
+        
+        EchoVirtualPosition.setRight(paneDivElements[1], 0);
+        paneDivElements[1].style.top = "0px";
+        EchoVirtualPosition.setBottom(paneDivElements[1], 0);
+        
+        if (separatorDivElement) {
+            separatorDivElement.style.width = this.separatorSize + "px";
+            separatorDivElement.style.top = "0px";
+            EchoVirtualPosition.setBottom(separatorDivElement, 0);
+            if (this.resizable) {
+                separatorDivElement.style.cursor = "w-resize";
+            }
+        }
+        break;
+    case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
+        paneDivElements[0].style.top = "0px";
+        EchoVirtualPosition.setBottom(paneDivElements[0], 0);
+        paneDivElements[0].style.right = "0px";
+        
+        EchoVirtualPosition.setLeft(paneDivElements[1], 0);
+        paneDivElements[1].style.top = "0px";
+        EchoVirtualPosition.setBottom(paneDivElements[1], 0);
+        
+        if (separatorDivElement) {
+            separatorDivElement.style.width = this.separatorSize + "px";
+            separatorDivElement.style.top = "0px";
+            EchoVirtualPosition.setBottom(separatorDivElement, 0);
+            if (this.resizable) {
+                separatorDivElement.style.cursor = "e-resize";
+            }
+        }
+        break;
+    default:
+        throw new Error("Illegal orientation: " + this.orientation);
+    }
+        
+    this.update(paneDivElements[0], paneDivElements[1], separatorDivElement);
+
+    splitPaneDivElement.appendChild(paneDivElements[0]);
+    splitPaneDivElement.appendChild(paneDivElements[1]);
+    if (separatorDivElement) {
+        splitPaneDivElement.appendChild(separatorDivElement);
+    }
+    
+    containerElement.appendChild(splitPaneDivElement);
+    
+    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
+    
+    if (separatorDivElement && this.resizable) {
+        EchoEventProcessor.addHandler(separatorDivElement.id, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
+    }
+};
+
+EchoSplitPane.prototype.dispose = function() {
+    EchoVirtualPosition.clear(this.elementId + "_pane0");
+    EchoVirtualPosition.clear(this.elementId + "_pane1");
+    EchoVirtualPosition.clear(this.elementId + "_separator");
+
+    EchoEventProcessor.removeHandler(this.elementId + "_separator", "mousedown");
+    EchoEventProcessor.removeHandler(this.elementId, "mousemove");
+    EchoEventProcessor.removeHandler(this.elementId, "mouseup");
+};
+
+EchoSplitPane.prototype.isOrientationVertical = function() {
+    return this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM 
+            || this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
+};
+
+EchoSplitPane.prototype.processSeparatorMouseDown = function(echoEvent) {
+    this.dragInitPosition = this.position;
+    if (this.isOrientationVertical()) {
+        this.dragInitMouseOffset = echoEvent.clientY;
+    } else {
+        this.dragInitMouseOffset = echoEvent.clientX;
+    }
+    EchoEventProcessor.addHandler(this.elementId, "mousemove", "EchoSplitPane.processSeparatorMouseMove");
+    EchoEventProcessor.addHandler(this.elementId, "mouseup", "EchoSplitPane.processSeparatorMouseUp");
+};
+
+EchoSplitPane.prototype.processSeparatorMouseUp = function(echoEvent) {
+    EchoEventProcessor.removeHandler(this.elementId, "mousemove");
+    EchoEventProcessor.removeHandler(this.elementId, "mouseup");
+    EchoClientMessage.setPropertyValue(this.elementId, "separatorPosition",  this.position + "px");
+    EchoVirtualPosition.redraw();
+};
+
+EchoSplitPane.prototype.processSeparatorMouseMove = function(echoEvent) {
+    switch (this.orientation) {
+    case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
+        this.setPosition(this.dragInitPosition + echoEvent.clientY - this.dragInitMouseOffset);
+        break;
+    case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
+        this.setPosition(this.dragInitPosition - echoEvent.clientY + this.dragInitMouseOffset);
+        break;
+    case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
+        this.setPosition(this.dragInitPosition + echoEvent.clientX - this.dragInitMouseOffset);
+        break;
+    case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
+        this.setPosition(this.dragInitPosition - echoEvent.clientX + this.dragInitMouseOffset);
+        break;
+    }
+    this.update();
+};
+
+EchoSplitPane.prototype.resetPane = function(index) {
+    var paneData = new EchoSplitPane.PaneData();
+    var paneDivElement = document.getElementById(this.elementId + "_pane" + index);
+    while (paneDivElement.childNodes.length > 0) {
+        paneDivElement.removeChild(paneDivElement.lastChild);
+    }
+    if (index == 0) {
+        this.paneData[0] = paneData;
+    } else {
+        this.paneData[1] = paneData;
+    }
+    paneData.applyStyle(paneDivElement);
+};
+
+EchoSplitPane.prototype.setPosition = function(newValue) {
+    var divElement = document.getElementById(this.elementId);
+    var vertical = this.isOrientationVertical();
+    var totalSize = vertical ? divElement.offsetHeight : divElement.offsetWidth;
+    
+    if (this.paneData[0].minimumSize != -1 && newValue < this.paneData[0].minimumSize) {
+	    this.position = this.paneData[0].minimumSize;
+    } else if (this.paneData[0].maximumSize != -1 && newValue > this.paneData[0].maximumSize) {
+	    this.position = this.paneData[0].maximumSize;
+    } else if (this.paneData[1].minimumSize != -1 && newValue > totalSize - this.paneData[1].minimumSize - this.separatorSize) {
+	    this.position = totalSize - this.paneData[1].minimumSize - this.separatorSize
+    } else if (this.paneData[1].maximumSize != -1 && newValue < totalSize - this.paneData[1].maximumSize - this.separatorSize) {
+	    this.position = totalSize - this.paneData[1].maximumSize - this.separatorSize;
+    } else {
+	    this.position = newValue;
+    }
+};
+
+EchoSplitPane.prototype.update = function(firstPaneDivElement, secondPaneDivElement, separatorDivElement) {
+    if (arguments.length == 0) {
+        firstPaneDivElement = document.getElementById(this.elementId + "_pane0");
+        secondPaneDivElement = document.getElementById(this.elementId + "_pane1");
+        separatorDivElement = document.getElementById(this.elementId + "_separator");
+    }
+
+    switch (this.orientation) {
+    case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
+        var firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
+        firstPaneDivElement.style.height = (firstHeight > 0 ? firstHeight : 0) + "px";
+        secondPaneDivElement.style.top = (this.position + this.separatorSize) + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.top = this.position + "px";
+        }
+        break;
+    case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
+        var firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
+        firstPaneDivElement.style.height = (firstHeight > 0 ? firstHeight : 0) + "px";
+        secondPaneDivElement.style.bottom = (this.position + this.separatorSize) + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.bottom = this.position + "px";
+        }
+        break;
+    case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
+        var firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
+        firstPaneDivElement.style.width = (firstWidth > 0 ? firstWidth : 0) + "px";
+        secondPaneDivElement.style.left = (this.position + this.separatorSize) + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.left = this.position + "px";
+        }
+        break;
+    case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
+        var firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
+        firstPaneDivElement.style.width = (firstWidth > 0 ? firstWidth : 0) + "px";
+        secondPaneDivElement.style.right = (this.position + this.separatorSize) + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.right = this.position + "px";
+        }
+        break;
+    default:
+        throw new Error("Illegal orientation: " + this.orientation);
+        break;
+    }
+};
+
+/**
+ * Returns the SplitPane data object instance based on the root element id
+ * of the SplitPane.
+ *
+ * @param componentId the root element id of the SplitPane
+ * @return the relevant SplitPane instance
+ */
+EchoSplitPane.getComponent = function(componentId) {
+    return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+};
+
+EchoSplitPane.processSeparatorMouseDown = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var splitPane = EchoSplitPane.getComponent(componentId);
+    splitPane.processSeparatorMouseDown(echoEvent);
+};
+
+EchoSplitPane.processSeparatorMouseMove = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var splitPane = EchoSplitPane.getComponent(componentId);
+    splitPane.processSeparatorMouseMove(echoEvent);
+};
+
+EchoSplitPane.processSeparatorMouseUp = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var splitPane = EchoSplitPane.getComponent(componentId);
+    splitPane.processSeparatorMouseUp(echoEvent);
+};
 
 /**
  * Static object/namespace for SplitPane MessageProcessor 
@@ -50,16 +374,22 @@ EchoSplitPane.MessageProcessor = function() { };
  */
 EchoSplitPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
+        if (messagePartElement.childNodes[i].nodeType === 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "add-child":
+                EchoSplitPane.MessageProcessor.processAddChild(messagePartElement.childNodes[i]);
+                break;
             case "dispose":
                 EchoSplitPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
                 break;
             case "init":
                 EchoSplitPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
-            case "update-pane":
-                EchoSplitPane.MessageProcessor.processUpdatePane(messagePartElement.childNodes[i]);
+            case "remove-child":
+                EchoSplitPane.MessageProcessor.processRemoveChild(messagePartElement.childNodes[i]);
+                break;
+            case "set-separator-position":
+                EchoSplitPane.MessageProcessor.processSetSeparatorPosition(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -67,370 +397,185 @@ EchoSplitPane.MessageProcessor.process = function(messagePartElement) {
 };
 
 /**
- * Processes a <code>dispose</code> message to finalize the state of a
- * split pane component that is being removed.
+ * Processes an <code>add-child</code> message to create an SplitPane.
+ *
+ * @param addChildMessageElement the <code>add-child</code> element to process
+ */
+EchoSplitPane.MessageProcessor.processAddChild = function(addChildMessageElement) {
+    var elementId = addChildMessageElement.getAttribute("eid");
+    var splitPane = EchoSplitPane.getComponent(elementId);
+    var index = parseInt(addChildMessageElement.getAttribute("index"));
+    
+    var layoutDataElements = addChildMessageElement.getElementsByTagName("layout-data");
+    if (layoutDataElements.length > 0) {
+        EchoSplitPane.MessageProcessor.processLayoutData(layoutDataElements[0], splitPane.paneData[index]);
+	    splitPane.paneData[index].applyStyle(document.getElementById(elementId + "_pane" + index));
+    }
+};
+
+/**
+ * Processes an <code>dispose</code> message to dispose the state of a 
+ * SplitPane component that is being removed.
  *
  * @param disposeMessageElement the <code>dispose</code> element to process
  */
 EchoSplitPane.MessageProcessor.processDispose = function(disposeMessageElement) {
-    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        EchoEventProcessor.removeHandler(elementId + "_separator", "mousedown");
+    var elementId = disposeMessageElement.getAttribute("eid");
+    var splitPane = EchoSplitPane.getComponent(elementId);
+    if (splitPane) {
+        splitPane.dispose();
     }
 };
 
 /**
- * Processes an <code>init</code> message to initialize the state of a 
- * split pane component that is being added.
+ * Processes an <code>init</code> message to create an SplitPane.
  *
  * @param initMessageElement the <code>init</code> element to process
  */
 EchoSplitPane.MessageProcessor.processInit = function(initMessageElement) {
-    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        var resizable = item.getAttribute("resizable") == "true";
-        
-        EchoDomPropertyStore.setPropertyValue(elementId, "topLeftPane", item.getAttribute("top-left-pane"));
-        if (resizable) {
-            EchoEventProcessor.addHandler(elementId + "_separator", "mousedown", "EchoSplitPane.mouseDown");
-        }
+    var elementId = initMessageElement.getAttribute("eid");
+    var containerElementId = initMessageElement.getAttribute("container-eid");
+    var orientation;
+    switch(initMessageElement.getAttribute("orientation")) {
+    case "l-r":
+        orientation = EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT;
+        break;
+    case "r-l":
+        orientation = EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT;
+        break;
+    case "t-b":
+        orientation = EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM;
+        break;
+    case "b-t":
+        orientation = EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
+        break;
+    default:
+        throw new Error("Illegal orientation.");
     }
-};
-
-/**
- * Processes an <code>update-pane</code> message to update non-rendered 
- * properties of a specific pane.
- *
- * @param updatePaneMessageElement the <code>update-pane</code> element to 
- *        process
- */
-EchoSplitPane.MessageProcessor.processUpdatePane = function(updatePaneMessageElement) {
-    for (var item = updatePaneMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        if (item.getAttribute("minimum-size")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "minimumSize", item.getAttribute("minimum-size"));
-        }
-        if (item.getAttribute("maximum-size")) {
-            EchoDomPropertyStore.setPropertyValue(elementId, "maximumSize", item.getAttribute("maximum-size"));
-        }
-    }
-};
-
-EchoSplitPane.DEFAULT_MINIMUM_SIZE = 80;
-EchoSplitPane.verticalDrag = false;
-EchoSplitPane.topLeftPane = 0;
-EchoSplitPane.initialWindowPosition = -1;
-EchoSplitPane.mouseOffset = -1;
-EchoSplitPane.activePaneId = null;
-EchoSplitPane.activePaneDiv = null;
-EchoSplitPane.activePane0Div = null;
-EchoSplitPane.activePane1Div = null;
-EchoSplitPane.activePane0MinimumSize = -1;
-EchoSplitPane.activePane1MinimumSize = -1;
-EchoSplitPane.activePane0MaximumSize = -1;
-EchoSplitPane.activePane1MaximumSize = -1;
-EchoSplitPane.separatorSize = 0;
-EchoSplitPane.activePaneSeparatorDiv = null;
-
-/**
- * Constrains the movement of the separator.
- *
- * @param newSeparatorPosition the user-requested position of the separator
- * @param regionSize the size of the entire region in which the separator might
- *        theoretically move
- * @return a constrained value indicating the permissable separator position
- *         (if the originally provided separator position was valid, the same
- *         value will be returned).
- */
-EchoSplitPane.constrainSeparatorPosition = function(newSeparatorPosition, regionSize) {
-    // Constrain pane 1 maximum size.
-    if (EchoSplitPane.activePane1MaximumSize > 0 && newSeparatorPosition < regionSize - EchoSplitPane.activePane1MaximumSize) {
-        newSeparatorPosition = regionSize - EchoSplitPane.activePane1MaximumSize;
-    }
-    // Constrain pane 0 maximum size.
-    if (EchoSplitPane.activePane0MaximumSize > 0 && newSeparatorPosition > EchoSplitPane.activePane0MaximumSize) {
-        newSeparatorPosition = EchoSplitPane.activePane0MaximumSize;
-    }
-    // Constrain pane 1 minimum size.
-    if (newSeparatorPosition > regionSize - EchoSplitPane.activePane1MinimumSize) {
-        newSeparatorPosition = regionSize - EchoSplitPane.activePane1MinimumSize;
-    }
-    // Constrain pane 0 minimum size.
-    if (newSeparatorPosition < EchoSplitPane.activePane0MinimumSize) {
-        newSeparatorPosition = EchoSplitPane.activePane0MinimumSize;
-    }
-    // Return constrained position.
-    return newSeparatorPosition;
-};
-
-/**
- * End-of-lifecycle method to dispose of resources and deregister
- * event listeners.  This method is invoked when the draggable
- * pane is removed from the DOM.
- */
-EchoSplitPane.dispose = function() {
-    EchoSplitPane.activePaneId = null;
-    EchoSplitPane.activePaneDiv = null;
-    EchoSplitPane.activePane0Div = null;
-    EchoSplitPane.activePane1Div = null;
-    EchoSplitPane.activePaneSeparatorDiv = null;
-    EchoSplitPane.separatorSize = 0;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.mouseMove, true);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.mouseUp, true);
-    EchoDomUtil.removeEventListener(document, "selectstart", EchoSplitPane.selectStart, true);
-};
-
-/**
- * Event handler for "MouseDown" events.  Permanently registered using 
- * EchoEventProcessor.
- *
- * @param echoEvent the event, preprocessed by the 
- *        <code>EchoEventProcessor</code>
- */
-EchoSplitPane.mouseDown = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    if (!EchoClientEngine.verifyInput(elementId)) {
-        return;
-    }
-    var mouseDownElement = echoEvent.target;
-    if (mouseDownElement != EchoSplitPane.separatorElement) {
-        EchoSplitPane.activePaneSeparatorDiv = mouseDownElement;
-        EchoSplitPane.verticalDrag = EchoSplitPane.activePaneSeparatorDiv.style.cursor == "s-resize";
-        if (EchoSplitPane.verticalDrag) {
-            EchoSplitPane.separatorSize = parseInt(mouseDownElement.style.height);
-        } else {
-            EchoSplitPane.separatorSize = parseInt(mouseDownElement.style.width);
-        }
-        EchoSplitPane.activePaneId = mouseDownElement.parentNode.getAttribute("id");
-        EchoSplitPane.topLeftPane = EchoDomPropertyStore.getPropertyValue(
-                EchoSplitPane.activePaneId, "topLeftPane") == "1" ? 1 : 0;
-        EchoSplitPane.activePaneDiv = document.getElementById(EchoSplitPane.activePaneId);
-        EchoSplitPane.activePane0Div = document.getElementById(EchoSplitPane.activePaneId + "_pane_0");
-        EchoSplitPane.activePane0MinimumSize = parseInt(EchoDomPropertyStore.getPropertyValue(
-                EchoSplitPane.activePaneId + "_pane_0", "minimumSize"));
-        if (isNaN(EchoSplitPane.activePane0MinimumSize)) {
-            EchoSplitPane.activePane0MinimumSize = EchoSplitPane.DEFAULT_MINIMUM_SIZE;
-        }
-        EchoSplitPane.activePane1Div = document.getElementById(EchoSplitPane.activePaneId + "_pane_1");
-        EchoSplitPane.activePane1MinimumSize = parseInt(EchoDomPropertyStore.getPropertyValue(
-                EchoSplitPane.activePaneId + "_pane_1", "minimumSize"));
-        if (isNaN(EchoSplitPane.activePane1MinimumSize)) {
-            EchoSplitPane.activePane1MinimumSize = EchoSplitPane.DEFAULT_MINIMUM_SIZE;
-        }
-        EchoSplitPane.activePane0MaximumSize = parseInt(EchoDomPropertyStore.getPropertyValue(
-                EchoSplitPane.activePaneId + "_pane_0", "maximumSize"));
-        if (isNaN(EchoSplitPane.activePane0MaximumSize)) {
-            EchoSplitPane.activePane0MaximumSize = -1;
-        }
-        EchoSplitPane.activePane1Div = document.getElementById(EchoSplitPane.activePaneId + "_pane_1");
-        EchoSplitPane.activePane1MaximumSize = parseInt(EchoDomPropertyStore.getPropertyValue(
-                EchoSplitPane.activePaneId + "_pane_1", "maximumSize"));
-        if (isNaN(EchoSplitPane.activePane1MaximumSize)) {
-            EchoSplitPane.activePane1MaximumSize = -1;
-        }
-        if (EchoSplitPane.verticalDrag) {
-            EchoSplitPane.mouseOffset = echoEvent.clientY;
-            if (EchoSplitPane.topLeftPane == 1) {
-                EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.bottom);
-            } else {
-                EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.top);
-            }
-        } else {
-            EchoSplitPane.mouseOffset = echoEvent.clientX;
-            if (EchoSplitPane.topLeftPane == 1) {
-                EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.right);
-            } else {
-                EchoSplitPane.initialWindowPosition = parseInt(EchoSplitPane.activePaneSeparatorDiv.style.left);
-            }
-        }
-        EchoDomUtil.addEventListener(document, "mousemove", EchoSplitPane.mouseMove, true);
-        EchoDomUtil.addEventListener(document, "mouseup", EchoSplitPane.mouseUp, true);
-        EchoDomUtil.addEventListener(document, "selectstart", EchoSplitPane.selectStart, true);
-    }
-};
-
-/**
- * Event handler for "MouseMove" events.  
- * Registered when drag is initiated, deregistered when drag is complete.
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoSplitPane.mouseMove = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
+    var position = parseInt(initMessageElement.getAttribute("position"));
     
-    if (!EchoSplitPane.activePaneId) {
-        // Handle invalid state.
-        EchoSplitPane.dispose();
-        return;
+    var splitPane = new EchoSplitPane(elementId, containerElementId, orientation, position);
+    
+    if (initMessageElement.getAttribute("background")) {
+        splitPane.background = initMessageElement.getAttribute("background");
     }
-
-    // Redraw separator only for IE (low performance), redraw entire
-    // SplitPane for other browsers.
-	if (EchoClientProperties.get("broswerInternetExplorer")) {
-	    EchoSplitPane.redrawSeparator(e);
-	} else {
-	    EchoSplitPane.redrawContent(e);
-	}
-};
-
-/**
- * Event handler for "MouseUp" events.
- * Registered when drag is initiated, deregistered when drag is complete.
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoSplitPane.mouseUp = function(e) {
-    if (EchoSplitPane.activePaneId) {
-        e = (e) ? e : ((window.event) ? window.event : "");
-    
-        EchoSplitPane.redrawContent(e);
-    
-        if (EchoSplitPane.verticalDrag) {
-            if (EchoSplitPane.topLeftPane == 1) {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.bottom);
-            } else {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.top);
-            }
-        } else {
-            if (EchoSplitPane.topLeftPane == 1) {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.right);
-            } else {
-                EchoClientMessage.setPropertyValue(EchoSplitPane.activePaneId, "separatorPosition", 
-                        EchoSplitPane.activePaneSeparatorDiv.style.left);
-            }
-        }
+    if (initMessageElement.getAttribute("foreground")) {
+        splitPane.foreground = initMessageElement.getAttribute("foreground");
+    }
+    if (initMessageElement.getAttribute("font")) {
+        splitPane.font = initMessageElement.getAttribute("font");
+    }
+    if (initMessageElement.getAttribute("separator-size")) {
+        splitPane.separatorSize = parseInt(initMessageElement.getAttribute("separator-size"));
+    }
+    if (initMessageElement.getAttribute("separator-color")) {
+        splitPane.separatorColor = initMessageElement.getAttribute("separator-color");
+    }
+    if (initMessageElement.getAttribute("separator-image")) {
+        splitPane.separatorImage = initMessageElement.getAttribute("separator-image");
+    }
+    if (initMessageElement.getAttribute("resizable")) {
+        splitPane.resizable = initMessageElement.getAttribute("resizable") == "true";
     }
     
-    EchoSplitPane.dispose();
+    var layoutDataElements = initMessageElement.getElementsByTagName("layout-data");
+    for (var i = 0; i < layoutDataElements.length; ++i) {
+        var paneData = layoutDataElements[i].getAttribute("index") == 0 ? splitPane.paneData[0] : splitPane.paneData[1];
+        EchoSplitPane.MessageProcessor.processLayoutData(layoutDataElements[i], paneData);
+    }
+    
+    splitPane.create();
+    
+    if (initMessageElement.getAttribute("enabled") == "false") {
+        EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
+    }
+};
+
+EchoSplitPane.MessageProcessor.processLayoutData = function(layoutDataElement, paneData) {
+    if (layoutDataElement.getAttribute("alignment")) {
+        paneData.alignment = layoutDataElement.getAttribute("alignment");
+    }
+    if (layoutDataElement.getAttribute("background")) {
+        paneData.background = layoutDataElement.getAttribute("background");
+    }
+    if (layoutDataElement.getAttribute("background-image")) {
+        paneData.backgroundImage = layoutDataElement.getAttribute("background-image");
+    }
+    if (layoutDataElement.getAttribute("insets")) {
+        paneData.insets = new EchoCoreProperties.Insets(layoutDataElement.getAttribute("insets"));
+    }
+    if (layoutDataElement.getAttribute("overflow")) {
+        paneData.overflow = layoutDataElement.getAttribute("overflow");
+    }
+    if (layoutDataElement.getAttribute("min-size")) {
+        paneData.minimumSize = parseInt(layoutDataElement.getAttribute("min-size"));
+    }
+    if (layoutDataElement.getAttribute("max-size")) {
+        paneData.maximumSize = parseInt(layoutDataElement.getAttribute("max-size"));
+    }
 };
 
 /**
- * Redraws the Separator of the split pane in the new position specified
- * by the mouse event.
- * This type of redrawing is used for IE browsers for performance reasons.
+ * Processes an <code>remove-child</code> message to create an SplitPane.
  *
- * @param e the MouseEvent.
+ * @param removeChildMessageElement the <code>remove-child</code> element to process
  */
-EchoSplitPane.redrawSeparator = function(e) {
-    var newSeparatorBegin, newSeparatorEnd;
-    if (EchoSplitPane.verticalDrag) {
-        if (EchoSplitPane.topLeftPane == 1) {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientHeight);
-            EchoSplitPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
-        } else {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientY - EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientHeight);
-            EchoSplitPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
-        }
+EchoSplitPane.MessageProcessor.processRemoveChild = function(removeChildMessageElement) {
+    var elementId = removeChildMessageElement.getAttribute("eid");
+    var splitPane = EchoSplitPane.getComponent(elementId);
+    var index = parseInt(removeChildMessageElement.getAttribute("index"));
+    splitPane.resetPane(index);
+};
+
+/**
+ * Processes an <code>set-separator-position</code> message to adjust the 
+ * position of a SplitPane's separator.
+ *
+ * @param setSeparatorPositionMessageElement the 
+ *        <code>set-separator-position</code> element to process
+ */
+EchoSplitPane.MessageProcessor.processSetSeparatorPosition = function(setSeparatorPositionMessageElement) {
+    var elementId = setSeparatorPositionMessageElement.getAttribute("eid");
+    var splitPane = EchoSplitPane.getComponent(elementId);
+    splitPane.position = parseInt(setSeparatorPositionMessageElement.getAttribute("position"));
+    splitPane.update();
+};
+
+EchoSplitPane.PaneData = function() {
+    this.alignment = null;
+    this.background = null;
+    this.backgroundImage = null;
+    this.insets = null;
+    this.minimumSize = -1;
+    this.maximumSize = -1;
+    this.overflow = null;
+};
+
+EchoSplitPane.PaneData.prototype.applyStyle = function(paneDivElement) {
+    if (this.alignment) {
+        EchoCssUtil.applyStyle(paneDivElement, this.alignment);
     } else {
-        if (EchoSplitPane.topLeftPane == 1) {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientWidth);
-            EchoSplitPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
-        } else {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientX - EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientWidth);
-            EchoSplitPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
-        }
+        paneDivElement.style.textAlign = "";
+        paneDivElement.style.verticalAlign = "";
     }
-};
-
-/**
- * Redraws the SplitPane based on the new position specified by the mouse event.
- * This method is invoked when the SplitPane is dragged on non-IE browsers.  It is
- * invoked when the mouse is released on all browsers.
- *
- * @param e the MouseEvent.
- */
-EchoSplitPane.redrawContent = function(e) {
-    var newSeparatorBegin, newSeparatorEnd;
-    if (EchoSplitPane.verticalDrag) {
-        if (EchoSplitPane.topLeftPane == 1) {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientY + EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientHeight);
-            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
-            EchoSplitPane.activePaneSeparatorDiv.style.bottom = newSeparatorBegin + "px";
-            if (EchoSplitPane.activePane0Div) {
-                EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
-            }
-            if (EchoSplitPane.activePane1Div) {
-                EchoSplitPane.activePane1Div.style.bottom = newSeparatorEnd + "px";
-                if (EchoSplitPane.activePane1Div.style.setExpression) {
-                    EchoSplitPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
-                            + EchoSplitPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
-                }
-            }
-        } else {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientY - EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientHeight);
-            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
-            EchoSplitPane.activePaneSeparatorDiv.style.top = newSeparatorBegin + "px";
-            if (EchoSplitPane.activePane0Div) {
-                EchoSplitPane.activePane0Div.style.height = newSeparatorBegin + "px";
-            }
-            if (EchoSplitPane.activePane1Div) {
-                EchoSplitPane.activePane1Div.style.top = newSeparatorEnd + "px";
-                if (EchoSplitPane.activePane1Div.style.setExpression) {
-                    EchoSplitPane.activePane1Div.style.setExpression("height", "(document.getElementById('" 
-                            + EchoSplitPane.activePaneId + "').clientHeight-" + newSeparatorEnd + ") + 'px'");
-                }
-            }
-        }
+    if (this.background) {
+        paneDivElement.style.backgroundColor = this.background;
     } else {
-        if (EchoSplitPane.topLeftPane == 1) {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition - e.clientX + EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientWidth);
-            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
-            EchoSplitPane.activePaneSeparatorDiv.style.right = newSeparatorBegin + "px";
-            if (EchoSplitPane.activePane0Div) {
-                EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
-            }
-            if (EchoSplitPane.activePane1Div) {
-                EchoSplitPane.activePane1Div.style.right = newSeparatorEnd + "px";
-                if (EchoSplitPane.activePane1Div.style.setExpression) {
-                    EchoSplitPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
-                            + EchoSplitPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
-                }
-            }
-        } else {
-            newSeparatorBegin = (EchoSplitPane.initialWindowPosition + e.clientX - EchoSplitPane.mouseOffset);
-            newSeparatorBegin = EchoSplitPane.constrainSeparatorPosition(newSeparatorBegin, 
-                    EchoSplitPane.activePaneDiv.clientWidth);
-            newSeparatorEnd = newSeparatorBegin + EchoSplitPane.separatorSize;
-            EchoSplitPane.activePaneSeparatorDiv.style.left = newSeparatorBegin + "px";
-            if (EchoSplitPane.activePane0Div) {
-                EchoSplitPane.activePane0Div.style.width = newSeparatorBegin + "px";
-            }
-            if (EchoSplitPane.activePane1Div) {
-                EchoSplitPane.activePane1Div.style.left = newSeparatorEnd + "px";
-                if (EchoSplitPane.activePane1Div.style.setExpression) {
-                    EchoSplitPane.activePane1Div.style.setExpression("width", "(document.getElementById('" 
-                            + EchoSplitPane.activePaneId + "').clientWidth-" + newSeparatorEnd + ") + 'px'");
-                }
-            }
-        }
+        paneDivElement.style.backgroundColor = "";
     }
-
-};
-
-/**
- * Event handler for "SelectStart" events to disable selection while dragging.
- * Registered when drag is initiated, deregistered when drag is complete.
- *
- * @param e The event (only provided when using DOM Level 2 Event Model)
- */
-EchoSplitPane.selectStart = function(e) {
-    e = (e) ? e : ((window.event) ? window.event : "");
-    EchoDomUtil.preventEventDefault(e);
+    if (this.backgroundImage) {
+        EchoCssUtil.applyStyle(paneDivElement, this.backgroundImage);
+    } else {
+        paneDivElement.style.backgroundImage = "";
+    }
+    if (this.overflow) {
+        paneDivElement.style.overflow = this.overflow;
+    } else {
+        paneDivElement.style.overflow = "auto";
+    }
+    if (this.insets) {
+        paneDivElement.style.padding = this.insets.toString();
+    } else {
+        paneDivElement.style.padding = "0";
+    }
 };

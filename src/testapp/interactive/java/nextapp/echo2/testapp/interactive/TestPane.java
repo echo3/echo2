@@ -134,6 +134,7 @@ public class TestPane extends ContentPane {
         addTest("Visibility", "VisibilityTest");
         addTest("Window", "WindowTest");
         addTest("WindowPane", "WindowPaneTest");
+        addTest("WindowPane Examples", "WindowPaneExamplesTest");
         
         Column applicationControlsColumn = new Column();
         controlsColumn.add(applicationControlsColumn);

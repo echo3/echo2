@@ -28,6 +28,7 @@
  */
 
 package nextapp.echo2.testapp.interactive;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.webcontainer.WebContainerServlet;
 

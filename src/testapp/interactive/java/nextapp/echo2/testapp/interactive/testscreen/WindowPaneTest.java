@@ -29,569 +29,228 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
-import nextapp.echo2.app.Alignment;
-import nextapp.echo2.app.Border;
-import nextapp.echo2.app.Button;
-import nextapp.echo2.app.CheckBox;
-import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Column;
-import nextapp.echo2.app.ListBox;
-import nextapp.echo2.app.RadioButton;
-import nextapp.echo2.app.SelectField;
 import nextapp.echo2.app.SplitPane;
-import nextapp.echo2.app.Table;
-import nextapp.echo2.app.TextArea;
-import nextapp.echo2.app.TextField;
 import nextapp.echo2.app.WindowPane;
-import nextapp.echo2.app.button.ButtonGroup;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
 /**
- * Interactive test for <code>WindowPane</code>s.
+ * Interactive test module for <code>WindowPane</code>s.
  */
 public class WindowPaneTest extends SplitPane {
     
-    private class WindowTestControls extends ButtonColumn {
-        
-        private WindowTestControls(String targetName, final ContentPane targetContentPane) {
-            add(new Label(targetName));
-            addButton("Add Test Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    targetContentPane.add(createTestWindow("Test"));
-                }
-            });
-            addButton("Add Label Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    targetContentPane.add(createSimpleWindow("Simple"));
-                }
-            });
-            addButton("Add Modal Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createModalWindow("Modal");
-                    windowPane.setModal(true);
-                    targetContentPane.add(windowPane);
-                }
-            });
-            addButton("Add Three Modal Windows", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    for (int i = 0; i < 3; ++i) {
-                        WindowPane windowPane = createModalWindow("3Modal");
-                        windowPane.setModal(true);
-                        targetContentPane.add(windowPane);
-                    }
-                }
-            });
-            addButton("Add Constrained Size Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createSimpleWindow("Constrained");
-                    windowPane.setMinimumWidth(new Extent(400));
-                    windowPane.setMaximumWidth(new Extent(500));
-                    windowPane.setMinimumHeight(new Extent(200));
-                    windowPane.setMaximumHeight(new Extent(280));
-                    targetContentPane.add(windowPane);
-                }
-            });
-            addButton("Add Default-Border Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    positionWindowPane(windowPane);
-                    windowPane.setTitle("Default-Border Window #" + windowNumber++);
-                    targetContentPane.add(windowPane);
-                    
-                    Column windowPaneColumn = new Column();
-                    windowPane.add(windowPaneColumn);
-                    windowPaneColumn.add(new Label("First Name:"));
-                    windowPaneColumn.add(new TextField());
-                    windowPaneColumn.add(new Label("Last Name:"));
-                    windowPaneColumn.add(new TextField());
-                }
-            });
-            addButton("Add Immovable Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createSimpleWindow("Immovable");
-                    windowPane.setMovable(false);
-                    targetContentPane.add(windowPane);
-                }
-            });
-            addButton("Add Fixed Size Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createSimpleWindow("Fixed Size");
-                    windowPane.setResizable(false);
-                    targetContentPane.add(windowPane);
-                }
-            });
-            addButton("Add Immovable Fixed Size Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = createSimpleWindow("Immovable Fixed Size");
-                    windowPane.setMovable(false);
-                    windowPane.setResizable(false);
-                    targetContentPane.add(windowPane);
-                }
-            });
-            addButton("Add SplitPane Window (No Close Icon)", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    windowPane.setClosable(false);
-                    positionWindowPane(windowPane);
-                    targetContentPane.add(windowPane);
-                    windowPane.setTitle("SplitPane Window #" + windowNumber++);
-                    windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setStyleName("Default");
-                    windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setWidth(new Extent(500, Extent.PX));
-                    windowPane.setHeight(new Extent(300, Extent.PX));
-                    SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(42));
-                    SplitPaneLayoutData splitPaneLayoutData;
-                    
-                    Button okButton = new Button("Ok");
-                    okButton.addActionListener(new ActionListener() {
-                        /**
-                         * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
-                         */
-                        public void actionPerformed(ActionEvent e) {
-                            windowPane.getParent().remove(windowPane);
-                        }
-                    });
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0x5f5f9f));
-                    splitPaneLayoutData.setInsets(new Insets(8));
-                    splitPaneLayoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
-                    splitPaneLayoutData.setOverflow(SplitPaneLayoutData.OVERFLOW_HIDDEN);
-                    okButton.setLayoutData(splitPaneLayoutData);
-                    okButton.setWidth(new Extent(100));
-                    okButton.setStyleName("Default");
-                    splitPane.add(okButton);
-                    
-                    Label contentLabel = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0xefefff));
-                    contentLabel.setLayoutData(splitPaneLayoutData);
-                    splitPane.add(contentLabel);
-                    
-                    windowPane.add(splitPane);
-                }
-            });
+    private WindowPane windowPane;
+    private ContentPane contentPane;
     
-            addButton("Add Multiple SplitPane Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    final WindowPane windowPane = new WindowPane();
-                    positionWindowPane(windowPane);
-                    targetContentPane.add(windowPane);
-                    windowPane.setTitle("Multiple SplitPane Window #" + windowNumber++);
-                    windowPane.setTitleInsets(new Insets(10, 5));
-                    windowPane.setStyleName("Default");
-                    windowPane.setTitleBackground(new Color(0x2f2f4f));
-                    windowPane.setWidth(new Extent(700, Extent.PX));
-                    windowPane.setWidth(new Extent(500, Extent.PX));
-                    
-                    SplitPane splitPane1 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(100));
-                    splitPane1.setStyleName("defaultResizable");
-                    SplitPaneLayoutData splitPaneLayoutData;
-                    
-                    Label label;
-                    
-                    label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0x3fbf5f));
-                    splitPaneLayoutData.setInsets(new Insets(5));
-                    label.setLayoutData(splitPaneLayoutData);
-                    splitPane1.add(label);
-
-                    SplitPane splitPane2 = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(120));
-                    splitPane2.setStyleName("defaultResizable");
-                    
-                    SplitPane splitPane3 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(200));
-                    splitPane3.setStyleName("defaultResizable");
-                    splitPane2.add(splitPane3);
-                    
-                    SplitPane splitPane4 = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(300));
-                    splitPane4.setStyleName("defaultResizable");
-                    splitPane2.add(splitPane4);
-                    
-                    label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0x5f3fbf));
-                    splitPaneLayoutData.setInsets(new Insets(5));
-                    label.setLayoutData(splitPaneLayoutData);
-                    splitPane3.add(label);
-                    
-                    label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0x3f5fbf));
-                    splitPaneLayoutData.setInsets(new Insets(5));
-                    label.setLayoutData(splitPaneLayoutData);
-                    splitPane3.add(label);
-                    
-                    label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0xbf5f3f));
-                    splitPaneLayoutData.setInsets(new Insets(5));
-                    label.setLayoutData(splitPaneLayoutData);
-                    splitPane4.add(label);
-                    
-                    label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
-                    splitPaneLayoutData = new SplitPaneLayoutData();
-                    splitPaneLayoutData.setBackground(new Color(0xbf3f5f));
-                    splitPaneLayoutData.setInsets(new Insets(5));
-                    label.setLayoutData(splitPaneLayoutData);
-                    splitPane4.add(label);
-    
-                    splitPane1.add(splitPane2);
-                    
-                    windowPane.add(splitPane1);
-                }
-            });
-
-            addButton("Add Mozilla TextField Quirk Workaround Test Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    targetContentPane.add(createMozillaTextFieldQuirkTestWindow());
-                }
-            });
-            
-            addButton("Add init() bug-fix test Window", new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WindowPane windowPane = new WindowPane();
-                    windowPane.add(new Column() {
-                        public void init() {
-                            super.init();
-                            add(new Label("Test"));
-                        }
-                        public void dispose() {
-                            removeAll();
-                            super.dispose();
-                        }
-                    });
-                    targetContentPane.add(windowPane);
-                }
-            });
-        }
-    }
-
-    /**
-     * Counter used to position new <code>WindowPane</code>s on the screen.
-     */
-    private int nextPosition = 0;
-    
-    /**
-     * Counter used to assign somewhat unique titles.
-     */
-    private int windowNumber = 0;
-
     public WindowPaneTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setCellSpacing(new Extent(5));
-        controlsColumn.setStyleName("TestControlsColumn");
-        add(controlsColumn);
+        Column groupContainerColumn = new Column();
+        groupContainerColumn.setCellSpacing(new Extent(5));
+        groupContainerColumn.setStyleName("TestControlsColumn");
+        add(groupContainerColumn);
         
-        ContentPane contentPane = new ContentPane();
+        contentPane = new ContentPane();
         add(contentPane);
-        
-        final Column contentColumn = new Column();
-        contentPane.add(contentColumn);
-        
-        WindowTestControls windowTestControls;
-        windowTestControls = new WindowTestControls("Root Level", InteractiveApp.getApp().getDefaultWindow().getContent());
-        controlsColumn.add(windowTestControls);
-        windowTestControls = new WindowTestControls("Embedded", contentPane);
-        controlsColumn.add(windowTestControls);
-        
-        Column componentSamplerControlsColumn = new Column();
-        componentSamplerControlsColumn.add(new Label("Component \"Sampler\""));
-        controlsColumn.add(componentSamplerControlsColumn);
+        windowPane = new WindowPane();
+        contentPane.add(windowPane);
 
-        Button button;
-
-        button = new Button("Add Component Sampler to Embedded ContentPane");
-        button.setStyleName("Default");
-        button.addActionListener(new ActionListener() {
+        ButtonColumn controlsColumn;
+        
+        // Content
+        
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Content"));
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.addButton("Set Content = Small Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addComponentSampler(contentColumn, false);
-            }
-        });
-        componentSamplerControlsColumn.add(button);
-
-        button = new Button("Add \"Modal Launching\" Component Sampler to Embedded ContentPane");
-        button.setStyleName("Default");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addComponentSampler(contentColumn, true);
-            }
-        });
-        componentSamplerControlsColumn.add(button);
-
-        button = new Button("Clear Embedded ContentPane");
-        button.setStyleName("Default");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                contentColumn.removeAll();
-            }
-        });
-        componentSamplerControlsColumn.add(button);
-    }
-    
-    private void addComponentSampler(Column contentColumn, boolean launchModals) {
-        Column componentSamplerColumn = new Column();
-        if (launchModals) {
-            componentSamplerColumn.setBorder(new Border(new Extent(5, Extent.PX), new Color(0xffafaf), Border.STYLE_INSET));
-        } else {
-            componentSamplerColumn.setBorder(new Border(new Extent(5, Extent.PX), new Color(0xafafff), Border.STYLE_INSET));
-        }
-        componentSamplerColumn.setInsets(new Insets(10));
-        componentSamplerColumn.setCellSpacing(new Extent(1));
-        contentColumn.add(componentSamplerColumn);
-        
-        for (int i = 1; i <= 3; ++i) {
-            Button button = new Button("Button #" + i);
-            button.setStyleName("Default");
-            componentSamplerColumn.add(button);
-            if (launchModals && i == 1) {
-                button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
-                    }
-                });
-            }
-        }
-        
-        ButtonGroup buttonGroup = new ButtonGroup();
-        for (int i = 1; i <= 3; ++i) {
-            RadioButton radioButton = new RadioButton("RadioButton #" + i);
-            radioButton.setGroup(buttonGroup);
-            radioButton.setStyleName("Default");
-            componentSamplerColumn.add(radioButton);
-            if (launchModals && i == 1) {
-                radioButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
-                    }
-                });
-            }
-        }
-        
-        for (int i = 1; i <= 3; ++i) {
-            CheckBox checkBox = new CheckBox("CheckBox #" + i);
-            checkBox.setStyleName("Default");
-            componentSamplerColumn.add(checkBox);
-            if (launchModals && i == 1) {
-                checkBox.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
-                    }
-                });
-            }
-        }
-        
-        Table table = new Table(TableTest.createEmployeeTableModel());
-        table.setBorder(new Border(new Extent(2), new Color(0xafffcf), Border.STYLE_GROOVE));
-        table.setInsets(new Insets(15, 5));
-        table.setSelectionEnabled(true);
-        table.setSelectionBackground(new Color(0xffcfaf));
-        table.setRolloverEnabled(true);
-        table.setRolloverBackground(new Color(0xafefff));
-        if (launchModals) {
-            table.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
-                }
-            });
-        }
-        componentSamplerColumn.add(table);
-        
-        ListBox listBox = new ListBox(ListBoxTest.NUMBERS);
-        if (launchModals) {
-            listBox.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
-                }
-            });
-        }
-        componentSamplerColumn.add(listBox);
-
-        SelectField selectField = new SelectField(ListBoxTest.NUMBERS);
-        if (launchModals) {
-            selectField.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    getApplicationInstance().getDefaultWindow().getContent().add(createComponentSamplerModalTestWindow());
-                }
-            });
-        }
-        componentSamplerColumn.add(selectField);
-    }
-    
-    private WindowPane createComponentSamplerModalTestWindow() {
-        WindowPane windowPane = createSimpleWindow("Component Sampler Modal Test Window");
-        windowPane.setModal(true);
-        return windowPane;
-    }
-    
-    private WindowPane createModalWindow(String name) {
-        final WindowPane windowPane = new WindowPane();
-        positionWindowPane(windowPane);
-        windowPane.setTitle(name + " Window #" + windowNumber++);
-        windowPane.setTitleInsets(new Insets(10, 5));
-        windowPane.setTitleBackground(new Color(0x2f2f4f));
-        windowPane.setInsets(new Insets(10));
-        windowPane.setWidth(new Extent(500));
-        windowPane.setHeight(new Extent(280));
-        windowPane.setStyleName("Default");
-        
-        ButtonColumn column = new ButtonColumn();
-        windowPane.add(column);
-
-        column.addButton("Add Modal Window", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ContentPane contentPane = (ContentPane) windowPane.getParent();
-                WindowPane newWindowPane = createModalWindow("YetAnotherModal");
-                newWindowPane.setModal(true);
-                contentPane.add(newWindowPane);
+                windowPane.removeAll();
+                windowPane.add(new Label("Hello, World!"));
             }
         });
         
-        return windowPane;
-    }
-
-    private WindowPane createMozillaTextFieldQuirkTestWindow() {
-       final WindowPane windowPane = new WindowPane();
-       //positionWindowPane(windowPane);
-       windowPane.setTitle("****Bug F1047 Window #" + windowNumber++);
-       windowPane.setStyleName("Default");
-
-       final Column mainColumn = new Column();
-       
-       Grid grid = new Grid();
-       mainColumn.add(grid);
-       
-       grid.add(new Label("User"));
-       TextField tf = new TextField();
-       tf.setText("This Text will render somewhere");
-       grid.add(tf);
-       grid.add(new Label("Subject"));
-       tf = new TextField();
-       tf.setText("BLANK OUT THIS FIELD!!!");
-       grid.add(tf);
-       grid.add(new Label("Message"));
-       grid.add(new TextArea());
-       grid.add(new Label("Stuff"));
-       grid.add(new ListBox(new Object[]{"one", "two", "three"}));
-       grid.add(new Label("Things"));
-       grid.add(new SelectField(new Object[]{"four", "five", "six"}));
-       
-       Button okButton = new Button("Ok");
-       okButton.addActionListener(new ActionListener() {
-           public void actionPerformed(ActionEvent e) {
-               Column errorColumn = new Column();
-               errorColumn.add(new Label("Did Mozilla break?"));
-               errorColumn.add(new Label("Did Mozilla break?"));
-               mainColumn.add(errorColumn, 0);
-               //**** UNCOMMENT THE FOLLWOING LINE FOR "FIXING" THIS BUG
-               //windowPane.setHeight(windowPane.getHeight());
-           }
-       });
-       grid.add(okButton);
-       windowPane.add(mainColumn);
-       return windowPane;
-    }    
-    
-    
-    private WindowPane createSimpleWindow(String name) {
-        WindowPane windowPane = new WindowPane();
-        positionWindowPane(windowPane);
-        windowPane.setTitle(name + " Window #" + windowNumber++);
-        windowPane.setTitleInsets(new Insets(10, 5));
-        windowPane.setTitleBackground(new Color(0x2f2f4f));
-        windowPane.setInsets(new Insets(10));
-        windowPane.setWidth(new Extent(500));
-        windowPane.setHeight(new Extent(280));
-        windowPane.setStyleName("Default");
-        windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
-        return windowPane;
-    }
-    
-    /**
-     * Creates a 'Test Window' that contains buttons which may be used to 
-     * configure various aspects of the window.
-     * 
-     * @param name the window name
-     * @return the created window
-     */
-    private WindowPane createTestWindow(String name) {
-        final WindowPane windowPane = new WindowPane();
-        positionWindowPane(windowPane);
-        windowPane.setTitle(name + " Window #" + windowNumber++);
-        windowPane.setTitleInsets(new Insets(10, 5));
-        windowPane.setTitleBackground(new Color(0x2f2f4f));
-        windowPane.setInsets(new Insets(10));
-        windowPane.setWidth(new Extent(500));
-        windowPane.setHeight(new Extent(280));
-        windowPane.setStyleName("Default");
-        
-        ButtonColumn column = new ButtonColumn();
-        windowPane.add(column);
-        
-        column.addButton("Set Icon", new ActionListener() {
+        controlsColumn.addButton("Set Content = Big Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setIcon(Styles.ICON_24_MAIL_COMPOSE);
-                windowPane.setIconInsets(new Insets(4, 2));
+                windowPane.removeAll();
+                windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
             }
         });
         
-        column.addButton("Clear Icon", new ActionListener() {
+        controlsColumn.addButton("Set Content = WindowPaneTest", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setIcon(null);
-                windowPane.setIconInsets(null);
+                windowPane.removeAll();
+                windowPane.add(new WindowPaneTest());
             }
         });
         
-        column.addButton("Set Close Icon (and appropriate Icon Insets)", new ActionListener() {
+        controlsColumn.addButton("Set Content = Nothing", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setCloseIcon(Styles.ICON_24_NO);
-                windowPane.setCloseIconInsets(new Insets(4, 2));
+                windowPane.removeAll();
             }
         });
         
-        column.addButton("Clear Close Icon", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                windowPane.setCloseIcon(null);
-                windowPane.setCloseIconInsets(null);
-            }
-        });
+        // Properties
         
-        column.addButton("Set Style Name = Default", new ActionListener() {
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Properties"));
+        groupContainerColumn.add(controlsColumn);
+        
+        controlsColumn.addButton("Set Style Name = Default", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setStyleName("Default");
             }
         });
-        
-        column.addButton("Clear Style Name", new ActionListener() {
+        controlsColumn.addButton("Clear Style Name", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setStyleName(null);
             }
         });
+        controlsColumn.addButton("Set Title", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitle("Window Title");
+            }
+        });
+        controlsColumn.addButton("Clear Title", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitle("Window Title");
+            }
+        });
+        controlsColumn.addButton("Set Title Height", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleHeight(new Extent(((int) (Math.random() * 24)) + 24));
+            }
+        });
+        controlsColumn.addButton("Clear Title Height", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleHeight(null);
+            }
+        });
+        controlsColumn.addButton("Set Title Insets to 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set Title Insets to 5", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Set Title Insets to 10/20/40/80", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleInsets(new Insets(10, 20, 40, 80));
+            }
+        });
+        controlsColumn.addButton("Clear Title Insets", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleInsets(null);
+            }
+        });
+        controlsColumn.addButton("Clear Title Height", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitleHeight(null);
+            }
+        });
+        controlsColumn.addButton("Set Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+            }
+        });
+        controlsColumn.addButton("Clear Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackgroundImage(null);
+            }
+        });
+        controlsColumn.addButton("Set Content Insets to 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set Content Insets to 5", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Set Content Insets to 10/20/40/80", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(new Insets(10, 20, 40, 80));
+            }
+        });
+        controlsColumn.addButton("Clear Content Insets", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(null);
+            }
+        });
         
-        return windowPane;
-    }
-    
-    private void positionWindowPane(WindowPane windowPane) {
-        Extent positionExtent = new Extent(nextPosition, Extent.PX);
-        windowPane.setPositionX(positionExtent);
-        windowPane.setPositionY(positionExtent);
-        nextPosition += 20;
-        if (nextPosition > 200) {
-            nextPosition = 0;
-        }
+        // Integration Tests
+        
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Content"));
+        groupContainerColumn.add(controlsColumn);
+
+        controlsColumn.addButton("Add Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (contentPane.getComponentCount() == 0) {
+                    contentPane.add(windowPane);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Remove Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                contentPane.remove(windowPane);
+            }
+        });
+
+        controlsColumn.addButton("Enable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setEnabled(true);
+            }
+        });
+
+        controlsColumn.addButton("Disable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setEnabled(false);
+            }
+        });
+
+        controlsColumn.addButton("Add Modal WindowPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane modalWindow = new WindowPane();
+                modalWindow.setTitle("Blocking Modal WindowPane");
+                modalWindow.setModal(true);
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
+            }
+        });
     }
 }

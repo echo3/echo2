@@ -46,7 +46,10 @@ import nextapp.echo2.app.update.UpdateManager;
 import nextapp.echo2.webcontainer.syncpeer.WindowPeer;
 import nextapp.echo2.webrender.Connection;
 import nextapp.echo2.webrender.ServerMessage;
+import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.UserInstance;
+import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
 
@@ -68,6 +71,16 @@ import nextapp.echo2.webrender.util.DomUtil;
  */
 public class ContainerSynchronizeService extends SynchronizeService {
     
+    /**
+     * Service to provide supporting JavaScript library.
+     */
+    public static final Service WEB_CONTAINER_SERVICE = JavaScriptService.forResource("Echo.WebContainer",
+            "/nextapp/echo2/webcontainer/resource/js/WebContainer.js");
+
+    static {
+        WebRenderServlet.getServiceRegistry().add(WEB_CONTAINER_SERVICE);
+    }
+
     /**
      * A single shared instance of this stateless service.
      */
@@ -311,6 +324,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
         ContainerInstance containerInstance = rc.getContainerInstance();
         try {
+            serverMessage.addLibrary(WEB_CONTAINER_SERVICE.getId());
+            
             processClientMessage(conn, clientMessageDocument);
 
             if (!containerInstance.isInitialized()) {
