@@ -306,7 +306,7 @@ EchoWindowPane.prototype.create = function() {
     var titleBarDivElement = document.createElement("div");
     titleBarDivElement.id = this.elementId + "_titlebar";
     titleBarDivElement.style.position = "absolute";
-    titleBarDivElement.style.zIndex = 2;
+    titleBarDivElement.style.zIndex = 3;
     titleBarDivElement.style.backgroundColor = this.titleBackground;
     if (this.titleBackgroundImage) {
        EchoCssUtil.applyStyle(titleBarDivElement, this.titleBackgroundImage);
@@ -344,6 +344,9 @@ EchoWindowPane.prototype.create = function() {
         if (this.titleInsets != null) {
             titleTextDivElement.style.padding = this.titleInsets;
         }
+        if (this.titleForeground != null) {
+            titleTextDivElement.style.color = this.titleForeground;
+        }
         titleTextDivElement.appendChild(document.createTextNode(this.title));
         titleBarDivElement.appendChild(titleTextDivElement);
     }
@@ -374,7 +377,7 @@ EchoWindowPane.prototype.create = function() {
     var contentDivElement = document.createElement("div");
     contentDivElement.id = this.elementId + "_content";
     contentDivElement.style.position = "absolute";
-    contentDivElement.style.zIndex = 1;
+    contentDivElement.style.zIndex = 2;
     contentDivElement.style.backgroundColor = this.background;
     if (this.foreground) {
         contentDivElement.style.color = this.foreground;
@@ -396,6 +399,27 @@ EchoWindowPane.prototype.create = function() {
         contentDivElement.style.padding = this.insets;
     }
     windowPaneDivElement.appendChild(contentDivElement);
+
+    if (EchoClientProperties.get("quirkIESelectZIndex")) {
+        // Render Select Field Masking IFRAME.
+        var maskDivElement = document.createElement("div");
+        maskDivElement.id = this.elementId + "_mask";
+        maskDivElement.style.zIndex = 1;
+        maskDivElement.style.position = "absolute";
+	    maskDivElement.style.top = this.border.contentInsets.top + "px";
+	    maskDivElement.style.left = this.border.contentInsets.left + "px";
+	    maskDivElement.style.right = this.border.contentInsets.right + "px";
+	    maskDivElement.style.bottom = this.border.contentInsets.bottom + "px";
+        maskDivElement.style.borderWidth = 0;
+        
+        var maskIFrameElement = document.createElement("iframe");
+        maskIFrameElement.style.width = "100%";
+        maskIFrameElement.style.height = "100%";
+        maskDivElement.appendChild(maskIFrameElement);
+        
+	    EchoVirtualPosition.register(maskDivElement.id);
+	    windowPaneDivElement.appendChild(maskDivElement);
+    }
     
     containerElement.appendChild(windowPaneDivElement);
 
@@ -419,7 +443,6 @@ EchoWindowPane.prototype.create = function() {
         EchoEventProcessor.addHandler(closeDivElement.id, "click", "EchoWindowPane.processClose");
     }
 
-    //BUGBUG.
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
     }
@@ -530,7 +553,7 @@ EchoWindowPane.prototype.processBorderMouseUp = function(e) {
     EchoClientMessage.setPropertyValue(this.elementId, "positionY", this.positionY + "px");
     EchoClientMessage.setPropertyValue(this.elementId, "width", this.width + "px");
     EchoClientMessage.setPropertyValue(this.elementId, "height", this.height + "px");
-    
+
     EchoVirtualPosition.redraw();
 };
 
@@ -607,6 +630,10 @@ EchoWindowPane.prototype.redraw = function() {
     var contentElement = document.getElementById(this.elementId + "_content");
     
     EchoVirtualPosition.redraw(contentElement);
+    if (EchoClientProperties.get("quirkIESelectZIndex")) {
+        var maskDivElement = document.getElementById(this.elementId + "_mask");
+        EchoVirtualPosition.redraw(maskDivElement);
+    }
 }
 
 EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
@@ -830,6 +857,9 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     }
     if (initElement.getAttribute("title-background-image")) {
         windowPane.titleBackgroundImage = initElement.getAttribute("title-background-image");
+    }
+    if (initElement.getAttribute("title-font")) {
+        windowPane.titleFont = initElement.getAttribute("title-font");
     }
     if (initElement.getAttribute("title-foreground")) {
         windowPane.titleForeground = initElement.getAttribute("title-foreground");
