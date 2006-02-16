@@ -116,6 +116,74 @@ public class WindowPaneTest extends SplitPane {
                 windowPane.setStyleName(null);
             }
         });
+
+        controlsColumn.addButton("Set Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setFont(StyleUtil.randomFont());
+            }
+        });
+        controlsColumn.addButton("Clear Font", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setFont(null);
+            }
+        });
+        controlsColumn.addButton("Set Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+            }
+        });
+        controlsColumn.addButton("Clear Background Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBackgroundImage(null);
+            }
+        });
+        controlsColumn.addButton("Set Content Insets to 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set Content Insets to 5", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Set Content Insets to 10/20/40/80", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(new Insets(10, 20, 40, 80));
+            }
+        });
+        controlsColumn.addButton("Clear Content Insets", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setInsets(null);
+            }
+        });
+        
+        // Title-Related Properties
+        
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Properties"));
+        groupContainerColumn.add(controlsColumn);
+        
         controlsColumn.addButton("Set Title", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setTitle("Window Title");
@@ -156,62 +224,37 @@ public class WindowPaneTest extends SplitPane {
                 windowPane.setTitleInsets(null);
             }
         });
-        controlsColumn.addButton("Clear Title Height", new ActionListener() {
+        controlsColumn.addButton("Set Title Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setTitleHeight(null);
+                windowPane.setTitleForeground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Set Foreground", new ActionListener() {
+        controlsColumn.addButton("Clear Title Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setForeground(StyleUtil.randomColor());
+                windowPane.setTitleForeground(null);
             }
         });
-        controlsColumn.addButton("Clear Foreground", new ActionListener() {
+        controlsColumn.addButton("Set Title Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setForeground(null);
+                windowPane.setTitleBackground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Set Background", new ActionListener() {
+        controlsColumn.addButton("Clear Title Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setBackground(StyleUtil.randomColor());
+                windowPane.setTitleBackground(null);
             }
         });
-        controlsColumn.addButton("Clear Background", new ActionListener() {
+        controlsColumn.addButton("Set Title Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setBackground(null);
+                windowPane.setTitleFont(StyleUtil.randomFont());
             }
         });
-        controlsColumn.addButton("Set Background Image", new ActionListener() {
+        controlsColumn.addButton("Clear Title Font", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE);
+                windowPane.setTitleFont(null);
             }
         });
-        controlsColumn.addButton("Clear Background Image", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                windowPane.setBackgroundImage(null);
-            }
-        });
-        controlsColumn.addButton("Set Content Insets to 0", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                windowPane.setInsets(new Insets(0));
-            }
-        });
-        controlsColumn.addButton("Set Content Insets to 5", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                windowPane.setInsets(new Insets(5));
-            }
-        });
-        controlsColumn.addButton("Set Content Insets to 10/20/40/80", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                windowPane.setInsets(new Insets(10, 20, 40, 80));
-            }
-        });
-        controlsColumn.addButton("Clear Content Insets", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                windowPane.setInsets(null);
-            }
-        });
-        
+
         // Integration Tests
         
         controlsColumn = new ButtonColumn();

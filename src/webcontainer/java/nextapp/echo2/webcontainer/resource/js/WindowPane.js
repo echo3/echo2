@@ -347,6 +347,9 @@ EchoWindowPane.prototype.create = function() {
         if (this.titleForeground != null) {
             titleTextDivElement.style.color = this.titleForeground;
         }
+	    if (this.titleFont) {
+	        EchoCssUtil.applyStyle(titleTextDivElement, this.titleFont);
+	    }
         titleTextDivElement.appendChild(document.createTextNode(this.title));
         titleBarDivElement.appendChild(titleTextDivElement);
     }
