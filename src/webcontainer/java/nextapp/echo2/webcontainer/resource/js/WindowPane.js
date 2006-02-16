@@ -102,15 +102,28 @@ EchoWindowPane.prototype.create = function() {
     windowPaneDivElement.style.position = "absolute";
     windowPaneDivElement.style.zIndex = "1";
     
+    var containerWidth = containerElement.offsetWidth;
+    var containerHeight = this.getContainerHeight();
+    
     if (this.positionX == null) {
-        this.positionX = Math.round((containerElement.offsetWidth - this.width) / 2);
-        if (this.positionX < 0) {
+        if (containerWidth && containerHeight) {
+            // Only center window if valid data exist for container width and height.
+	        this.positionX = Math.round((containerWidth - this.width) / 2);
+	        if (this.positionX < 0) {
+	            this.positionX = 0;
+	        }
+        } else {
             this.positionX = 0;
         }
     }
     if (this.positionY == null) {
-        this.positionY = Math.round((this.getContainerHeight() - this.height) / 2);
-        if (this.positionY < 0) {
+        if (containerWidth && containerHeight) {
+            // Only center window if valid data exist for container width and height.
+	        this.positionY = Math.round((containerHeight - this.height) / 2);
+	        if (this.positionY < 0) {
+	            this.positionY = 0;
+	        }
+        } else {
             this.positionY = 0;
         }
     }
