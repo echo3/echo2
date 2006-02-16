@@ -2613,7 +2613,7 @@ EchoVirtualPosition.redraw = function(element) {
         return;
     }
     
-    var removedIds = null;
+    var removedIds = false;
     
     if (element != undefined) {
         EchoVirtualPosition.adjustWidth(element);
@@ -2625,15 +2625,23 @@ EchoVirtualPosition.redraw = function(element) {
                 EchoVirtualPosition.adjustWidth(element);
                 EchoVirtualPosition.adjustHeight(element);
             } else {
-                if (removedIds == null) {
-                    removedIds = new Array();
-                }
-                removedIds.push(EchoVirtualPosition.elementIdList[i]);
+                // Element no longer exists.  Replace id in elementIdList with null,
+                // and set 'removedIds' flag to true such that elementIdList will
+                // be pruned for nulls once redrawing has been completed.
+                EchoVirtualPosition.elementIdList[i] = null;
+                removedIds = true;
             }
         }
         
-        if (removedIds != null) {
-            //RECREATE LIST OF IDS.....currently this is a client-side memory leak.
+        // Prune removed ids from list if necessary.
+        if (removedIds) {
+            var updatedIdList = new Array();
+            for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+                if (EchoVirtualPosition.elementIdList[i] != null) {
+                    updatedIdList.push(EchoVirtualPosition.elementIdList[i]);
+                }
+            }
+            EchoVirtualPosition.elementIdList = updatedIdList;
         }
     }
 }
