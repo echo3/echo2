@@ -324,6 +324,7 @@ EchoWindowPane.prototype.create = function() {
     if (this.icon) {
         var titleIconDivElement = document.createElement("div");
         titleIconDivElement.style.position = "absolute";
+        titleIconDivElement.style.left = "0px";
         if (this.iconInsets != null) {
             titleIconDivElement.style.padding = this.iconInsets;
         }
@@ -337,6 +338,8 @@ EchoWindowPane.prototype.create = function() {
         var titleTextDivElement = document.createElement("div");
         titleTextDivElement.id = this.elementId + "_titletext";
         titleTextDivElement.style.position = "absolute";
+        titleTextDivElement.style.left = "0px";
+        titleTextDivElement.style.textAlign = "left";
         if (this.icon) {
             titleTextDivElement.style.left = "32px";
         }
