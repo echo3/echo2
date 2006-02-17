@@ -2509,84 +2509,71 @@ EchoVirtualPosition.verifyPixelOrUndefinedValue = function(value) {
 };
 
 /** 
- * Adjusts the style.height attribute of an element to simulate its specified
- * top/bottom settings.  The calculation makes allowances for padding
- * and margin.
+ * Adjusts the style.height and style.height attributes of an element to 
+ * simulate its specified top, bottom, left, and right CSS position settings
+ * The calculation makes allowances for padding, margin, and border width.
  *
  * @param element the element whose height setting is to be calculated
  *
  * This method is for internal use only by EchoVirtualPosition.
  */
-EchoVirtualPosition.adjustHeight = function(element) {
-    if (!EchoVirtualPosition.verifyPixelValue(element.style.top)
-            || !EchoVirtualPosition.verifyPixelValue(element.style.bottom)) {
-        // Positioning on one side only or non-pixel-based positions: do nothing.
-        return;
+EchoVirtualPosition.adjust = function(element) {
+    // Adjust 'height' property if 'top' and 'bottom' properties are set, 
+    // and if all padding/margin/borders are 0 or set in pixel units .
+    if (EchoVirtualPosition.verifyPixelValue(element.style.top)
+            && EchoVirtualPosition.verifyPixelValue(element.style.bottom)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
+        var parentHeight = element.parentNode.offsetHeight;
+        var topPixels = parseInt(element.style.top);
+        var bottomPixels = parseInt(element.style.bottom);
+        var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) 
+                + EchoVirtualPosition.toInteger(element.style.paddingBottom);
+        var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
+                + EchoVirtualPosition.toInteger(element.style.marginBottom);
+        var borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) 
+                + EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
+        var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
+        if (calculatedHeight <= 0) {
+            element.style.height = 0;
+        } else {
+            if (element.style.height != calculatedHeight + "px") {
+	            element.style.height = calculatedHeight + "px";
+            }
+        }
     }
-    if (!EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
-        // Element has non-pixel padding or margins: do nothing.
-        return;
-    }
-    var parentHeight = element.parentNode.offsetHeight;
-    var topPixels = parseInt(element.style.top);
-    var bottomPixels = parseInt(element.style.bottom);
-    var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) 
-            + EchoVirtualPosition.toInteger(element.style.paddingBottom);
-    var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
-            + EchoVirtualPosition.toInteger(element.style.marginBottom);
-    var borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) 
-            + EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
-    var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
-    if (calculatedHeight <= 0) {
-        element.style.height = 0;
-    } else {
-        element.style.height = calculatedHeight + "px";
-    }
-};
-
-/** 
- * Adjusts the style.width attribute of an element to simulate its specified
- * left/right settings.  The calculation makes allowances for padding
- * and margin.
- *
- * @param element the element whose height setting is to be calculated
- *
- * This method is for internal use only by EchoVirtualPosition.
- */
-EchoVirtualPosition.adjustWidth = function(element) {
-    if (!EchoVirtualPosition.verifyPixelValue(element.style.left)
-            || !EchoVirtualPosition.verifyPixelValue(element.style.right)) {
-        // Positioning on one side only or non-pixel-based positions: do nothing.
-        return;
-    }
-    if (!EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
-        // Element has non-pixel padding or margins: do nothing.
-        return;
-    }
-    var parentWidth = element.parentNode.offsetWidth;
-    var leftPixels = parseInt(element.style.left);
-    var rightPixels = parseInt(element.style.right);
-    var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) 
-            + EchoVirtualPosition.toInteger(element.style.paddingRight);
-    var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
-            + EchoVirtualPosition.toInteger(element.style.marginRight);
-    var borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) 
-            + EchoVirtualPosition.toInteger(element.style.borderRightWidth);
-    var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
-    if (calculatedWidth <= 0) {
-        element.style.width = 0;
-    } else {
-        element.style.width = calculatedWidth + "px";
+    
+    // Adjust 'width' property if 'left' and 'right' properties are set, 
+    // and if all padding/margin/borders are 0 or set in pixel units .
+    if (EchoVirtualPosition.verifyPixelValue(element.style.left)
+            && EchoVirtualPosition.verifyPixelValue(element.style.right)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth)
+            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
+        var parentWidth = element.parentNode.offsetWidth;
+        var leftPixels = parseInt(element.style.left);
+        var rightPixels = parseInt(element.style.right);
+        var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) 
+                + EchoVirtualPosition.toInteger(element.style.paddingRight);
+        var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
+                + EchoVirtualPosition.toInteger(element.style.marginRight);
+        var borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) 
+                + EchoVirtualPosition.toInteger(element.style.borderRightWidth);
+        var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
+        if (calculatedWidth <= 0) {
+            element.style.width = 0;
+        } else {
+            if (element.style.width != calculatedWidth + "px") {
+                element.style.width = calculatedWidth + "px";
+            }
+        }
     }
 };
 
@@ -2624,14 +2611,12 @@ EchoVirtualPosition.redraw = function(element) {
     var removedIds = false;
     
     if (element != undefined) {
-        EchoVirtualPosition.adjustWidth(element);
-        EchoVirtualPosition.adjustHeight(element);
+        EchoVirtualPosition.adjust(element);
     } else {
         for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
             element = document.getElementById(EchoVirtualPosition.elementIdList[i]);
             if (element) {
-                EchoVirtualPosition.adjustWidth(element);
-                EchoVirtualPosition.adjustHeight(element);
+                EchoVirtualPosition.adjust(element);
             } else {
                 // Element no longer exists.  Replace id in elementIdList with null,
                 // and set 'removedIds' flag to true such that elementIdList will
