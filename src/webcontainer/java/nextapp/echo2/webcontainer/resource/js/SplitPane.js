@@ -76,8 +76,11 @@ EchoSplitPane.prototype.create = function() {
     splitPaneDivElement.id = this.elementId;
     splitPaneDivElement.style.position = "absolute";
     splitPaneDivElement.style.overflow = "hidden";
-    splitPaneDivElement.style.width = "100%";
-    splitPaneDivElement.style.height = "100%";
+    splitPaneDivElement.style.top = "0px"
+    splitPaneDivElement.style.bottom = "0px"
+    splitPaneDivElement.style.left = "0px"
+    splitPaneDivElement.style.right = "0px"
+    EchoVirtualPosition.register(splitPaneDivElement.id);
     if (this.background != null) {
         splitPaneDivElement.style.background = this.background;
     }
@@ -209,6 +212,7 @@ EchoSplitPane.prototype.create = function() {
         EchoEventProcessor.addHandler(separatorDivElement.id, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
     }
     
+    EchoVirtualPosition.redraw(splitPaneDivElement);
     EchoVirtualPosition.redraw(paneDivElements[0]);
     EchoVirtualPosition.redraw(paneDivElements[1]);
 };

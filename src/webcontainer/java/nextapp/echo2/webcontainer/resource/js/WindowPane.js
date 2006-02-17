@@ -481,7 +481,7 @@ EchoWindowPane.prototype.dispose = function() {
         var borderElementId = this.elementId + EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES[i];
         EchoEventProcessor.removeHandler(borderElementId, "mousedown");
     }
-    if (EchoClientProperties.get("browserIntenetExplorer")) {
+    if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
     }
     

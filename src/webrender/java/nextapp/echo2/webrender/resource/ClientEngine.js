@@ -2526,7 +2526,9 @@ EchoVirtualPosition.adjustHeight = function(element) {
     if (!EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
             || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
             || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)) {
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
         // Element has non-pixel padding or margins: do nothing.
         return;
     }
@@ -2537,7 +2539,9 @@ EchoVirtualPosition.adjustHeight = function(element) {
             + EchoVirtualPosition.toInteger(element.style.paddingBottom);
     var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
             + EchoVirtualPosition.toInteger(element.style.marginBottom);
-    var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels;
+    var borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) 
+            + EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
+    var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
     if (calculatedHeight <= 0) {
         element.style.height = 0;
     } else {
@@ -2563,7 +2567,9 @@ EchoVirtualPosition.adjustWidth = function(element) {
     if (!EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
             || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
             || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
-            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)) {
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth)
+            || !EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
         // Element has non-pixel padding or margins: do nothing.
         return;
     }
@@ -2574,7 +2580,9 @@ EchoVirtualPosition.adjustWidth = function(element) {
             + EchoVirtualPosition.toInteger(element.style.paddingRight);
     var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
             + EchoVirtualPosition.toInteger(element.style.marginRight);
-    var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels;
+    var borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) 
+            + EchoVirtualPosition.toInteger(element.style.borderRightWidth);
+    var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
     if (calculatedWidth <= 0) {
         element.style.width = 0;
     } else {
