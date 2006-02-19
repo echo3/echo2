@@ -102,7 +102,7 @@ EchoWindowPane.prototype.create = function() {
     windowPaneDivElement.style.position = "absolute";
     windowPaneDivElement.style.zIndex = "1";
     
-    var containerWidth = containerElement.offsetWidth;
+    var containerWidth = this.getContainerWidth();
     var containerHeight = this.getContainerHeight();
     
     if (this.positionX == null) {
@@ -497,6 +497,15 @@ EchoWindowPane.prototype.getContainerHeight = function() {
     return height;
 };
 
+EchoWindowPane.prototype.getContainerWidth = function() {
+    var containerElement = document.getElementById(this.containerElementId);
+    var width = containerElement.offsetWidth;
+    if (width == 0) {
+        width = containerElement.parentNode.offsetWidth;
+    }
+    return width;
+};
+
 EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
     if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
         return;
@@ -657,11 +666,13 @@ EchoWindowPane.prototype.redraw = function() {
 
 EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
     var windowPaneDivElement = document.getElementById(this.elementId);
-
     if (positionX < 0) {
         positionX = 0;
-    } else if (positionX > windowPaneDivElement.parentNode.offsetWidth - this.width) {
-        positionX = windowPaneDivElement.parentNode.offsetWidth - this.width;
+    } else {
+        var containerWidth = this.getContainerWidth();
+        if (containerWidth > 0 && positionX > containerWidth - this.width) {
+            positionX = containerWidth - this.width;
+        }
     }
     if (positionY < 0) {
         positionY = 0;
@@ -671,6 +682,7 @@ EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
             positionY = containerHeight - this.height;
         }
     }
+    
 
     this.positionX = positionX;
     this.positionY = positionY;
