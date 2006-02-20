@@ -34,6 +34,8 @@ import java.io.Serializable;
  * A property which describes an &quot;inset&quot; within a rectangular 
  * region.  This property is commonly used to specify margins of a 
  * <code>Component</code> relative to its container.
+ * Null values for top/left/right/bottom margins indicate a 0-pixel inset 
+ * for that margin.
  */
 public class Insets 
 implements Serializable {
