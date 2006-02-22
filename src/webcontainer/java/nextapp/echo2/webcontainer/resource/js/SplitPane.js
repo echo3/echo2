@@ -358,6 +358,9 @@ EchoSplitPane.getComponent = function(componentId) {
 
 EchoSplitPane.processSeparatorMouseDown = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    if (!EchoClientEngine.verifyInput(componentId)) {
+        return;
+    }
     var splitPane = EchoSplitPane.getComponent(componentId);
     splitPane.processSeparatorMouseDown(echoEvent);
 };
