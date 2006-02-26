@@ -179,6 +179,10 @@ implements Serializable {
     
     /**
      * Returns the child components which have been removed from the parent.
+     * These components may or may not have ever been rendered by the container,
+     * e.g., if a component was added and removed in a single synchronization it
+     * will show up as a removed component even though the container may have
+     * never rendered it.
      * 
      * @return the removed child components
      * @see #getRemovedDescendants()
@@ -195,6 +199,10 @@ implements Serializable {
      * Returns all descendants of the child components which have been 
      * removed from the parent.  This returned array DOES NOT contain the
      * children which were directly removed from the parent component.
+     * These components may or may not have ever been rendered by the container,
+     * e.g., if a component was added and removed in a single synchronization it
+     * will show up as a removed descendant even though the container may have
+     * never rendered it.
      * 
      * @return the removed descendant components
      * @see #getRemovedChildren()
