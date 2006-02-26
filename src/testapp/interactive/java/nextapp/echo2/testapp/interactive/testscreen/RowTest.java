@@ -78,6 +78,14 @@ public class RowTest extends SplitPane {
                 testRow.add(new Label("Added item [" + nextValue++ + "]"));
             }
         });
+        controlsColumn.addButton("Add-Remove-Add Item (at end)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Added item [" + nextValue++ + "]");
+                testRow.add(label);
+                testRow.remove(label);
+                testRow.add(label);
+            }
+        });
         controlsColumn.addButton("Remove Last Item", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testRow.getComponentCount() > 0) {

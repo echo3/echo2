@@ -269,6 +269,16 @@ public class SplitPaneTest extends SplitPane {
                 }
             }
         });
+        controlsColumn.addButton("Add-Remove-Add", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (testPane.getComponentCount() < 2) {
+                    Label label = createPaneLabel("Added at End, Removed, Re-Added");
+                    testPane.add(label);
+                    testPane.remove(label);
+                    testPane.add(label);
+                }
+            }
+        });
         
         controlsColumn = new ButtonColumn();
         controlsColumn.add(new Label("Configure SplitPane"));

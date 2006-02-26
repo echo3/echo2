@@ -100,6 +100,16 @@ public class WindowPaneTest extends SplitPane {
             }
         });
         
+        controlsColumn.addButton("Add-Remove-Add", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.removeAll();
+                Label label = new Label("Hello, World!");
+                windowPane.add(label);
+                windowPane.remove(label);
+                windowPane.add(label);
+            }
+        });
+        
         // Properties
         
         controlsColumn = new ButtonColumn();
