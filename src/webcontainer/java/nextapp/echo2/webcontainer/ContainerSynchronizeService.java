@@ -287,7 +287,7 @@ public class ContainerSynchronizeService extends SynchronizeService {
                 // Dispose of removed children.
                 Component[] removedChildren = componentUpdates[i].getRemovedChildren();
                 disposeComponents(rc, componentUpdates[i], removedChildren);
-    
+
                 // Dispose of removed descendants.
                 Component[] removedDescendants = componentUpdates[i].getRemovedDescendants();
                 disposeComponents(rc, componentUpdates[i], removedDescendants);

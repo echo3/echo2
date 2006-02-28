@@ -454,9 +454,9 @@ EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
  * Creates or retrieves the "message-part" DOM element from the 
  * EchoClientMessage with the specified processor attribute.
  *
- * @param processor A string representing the processor type of
- *        the message-part element to return.
- * @return The "message-part" DOM element.
+ * @param processor a string representing the processor type of
+ *        the message-part element to return
+ * @return the "message-part" DOM element
  */
 EchoClientMessage.getMessagePart = function(processor) {
     // Return existing <message-part> if available.
@@ -477,9 +477,9 @@ EchoClientMessage.getMessagePart = function(processor) {
 /**
  * Retrieves the value of a string property in the EchoClientMessage.
  *
- * @param componentId The id of the component.
- * @param propertyName The name of the property.
- * @return  The value of the property.
+ * @param componentId the id of the component.
+ * @param propertyName the name of the property.
+ * @return the value of the property
  */
 EchoClientMessage.getPropertyValue = function(componentId, propertyName) {
     var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
@@ -532,9 +532,10 @@ EchoClientMessage.reset = function() {
  * called one time, and the EchoClientMessage should be submitted to the
  * server soon thereafter.
  *
- * @param componentId The id of the component which initiated the action.
- * @param actionName The name of the action.
- * @param actionValue The value of the action (optional).
+ * @param componentId the id of the component which initiated the action
+ * @param actionName the name of the action
+ * @param actionValue the value of the action (optional)
+ * @return the created 'action' element
  */
 EchoClientMessage.setActionValue = function(componentId, actionName, actionValue) {
     var messagePartElement = EchoClientMessage.getMessagePart("EchoAction");
@@ -548,14 +549,16 @@ EchoClientMessage.setActionValue = function(componentId, actionName, actionValue
     messagePartElement.appendChild(actionElement);
 
     EchoDebugManager.updateClientMessage();
+    
+    return actionElement;
 };
 
 /**
  * Stores the value of a string property in in the EchoClientMessage.
  *
- * @param componentId The id of the component.
- * @param propertyName The name of the property.
- * @param newValue The new value of the property.
+ * @param componentId the id of the component
+ * @param propertyName the name of the property
+ * @param newValue the new value of the property
  */
 EchoClientMessage.setPropertyValue = function(componentId, propertyName, newValue) {
     var propertyElement = EchoClientMessage.createPropertyElement(componentId, propertyName);
