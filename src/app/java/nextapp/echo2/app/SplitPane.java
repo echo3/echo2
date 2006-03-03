@@ -179,7 +179,7 @@ implements Pane, PaneContainer {
      *          <li><code>ORIENTATION_VERTICAL_BOTTOM_TOP</code></li>
      *         </ul>
      */
-    public int getOrienation() {
+    public int getOrientation() {
         Integer orientation = (Integer) getProperty(PROPERTY_ORIENTATION); 
         return orientation == null ? ORIENTATION_VERTICAL : orientation.intValue();
     }
