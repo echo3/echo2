@@ -84,11 +84,11 @@ public class SplitPaneTest extends TestCase {
     public void testPrimaryConstructor() {
         SplitPane splitPane;
         splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, TestConstants.EXTENT_200_PX);
-        assertEquals(SplitPane.ORIENTATION_VERTICAL, splitPane.getOrienation());
+        assertEquals(SplitPane.ORIENTATION_VERTICAL, splitPane.getOrientation());
         assertEquals(TestConstants.EXTENT_200_PX, splitPane.getSeparatorPosition());
         
         splitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, TestConstants.EXTENT_500_PX); 
-        assertEquals(SplitPane.ORIENTATION_HORIZONTAL, splitPane.getOrienation());
+        assertEquals(SplitPane.ORIENTATION_HORIZONTAL, splitPane.getOrientation());
         assertEquals(TestConstants.EXTENT_500_PX, splitPane.getSeparatorPosition());
     }
     
@@ -98,7 +98,7 @@ public class SplitPaneTest extends TestCase {
     public void testProperties() {
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(SplitPane.ORIENTATION_VERTICAL);
-        assertEquals(SplitPane.ORIENTATION_VERTICAL, splitPane.getOrienation());
+        assertEquals(SplitPane.ORIENTATION_VERTICAL, splitPane.getOrientation());
         splitPane.setSeparatorPosition(TestConstants.EXTENT_200_PX);
         assertEquals(TestConstants.EXTENT_200_PX, splitPane.getSeparatorPosition());
         splitPane.setSeparatorHeight(TestConstants.EXTENT_30_PX);
