@@ -47,7 +47,7 @@ import nextapp.echo2.app.event.ListDataListener;
 /**
  * An abstract base class for list components.
  */
-public class AbstractListComponent extends Component {
+public abstract class AbstractListComponent extends Component {
 
     public static final String INPUT_ACTION = "action";
 
