@@ -85,14 +85,6 @@ public abstract class WebRenderServlet extends HttpServlet {
     public static final String SERVICE_ID_SESSION_EXPIRED = "Echo.Expired";
     
     /**
-     * The time delta (in seconds) when cached services will expire.
-     */
-    private static final int CACHED_SERVICE_TIMEOUT = 3600;
-    
-    /** A convenience for setting the cache header */
-    private static final String CACHE_MAX_AGE = "max-age=" + CACHED_SERVICE_TIMEOUT;
-
-    /**
      * Global handler for multipart/form-data encoded HTTP requests.
      */
     private static MultipartRequestWrapper multipartRequestWrapper;
@@ -262,7 +254,7 @@ public abstract class WebRenderServlet extends HttpServlet {
             
             // Set caching directives.
             if ((!DISABLE_CACHING) && version != Service.DO_NOT_CACHE) {
-                response.setHeader("Cache-control", CACHE_MAX_AGE);
+                response.setHeader("Cache-Control", "max-age=3600,post-check=900,pre-check=43200");
             } else {
                 response.setHeader("Pragma", "no-cache");
                 response.setHeader("Cache-Control", "no-cache");
