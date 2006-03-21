@@ -383,8 +383,16 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 new String[]{rolloverStyle, selectionStyle});
         Element itemElement = document.createElement("item");
         itemElement.setAttribute("eid", elementId);
+        if (table.isHeaderVisible()) {
+            itemElement.setAttribute("header-visible", "true");
+        }
+        
         if (table.hasActionListeners()) {
             itemElement.setAttribute("server-notify", "true");
+        }
+        
+        if (rolloverEnabled) {
+            itemElement.setAttribute("rollover-enabled", "true");
         }
         
         if (selectionEnabled) {

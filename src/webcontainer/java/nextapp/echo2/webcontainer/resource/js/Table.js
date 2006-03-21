@@ -33,8 +33,301 @@
 /**
  * Static object/namespace for Table support.
  * This object/namespace should not be used externally.
+ * <p>
+ * Constructor to create new <code>EchoTable</code> instance.
+ * 
+ * @param elementId the target <code>TABLE</code> DOM element 
  */
-EchoTable = function() { };
+EchoTable = function(elementId) {
+    this.elementId = elementId;
+    this.multipleSelect = false;
+    this.rolloverEnabled = false;
+    this.rolloverStyle = null;
+    this.selectionEnabled = false;
+    this.selectionStyle = null;
+    this.rowCount = 0;
+    this.selectionState = null;
+    this.headerVisible = false;
+};
+
+/**
+ * Deselects all selected rows in a Table.
+ */
+EchoTable.prototype.clearSelected = function() {
+    var tableElement = document.getElementById(this.elementId);
+    for (var i = 0; i < this.rowCount; ++i) {
+        if (this.isSelected(i)) {
+            this.setSelected(i, false);
+        }
+    }
+};
+
+/**
+ * Disposes of an <code>EchoTable</code> instance, de-registering 
+ * listeners and cleaning up resources.
+ */
+EchoTable.prototype.dispose = function() {
+    var tableElement = document.getElementById(this.elementId);
+    if (this.rolloverEnabled || this.selectionEnabled) {
+        var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
+        for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
+            var trElement = tableElement.rows[rowIndex];
+            if (this.rolloverEnabled) {
+                if (mouseEnterLeaveSupport) {
+                    EchoEventProcessor.removeHandler(trElement.id, "mouseenter");
+                    EchoEventProcessor.removeHandler(trElement.id, "mouseleave");
+                } else {
+                    EchoEventProcessor.removeHandler(trElement.id, "mouseout");
+                    EchoEventProcessor.removeHandler(trElement.id, "mouseover");
+                }
+            }
+            if (this.selectionEnabled) {
+                EchoEventProcessor.removeHandler(trElement.id, "click");
+            }
+        }
+    }
+};
+
+/**
+ * Redraws a row in the appropriate style (i.e., selected or deselected).
+ *
+ * @param rowIndex the index of the row to redraw
+ */
+EchoTable.prototype.drawRowStyle = function(rowIndex) {
+    var tableElementId = document.getElementById(this.elementId);
+    var selected = this.isSelected(rowIndex);
+    var trElement = this.getRowElement(rowIndex);
+    
+    for (var i = 0; i < trElement.cells.length; ++i) {
+        if (selected) {
+            EchoCssUtil.restoreOriginalStyle(trElement.cells[i]);
+            EchoCssUtil.applyTemporaryStyle(trElement.cells[i], this.selectionStyle);
+        } else {
+            EchoCssUtil.restoreOriginalStyle(trElement.cells[i]);
+        }
+    }
+};
+
+/**
+ * Returns the <code>TR</code> element associated with a specific
+ * row index.
+ * 
+ * @param rowIndex the row index
+ * @return the relevant <code>TR</code> element
+ */
+EchoTable.prototype.getRowElement = function(rowIndex) {
+    var tableElement = document.getElementById(this.elementId);
+    if (this.headerVisible) {
+        if (rowIndex == -1) {
+            return tableElement.rows[0];
+        } else if (rowIndex >= 0 && rowIndex < this.rowCount) {
+            return tableElement.rows[rowIndex + 1];
+        }
+    } else {
+        if (rowIndex >= 0 && rowIndex < this.rowCount) {
+            return tableElement.rows[rowIndex];
+        }
+    }
+    return null;
+};
+
+/**
+ * Determines the index of a table row based on a 
+ * <code>TR</code> element.  This method is used for
+ * processing events.
+ * 
+ * @param trElement the <code>TR</code> element to evaluate
+ * @return the row index
+ */
+EchoTable.prototype.getRowIndex = function(trElement) {
+    var stringIndex = trElement.id.lastIndexOf("_tr_") + 4;
+    var rowIndex = trElement.id.substring(stringIndex);
+    if (rowIndex == "header") {
+        return -1;
+    } else {
+        return parseInt(rowIndex);
+    }
+};
+
+/**
+ * Initializes the state of an <code>EchoTable</code> instance,
+ * registering event handlers and binding it to it target
+ * <code>TABLE</code> DOM element.
+ */
+EchoTable.prototype.init = function() {
+    var tableElement = document.getElementById(this.elementId);
+    this.rowCount = tableElement.rows.length;
+    this.selectionState = new Array();
+    
+    if (this.rolloverEnabled || this.selectionEnabled) {
+        var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
+        for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
+            var trElement = tableElement.rows[rowIndex];
+            if (this.rolloverEnabled) {
+                if (mouseEnterLeaveSupport) {
+                    EchoEventProcessor.addHandler(trElement.id, "mouseenter", "EchoTable.processRolloverEnter");
+                    EchoEventProcessor.addHandler(trElement.id, "mouseleave", "EchoTable.processRolloverExit");
+                } else {
+                    EchoEventProcessor.addHandler(trElement.id, "mouseout", "EchoTable.processRolloverExit");
+                    EchoEventProcessor.addHandler(trElement.id, "mouseover", "EchoTable.processRolloverEnter");
+                }
+            }
+            if (this.selectionEnabled) {
+                EchoEventProcessor.addHandler(trElement.id, "click", "EchoTable.processClick");
+            }
+        }
+    }
+    
+    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
+};
+
+/**
+ * Determines if a row is selected.
+ * 
+ * @param index the index of the row to evaluate
+ * @return true if the row is selected
+ */
+EchoTable.prototype.isSelected = function(index) {
+    if (this.selectionState.length <= index) {
+        return false;
+    } else {
+        return this.selectionState[index];
+    }
+};
+
+/**
+ * Processes a row selection (click) event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTable.prototype.processClick = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+
+    if (!this.selectionEnabled) {
+        return;
+    }
+
+    var trElement = echoEvent.registeredTarget;
+    var rowIndex = this.getRowIndex(trElement);
+    if (rowIndex == -1) {
+        return;
+    }
+    
+    EchoDomUtil.preventEventDefault(echoEvent);
+
+    if (!this.multipleSelect) {
+        this.clearSelected();
+    }
+
+    this.setSelected(rowIndex, !this.isSelected(rowIndex));
+    
+    // Update ClientMessage.
+    this.updateClientMessage();
+    
+    // Notify server if required.
+    if (this.serverNotify) {
+        EchoClientMessage.setActionValue(this.elementId, "action");
+        EchoServerTransaction.connect();
+    }
+};
+
+/**
+ * Processes a row mouse over event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTable.prototype.processRolloverEnter = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+
+    var trElement = echoEvent.registeredTarget;
+    var rowIndex = this.getRowIndex(trElement);
+    
+    if (rowIndex == -1) {
+        return;
+    }
+    
+    if (this.rolloverStyle) {
+        for (var i = 0; i < trElement.cells.length; ++i) {
+            EchoCssUtil.applyTemporaryStyle(trElement.cells[i], this.rolloverStyle);
+        }
+    }
+};
+
+/**
+ * Processes a row mouse out event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
+EchoTable.prototype.processRolloverExit = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+
+    var trElement = echoEvent.registeredTarget;
+    var rowIndex = this.getRowIndex(trElement);
+
+    if (rowIndex == -1) {
+        return;
+    }
+
+    this.drawRowStyle(rowIndex);
+};
+
+
+/**
+ * Sets the selection state of a table row.
+ *
+ * @param rowIndex the index of the row
+ * @param newValue the new selection state (a boolean value)
+ */
+EchoTable.prototype.setSelected = function(rowIndex, newValue) {
+    this.selectionState[rowIndex] = newValue;
+
+    // Redraw.
+    this.drawRowStyle(rowIndex);
+};
+
+/**
+ * Updates the selection state in the outgoing <code>ClientMessage</code>.
+ * If any server-side <code>ActionListener</code>s are registered, an action
+ * will be set in the ClientMessage and a client-server connection initiated.
+ */
+EchoTable.prototype.updateClientMessage = function() {
+    var propertyElement = EchoClientMessage.createPropertyElement(this.elementId, "selection");
+
+    // remove previous values
+    while(propertyElement.hasChildNodes()){
+        propertyElement.removeChild(propertyElement.firstChild);
+    }
+    
+    for (var i = 0; i < this.rowCount; ++i) {
+        if (this.isSelected(i)) {
+            var rowElement = EchoClientMessage.messageDocument.createElement("row");
+            rowElement.setAttribute("index", i);
+            propertyElement.appendChild(rowElement);
+        }
+    }
+
+    EchoDebugManager.updateClientMessage();
+};
+
+/**
+ * Returns the Table data object instance based on the root element id
+ * of the Table.
+ *
+ * @param componentId the root element id of the Table
+ * @return the relevant Table instance
+ */
+EchoTable.getComponent = function(componentId) {
+    return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+};
 
 /**
  * Static object/namespace for Table MessageProcessor 
@@ -72,11 +365,10 @@ EchoTable.MessageProcessor.process = function(messagePartElement) {
 EchoTable.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-	    var selectionEnabled = "true" == EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionEnabled");
-	    var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
-	    if (rolloverStyle || selectionEnabled) {
-            EchoTable.disposeCellListeners(tableElementId);
-	    }
+        var table = EchoTable.getComponent(tableElementId);
+        if (table) {
+            table.dispose();
+        }
     }
 };
 
@@ -92,248 +384,70 @@ EchoTable.MessageProcessor.processInit = function(initMessageElement) {
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var tableElementId = item.getAttribute("eid");
-        var selectionEnabled = item.getAttribute("selection-enabled") == "true";
-        if (selectionEnabled) {
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionStyle", selectionStyle);
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionEnabled", "true");
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "selectionMode", item.getAttribute("selection-mode"));
-            if (item.getAttribute("server-notify")) {
-                EchoDomPropertyStore.setPropertyValue(tableElementId, "serverNotify", item.getAttribute("server-notify"));
-            }
+        
+        var table = new EchoTable(tableElementId);
+        table.enabled = item.getAttribute("enabled") != "false";
+        table.headerVisible = item.getAttribute("header-visible") == "true";
+        table.rolloverEnabled = item.getAttribute("rollover-enabled") == "true";
+        if (table.rolloverEnabled) {
+            table.rolloverStyle = rolloverStyle;
         }
-
-        if (rolloverStyle) {
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "rolloverStyle", rolloverStyle);
+        table.selectionEnabled = item.getAttribute("selection-enabled") == "true";
+        if (table.selectionEnabled) {
+            table.selectionStyle = selectionStyle;
+            table.multipleSelect = item.getAttribute("selection-mode") == "multiple";
+            table.serverNotify = item.getAttribute("server-notify") == "true";
         }
+        
+        table.init();
         
         var rowElements = item.getElementsByTagName("row");
         for (var rowIndex = 0; rowIndex < rowElements.length; ++rowIndex) {
-            var trElement = document.getElementById(tableElementId + "_tr_" + rowElements[rowIndex].getAttribute("index"));
-            EchoTable.setSelected(trElement, true);
-        }
-        
-        if (item.getAttribute("enabled") == "false") {
-            EchoDomPropertyStore.setPropertyValue(tableElementId, "EchoClientEngine.inputDisabled", true);
-        }
-
-        if (selectionEnabled || rolloverStyle) {
-            // Enable listeners only if table features selection or rollover effects.
-            EchoTable.initCellListeners(tableElementId);
+            var tableRowIndex = parseInt(rowElements[rowIndex].getAttribute("index"));
+            table.setSelected(tableRowIndex, true);
         }
     }
-};
-
-/**
- * Deselects all selected rows in a Table.
- *
- * @param tableElement the Table element
- */
-EchoTable.clearSelected = function(tableElement) {
-    for (var i = 0; i < tableElement.rows.length; ++i) {
-        if (EchoTable.isSelected(tableElement.rows[i])) {
-            EchoTable.setSelected(tableElement.rows[i], false);
-        }
-    }
-};
-
-/**
- * Removes rollover/selection listeners from a Table row.
- *
- * @param tableElementId the id of the Table element
- */
-EchoTable.disposeCellListeners = function(tableElementId) {
-    var tableElement = document.getElementById(tableElementId);
-    if (!tableElement) {
-        return;
-    }
-    var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
-    for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
-        var trElement = tableElement.rows[rowIndex];
-        EchoEventProcessor.removeHandler(trElement.id, "click");
-        if (mouseEnterLeaveSupport) {
-            EchoEventProcessor.removeHandler(trElement.id, "mouseenter");
-            EchoEventProcessor.removeHandler(trElement.id, "mouseleave");
-        } else {
-            EchoEventProcessor.removeHandler(trElement.id, "mouseout");
-            EchoEventProcessor.removeHandler(trElement.id, "mouseover");
-        }
-    }
-};
-
-/**
- * Redraws a row in the appropriate style (i.e., selected or deselected).
- *
- * @param trElement the row <code>tr</code> element to redraw
- */
-EchoTable.drawRowStyle = function(trElement) {
-    var selected = EchoTable.isSelected(trElement);
-    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
-    var selectionStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionStyle");
-
-    for (var i = 0; i < trElement.cells.length; ++i) {
-        if (selected) {
-            EchoCssUtil.restoreOriginalStyle(trElement.cells[i]);
-            EchoCssUtil.applyTemporaryStyle(trElement.cells[i], selectionStyle);
-        } else {
-            EchoCssUtil.restoreOriginalStyle(trElement.cells[i]);
-        }
-    }
-};
-
-/**
- * Adds rollover/selection listeners to a Table row.
- *
- * @param tableElementId the id of the Table element
- */
-EchoTable.initCellListeners = function(tableElementId) {
-    var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
-    var tableElement = document.getElementById(tableElementId);
-    for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
-        var trElement = tableElement.rows[rowIndex];
-        EchoEventProcessor.addHandler(trElement.id, "click", "EchoTable.processClick");
-        if (mouseEnterLeaveSupport) {
-            EchoEventProcessor.addHandler(trElement.id, "mouseenter", "EchoTable.processRolloverEnter");
-            EchoEventProcessor.addHandler(trElement.id, "mouseleave", "EchoTable.processRolloverExit");
-        } else {
-            EchoEventProcessor.addHandler(trElement.id, "mouseout", "EchoTable.processRolloverExit");
-            EchoEventProcessor.addHandler(trElement.id, "mouseover", "EchoTable.processRolloverEnter");
-        }
-    }
-};
-
-/**
- * Determines the selection state of a table row.
- *
- * @param trElement the row TR element
- * @return the selection state (as a boolean value)
- */
-EchoTable.isSelected = function(trElement) {
-    return EchoDomPropertyStore.getPropertyValue(trElement.id, "selected") == "true";
 };
 
 /**
  * Processes a row selection (click) event.
+ * Finds the appropriate <code>EchoTable</code> instance and
+ * delegates processing to it.
  *
  * @param echoEvent the event, preprocessed by the 
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.processClick = function(echoEvent) {
-    var trElement = echoEvent.registeredTarget;
-    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
-    if (!EchoClientEngine.verifyInput(tableElementId)) {
-        return;
-    }
-
-    if (trElement.id.indexOf("_header") != -1) {
-        return;
-    }
-
-    if (EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionEnabled") != "true") {
-        return;
-    }
-    
-    EchoDomUtil.preventEventDefault(echoEvent);
-
-    var tableElement = document.getElementById(tableElementId);
-    if (EchoDomPropertyStore.getPropertyValue(tableElementId, "selectionMode") != "multiple") {
-        EchoTable.clearSelected(tableElement);
-    }
-
-    EchoTable.setSelected(trElement, !EchoTable.isSelected(trElement));
-    
-    // Update ClientMessage.
-    EchoTable.updateClientMessage(tableElement);
-    
-    // Notify server if required.
-    if ("true" == EchoDomPropertyStore.getPropertyValue(tableElement.id, "serverNotify")) {
-        EchoClientMessage.setActionValue(tableElement.id, "action");
-        EchoServerTransaction.connect();
-    }
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var table = EchoTable.getComponent(componentId);
+    table.processClick(echoEvent);
 };
 
 /**
  * Processes a row mouse over event.
+ * Finds the appropriate <code>EchoTable</code> instance and
+ * delegates processing to it.
  *
  * @param echoEvent the event, preprocessed by the 
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.processRolloverEnter = function(echoEvent) {
-    var trElement = echoEvent.registeredTarget;
-    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
-    if (!EchoClientEngine.verifyInput(tableElementId)) {
-        return;
-    }
-    
-    if (trElement.id.indexOf("_header") != -1) {
-        return;
-    }
-    
-    var rolloverStyle = EchoDomPropertyStore.getPropertyValue(tableElementId, "rolloverStyle");
-    if (rolloverStyle) {
-        for (var i = 0; i < trElement.cells.length; ++i) {
-            EchoCssUtil.applyTemporaryStyle(trElement.cells[i], rolloverStyle);
-        }
-    }
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var table = EchoTable.getComponent(componentId);
+    table.processRolloverEnter(echoEvent);
 };
 
 /**
  * Processes a row mouse out event.
+ * Finds the appropriate <code>EchoTable</code> instance and
+ * delegates processing to it.
  *
  * @param echoEvent the event, preprocessed by the 
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.processRolloverExit = function(echoEvent) {
-    var trElement = echoEvent.registeredTarget;
-    var tableElementId = EchoDomUtil.getComponentId(trElement.id);
-    if (!EchoClientEngine.verifyInput(tableElementId)) {
-        return;
-    }
-
-    if (trElement.id.indexOf("_header") != -1) {
-        return;
-    }
-
-    EchoTable.drawRowStyle(trElement);
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var table = EchoTable.getComponent(componentId);
+    table.processRolloverExit(echoEvent);
 };
 
-/**
- * Sets the selection state of a table row.
- *
- * @param trElement the row TR element
- * @param newValue the new selection state (a boolean value)
- */
-EchoTable.setSelected = function(trElement, newValue) {
-    // Set state flag.
-    EchoDomPropertyStore.setPropertyValue(trElement.id, "selected", newValue ? "true" : "false");
-    
-    // Redraw.
-    EchoTable.drawRowStyle(trElement);
-};
-
-/**
- * Updates the selection state in the outgoing <code>ClientMessage</code>.
- * If any server-side <code>ActionListener</code>s are registered, an action
- * will be set in the ClientMessage and a client-server connection initiated.
- *
- * @param tableElement the table element whose state is to be updated
- */
-EchoTable.updateClientMessage = function(tableElement) {
-    var propertyElement = EchoClientMessage.createPropertyElement(tableElement.id, "selection");
-
-    // remove previous values
-    while(propertyElement.hasChildNodes()){
-        propertyElement.removeChild(propertyElement.firstChild);
-    }
-    
-    var hasHeaderRow = tableElement.rows.length > 0 && tableElement.rows[0].id.indexOf("_head") != -1;
-    
-    for (var i = 0; i < tableElement.rows.length; ++i) {
-        if (EchoTable.isSelected(tableElement.rows[i])) {
-            var rowElement = EchoClientMessage.messageDocument.createElement("row");
-            rowElement.setAttribute("index", hasHeaderRow ? i - 1 : i);
-            propertyElement.appendChild(rowElement);
-        }
-    }
-
-    EchoDebugManager.updateClientMessage();
-};
