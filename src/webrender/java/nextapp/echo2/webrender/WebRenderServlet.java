@@ -89,6 +89,8 @@ public abstract class WebRenderServlet extends HttpServlet {
      */
     private static MultipartRequestWrapper multipartRequestWrapper;
     
+    private static final long startupTime = System.currentTimeMillis();
+    
     /**
      * Global <code>ServiceRegistry</code>.
      */
@@ -254,10 +256,15 @@ public abstract class WebRenderServlet extends HttpServlet {
             
             // Set caching directives.
             if ((!DISABLE_CACHING) && version != Service.DO_NOT_CACHE) {
-System.err.println("  CACHE: " + serviceId + " : " + service.getClass().getName());                
+                // Setting all of the following (possibly with the exception of "Expires")
+                // are *absolutely critical* in order to ensure proper caching of resources
+                // with Internet Explorer 6.  Without "Last-Modified", IE6 appears to not
+                // cache images properly resulting in an substantially greater than expected
+                // performance impact.
                 response.setHeader("Cache-Control", "max-age=3600");
+                response.setDateHeader("Expires", System.currentTimeMillis() + (86400000));
+                response.setDateHeader("Last-Modified", startupTime);
             } else {
-System.err.println("NOCACHE: " + serviceId + " : " + service.getClass().getName());                
                 response.setHeader("Pragma", "no-cache");
                 response.setHeader("Cache-Control", "no-store");
                 response.setHeader("Expires", "0");
