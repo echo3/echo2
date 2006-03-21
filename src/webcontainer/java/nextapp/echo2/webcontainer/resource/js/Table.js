@@ -146,11 +146,17 @@ EchoTable.disposeCellListeners = function(tableElementId) {
     if (!tableElement) {
         return;
     }
+    var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         var trElement = tableElement.rows[rowIndex];
         EchoEventProcessor.removeHandler(trElement.id, "click");
-        EchoEventProcessor.removeHandler(trElement.id, "mouseover");
-        EchoEventProcessor.removeHandler(trElement.id, "mouseout");
+        if (mouseEnterLeaveSupport) {
+            EchoEventProcessor.removeHandler(trElement.id, "mouseenter");
+            EchoEventProcessor.removeHandler(trElement.id, "mouseleave");
+        } else {
+            EchoEventProcessor.removeHandler(trElement.id, "mouseout");
+            EchoEventProcessor.removeHandler(trElement.id, "mouseover");
+        }
     }
 };
 
@@ -180,12 +186,18 @@ EchoTable.drawRowStyle = function(trElement) {
  * @param tableElementId the id of the Table element
  */
 EchoTable.initCellListeners = function(tableElementId) {
+    var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
     var tableElement = document.getElementById(tableElementId);
     for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
         var trElement = tableElement.rows[rowIndex];
         EchoEventProcessor.addHandler(trElement.id, "click", "EchoTable.processClick");
-        EchoEventProcessor.addHandler(trElement.id, "mouseover", "EchoTable.processRolloverEnter");
-        EchoEventProcessor.addHandler(trElement.id, "mouseout", "EchoTable.processRolloverExit");
+        if (mouseEnterLeaveSupport) {
+            EchoEventProcessor.addHandler(trElement.id, "mouseenter", "EchoTable.processRolloverEnter");
+            EchoEventProcessor.addHandler(trElement.id, "mouseleave", "EchoTable.processRolloverExit");
+        } else {
+            EchoEventProcessor.addHandler(trElement.id, "mouseout", "EchoTable.processRolloverExit");
+            EchoEventProcessor.addHandler(trElement.id, "mouseover", "EchoTable.processRolloverEnter");
+        }
     }
 };
 
