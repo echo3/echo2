@@ -220,6 +220,17 @@ implements Serializable {
      */
     public static final String PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED = "proprietaryIEPngAlphaFilterRequired";
     
+    /**
+     * A proprietary feature flag indicating that 'mouseenter' and 
+     * 'mouseleave' events are supported.
+     * <p>
+     * This proprietary feature is provided by:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED = "proprietaryEventMouseEnterLeaveSupported";
+    
     // General Browser Properties
     
     /**

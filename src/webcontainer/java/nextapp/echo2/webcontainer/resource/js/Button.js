@@ -90,9 +90,14 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
         EchoEventProcessor.removeHandler(elementId, "click");
         EchoEventProcessor.removeHandler(elementId, "keypress");
         EchoEventProcessor.removeHandler(elementId, "mousedown");
-        EchoEventProcessor.removeHandler(elementId, "mouseout");
-        EchoEventProcessor.removeHandler(elementId, "mouseover");
         EchoEventProcessor.removeHandler(elementId, "mouseup");
+        if (EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported")) {
+            EchoEventProcessor.removeHandler(elementId, "mouseenter");
+            EchoEventProcessor.removeHandler(elementId, "mouseleave");
+        } else {
+	        EchoEventProcessor.removeHandler(elementId, "mouseout");
+	        EchoEventProcessor.removeHandler(elementId, "mouseover");
+        }
     }
 };
 
@@ -157,9 +162,14 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
         EchoEventProcessor.addHandler(elementId, "click", "EchoButton.processClick");
         EchoEventProcessor.addHandler(elementId, "keypress", "EchoButton.processKeyPressed");
         EchoEventProcessor.addHandler(elementId, "mousedown", "EchoButton.processPressed");
-        EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.processRolloverExit");
-        EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.processRolloverEnter");
         EchoEventProcessor.addHandler(elementId, "mouseup", "EchoButton.processReleased");
+        if (EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported")) {
+            EchoEventProcessor.addHandler(elementId, "mouseenter", "EchoButton.processRolloverEnter");
+            EchoEventProcessor.addHandler(elementId, "mouseleave", "EchoButton.processRolloverExit");
+        } else {
+	        EchoEventProcessor.addHandler(elementId, "mouseout", "EchoButton.processRolloverExit");
+	        EchoEventProcessor.addHandler(elementId, "mouseover", "EchoButton.processRolloverEnter");
+        }
     }
 };
 
