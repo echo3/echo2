@@ -65,6 +65,8 @@ import org.w3c.dom.Node;
  */
 public class ListBoxPeer extends AbstractListComponentPeer {
     
+    private static final boolean FORCE_DHTML_RENDERING = false;
+    
     private static final Border DEFAULT_DHTML_BORDER = new Border(2, null, Border.STYLE_INSET);
     private static final Extent DEFAULT_HEIGHT = new Extent(80);
     
@@ -165,6 +167,9 @@ public class ListBoxPeer extends AbstractListComponentPeer {
      *         target client
      */
     private boolean isDhtmlComponentRequired(RenderContext rc) {
+        if (FORCE_DHTML_RENDERING) {
+            return true;
+        }
         ClientProperties clientProperties = rc.getContainerInstance().getClientProperties();
         return clientProperties.getBoolean(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE);
     }

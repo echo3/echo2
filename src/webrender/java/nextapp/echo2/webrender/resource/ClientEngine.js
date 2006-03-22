@@ -758,8 +758,9 @@ EchoCssUtil.applyStyle = function(element, cssText) {
 EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     // Set original style if not already set.
     if (!EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle")) {
-        if (element.getAttribute("style")) {
-            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", EchoDomUtil.getCssText(element));
+        var originalStyle = EchoDomUtil.getCssText(element);
+        if (originalStyle) {
+            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", originalStyle);
         } else {
             // Flag that no original CSS text existed.
             EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", "-");
@@ -1449,7 +1450,11 @@ EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener
  */
 EchoDomUtil.setCssText = function(element, cssText) {
     if (EchoClientProperties.get("quirkOperaNoCssText")) {
-	    element.setAttribute("style", cssText);
+        if (cssText) {
+            element.setAttribute("style", cssText);
+        } else {
+            element.removeAttribute("style");
+        }
     } else {
 	    element.style.cssText = cssText;
     }
