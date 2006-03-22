@@ -1336,17 +1336,55 @@ EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
 };
 
 /**
- * Manual implementation of DOMImplementation.importNode() for clients that do
- * not provide their own (i.e., Internet Explorer 6).
- *
- * @param targetDocument the document into which the node/hierarchy is to be
- *        imported
- * @param sourceNode the node to import
- * @param importChildren a boolean flag indicating whether child nodes should
- *        be recursively imported
- */
+* Manual implementation of DOMImplementation.importNode() for clients that do
+* not provide their own (i.e., Internet Explorer 6).
+*
+* @param targetDocument the document into which the node/hierarchy is to be
+*        imported
+* @param sourceNode the node to import
+* @param importChildren a boolean flag indicating whether child nodes should
+*        be recursively imported
+*/
 EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren) {
+    var targetNode;  
+   
+    if (importChildren || !sourceNode.hasChildNodes) {
+        // Attempt to use innerHTML to import node.
+        // This approach cannot be used if importing children is not desired and
+        // the element has children.
+        targetNode = EchoDomUtil.importNodeByInnerHtml(targetDocument, sourceNode, importChildren);
+        if (targetNode != null) {
+            // Return created node if successfully imported, otherwise continue.
+            return targetNode;
+        }
+    }
+   
+    // Import single node (but not its children).
+    targetNode = EchoDomUtil.importNodeByDom(targetDocument, sourceNode);
+    
+    if (importChildren && sourceNode.hasChildNodes()) {
+        // Recurse to import children.
+        for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
+            var targetChildNode = EchoDomUtil.importNodeImpl(targetDocument, sourceChildNode, true);
+            if (targetChildNode) {
+                targetNode.appendChild(targetChildNode);
+            }
+         }
+    }
+    return targetNode;
+};
+
+/**
+* Import a node by re-creating it using DOM methods.
+* This method will not import child elements.
+*
+* @param targetDocument the document into which the node/hierarchy is to be
+*        imported
+* @param sourceNode the node to import
+*/
+EchoDomUtil.importNodeByDom = function(targetDocument, sourceNode) {
     var targetNode, i;
+
     switch (sourceNode.nodeType) {
     case 1:
         targetNode = targetDocument.createElement(sourceNode.nodeName);
@@ -1371,15 +1409,52 @@ EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren
         targetNode = targetDocument.createTextNode(sourceNode.nodeValue);
         break;
     }
-    
-    if (importChildren && sourceNode.hasChildNodes()) {
-        for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
-            var targetChildNode = EchoDomUtil.importNodeImpl(targetDocument, sourceChildNode, true);
-            if (targetChildNode) {
-	            targetNode.appendChild(targetChildNode);
-            }
-        }
+
+    return targetNode;
+};
+
+/**
+ * Try importing a node using innerHTML, on IE6 this is much faster than manually
+ * traversing the DOM-tree.
+ *
+ * @param targetDocument the document into which the node/hierarchy is to be
+ *        imported
+ * @param sourceNode the node to import
+ */
+EchoDomUtil.importNodeByInnerHtml = function(targetDocument, sourceNode) {
+    var targetNode;
+    if (sourceNode.nodeName.match(/tr|tbody|table|thead|tfoot|colgroup/)) {
+        // The innerHTML-property is read-only for the following objects:
+        // COL, COLGROUP, FRAMESET, HTML, STYLE, TABLE, TBODY, TFOOT, THEAD, TITLE, TR
+        // so we have to import nodes of such types using DOM-methods.
+        // see: http://msdn.microsoft.com/workshop/author/dhtml/reference/properties/innerhtml.asp
+        return null;
     }
+
+    //Get the html of the sourcenode as a string.
+    var sourceHTML = "";
+    for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
+        //We are importing an xml-node.
+        childHTML = sourceChildNode.xml;
+        if (childHTML == null) {
+            return null;
+        }
+        sourceHTML += childHTML;
+    }
+   
+    // Import the topnode
+    targetNode = EchoDomUtil.importNodeByDom(targetDocument, sourceNode);
+    
+    // IE fails to recognize <tag/> as a closed tag when using innerHTML, so replace it with <tag></tag>
+    // except for br, img, and hr elements.
+    var expr = new RegExp("<(?:(?!br|img|hr)([a-zA-Z]+))([^>]*)/>", "ig");
+    sourceHTML = sourceHTML.replace(expr, "<$1$2></$1>");
+
+    if (EchoStringUtil.trim(sourceHTML).length > 0) {
+        // Adding an empty string throws an 'Unknown error'.
+        targetNode.innerHTML = sourceHTML;
+    }
+ 
     return targetNode;
 };
 
@@ -2453,6 +2528,25 @@ EchoServerTransaction.postProcess = function() {
 EchoServerTransaction.responseHandler = function(conn) {
     EchoServerMessage.init(conn.getResponseXml(), EchoServerTransaction.postProcess);
     EchoServerMessage.process();
+};
+
+// ____________________
+// Object EchoStringUtil
+
+/**
+* Static object/namespace for performing string-operations that are not
+* provided by the JavaScript specification.
+*/
+function EchoStringUtil() {};
+
+/**
+ * Trims leading and trailing whitespace from a string.
+ *
+ * @param s the string to trim
+*/
+EchoStringUtil.trim = function(s) {
+   var result = s.replace(/^\s+/g, "");  // strip leading
+   return result.replace(/\s+$/g, "");   // strip trailing
 };
 
 // __________________________

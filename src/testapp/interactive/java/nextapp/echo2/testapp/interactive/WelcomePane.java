@@ -84,6 +84,7 @@ public class WelcomePane extends ContentPane {
         splitPane.add(controlRow);
         
         Button button = new Button("Continue", Styles.ICON_24_YES);
+        button.setId("EnterTestApplication");
         button.setStyleName("ControlPane.Button");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

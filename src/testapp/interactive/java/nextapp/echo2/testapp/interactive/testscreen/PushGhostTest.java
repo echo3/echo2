@@ -113,7 +113,7 @@ public class PushGhostTest extends Column {
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                app.startGhostTask(callbackInterval, runTimeInSeconds * 1000, clicksPerIteration);
+                app.startGhostTask(null, callbackInterval, runTimeInSeconds * 1000, clicksPerIteration);
             }
         });
         add(startButton);

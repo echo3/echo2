@@ -51,6 +51,17 @@ import nextapp.echo2.webrender.ClientConfiguration;
  */
 public class InteractiveApp extends ApplicationInstance {
 
+    private static final String[] GHOST_SCRIPT_1 = new String[] {
+        "EnterTestApplication", 
+        "StartTest:ButtonTest", 
+        "StartTest:SplitPaneNestedTest",
+        "StartTest:ListBoxTest",
+        "StartTest:ContainerContextTest",
+        "StartTest:GridTest",
+        "StartTest:HierarchyTest",
+        "ExitTestApplication"
+    };
+    
     /**
      * A boolean flag indicating whether the application is running on a live
      * demo server.  This flag is used to disable certain tests based on 
@@ -119,6 +130,18 @@ public class InteractiveApp extends ApplicationInstance {
     public void displayWelcomePane() {
         mainWindow.setContent(new WelcomePane());
     }
+    
+    private String getRequestParameter(String parameterName) {
+        ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
+        Object parameterValue = cc.getInitialRequestParameterMap().get(parameterName);
+        if (parameterValue instanceof String) {
+            return (String) parameterValue;
+        } else if (parameterValue instanceof String[]) {
+            return ((String[]) parameterValue).length == 0 ? null : ((String[]) parameterValue)[0]; 
+        } else {
+            return parameterValue == null ? null : parameterValue.toString();
+        }
+    }
 
     /**
      * @see nextapp.echo2.app.ApplicationInstance#init()
@@ -130,11 +153,20 @@ public class InteractiveApp extends ApplicationInstance {
         mainWindow.setContent(new WelcomePane());
         
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
-        if (!LIVE_DEMO_SERVER && cc.getInitialRequestParameterMap().containsKey("ghost")) {
-            if (cc.getInitialRequestParameterMap().containsKey("clicks")) {
-                startGhostTask(0, 0, Integer.parseInt((String) cc.getInitialRequestParameterMap().get("clicks")));
-            } else {
-                startGhostTask(0, 0, 1);
+        if (!LIVE_DEMO_SERVER) {
+            if (cc.getInitialRequestParameterMap().containsKey("ghost")) {
+                // Start the ghost task.
+                String[] script;
+                if ("1".equals(getRequestParameter("script"))) {
+                    script = GHOST_SCRIPT_1; 
+                } else {
+                    script = null;
+                }
+                if (cc.getInitialRequestParameterMap().containsKey("clicks")) {
+                    startGhostTask(script, 0, 0, Integer.parseInt(getRequestParameter("clicks")));
+                } else {
+                    startGhostTask(script, 0, 0, 1);
+                }
             }
         }
         
@@ -172,7 +204,7 @@ public class InteractiveApp extends ApplicationInstance {
      * @param clicksPerIteration the number of button clicks to perform in a 
      *        single iteration
      */
-    public void startGhostTask(int interval, long runTime, int clicksPerIteration) {
+    public void startGhostTask(String[] script, int interval, long runTime, int clicksPerIteration) {
         if (ghostTaskQueue != null) {
             return;
         }
@@ -180,7 +212,7 @@ public class InteractiveApp extends ApplicationInstance {
         ContainerContext containerContext = 
                 (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
         containerContext.setTaskQueueCallbackInterval(ghostTaskQueue, interval);
-        GhostTask.start(this, ghostTaskQueue, runTime, clicksPerIteration);
+        GhostTask.start(this, ghostTaskQueue, script, runTime, clicksPerIteration);
     }
     
     /**

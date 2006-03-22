@@ -29,6 +29,7 @@
 
 package nextapp.echo2.testapp.interactive;
 
+import nextapp.echo2.app.Button;
 import nextapp.echo2.app.TaskQueueHandle;
 
 /**
@@ -51,13 +52,16 @@ implements Runnable {
      * @param clicksPerIteration the number of button clicks to perform in a 
      *        single iteration.
      */
-    static void start(InteractiveApp app, TaskQueueHandle taskQueue, long runTime, int clicksPerIteration) {
-        app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, runTime, clicksPerIteration));
+    static void start(InteractiveApp app, TaskQueueHandle taskQueue, String[] script, long runTime, 
+            int clicksPerIteration) {
+        app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, script, runTime, clicksPerIteration));
     }
     
     private int iteration = 0;
     private boolean indefinite;
     private long stopTime;
+    private String[] script;
+    private int scriptIndex = 0;
     private int clicksPerIteration;
     private TaskQueueHandle taskQueue;
     private InteractiveApp app;
@@ -73,8 +77,10 @@ implements Runnable {
      * @param clicksPerIteration the number of button clicks to perform in a 
      *        single iteration.
      */
-    private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, long runTime, int clicksPerIteration) {
+    private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, String[] script, long runTime, 
+            int clicksPerIteration) {
         this.taskQueue = taskQueue;
+        this.script = script;
         this.app = app;
         this.clicksPerIteration = clicksPerIteration;
         if (InteractiveApp.LIVE_DEMO_SERVER || runTime > 0) {
@@ -89,7 +95,16 @@ implements Runnable {
      */
     public void run() {
         for (int i = 0; i < clicksPerIteration; ++i) {
-            RandomClick.clickRandomButton();
+            if (script == null) {
+                RandomClick.clickRandomButton();
+            } else {
+                Button button = (Button) app.getDefaultWindow().getComponent(script[scriptIndex]);
+                button.doAction();
+                ++scriptIndex;
+                if (scriptIndex >= script.length) {
+                    scriptIndex = 0;
+                }
+            }
         }
         if (indefinite || System.currentTimeMillis() < stopTime) {
             ++iteration;
