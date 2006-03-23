@@ -77,12 +77,6 @@ EchoWindowPane = function(elementId, containerElementId) {
 
 EchoWindowPane.activeInstance = null;
 
-/**
- * Id suffixes of border elements.
- */
-EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES = new Array("_border_tl", "_border_t", "_border_tr",
-        "_border_l", "_border_r", "_border_bl", "_border_b", "_border_br");
-
 EchoWindowPane.DEFAULT_CLOSE_ICON_INSETS = "4px";
 EchoWindowPane.DEFAULT_ICON_INSETS = "4px";
 EchoWindowPane.DEFAULT_TITLE_INSETS = "4px";

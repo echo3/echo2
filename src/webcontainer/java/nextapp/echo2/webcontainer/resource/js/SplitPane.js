@@ -219,7 +219,7 @@ EchoSplitPane.prototype.create = function() {
 };
 
 EchoSplitPane.prototype.dispose = function() {
-    if (this.separatorDivElement) {
+    if (this.separatorDivElement && this.resizable) {
         EchoEventProcessor.removeHandler(this.separatorDivElement, "mousedown");
         EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
         EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
