@@ -96,7 +96,7 @@ EchoContentPane.MessageProcessor.processInit = function(initMessageElement) {
         var horizontalScroll = item.getAttribute("horizontal-scroll");
         var verticalScroll = item.getAttribute("vertical-scroll");
 
-        EchoEventProcessor.addHandler(elementId, "scroll", "EchoContentPane.scroll");
+        EchoEventProcessor.addHandler(divElement, "scroll", "EchoContentPane.processScroll");
         
         if (horizontalScroll) {
             divElement.scrollLeft = parseInt(horizontalScroll);
@@ -116,14 +116,17 @@ EchoContentPane.MessageProcessor.processInit = function(initMessageElement) {
 EchoContentPane.MessageProcessor.processScroll = function(scrollMessageElement) {
     var elementId = scrollMessageElement.getAttribute("eid");
     var position = parseInt(scrollMessageElement.getAttribute("position"));
+
+    var divElement = document.getElementById(elementId);
+    
     if (position < 0) {
         position = 1000000;
     }
-
+    
     if (scrollMessageElement.nodeName == "scroll-horizontal") {
-        document.getElementById(elementId).scrollLeft = position;
+        divElement.scrollLeft = position;
     } else if (scrollMessageElement.nodeName == "scroll-vertical") {
-        document.getElementById(elementId).scrollTop = position;
+        divElement.scrollTop = position;
     }
 };
 
@@ -133,8 +136,8 @@ EchoContentPane.MessageProcessor.processScroll = function(scrollMessageElement) 
  * @param echoEvent the event, preprocessed by the 
  *        <code>EchoEventProcessor</code>
  */
-EchoContentPane.scroll = function(echoEvent) {
-    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget.id)) {
+EchoContentPane.processScroll = function(echoEvent) {
+    if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget)) {
         return;
     }
     EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "horizontalScroll",  
