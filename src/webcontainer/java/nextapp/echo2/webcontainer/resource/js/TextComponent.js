@@ -66,7 +66,7 @@ EchoTextComponent.prototype.doAction = function() {
         return;
     }
     
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id, false)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element, false)) {
         // Don't process actions when client/server transaction in progress.
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
@@ -132,7 +132,7 @@ EchoTextComponent.prototype.init = function() {
  *        <code>EchoEventProcessor</code>
  */
 EchoTextComponent.prototype.processBlur = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
     
@@ -148,7 +148,7 @@ EchoTextComponent.prototype.processBlur = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTextComponent.prototype.processFocus = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
     
@@ -163,7 +163,7 @@ EchoTextComponent.prototype.processFocus = function(echoEvent) {
  * @param e the DOM Level 2 event
  */
 EchoTextComponent.prototype.processKeyPress = function(e) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id, true)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element, true)) {
         EchoDomUtil.preventEventDefault(e);
         return;
     }
@@ -180,7 +180,7 @@ EchoTextComponent.prototype.processKeyPress = function(e) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTextComponent.prototype.processKeyUp = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id, true)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element, true)) {
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }

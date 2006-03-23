@@ -161,7 +161,7 @@ EchoButton.prototype.init = function() {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processClick = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
     this.doAction();
@@ -174,7 +174,7 @@ EchoButton.prototype.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processKeyPressed = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
     if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
@@ -189,7 +189,7 @@ EchoButton.prototype.processKeyPressed = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processPressed = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
     EchoDomUtil.preventEventDefault(echoEvent);
@@ -213,7 +213,7 @@ EchoButton.prototype.processReleased = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processRolloverEnter = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
     this.setVisualState(EchoButton.STATE_ROLLOVER);

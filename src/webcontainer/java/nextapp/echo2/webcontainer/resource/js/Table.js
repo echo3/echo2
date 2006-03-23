@@ -200,7 +200,7 @@ EchoTable.prototype.isSelected = function(index) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processClick = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
 
@@ -239,7 +239,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processRolloverEnter = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
 
@@ -264,7 +264,7 @@ EchoTable.prototype.processRolloverEnter = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processRolloverExit = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
         return;
     }
 

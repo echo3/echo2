@@ -390,19 +390,19 @@ EchoClientEngine.processServerError = function() {
  * synchronization occurred while the user were typing text into a field, some
  * of the his/her entered characters would be silently dropped.
  *
- * @param elementId the id of the element
+ * @param element the elment or id of the element
  * @param allowInputDuringTransaction flag indicating that input should be 
  *        allowed during client/server transactions (Use of this flag is
  *        recommended against in MOST situations, see above)
  */
-EchoClientEngine.verifyInput = function(elementId, allowInputDuringTransaction) {
+EchoClientEngine.verifyInput = function(element, allowInputDuringTransaction) {
     if (!allowInputDuringTransaction && EchoServerTransaction.active) {
         return false;
     }
-    if (!EchoModalManager.isElementInModalContext(elementId)) {
+    if (!EchoModalManager.isElementInModalContext(element)) {
         return false;
     }
-    if (EchoDomPropertyStore.getPropertyValue(elementId, "EchoClientEngine.inputDisabled")) {
+    if (EchoDomPropertyStore.getPropertyValue(element, "EchoClientEngine.inputDisabled")) {
         return false;
     }
     return true;
@@ -1955,12 +1955,14 @@ EchoModalManager.modalElementId = null;
 /**
  * Determines if a particular element lies within the modal context.
  *
- * @param elementId the id of the element to analyze
- * @return true if the specified <code>elementId</code> is within the modal
+ * @param element the element or id of the element to analyze
+ * @return true if the specified <code>element</code> is within the modal
  *         context
  */
-EchoModalManager.isElementInModalContext = function(elementId) {
-    var element = document.getElementById(elementId);
+EchoModalManager.isElementInModalContext = function(element) {
+    if (typeof element == "string") {
+        element = document.getElementById(element);
+    }
     if (EchoModalManager.modalElementId) {
         var modalElement = document.getElementById(EchoModalManager.modalElementId);
         return EchoDomUtil.isAncestorOf(modalElement, element);
