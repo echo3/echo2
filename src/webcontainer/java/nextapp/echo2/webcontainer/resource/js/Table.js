@@ -69,8 +69,8 @@ EchoTable.prototype.clearSelected = function() {
 EchoTable.prototype.dispose = function() {
     if (this.rolloverEnabled || this.selectionEnabled) {
         var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
-        for (var rowIndex = 0; rowIndex < this.element.rows.length; ++rowIndex) {
-            var trElement = this.element.rows[rowIndex];
+        for (var rowIndex = 0; rowIndex < this.rowCount; ++rowIndex) {
+            var trElement = this.element.rows[rowIndex + (this.headerVisible ? 1 : 0)];
             if (this.rolloverEnabled) {
                 if (mouseEnterLeaveSupport) {
                     EchoEventProcessor.removeHandler(trElement, "mouseenter");
@@ -156,11 +156,12 @@ EchoTable.prototype.getRowIndex = function(trElement) {
  */
 EchoTable.prototype.init = function() {
     this.selectionState = new Array();
+    this.rowCount = this.element.rows.length - (this.headerVisible ? 1 : 0); 
     
     if (this.rolloverEnabled || this.selectionEnabled) {
         var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
-        for (var rowIndex = 0; rowIndex < this.element.rows.length; ++rowIndex) {
-            var trElement = this.element.rows[rowIndex];
+        for (var rowIndex = 0; rowIndex < this.rowCount; ++rowIndex) {
+            var trElement = this.element.rows[rowIndex + (this.headerVisible ? 1 : 0)];
             if (this.rolloverEnabled) {
                 if (mouseEnterLeaveSupport) {
                     EchoEventProcessor.addHandler(trElement, "mouseenter", "EchoTable.processRolloverEnter");
