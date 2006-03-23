@@ -36,10 +36,11 @@
  * <p>
  * Constructor to create new <code>EchoTable</code> instance.
  * 
- * @param elementId the target <code>TABLE</code> DOM element 
+ * @param element the supported <code>TABLE</code> DOM element 
  */
 EchoTable = function(elementId) {
-    this.elementId = elementId;
+    this.element = document.getElementById(elementId);
+    
     this.multipleSelect = false;
     this.rolloverEnabled = false;
     this.rolloverStyle = null;
@@ -54,7 +55,6 @@ EchoTable = function(elementId) {
  * Deselects all selected rows in a Table.
  */
 EchoTable.prototype.clearSelected = function() {
-    var tableElement = document.getElementById(this.elementId);
     for (var i = 0; i < this.rowCount; ++i) {
         if (this.isSelected(i)) {
             this.setSelected(i, false);
@@ -67,25 +67,27 @@ EchoTable.prototype.clearSelected = function() {
  * listeners and cleaning up resources.
  */
 EchoTable.prototype.dispose = function() {
-    var tableElement = document.getElementById(this.elementId);
     if (this.rolloverEnabled || this.selectionEnabled) {
         var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
-        for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
-            var trElement = tableElement.rows[rowIndex];
+        for (var rowIndex = 0; rowIndex < this.element.rows.length; ++rowIndex) {
+            var trElement = this.element.rows[rowIndex];
             if (this.rolloverEnabled) {
                 if (mouseEnterLeaveSupport) {
-                    EchoEventProcessor.removeHandler(trElement.id, "mouseenter");
-                    EchoEventProcessor.removeHandler(trElement.id, "mouseleave");
+                    EchoEventProcessor.removeHandler(trElement, "mouseenter");
+                    EchoEventProcessor.removeHandler(trElement, "mouseleave");
                 } else {
-                    EchoEventProcessor.removeHandler(trElement.id, "mouseout");
-                    EchoEventProcessor.removeHandler(trElement.id, "mouseover");
+                    EchoEventProcessor.removeHandler(trElement, "mouseout");
+                    EchoEventProcessor.removeHandler(trElement, "mouseover");
                 }
             }
             if (this.selectionEnabled) {
-                EchoEventProcessor.removeHandler(trElement.id, "click");
+                EchoEventProcessor.removeHandler(trElement, "click");
             }
         }
     }
+    
+    EchoDomPropertyStore.setPropertyValue(this.element, "component", null);
+    this.element = null;
 };
 
 /**
@@ -94,7 +96,6 @@ EchoTable.prototype.dispose = function() {
  * @param rowIndex the index of the row to redraw
  */
 EchoTable.prototype.drawRowStyle = function(rowIndex) {
-    var tableElementId = document.getElementById(this.elementId);
     var selected = this.isSelected(rowIndex);
     var trElement = this.getRowElement(rowIndex);
     
@@ -116,16 +117,15 @@ EchoTable.prototype.drawRowStyle = function(rowIndex) {
  * @return the relevant <code>TR</code> element
  */
 EchoTable.prototype.getRowElement = function(rowIndex) {
-    var tableElement = document.getElementById(this.elementId);
     if (this.headerVisible) {
         if (rowIndex == -1) {
-            return tableElement.rows[0];
+            return this.element.rows[0];
         } else if (rowIndex >= 0 && rowIndex < this.rowCount) {
-            return tableElement.rows[rowIndex + 1];
+            return this.element.rows[rowIndex + 1];
         }
     } else {
         if (rowIndex >= 0 && rowIndex < this.rowCount) {
-            return tableElement.rows[rowIndex];
+            return this.element.rows[rowIndex];
         }
     }
     return null;
@@ -155,30 +155,28 @@ EchoTable.prototype.getRowIndex = function(trElement) {
  * <code>TABLE</code> DOM element.
  */
 EchoTable.prototype.init = function() {
-    var tableElement = document.getElementById(this.elementId);
-    this.rowCount = tableElement.rows.length;
     this.selectionState = new Array();
     
     if (this.rolloverEnabled || this.selectionEnabled) {
         var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
-        for (var rowIndex = 0; rowIndex < tableElement.rows.length; ++rowIndex) {
-            var trElement = tableElement.rows[rowIndex];
+        for (var rowIndex = 0; rowIndex < this.element.rows.length; ++rowIndex) {
+            var trElement = this.element.rows[rowIndex];
             if (this.rolloverEnabled) {
                 if (mouseEnterLeaveSupport) {
-                    EchoEventProcessor.addHandler(trElement.id, "mouseenter", "EchoTable.processRolloverEnter");
-                    EchoEventProcessor.addHandler(trElement.id, "mouseleave", "EchoTable.processRolloverExit");
+                    EchoEventProcessor.addHandler(trElement, "mouseenter", "EchoTable.processRolloverEnter");
+                    EchoEventProcessor.addHandler(trElement, "mouseleave", "EchoTable.processRolloverExit");
                 } else {
-                    EchoEventProcessor.addHandler(trElement.id, "mouseout", "EchoTable.processRolloverExit");
-                    EchoEventProcessor.addHandler(trElement.id, "mouseover", "EchoTable.processRolloverEnter");
+                    EchoEventProcessor.addHandler(trElement, "mouseout", "EchoTable.processRolloverExit");
+                    EchoEventProcessor.addHandler(trElement, "mouseover", "EchoTable.processRolloverEnter");
                 }
             }
             if (this.selectionEnabled) {
-                EchoEventProcessor.addHandler(trElement.id, "click", "EchoTable.processClick");
+                EchoEventProcessor.addHandler(trElement, "click", "EchoTable.processClick");
             }
         }
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
+    EchoDomPropertyStore.setPropertyValue(this.element, "component", this);
 };
 
 /**
@@ -202,7 +200,7 @@ EchoTable.prototype.isSelected = function(index) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processClick = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
 
@@ -229,7 +227,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
     
     // Notify server if required.
     if (this.serverNotify) {
-        EchoClientMessage.setActionValue(this.elementId, "action");
+        EchoClientMessage.setActionValue(this.element.id, "action");
         EchoServerTransaction.connect();
     }
 };
@@ -241,7 +239,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processRolloverEnter = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
 
@@ -266,7 +264,7 @@ EchoTable.prototype.processRolloverEnter = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processRolloverExit = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
 
@@ -300,7 +298,7 @@ EchoTable.prototype.setSelected = function(rowIndex, newValue) {
  * will be set in the ClientMessage and a client-server connection initiated.
  */
 EchoTable.prototype.updateClientMessage = function() {
-    var propertyElement = EchoClientMessage.createPropertyElement(this.elementId, "selection");
+    var propertyElement = EchoClientMessage.createPropertyElement(this.element.id, "selection");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
@@ -319,14 +317,14 @@ EchoTable.prototype.updateClientMessage = function() {
 };
 
 /**
- * Returns the Table data object instance based on the root element id
+ * Returns the Table data object instance based on the root element 
  * of the Table.
  *
- * @param componentId the root element id of the Table
- * @return the relevant Table instance
+ * @param element the root element or element id of the Table
+ * @return the relevant Tableinstance
  */
-EchoTable.getComponent = function(componentId) {
-    return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+EchoTable.getComponent = function(element) {
+    return EchoDomPropertyStore.getPropertyValue(element, "component");
 };
 
 /**
@@ -450,4 +448,3 @@ EchoTable.processRolloverExit = function(echoEvent) {
     var table = EchoTable.getComponent(componentId);
     table.processRolloverExit(echoEvent);
 };
-

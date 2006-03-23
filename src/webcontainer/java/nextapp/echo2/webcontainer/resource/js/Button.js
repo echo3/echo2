@@ -37,7 +37,7 @@
  * Creates a new Button data object.
  */
 EchoButton = function(elementId) { 
-    this.elementId = elementId;
+    this.element = document.getElementById(elementId);
 };
 
 /**
@@ -77,18 +77,20 @@ EchoButton.prototype.deselectRadioButtonsInGroup = function() {
  * and cleaning up resources of underlying element.
  */
 EchoButton.prototype.dispose = function() {
-    var element = document.getElementById(this.elementId);
-    EchoEventProcessor.removeHandler(element, "click");
-    EchoEventProcessor.removeHandler(element, "keypress");
-    EchoEventProcessor.removeHandler(element, "mousedown");
-    EchoEventProcessor.removeHandler(element, "mouseup");
+    EchoEventProcessor.removeHandler(this.element, "click");
+    EchoEventProcessor.removeHandler(this.element, "keypress");
+    EchoEventProcessor.removeHandler(this.element, "mousedown");
+    EchoEventProcessor.removeHandler(this.element, "mouseup");
     if (EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported")) {
-        EchoEventProcessor.removeHandler(element, "mouseenter");
-        EchoEventProcessor.removeHandler(element, "mouseleave");
+        EchoEventProcessor.removeHandler(this.element, "mouseenter");
+        EchoEventProcessor.removeHandler(this.element, "mouseleave");
     } else {
-        EchoEventProcessor.removeHandler(element, "mouseout");
-        EchoEventProcessor.removeHandler(element, "mouseover");
+        EchoEventProcessor.removeHandler(this.element, "mouseout");
+        EchoEventProcessor.removeHandler(this.element, "mouseover");
     }
+    
+    EchoDomPropertyStore.setPropertyValue(this.element, "component", null);
+    this.element = null;
 };
 
 /**
@@ -112,7 +114,7 @@ EchoButton.prototype.doAction = function() {
         document.selection.empty();
     }
     
-    EchoClientMessage.setActionValue(this.elementId, "click");
+    EchoClientMessage.setActionValue(this.element.id, "click");
     
     EchoServerTransaction.connect();
 };
@@ -137,20 +139,19 @@ EchoButton.prototype.doToggle = function() {
  * Registers event listeners for the underlying element.
  */
 EchoButton.prototype.init = function() {
-    var element = document.getElementById(this.elementId);
-    EchoEventProcessor.addHandler(element, "click", "EchoButton.processClick");
-    EchoEventProcessor.addHandler(element, "keypress", "EchoButton.processKeyPressed");
-    EchoEventProcessor.addHandler(element, "mousedown", "EchoButton.processPressed");
-    EchoEventProcessor.addHandler(element, "mouseup", "EchoButton.processReleased");
+    EchoEventProcessor.addHandler(this.element, "click", "EchoButton.processClick");
+    EchoEventProcessor.addHandler(this.element, "keypress", "EchoButton.processKeyPressed");
+    EchoEventProcessor.addHandler(this.element, "mousedown", "EchoButton.processPressed");
+    EchoEventProcessor.addHandler(this.element, "mouseup", "EchoButton.processReleased");
     if (EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported")) {
-        EchoEventProcessor.addHandler(element, "mouseenter", "EchoButton.processRolloverEnter");
-        EchoEventProcessor.addHandler(element, "mouseleave", "EchoButton.processRolloverExit");
+        EchoEventProcessor.addHandler(this.element, "mouseenter", "EchoButton.processRolloverEnter");
+        EchoEventProcessor.addHandler(this.element, "mouseleave", "EchoButton.processRolloverExit");
     } else {
-        EchoEventProcessor.addHandler(element, "mouseout", "EchoButton.processRolloverExit");
-        EchoEventProcessor.addHandler(element, "mouseover", "EchoButton.processRolloverEnter");
+        EchoEventProcessor.addHandler(this.element, "mouseout", "EchoButton.processRolloverExit");
+        EchoEventProcessor.addHandler(this.element, "mouseover", "EchoButton.processRolloverEnter");
     }
     
-    EchoDomPropertyStore.setPropertyValue(element, "component", this);
+    EchoDomPropertyStore.setPropertyValue(this.element, "component", this);
 };
 
 /**
@@ -160,7 +161,7 @@ EchoButton.prototype.init = function() {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processClick = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
     this.doAction();
@@ -173,7 +174,7 @@ EchoButton.prototype.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processKeyPressed = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
     if (echoEvent.keyCode == 13 || echoEvent.keyCode == 32) {
@@ -188,7 +189,7 @@ EchoButton.prototype.processKeyPressed = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processPressed = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
     EchoDomUtil.preventEventDefault(echoEvent);
@@ -212,7 +213,7 @@ EchoButton.prototype.processReleased = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.prototype.processRolloverEnter = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.element.id)) {
         return;
     }
     this.setVisualState(EchoButton.STATE_ROLLOVER);
@@ -240,7 +241,7 @@ EchoButton.prototype.setButtonGroup = function(groupId) {
         buttonArray = new Array();
         EchoButton.buttonGroupIdToButtonArrayMap[groupId] = buttonArray;
     }
-    buttonArray.push(this.elementId);
+    buttonArray.push(this.element.id);
 };
 
 /**
@@ -254,10 +255,10 @@ EchoButton.prototype.setSelected = function(newState) {
     if (!stateIconUri) {
         throw new Error("State icon not specified for selection state: " + newState);
     }
-    var stateIconElement = document.getElementById(this.elementId + "_stateicon");
+    var stateIconElement = document.getElementById(this.element.id + "_stateicon");
     stateIconElement.src = stateIconUri;
     
-    EchoClientMessage.setPropertyValue(this.elementId, "selected", newState ? "true" : "false");
+    EchoClientMessage.setPropertyValue(this.element.id, "selected", newState ? "true" : "false");
 };
 
 /**
@@ -290,21 +291,19 @@ EchoButton.prototype.setVisualState = function(newState) {
     }
     
     if (newIcon) {
-        var iconElement = document.getElementById(this.elementId + "_icon");
+        var iconElement = document.getElementById(this.element.id + "_icon");
         iconElement.src = newIcon;
     }
     if (newStateIcon) {
-        var stateIconElement = document.getElementById(this.elementId + "_stateicon");
+        var stateIconElement = document.getElementById(this.element.id + "_stateicon");
         stateIconElement.src = newStateIcon;
     }
     
-    var buttonElement = document.getElementById(this.elementId);
-    
-    EchoCssUtil.restoreOriginalStyle(buttonElement);
+    EchoCssUtil.restoreOriginalStyle(this.element);
     if (newStyle) {
-        EchoCssUtil.applyTemporaryStyle(buttonElement, newStyle);
+        EchoCssUtil.applyTemporaryStyle(this.element, newStyle);
     }
-    EchoButton.ieRepaint(buttonElement);
+    EchoButton.ieRepaint(this.element);
 };
 
 /**
@@ -362,7 +361,6 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
 
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        var element = document.getElementById(elementId);
         
         var button = new EchoButton(elementId);
         
