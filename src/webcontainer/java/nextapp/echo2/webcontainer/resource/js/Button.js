@@ -411,11 +411,11 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
  * Returns the Button data object instance based on the root element id
  * of the Button.
  *
- * @param componentId the root element id of the Button
+ * @param element the root element or element id of the Button
  * @return the relevant Button instance
  */
-EchoButton.getComponent = function(componentId) {
-    return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+EchoButton.getComponent = function(element) {
+    return EchoDomPropertyStore.getPropertyValue(element, "component");
 };
 
 /**
@@ -444,8 +444,7 @@ EchoButton.ieRepaint = function(buttonElement) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.processClick = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    var button = EchoButton.getComponent(elementId);
+    var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processClick(echoEvent);
 };
 
@@ -458,8 +457,7 @@ EchoButton.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.processKeyPressed = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    var button = EchoButton.getComponent(elementId);
+    var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processKeyPressed(echoEvent);
 };
 
@@ -472,8 +470,7 @@ EchoButton.processKeyPressed = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.processPressed = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    var button = EchoButton.getComponent(elementId);
+    var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processPressed(echoEvent);
 };
 
@@ -486,8 +483,7 @@ EchoButton.processPressed = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.processReleased = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    var button = EchoButton.getComponent(elementId);
+    var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processReleased(echoEvent);
 };
 
@@ -500,8 +496,7 @@ EchoButton.processReleased = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.processRolloverEnter = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    var button = EchoButton.getComponent(elementId);
+    var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processRolloverEnter(echoEvent);
 };
 
@@ -514,7 +509,6 @@ EchoButton.processRolloverEnter = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoButton.processRolloverExit = function(echoEvent) {
-    var elementId = echoEvent.registeredTarget.getAttribute("id");
-    var button = EchoButton.getComponent(elementId);
+    var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processRolloverExit(echoEvent);
 };
