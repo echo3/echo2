@@ -1353,7 +1353,7 @@ EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
 EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren) {
     var targetNode;  
    
-    if (importChildren || !sourceNode.hasChildNodes) {
+    if (importChildren || !sourceNode.hasChildNodes()) {
         // Attempt to use innerHTML to import node.
         // This approach cannot be used if importing children is not desired and
         // the element has children.
@@ -1440,7 +1440,7 @@ EchoDomUtil.importNodeByInnerHtml = function(targetDocument, sourceNode) {
     var sourceHTML = "";
     for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
         //We are importing an xml-node.
-        childHTML = sourceChildNode.xml;
+        var childHTML = sourceChildNode.xml;
         if (childHTML == null) {
             return null;
         }
