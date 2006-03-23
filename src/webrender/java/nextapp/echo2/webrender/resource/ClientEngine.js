@@ -902,12 +902,15 @@ EchoDomPropertyStore.MessageProcessor.processStoreProperty = function(storePrope
 /**
  * Retrieves the value of a specific <code>EchoDomPropertyStore</code> property.
  *
- * @param elementId the id of the DOM element
+ * @param element the element or element id on which to set the property
  * @param propertyName the name of the property
  * @return the property value, or null if it is not set
  */
-EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
-    var element = document.getElementById(elementId);
+EchoDomPropertyStore.getPropertyValue = function(element, propertyName) {
+    if (typeof element == "string") {
+        element = document.getElementById(element);
+    }
+    
     if (!element) {
         return null;
     }
@@ -921,12 +924,14 @@ EchoDomPropertyStore.getPropertyValue = function(elementId, propertyName) {
 /**
  * Sets the value of a specific <code>EchoDomPropertyStore</code> property.
  *
- * @param elementId the id of the DOM element
+ * @param element the element or element id on which to set the property
  * @param propertyName the name of the property
  * @param propertyValue the new value of the property
  */
-EchoDomPropertyStore.setPropertyValue = function(elementId, propertyName, propertyValue) {
-    var element = document.getElementById(elementId);
+EchoDomPropertyStore.setPropertyValue = function(element, propertyName, propertyValue) {
+    if (typeof element == "string") {
+        element = document.getElementById(element);
+    }
     if (!element) {
         return;
     }
@@ -1627,14 +1632,22 @@ EchoEventProcessor.eventTypeToHandlersMap = new EchoCollectionsMap();
 /**
  * Registers an event handler.
  *
- * @param elementId the target elementId of the event
+ * @param element the target element or the id of the target element on which
+ *        to register the event
  * @param eventType the type of the event (should be specified using 
  *        DOM level 2 event names, e.g., "mouseover" or "click", without
  *        the "on" prefix)
  * @param handler the name of the handler, as a String
  */
-EchoEventProcessor.addHandler = function(elementId, eventType, handler) {
-    var element = document.getElementById(elementId);
+EchoEventProcessor.addHandler = function(element, eventType, handler) {
+    var elementId;
+    if (typeof element == "string") {
+        elementId = element;
+        element = document.getElementById(element);
+    } else {
+        elementId = element.id;
+    }
+
     EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
     
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
@@ -1736,13 +1749,21 @@ EchoEventProcessor.processEvent = function(e) {
 /**
  * Unregisters an event handler.
  *
- * @param elementId the target elementId of the event
+ * @param element the target element or the id of the target element on which
+ *        to register the event
  * @param eventType the type of the event (should be specified using 
  *        DOM level 2 event names, e.g., "mouseover" or "click", without
  *        the "on" prefix)
  */
-EchoEventProcessor.removeHandler = function(elementId, eventType) {
-    var element = document.getElementById(elementId);
+EchoEventProcessor.removeHandler = function(element, eventType) {
+    var elementId;
+    if (typeof element == "string") {
+        elementId = element;
+        element = document.getElementById(element);
+    } else {
+        elementId = element.id;
+    }
+    
     if (element) {
         EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
     }

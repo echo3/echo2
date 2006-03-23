@@ -445,21 +445,25 @@ EchoWindowPane.prototype.create = function() {
     EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
     
     if (this.movable) {
-        EchoEventProcessor.addHandler(this.elementId + "_titlebar", "mousedown", 
+        EchoEventProcessor.addHandler(titleBarDivElement, "mousedown", 
                 "EchoWindowPane.processTitleBarMouseDown");
     }
 
     if (this.resizable) {
-        for (var i = 0; i < EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES.length; ++i) {
-            var borderElementId = this.elementId + EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES[i];
-            EchoEventProcessor.addHandler(borderElementId, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        }
+        EchoEventProcessor.addHandler(borderTLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderTDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderTRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderBLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderBDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.addHandler(borderBRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
     }
     
     if (this.closable) {
         // MouseDown event handler is added to avoid initiating a title-bar drag when close button is clicked.
-        EchoEventProcessor.addHandler(closeDivElement.id, "mousedown", "EchoWindowPane.nullEventHandler");
-        EchoEventProcessor.addHandler(closeDivElement.id, "click", "EchoWindowPane.processClose");
+        EchoEventProcessor.addHandler(closeDivElement, "mousedown", "EchoWindowPane.nullEventHandler");
+        EchoEventProcessor.addHandler(closeDivElement, "click", "EchoWindowPane.processClose");
     }
 
     if (EchoClientProperties.get("browserInternetExplorer")) {
