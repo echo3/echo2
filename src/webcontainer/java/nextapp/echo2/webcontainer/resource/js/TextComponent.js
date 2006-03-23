@@ -260,7 +260,9 @@ EchoTextComponent.MessageProcessor.processDispose = function(disposeMessageEleme
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         var textComponent = EchoTextComponent.getComponent(elementId);
-        textComponent.dispose();
+        if (textComponent) {
+            textComponent.dispose();
+        }
     }
 };
 
