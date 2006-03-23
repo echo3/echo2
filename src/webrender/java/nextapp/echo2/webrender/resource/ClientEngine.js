@@ -1829,12 +1829,7 @@ function EchoHttpConnection(url, method, messageObject, contentType) {
     this.responseHandler = null;
     this.invalidResponseHandler = null;
     this.disposed = false;
-}
-
-/**
- * Empty method assigned to onreadystatechange handler to avoid IE memory leaks.
- */
-EchoHttpConnection.cancelReadyStateChange = function() { };
+};
 
 /**
  * Executes the HTTP connection.
@@ -1880,8 +1875,7 @@ EchoHttpConnection.prototype.connect = function() {
 };
 
 EchoHttpConnection.prototype.dispose = function() {
-this.onreadystatechange
-    this.onreadystatechange = this.cancelReadyStateChange;
+    this.onreadystatechange = undefined;
     this.messageObject = null;
     this.responseHandler = null;
     this.invalidResponseHandler = null;
@@ -2762,7 +2756,7 @@ EchoVirtualPosition.redraw = function(element) {
             EchoVirtualPosition.elementIdList = updatedIdList;
         }
     }
-}
+};
 
 /**
  * Registers an element to be drawn using the virtual positioning system.
