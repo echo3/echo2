@@ -40,12 +40,6 @@ EchoButton = function(elementId) {
     this.element = document.getElementById(elementId);
 };
 
-/**
- * Associative arary mapping button group ids to
- * arrays of button element ids.
- */
-EchoButton.buttonGroupIdToButtonArrayMap = new Array();
-
 /** State constant indicating default button state. */
 EchoButton.STATE_DEFAULT = 0;
 
@@ -54,23 +48,6 @@ EchoButton.STATE_ROLLOVER = 1;
 
 /** State constant indicating pressed button state. */
 EchoButton.STATE_PRESSED = 2;
-
-/**
- * Deselects the selected radio button in this button's group.
- */
-EchoButton.prototype.deselectRadioButtonsInGroup = function() {
-    var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[this.groupId];
-    if (!buttonArray) {
-        return;
-    }
-    for (var i = 0; i < buttonArray.length; ++i) {
-        var elementId = buttonArray[i];
-        var button = EchoButton.getComponent(elementId);
-        if (button.selected) {
-            button.setSelected(false);
-        }
-    }
-};
 
 /**
  * Disposes of a button data object, unregistering event listeners
@@ -89,6 +66,10 @@ EchoButton.prototype.dispose = function() {
         EchoEventProcessor.removeHandler(this.element, "mouseover");
     }
     
+    if (this.groupId) {
+        EchoButton.Group.remove(this.groupId, this.element.id);
+    }
+
     EchoDomPropertyStore.setPropertyValue(this.element, "component", null);
     this.element = null;
 };
@@ -129,7 +110,7 @@ EchoButton.prototype.doToggle = function() {
             // Clicking on selected radio button: do nothing.
             return;
         }
-        this.deselectRadioButtonsInGroup();
+        EchoButton.Group.deselect(this.groupId);
     }
     this.setSelected(newState);
 };
@@ -139,6 +120,10 @@ EchoButton.prototype.doToggle = function() {
  * Registers event listeners for the underlying element.
  */
 EchoButton.prototype.init = function() {
+    if (this.groupId) {
+        EchoButton.Group.add(this.groupId, this.element.id);
+    }
+    
     EchoEventProcessor.addHandler(this.element, "click", "EchoButton.processClick");
     EchoEventProcessor.addHandler(this.element, "keypress", "EchoButton.processKeyPressed");
     EchoEventProcessor.addHandler(this.element, "mousedown", "EchoButton.processPressed");
@@ -230,21 +215,6 @@ EchoButton.prototype.processRolloverExit = function(echoEvent) {
 };
 
 /**
- * Sets the button group id.
- *
- * @param groupId the id of the button group
- */
-EchoButton.prototype.setButtonGroup = function(groupId) {
-    this.groupId = groupId;
-    var buttonArray = EchoButton.buttonGroupIdToButtonArrayMap[groupId];
-    if (!buttonArray) {
-        buttonArray = new Array();
-        EchoButton.buttonGroupIdToButtonArrayMap[groupId] = buttonArray;
-    }
-    buttonArray.push(this.element.id);
-};
-
-/**
  * Sets the selection state of a toggle button.
  * @param newState a boolean flag indicating the new selection state
  */
@@ -304,105 +274,6 @@ EchoButton.prototype.setVisualState = function(newState) {
         EchoCssUtil.applyTemporaryStyle(this.element, newStyle);
     }
     EchoButton.ieRepaint(this.element);
-};
-
-/**
- * Static object/namespace for Button MessageProcessor 
- * implementation.
- */
-EchoButton.MessageProcessor = function() { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process.
- */
-EchoButton.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "init":
-                EchoButton.MessageProcessor.processInit(messagePartElement.childNodes[i]);
-                break;
-            case "dispose":
-                EchoButton.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
-                break;
-            }
-        }
-    }
-};
-
-/**
- * Processes a <code>dispose</code> message to finalize the state of a
- * button component that is being removed.
- *
- * @param disposeMessageElement the <code>dispose</code> element to process
- */
-EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
-    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        var button = EchoButton.getComponent(elementId);
-        if (button) {
-            button.dispose();
-        }
-    }
-};
-
-/**
- * Processes an <code>init</code> message to initialize the state of a 
- * button component that is being added.
- *
- * @param initMessageElement the <code>init</code> element to process
- */
-EchoButton.MessageProcessor.processInit = function(initMessageElement) {
-    var rolloverStyle = initMessageElement.getAttribute("rollover-style");
-    var pressedStyle = initMessageElement.getAttribute("pressed-style");
-
-    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
-        var elementId = item.getAttribute("eid");
-        
-        var button = new EchoButton(elementId);
-        
-        if (rolloverStyle) {
-            button.rolloverStyle = rolloverStyle;
-        }
-        if (pressedStyle) {
-            button.pressedStyle = pressedStyle;
-        }
-        button.enabled = item.getAttribute("enabled") != "false";
-        button.serverNotify = item.getAttribute("server-notify") != "false";
-        if (item.getAttribute("default-icon")) {
-            button.defaultIcon = item.getAttribute("default-icon");
-        }
-        if (item.getAttribute("rollover-icon")) {
-            button.defaultIcon = item.getAttribute("rollover-icon");
-        }
-        if (item.getAttribute("pressed-icon")) {
-            button.defaultIcon = item.getAttribute("pressed-icon");
-        }
-        
-        if (item.getAttribute("toggle") == "true") {
-            // ToggleButton-specific properties.
-            button.toggle = true;
-            button.selected = item.getAttribute("selected") == "true";
-            button.stateIcon = item.getAttribute("state-icon");
-            button.selectedStateIcon = item.getAttribute("selected-state-icon");
-            if (item.getAttribute("group")) {
-                button.setButtonGroup(item.getAttribute("group"));
-            }
-            if (rolloverStyle) {
-                button.rolloverStateIcon = item.getAttribute("rollover-state-icon"); 
-                button.rolloverSelectedStateIcon = item.getAttribute("rollover-selected-state-icon"); 
-            }
-            if (pressedStyle) {
-                button.pressedStateIcon = item.getAttribute("pressed-state-icon"); 
-                button.pressedSelectedStateIcon = item.getAttribute("pressed-selected-state-icon"); 
-            }
-        }
-        
-        button.init();
-    }
 };
 
 /**
@@ -509,4 +380,176 @@ EchoButton.processRolloverEnter = function(echoEvent) {
 EchoButton.processRolloverExit = function(echoEvent) {
     var button = EchoButton.getComponent(echoEvent.registeredTarget);
     button.processRolloverExit(echoEvent);
+};
+
+
+/**
+ * Static object/namespace for RadioButton group management.
+ */
+EchoButton.Group = function() { };
+
+/**
+ * Associative arary mapping button group ids to
+ * arrays of button element ids.
+ */
+EchoButton.Group.idToButtonArrayMap = new EchoCollectionsMap();
+
+/**
+ * Adds a button to a button group.
+ *
+ * @param groupId the id of the button group
+ */
+EchoButton.Group.add = function(groupId, buttonId) {
+    var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);
+    if (!buttonArray) {
+        buttonArray = new Array();
+        EchoButton.Group.idToButtonArrayMap.put(groupId, buttonArray);
+    }
+    buttonArray.push(buttonId);
+};
+
+EchoButton.Group.deselect = function(groupId) {
+    var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);
+    if (!buttonArray) {
+        return;
+    }
+    for (var i = 0; i < buttonArray.length; ++i) {
+        var elementId = buttonArray[i];
+        var button = EchoButton.getComponent(elementId);
+        if (button.selected) {
+            button.setSelected(false);
+        }
+    }
+};
+
+EchoButton.Group.remove = function(groupId, buttonId) {
+    // Obtain appropriate button group.
+    var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);
+    
+    if (!buttonArray) {
+        // No such button group exists.
+        throw new Error("No such group: " + groupId);
+    }
+
+    // Find index of button in array.
+    var arrayIndex = -1;
+    for (var i = 0; i < buttonArray.length; ++i) {
+        if (buttonArray[i] == buttonId) {
+            arrayIndex = i;
+            break;
+        }
+    }
+    
+    if (arrayIndex == -1) {
+        // Button does not exist in group.
+        throw new Error("No such button: " + buttonId + " in group: " + groupId);
+    }
+    
+    if (buttonArray.length == 1) {
+        // Array will now be empty, remove button group entirely.
+        EchoButton.Group.idToButtonArrayMap.remove(groupId);
+    } else {
+        // Buttons remain, remove button from button group.
+        buttonArray[arrayIndex] = buttonArray[buttonArray.length - 1];
+        buttonArray.length = buttonArray.length - 1;
+    }
+};
+
+/**
+ * Static object/namespace for Button MessageProcessor 
+ * implementation.
+ */
+EchoButton.MessageProcessor = function() { };
+
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process.
+ */
+EchoButton.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                EchoButton.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                EchoButton.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+/**
+ * Processes a <code>dispose</code> message to finalize the state of a
+ * button component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
+EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
+    for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        var button = EchoButton.getComponent(elementId);
+        if (button) {
+            button.dispose();
+        }
+    }
+};
+    
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * button component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
+EchoButton.MessageProcessor.processInit = function(initMessageElement) {
+    var rolloverStyle = initMessageElement.getAttribute("rollover-style");
+    var pressedStyle = initMessageElement.getAttribute("pressed-style");
+
+    for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
+        var elementId = item.getAttribute("eid");
+        
+        var button = new EchoButton(elementId);
+        
+        if (rolloverStyle) {
+            button.rolloverStyle = rolloverStyle;
+        }
+        if (pressedStyle) {
+            button.pressedStyle = pressedStyle;
+        }
+        button.enabled = item.getAttribute("enabled") != "false";
+        button.serverNotify = item.getAttribute("server-notify") != "false";
+        if (item.getAttribute("default-icon")) {
+            button.defaultIcon = item.getAttribute("default-icon");
+        }
+        if (item.getAttribute("rollover-icon")) {
+            button.defaultIcon = item.getAttribute("rollover-icon");
+        }
+        if (item.getAttribute("pressed-icon")) {
+            button.defaultIcon = item.getAttribute("pressed-icon");
+        }
+        
+        if (item.getAttribute("toggle") == "true") {
+            // ToggleButton-specific properties.
+            button.toggle = true;
+            button.selected = item.getAttribute("selected") == "true";
+            button.stateIcon = item.getAttribute("state-icon");
+            button.selectedStateIcon = item.getAttribute("selected-state-icon");
+            if (item.getAttribute("group")) {
+                button.groupId = item.getAttribute("group");
+            }
+            if (rolloverStyle) {
+                button.rolloverStateIcon = item.getAttribute("rollover-state-icon"); 
+                button.rolloverSelectedStateIcon = item.getAttribute("rollover-selected-state-icon"); 
+            }
+            if (pressedStyle) {
+                button.pressedStateIcon = item.getAttribute("pressed-state-icon"); 
+                button.pressedSelectedStateIcon = item.getAttribute("pressed-selected-state-icon"); 
+            }
+        }
+        
+        button.init();
+    }
 };
