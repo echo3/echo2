@@ -206,10 +206,10 @@ EchoSplitPane.prototype.create = function() {
         EchoVirtualPosition.register(separatorDivElement.id);
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
+    EchoDomPropertyStore.setPropertyValue(splitPaneDivElement, "component", this);
     
     if (separatorDivElement && this.resizable) {
-        EchoEventProcessor.addHandler(separatorDivElement.id, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
+        EchoEventProcessor.addHandler(separatorDivElement, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
     }
     
     EchoVirtualPosition.redraw(splitPaneDivElement);
