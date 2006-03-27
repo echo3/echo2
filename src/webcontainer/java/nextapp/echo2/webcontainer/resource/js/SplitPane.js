@@ -226,8 +226,9 @@ EchoSplitPane.prototype.dispose = function() {
     }
     
     EchoDomPropertyStore.dispose(this.splitPaneDivElement);
-    this.splitPaneDivElement = null;
-    this.separatorDivElement = null;
+    this.splitPaneDivElement = undefined;
+    this.separatorDivElement = undefined;
+    this.paneData = undefined;
 };
 
 EchoSplitPane.prototype.isOrientationVertical = function() {

@@ -71,7 +71,7 @@ EchoButton.prototype.dispose = function() {
     }
 
     EchoDomPropertyStore.dispose(this.element);
-    this.element = null;
+    this.element = undefined;
 };
 
 /**

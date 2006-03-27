@@ -500,18 +500,18 @@ EchoWindowPane.prototype.dispose = function() {
     
     EchoDomPropertyStore.dispose(this.windowPaneDivElement);
 
-    this.windowPaneDivElement = null;
-    this.closeDivElement = null;
-    this.titleBarDivElement = null;
-    
-    this.borderTLDivElement = null;
-    this.borderTDivElement = null;
-    this.borderTRDivElement = null;
-    this.borderLDivElement = null;
-    this.borderRDivElement = null;
-    this.borderBLDivElement = null;
-    this.borderBDivElement = null;
-    this.borderBRDivElement = null;
+    this.windowPaneDivElement = undefined;
+    this.closeDivElement = undefined;
+    this.titleBarDivElement = undefined;
+         
+    this.borderTLDivElement = undefined;
+    this.borderTDivElement = undefined;
+    this.borderTRDivElement = undefined;
+    this.borderLDivElement = undefined;
+    this.borderRDivElement = undefined;
+    this.borderBLDivElement = undefined;
+    this.borderBDivElement = undefined;
+    this.borderBRDivElement = undefined;
 };
 
 EchoWindowPane.prototype.getContainerHeight = function() {
