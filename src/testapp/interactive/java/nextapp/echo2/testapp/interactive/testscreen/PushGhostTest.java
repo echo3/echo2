@@ -37,6 +37,7 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
+import nextapp.echo2.testapp.interactive.GhostTask;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 
 /**
@@ -113,7 +114,12 @@ public class PushGhostTest extends Column {
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp app = (InteractiveApp)getApplicationInstance();
-                app.startGhostTask(null, callbackInterval, runTimeInSeconds * 1000, clicksPerIteration);
+                GhostTask ghostTask = new GhostTask();
+                ghostTask.setClicksPerIteration(clicksPerIteration);
+                if (runTimeInSeconds > 0) {
+                    ghostTask.setRunTime(runTimeInSeconds * 1000);
+                }
+                app.startGhostTask(ghostTask, callbackInterval);
             }
         });
         add(startButton);

@@ -53,12 +53,12 @@ public class InteractiveApp extends ApplicationInstance {
 
     private static final String[] GHOST_SCRIPT_1 = new String[] {
         "EnterTestApplication", 
-        "StartTest:ButtonTest", 
-        "StartTest:SplitPaneNestedTest",
-        "StartTest:ListBoxTest",
-        "StartTest:ContainerContextTest",
-        "StartTest:GridTest",
-        "StartTest:HierarchyTest",
+//        "StartTest:ButtonTest", 
+//        "StartTest:SplitPaneNestedTest",
+//        "StartTest:ListBoxTest",
+//        "StartTest:ContainerContextTest",
+//        "StartTest:GridTest",
+//        "StartTest:HierarchyTest",
         "ExitTestApplication"
     };
     
@@ -155,18 +155,18 @@ public class InteractiveApp extends ApplicationInstance {
         ContainerContext cc = (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
         if (!LIVE_DEMO_SERVER) {
             if (cc.getInitialRequestParameterMap().containsKey("ghost")) {
-                // Start the ghost task.
-                String[] script;
+                GhostTask ghostTask = new GhostTask();
+                
                 if ("1".equals(getRequestParameter("script"))) {
-                    script = GHOST_SCRIPT_1; 
-                } else {
-                    script = null;
+                    ghostTask.setScript(GHOST_SCRIPT_1); 
                 }
                 if (cc.getInitialRequestParameterMap().containsKey("clicks")) {
-                    startGhostTask(script, 0, 0, Integer.parseInt(getRequestParameter("clicks")));
-                } else {
-                    startGhostTask(script, 0, 0, 1);
+                    ghostTask.setClicksPerIteration(Integer.parseInt(getRequestParameter("clicks")));
                 }
+                if (cc.getInitialRequestParameterMap().containsKey("iterations")) {
+                    ghostTask.setTotalIterations(Integer.parseInt(getRequestParameter("iterations")));
+                }
+                startGhostTask(ghostTask, 0);
             }
         }
         
@@ -199,12 +199,8 @@ public class InteractiveApp extends ApplicationInstance {
      * 
      * @param interval the callback interval between ghost actions, in
      *        milliseconds
-     * @param runTime the total run-time of the ghost test, in milliseconds;
-     *        specifying 0 will run the ghost test indefinitely
-     * @param clicksPerIteration the number of button clicks to perform in a 
-     *        single iteration
      */
-    public void startGhostTask(String[] script, int interval, long runTime, int clicksPerIteration) {
+    public void startGhostTask(GhostTask ghostTask, int interval) {
         if (ghostTaskQueue != null) {
             return;
         }
@@ -212,7 +208,7 @@ public class InteractiveApp extends ApplicationInstance {
         ContainerContext containerContext = 
                 (ContainerContext) getContextProperty(ContainerContext.CONTEXT_PROPERTY_NAME);
         containerContext.setTaskQueueCallbackInterval(ghostTaskQueue, interval);
-        GhostTask.start(this, ghostTaskQueue, script, runTime, clicksPerIteration);
+        ghostTask.startTask(this, ghostTaskQueue);
     }
     
     /**

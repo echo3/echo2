@@ -38,33 +38,55 @@ import nextapp.echo2.app.TaskQueueHandle;
  * See the documentation for examples of how asynchronous tasks
  * might normally be used.
  */
-public class GhostTask 
-implements Runnable {
+public class GhostTask {
     
-    /**
-     * Creates and starts a new <code>GhostTask</code>.
-     * 
-     * @param app the application to test
-     * @param taskQueue the <code>TaskQueueHandle</code> to which tasks will be
-     *        added 
-     * @param runTime the number of milliseconds the test should run (specify 0
-     *        for an indefinite amount of time)
-     * @param clicksPerIteration the number of button clicks to perform in a 
-     *        single iteration.
-     */
-    static void start(InteractiveApp app, TaskQueueHandle taskQueue, String[] script, long runTime, 
-            int clicksPerIteration) {
-        app.enqueueTask(taskQueue, new GhostTask(app, taskQueue, script, runTime, clicksPerIteration));
-    }
-    
+    private InteractiveApp app;
+    private int clicksPerIteration = 1;
+    private boolean indefiniteAllowed;
     private int iteration = 0;
-    private boolean indefinite;
-    private long stopTime;
     private String[] script;
     private int scriptIndex = 0;
-    private int clicksPerIteration;
+    private String[] startupScript;
+    
     private TaskQueueHandle taskQueue;
-    private InteractiveApp app;
+    
+    private int totalIterations = -1;
+    private int runTime = -1;
+    private long stopTime = -1;
+
+    private Runnable task = new Runnable() {
+    
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+            for (int i = 0; i < clicksPerIteration; ++i) {
+                if (script == null) {
+                    RandomClick.clickRandomButton();
+                } else {
+                    Button button = (Button) app.getDefaultWindow().getComponent(script[scriptIndex]);
+                    button.doAction();
+                    ++scriptIndex;
+                    if (scriptIndex >= script.length) {
+                        scriptIndex = 0;
+                    }
+                }
+            }
+            if (stopTime != -1 && System.currentTimeMillis() > stopTime) {
+                app.setGhostIterationWindowTitle(-1);
+                // Test complete.
+                app.stopGhostTest();
+            } else if (totalIterations != -1 && iteration >= totalIterations) {
+                app.setGhostIterationWindowTitle(-1);
+                // Test complete.
+                app.stopGhostTest();
+            } else if (indefiniteAllowed) {
+                ++iteration;
+                app.setGhostIterationWindowTitle(iteration);
+                app.enqueueTask(taskQueue, this);
+            }
+        }
+    };
     
     /**
      * Creates a new <code>GhostTask</code>.
@@ -72,48 +94,60 @@ implements Runnable {
      * @param app the application to test
      * @param taskQueue the <code>TaskQueueHandle</code> to which tasks will be 
      *        added
-     * @param runTime the number of milliseconds the test should run (specify 0
-     *        for an indefinite amount of time)
-     * @param clicksPerIteration the number of button clicks to perform in a 
-     *        single iteration.
      */
-    private GhostTask(InteractiveApp app, TaskQueueHandle taskQueue, String[] script, long runTime, 
-            int clicksPerIteration) {
-        this.taskQueue = taskQueue;
-        this.script = script;
-        this.app = app;
-        this.clicksPerIteration = clicksPerIteration;
-        if (InteractiveApp.LIVE_DEMO_SERVER || runTime > 0) {
-            stopTime = System.currentTimeMillis() + runTime;
-        } else {
-            indefinite = true;
-        }
+    public GhostTask() {
+        super();
+        indefiniteAllowed = !InteractiveApp.LIVE_DEMO_SERVER;
     }
     
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    public void run() {
-        for (int i = 0; i < clicksPerIteration; ++i) {
-            if (script == null) {
-                RandomClick.clickRandomButton();
-            } else {
-                Button button = (Button) app.getDefaultWindow().getComponent(script[scriptIndex]);
-                button.doAction();
-                ++scriptIndex;
-                if (scriptIndex >= script.length) {
-                    scriptIndex = 0;
-                }
-            }
+    public int getClicksPerIteration() {
+        return clicksPerIteration;
+    }
+    
+    public int getRunTime() {
+        return runTime;
+    }
+
+    public String[] getScript() {
+        return script;
+    }
+
+    public String[] getStartupScript() {
+        return startupScript;
+    }
+
+    public int getTotalIterations() {
+        return totalIterations;
+    }
+
+    public void setClicksPerIteration(int clicksPerIteration) {
+        this.clicksPerIteration = clicksPerIteration;
+    }
+
+    public void setScript(String[] script) {
+        this.script = script;
+    }
+
+    public void setRunTime(int runTime) {
+        this.runTime = runTime;
+        this.totalIterations = -1;
+    }
+
+    public void setStartupScript(String[] startupScript) {
+        this.startupScript = startupScript;
+    }
+
+    public void setTotalIterations(int totalIterations) {
+        this.totalIterations = totalIterations;
+        this.runTime = -1;
+    }
+
+    void startTask(InteractiveApp app, TaskQueueHandle taskQueue) {
+        this.app = app;
+        this.taskQueue = taskQueue;
+        if (runTime != -1) {
+            stopTime = System.currentTimeMillis() + runTime;
         }
-        if (indefinite || System.currentTimeMillis() < stopTime) {
-            ++iteration;
-            app.setGhostIterationWindowTitle(iteration);
-            app.enqueueTask(taskQueue, this);
-        } else {
-            app.setGhostIterationWindowTitle(-1);
-            // Test complete.
-            app.stopGhostTest();
-        }
+        app.enqueueTask(taskQueue, task);
     }
 }

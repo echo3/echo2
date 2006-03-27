@@ -757,6 +757,7 @@ EchoCssUtil.applyStyle = function(element, cssText) {
  */
 EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     // Set original style if not already set.
+
     if (!EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle")) {
         var originalStyle = EchoDomUtil.getCssText(element);
         if (originalStyle) {
@@ -897,6 +898,28 @@ EchoDomPropertyStore.MessageProcessor.processStoreProperty = function(storePrope
         var elementId = items[i].getAttribute("eid");
         EchoDomPropertyStore.setPropertyValue(elementId, propertyName, propertyValue);
     }
+};
+
+/**
+ * Disposes of any <code>EchoDomPropertyStore</code> properties stored for a 
+ * specific element.
+ * 
+ * @param element the element or element id on which all properties should 
+ *        be removed
+ */
+EchoDomPropertyStore.dispose = function(element) {
+    if (typeof element == "string") {
+        element = document.getElementById(element);
+    }
+    if (!element) {
+        throw new Error("Element not found.");
+    }
+    if (element.echoDomPropertyStore) {
+        for (var elementProperty in element.echoDomPropertyStore) {
+            delete element.echoDomPropertyStore[elementProperty];
+        }
+    }
+    element.echoDomPropertyStore = undefined;
 };
 
 /**

@@ -86,7 +86,7 @@ EchoTable.prototype.dispose = function() {
         }
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.element, "component", null);
+    EchoDomPropertyStore.dispose(this.element);
     this.element = null;
 };
 

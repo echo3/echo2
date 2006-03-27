@@ -82,6 +82,7 @@ EchoListComponent.MessageProcessor.processDispose = function(disposeMessageEleme
             EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
             EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
         }
+        EchoDomPropertyStore.dispose(selectElement);
     }
 };
 

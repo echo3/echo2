@@ -70,7 +70,7 @@ EchoButton.prototype.dispose = function() {
         EchoButton.Group.remove(this.groupId, this.element.id);
     }
 
-    EchoDomPropertyStore.setPropertyValue(this.element, "component", null);
+    EchoDomPropertyStore.dispose(this.element);
     this.element = null;
 };
 

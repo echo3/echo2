@@ -51,7 +51,7 @@ EchoTextComponent.prototype.dispose = function() {
     // Remove any updates to text component that occurred during client/server transaction.
     EchoClientMessage.removePropertyElement(this.element.id, "text");
     
-    EchoDomPropertyStore.setPropertyValue(this.element, "component", null);
+    EchoDomPropertyStore.dispose(this.element);
     this.element = null;
 };
 

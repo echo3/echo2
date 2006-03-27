@@ -225,7 +225,7 @@ EchoSplitPane.prototype.dispose = function() {
         EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.splitPaneDivElement, "component", null);
+    EchoDomPropertyStore.dispose(this.splitPaneDivElement);
     this.splitPaneDivElement = null;
     this.separatorDivElement = null;
 };

@@ -80,10 +80,12 @@ EchoListComponentDhtml.MessageProcessor.processDispose = function(disposeMessage
         }
         var itemElements = selectElement.getElementsByTagName("div");
         for (var i = 0; i < itemElements.length; ++i) {
-            EchoEventProcessor.removeHandler(itemElements[i].id, "click");
-            EchoEventProcessor.removeHandler(itemElements[i].id, "mouseout");
-            EchoEventProcessor.removeHandler(itemElements[i].id, "mouseover");
+            EchoDomPropertyStore.dispose(itemElements[i]);
+            EchoEventProcessor.removeHandler(itemElements[i], "click");
+            EchoEventProcessor.removeHandler(itemElements[i], "mouseout");
+            EchoEventProcessor.removeHandler(itemElements[i], "mouseover");
         }
+        EchoDomPropertyStore.dispose(selectElement);
     }
 };
 
@@ -112,15 +114,15 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
         var selectElement = document.getElementById(elementId);
         var itemElements = selectElement.getElementsByTagName("div");
         for (i = 0; i < itemElements.length; ++i) {
-            EchoEventProcessor.addHandler(itemElements[i].id, "click", "EchoListComponentDhtml.processSelection");
-            EchoEventProcessor.addHandler(itemElements[i].id, "mouseout", "EchoListComponentDhtml.processRolloverExit");
-            EchoEventProcessor.addHandler(itemElements[i].id, "mouseover", "EchoListComponentDhtml.processRolloverEnter");
+            EchoEventProcessor.addHandler(itemElements[i], "click", "EchoListComponentDhtml.processSelection");
+            EchoEventProcessor.addHandler(itemElements[i], "mouseout", "EchoListComponentDhtml.processRolloverExit");
+            EchoEventProcessor.addHandler(itemElements[i], "mouseover", "EchoListComponentDhtml.processRolloverEnter");
         }
         
-        EchoDomPropertyStore.setPropertyValue(elementId, "selectionMode", selectionMode);
-        EchoDomPropertyStore.setPropertyValue(elementId, "defaultStyle", defaultStyle);
-        EchoDomPropertyStore.setPropertyValue(elementId, "rolloverStyle", rolloverStyle);
-        EchoDomPropertyStore.setPropertyValue(elementId, "selectionStyle", selectionStyle);
+        EchoDomPropertyStore.setPropertyValue(selectElement, "selectionMode", selectionMode);
+        EchoDomPropertyStore.setPropertyValue(selectElement, "defaultStyle", defaultStyle);
+        EchoDomPropertyStore.setPropertyValue(selectElement, "rolloverStyle", rolloverStyle);
+        EchoDomPropertyStore.setPropertyValue(selectElement, "selectionStyle", selectionStyle);
 
         var selectionItems = item.getElementsByTagName("selection-item");
         for (i = 0; i < selectionItems.length; ++i) {
@@ -138,7 +140,7 @@ EchoListComponentDhtml.MessageProcessor.processInit = function(initMessageElemen
 EchoListComponentDhtml.drawItemStyle = function(itemElement) {
     var selected = EchoListComponentDhtml.isSelected(itemElement);
     var listComponent = itemElement.parentNode;
-    var selectionStyle = EchoDomPropertyStore.getPropertyValue(listComponent.id, "selectionStyle");
+    var selectionStyle = EchoDomPropertyStore.getPropertyValue(listComponent, "selectionStyle");
 
     if (selected) {
         EchoCssUtil.restoreOriginalStyle(itemElement);

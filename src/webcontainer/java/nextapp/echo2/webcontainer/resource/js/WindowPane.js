@@ -498,7 +498,7 @@ EchoWindowPane.prototype.dispose = function() {
     
     EchoWindowPane.ZIndexManager.remove(this.containerComponentElementId, this.elementId);
     
-    EchoDomPropertyStore.setPropertyValue(this.windowPaneDivElement, "component", null);
+    EchoDomPropertyStore.dispose(this.windowPaneDivElement);
 
     this.windowPaneDivElement = null;
     this.closeDivElement = null;
