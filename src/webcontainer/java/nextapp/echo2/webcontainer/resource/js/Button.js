@@ -507,7 +507,7 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
 EchoButton.MessageProcessor.processInit = function(initMessageElement) {
     var rolloverStyle = initMessageElement.getAttribute("rollover-style");
     var pressedStyle = initMessageElement.getAttribute("pressed-style");
-
+    
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         
@@ -525,10 +525,10 @@ EchoButton.MessageProcessor.processInit = function(initMessageElement) {
             button.defaultIcon = item.getAttribute("default-icon");
         }
         if (item.getAttribute("rollover-icon")) {
-            button.defaultIcon = item.getAttribute("rollover-icon");
+            button.rolloverIcon = item.getAttribute("rollover-icon");
         }
         if (item.getAttribute("pressed-icon")) {
-            button.defaultIcon = item.getAttribute("pressed-icon");
+            button.pressedIcon = item.getAttribute("pressed-icon");
         }
         
         if (item.getAttribute("toggle") == "true") {
