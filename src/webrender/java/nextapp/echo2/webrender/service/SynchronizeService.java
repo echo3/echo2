@@ -110,6 +110,26 @@ implements Service {
     private Map clientMessagePartProcessorMap = new HashMap(); 
     
     /**
+     * ThreadLocal cache of <code>DocumentBuilder</code> instances.
+     */
+    private ThreadLocal documentBuilders = new ThreadLocal() {
+    
+        /**
+         * @see java.lang.ThreadLocal#initialValue()
+         */
+        protected Object initialValue() {
+            try {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                return builder;
+            } catch (ParserConfigurationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    };
+
+    /**
      * Creates a new <code>SynchronizeService</code>.
      */
     public SynchronizeService() {
@@ -187,12 +207,7 @@ implements Service {
             } else {
                 in = request.getInputStream();
             }
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(in);
-        } catch (ParserConfigurationException ex) {
-            throw new IOException("Provided InputStream cannot be parsed: " + ex);
+            return ((DocumentBuilder) documentBuilders.get()).parse(in);
         } catch (SAXException ex) {
             throw new IOException("Provided InputStream cannot be parsed: " + ex);
         } catch (IOException ex) {
@@ -265,7 +280,8 @@ implements Service {
     /**
      * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
      */
-    public void service(Connection conn) throws IOException {
+    public void service(Connection conn) 
+    throws IOException {
         UserInstance userInstance = conn.getUserInstance();
         synchronized(userInstance) {
             Document clientMessageDocument = parseRequestDocument(conn);
