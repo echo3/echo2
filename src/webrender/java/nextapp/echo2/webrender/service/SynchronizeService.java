@@ -37,9 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,26 +106,6 @@ implements Service {
      */
     private Map clientMessagePartProcessorMap = new HashMap(); 
     
-    /**
-     * ThreadLocal cache of <code>DocumentBuilder</code> instances.
-     */
-    private ThreadLocal documentBuilders = new ThreadLocal() {
-    
-        /**
-         * @see java.lang.ThreadLocal#initialValue()
-         */
-        protected Object initialValue() {
-            try {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                return builder;
-            } catch (ParserConfigurationException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-    };
-
     /**
      * Creates a new <code>SynchronizeService</code>.
      */
@@ -207,7 +184,7 @@ implements Service {
             } else {
                 in = request.getInputStream();
             }
-            return ((DocumentBuilder) documentBuilders.get()).parse(in);
+            return DomUtil.getDocumentBuilder().parse(in);
         } catch (SAXException ex) {
             throw new IOException("Provided InputStream cannot be parsed: " + ex);
         } catch (IOException ex) {

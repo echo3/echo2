@@ -32,6 +32,11 @@ package nextapp.echo2.webrender.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,6 +47,58 @@ import org.w3c.dom.Text;
  */
 public class DomUtil {
 
+    /**
+     * ThreadLocal cache of <code>DocumentBuilder</code> instances.
+     */
+    private static final ThreadLocal documentBuilders = new ThreadLocal() {
+    
+        /**
+         * @see java.lang.ThreadLocal#initialValue()
+         */
+        protected Object initialValue() {
+            try {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                return builder;
+            } catch (ParserConfigurationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    };
+    
+    /**
+     * ThreadLocal cache of <code>TransformerFactory</code> instances.
+     */
+    private static final ThreadLocal transformerFactories = new ThreadLocal() {
+    
+        /**
+         * @see java.lang.ThreadLocal#initialValue()
+         */
+        protected Object initialValue() {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            return factory;
+        }
+    };
+    
+    /**
+     * Retrieves a thread-specific <code>DocumentBuilder</code>.
+     * 
+     * @return the <code>DocumentBuilder</code> serving the current thread.
+     */
+    public static DocumentBuilder getDocumentBuilder() {
+        return (DocumentBuilder) documentBuilders.get();
+    }
+    
+    /**
+     * Retrieves a thread-specific <code>TransformerFactory</code>.
+     * 
+     * @return the <code>TransformerFactory</code> serving the current thread.
+     */
+    public static TransformerFactory getTransformerFactory() {
+        return (TransformerFactory) transformerFactories.get();
+    }
+    
     /**
      * Determines whether a specific boolean flag is set on an element.
      * 

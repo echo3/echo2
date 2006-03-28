@@ -33,14 +33,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import nextapp.echo2.webrender.util.DomUtil;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -66,15 +65,9 @@ public class XmlDocument {
      */
     public XmlDocument(String qualifiedName, String publicId, String systemId, String namespaceUri) {
         super();
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            DOMImplementation dom = builder.getDOMImplementation();
-            DocumentType docType = dom.createDocumentType(qualifiedName, publicId, systemId);
-            document = dom.createDocument(namespaceUri, qualifiedName, docType);
-        } catch (ParserConfigurationException ex) {
-            throw new RuntimeException("Cannot create XmlService", ex);
-        }
+        DOMImplementation dom = DomUtil.getDocumentBuilder().getDOMImplementation();
+        DocumentType docType = dom.createDocumentType(qualifiedName, publicId, systemId);
+        document = dom.createDocument(namespaceUri, qualifiedName, docType);
         if (namespaceUri != null) {
             document.getDocumentElement().setAttribute("xmlns", namespaceUri);
         }
@@ -97,7 +90,7 @@ public class XmlDocument {
     public void render(PrintWriter pw)
     throws IOException {
         try {
-            TransformerFactory tFactory = TransformerFactory.newInstance();
+            TransformerFactory tFactory = DomUtil.getTransformerFactory();
             Transformer transformer = tFactory.newTransformer();
             if (outputProperties != null) {
                 transformer.setOutputProperties(outputProperties);
