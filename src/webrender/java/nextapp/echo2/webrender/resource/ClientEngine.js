@@ -758,13 +758,12 @@ EchoCssUtil.applyStyle = function(element, cssText) {
 EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     // Set original style if not already set.
 
-    if (!EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle")) {
-        var originalStyle = EchoDomUtil.getCssText(element);
-        if (originalStyle) {
-            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", originalStyle);
+    if (!EchoDomPropertyStore.getPropertyValue(element, "EchoCssUtil.originalStyle")) {
+        if (EchoDomUtil.getCssText(element)) {
+            EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", EchoDomUtil.getCssText(element));
         } else {
             // Flag that no original CSS text existed.
-            EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", "-");
+            EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", "-");
         }
     }
     
@@ -781,7 +780,7 @@ EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
  */
 EchoCssUtil.restoreOriginalStyle = function(element) {
     // Obtain original style.
-    var originalStyle = EchoDomPropertyStore.getPropertyValue(element.id, "EchoCssUtil.originalStyle");
+    var originalStyle = EchoDomPropertyStore.getPropertyValue(element, "EchoCssUtil.originalStyle");
     
     // Do nothing if no original style exists.
     if (!originalStyle) {
@@ -792,7 +791,7 @@ EchoCssUtil.restoreOriginalStyle = function(element) {
     EchoDomUtil.setCssText(element, originalStyle == "-" ? "" : originalStyle);
     
     // Clear original style from EchoDomPropertyStore.
-    EchoDomPropertyStore.setPropertyValue(element.id, "EchoCssUtil.originalStyle", null);
+    EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", null);
 };
 
 // _______________________
