@@ -459,10 +459,6 @@ EchoWindowPane.prototype.create = function() {
         EchoEventProcessor.addHandler(this.closeDivElement, "click", "EchoWindowPane.processClose");
     }
 
-    if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
-    }
-
     EchoWindowPane.ZIndexManager.add(this.containerComponentElementId, this.elementId);
 };
 
@@ -561,6 +557,9 @@ EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
 
     EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
     EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
 };
 
 EchoWindowPane.prototype.processBorderMouseMove = function(e) {
@@ -600,6 +599,9 @@ EchoWindowPane.prototype.processBorderMouseMove = function(e) {
 EchoWindowPane.prototype.processBorderMouseUp = function(e) {
     EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
     this.resizingBorderElementId = null;
     EchoWindowPane.activeInstance = null;
     
@@ -631,6 +633,9 @@ EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
     this.dragOriginY = echoEvent.clientY;
     EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
     EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
 };
 
 EchoWindowPane.prototype.processTitleBarMouseMove = function(e) {
@@ -642,6 +647,9 @@ EchoWindowPane.prototype.processTitleBarMouseMove = function(e) {
 EchoWindowPane.prototype.processTitleBarMouseUp = function(e) {
     EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
     EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
     EchoWindowPane.activeInstance = null;
     
     EchoClientMessage.setPropertyValue(this.elementId, "positionX", this.positionX + "px");
