@@ -277,7 +277,7 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
      * unregistering event listeners on the client.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param splitPane the <code>SplitPane</code>
+     * @param windowPane the <code>WindowPane</code>
      */
     private void renderDisposeDirective(RenderContext rc, WindowPane windowPane) {
         String elementId = ContainerInstance.getElementId(windowPane);

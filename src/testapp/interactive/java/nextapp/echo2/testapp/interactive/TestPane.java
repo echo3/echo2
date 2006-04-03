@@ -119,6 +119,7 @@ public class TestPane extends ContentPane {
         addTest("Image", "ImageReferenceTest");
         addTest("Label", "LabelTest");
         addTest("ListBox", "ListBoxTest");
+        addTest("ListBox (Large Quantity)", "ListRenderTableTest");
         addTest("Localization", "LocalizationTest");
         addTest("Push (Basic)", "PushTest");
         addTest("Push (Ghost Test)", "PushGhostTest");

@@ -794,6 +794,32 @@ EchoCssUtil.restoreOriginalStyle = function(element) {
     EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", null);
 };
 
+/**
+ * Object used to determine the actual on-screen pixel bounds 
+ * (top/left/width/height) of an element.
+ * Craetes a new <code>Bounds</code> instance.
+ * 
+ * @param element the element to analyze
+ */
+EchoCssUtil.Bounds = function(element) {
+    this.left = 0;
+    this.top = 0;
+    this.width = element.offsetWidth;
+    this.height = element.offsetHeight;
+    while (element != null) {
+        this.left += element.offsetLeft;
+        this.top += element.offsetTop;
+        element = element.offsetParent;
+    }
+};
+
+/**
+ * Renders a <code>Bounds</code> object to a human-readable debug string.
+ */
+EchoCssUtil.Bounds.prototype.toString = function() {
+    return "(" + this.left + ", " + this.top + ") [" + this.width + "x" + this.height + "]";
+};
+
 // _______________________
 // Object EchoDebugManager
 
@@ -2259,6 +2285,12 @@ EchoServerMessage.enableFixSafariAttrs = false;
 EchoServerMessage.processingCompleteListener = null;
 
 /**
+ * Map of temporarily stored properties in the server message.
+ * These properties are reset after each transaction.
+ */
+EchoServerMessage.temporaryProperties = null;
+
+/**
  * ServerMessage processing status, one of the following constants:
  * <ul>
  *  <li><code>EchoServerMessage.STATUS_INITIALIZED</code></li>
@@ -2270,6 +2302,20 @@ EchoServerMessage.processingCompleteListener = null;
 EchoServerMessage.status = EchoServerMessage.STATUS_INITIALIZED;
 
 /**
+ * Retrieves the value of a temporary property.
+ * 
+ * @param key the property key
+ * @return the property value
+ */
+EchoServerMessage.getTemporaryProperty = function(key) {
+    if (!EchoServerMessage.temporaryProperties) {
+        return undefined;
+    } else {
+        return EchoServerMessage.temporaryProperties[key];
+    }
+};
+
+/**
  * Initializes the state of the ServerMessage processor.
  *
  * @param messageDocument the ServerMessage XML document to be processed
@@ -2277,6 +2323,7 @@ EchoServerMessage.status = EchoServerMessage.STATUS_INITIALIZED;
  *        has been completed
  */
 EchoServerMessage.init = function(messageDocument, processingCompleteListener) {
+    EchoServerMessage.temporaryProperties = null;
     EchoServerMessage.messageDocument = messageDocument;
     EchoServerMessage.backgroundIntervalId = null;
     EchoServerMessage.processingCompleteListener = processingCompleteListener;
@@ -2450,6 +2497,7 @@ EchoServerMessage.processPhase1 = function() {
 	        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
 	    }
     } catch (ex) {
+        EchoServerMessage.temporaryProperties = null;
         EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1)", ex);
         throw ex;
     }
@@ -2467,17 +2515,32 @@ EchoServerMessage.processPhase2 = function() {
         EchoServerMessage.installLibraries();
 		EchoServerMessage.processMessageParts();
 		EchoServerMessage.processApplicationProperties();
-		if (EchoServerMessage.processingCompleteListener) {
+        if (EchoServerMessage.processingCompleteListener) {
 		    EchoServerMessage.processingCompleteListener();
 		}
 		EchoServerMessage.processAsyncConfig();
     } catch (ex) {
         EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2)", ex);
         throw ex;
+    } finally {
+        EchoServerMessage.temporaryProperties = null;
     }
     
     EchoVirtualPosition.redraw();
     ++EchoServerMessage.transactionCount;
+};
+
+/**
+  Sets the value of a temporary property.
+ * 
+ * @param key the property key
+ * @param value the property value
+ */
+EchoServerMessage.setTemporaryProperty = function(key, value) {
+    if (!EchoServerMessage.temporaryProperties) {
+        EchoServerMessage.temporaryProperties = new Array();
+    }
+    EchoServerMessage.temporaryProperties[key] = value;
 };
 
 /**

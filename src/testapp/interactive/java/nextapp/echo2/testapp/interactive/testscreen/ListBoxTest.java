@@ -502,6 +502,34 @@ public class ListBoxTest extends SplitPane {
             }
         });
 
+        controlsColumn.addButton("Select Index 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator(){
+                    public void apply(AbstractListComponent listComponent) {
+                        if (listComponent instanceof ListBox) {
+                            ((ListBox) listComponent).setSelectedIndices(new int[] {0});
+                        } else if (listComponent instanceof SelectField) {
+                            ((SelectField) listComponent).setSelectedIndex(0);
+                        }
+                    }
+                });
+            }
+        });
+        
+        controlsColumn.addButton("Select Index 2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator(){
+                    public void apply(AbstractListComponent listComponent) {
+                        if (listComponent instanceof ListBox) {
+                            ((ListBox) listComponent).setSelectedIndices(new int[] {2});
+                        } else if (listComponent instanceof SelectField) {
+                            ((SelectField) listComponent).setSelectedIndex(2);
+                        }
+                    }
+                });
+            }
+        });
+        
         controlsColumn.addButton("Clear Selections", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator(){

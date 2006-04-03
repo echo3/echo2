@@ -32,6 +32,8 @@ package nextapp.echo2.webrender;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +58,8 @@ public class Connection {
     private HttpServletResponse response;
     private WebRenderServlet servlet;
     private UserInstance userInstance;
-
+    private Map propertyMap;
+    
     /**
      * Creates a <code>connection</code> object that will handle the given 
      * request and response.  The <code>UserInstance</code> will be acquired from the session 
@@ -118,6 +121,20 @@ public class Connection {
         } catch (IOException ex) {
             throw new WebRenderServletException("Unable to get PrintWriter.", ex);
         }
+    }
+    
+    /**
+     * Returns a property from the <code>Connection</code>-persistent 
+     * property map.  (Properties are disposed of when <code>Connection</code>
+     * has completed). 
+     * 
+     * @param key the property key (for namespacing purposes, keys should 
+     *        be prefaced with the full class name of the object setting the
+     *        property)
+     * @return the property value
+     */
+    public Object getProperty(String key) {
+        return propertyMap == null ? null : propertyMap.get(key);
     }
 
     /**
@@ -221,5 +238,22 @@ public class Connection {
         } else {
             response.setContentType(contentType.getMimeType() + "; charset=" + userInstance.getCharacterEncoding());
         }
+    }
+    
+    /**
+     * Sets a property inthe <code>Connection</code>-persistent 
+     * property map.  (Properties are disposed of when <code>Connection</code>
+     * has completed). 
+     * 
+     * @param key the property key (for namespacing purposes, keys should 
+     *        be prefaced with the full class name of the object setting the
+     *        property)
+     * @param value the new property value
+     */
+    public void setProperty(String key, Object value) {
+        if (propertyMap == null) {
+            propertyMap = new HashMap();
+        }
+        propertyMap.put(key, value);
     }
 }

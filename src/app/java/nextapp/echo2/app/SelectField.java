@@ -90,6 +90,10 @@ public class SelectField extends AbstractListComponent {
      * @param index the new selected index
      */
     public void setSelectedIndex(int index) {
-        getSelectionModel().setSelectedIndex(index, true);
+        if (index == -1) {
+            getSelectionModel().clearSelection();
+        } else {
+            getSelectionModel().setSelectedIndex(index, true);
+        }
     }
 }
