@@ -112,6 +112,10 @@ EchoListComponent.prototype.createSelect = function() {
     
     this.selectElement = document.createElement("select");
     this.selectElement.id = this.elementId;
+    
+    if (!this.enabled) {
+        this.selectElement.disabled = true;
+    }
 
     EchoDomUtil.setCssText(this.selectElement, this.style);
     

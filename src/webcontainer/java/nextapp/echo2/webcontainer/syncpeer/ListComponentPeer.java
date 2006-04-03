@@ -398,7 +398,7 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("eid", elementId);
         initElement.setAttribute("content-id", contentId);
         
-        initElement.setAttribute("enabled", listComponent.isRenderEnabled() ? "true" : " false");
+        initElement.setAttribute("enabled", listComponent.isRenderEnabled() ? "true" : "false");
     
         if (listComponent.hasActionListeners()) {
             initElement.setAttribute("server-notify", "true");
