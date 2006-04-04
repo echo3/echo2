@@ -45,6 +45,9 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 /**
  * A <code>CommandSynchronizePeer</code> implementation for 
  * browser control commands.
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class BrowserCommandPeer 
 implements CommandSynchronizePeer {

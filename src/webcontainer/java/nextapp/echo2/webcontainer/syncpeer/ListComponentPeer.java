@@ -77,6 +77,9 @@ import nextapp.echo2.webrender.util.DomUtil;
  * (<code>ServerMessage.GROUP_ID_INIT</code>) such that a single
  * rendering of content may be used by multiple list components
  * if possible. 
+ * <p>
+ * This class should not be extended or used by classes outside of the
+ * Echo framework.
  */
 public class ListComponentPeer 
 implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
