@@ -71,6 +71,12 @@ import nextapp.echo2.webrender.util.DomUtil;
 /**
  * <code>ComponentSynchronizePeer</code> implementation for 
  * <code>AbstractListComponent</code>-based components.
+ * <p>
+ * This peer renders the content of list components in the
+ * <code>ServerMessage</code>'s initialization section 
+ * (<code>ServerMessage.GROUP_ID_INIT</code>) such that a single
+ * rendering of content may be used by multiple list components
+ * if possible. 
  */
 public class ListComponentPeer 
 implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
@@ -104,10 +110,27 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
 
     private PartialUpdateManager partialUpdateManager;
     
+    /**
+     * A representation of the content of a list component, i.e., the 
+     * contents of the <code>ListModel</code> after having been run through a 
+     * <code>ListCellRenderer</code>.
+     */
     private class RenderedModelData {
         
+        /**
+         * An array containing the String values of the list component.
+         */
         private String[] values;
+        
+        /**
+         * An array containing the CSS style values of the list component.
+         * May be null, or contain nulls representing list items without style.
+         */
         private String[] styles;
+        
+        /**
+         * Cached hash code. 
+         */
         private int hashCode;
 
         /**
@@ -151,6 +174,9 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
                     if (values[i]  != null) {
                         hashCode ^= values[i].hashCode();
                     }
+                }
+                if (hashCode == 0) {
+                    hashCode = 1;
                 }
             }
             return hashCode;
@@ -345,7 +371,15 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("eid", elementId);
     }
 
-    private String renderLoadContent(RenderContext rc, AbstractListComponent listComponent) {
+    /**
+     * Renders content for an <code>AbstractListComponent</code> (if necessary); 
+     * returns the content id.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param listComponent the <code>AbstractListComponent</code>
+     * @return the content id
+     */
+    private String renderContent(RenderContext rc, AbstractListComponent listComponent) {
         RenderedModelData renderedModelData = new RenderedModelData(listComponent);
         
         Map renderedModelDataToIdMap = (Map) rc.getConnection().getProperty(RENDERED_MODEL_MAP_KEY);
@@ -362,6 +396,14 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
         return contentId;
     }
     
+    /**
+     * Renders a directive to load the content (a rendered version of model)
+     * to the client.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param renderedModelData the <code>RenderedModelData</code> object to render
+     * @param contentId the content id to associate with the rendered content
+     */
     private void renderLoadContentDirective(RenderContext rc, RenderedModelData renderedModelData, String contentId) {
         ServerMessage serverMessage = rc.getServerMessage();
         Element partElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_INIT, 
@@ -386,8 +428,16 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
         }
     }
     
+    /**
+     * Renders a directive to the outgoing <code>ServerMessage</code> to 
+     * render and intialize the state of a list component.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param listComponent the component
+     * @param targetId the id of the container element
+     */
     private void renderInitDirective(RenderContext rc, AbstractListComponent listComponent, String targetId) {
-        String contentId = renderLoadContent(rc, listComponent);
+        String contentId = renderContent(rc, listComponent);
         String elementId = ContainerInstance.getElementId(listComponent);
         ServerMessage serverMessage = rc.getServerMessage();
         Document document = serverMessage.getDocument();
