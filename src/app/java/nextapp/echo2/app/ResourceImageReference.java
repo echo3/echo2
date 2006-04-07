@@ -221,6 +221,13 @@ extends StreamImageReference {
     }
 
     /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return resource == null ? 0 : resource.hashCode();
+    }
+
+    /**
      * @see nextapp.echo2.app.StreamImageReference#render(java.io.OutputStream)
      */
     public void render(OutputStream out) 
