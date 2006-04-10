@@ -79,7 +79,6 @@ public class AwtImageService extends AbstractImageService {
         } catch (IOException ex) {
             // Internet Explorer appears to enjoy making half-hearted requests for images, wherein it resets the connection
             // leaving us with an IOException.  This exception is silently eaten.
-            ex.printStackTrace();
         }
     }
 }
