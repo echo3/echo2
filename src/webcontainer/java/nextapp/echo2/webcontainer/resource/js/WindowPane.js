@@ -625,6 +625,7 @@ EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
     if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
         return;
     }
+    EchoDomUtil.preventEventDefault(echoEvent);
     this.raise();
     EchoWindowPane.activeInstance = this;
     this.dragInitPositionX = this.positionX;
