@@ -77,6 +77,7 @@ EchoListComponent.prototype.createDhtml = function() {
         this.selectElement.setAttribute("tabindex", this.tabIndex);
     }
 
+    this.selectElement.style.cursor = "default";
     this.selectElement.style.overflow = "auto";
     
     if (!this.selectElement.style.height) {
@@ -102,6 +103,9 @@ EchoListComponent.prototype.createDhtml = function() {
     if (this.rolloverStyle) {
         EchoEventProcessor.addHandler(this.selectElement, "mouseover", "EchoListComponent.processRolloverEnter");
         EchoEventProcessor.addHandler(this.selectElement, "mouseout", "EchoListComponent.processRolloverExit");
+    }
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(this.selectElement, "selectstart", EchoListComponent.processSelectStart, false);
     }
     
     EchoDomPropertyStore.setPropertyValue(this.selectElement, "component", this);
@@ -161,6 +165,9 @@ EchoListComponent.prototype.createSelect = function() {
 EchoListComponent.prototype.dispose = function() {
     if (this.renderAsDhtml) {
         EchoEventProcessor.removeHandler(this.selectElement, "click");
+        if (EchoClientProperties.get("browserInternetExplorer")) {
+            EchoDomUtil.removeEventListener(this.selectElement, "selectstart", EchoListComponent.processSelectStart, false);
+        }
     } else {
         EchoEventProcessor.removeHandler(this.selectElement, "change");
     }
@@ -406,6 +413,10 @@ EchoListComponent.processSelection = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var listComponent = EchoListComponent.getComponent(componentId);
     listComponent.processSelection(echoEvent);
+};
+
+EchoListComponent.processSelectStart = function(e) {
+    EchoDomUtil.preventEventDefault(e);
 };
 
 /**
