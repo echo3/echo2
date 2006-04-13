@@ -272,6 +272,15 @@ EchoClientEngine.configure = function() {
 };
 
 /**
+ * Disposes the Echo2 Client Engine, unregistering event listeners 
+ * and releasing resources.
+ */
+EchoClientEngine.dispose = function() {
+    EchoEventProcessor.dispose();
+    EchoDomPropertyStore.disposeAll();
+};
+
+/**
  * Initializes the Echo2 Client Engine.
  *
  * @param baseServerUri the base URI of the Echo application server
@@ -294,6 +303,9 @@ EchoClientEngine.init = function(baseServerUri, debugEnabled) {
     
     // Synchronize initial state from server.
     EchoServerTransaction.connect();
+
+    // Add disposal listener.
+    EchoDomUtil.addEventListener(window, "unload", EchoClientEngine.dispose);
 };
 
 /**
@@ -951,6 +963,35 @@ EchoDomPropertyStore.dispose = function(element) {
         }
     }
     element.echoDomPropertyStore = undefined;
+};
+
+/**
+ * Destorys EchoDomPropertyStore instances for all elements in document.
+ */
+EchoDomPropertyStore.disposeAll = function() {
+    EchoDomPropertyStore.disposeAllRecurse(document.documentElement);
+};
+
+/**
+ * Recursive implementation of disposeAll().
+ * Disposes of an element's property store (if applicable) and
+ * recursively invokes on child elements.
+ * 
+ * @param element the elemnt to dispose
+ */
+EchoDomPropertyStore.disposeAllRecurse = function(element) {
+    if (element.echoDomPropertyStore) {
+        for (var elementProperty in element.echoDomPropertyStore) {
+            delete element.echoDomPropertyStore[elementProperty];
+        }
+    }
+    element.echoDomPropertyStore = undefined;
+    
+    for (var childElement = element.firstChild; childElement; childElement = childElement.nextSibling) {
+        if (childElement.nodeType == 1) {
+            EchoDomPropertyStore.disposeAllRecurse(childElement);
+        }
+    }
 };
 
 /**
@@ -1710,6 +1751,24 @@ EchoEventProcessor.addHandler = function(element, eventType, handler) {
         EchoEventProcessor.eventTypeToHandlersMap.put(eventType, elementIdToHandlerMap);
     }
     elementIdToHandlerMap.put(elementId, handler);
+};
+
+/**
+ * Disposes the EchoEventProcessor, releasing all resources.
+ * This method is invoked when the client engine is disposed.
+ */
+EchoEventProcessor.dispose = function() {
+    for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
+        var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.associations[eventType];
+        for (var elementId in elementIdToHandlerMap.associations) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
+            }
+            elementIdToHandlerMap.remove(elementId);
+        }
+        EchoEventProcessor.eventTypeToHandlersMap.remove(eventType);
+    }
 };
 
 /**
