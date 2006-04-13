@@ -105,7 +105,7 @@ EchoListComponent.prototype.createDhtml = function() {
         EchoEventProcessor.addHandler(this.selectElement, "mouseout", "EchoListComponent.processRolloverExit");
     }
     if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.addEventListener(this.selectElement, "selectstart", EchoListComponent.processSelectStart, false);
+        EchoEventProcessor.addHandler(this.selectElement, "selectstart", "EchoListComponent.processSelectStart");
     }
     
     EchoDomPropertyStore.setPropertyValue(this.selectElement, "component", this);
@@ -166,7 +166,7 @@ EchoListComponent.prototype.dispose = function() {
     if (this.renderAsDhtml) {
         EchoEventProcessor.removeHandler(this.selectElement, "click");
         if (EchoClientProperties.get("browserInternetExplorer")) {
-            EchoDomUtil.removeEventListener(this.selectElement, "selectstart", EchoListComponent.processSelectStart, false);
+            EchoEventProcessor.removeHandler(this.selectElement, "selectstart");
         }
     } else {
         EchoEventProcessor.removeHandler(this.selectElement, "change");
