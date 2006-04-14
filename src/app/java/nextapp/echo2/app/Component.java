@@ -75,9 +75,9 @@ import nextapp.echo2.app.event.EventListenerList;
  * and <code>PROPERTY_LAYOUT_DATA</code>. The rendering application container
  * will use the <code>Component.getRenderProperty()</code> and
  * <code>Component.getRenderIndexedProperty()</code> to retrieve the values of
- * stylistic properties, in order that that their values might be obtained from
- * the a <code>Component</code>'s shared <code>Style</code> or the
- * <code>ApplicationInstance</code>'s<code>StyleSheet</code> in the event
+ * stylistic properties, in order that their values might be obtained from
+ * the <code>Component</code>'s shared <code>Style</code> or the
+ * <code>ApplicationInstance</code>'s <code>StyleSheet</code> in the event
  * they are not directly set in the <code>Component</code>.
  * <p>
  * A <code>Component</code> implementation should not store the values of

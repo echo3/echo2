@@ -217,6 +217,32 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
+     * Determines if the specified <code>component</code> has been rendered to
+     * the client by determining if it is a descendant of any
+     * <code>LazyRenderContainer</code>s and if so querying them to determine
+     * the hierarchy's render state. This method is recursively invoked.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param component the <code>Component</code> to analyze
+     * @return <code>true</code> if the <code>Component</code> has been
+     *         rendered to the client
+     */
+    private boolean isRendered(ContainerInstance ci, Component component) {
+        Component parent = component.getParent();
+        if (parent == null) {
+            return true;
+        }
+        ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(parent.getClass());
+        if (syncPeer instanceof LazyRenderContainer) {
+            boolean rendered = ((LazyRenderContainer) syncPeer).isRendered(ci, parent, component);
+            if (!rendered) {
+                return false;
+            }
+        }
+        return isRendered(ci, parent);
+    }
+    
+    /**
      * Retrieves information about the current focused component on the client,
      * if provided, and in such case notifies the 
      * <code>ApplicationInstance</code> of the focus.
@@ -260,7 +286,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
      * @param rc the relevant <code>RenderContext</code>
      */
     private void processServerUpdates(RenderContext rc) {
-        UpdateManager updateManager = rc.getContainerInstance().getUpdateManager();
+        ContainerInstance ci = rc.getContainerInstance();
+        UpdateManager updateManager = ci.getUpdateManager();
         ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
         ServerComponentUpdate[] componentUpdates = updateManager.getServerUpdateManager().getComponentUpdates();
         
@@ -279,11 +306,24 @@ public class ContainerSynchronizeService extends SynchronizeService {
             
             setRootLayoutDirection(rc);
         } else {
+            // Remove any updates whose updates are descendants of components which have not been rendered to the
+            // client yet due to lazy-loading containers.
+            for (int i = 0; i < componentUpdates.length; ++i) {
+                if (!isRendered(ci, componentUpdates[i].getParent())) {
+                    componentUpdates[i] = null;
+                }
+            }
+            
             // Set of Components whose HTML was entirely re-rendered, negating the need
             // for updates of their children to be processed.
             Set fullyReplacedHierarchies = new HashSet();
     
             for (int i = 0; i < componentUpdates.length; ++i) {
+                if (componentUpdates[i] == null) {
+                    // Update removed, do nothing.
+                    continue;
+                }
+                
                 // Dispose of removed children.
                 Component[] removedChildren = componentUpdates[i].getRemovedChildren();
                 disposeComponents(rc, componentUpdates[i], removedChildren);
