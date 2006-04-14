@@ -508,10 +508,6 @@ implements Serializable {
                     "Attempt to update state of application user interface outside of user interface thread.");
         }
 
-        if (oldValue != null && newValue != null && oldValue.equals(newValue)) {
-            return;
-        }
-        
         ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
         if (Component.CHILDREN_CHANGED_PROPERTY.equals(propertyName)) {
             if (newValue == null) {
@@ -522,8 +518,14 @@ implements Serializable {
         } else if (Component.PROPERTY_LAYOUT_DATA.equals(propertyName)) {
             serverUpdateManager.processComponentLayoutDataUpdate(parent);
         } else if (Component.VISIBLE_CHANGED_PROPERTY.equals(propertyName)) {
+            if (oldValue != null && newValue != null && oldValue.equals(newValue)) {
+                return;
+            }
             serverUpdateManager.processComponentVisibilityUpdate(parent);
         } else {
+            if (oldValue != null && newValue != null && oldValue.equals(newValue)) {
+                return;
+            }
             if (parent instanceof ModalSupport && ModalSupport.MODAL_CHANGED_PROPERTY.equals(propertyName)) {
                 setModal(parent, ((Boolean) newValue).booleanValue());
             }
