@@ -141,6 +141,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
         // Set quirk flags.
         if (browserInternetExplorer) {
             clientProperties.setProperty(ClientProperties.QUIRK_IE_REPAINT, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_CONTENT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE, Boolean.TRUE);
@@ -162,6 +163,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             }
         }
         if (browserOpera) {
+            clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_CONTENT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_OPERA_NO_CSS_TEXT, Boolean.TRUE);
         }
         if (browserMozilla) {

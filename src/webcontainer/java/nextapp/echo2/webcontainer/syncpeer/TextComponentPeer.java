@@ -371,7 +371,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
             }
         }
         if (textComponent instanceof TextArea && rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION)) {
+                ClientProperties.QUIRK_TEXTAREA_CONTENT)) {
             String value = textComponent.getText();
             if (value != null) {
                 itemElement.setAttribute("text", value);

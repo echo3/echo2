@@ -140,12 +140,29 @@ implements Serializable {
     public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
     
     /**
+     * A quirk flag describing various issues with rendering content in TEXTAREA elements.
+     * This quirk includes IE problems with "newline obliteration", and Opera8 problems with
+     * simply ignoring textarea content with importNode().
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     *  <li>Opera 8 (Linux and Windows Tested, assuming all))</li>
+     * </ul>
+     */
+    public static final String QUIRK_TEXTAREA_CONTENT = "quirkTextAreaContent";
+    
+    /**
      * A quirk flag indicating the incorrect parsing of newlines in the content of a 'textarea'.
      * <p>
      * This quirk occurs with:
      * <ul>
      *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
+     * 
+     * This a more specific version of <code>QUIRK_TEXTAREA_CONTENT</code>.  Now that it has been
+     * discovered that Opera has similar issues, <code>QUIRK_TEXTAREA_CONTENT</code> should be used
+     * instead.
      */
     public static final String QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION = "quirkIETextareaNewlineObliteration";
     
