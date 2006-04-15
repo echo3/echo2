@@ -150,7 +150,7 @@ implements Serializable {
      *  <li>Opera 8 (Linux and Windows Tested, assuming all))</li>
      * </ul>
      */
-    public static final String QUIRK_TEXTAREA_CONTENT = "quirkTextAreaContent";
+    public static final String QUIRK_TEXTAREA_CONTENT = "quirkTextareaContent";
     
     /**
      * A quirk flag indicating the incorrect parsing of newlines in the content of a 'textarea'.
