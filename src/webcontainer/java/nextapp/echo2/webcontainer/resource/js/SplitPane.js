@@ -244,6 +244,9 @@ EchoSplitPane.prototype.processSeparatorMouseDown = function(echoEvent) {
         this.dragInitMouseOffset = echoEvent.clientX;
     }
     
+    // Avoid potential IE multi-listener issues.
+    this.removeListeners();
+        
     EchoDomUtil.addEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
     EchoDomUtil.addEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
     if (EchoClientProperties.get("browserInternetExplorer")) {
