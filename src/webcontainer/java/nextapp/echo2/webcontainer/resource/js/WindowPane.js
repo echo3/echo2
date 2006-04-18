@@ -89,16 +89,6 @@ EchoWindowPane.DEFAULT_HEIGHT = 300;
 EchoWindowPane.DEFAULT_BORDER = new EchoCoreProperties.FillImageBorder("#00007f", new EchoCoreProperties.Insets(20), 
         new EchoCoreProperties.Insets(3));
 
-EchoWindowPane.prototype.removeListeners = function() {
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
-    if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
-    }
-};
-
 EchoWindowPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
     
@@ -691,7 +681,17 @@ EchoWindowPane.prototype.redraw = function() {
         var maskDivElement = document.getElementById(this.elementId + "_mask");
         EchoVirtualPosition.redraw(maskDivElement);
     }
-}
+};
+
+EchoWindowPane.prototype.removeListeners = function() {
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
+};
 
 EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
     if (positionX < 0) {

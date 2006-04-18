@@ -221,8 +221,7 @@ EchoSplitPane.prototype.create = function() {
 EchoSplitPane.prototype.dispose = function() {
     if (this.separatorDivElement && this.resizable) {
         EchoEventProcessor.removeHandler(this.separatorDivElement, "mousedown");
-        EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
-        EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+        this.removeListeners();
     }
     
     EchoDomPropertyStore.dispose(this.splitPaneDivElement);
@@ -247,6 +246,9 @@ EchoSplitPane.prototype.processSeparatorMouseDown = function(echoEvent) {
     
     EchoDomUtil.addEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
     EchoDomUtil.addEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(document, "selectstart", EchoSplitPane.selectStart, false);
+    }
 };
 
 EchoSplitPane.prototype.processSeparatorMouseMove = function(e) {
@@ -269,10 +271,17 @@ EchoSplitPane.prototype.processSeparatorMouseMove = function(e) {
 
 EchoSplitPane.prototype.processSeparatorMouseUp = function(e) {
     EchoSplitPane.activeInstance = null;
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+    this.removeListeners();
     EchoClientMessage.setPropertyValue(this.elementId, "separatorPosition",  this.position + "px");
     EchoVirtualPosition.redraw();
+};
+
+EchoSplitPane.prototype.removeListeners = function() {
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(document, "selectstart", EchoSplitPane.selectStart, false);
+    }
 };
 
 EchoSplitPane.prototype.resetPane = function(index) {
@@ -361,6 +370,14 @@ EchoSplitPane.prototype.update = function(firstPaneDivElement, secondPaneDivElem
  */
 EchoSplitPane.getComponent = function(componentId) {
     return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+};
+
+/**
+ * Event handler for "SelectStart" events to disable selection while dragging
+ * the SplitPane.  (Internet Explorer specific)
+ */
+EchoSplitPane.selectStart = function() {
+    EchoDomUtil.preventEventDefault(window.event);
 };
 
 EchoSplitPane.processSeparatorMouseDown = function(echoEvent) {
