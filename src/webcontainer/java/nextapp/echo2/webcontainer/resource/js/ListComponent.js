@@ -84,7 +84,7 @@ EchoListComponent.prototype.createDhtml = function() {
         this.selectElement.style.height = "6em";
     }
     if (!this.selectElement.style.border) {
-        this.selectElement.style.border = "1px inset";
+        this.selectElement.style.border = "1px inset #cfcfcf";
     }
     
     for (var i = 0; i < this.values.length; ++i) {
