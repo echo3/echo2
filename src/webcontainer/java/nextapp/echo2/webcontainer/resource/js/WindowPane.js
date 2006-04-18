@@ -89,6 +89,16 @@ EchoWindowPane.DEFAULT_HEIGHT = 300;
 EchoWindowPane.DEFAULT_BORDER = new EchoCoreProperties.FillImageBorder("#00007f", new EchoCoreProperties.Insets(20), 
         new EchoCoreProperties.Insets(3));
 
+EchoWindowPane.prototype.removeListeners = function() {
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
+    }
+};
+
 EchoWindowPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
     
@@ -463,10 +473,7 @@ EchoWindowPane.prototype.create = function() {
 };
 
 EchoWindowPane.prototype.dispose = function() {
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    this.removeListeners();
 
     if (this.movable) {
         EchoEventProcessor.removeHandler(this.titleBarDivElement, "mousedown");
@@ -488,10 +495,6 @@ EchoWindowPane.prototype.dispose = function() {
         EchoEventProcessor.removeHandler(this.borderBRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
     }
 
-    if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
-    }
-    
     EchoWindowPane.ZIndexManager.remove(this.containerComponentElementId, this.elementId);
     
     EchoDomPropertyStore.dispose(this.windowPaneDivElement);
@@ -555,6 +558,9 @@ EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
     case "br": this.resizeX =  1; this.resizeY =  1; break;
     }
 
+    // Remove all listeners to avoid possible retention issues in IE.
+    this.removeListeners();
+    
     EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
     EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
     if (EchoClientProperties.get("browserInternetExplorer")) {
@@ -597,11 +603,8 @@ EchoWindowPane.prototype.processBorderMouseMove = function(e) {
 };
 
 EchoWindowPane.prototype.processBorderMouseUp = function(e) {
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
-    if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
-    }
+    this.removeListeners();
+    
     this.resizingBorderElementId = null;
     EchoWindowPane.activeInstance = null;
     
@@ -632,6 +635,10 @@ EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
     this.dragInitPositionY = this.positionY;
     this.dragOriginX = echoEvent.clientX;
     this.dragOriginY = echoEvent.clientY;
+    
+    // Remove all listeners to avoid possible retention issues in IE.
+    this.removeListeners();
+    
     EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
     EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
     if (EchoClientProperties.get("browserInternetExplorer")) {
@@ -646,11 +653,8 @@ EchoWindowPane.prototype.processTitleBarMouseMove = function(e) {
 };
 
 EchoWindowPane.prototype.processTitleBarMouseUp = function(e) {
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
-    if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
-    }
+    this.removeListeners();
+    
     EchoWindowPane.activeInstance = null;
     
     EchoClientMessage.setPropertyValue(this.elementId, "positionX", this.positionX + "px");

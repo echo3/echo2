@@ -264,6 +264,20 @@ public class ComponentTest extends TestCase {
     }
 
     /**
+     * Test <code>getVisibleComponent()</code>.
+     */
+    public void testGetVisibleComponent2() {
+        NullComponent c = new NullComponent();
+        Exception exception = null;
+        try {
+            c.getVisibleComponent(0);
+        } catch (IndexOutOfBoundsException ex) {
+            exception = ex;
+        }
+        assertNotNull(exception);
+    }
+    
+    /**
      * Test <code>getVisibleComponentCount()</code>.
      */
     public void testGetVisibleComponentCount() {
