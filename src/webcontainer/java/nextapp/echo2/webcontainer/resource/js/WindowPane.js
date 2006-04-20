@@ -475,14 +475,14 @@ EchoWindowPane.prototype.dispose = function() {
     }
 
     if (this.resizable) {
-        EchoEventProcessor.removeHandler(this.borderTLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderTDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderTRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderBLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderBDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.removeHandler(this.borderBRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        EchoEventProcessor.removeHandler(this.borderTLDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderTDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderTRDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderLDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderRDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderBLDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderBDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(this.borderBRDivElement, "mousedown");
     }
 
     EchoWindowPane.ZIndexManager.remove(this.containerComponentElementId, this.elementId);
@@ -551,8 +551,8 @@ EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
     // Remove all listeners to avoid possible retention issues in IE.
     this.removeListeners();
     
-    EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
-    EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove, false);
+    EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
     }
@@ -629,8 +629,8 @@ EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
     // Remove all listeners to avoid possible retention issues in IE.
     this.removeListeners();
     
-    EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
-    EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
+    EchoDomUtil.addEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove, false);
+    EchoDomUtil.addEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.addEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
     }
@@ -684,10 +684,10 @@ EchoWindowPane.prototype.redraw = function() {
 };
 
 EchoWindowPane.prototype.removeListeners = function() {
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp);
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove, false);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp, false);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processBorderMouseMove, false);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processBorderMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.removeEventListener(document, "selectstart", EchoWindowPane.selectStart, false);
     }

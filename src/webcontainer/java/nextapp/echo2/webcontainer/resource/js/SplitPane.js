@@ -247,8 +247,8 @@ EchoSplitPane.prototype.processSeparatorMouseDown = function(echoEvent) {
     // Avoid potential IE multi-listener issues.
     this.removeListeners();
         
-    EchoDomUtil.addEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
-    EchoDomUtil.addEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+    EchoDomUtil.addEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove, false);
+    EchoDomUtil.addEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.addEventListener(document, "selectstart", EchoSplitPane.selectStart, false);
     }
@@ -280,8 +280,8 @@ EchoSplitPane.prototype.processSeparatorMouseUp = function(e) {
 };
 
 EchoSplitPane.prototype.removeListeners = function() {
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp);
+    EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove, false);
+    EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoDomUtil.removeEventListener(document, "selectstart", EchoSplitPane.selectStart, false);
     }
