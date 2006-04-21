@@ -487,12 +487,12 @@
         <!-- Source Code -->
         <copy todir="${dir.build.release.root}/SourceCode/src">
             <fileset dir="${dir.src}">
-                <exclude name="CVS/**"/>
+                <exclude name=".svn/**"/>
             </fileset>
         </copy>
         <copy todir="${dir.build.release.root}/SourceCode/resource">
             <fileset dir="${dir.resource}">
-                <exclude name="CVS/**"/>
+                <exclude name=".svn/**"/>
             </fileset>
         </copy>
         <copy todir="${dir.build.release.root}/SourceCode">
