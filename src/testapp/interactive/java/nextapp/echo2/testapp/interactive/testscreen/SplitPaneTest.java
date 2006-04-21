@@ -29,12 +29,16 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Alignment;
+import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -197,6 +201,46 @@ public class SplitPaneTest extends SplitPane {
                     testPane.getComponent(paneNumber).setLayoutData(splitPaneLayoutData);
                 }
             });
+            addButton("Alignment = Left", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (testPane.getComponentCount() < paneNumber + 1) {
+                        return;
+                    }
+                    SplitPaneLayoutData splitPaneLayoutData = getLayoutData(paneNumber);
+                    splitPaneLayoutData.setAlignment(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+                    testPane.getComponent(paneNumber).setLayoutData(splitPaneLayoutData);
+                }
+            });
+            addButton("Alignment = Center", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (testPane.getComponentCount() < paneNumber + 1) {
+                        return;
+                    }
+                    SplitPaneLayoutData splitPaneLayoutData = getLayoutData(paneNumber);
+                    splitPaneLayoutData.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
+                    testPane.getComponent(paneNumber).setLayoutData(splitPaneLayoutData);
+                }
+            });
+            addButton("Alignment = Right", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (testPane.getComponentCount() < paneNumber + 1) {
+                        return;
+                    }
+                    SplitPaneLayoutData splitPaneLayoutData = getLayoutData(paneNumber);
+                    splitPaneLayoutData.setAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                    testPane.getComponent(paneNumber).setLayoutData(splitPaneLayoutData);
+                }
+            });
+            addButton("Alignment = Default", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (testPane.getComponentCount() < paneNumber + 1) {
+                        return;
+                    }
+                    SplitPaneLayoutData splitPaneLayoutData = getLayoutData(paneNumber);
+                    splitPaneLayoutData.setAlignment(new Alignment(Alignment.DEFAULT, Alignment.DEFAULT));
+                    testPane.getComponent(paneNumber).setLayoutData(splitPaneLayoutData);
+                }
+            });
         }
         
         private SplitPaneLayoutData getLayoutData(int paneNumber) {
@@ -266,6 +310,20 @@ public class SplitPaneTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 if (testPane.getComponentCount() < 2) {
                     testPane.add(createPaneLabel("Added at End"));
+                }
+            }
+        });
+        controlsColumn.addButton("Add Row", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (testPane.getComponentCount() < 2) {
+                    Row row = new Row();
+                    row.setBorder(new Border(new Extent(1), Color.BLACK, Border.STYLE_SOLID));
+                    row.setCellSpacing(new Extent(5));
+                    row.setInsets(new Insets(10, 5));
+                    row.add(new Label("Alpha"));
+                    row.add(new Label("Bravo"));
+                    row.add(new Label("Charlie"));
+                    testPane.add(row);
                 }
             }
         });

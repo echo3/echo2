@@ -34,6 +34,7 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
@@ -57,6 +58,7 @@ import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.partialupdate.BorderUpdate;
 import nextapp.echo2.webcontainer.partialupdate.ColorUpdate;
 import nextapp.echo2.webcontainer.partialupdate.InsetsUpdate;
+import nextapp.echo2.webcontainer.propertyrender.AlignmentRender;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.CellLayoutDataRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -303,6 +305,10 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         Element tableElement = document.createElement("table");
         tableElement.setAttribute("id", elementId + "_table");
         tableElement.setAttribute("style", "padding:0px;border-collapse:collapse;");
+        
+        AlignmentRender.renderToElement(divElement, 
+                ((Alignment) row.getRenderProperty(Row.PROPERTY_ALIGNMENT)), row);
+        
         divElement.appendChild(tableElement);
         
         Element tbodyElement = document.createElement("tbody");

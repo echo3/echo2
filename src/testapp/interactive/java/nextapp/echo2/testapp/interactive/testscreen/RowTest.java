@@ -29,6 +29,7 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
@@ -205,6 +206,37 @@ public class RowTest extends SplitPane {
                 testRow.setInsets(new Insets(10, 20, 30, 40));
             }
         });
+        controlsColumn.addButton("Alignment -> Leading", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                testRow.setAlignment(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+            }
+        });
+        controlsColumn.addButton("Alignment -> Trailing", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                testRow.setAlignment(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
+            }
+        });
+        controlsColumn.addButton("Alignment -> Left", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                testRow.setAlignment(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+            }
+        });
+        controlsColumn.addButton("Alignment -> Center", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                testRow.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
+            }
+        });
+        controlsColumn.addButton("Alignment -> Right", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                testRow.setAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+            }
+        });
+        controlsColumn.addButton("Alignment -> Default", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                testRow.setAlignment(new Alignment(Alignment.DEFAULT, Alignment.DEFAULT));
+            }
+        });
+        
         controlsColumn.addButton("Set Layout Data (of random item)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int componentCount = testRow.getComponentCount();

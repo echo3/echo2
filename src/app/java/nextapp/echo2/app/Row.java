@@ -41,6 +41,7 @@ package nextapp.echo2.app;
  */
 public class Row extends Component {
     
+    public static final String PROPERTY_ALIGNMENT = "alignment";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CELL_SPACING = "cellSpacing";
     public static final String PROPERTY_INSETS = "insets";
@@ -50,6 +51,16 @@ public class Row extends Component {
      */
     public Row() {
         super();
+    }
+
+    /**
+     * Returns the alignment of the row's content.
+     * Only horizontal alignments are supported.
+     * 
+     * @return the alignment
+     */
+    public Alignment getAlignment() {
+        return (Alignment) getProperty(PROPERTY_ALIGNMENT);
     }
 
     /**
@@ -80,8 +91,18 @@ public class Row extends Component {
     public Insets getInsets() {
         return (Insets) getProperty(PROPERTY_INSETS);
     }
+
+    /**
+     * Sets the alignment of the row's content.
+     * Only horizontal alignments are supported.
+     * 
+     * @param newValue the new alignment
+     */
+    public void setAlignment(Alignment newValue) {
+        setProperty(PROPERTY_ALIGNMENT, newValue);
+    }
     
-     /**
+    /**
      * Sets the <code>Border</code> that encloses the entire <code>Column</code>.
      * 
      * @param newValue the new border
