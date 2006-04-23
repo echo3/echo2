@@ -66,7 +66,7 @@ EchoWindowPane = function(elementId, containerElementId) {
     this.positionY = null;
     this.resizable = true;
     this.title = null;
-    this.titleBackground = EchoWindowPane.DEFAULT_TITLE_BACKGROUND;
+    this.titleBackground = null;
     this.titleBackgroundImage = null;
     this.titleFont = null;
     this.titleForeground = EchoWindowPane.DEFAULT_TITLE_FOREGROUND;
@@ -313,9 +313,14 @@ EchoWindowPane.prototype.create = function() {
     this.titleBarDivElement.id = this.elementId + "_titlebar";
     this.titleBarDivElement.style.position = "absolute";
     this.titleBarDivElement.style.zIndex = 3;
-    this.titleBarDivElement.style.backgroundColor = this.titleBackground;
+    if (this.titleBackground) {
+        this.titleBarDivElement.style.backgroundColor = this.titleBackground;
+    }
     if (this.titleBackgroundImage) {
-       EchoCssUtil.applyStyle(this.titleBarDivElement, this.titleBackgroundImage);
+        EchoCssUtil.applyStyle(this.titleBarDivElement, this.titleBackgroundImage);
+    }
+    if (!this.titleBackground && !this.titleBackgroundImage) {
+        this.titleBarDivElement.style.backgroundColor = EchoWindowPane.DEFAULT_TITLE_BACKGROUND;
     }
     this.titleBarDivElement.style.color = this.titleForeground;
     this.titleBarDivElement.style.top = this.border.contentInsets.top + "px";
