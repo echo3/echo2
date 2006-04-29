@@ -202,6 +202,21 @@ public class GridTest extends SplitPane {
                 grid.setInsets(new Insets(10, 20, 30, 40));
             }
         });
+        controlsColumn.addButton("Set Width = null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                grid.setWidth(null);
+            }
+        });
+        controlsColumn.addButton("Set Width = 500px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                grid.setWidth(new Extent(500));
+            }
+        });
+        controlsColumn.addButton("Set Width = 100%", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                grid.setWidth(new Extent(100, Extent.PERCENT));
+            }
+        });
         
         controlsColumn = new ButtonColumn();
         controlsColumn.add(new Label("Configure Cell"));

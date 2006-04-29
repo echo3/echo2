@@ -56,7 +56,6 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
-import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -350,6 +349,7 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId());
         renderDisposeDirective(rc, (SplitPane) component);
 
+//BUGBUG. Temporarily removed, pending confirmation that fix is no longer relevant with new client-rendered SplitPane arch.
 //        // Performance Hack for Mozilla/Firefox Browsers:
 //        if (rc.getContainerInstance().getClientProperties()
 //                .getBoolean(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE)) {

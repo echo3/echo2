@@ -91,6 +91,8 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
     private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
     private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
  
+    private static final Extent PERCENT_95 = new Extent(95, Extent.PERCENT);
+    
     /**
      * Service to provide supporting JavaScript library.
      */
@@ -283,7 +285,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
             if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() > 95) {
-                width = new Extent(95, Extent.PERCENT);
+                width = PERCENT_95;
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", width);

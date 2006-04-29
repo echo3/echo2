@@ -71,6 +71,8 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 public class GridPeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
     
+    private static final Extent PERCENT_95 = new Extent(95, Extent.PERCENT);
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
@@ -168,8 +170,15 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         ColorRender.renderToStyle(tableCssStyle, component);
         FontRender.renderToStyle(tableCssStyle, component);
         BorderRender.renderToStyle(tableCssStyle, border);
-        ExtentRender.renderToStyle(tableCssStyle, "width", (Extent) grid.getRenderProperty(Grid.PROPERTY_WIDTH));
         ExtentRender.renderToStyle(tableCssStyle, "height", (Extent) grid.getRenderProperty(Grid.PROPERTY_HEIGHT));
+        Extent width = (Extent) grid.getRenderProperty(Grid.PROPERTY_WIDTH);
+        if (rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
+            if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() > 95) {
+                width = PERCENT_95;
+            }
+        }
+        ExtentRender.renderToStyle(tableCssStyle, "width", width);
         
         Extent borderSize = border == null ? null : border.getSize();
         if (borderSize != null) {
