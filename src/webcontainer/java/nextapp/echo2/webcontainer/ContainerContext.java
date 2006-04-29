@@ -46,6 +46,9 @@ import nextapp.echo2.webrender.Service;
  * application instance.  The <code>ContainerContext</code> will be stored
  * as a context property of an application's <code>ApplicationInstance</code>,
  * under the key constant <code>CONTEXT_PROPERTY_NAME</code>.
+ * 
+ * This interface should not be implemented outside of the core 
+ * framework.
  */
 public interface ContainerContext {
     
@@ -87,6 +90,13 @@ public interface ContainerContext {
      * @return the URI
      */
     public String getServiceUri(Service service);
+    
+    /**
+     * Returns the URI of the Echo2 servlet.
+     * 
+     * @return the servlet URI
+     */
+    public String getServletUri();
     
     /**
      * Returns the <code>HttpSession</code> in which the application is 

@@ -96,6 +96,13 @@ implements ContainerContext, Serializable {
     }
     
     /**
+     * @see nextapp.echo2.webcontainer.ContainerContext#getServletUri()
+     */
+    public String getServletUri() {
+        return containerInstance.getServletUri();
+    }
+    
+    /**
      * @see nextapp.echo2.webcontainer.ContainerContext#getSession()
      */
     public HttpSession getSession() {

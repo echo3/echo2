@@ -350,14 +350,14 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId());
         renderDisposeDirective(rc, (SplitPane) component);
 
-        // Performance Hack for Mozilla/Firefox Browsers:
-        if (rc.getContainerInstance().getClientProperties()
-                .getBoolean(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE)) {
-            String elementId = ContainerInstance.getElementId(component);
-            if (!update.hasRemovedChild(component)) {
-                DomUpdate.renderElementRemove(rc.getServerMessage(), elementId);
-            }
-        }
+//        // Performance Hack for Mozilla/Firefox Browsers:
+//        if (rc.getContainerInstance().getClientProperties()
+//                .getBoolean(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE)) {
+//            String elementId = ContainerInstance.getElementId(component);
+//            if (!update.hasRemovedChild(component)) {
+//                DomUpdate.renderElementRemove(rc.getServerMessage(), elementId);
+//            }
+//        }
     }
 
     /**
