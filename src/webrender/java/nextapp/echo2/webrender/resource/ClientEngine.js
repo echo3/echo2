@@ -268,6 +268,7 @@ EchoClientEngine.debugEnabled = true;
 EchoClientEngine.configure = function() {
     if (EchoClientProperties.get("browserInternetExplorer")) {
         EchoVirtualPosition.init();
+        document.documentElement.style.overflow = "hidden";
     }
 };
 

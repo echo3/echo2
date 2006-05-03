@@ -62,8 +62,10 @@ public class SplitPaneTest extends SplitPane {
                     if (testPane.getComponentCount() < paneNumber + 1) {
                         return;
                     }
-                    Label label = (Label) testPane.getComponent(paneNumber);
-                    label.setText(StyleUtil.QUASI_LATIN_TEXT_1);
+                    if (testPane.getComponent(paneNumber) instanceof Label) {
+                        Label label = (Label) testPane.getComponent(paneNumber);
+                        label.setText(StyleUtil.QUASI_LATIN_TEXT_1);
+                    }
                 }
             });
             addButton("Change Background Color", new ActionListener() {

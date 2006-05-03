@@ -80,7 +80,7 @@ implements Service {
         BaseHtmlDocument baseDoc = new BaseHtmlDocument(ROOT_ID);
         baseDoc.setGenarator(ApplicationInstance.ID_STRING);
         baseDoc.addJavaScriptInclude(ci.getServiceUri(CoreServices.CLIENT_ENGINE));
-        
+
         // Add initialization directive.
         baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getServletUri() + "', " 
                 + debug + ");");
