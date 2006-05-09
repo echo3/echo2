@@ -108,7 +108,10 @@ implements Service {
     public void service(Connection conn) 
     throws IOException {
         String userAgent = conn.getRequest().getHeader("user-agent");
-        if (userAgent == null || userAgent.indexOf("MSIE") != -1) {
+        if (false && (userAgent == null || userAgent.indexOf("MSIE") != -1)) {
+            // ^^ THIS CODE IS DISABLED: IE is now being served GZip-compressed
+            // scripts.  (Note 'false' in 'if' statement.)
+            // --------------------------------------------------------------------
             // Due to behavior detailed Microsoft Knowledge Base Article Id 312496, 
             // all HTTP compression support is disabled for this browser.
             // Due to the fact that ClientProperties information is not necessarily 
@@ -133,7 +136,7 @@ implements Service {
     private void serviceGZipCompressed(Connection conn) 
     throws IOException {
         conn.getResponse().setContentType("text/plain");
-        conn.getResponse().setHeader("content-encoding", "x-gzip");
+        conn.getResponse().setHeader("Content-Encoding", "gzip");
         conn.getOutputStream().write(gzipContent);
     }
     
