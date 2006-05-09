@@ -49,6 +49,7 @@ import nextapp.echo2.app.event.ListDataEvent;
 import nextapp.echo2.app.event.ListDataListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.app.list.AbstractListComponent;
+import nextapp.echo2.app.list.DefaultListModel;
 import nextapp.echo2.app.list.ListCellRenderer;
 import nextapp.echo2.app.list.ListSelectionModel;
 import nextapp.echo2.app.list.StyledListCell;
@@ -530,6 +531,20 @@ public class ListBoxTest extends SplitPane {
             }
         });
         
+        controlsColumn.addButton("Select Index 1502", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator(){
+                    public void apply(AbstractListComponent listComponent) {
+                        if (listComponent instanceof ListBox) {
+                            ((ListBox) listComponent).setSelectedIndices(new int[] {1502});
+                        } else if (listComponent instanceof SelectField) {
+                            ((SelectField) listComponent).setSelectedIndex(1502);
+                        }
+                    }
+                });
+            }
+        });
+        
         controlsColumn.addButton("Clear Selections", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 apply(new Applicator(){
@@ -539,6 +554,26 @@ public class ListBoxTest extends SplitPane {
                         } else if (listComponent instanceof SelectField) {
                             ((SelectField) listComponent).setSelectedIndex(0);
                         }
+                    }
+                });
+            }
+        });
+        
+        controlsColumn.addButton("Empty ListModel", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator(){
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setModel(new DefaultListModel());
+                    }
+                });
+            }
+        });
+        
+        controlsColumn.addButton("Set ListModel = Numbers", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator(){
+                    public void apply(AbstractListComponent listComponent) {
+                        listComponent.setModel(new DefaultListModel(NUMBERS));
                     }
                 });
             }

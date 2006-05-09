@@ -216,7 +216,9 @@ EchoListComponent.prototype.loadSelection = function() {
             return;
         }
         for (var i = 0; i < this.selectedIndices.length; ++i) {
-            this.selectElement.options[this.selectedIndices[i]].selected = true;
+            if (this.selectedIndices[i] < this.selectElement.options.length) {
+                this.selectElement.options[this.selectedIndices[i]].selected = true;
+            }
         }
     }
 };
@@ -234,7 +236,10 @@ EchoListComponent.prototype.loadSelectionDhtml = function() {
     }
     
     for (var i = 0; i < this.selectedIndices.length; ++i) {
-        EchoCssUtil.applyStyle(this.selectElement.childNodes[this.selectedIndices[i]], EchoListComponent.DHTML_SELECTION_STYLE);
+        if (this.selectedIndices[i] < this.selectElement.childNodes.length) {
+            EchoCssUtil.applyStyle(this.selectElement.childNodes[this.selectedIndices[i]], 
+                    EchoListComponent.DHTML_SELECTION_STYLE);
+        }
     }
 };
 
