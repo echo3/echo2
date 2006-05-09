@@ -552,7 +552,7 @@ public class ListBoxTest extends SplitPane {
                         if (listComponent instanceof ListBox) {
                             ((ListBox) listComponent).setSelectedIndices(new int[] {});
                         } else if (listComponent instanceof SelectField) {
-                            ((SelectField) listComponent).setSelectedIndex(0);
+                            ((SelectField) listComponent).setSelectedIndex(-1);
                         }
                     }
                 });

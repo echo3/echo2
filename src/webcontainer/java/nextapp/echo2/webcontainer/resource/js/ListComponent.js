@@ -207,17 +207,50 @@ EchoListComponent.prototype.getNodeIndex = function(node) {
     return -1;
 };
 
+EchoListComponent.prototype.addNullOption = function() {
+    if (EchoClientProperties.get("quirkSelectRequiresNullOption") 
+            && !this.renderAsListBox && !this.nullOptionActive) {
+        // Add null option.
+        var nullOptionElement = document.createElement("option");
+        if (this.selectElement.childNodes.length > 0) {
+            this.selectElement.insertBefore(nullOptionElement, this.selectElement.options[0]);
+        } else {
+            this.selectElement.appendChild(nullOptionElement);
+        }
+        this.nullOptionActive = true;
+    }
+};
+
+EchoListComponent.prototype.removeNullOption = function() {
+    if (this.nullOptionActive) {
+        // Remove null option.
+        this.selectElement.removeChild(this.selectElement.options[0]);
+        this.nullOptionActive = false;
+    }
+};
+
 EchoListComponent.prototype.loadSelection = function() {
     if (this.renderAsDhtml) {
         this.loadSelectionDhtml();
     } else {
         this.selectElement.selectedIndex = -1;
-        if (!this.selectedIndices) {
-            return;
+        if (this.selectElement.options.length > 0) {
+            this.selectElement.options[0].selected = false;
         }
-        for (var i = 0; i < this.selectedIndices.length; ++i) {
-            if (this.selectedIndices[i] < this.selectElement.options.length) {
-                this.selectElement.options[this.selectedIndices[i]].selected = true;
+        
+        if (!this.selectedIndices || this.selectedIndices.length == 0) {
+            this.addNullOption();
+        } else {
+            this.removeNullOption();
+            var selectionSet;
+            for (var i = 0; i < this.selectedIndices.length; ++i) {
+                if (this.selectedIndices[i] < this.selectElement.options.length) {
+                    selectionSet = true;
+                    this.selectElement.options[this.selectedIndices[i]].selected = true;
+                }
+            }
+            if (!selectionSet) {
+                this.addNullOption();
             }
         }
     }
@@ -309,6 +342,7 @@ EchoListComponent.prototype.processSelection = function(echoEvent) {
         this.loadSelection();
         return;
     }
+    this.removeNullOption();
     this.storeSelection();
     this.updateClientMessage();
 };

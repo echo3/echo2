@@ -140,6 +140,19 @@ implements Serializable {
     public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
     
     /**
+     * A quirk flag describing a behavior where a specific "null" option be 
+     * must be added to a drop-down-list-style SELECT element in order to to
+     * render a "no items selected" state.   
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Mozilla (all platforms)</li>
+     *  <li>Mozilla Firefox ((all platforms)</li>
+     * </ul>
+     */
+    public static final String QUIRK_SELECT_REQUIRES_NULL_OPTION = "quirkSelectRequiresNullOption";
+    
+    /**
      * A quirk flag describing various issues with rendering content in TEXTAREA elements.
      * This quirk includes IE problems with "newline obliteration", and Opera8 problems with
      * simply ignoring textarea content with importNode().

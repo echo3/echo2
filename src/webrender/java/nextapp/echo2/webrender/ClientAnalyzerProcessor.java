@@ -167,6 +167,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_OPERA_NO_CSS_TEXT, Boolean.TRUE);
         }
         if (browserMozilla) {
+            clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_TEXT_INPUT_REPAINT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE, Boolean.TRUE);
         }
