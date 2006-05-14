@@ -87,14 +87,16 @@ EchoListComponent.prototype.createDhtml = function() {
         this.selectElement.style.border = "1px inset #cfcfcf";
     }
     
-    for (var i = 0; i < this.values.length; ++i) {
-        var optionElement = document.createElement("div");
-        optionElement.setAttribute("id", this.elementId + "_item_" + i);
-        optionElement.appendChild(document.createTextNode(this.values[i]));
-        if (this.styles && this.styles[i]) {
-            optionElement.setAttribute("style", this.styles[i]);
+    if (this.values) {
+        for (var i = 0; i < this.values.length; ++i) {
+            var optionElement = document.createElement("div");
+            optionElement.setAttribute("id", this.elementId + "_item_" + i);
+            optionElement.appendChild(document.createTextNode(this.values[i]));
+            if (this.styles && this.styles[i]) {
+                optionElement.setAttribute("style", this.styles[i]);
+            }
+            this.selectElement.appendChild(optionElement);
         }
-        this.selectElement.appendChild(optionElement);
     }
 
     containerElement.appendChild(this.selectElement);
@@ -137,14 +139,16 @@ EchoListComponent.prototype.createSelect = function() {
         }
     }
 
-    for (var i = 0; i < this.values.length; ++i) {
-        var optionElement = document.createElement("option");
-        optionElement.setAttribute("id", this.elementId + "_item_" + i);
-        optionElement.appendChild(document.createTextNode(this.values[i]));
-        if (this.styles && this.styles[i]) {
-            optionElement.setAttribute("style", this.styles[i]);
+    if (this.values) {
+        for (var i = 0; i < this.values.length; ++i) {
+            var optionElement = document.createElement("option");
+            optionElement.setAttribute("id", this.elementId + "_item_" + i);
+            optionElement.appendChild(document.createTextNode(this.values[i]));
+            if (this.styles && this.styles[i]) {
+                optionElement.setAttribute("style", this.styles[i]);
+            }
+            this.selectElement.appendChild(optionElement);
         }
-        this.selectElement.appendChild(optionElement);
     }
     
     containerElement.appendChild(this.selectElement);
@@ -163,6 +167,9 @@ EchoListComponent.prototype.createSelect = function() {
  * and unregistering event handlers.
  */
 EchoListComponent.prototype.dispose = function() {
+    this.values = null;
+    this.styles = null;
+
     if (this.renderAsDhtml) {
         EchoEventProcessor.removeHandler(this.selectElement, "click");
         if (EchoClientProperties.get("browserInternetExplorer")) {

@@ -53,7 +53,7 @@ public class InteractiveApp extends ApplicationInstance {
 
     private static final String[] GHOST_SCRIPT_1 = new String[] {
         "EnterTestApplication", 
-        "StartTest:ButtonTest", 
+        "StartTest:ButtonTest",
         "StartTest:SplitPaneNestedTest",
         "StartTest:ListBoxTest",
         "StartTest:TextComponentTest",

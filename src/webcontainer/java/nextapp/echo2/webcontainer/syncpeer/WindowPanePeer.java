@@ -131,7 +131,8 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
      */
     public WindowPanePeer() {
         super();
-        partialUpdateManager = new PartialUpdateManager();    }
+        partialUpdateManager = new PartialUpdateManager();    
+    }
     
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
