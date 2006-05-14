@@ -41,11 +41,13 @@ import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.WindowPane;
+import nextapp.echo2.app.update.PropertyUpdate;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
@@ -124,6 +126,17 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         }
     }
     
+    private PartialUpdateParticipant placeHolder = new PartialUpdateParticipant() {
+
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+            return true;
+        }
+
+        public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+            // Do nothing.
+        }
+    };
+    
     private PartialUpdateManager partialUpdateManager;
 
     /**
@@ -131,7 +144,11 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
      */
     public WindowPanePeer() {
         super();
-        partialUpdateManager = new PartialUpdateManager();    
+        partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(WindowPane.PROPERTY_POSITION_X, placeHolder);
+        partialUpdateManager.add(WindowPane.PROPERTY_POSITION_Y, placeHolder);
+        partialUpdateManager.add(WindowPane.PROPERTY_WIDTH, placeHolder);
+        partialUpdateManager.add(WindowPane.PROPERTY_HEIGHT, placeHolder);
     }
     
     /**
@@ -447,13 +464,17 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         if (update.hasUpdatedLayoutDataChildren()) {
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
-            if (!partialUpdateManager.canProcess(rc, update)) {
+            if (partialUpdateManager.canProcess(rc, update)) {
+                renderUpdateDirective(rc, update);
+            } else {
                 fullReplace = true;
             }
         }
 
-        //TODO. Temp fix. 
-        fullReplace = true;
+        if (update.hasAddedChildren() || update.hasRemovedChildren() || update.hasUpdatedLayoutDataChildren()) {
+            //TODO. temporary, renderSetContent needs impl
+            fullReplace = true;
+        }
         
         if (fullReplace) {
             // Perform full update.
@@ -468,5 +489,34 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         }
         
         return fullReplace;
+    }
+    
+    private void renderUpdateDirective(RenderContext rc, ServerComponentUpdate update) {
+        WindowPane windowPane = (WindowPane) update.getParent();
+
+        Element updateElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_PREREMOVE, 
+                "EchoWindowPane.MessageProcessor", "update");
+        String elementId = ContainerInstance.getElementId(windowPane);
+        updateElement.setAttribute("eid", elementId);
+
+        PropertyUpdate positionX = update.getUpdatedProperty(WindowPane.PROPERTY_POSITION_X);
+        if (positionX != null) {
+            renderPixelProperty(windowPane, WindowPane.PROPERTY_POSITION_X, updateElement, "position-x");
+        }
+
+        PropertyUpdate positionY = update.getUpdatedProperty(WindowPane.PROPERTY_POSITION_Y);
+        if (positionY != null) {
+            renderPixelProperty(windowPane, WindowPane.PROPERTY_POSITION_Y, updateElement, "position-y");
+        }
+        
+        PropertyUpdate width = update.getUpdatedProperty(WindowPane.PROPERTY_WIDTH);
+        if (width != null) {
+            renderPixelProperty(windowPane, WindowPane.PROPERTY_WIDTH, updateElement, "width");
+        }
+
+        PropertyUpdate height = update.getUpdatedProperty(WindowPane.PROPERTY_HEIGHT);
+        if (height != null) {
+            renderPixelProperty(windowPane, WindowPane.PROPERTY_HEIGHT, updateElement, "height");
+        }
     }
 }

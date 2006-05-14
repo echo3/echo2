@@ -187,6 +187,27 @@ public class WindowPaneTest extends SplitPane {
                 windowPane.setInsets(null);
             }
         });
+
+        controlsColumn.addButton("Set Position Random", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setPositionX(new Extent((int) (Math.random() * 600)));
+                windowPane.setPositionY(new Extent((int) (Math.random() * 500)));
+            }
+        });
+        controlsColumn.addButton("Set Size Random", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setWidth(new Extent(100 + (int) (Math.random() * 400)));
+                windowPane.setHeight(new Extent(100 + (int) (Math.random() * 300)));
+            }
+        });
+        controlsColumn.addButton("Set Position&Size Random", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setPositionX(new Extent((int) (Math.random() * 600)));
+                windowPane.setPositionY(new Extent((int) (Math.random() * 500)));
+                windowPane.setWidth(new Extent(100 + (int) (Math.random() * 400)));
+                windowPane.setHeight(new Extent(100 + (int) (Math.random() * 300)));
+            }
+        });        
         
         // Title-Related Properties
         

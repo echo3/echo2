@@ -812,6 +812,21 @@ EchoWindowPane.processTitleBarMouseUp = function(e) {
  */
 EchoWindowPane.MessageProcessor = function() { };
 
+EchoWindowPane.MessageProcessor.loadProperties = function(propertiesElement, windowPane) {
+    if (propertiesElement.getAttribute("position-x")) {
+        windowPane.positionX = parseInt(propertiesElement.getAttribute("position-x"));
+    }
+    if (propertiesElement.getAttribute("position-y")) {
+        windowPane.positionY = parseInt(propertiesElement.getAttribute("position-y"));
+    }
+    if (propertiesElement.getAttribute("width")) {
+        windowPane.width = parseInt(propertiesElement.getAttribute("width"));
+    }
+    if (propertiesElement.getAttribute("height")) {
+        windowPane.height = parseInt(propertiesElement.getAttribute("height"));
+    }
+};
+
 /**
  * MessageProcessor process() implementation 
  * (invoked by ServerMessage processor).
@@ -822,11 +837,14 @@ EchoWindowPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "dispose":
+                EchoWindowPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
             case "init":
                 EchoWindowPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
-            case "dispose":
-                EchoWindowPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+            case "update":
+                EchoWindowPane.MessageProcessor.processUpdate(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -847,6 +865,16 @@ EchoWindowPane.MessageProcessor.processDispose = function(disposeElement) {
     }
 };
 
+EchoWindowPane.MessageProcessor.processUpdate = function(updateElement) {
+    var elementId = updateElement.getAttribute("eid");
+    var windowPane = EchoWindowPane.getComponent(elementId);
+    if (!windowPane) {
+        throw new Error("No WindowPane with id: " + elementId);
+    }
+    EchoWindowPane.MessageProcessor.loadProperties(updateElement, windowPane);
+    windowPane.redraw();
+};
+
 /**
  * Processes an <code>init</code> message to initialize the state of a 
  * WindowPane that is being added.
@@ -858,6 +886,8 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     var containerElementId = initElement.getAttribute("container-eid");
     
     var windowPane = new EchoWindowPane(elementId, containerElementId);
+    
+    EchoWindowPane.MessageProcessor.loadProperties(initElement, windowPane);
     
     windowPane.enabled = initElement.getAttribute("enabled") != "false";
 
@@ -883,9 +913,6 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     if (initElement.getAttribute("foreground")) {
         windowPane.foreground = initElement.getAttribute("foreground");
     }
-    if (initElement.getAttribute("height")) {
-        windowPane.height = parseInt(initElement.getAttribute("height"));
-    }
     if (initElement.getAttribute("icon")) {
         windowPane.icon = initElement.getAttribute("icon");
     }
@@ -907,12 +934,6 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     if (initElement.getAttribute("minimum-width")) {
         windowPane.minimumWidth = parseInt(initElement.getAttribute("minimum-width"));
     }
-    if (initElement.getAttribute("position-x")) {
-        windowPane.positionX = parseInt(initElement.getAttribute("position-x"));
-    }
-    if (initElement.getAttribute("position-y")) {
-        windowPane.positionY = parseInt(initElement.getAttribute("position-y"));
-    }
     if (initElement.getAttribute("title")) {
         windowPane.title = initElement.getAttribute("title");
     }
@@ -933,9 +954,6 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     }
     if (initElement.getAttribute("title-insets")) {
         windowPane.titleInsets = initElement.getAttribute("title-insets");
-    }
-    if (initElement.getAttribute("width")) {
-        windowPane.width = parseInt(initElement.getAttribute("width"));
     }
     
     var borderElements = initElement.getElementsByTagName("border");
