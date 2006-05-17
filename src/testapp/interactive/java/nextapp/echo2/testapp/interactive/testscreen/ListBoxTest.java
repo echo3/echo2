@@ -600,7 +600,7 @@ public class ListBoxTest extends SplitPane {
                 apply(new Applicator(){
                     public void apply(AbstractListComponent listComponent) {
                         if (listComponent instanceof ListBox) {
-                            ((ListBox) listComponent).setSelectedIndices(new int[] { 0, 2, 4, 6, 8 });
+                            ((ListBox) listComponent).setSelectedIndices(new int[] { 0, 2, 4, 6, 8, 10 });
                         }
                     }
                 });
@@ -611,7 +611,9 @@ public class ListBoxTest extends SplitPane {
                 apply(new Applicator(){
                     public void apply(AbstractListComponent listComponent) {
                         if (listComponent instanceof ListBox) {
-                            ((ListBox) listComponent).setSelectedIndices(new int[] { 1, 3, 5, 7, 9 });
+                            // Note: Unlike certain amplifiers, this selectfield does not "go up to eleven".
+                            // Just want to make sure this is handled. 
+                            ((ListBox) listComponent).setSelectedIndices(new int[] { 1, 3, 5, 7, 9, 11 });
                         }
                     }
                 });

@@ -490,16 +490,13 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
         // Render selection state.
         ListSelectionModel selectionModel = listComponent.getSelectionModel();
         int minIndex = selectionModel.getMinSelectedIndex();
-        if (minIndex != -1) {
+        if (minIndex >= 0) {
             if (multipleSelect) {
                 Element selectionElement = document.createElement("selection");
-                Element itemElement = document.createElement("item");
-                itemElement.setAttribute("index", Integer.toString(minIndex));
-                selectionElement.appendChild(itemElement);
                 int maxIndex = selectionModel.getMaxSelectedIndex();
-                for (int i = minIndex + 1; i <= maxIndex; ++i) {
+                for (int i = minIndex; i <= maxIndex; ++i) {
                     if (selectionModel.isSelectedIndex(i)) {
-                        itemElement = document.createElement("item");
+                        Element itemElement = document.createElement("item");
                         itemElement.setAttribute("index", Integer.toString(i));
                         selectionElement.appendChild(itemElement);
                     }
