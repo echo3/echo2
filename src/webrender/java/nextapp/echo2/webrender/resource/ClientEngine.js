@@ -1967,6 +1967,7 @@ EchoHttpConnection.prototype.connect = function() {
     }
 
     var instance = this;
+    
     this.xmlHttpRequest.onreadystatechange = function() { 
         if (!instance) {
             return;
@@ -1989,11 +1990,13 @@ EchoHttpConnection.prototype.connect = function() {
 };
 
 EchoHttpConnection.prototype.dispose = function() {
-    this.onreadystatechange = undefined;
     this.messageObject = null;
     this.responseHandler = null;
     this.invalidResponseHandler = null;
-    this.xmlHttpRequest = null;
+    if (this.xmlHttpRequest) {
+        this.xmlHttpRequest.onreadystatechange = EchoHttpConnection.nullMethod;
+        this.xmlHttpRequest = null;
+    }
     this.disposed = true;
 };
 
@@ -2045,6 +2048,8 @@ EchoHttpConnection.prototype.processReadyStateChange = function() {
         }
     }
 };
+
+EchoHttpConnection.nullMethod = function() { };
 
 // _______________________
 // Object EchoModalManager
