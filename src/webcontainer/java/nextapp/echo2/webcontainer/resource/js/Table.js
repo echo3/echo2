@@ -39,7 +39,7 @@
  * @param element the supported <code>TABLE</code> DOM element 
  */
 EchoTable = function(elementId) {
-    this.element = document.getElementById(elementId);
+    this.elementId = elementId;
     
     this.multipleSelect = false;
     this.rolloverEnabled = false;
@@ -67,10 +67,12 @@ EchoTable.prototype.clearSelected = function() {
  * listeners and cleaning up resources.
  */
 EchoTable.prototype.dispose = function() {
+    var element = this.getElement();
+    
     if (this.rolloverEnabled || this.selectionEnabled) {
         var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
         for (var rowIndex = 0; rowIndex < this.rowCount; ++rowIndex) {
-            var trElement = this.element.rows[rowIndex + (this.headerVisible ? 1 : 0)];
+            var trElement = element.rows[rowIndex + (this.headerVisible ? 1 : 0)];
             if (this.rolloverEnabled) {
                 if (mouseEnterLeaveSupport) {
                     EchoEventProcessor.removeHandler(trElement, "mouseenter");
@@ -86,8 +88,7 @@ EchoTable.prototype.dispose = function() {
         }
     }
     
-    EchoDomPropertyStore.dispose(this.element);
-    this.element = null;
+    EchoDomPropertyStore.dispose(element);
 };
 
 /**
@@ -109,6 +110,10 @@ EchoTable.prototype.drawRowStyle = function(rowIndex) {
     }
 };
 
+EchoTable.prototype.getElement = function() {
+    return document.getElementById(this.elementId);
+};
+
 /**
  * Returns the <code>TR</code> element associated with a specific
  * row index.
@@ -117,15 +122,16 @@ EchoTable.prototype.drawRowStyle = function(rowIndex) {
  * @return the relevant <code>TR</code> element
  */
 EchoTable.prototype.getRowElement = function(rowIndex) {
+    var element = this.getElement();
     if (this.headerVisible) {
         if (rowIndex == -1) {
-            return this.element.rows[0];
+            return element.rows[0];
         } else if (rowIndex >= 0 && rowIndex < this.rowCount) {
-            return this.element.rows[rowIndex + 1];
+            return element.rows[rowIndex + 1];
         }
     } else {
         if (rowIndex >= 0 && rowIndex < this.rowCount) {
-            return this.element.rows[rowIndex];
+            return element.rows[rowIndex];
         }
     }
     return null;
@@ -155,13 +161,15 @@ EchoTable.prototype.getRowIndex = function(trElement) {
  * <code>TABLE</code> DOM element.
  */
 EchoTable.prototype.init = function() {
+    var element = this.getElement();
+
     this.selectionState = new Array();
-    this.rowCount = this.element.rows.length - (this.headerVisible ? 1 : 0); 
+    this.rowCount = element.rows.length - (this.headerVisible ? 1 : 0); 
     
     if (this.rolloverEnabled || this.selectionEnabled) {
         var mouseEnterLeaveSupport = EchoClientProperties.get("proprietaryEventMouseEnterLeaveSupported");
         for (var rowIndex = 0; rowIndex < this.rowCount; ++rowIndex) {
-            var trElement = this.element.rows[rowIndex + (this.headerVisible ? 1 : 0)];
+            var trElement = element.rows[rowIndex + (this.headerVisible ? 1 : 0)];
             if (this.rolloverEnabled) {
                 if (mouseEnterLeaveSupport) {
                     EchoEventProcessor.addHandler(trElement, "mouseenter", "EchoTable.processRolloverEnter");
@@ -177,7 +185,7 @@ EchoTable.prototype.init = function() {
         }
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.element, "component", this);
+    EchoDomPropertyStore.setPropertyValue(element, "component", this);
 };
 
 /**
@@ -201,7 +209,7 @@ EchoTable.prototype.isSelected = function(index) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processClick = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
         return;
     }
 
@@ -228,7 +236,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
     
     // Notify server if required.
     if (this.serverNotify) {
-        EchoClientMessage.setActionValue(this.element.id, "action");
+        EchoClientMessage.setActionValue(this.elementId, "action");
         EchoServerTransaction.connect();
     }
 };
@@ -240,7 +248,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processRolloverEnter = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
         return;
     }
 
@@ -265,7 +273,7 @@ EchoTable.prototype.processRolloverEnter = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTable.prototype.processRolloverExit = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
         return;
     }
 
@@ -299,7 +307,7 @@ EchoTable.prototype.setSelected = function(rowIndex, newValue) {
  * will be set in the ClientMessage and a client-server connection initiated.
  */
 EchoTable.prototype.updateClientMessage = function() {
-    var propertyElement = EchoClientMessage.createPropertyElement(this.element.id, "selection");
+    var propertyElement = EchoClientMessage.createPropertyElement(this.elementId, "selection");
 
     // remove previous values
     while(propertyElement.hasChildNodes()){
