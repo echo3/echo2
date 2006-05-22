@@ -64,27 +64,27 @@ EchoListComponent.prototype.create = function() {
 EchoListComponent.prototype.createDhtml = function() {
     var containerElement = document.getElementById(this.containerElementId);
     
-    this.selectElement = document.createElement("div");
-    this.selectElement.id = this.elementId;
-    this.selectElement.selectedIndex = -1;
+    var selectElement = document.createElement("div");
+    selectElement.id = this.elementId;
+    selectElement.selectedIndex = -1;
     
-    EchoDomUtil.setCssText(this.selectElement, this.style);
+    EchoDomUtil.setCssText(selectElement, this.style);
     
     if (this.toolTip) {
-        this.selectElement.setAttribute("title", this.toolTip);
+        selectElement.setAttribute("title", this.toolTip);
     }
     if (this.tabIndex) {
-        this.selectElement.setAttribute("tabindex", this.tabIndex);
+        selectElement.setAttribute("tabindex", this.tabIndex);
     }
 
-    this.selectElement.style.cursor = "default";
-    this.selectElement.style.overflow = "auto";
+    selectElement.style.cursor = "default";
+    selectElement.style.overflow = "auto";
     
-    if (!this.selectElement.style.height) {
-        this.selectElement.style.height = "6em";
+    if (!selectElement.style.height) {
+        selectElement.style.height = "6em";
     }
-    if (!this.selectElement.style.border) {
-        this.selectElement.style.border = "1px inset #cfcfcf";
+    if (!selectElement.style.border) {
+        selectElement.style.border = "1px inset #cfcfcf";
     }
     
     if (this.values) {
@@ -95,47 +95,47 @@ EchoListComponent.prototype.createDhtml = function() {
             if (this.styles && this.styles[i]) {
                 optionElement.setAttribute("style", this.styles[i]);
             }
-            this.selectElement.appendChild(optionElement);
+            selectElement.appendChild(optionElement);
         }
     }
 
-    containerElement.appendChild(this.selectElement);
+    containerElement.appendChild(selectElement);
     
-    EchoEventProcessor.addHandler(this.selectElement, "click", "EchoListComponent.processClickDhtml");
+    EchoEventProcessor.addHandler(selectElement, "click", "EchoListComponent.processClickDhtml");
     if (this.rolloverStyle) {
-        EchoEventProcessor.addHandler(this.selectElement, "mouseover", "EchoListComponent.processRolloverEnter");
-        EchoEventProcessor.addHandler(this.selectElement, "mouseout", "EchoListComponent.processRolloverExit");
+        EchoEventProcessor.addHandler(selectElement, "mouseover", "EchoListComponent.processRolloverEnter");
+        EchoEventProcessor.addHandler(selectElement, "mouseout", "EchoListComponent.processRolloverExit");
     }
     if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoEventProcessor.addHandler(this.selectElement, "selectstart", "EchoListComponent.processSelectStart");
+        EchoEventProcessor.addHandler(selectElement, "selectstart", "EchoListComponent.processSelectStart");
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.selectElement, "component", this);
+    EchoDomPropertyStore.setPropertyValue(selectElement, "component", this);
 };
 
 EchoListComponent.prototype.createSelect = function() {
     var containerElement = document.getElementById(this.containerElementId);
     
-    this.selectElement = document.createElement("select");
-    this.selectElement.id = this.elementId;
+    var selectElement = document.createElement("select");
+    selectElement.id = this.elementId;
     
     if (!this.enabled) {
-        this.selectElement.disabled = true;
+        selectElement.disabled = true;
     }
 
-    EchoDomUtil.setCssText(this.selectElement, this.style);
+    EchoDomUtil.setCssText(selectElement, this.style);
     
     if (this.toolTip) {
-        this.selectElement.setAttribute("title", this.toolTip);
+        selectElement.setAttribute("title", this.toolTip);
     }
     if (this.tabIndex) {
-        this.selectElement.setAttribute("tabindex", this.tabIndex);
+        selectElement.setAttribute("tabindex", this.tabIndex);
     }
     
     if (this.renderAsListBox) {
-        this.selectElement.setAttribute("size", "5");
+        selectElement.setAttribute("size", "5");
         if (this.multipleSelection) {
-            this.selectElement.setAttribute("multiple", "multiple");
+            selectElement.setAttribute("multiple", "multiple");
         }
     }
 
@@ -147,19 +147,19 @@ EchoListComponent.prototype.createSelect = function() {
             if (this.styles && this.styles[i]) {
                 optionElement.setAttribute("style", this.styles[i]);
             }
-            this.selectElement.appendChild(optionElement);
+            selectElement.appendChild(optionElement);
         }
     }
     
-    containerElement.appendChild(this.selectElement);
+    containerElement.appendChild(selectElement);
     
-    EchoEventProcessor.addHandler(this.selectElement, "change", "EchoListComponent.processSelection");
+    EchoEventProcessor.addHandler(selectElement, "change", "EchoListComponent.processSelection");
     if (this.rolloverStyle) {
-        EchoEventProcessor.addHandler(this.selectElement, "mouseover", "EchoListComponent.processRolloverEnter");
-        EchoEventProcessor.addHandler(this.selectElement, "mouseout", "EchoListComponent.processRolloverExit");
+        EchoEventProcessor.addHandler(selectElement, "mouseover", "EchoListComponent.processRolloverEnter");
+        EchoEventProcessor.addHandler(selectElement, "mouseout", "EchoListComponent.processRolloverExit");
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.selectElement, "component", this);
+    EchoDomPropertyStore.setPropertyValue(selectElement, "component", this);
 };
 
 /**
@@ -170,39 +170,48 @@ EchoListComponent.prototype.dispose = function() {
     this.values = null;
     this.styles = null;
 
+    var selectElement = this.getElement();
     if (this.renderAsDhtml) {
-        EchoEventProcessor.removeHandler(this.selectElement, "click");
+        EchoEventProcessor.removeHandler(selectElement, "click");
         if (EchoClientProperties.get("browserInternetExplorer")) {
-            EchoEventProcessor.removeHandler(this.selectElement, "selectstart");
+            EchoEventProcessor.removeHandler(selectElement, "selectstart");
         }
     } else {
-        EchoEventProcessor.removeHandler(this.selectElement, "change");
+        EchoEventProcessor.removeHandler(selectElement, "change");
     }
 
     if (this.rolloverStyle) {
-        EchoEventProcessor.removeHandler(this.selectElement, "mouseover");
-        EchoEventProcessor.removeHandler(this.selectElement, "mouseout");
+        EchoEventProcessor.removeHandler(selectElement, "mouseover");
+        EchoEventProcessor.removeHandler(selectElement, "mouseout");
     }
     
-    EchoDomPropertyStore.dispose(this.selectElement);
-    this.selectElement = null;
+    EchoDomPropertyStore.dispose(selectElement);
 };
 
 EchoListComponent.prototype.ensureSelectionVisibleDhtml = function() {
+    var selectElement = this.getElement();
+
     //TODO finish
     if (!this.selectedIndices) {
         return;
     }
-    var scrollTop = this.selectElement.scrollTop;
-    var scrollBottom = scrollTop + this.selectElement.scrollHeight;
+    
+    var scrollTop = selectElement.scrollTop;
+    var scrollBottom = scrollTop + selectElement.scrollHeight;
     for (var i = 0; i < this.selectedIndices.length; ++i) {
-        var itemBounds = new EchoCssUtil.Bounds(this.selectElement.childNodes[i]);
+        var itemBounds = new EchoCssUtil.Bounds(selectElement.childNodes[i]);
     }
 };
 
+EchoListComponent.prototype.getElement = function() {
+    return document.getElementById(this.elementId);
+};
+
 EchoListComponent.prototype.getNodeIndex = function(node) {
+    var selectElement = this.getElement();
+    
     var itemPrefix = this.elementId + "_item_";
-    while (node != this.selectElement) {
+    while (node != selectElement) {
         if (node.nodeType == 1) {
             var id = node.getAttribute("id");
             if (id && id.indexOf(itemPrefix) == 0) {
@@ -215,14 +224,15 @@ EchoListComponent.prototype.getNodeIndex = function(node) {
 };
 
 EchoListComponent.prototype.addNullOption = function() {
-    if (EchoClientProperties.get("quirkSelectRequiresNullOption") 
+    if (EchoClientProperties.get("quirkSelectRequiresNullOption")
             && !this.renderAsListBox && !this.nullOptionActive) {
         // Add null option.
+        var selectElement = this.getElement();
         var nullOptionElement = document.createElement("option");
-        if (this.selectElement.childNodes.length > 0) {
-            this.selectElement.insertBefore(nullOptionElement, this.selectElement.options[0]);
+        if (selectElement.childNodes.length > 0) {
+            selectElement.insertBefore(nullOptionElement, selectElement.options[0]);
         } else {
-            this.selectElement.appendChild(nullOptionElement);
+            selectElement.appendChild(nullOptionElement);
         }
         this.nullOptionActive = true;
     }
@@ -231,7 +241,8 @@ EchoListComponent.prototype.addNullOption = function() {
 EchoListComponent.prototype.removeNullOption = function() {
     if (this.nullOptionActive) {
         // Remove null option.
-        this.selectElement.removeChild(this.selectElement.options[0]);
+        var selectElement = this.getElement();
+        selectElement.removeChild(selectElement.options[0]);
         this.nullOptionActive = false;
     }
 };
@@ -240,9 +251,10 @@ EchoListComponent.prototype.loadSelection = function() {
     if (this.renderAsDhtml) {
         this.loadSelectionDhtml();
     } else {
-        this.selectElement.selectedIndex = -1;
-        if (this.selectElement.options.length > 0) {
-            this.selectElement.options[0].selected = false;
+        var selectElement = this.getElement();
+        selectElement.selectedIndex = -1;
+        if (selectElement.options.length > 0) {
+            selectElement.options[0].selected = false;
         }
         
         if (!this.selectedIndices || this.selectedIndices.length == 0) {
@@ -251,9 +263,9 @@ EchoListComponent.prototype.loadSelection = function() {
             this.removeNullOption();
             var selectionSet;
             for (var i = 0; i < this.selectedIndices.length; ++i) {
-                if (this.selectedIndices[i] < this.selectElement.options.length) {
+                if (this.selectedIndices[i] < selectElement.options.length) {
                     selectionSet = true;
-                    this.selectElement.options[this.selectedIndices[i]].selected = true;
+                    selectElement.options[this.selectedIndices[i]].selected = true;
                 }
             }
             if (!selectionSet) {
@@ -264,11 +276,13 @@ EchoListComponent.prototype.loadSelection = function() {
 };
 
 EchoListComponent.prototype.loadSelectionDhtml = function() {
-    for (var i = 0; i < this.selectElement.childNodes.length; ++i) {
+    var selectElement = this.getElement();
+    
+    for (var i = 0; i < selectElement.childNodes.length; ++i) {
         if (this.styles && this.styles[i]) {
-            EchoDomUtil.setCssText(this.selectElement.childNodes[i], this.styles[i]);
+            EchoDomUtil.setCssText(selectElement.childNodes[i], this.styles[i]);
         } else {
-            EchoDomUtil.setCssText(this.selectElement.childNodes[i], "");
+            EchoDomUtil.setCssText(selectElement.childNodes[i], "");
         }
     }
     if (!this.selectedIndices) {
@@ -276,16 +290,18 @@ EchoListComponent.prototype.loadSelectionDhtml = function() {
     }
     
     for (var i = 0; i < this.selectedIndices.length; ++i) {
-        if (this.selectedIndices[i] < this.selectElement.childNodes.length) {
-            EchoCssUtil.applyStyle(this.selectElement.childNodes[this.selectedIndices[i]], 
+        if (this.selectedIndices[i] < selectElement.childNodes.length) {
+            EchoCssUtil.applyStyle(selectElement.childNodes[this.selectedIndices[i]], 
                     EchoListComponent.DHTML_SELECTION_STYLE);
         }
     }
 };
 
 EchoListComponent.prototype.processClickDhtml = function(echoEvent) {
+    var selectElement = this.getElement();
+    
     EchoDomUtil.preventEventDefault(echoEvent);
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.selectElement)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(selectElement)) {
         return;
     }
     var index = this.getNodeIndex(echoEvent.target);
@@ -315,8 +331,10 @@ EchoListComponent.prototype.processClickDhtml = function(echoEvent) {
 };
 
 EchoListComponent.prototype.processRolloverEnter = function(echoEvent) {
+    var selectElement = this.getElement();
+    
     EchoDomUtil.preventEventDefault(echoEvent);
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.selectElement)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(selectElement)) {
         return;
     }
     var index = this.getNodeIndex(echoEvent.target);
@@ -327,8 +345,10 @@ EchoListComponent.prototype.processRolloverEnter = function(echoEvent) {
 };
 
 EchoListComponent.prototype.processRolloverExit = function(echoEvent) {
+    var selectElement = this.getElement();
+
     EchoDomUtil.preventEventDefault(echoEvent);
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.selectElement)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(selectElement)) {
         return;
     }
     var index = this.getNodeIndex(echoEvent.target);
@@ -345,7 +365,9 @@ EchoListComponent.prototype.processRolloverExit = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoListComponent.prototype.processSelection = function(echoEvent) {    
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.selectElement)) {
+    var selectElement = this.getElement();
+
+    if (!this.enabled || !EchoClientEngine.verifyInput(selectElement)) {
         this.loadSelection();
         return;
     }
@@ -355,11 +377,13 @@ EchoListComponent.prototype.processSelection = function(echoEvent) {
 };
 
 EchoListComponent.prototype.setRolloverIndex = function(rolloverIndex) {
+    var selectElement = this.getElement();
+    
     if (this.rolloverIndex != -1) {
         var oldElement;
         var oldStyle = null;
         if (this.renderAsDhtml) {
-            oldElement = this.selectElement.childNodes[this.rolloverIndex];
+            oldElement = selectElement.childNodes[this.rolloverIndex];
             // Determine if element was selected and if so load selection style as "old style".
             if (this.selectedIndices) {
                 for (var i = 0; i < this.selectedIndices.length; ++i) {
@@ -370,7 +394,7 @@ EchoListComponent.prototype.setRolloverIndex = function(rolloverIndex) {
                 }
             }
         } else {
-            oldElement = this.selectElement.options[this.rolloverIndex];
+            oldElement = selectElement.options[this.rolloverIndex];
         }
         if (!oldStyle) {
             oldStyle = this.styles ? this.styles[this.rolloverIndex] : "";
@@ -380,15 +404,17 @@ EchoListComponent.prototype.setRolloverIndex = function(rolloverIndex) {
     this.rolloverIndex = rolloverIndex;
     if (this.rolloverIndex != -1) {
         var newElement = this.renderAsDhtml 
-                ? this.selectElement.childNodes[this.rolloverIndex] : this.selectElement.options[this.rolloverIndex];
+                ? selectElement.childNodes[this.rolloverIndex] : selectElement.options[this.rolloverIndex];
         EchoCssUtil.applyStyle(newElement, this.rolloverStyle);
     }
 };
 
 EchoListComponent.prototype.storeSelection = function() {
+    var selectElement = this.getElement();
+
     this.selectedIndices = new Array();
-    for (var i = 0; i < this.selectElement.options.length; ++i) {
-        if (this.selectElement.options[i].selected) {
+    for (var i = 0; i < selectElement.options.length; ++i) {
+        if (selectElement.options[i].selected) {
             this.selectedIndices.push(i);
         }
     }
