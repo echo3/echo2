@@ -39,20 +39,20 @@
  * @param elementId the id of the supported text component element
  */
 EchoTextComponent = function(elementId) {
-    this.element = document.getElementById(elementId);
+    this.elementId = elementId;
 };
 
 EchoTextComponent.prototype.dispose = function() {
-    EchoEventProcessor.removeHandler(this.element, "blur");
-    EchoEventProcessor.removeHandler(this.element, "focus");
-    EchoEventProcessor.removeHandler(this.element, "keyup");
-    EchoDomUtil.removeEventListener(this.element, "keypress", EchoTextComponent.processKeyPress, false);    
+    var element = this.getElement();
+    EchoEventProcessor.removeHandler(element, "blur");
+    EchoEventProcessor.removeHandler(element, "focus");
+    EchoEventProcessor.removeHandler(element, "keyup");
+    EchoDomUtil.removeEventListener(element, "keypress", EchoTextComponent.processKeyPress, false);    
 
     // Remove any updates to text component that occurred during client/server transaction.
-    EchoClientMessage.removePropertyElement(this.element.id, "text");
+    EchoClientMessage.removePropertyElement(element.id, "text");
     
-    EchoDomPropertyStore.dispose(this.element);
-    this.element = null;
+    EchoDomPropertyStore.dispose(element);
 };
 
 /**
@@ -66,62 +66,68 @@ EchoTextComponent.prototype.doAction = function() {
         return;
     }
     
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element, false)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement(), false)) {
         // Don't process actions when client/server transaction in progress.
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }
     
     this.updateClientMessage();
-    EchoClientMessage.setActionValue(this.element.id, "action");
+    EchoClientMessage.setActionValue(this.elementId, "action");
     EchoServerTransaction.connect();
 };
 
+EchoTextComponent.prototype.getElement = function() {
+    return document.getElementById(this.elementId);
+};
+
 EchoTextComponent.prototype.init = function() {
+    var element = this.getElement();
+    
     if (!this.enabled) {
-        this.element.readOnly = true;
+        element.readOnly = true;
     }
     if (this.text) {
-        this.element.value = this.text;
+        element.value = this.text;
     }
 
     if (this.horizontalScroll != 0) {
-        this.element.scrollLeft = this.horizontalScroll;
+        element.scrollLeft = this.horizontalScroll;
     }
     
     if (this.verticalScroll != 0) {
         if (EchoClientProperties.get("quirkIERepaint")) {
             // Avoid IE quirk where browser will fail to set scroll bar position.
-            var originalWidth = this.element.style.width;
-            var temporaryWidth = parseInt(this.element.clientWidth) - 1;
-            this.element.style.width = temporaryWidth + "px";
-            this.element.style.width = originalWidth;
+            var originalWidth = element.style.width;
+            var temporaryWidth = parseInt(element.clientWidth) - 1;
+            element.style.width = temporaryWidth + "px";
+            element.style.width = originalWidth;
         }
-        this.element.scrollTop = this.verticalScroll;
+        element.scrollTop = this.verticalScroll;
     }
     
     if (EchoClientProperties.get("quirkMozillaTextInputRepaint")) {
         // Avoid Mozilla quirk where text will be rendered outside of text field
         // (this appears to be a Mozilla bug).
-        var noValue = !this.element.value;
+        var noValue = !element.value;
         if (noValue) {
-            this.element.value = "-";
+            element.value = "-";
         }
-        var currentWidth = this.element.style.width;
-        this.element.style.width = "20px";
-        this.element.style.width = currentWidth;
+        var currentWidth = element.style.width;
+        element.style.width = "20px";
+        element.style.width = currentWidth;
         if (noValue) {
-            this.element.value = "";
+            element.value = "";
         }
     }
     
-    EchoEventProcessor.addHandler(this.element, "blur", "EchoTextComponent.processBlur");
-    EchoEventProcessor.addHandler(this.element, "focus", "EchoTextComponent.processFocus");
-    EchoEventProcessor.addHandler(this.element, "keyup", "EchoTextComponent.processKeyUp");
+    EchoEventProcessor.addHandler(element, "blur", "EchoTextComponent.processBlur");
+    EchoEventProcessor.addHandler(element, "focus", "EchoTextComponent.processFocus");
+    EchoEventProcessor.addHandler(element, "keyup", "EchoTextComponent.processKeyUp");
     
-    EchoDomUtil.addEventListener(this.element, "keypress", EchoTextComponent.processKeyPress, false);
+    EchoDomUtil.addEventListener(element, "keypress", EchoTextComponent.processKeyPress, false);
     
-    EchoDomPropertyStore.setPropertyValue(this.element, "component", this);
+    EchoDomPropertyStore.setPropertyValue(element, "component", this);
 };
 
 /**
@@ -132,12 +138,12 @@ EchoTextComponent.prototype.init = function() {
  *        <code>EchoEventProcessor</code>
  */
 EchoTextComponent.prototype.processBlur = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
         return;
     }
     
     this.updateClientMessage();
-    EchoFocusManager.setFocusedState(this.element.id, false);
+    EchoFocusManager.setFocusedState(this.elementId, false);
 };
 
 /**
@@ -148,11 +154,11 @@ EchoTextComponent.prototype.processBlur = function(echoEvent) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTextComponent.prototype.processFocus = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
         return;
     }
     
-    EchoFocusManager.setFocusedState(this.element.id, true);
+    EchoFocusManager.setFocusedState(this.elementId, true);
 };
 
 /**
@@ -163,7 +169,7 @@ EchoTextComponent.prototype.processFocus = function(echoEvent) {
  * @param e the DOM Level 2 event
  */
 EchoTextComponent.prototype.processKeyPress = function(e) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element, true)) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement(), true)) {
         EchoDomUtil.preventEventDefault(e);
         return;
     }
@@ -180,14 +186,15 @@ EchoTextComponent.prototype.processKeyPress = function(e) {
  *        <code>EchoEventProcessor</code>
  */
 EchoTextComponent.prototype.processKeyUp = function(echoEvent) {
-    if (!this.enabled || !EchoClientEngine.verifyInput(this.element, true)) {
+    var element = this.getElement();
+    if (!this.enabled || !EchoClientEngine.verifyInput(element, true)) {
         EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }
     
     if (this.maximumLength >= 0) {
-        if (this.element.value && this.element.value.length > this.maximumLength) {
-            this.element.value = this.element.value.substring(0, this.maximumLength);
+        if (element.value && element.value.length > this.maximumLength) {
+            element.value = element.value.substring(0, this.maximumLength);
         }
     }
     
@@ -198,15 +205,17 @@ EchoTextComponent.prototype.processKeyUp = function(echoEvent) {
  * Updates the component state in the outgoing <code>ClientMessage</code>.
  */
 EchoTextComponent.prototype.updateClientMessage = function() {
-    var textPropertyElement = EchoClientMessage.createPropertyElement(this.element.id, "text");
+    var element = this.getElement();
+    var textPropertyElement = EchoClientMessage.createPropertyElement(this.elementId, "text");
+    
     if (textPropertyElement.firstChild) {
-        textPropertyElement.firstChild.nodeValue = this.element.value;
+        textPropertyElement.firstChild.nodeValue = element.value;
     } else {
-        textPropertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(this.element.value));
+        textPropertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(element.value));
     }
     
-    EchoClientMessage.setPropertyValue(this.element.id, "horizontalScroll", this.element.scrollLeft);
-    EchoClientMessage.setPropertyValue(this.element.id, "verticalScroll", this.element.scrollTop);
+    EchoClientMessage.setPropertyValue(this.elementId, "horizontalScroll", element.scrollLeft);
+    EchoClientMessage.setPropertyValue(this.elementId, "verticalScroll", element.scrollTop);
 };
 
 /**
