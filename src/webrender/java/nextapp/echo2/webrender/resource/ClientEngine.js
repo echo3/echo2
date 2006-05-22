@@ -1993,10 +1993,7 @@ EchoHttpConnection.prototype.dispose = function() {
     this.messageObject = null;
     this.responseHandler = null;
     this.invalidResponseHandler = null;
-    if (this.xmlHttpRequest) {
-        this.xmlHttpRequest.onreadystatechange = EchoHttpConnection.nullMethod;
-        this.xmlHttpRequest = null;
-    }
+    this.xmlHttpRequest = null;
     this.disposed = true;
 };
 
