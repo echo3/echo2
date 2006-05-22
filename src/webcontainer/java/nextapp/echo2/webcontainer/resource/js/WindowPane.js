@@ -77,6 +77,12 @@ EchoWindowPane = function(elementId, containerElementId) {
 
 EchoWindowPane.activeInstance = null;
 
+/**
+ * Id suffixes of border elements.
+ */
+EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES = new Array("_border_tl", "_border_t", "_border_tr",
+        "_border_l", "_border_r", "_border_bl", "_border_b", "_border_br");
+
 EchoWindowPane.DEFAULT_CLOSE_ICON_INSETS = "4px";
 EchoWindowPane.DEFAULT_ICON_INSETS = "4px";
 EchoWindowPane.DEFAULT_TITLE_INSETS = "4px";
@@ -91,19 +97,17 @@ EchoWindowPane.DEFAULT_BORDER = new EchoCoreProperties.FillImageBorder("#00007f"
 
 EchoWindowPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
+    var windowPaneDivElement = document.createElement("div");
+    windowPaneDivElement.id = this.elementId;
+    windowPaneDivElement.style.position = "absolute";
+    windowPaneDivElement.style.zIndex = "1";
     
-    this.windowPaneDivElement = document.createElement("div");
-    this.windowPaneDivElement.id = this.elementId;
-    this.windowPaneDivElement.style.position = "absolute";
-    this.windowPaneDivElement.style.zIndex = "1";
-    
-    var containerWidth = this.getContainerWidth();
-    var containerHeight = this.getContainerHeight();
+    this.loadContainerSize();
     
     if (this.positionX == null) {
-        if (containerWidth && containerHeight) {
+        if (this.containerWidth && this.containerHeight) {
             // Only center window if valid data exist for container width and height.
-	        this.positionX = Math.round((containerWidth - this.width) / 2);
+	        this.positionX = Math.round((this.containerWidth - this.width) / 2);
 	        if (this.positionX < 0) {
 	            this.positionX = 0;
 	        }
@@ -112,9 +116,9 @@ EchoWindowPane.prototype.create = function() {
         }
     }
     if (this.positionY == null) {
-        if (containerWidth && containerHeight) {
+        if (this.containerWidth && this.containerHeight) {
             // Only center window if valid data exist for container width and height.
-	        this.positionY = Math.round((containerHeight - this.height) / 2);
+	        this.positionY = Math.round((this.containerHeight - this.height) / 2);
 	        if (this.positionY < 0) {
 	            this.positionY = 0;
 	        }
@@ -122,214 +126,219 @@ EchoWindowPane.prototype.create = function() {
             this.positionY = 0;
         }
     }
-    this.windowPaneDivElement.style.left = this.positionX + "px";
-    this.windowPaneDivElement.style.top = this.positionY + "px";
-    this.windowPaneDivElement.style.width = this.width + "px";
-    this.windowPaneDivElement.style.height = this.height + "px";
+    windowPaneDivElement.style.left = this.positionX + "px";
+    windowPaneDivElement.style.top = this.positionY + "px";
+    windowPaneDivElement.style.width = this.width + "px";
+    windowPaneDivElement.style.height = this.height + "px";
     
     var borderSideWidth = this.width - this.border.borderInsets.left - this.border.borderInsets.right;
     var borderSideHeight = this.height - this.border.borderInsets.top - this.border.borderInsets.bottom;
+    
+    var borderDivElements = new Array(8);
     
     // Render top row
     if (this.border.borderInsets.top > 0) {
         // Render top left corner
         if (this.border.borderInsets.left > 0) {
-            this.borderTLDivElement = document.createElement("div");
-            this.borderTLDivElement.id = this.elementId + "_border_tl";
-            this.borderTLDivElement.style.position = "absolute";
-            this.borderTLDivElement.style.left = "0px";
-            this.borderTLDivElement.style.top = "0px";
-            this.borderTLDivElement.style.width = this.border.borderInsets.left + "px";
-            this.borderTLDivElement.style.height = this.border.borderInsets.top + "px";
+            borderDivElements[0] = document.createElement("div");
+            borderDivElements[0].id = this.elementId + "_border_tl";
+            borderDivElements[0].style.position = "absolute";
+            borderDivElements[0].style.left = "0px";
+            borderDivElements[0].style.top = "0px";
+            borderDivElements[0].style.width = this.border.borderInsets.left + "px";
+            borderDivElements[0].style.height = this.border.borderInsets.top + "px";
             if (this.border.color != null) {
-                this.borderTLDivElement.style.backgroundColor = this.border.color;
+                borderDivElements[0].style.backgroundColor = this.border.color;
             }
             if (this.resizable) {
-                this.borderTLDivElement.style.cursor = "nw-resize";
+                borderDivElements[0].style.cursor = "nw-resize";
             }
             if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TL]) {
-                EchoCssUtil.applyStyle(this.borderTLDivElement, 
+                EchoCssUtil.applyStyle(borderDivElements[0], 
                         this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TL]);
             }
-            this.windowPaneDivElement.appendChild(this.borderTLDivElement);
+            windowPaneDivElement.appendChild(borderDivElements[0]);
         }
         
         // Render top side
-        this.borderTDivElement = document.createElement("div");
-        this.borderTDivElement.id = this.elementId + "_border_t";
-        this.borderTDivElement.style.position = "absolute";
-        this.borderTDivElement.style.left = this.border.borderInsets.left + "px";
-        this.borderTDivElement.style.top = "0px";
-        this.borderTDivElement.style.width = borderSideWidth + "px";
-        this.borderTDivElement.style.height = this.border.borderInsets.top + "px";
+        borderDivElements[1] = document.createElement("div");
+        borderDivElements[1].id = this.elementId + "_border_t";
+        borderDivElements[1].style.position = "absolute";
+        borderDivElements[1].style.left = this.border.borderInsets.left + "px";
+        borderDivElements[1].style.top = "0px";
+        borderDivElements[1].style.width = borderSideWidth + "px";
+        borderDivElements[1].style.height = this.border.borderInsets.top + "px";
         if (this.border.color != null) {
-            this.borderTDivElement.style.backgroundColor = this.border.color;
+            borderDivElements[1].style.backgroundColor = this.border.color;
         }
         if (this.resizable) {
-            this.borderTDivElement.style.cursor = "n-resize";
+            borderDivElements[1].style.cursor = "n-resize";
         }
         if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_T]) {
-            EchoCssUtil.applyStyle(this.borderTDivElement, 
+            EchoCssUtil.applyStyle(borderDivElements[1], 
                     this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_T]);
         }
-        this.windowPaneDivElement.appendChild(this.borderTDivElement);
+        windowPaneDivElement.appendChild(borderDivElements[1]);
 
         // Render top right corner
         if (this.border.borderInsets.right > 0) {
-            this.borderTRDivElement = document.createElement("div");
-            this.borderTRDivElement.id = this.elementId + "_border_tr";
-            this.borderTRDivElement.style.position = "absolute";
-            this.borderTRDivElement.style.right = "0px";
-            this.borderTRDivElement.style.top = "0px";
-            this.borderTRDivElement.style.width = this.border.borderInsets.right + "px";
-            this.borderTRDivElement.style.height = this.border.borderInsets.top + "px";
+            borderDivElements[2] = document.createElement("div");
+            borderDivElements[2].id = this.elementId + "_border_tr";
+            borderDivElements[2].style.position = "absolute";
+            borderDivElements[2].style.right = "0px";
+            borderDivElements[2].style.top = "0px";
+            borderDivElements[2].style.width = this.border.borderInsets.right + "px";
+            borderDivElements[2].style.height = this.border.borderInsets.top + "px";
             if (this.border.color != null) {
-                this.borderTRDivElement.style.backgroundColor = this.border.color;
+                borderDivElements[2].style.backgroundColor = this.border.color;
             }
             if (this.resizable) {
-                this.borderTRDivElement.style.cursor = "ne-resize";
+                borderDivElements[2].style.cursor = "ne-resize";
             }
             if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TR]) {
-                EchoCssUtil.applyStyle(this.borderTRDivElement,
+                EchoCssUtil.applyStyle(borderDivElements[2],
                         this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_TR]);
             }
-            this.windowPaneDivElement.appendChild(this.borderTRDivElement);
+            windowPaneDivElement.appendChild(borderDivElements[2]);
         }
     }
     
     // Render left side
     if (this.border.borderInsets.left > 0) {
-        this.borderLDivElement = document.createElement("div");
-        this.borderLDivElement.id = this.elementId + "_border_l";
-        this.borderLDivElement.style.position = "absolute";
-        this.borderLDivElement.style.left = "0px";
-        this.borderLDivElement.style.top = this.border.borderInsets.top + "px";
-        this.borderLDivElement.style.width = this.border.borderInsets.left + "px";
-        this.borderLDivElement.style.height = borderSideHeight + "px";
+        borderDivElements[3] = document.createElement("div");
+        borderDivElements[3].id = this.elementId + "_border_l";
+        borderDivElements[3].style.position = "absolute";
+        borderDivElements[3].style.left = "0px";
+        borderDivElements[3].style.top = this.border.borderInsets.top + "px";
+        borderDivElements[3].style.width = this.border.borderInsets.left + "px";
+        borderDivElements[3].style.height = borderSideHeight + "px";
         if (this.border.color != null) {
-            this.borderLDivElement.style.backgroundColor = this.border.color;
+            borderDivElements[3].style.backgroundColor = this.border.color;
         }
         if (this.resizable) {
-            this.borderLDivElement.style.cursor = "w-resize";
+            borderDivElements[3].style.cursor = "w-resize";
         }
         if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_L]) {
-            EchoCssUtil.applyStyle(this.borderLDivElement,
+            EchoCssUtil.applyStyle(borderDivElements[3],
                     this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_L]);
         }
-        this.windowPaneDivElement.appendChild(this.borderLDivElement);
+        windowPaneDivElement.appendChild(borderDivElements[3]);
     }
     
     // Render right side
     if (this.border.borderInsets.right > 0) {
-        this.borderRDivElement = document.createElement("div");
-        this.borderRDivElement.id = this.elementId + "_border_r";
-        this.borderRDivElement.style.position = "absolute";
-        this.borderRDivElement.style.right = "0px";
-        this.borderRDivElement.style.top = this.border.borderInsets.top + "px";
-        this.borderRDivElement.style.width = this.border.borderInsets.right + "px";
-        this.borderRDivElement.style.height = borderSideHeight + "px";
+        borderDivElements[4] = document.createElement("div");
+        borderDivElements[4].id = this.elementId + "_border_r";
+        borderDivElements[4].style.position = "absolute";
+        borderDivElements[4].style.right = "0px";
+        borderDivElements[4].style.top = this.border.borderInsets.top + "px";
+        borderDivElements[4].style.width = this.border.borderInsets.right + "px";
+        borderDivElements[4].style.height = borderSideHeight + "px";
         if (this.border.color != null) {
-            this.borderRDivElement.style.backgroundColor = this.border.color;
+            borderDivElements[4].style.backgroundColor = this.border.color;
         }
         if (this.resizable) {
-            this.borderRDivElement.style.cursor = "e-resize";
+            borderDivElements[4].style.cursor = "e-resize";
         }
         if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_R]) {
-            EchoCssUtil.applyStyle(this.borderRDivElement,
+            EchoCssUtil.applyStyle(borderDivElements[4],
                     this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_R]);
         }
-        this.windowPaneDivElement.appendChild(this.borderRDivElement);
+        windowPaneDivElement.appendChild(borderDivElements[4]);
     }
     
     // Render bottom row
     if (this.border.borderInsets.bottom > 0) {
         // Render bottom left corner
         if (this.border.borderInsets.left > 0) {
-            this.borderBLDivElement = document.createElement("div");
-            this.borderBLDivElement.id = this.elementId + "_border_bl";
-            this.borderBLDivElement.style.position = "absolute";
-            this.borderBLDivElement.style.left = "0px";
-            this.borderBLDivElement.style.bottom = "0px";
-            this.borderBLDivElement.style.width = this.border.borderInsets.left + "px";
-            this.borderBLDivElement.style.height = this.border.borderInsets.bottom + "px";
+            borderDivElements[5] = document.createElement("div");
+            borderDivElements[5].id = this.elementId + "_border_bl";
+            borderDivElements[5].style.position = "absolute";
+            borderDivElements[5].style.left = "0px";
+            borderDivElements[5].style.bottom = "0px";
+            borderDivElements[5].style.width = this.border.borderInsets.left + "px";
+            borderDivElements[5].style.height = this.border.borderInsets.bottom + "px";
             if (this.border.color != null) {
-                this.borderBLDivElement.style.backgroundColor = this.border.color;
+                borderDivElements[5].style.backgroundColor = this.border.color;
             }
             if (this.resizable) {
-                this.borderBLDivElement.style.cursor = "sw-resize";
+                borderDivElements[5].style.cursor = "sw-resize";
             }
             if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BL]) {
-                EchoCssUtil.applyStyle(this.borderBLDivElement, 
+                EchoCssUtil.applyStyle(borderDivElements[5], 
                         this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BL]);
             }
-            this.windowPaneDivElement.appendChild(this.borderBLDivElement);
+            windowPaneDivElement.appendChild(borderDivElements[5]);
         }
 
         // Render bottom side
-        this.borderBDivElement = document.createElement("div");
-        this.borderBDivElement.id = this.elementId + "_border_b";
-        this.borderBDivElement.style.position = "absolute";
-        this.borderBDivElement.style.left = this.border.borderInsets.left + "px";
-        this.borderBDivElement.style.bottom = "0px";
-        this.borderBDivElement.style.width = borderSideWidth + "px";
-        this.borderBDivElement.style.height = this.border.borderInsets.bottom + "px";
+        borderDivElements[6] = document.createElement("div");
+        borderDivElements[6].id = this.elementId + "_border_b";
+        borderDivElements[6].style.position = "absolute";
+        borderDivElements[6].style.left = this.border.borderInsets.left + "px";
+        borderDivElements[6].style.bottom = "0px";
+        borderDivElements[6].style.width = borderSideWidth + "px";
+        borderDivElements[6].style.height = this.border.borderInsets.bottom + "px";
         if (this.border.color != null) {
-            this.borderBDivElement.style.backgroundColor = this.border.color;
+            borderDivElements[6].style.backgroundColor = this.border.color;
         }
         if (this.resizable) {
-            this.borderBDivElement.style.cursor = "s-resize";
+            borderDivElements[6].style.cursor = "s-resize";
         }
         if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_B]) {
-            EchoCssUtil.applyStyle(this.borderBDivElement, 
+            EchoCssUtil.applyStyle(borderDivElements[6], 
                     this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_B]);
         }
-        this.windowPaneDivElement.appendChild(this.borderBDivElement);
+        windowPaneDivElement.appendChild(borderDivElements[6]);
         
         // Render bottom right corner
         if (this.border.borderInsets.right > 0) {
-            this.borderBRDivElement = document.createElement("div");
-            this.borderBRDivElement.id = this.elementId + "_border_br";
-            this.borderBRDivElement.style.position = "absolute";
-            this.borderBRDivElement.style.right = "0px";
-            this.borderBRDivElement.style.bottom = "0px";
-            this.borderBRDivElement.style.width = this.border.borderInsets.right + "px";
-            this.borderBRDivElement.style.height = this.border.borderInsets.bottom + "px";
+            borderDivElements[7] = document.createElement("div");
+            borderDivElements[7].id = this.elementId + "_border_br";
+            borderDivElements[7].style.position = "absolute";
+            borderDivElements[7].style.right = "0px";
+            borderDivElements[7].style.bottom = "0px";
+            borderDivElements[7].style.width = this.border.borderInsets.right + "px";
+            borderDivElements[7].style.height = this.border.borderInsets.bottom + "px";
             if (this.border.color != null) {
-                this.borderBRDivElement.style.backgroundColor = this.border.color;
+                borderDivElements[7].style.backgroundColor = this.border.color;
             }
             if (this.resizable) {
-                this.borderBRDivElement.style.cursor = "se-resize";
+                borderDivElements[7].style.cursor = "se-resize";
             }
             if (this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BR]) {
-                EchoCssUtil.applyStyle(this.borderBRDivElement, 
+                EchoCssUtil.applyStyle(borderDivElements[7], 
                         this.border.fillImages[EchoCoreProperties.FillImageBorder.IMAGE_BR]);
             }
-            this.windowPaneDivElement.appendChild(this.borderBRDivElement);
+            windowPaneDivElement.appendChild(borderDivElements[7]);
         }
     }
     
     // Render Title Bar
-    this.titleBarDivElement = document.createElement("div");
-    this.titleBarDivElement.id = this.elementId + "_titlebar";
-    this.titleBarDivElement.style.position = "absolute";
-    this.titleBarDivElement.style.zIndex = 3;
+    var titleBarDivElement = document.createElement("div");
+    titleBarDivElement.id = this.elementId + "_titlebar";
+    titleBarDivElement.style.position = "absolute";
+    titleBarDivElement.style.zIndex = 3;
+
     if (this.titleBackground) {
-        this.titleBarDivElement.style.backgroundColor = this.titleBackground;
+        titleBarDivElement.style.backgroundColor = this.titleBackground;
     }
+
+    titleBarDivElement.style.backgroundColor = this.titleBackground;
     if (this.titleBackgroundImage) {
-        EchoCssUtil.applyStyle(this.titleBarDivElement, this.titleBackgroundImage);
+       EchoCssUtil.applyStyle(titleBarDivElement, this.titleBackgroundImage);
     }
     if (!this.titleBackground && !this.titleBackgroundImage) {
-        this.titleBarDivElement.style.backgroundColor = EchoWindowPane.DEFAULT_TITLE_BACKGROUND;
+        titleBarDivElement.style.backgroundColor = EchoWindowPane.DEFAULT_TITLE_BACKGROUND;
     }
-    this.titleBarDivElement.style.color = this.titleForeground;
-    this.titleBarDivElement.style.top = this.border.contentInsets.top + "px";
-    this.titleBarDivElement.style.left = this.border.contentInsets.left + "px";
-    this.titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
-    this.titleBarDivElement.style.height = this.titleHeight + "px";
-    this.titleBarDivElement.style.overflow = "hidden";
+    titleBarDivElement.style.color = this.titleForeground;
+    titleBarDivElement.style.top = this.border.contentInsets.top + "px";
+    titleBarDivElement.style.left = this.border.contentInsets.left + "px";
+    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
+    titleBarDivElement.style.height = this.titleHeight + "px";
+    titleBarDivElement.style.overflow = "hidden";
     if (this.movable) {
-        this.titleBarDivElement.style.cursor = "move";
+        titleBarDivElement.style.cursor = "move";
     }
     
     if (this.icon) {
@@ -339,7 +348,7 @@ EchoWindowPane.prototype.create = function() {
         if (this.iconInsets != null) {
             titleIconDivElement.style.padding = this.iconInsets;
         }
-        this.titleBarDivElement.appendChild(titleIconDivElement);
+        titleBarDivElement.appendChild(titleIconDivElement);
         var iconImgElement = document.createElement("img");
         iconImgElement.setAttribute("src", this.icon);
         titleIconDivElement.appendChild(iconImgElement);
@@ -365,29 +374,30 @@ EchoWindowPane.prototype.create = function() {
 	        EchoCssUtil.applyStyle(titleTextDivElement, this.titleFont);
 	    }
         titleTextDivElement.appendChild(document.createTextNode(this.title));
-        this.titleBarDivElement.appendChild(titleTextDivElement);
+        titleBarDivElement.appendChild(titleTextDivElement);
     }
 
+    var closeDivElement = null;
     if (this.closable) {
-        this.closeDivElement = document.createElement("div");
-        this.closeDivElement.id = this.elementId + "_close";
-        this.closeDivElement.style.position = "absolute";
-        this.closeDivElement.style.right = "0px";
-        this.closeDivElement.style.cursor = "pointer";
+        closeDivElement = document.createElement("div");
+        closeDivElement.id = this.elementId + "_close";
+        closeDivElement.style.position = "absolute";
+        closeDivElement.style.right = "0px";
+        closeDivElement.style.cursor = "pointer";
         if (this.closeIconInsets) {
-            this.closeDivElement.style.padding = this.closeIconInsets;
+            closeDivElement.style.padding = this.closeIconInsets;
         }
         if (this.closeIcon) {
             var closeImgElement = document.createElement("img");
             closeImgElement.setAttribute("src", this.closeIcon);
-            this.closeDivElement.appendChild(closeImgElement);
+            closeDivElement.appendChild(closeImgElement);
         } else {
-            this.closeDivElement.appendChild(document.createTextNode("[X]"));
+            closeDivElement.appendChild(document.createTextNode("[X]"));
         }
-        this.titleBarDivElement.appendChild(this.closeDivElement);
+        titleBarDivElement.appendChild(closeDivElement);
     }
 
-    this.windowPaneDivElement.appendChild(this.titleBarDivElement);
+    windowPaneDivElement.appendChild(titleBarDivElement);
     
     // Render Content Area
     
@@ -415,7 +425,7 @@ EchoWindowPane.prototype.create = function() {
     if (this.insets != null) {
         contentDivElement.style.padding = this.insets;
     }
-    this.windowPaneDivElement.appendChild(contentDivElement);
+    windowPaneDivElement.appendChild(contentDivElement);
 
     if (EchoClientProperties.get("quirkIESelectZIndex")) {
         // Render Select Field Masking IFRAME.
@@ -435,33 +445,30 @@ EchoWindowPane.prototype.create = function() {
         maskDivElement.appendChild(maskIFrameElement);
         
 	    EchoVirtualPosition.register(maskDivElement.id);
-	    this.windowPaneDivElement.appendChild(maskDivElement);
+	    windowPaneDivElement.appendChild(maskDivElement);
     }
     
-    containerElement.appendChild(this.windowPaneDivElement);
+    containerElement.appendChild(windowPaneDivElement);
 
-    EchoDomPropertyStore.setPropertyValue(this.windowPaneDivElement, "component", this);
+    EchoDomPropertyStore.setPropertyValue(windowPaneDivElement, "component", this);
     
     if (this.movable) {
-        EchoEventProcessor.addHandler(this.titleBarDivElement, "mousedown", 
+        EchoEventProcessor.addHandler(titleBarDivElement, "mousedown", 
                 "EchoWindowPane.processTitleBarMouseDown");
     }
 
     if (this.resizable) {
-        EchoEventProcessor.addHandler(this.borderTLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderTDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderTRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderBLDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderBDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
-        EchoEventProcessor.addHandler(this.borderBRDivElement, "mousedown", "EchoWindowPane.processBorderMouseDown");
+        for (var i = 0; i < borderDivElements.length; ++i) {
+            if (borderDivElements[i]) {
+                EchoEventProcessor.addHandler(borderDivElements[i], "mousedown", "EchoWindowPane.processBorderMouseDown");
+            }
+        }
     }
     
     if (this.closable) {
         // MouseDown event handler is added to avoid initiating a title-bar drag when close button is clicked.
-        EchoEventProcessor.addHandler(this.closeDivElement, "mousedown", "EchoWindowPane.nullEventHandler");
-        EchoEventProcessor.addHandler(this.closeDivElement, "click", "EchoWindowPane.processClose");
+        EchoEventProcessor.addHandler(closeDivElement, "mousedown", "EchoWindowPane.nullEventHandler");
+        EchoEventProcessor.addHandler(closeDivElement, "click", "EchoWindowPane.processClose");
     }
 
     EchoWindowPane.ZIndexManager.add(this.containerComponentElementId, this.elementId);
@@ -471,59 +478,42 @@ EchoWindowPane.prototype.dispose = function() {
     this.removeListeners();
 
     if (this.movable) {
-        EchoEventProcessor.removeHandler(this.titleBarDivElement, "mousedown");
+        var titleBarDivElement = document.getElementById(this.elementId + "_titlebar");
+        EchoEventProcessor.removeHandler(titleBarDivElement, "mousedown");
     }
     
     if (this.closable) {
-        EchoEventProcessor.removeHandler(this.closeDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.closeDivElement, "click");
+        var closeDivElement = document.getElementById(this.elementId + "_close");
+        EchoEventProcessor.removeHandler(closeDivElement, "mousedown");
+        EchoEventProcessor.removeHandler(closeDivElement, "click");
     }
 
     if (this.resizable) {
-        EchoEventProcessor.removeHandler(this.borderTLDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderTDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderTRDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderLDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderRDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderBLDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderBDivElement, "mousedown");
-        EchoEventProcessor.removeHandler(this.borderBRDivElement, "mousedown");
+        for (var i = 0; i < EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES.length; ++i) {
+            var borderElementId = this.elementId + EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES[i];
+            EchoEventProcessor.removeHandler(borderElementId, "mousedown");
+        }
     }
 
     EchoWindowPane.ZIndexManager.remove(this.containerComponentElementId, this.elementId);
     
-    EchoDomPropertyStore.dispose(this.windowPaneDivElement);
-
-    this.windowPaneDivElement = undefined;
-    this.closeDivElement = undefined;
-    this.titleBarDivElement = undefined;
-         
-    this.borderTLDivElement = undefined;
-    this.borderTDivElement = undefined;
-    this.borderTRDivElement = undefined;
-    this.borderLDivElement = undefined;
-    this.borderRDivElement = undefined;
-    this.borderBLDivElement = undefined;
-    this.borderBDivElement = undefined;
-    this.borderBRDivElement = undefined;
+    EchoDomPropertyStore.dispose(this.elementId);
 };
 
-EchoWindowPane.prototype.getContainerHeight = function() {
+/**
+ * Determines dimensions of containing region and stores resultant values in
+ * containerWidth/containerHeight properties of WindowPane object.
+ */
+EchoWindowPane.prototype.loadContainerSize = function() {
     var containerElement = document.getElementById(this.containerElementId);
-    var height = containerElement.offsetHeight;
-    if (height == 0) {
-        height = containerElement.parentNode.offsetHeight;
+    this.containerWidth = containerElement.offsetWidth;
+    if (this.containerWidth == 0) {
+        this.containerWidth = containerElement.parentNode.offsetWidth;
     }
-    return height;
-};
-
-EchoWindowPane.prototype.getContainerWidth = function() {
-    var containerElement = document.getElementById(this.containerElementId);
-    var width = containerElement.offsetWidth;
-    if (width == 0) {
-        width = containerElement.parentNode.offsetWidth;
+    this.containerHeight = containerElement.offsetHeight;
+    if (this.containerHeight == 0) {
+        this.containerHeight = containerElement.parentNode.offsetHeight;
     }
-    return width;
 };
 
 EchoWindowPane.prototype.processBorderMouseDown = function(echoEvent) {
@@ -664,20 +654,29 @@ EchoWindowPane.prototype.raise = function() {
 };
 
 EchoWindowPane.prototype.redraw = function() {
+    var windowPaneDivElement = document.getElementById(this.elementId);
+
+    var titleBarDivElement = document.getElementById(this.elementId + "_titlebar");
+
+    var borderTDivElement = document.getElementById(this.elementId + "_border_t");
+    var borderBDivElement = document.getElementById(this.elementId + "_border_b");
+    var borderLDivElement = document.getElementById(this.elementId + "_border_l");
+    var borderRDivElement = document.getElementById(this.elementId + "_border_r");
+
     var borderSideWidth = this.width - this.border.borderInsets.left - this.border.borderInsets.right;
     var borderSideHeight = this.height - this.border.borderInsets.top - this.border.borderInsets.bottom;
 
-    this.windowPaneDivElement.style.left = this.positionX + "px";
-    this.windowPaneDivElement.style.top = this.positionY + "px";
-    this.windowPaneDivElement.style.width = this.width + "px";
-    this.windowPaneDivElement.style.height = this.height + "px";
+    windowPaneDivElement.style.left = this.positionX + "px";
+    windowPaneDivElement.style.top = this.positionY + "px";
+    windowPaneDivElement.style.width = this.width + "px";
+    windowPaneDivElement.style.height = this.height + "px";
 
-    this.titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
+    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
 
-    this.borderTDivElement.style.width = borderSideWidth + "px";
-    this.borderBDivElement.style.width = borderSideWidth + "px";
-    this.borderLDivElement.style.height = borderSideHeight + "px";
-    this.borderRDivElement.style.height = borderSideHeight + "px";
+    borderTDivElement.style.width = borderSideWidth + "px";
+    borderBDivElement.style.width = borderSideWidth + "px";
+    borderLDivElement.style.height = borderSideHeight + "px";
+    borderRDivElement.style.height = borderSideHeight + "px";
     
     var contentElement = document.getElementById(this.elementId + "_content");
     
@@ -699,20 +698,20 @@ EchoWindowPane.prototype.removeListeners = function() {
 };
 
 EchoWindowPane.prototype.setPosition = function(positionX, positionY) {
+    this.loadContainerSize();
+    
     if (positionX < 0) {
         positionX = 0;
     } else {
-        var containerWidth = this.getContainerWidth();
-        if (containerWidth > 0 && positionX > containerWidth - this.width) {
-            positionX = containerWidth - this.width;
+        if (this.containerWidth > 0 && positionX > this.containerWidth - this.width) {
+            positionX = this.containerWidth - this.width;
         }
     }
     if (positionY < 0) {
         positionY = 0;
     } else {
-        var containerHeight = this.getContainerHeight();
-        if (containerHeight > 0 && positionY > containerHeight - this.height) {
-            positionY = containerHeight - this.height;
+        if (this.containerHeight > 0 && positionY > this.containerHeight - this.height) {
+            positionY = this.containerHeight - this.height;
         }
     }
     

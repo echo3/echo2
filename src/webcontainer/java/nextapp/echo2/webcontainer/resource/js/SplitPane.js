@@ -72,24 +72,23 @@ EchoSplitPane.getPaddingWidth = function(pane) {
  */
 EchoSplitPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
-    
-    this.splitPaneDivElement = document.createElement("div");
-    this.splitPaneDivElement.id = this.elementId;
-    this.splitPaneDivElement.style.position = "absolute";
-    this.splitPaneDivElement.style.overflow = "hidden";
-    this.splitPaneDivElement.style.top = "0px"
-    this.splitPaneDivElement.style.bottom = "0px"
-    this.splitPaneDivElement.style.left = "0px"
-    this.splitPaneDivElement.style.right = "0px"
-    EchoVirtualPosition.register(this.splitPaneDivElement.id);
+    var splitPaneDivElement = document.createElement("div");
+    splitPaneDivElement.id = this.elementId;
+    splitPaneDivElement.style.position = "absolute";
+    splitPaneDivElement.style.overflow = "hidden";
+    splitPaneDivElement.style.top = "0px"
+    splitPaneDivElement.style.bottom = "0px"
+    splitPaneDivElement.style.left = "0px"
+    splitPaneDivElement.style.right = "0px"
+    EchoVirtualPosition.register(splitPaneDivElement.id);
     if (this.background != null) {
-        this.splitPaneDivElement.style.background = this.background;
+        splitPaneDivElement.style.background = this.background;
     }
     if (this.foreground != null) {
-        this.splitPaneDivElement.style.foreground = this.foreground;
+        splitPaneDivElement.style.foreground = this.foreground;
     }
     if (this.font != null) {
-        EchoCssUtil.applyStyle(this.splitPaneDivElement, this.font);
+        EchoCssUtil.applyStyle(splitPaneDivElement, this.font);
     }
     
     var paneDivElements = new Array();
@@ -101,16 +100,16 @@ EchoSplitPane.prototype.create = function() {
         this.paneData[i].applyStyle(paneDivElements[i]);
     }
     
-    this.separatorDivElement = null;
+    var separatorDivElement = null;
     if (this.separatorSize > 0) {
-        this.separatorDivElement = document.createElement("div");
-        this.separatorDivElement.id = this.elementId + "_separator";
-        this.separatorDivElement.style.position = "absolute";
-        this.separatorDivElement.style.backgroundColor = this.separatorColor;
-        this.separatorDivElement.style.fontSize = "1px";
-        this.separatorDivElement.style.lineHeight = "0";
+        separatorDivElement = document.createElement("div");
+        separatorDivElement.id = this.elementId + "_separator";
+        separatorDivElement.style.position = "absolute";
+        separatorDivElement.style.backgroundColor = this.separatorColor;
+        separatorDivElement.style.fontSize = "1px";
+        separatorDivElement.style.lineHeight = "0";
         if (this.separatorImage != null) {
-            EchoCssUtil.applyStyle(this.separatorDivElement, this.separatorImage);
+            EchoCssUtil.applyStyle(separatorDivElement, this.separatorImage);
         }
     }
     
@@ -124,12 +123,12 @@ EchoSplitPane.prototype.create = function() {
         paneDivElements[1].style.left = "0px";
         paneDivElements[1].style.right = "0px";
         
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.height = this.separatorSize + "px";
-            this.separatorDivElement.style.left = "0px";
-            this.separatorDivElement.style.right = "0px";
+        if (separatorDivElement) {
+            separatorDivElement.style.height = this.separatorSize + "px";
+            separatorDivElement.style.left = "0px";
+            separatorDivElement.style.right = "0px";
             if (this.resizable) {
-                this.separatorDivElement.style.cursor = "n-resize";
+                separatorDivElement.style.cursor = "n-resize";
             }
         }
         break;
@@ -142,12 +141,12 @@ EchoSplitPane.prototype.create = function() {
         paneDivElements[1].style.left = "0px";
         paneDivElements[1].style.right = "0px";
         
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.height = this.separatorSize + "px";
-            this.separatorDivElement.style.left = "0px";
-            this.separatorDivElement.style.right = "0px";
+        if (separatorDivElement) {
+            separatorDivElement.style.height = this.separatorSize + "px";
+            separatorDivElement.style.left = "0px";
+            separatorDivElement.style.right = "0px";
             if (this.resizable) {
-                this.separatorDivElement.style.cursor = "s-resize";
+                separatorDivElement.style.cursor = "s-resize";
             }
         }
         break;
@@ -160,12 +159,12 @@ EchoSplitPane.prototype.create = function() {
         paneDivElements[1].style.bottom = "0px";
         paneDivElements[1].style.right = "0px";
         
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.width = this.separatorSize + "px";
-            this.separatorDivElement.style.top = "0px";
-            this.separatorDivElement.style.bottom = "0px";
+        if (separatorDivElement) {
+            separatorDivElement.style.width = this.separatorSize + "px";
+            separatorDivElement.style.top = "0px";
+            separatorDivElement.style.bottom = "0px";
             if (this.resizable) {
-                this.separatorDivElement.style.cursor = "w-resize";
+                separatorDivElement.style.cursor = "w-resize";
             }
         }
         break;
@@ -178,12 +177,12 @@ EchoSplitPane.prototype.create = function() {
         paneDivElements[1].style.bottom = "0px";
         paneDivElements[1].style.left = "0px";
         
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.width = this.separatorSize + "px";
-            this.separatorDivElement.style.top = "0px";
-            this.separatorDivElement.style.bottom = "0px";
+        if (separatorDivElement) {
+            separatorDivElement.style.width = this.separatorSize + "px";
+            separatorDivElement.style.top = "0px";
+            separatorDivElement.style.bottom = "0px";
             if (this.resizable) {
-                this.separatorDivElement.style.cursor = "e-resize";
+                separatorDivElement.style.cursor = "e-resize";
             }
         }
         break;
@@ -191,42 +190,40 @@ EchoSplitPane.prototype.create = function() {
         throw new Error("Illegal orientation: " + this.orientation);
     }
         
-    this.update(paneDivElements[0], paneDivElements[1]);
+    this.update(paneDivElements[0], paneDivElements[1], separatorDivElement);
 
-    this.splitPaneDivElement.appendChild(paneDivElements[0]);
-    this.splitPaneDivElement.appendChild(paneDivElements[1]);
-    if (this.separatorDivElement) {
-        this.splitPaneDivElement.appendChild(this.separatorDivElement);
+    splitPaneDivElement.appendChild(paneDivElements[0]);
+    splitPaneDivElement.appendChild(paneDivElements[1]);
+    if (separatorDivElement) {
+        splitPaneDivElement.appendChild(separatorDivElement);
     }
     
-    containerElement.appendChild(this.splitPaneDivElement);
+    containerElement.appendChild(splitPaneDivElement);
     
     EchoVirtualPosition.register(paneDivElements[0].id);
     EchoVirtualPosition.register(paneDivElements[1].id);
-    if (this.separatorDivElement) {
-        EchoVirtualPosition.register(this.separatorDivElement.id);
+    if (separatorDivElement) {
+        EchoVirtualPosition.register(separatorDivElement.id);
     }
     
-    EchoDomPropertyStore.setPropertyValue(this.splitPaneDivElement, "component", this);
+    EchoDomPropertyStore.setPropertyValue(splitPaneDivElement, "component", this);
     
-    if (this.separatorDivElement && this.resizable) {
-        EchoEventProcessor.addHandler(this.separatorDivElement, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
+    if (separatorDivElement && this.resizable) {
+        EchoEventProcessor.addHandler(separatorDivElement, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
     }
     
-    EchoVirtualPosition.redraw(this.splitPaneDivElement);
+    EchoVirtualPosition.redraw(splitPaneDivElement);
     EchoVirtualPosition.redraw(paneDivElements[0]);
     EchoVirtualPosition.redraw(paneDivElements[1]);
 };
 
 EchoSplitPane.prototype.dispose = function() {
-    if (this.separatorDivElement && this.resizable) {
-        EchoEventProcessor.removeHandler(this.separatorDivElement, "mousedown");
+    if (this.separatorSize > 0 && this.resizable) {
+        EchoEventProcessor.removeHandler(this.elementId + "_separator", "mousedown");
         this.removeListeners();
     }
     
-    EchoDomPropertyStore.dispose(this.splitPaneDivElement);
-    this.splitPaneDivElement = undefined;
-    this.separatorDivElement = undefined;
+    EchoDomPropertyStore.dispose(this.elementId);
     this.paneData = undefined;
 };
 
@@ -319,10 +316,11 @@ EchoSplitPane.prototype.setPosition = function(newValue) {
     }
 };
 
-EchoSplitPane.prototype.update = function(firstPaneDivElement, secondPaneDivElement) {
+EchoSplitPane.prototype.update = function(firstPaneDivElement, secondPaneDivElement, separatorDivElement) {
     if (arguments.length == 0) {
         firstPaneDivElement = document.getElementById(this.elementId + "_pane0");
         secondPaneDivElement = document.getElementById(this.elementId + "_pane1");
+        separatorDivElement = document.getElementById(this.elementId + "_separator");
     }
 
     switch (this.orientation) {
@@ -330,32 +328,32 @@ EchoSplitPane.prototype.update = function(firstPaneDivElement, secondPaneDivElem
         var firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
         firstPaneDivElement.style.height = (firstHeight > 0 ? firstHeight : 0) + "px";
         secondPaneDivElement.style.top = (this.position + this.separatorSize) + "px";
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.top = this.position + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.top = this.position + "px";
         }
         break;
     case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
         var firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
         firstPaneDivElement.style.height = (firstHeight > 0 ? firstHeight : 0) + "px";
         secondPaneDivElement.style.bottom = (this.position + this.separatorSize) + "px";
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.bottom = this.position + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.bottom = this.position + "px";
         }
         break;
     case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
         var firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
         firstPaneDivElement.style.width = (firstWidth > 0 ? firstWidth : 0) + "px";
         secondPaneDivElement.style.left = (this.position + this.separatorSize) + "px";
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.left = this.position + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.left = this.position + "px";
         }
         break;
     case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
         var firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
         firstPaneDivElement.style.width = (firstWidth > 0 ? firstWidth : 0) + "px";
         secondPaneDivElement.style.right = (this.position + this.separatorSize) + "px";
-        if (this.separatorDivElement) {
-            this.separatorDivElement.style.right = this.position + "px";
+        if (separatorDivElement) {
+            separatorDivElement.style.right = this.position + "px";
         }
         break;
     default:
