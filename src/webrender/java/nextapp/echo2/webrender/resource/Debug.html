@@ -206,11 +206,21 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     
     EchoDebug.Sync = function() { };
     
+    EchoDebug.Sync.setClientMessageStatusSent = function(status) {
+        var header = document.getElementById("synctab_pane_client_header");
+        while (header.childNodes.length > 0) {
+            header.removeChild(header.firstChild);
+        }
+        header.appendChild(document.createTextNode("Client Request Message " + (status ? "[SENT]" : "[PENDING]")));
+    };
+    
     EchoDebug.Sync.displayClientMessage = function(clientMessageDocument) {
+        EchoDebug.Sync.setClientMessageStatusSent(false);
         EchoDebug.displayDocument("synctab_pane_client", clientMessageDocument);
     };
 
     EchoDebug.Sync.displayServerMessage = function(serverMessageDocument) {
+        EchoDebug.Sync.setClientMessageStatusSent(true);
         EchoDebug.displayDocument("synctab_pane_server", serverMessageDocument);
     };
     
