@@ -1014,6 +1014,68 @@ extends SplitPane {
             }
         });
         
+        // Alignment
+
+        controlsColumn = new ButtonColumn();
+        controlGroupsColumn.add(controlsColumn);
+        
+        controlsColumn.add(new Label("Alignment"));
+
+        controlsColumn.addButton("Alignment = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setAlignment(null);
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Alignment = Left", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setAlignment(new Alignment(Alignment.LEFT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Alignment = Center (H)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setAlignment(new Alignment(Alignment.CENTER, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Alignment = Right", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setAlignment(new Alignment(Alignment.RIGHT, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Alignment = Leading", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setAlignment(new Alignment(Alignment.LEADING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        controlsColumn.addButton("Alignment = Trailing", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                apply(new Applicator() {
+                    public void apply(AbstractButton button) {
+                        button.setAlignment(new Alignment(Alignment.TRAILING, Alignment.DEFAULT));
+                    }
+                });
+            }
+        });
+        
         // Icon/Text Margin
 
         controlsColumn = new ButtonColumn();
