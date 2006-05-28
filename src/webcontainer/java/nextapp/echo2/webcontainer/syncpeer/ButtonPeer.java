@@ -158,6 +158,29 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
     
     /**
+     * Combines the properties of two <code>Alignment</code> objects together.
+     * Properties of the <code>secondary</code> object will override default
+     * properties of the <code>primary</code>.
+     * 
+     * @param primary the first <code>Alignment</code> (may be null)
+     * @param secondary the second <code>Alignment</code> (may be null)
+     * @return a new <code>Alignment</code> combining the values of both (or 
+     *         null if both input <code>Alignment</code>s were null 
+     */
+    private Alignment combineAlignment(Alignment primary, Alignment secondary) {
+        if (primary == null) {
+            return secondary;
+        } else if (secondary == null) {
+            return primary;
+        }
+        int horizontal = primary.getHorizontal(); 
+        int vertical = primary.getVertical();
+        Alignment alignment = new Alignment(horizontal == Alignment.DEFAULT ? secondary.getHorizontal() : horizontal,
+                vertical == Alignment.DEFAULT ? secondary.getVertical() : vertical);
+        return alignment;
+    }
+    
+    /**
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, 
      *      java.lang.String)
      */
@@ -459,7 +482,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 tct = new TriCellTable(rc, document, elementId, orientation, iconTextMargin);
                 
                 renderCellText(tct, textNode, button);
-                renderCellIcon(tct, iconElement, 1);
+                renderCellIcon(tct, iconElement, 1, button);
             } else {
                  // Rendering a ToggleButton.
                 Extent stateMargin = (Extent) button.getRenderProperty(ToggleButton.PROPERTY_STATE_MARGIN, 
@@ -470,7 +493,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
                 tct = new TriCellTable(rc, document, elementId, orientation, stateMargin);
 
                 if (textNode == null) {
-                    renderCellIcon(tct, iconElement, 0);
+                    renderCellIcon(tct, iconElement, 0, button);
                 } else {
                     renderCellText(tct, textNode, button);
                 }
@@ -497,7 +520,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             tct = new TriCellTable(rc, document, elementId, orientation, iconTextMargin, stateOrientation, stateMargin);
 
             renderCellText(tct, textNode, button);
-            renderCellIcon(tct, iconElement, 1);
+            renderCellIcon(tct, iconElement, 1, button);
             renderCellState(tct, stateIconElement, 2, button);
 
             tct.addCellCssText("padding:0px;");
@@ -525,8 +548,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * @param cellIndex the index of the cell in the <code>TriCellTable</code>
      *        that should contain the icon
      */
-    private void renderCellIcon(TriCellTable tct, Element iconElement, int cellIndex) {
+    private void renderCellIcon(TriCellTable tct, Element iconElement, int cellIndex, AbstractButton button) {
         Element iconTdElement = tct.getTdElement(cellIndex);
+        Alignment alignment = (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT);
+        if (alignment != null) {
+            CssStyle style = new CssStyle();
+            AlignmentRender.renderToStyle(style, alignment, button);
+            iconTdElement.setAttribute("style", style.renderInline());
+        }
         iconTdElement.appendChild(iconElement);
     }
     
@@ -561,12 +590,19 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private void renderCellText(TriCellTable tct, Text textNode, AbstractButton button) {
         Element textTdElement = tct.getTdElement(0);
         CssStyle textTdCssStyle = new CssStyle();
+        
         if (Boolean.FALSE.equals(button.getRenderProperty(AbstractButton.PROPERTY_LINE_WRAP))) {
             textTdCssStyle.setAttribute("white-space", "nowrap");
         }
-        AlignmentRender.renderToStyle(textTdCssStyle, 
-                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT), button);
-        textTdElement.setAttribute("style", textTdCssStyle.renderInline());
+        
+        Alignment alignment = combineAlignment((Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT),
+                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT));
+        AlignmentRender.renderToStyle(textTdCssStyle, alignment, button);
+        
+        if (textTdCssStyle.hasAttributes()) {
+            textTdElement.setAttribute("style", textTdCssStyle.renderInline());
+        }
+        
         textTdElement.appendChild(textNode);
     }
     
