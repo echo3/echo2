@@ -52,6 +52,12 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     
     EchoDebug.nextId = 0;
     
+    EchoDebug.Config = function() { };
+    
+    EchoDebug.Config.isSyncMessageDisplayEnabled = function() {
+        return document.getElementById("configtab_displaysync").checked;
+    };
+    
     EchoDebug.Console = function() { };
     
     EchoDebug.Console.clear = function() {
@@ -215,11 +221,17 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     };
     
     EchoDebug.Sync.displayClientMessage = function(clientMessageDocument) {
+        if (!EchoDebug.Config.isSyncMessageDisplayEnabled()) {
+            return;
+        }
         EchoDebug.Sync.setClientMessageStatusSent(false);
         EchoDebug.displayDocument("synctab_pane_client", clientMessageDocument);
     };
 
     EchoDebug.Sync.displayServerMessage = function(serverMessageDocument) {
+        if (!EchoDebug.Config.isSyncMessageDisplayEnabled()) {
+            return;
+        }
         EchoDebug.Sync.setClientMessageStatusSent(true);
         EchoDebug.displayDocument("synctab_pane_server", serverMessageDocument);
     };
@@ -365,6 +377,8 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
        <td style="width: 10px;"/>
        <td id="consoletab_tab" onclick="EchoDebug.displayTab('consoletab');" style="cursor: pointer; padding: 3px 10px; background-color: #4f4f6f;">Console</td>
        <td style="width: 10px;"/>
+       <td id="configtab_tab" onclick="EchoDebug.displayTab('configtab');" style="cursor: pointer; padding: 3px 10px; background-color: #4f4f6f;">Config</td>
+       <td style="width: 10px;"/>
       </tr>
      </tbody>
     </table>
@@ -406,6 +420,15 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         </tr>
        </tbody>
       </table>
+     </div>
+     <div id="consoletab_output" style="padding: 10px">
+     </div>
+    </div>
+
+    <div id="configtab" style="display: none; width: 100%; height: 100%; overflow: auto; color: white; background: #4f4f6f;">
+     <div id="configtab_controls" style="padding: 10px 10px 0px 10px;">
+      <input id="configtab_displaysync" type="checkbox" checked="checked"/> Display Synchronize Messages
+      <br/>
      </div>
      <div id="consoletab_output" style="padding: 10px">
      </div>
