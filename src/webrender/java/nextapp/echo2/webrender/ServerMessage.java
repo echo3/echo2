@@ -410,4 +410,14 @@ public class ServerMessage extends XmlDocument {
             throw new IllegalArgumentException("Illegal layout direction.");
         }
     }
+    
+    /**
+     * Sets the numeric identifier for this transaction, which will be returned
+     * in next client message.
+     * 
+     * @param transactionId the transaction identifier
+     */
+    public void setTransactionId(long transactionId) {
+        serverMessageElement.setAttribute("trans-id", Long.toString(transactionId));
+    }
 }

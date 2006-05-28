@@ -262,6 +262,11 @@ EchoClientEngine.baseServerUri = null;
 EchoClientEngine.debugEnabled = true;
 
 /**
+ * Current transaction id, retrieved from ServerMessage.
+ */
+EchoClientEngine.transactionId = "";
+
+/**
  * Configures browser-specific settings based on ClientProperties results.
  * Invoked when ClientProperties are stored.
  */
@@ -2482,6 +2487,9 @@ EchoServerMessage.process = function() {
  * values (if required).
  */
 EchoServerMessage.prepare = function() {
+    EchoClientEngine.transactionId = EchoServerMessage.messageDocument.documentElement.getAttribute("trans-id");
+    EchoClientMessage.messageDocument.documentElement.setAttribute("trans-id", EchoClientEngine.transactionId);
+    
     // Test to determine if the document element contains a "XML Attribute Test" attribute.
     // The attribute should have a value of "x&y" if the browser is working properly.
     // The attribute will return the value of "x&#38;y" in the case of Safari2's broken DOM.
@@ -2595,6 +2603,7 @@ EchoServerMessage.processPhase2 = function() {
     }
     
     EchoVirtualPosition.redraw();
+
     ++EchoServerMessage.transactionCount;
 };
 

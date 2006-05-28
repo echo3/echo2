@@ -405,9 +405,16 @@ public class ContainerSynchronizeService extends SynchronizeService {
         ServerMessage serverMessage = new ServerMessage();
         RenderContext rc = new RenderContextImpl(conn, serverMessage);
         
-        ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
+        ContainerInstance ci = rc.getContainerInstance();
+        ApplicationInstance applicationInstance = ci.getApplicationInstance();
         
         try {
+            if (!validateTransactionId(ci, clientMessageDocument)) {
+                //System.err.println("Out-of-order Transaction");
+                //TODO Do something about it...send instructions to refresh entire user interface, 
+                // and purge all existing stuff.
+            }
+            
             // Mark instance as active.
             ApplicationInstance.setActive(applicationInstance);
             
@@ -511,5 +518,17 @@ public class ContainerSynchronizeService extends SynchronizeService {
         ApplicationInstance applicationInstance = rc.getContainerInstance().getApplicationInstance();
         rc.getServerMessage().setRootLayoutDirection(applicationInstance.getLayoutDirection().isLeftToRight()
                 ? ServerMessage.LEFT_TO_RIGHT : ServerMessage.RIGHT_TO_LEFT);
+    }
+    
+    /**
+     * Determines if transaction id retrieved from client matches current transaction id.
+     * 
+     * @param containerInstance the relevant <code>ContainerInstance</code>
+     * @param clientMessageDocument the incoming client message
+     * @return true if the transaction id is valid
+     */
+    private boolean validateTransactionId(ContainerInstance containerInstance, Document clientMessageDocument) {
+        long clientTransactionId = Long.parseLong(clientMessageDocument.getDocumentElement().getAttribute("trans-id"));
+        return containerInstance.getCurrentTransactionId() == clientTransactionId;
     }
 }

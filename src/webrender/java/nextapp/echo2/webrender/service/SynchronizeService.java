@@ -279,6 +279,7 @@ implements Service {
                 serverMessage = renderUpdate(conn, clientMessageDocument);
                 processUserInstanceUpdates(userInstance, serverMessage);
             }
+            serverMessage.setTransactionId(userInstance.getNextTransactionId());
             conn.setContentType(ContentType.TEXT_XML);
             serverMessage.render(conn.getWriter());
         }

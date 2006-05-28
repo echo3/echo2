@@ -87,6 +87,14 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
     private UserInstanceUpdateManager updateManager;
 
     /**
+     * The current transactionId.  Used to ensure incoming ClientMessages reflect
+     * changes made by user against current server-side state of user interface.
+     * This is used to eliminate issues that could be encountered with two
+     * browser windows pointing at the same application instance.
+     */
+    private long transactionId = 0;
+    
+    /**
      * Creates a new <code>UserInstance</code>.
      * 
      * @param conn the client/server <code>Connection</code> for which the
@@ -130,6 +138,25 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
         return clientProperties;
     }
     
+    /**
+     * Returns the current transaction id.
+     * 
+     * @return the current transaction id
+     */
+    public long getCurrentTransactionId() {
+        return transactionId;
+    }
+    
+    /**
+     * Increments the current transaction id and returns it.
+     * 
+     * @return the current transaction id, after an increment
+     */
+    public long getNextTransactionId() {
+        ++transactionId;
+        return transactionId;
+    }
+
     /**
      * Retrieves the <code>ServerDelayMessage</code> displayed during 
      * client/server-interactions.
@@ -209,7 +236,7 @@ implements HttpSessionActivationListener, HttpSessionBindingListener, Serializab
     public HttpSession getSession() {
         return session;
     }
-
+    
     /**
      * @see javax.servlet.http.HttpSessionActivationListener#sessionDidActivate(javax.servlet.http.HttpSessionEvent)
      */
