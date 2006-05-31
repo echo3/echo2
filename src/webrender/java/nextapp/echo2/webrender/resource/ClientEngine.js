@@ -261,6 +261,8 @@ EchoClientEngine.baseServerUri = null;
  */
 EchoClientEngine.debugEnabled = true;
 
+EchoClientEngine.loadStatus = 2;
+
 /**
  * Current transaction id, retrieved from ServerMessage.
  */
@@ -306,12 +308,14 @@ EchoClientEngine.init = function(baseServerUri, debugEnabled) {
     
     // Analyze client information.
     EchoClientAnalyzer.analyze();
-    
+
     // Synchronize initial state from server.
     EchoServerTransaction.connect();
 
     // Add disposal listener.
     EchoDomUtil.addEventListener(window, "unload", EchoClientEngine.dispose);
+
+    EchoClientEngine.incrementLoadStatus();
 };
 
 /**
@@ -383,6 +387,52 @@ EchoClientEngine.processServerError = function() {
             // Only reload if not on first transaction to avoid infinite crash loop.
             window.location.reload();
         }
+    }
+};
+
+/**
+ * Disable (remove) loading status progress bar.
+ * Performs no operation if application is not starting up, i.e.,
+ * if first synchronization has been completed.
+ */
+EchoClientEngine.disableLoadStatus = function() {
+    if (EchoClientEngine.loadStatus != -1) {
+        EchoClientEngine.loadStatus = -1;
+        EchoClientEngine.renderLoadStatus();
+    }
+};
+
+/**
+ * Increment loading status progress bar and re-render.
+ * Performs no operation if application is not starting up, i.e.,
+ * if first synchronization has been completed.
+ */
+EchoClientEngine.incrementLoadStatus = function() {
+    if (EchoClientEngine.loadStatus != -1) {
+        ++EchoClientEngine.loadStatus;
+        EchoClientEngine.renderLoadStatus();
+    }
+};
+
+/**
+ * Render current loading status.
+ * Performs no operation if element with id "loadstatus" 
+ * does not exist.
+ */
+EchoClientEngine.renderLoadStatus = function() {
+    var loadStatusDivElement = document.getElementById("loadstatus");
+    if (!loadStatusDivElement) {
+        return;
+    }
+    if (EchoClientEngine.loadStatus == -1) {
+        loadStatusDivElement.parentNode.removeChild(loadStatusDivElement);
+    } else {
+        var text = "";
+        for (var i = 0; i < EchoClientEngine.loadStatus; ++i) {
+            text += "|";
+        }
+        loadStatusDivElement.removeChild(loadStatusDivElement.firstChild);
+        loadStatusDivElement.appendChild(document.createTextNode(text));
     }
 };
 
@@ -2190,6 +2240,7 @@ EchoScriptLibraryManager.loadLibrary = function(serviceId) {
 EchoScriptLibraryManager.responseHandler = function(conn) {
     EchoScriptLibraryManager.librarySourceMap[conn.serviceId] = conn.getResponseText();
     EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+    EchoClientEngine.incrementLoadStatus();
 };
 
 // _____________________________
@@ -2467,6 +2518,7 @@ EchoServerMessage.installLibraries = function() {
     for (var i = 0; i < libraryElements.length; ++i) {
         var serviceId = libraryElements.item(i).getAttribute("service-id");
         EchoScriptLibraryManager.installLibrary(serviceId);
+        EchoClientEngine.incrementLoadStatus();
     }
 };
 
@@ -2588,8 +2640,15 @@ EchoServerMessage.processPhase1 = function() {
  */
 EchoServerMessage.processPhase2 = function() {
     try {
+        // Install retrieved libraries.
         EchoServerMessage.installLibraries();
+        
+        // Disable load status indicator (only relevant on initialization).
+        EchoClientEngine.disableLoadStatus();
+        
+        // Process message parts contained in server message.
 		EchoServerMessage.processMessageParts();
+        
 		EchoServerMessage.processApplicationProperties();
         if (EchoServerMessage.processingCompleteListener) {
 		    EchoServerMessage.processingCompleteListener();

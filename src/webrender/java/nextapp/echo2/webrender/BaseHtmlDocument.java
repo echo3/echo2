@@ -72,6 +72,12 @@ public class BaseHtmlDocument extends HtmlDocument {
         formElement.setAttribute("action", "#");
         formElement.setAttribute("id", contentId);
         formElement.setAttribute("onsubmit", "return false;");
+
+        Element loadingDiv = document.createElement("div");
+        loadingDiv.setAttribute("id", "loadstatus");
+        loadingDiv.appendChild(document.createTextNode("//"));
+        formElement.appendChild(loadingDiv);
+        
         getBodyElement().appendChild(formElement);
     }
     

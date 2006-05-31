@@ -31,6 +31,8 @@ package nextapp.echo2.webcontainer;
 
 import java.io.IOException;
 
+import org.w3c.dom.Element;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.webrender.BaseHtmlDocument;
 import nextapp.echo2.webrender.Connection;
@@ -85,6 +87,8 @@ implements Service {
         baseDoc.getBodyElement().setAttribute("onload", "EchoClientEngine.init('" + ci.getServletUri() + "', " 
                 + debug + ");");
         
+        Element bodyElement = baseDoc.getBodyElement(); 
+        
         // Set body element CSS style.
         CssStyle cssStyle = new CssStyle();
         cssStyle.setAttribute("position", "absolute");
@@ -95,7 +99,7 @@ implements Service {
         cssStyle.setAttribute("padding", "0px");
         cssStyle.setAttribute("margin", "0px");
         cssStyle.setAttribute("overflow", "hidden");
-        baseDoc.getBodyElement().setAttribute("style", cssStyle.renderInline());
+        bodyElement.setAttribute("style", cssStyle.renderInline());
         
         // Render.
         baseDoc.render(conn.getWriter());
