@@ -147,8 +147,11 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
             
+            clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
+
             clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED, Boolean.TRUE);
 
             // The following flaws are verified as present in IE7.0Beta2:
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
@@ -165,6 +168,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserOpera) {
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_CONTENT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_OPERA_NO_CSS_TEXT, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
         }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);

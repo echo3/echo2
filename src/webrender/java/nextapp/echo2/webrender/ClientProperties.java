@@ -251,6 +251,17 @@ implements Serializable {
     public static final String PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED = "proprietaryIEPngAlphaFilterRequired";
     
     /**
+     * A proprietary feature flag indicating that CSS opacity support is
+     * available only by using a 'filter'.
+     * <p>
+     * This proprietary feature is provided by:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String PROPRIETARY_IE_OPACITY_FILTER_REQUIRED = "proprietaryIEOpacityFilterRequired";
+    
+    /**
      * A proprietary feature flag indicating that 'mouseenter' and 
      * 'mouseleave' events are supported.
      * <p>
@@ -260,6 +271,17 @@ implements Serializable {
      * </ul>
      */
     public static final String PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED = "proprietaryEventMouseEnterLeaveSupported";
+    
+    /**
+     * An unsupported feature flag indicating that CSS opacity effects are 
+     * not supported.
+     * <p>
+     * This issue occurs with:
+     * <ul>
+     *  <li>Opera</li>
+     * </ul>
+     */
+    public static final String NOT_SUPPORTED_CSS_OPACITY = "notSupportedCssOpacity";
     
     // General Browser Properties
     
