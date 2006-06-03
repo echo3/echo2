@@ -55,6 +55,9 @@ public class StyleSheetLoader {
     /**
      * Parses an XML style sheet and returns a <code>StyleSheet</code> 
      * instance.
+     * <p>
+     * Styles for components that cannot be loaded by the specified 
+     * <code>ClassLoader</code> will be ignored.
      * 
      * @param resourceName the name of the resource on the 
      *        <code>CLASSPATH</code> containing the XML data
@@ -81,6 +84,9 @@ public class StyleSheetLoader {
     /**
      * Parses an XML style sheet and returns a <code>StyleSheet</code> 
      * instance.
+     * <p>
+     * Styles for components that cannot be loaded by the specified 
+     * <code>ClassLoader</code> will be ignored.
      * 
      * @param in the <code>InputStream</code> containing the XML data
      * @param classLoader the <code>ClassLoader</code> with which to 
@@ -111,6 +117,8 @@ public class StyleSheetLoader {
         MutableStyleSheet styleSheet = new MutableStyleSheet();
         Element styleSheetElement = document.getDocumentElement();
         Element[] styleElements = DomUtil.getChildElementsByTagName(styleSheetElement, "style");
+        
+        // First pass, load style information.
         for (int i = 0; i < styleElements.length; ++i) {
             String name = styleElements[i].getAttribute("name");
             if (!styleElements[i].hasAttribute("type")) {
@@ -122,7 +130,9 @@ public class StyleSheetLoader {
             try {
                 componentClass = Class.forName(type, true, classLoader);
             } catch (ClassNotFoundException ex) {
-                throw new ComponentXmlException("Cannot load component class: " + type, ex);
+                // StyleSheet contains reference to Component which does not exist in this ClassLoader,
+                // and thus should be ignored.
+                continue;
             }
             
             DerivedMutableStyle style  = new DerivedMutableStyle();
@@ -141,6 +151,7 @@ public class StyleSheetLoader {
             styleSheet.addStyle(componentClass, name, style);
         }
         
+        // Second pass, bind derived styles to base styles where applicable.
         for (int i = 0; i < styleElements.length; ++i) {
             if (styleElements[i].hasAttribute("base-name")) {
                 String name = styleElements[i].getAttribute("name");
@@ -149,7 +160,9 @@ public class StyleSheetLoader {
                 try {
                     componentClass = Class.forName(type, true, classLoader);
                 } catch (ClassNotFoundException ex) {
-                    throw new ComponentXmlException("Cannot load component class: " + type, ex);
+                    // StyleSheet contains reference to Component which does not exist in this ClassLoader,
+                    // and thus should be ignored.
+                    continue;
                 }
 
                 Map classToStyleMap = (Map) namedStyleMap.get(name);
