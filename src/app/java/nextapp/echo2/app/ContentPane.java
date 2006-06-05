@@ -43,6 +43,9 @@ package nextapp.echo2.app;
 public class ContentPane extends Component 
 implements Pane, PaneContainer {
     
+    private static final Extent PX_0 = new Extent(0);
+    private static final Extent SCROLL_BOTTOM = new Extent(-1);
+    
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
     public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
@@ -149,6 +152,9 @@ implements Pane, PaneContainer {
      * @param newValue the new vertical scrollbar position
      */
     public void setVerticalScroll(Extent newValue) {
+        if (SCROLL_BOTTOM.equals(newValue)) {
+            setProperty(PROPERTY_VERTICAL_SCROLL, PX_0);
+        }
         setProperty(PROPERTY_VERTICAL_SCROLL, newValue);
     }
 }

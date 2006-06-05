@@ -92,17 +92,20 @@ EchoContentPane.MessageProcessor.processInit = function(initMessageElement) {
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
         var divElement = document.getElementById(elementId);
+        var contentElement = EchoContentPane.findContentElement(divElement);
 
         var horizontalScroll = item.getAttribute("horizontal-scroll");
         var verticalScroll = item.getAttribute("vertical-scroll");
 
         EchoEventProcessor.addHandler(divElement, "scroll", "EchoContentPane.processScroll");
         
-        if (horizontalScroll) {
-            divElement.scrollLeft = parseInt(horizontalScroll);
-        }
-        if (verticalScroll) {
-            divElement.scrollTop = parseInt(verticalScroll);
+        if (contentElement) {
+            if (horizontalScroll) {
+                contentElement.scrollLeft = parseInt(horizontalScroll);
+            }
+            if (verticalScroll) {
+                contentElement.scrollTop = parseInt(verticalScroll);
+            }
         }
     }
 };
@@ -118,16 +121,29 @@ EchoContentPane.MessageProcessor.processScroll = function(scrollMessageElement) 
     var position = parseInt(scrollMessageElement.getAttribute("position"));
 
     var divElement = document.getElementById(elementId);
+    var contentElement = EchoContentPane.findContentElement(divElement);
+    if (!contentElement) {
+        return;
+    }
     
     if (position < 0) {
         position = 1000000;
     }
     
     if (scrollMessageElement.nodeName == "scroll-horizontal") {
-        divElement.scrollLeft = position;
+        contentElement.scrollLeft = position;
     } else if (scrollMessageElement.nodeName == "scroll-vertical") {
-        divElement.scrollTop = position;
+        contentElement.scrollTop = position;
     }
+};
+
+EchoContentPane.findContentElement = function(element) {
+    for (var child = element.firstChild; child; child.nextSibling) {
+        if (child.id && child.id.indexOf("_content_") != -1) {
+            return child;
+        }
+    }
+    return null;
 };
 
 /**
@@ -140,8 +156,10 @@ EchoContentPane.processScroll = function(echoEvent) {
     if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget)) {
         return;
     }
-    EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "horizontalScroll",  
-            echoEvent.registeredTarget.scrollLeft + "px");
-    EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "verticalScroll",  
-            echoEvent.registeredTarget.scrollTop + "px");
+    var contentElement = EchoContentPane.findContentElement(echoEvent.registeredTarget);
+    if (!contentElement) {
+        return;
+    }
+    EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "horizontalScroll", contentElement.scrollLeft + "px");
+    EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "verticalScroll", contentElement.scrollTop + "px");
 };

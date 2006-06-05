@@ -123,8 +123,15 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        String parentId = ContainerInstance.getElementId(child.getParent());
-        return parentId + "_container_" + ContainerInstance.getElementId(child);
+        return getContainerId(child.getParent(), child);
+    }
+    
+    private String getContainerId(Component parent, Component child) {
+        if (child instanceof FloatingPane) {
+            return ContainerInstance.getElementId(parent) + "_float_" + ContainerInstance.getElementId(child);
+        } else {
+            return ContainerInstance.getElementId(parent) + "_content_" + ContainerInstance.getElementId(child);
+        }
     }
     
     /**
@@ -337,9 +344,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
     private void renderRemoveChildren(RenderContext rc, ServerComponentUpdate update) {
         Component[] removedChildren = update.getRemovedChildren();
         for (int i = 0; i < removedChildren.length; ++i) {
-            DomUpdate.renderElementRemove(rc.getServerMessage(), 
-                    ContainerInstance.getElementId(update.getParent()) + "_container_" +
-                    ContainerInstance.getElementId(removedChildren[i]));
+            DomUpdate.renderElementRemove(rc.getServerMessage(), getContainerId(update.getParent(), removedChildren[i]));
         }
     }
     /**

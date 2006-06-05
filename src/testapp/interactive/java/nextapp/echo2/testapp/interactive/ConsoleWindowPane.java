@@ -32,6 +32,7 @@ package nextapp.echo2.testapp.interactive;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
@@ -49,45 +50,45 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 public class ConsoleWindowPane extends WindowPane {
     
     private Column column;
+    private ContentPane logPane;
     
     public ConsoleWindowPane() {
         super();
         setTitle("Console");
         setStyleName("Default");
         
-        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(40));
-        splitPane.setSeparatorHeight(new Extent(1));
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(32));
         add(splitPane);
         
-        SplitPaneLayoutData splitPaneLayoutData;
-        
         Row controlRow = new Row();
-        splitPaneLayoutData = new SplitPaneLayoutData();
-        splitPaneLayoutData.setBackground(new Color(0xafafbf));
-        splitPaneLayoutData.setInsets(new Insets(5));
-        controlRow.setLayoutData(splitPaneLayoutData);
+        controlRow.setStyleName("ControlPane");
         splitPane.add(controlRow);
         
-        Button clearButton = new Button("Clear");
-        clearButton.setStyleName("Default");
-        clearButton.addActionListener(new ActionListener() {
+        Button button = new Button("Clear", Styles.ICON_24_NO);
+        button.setStyleName("ControlPane.Button");
+        button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 column.removeAll();
             }
         });
-        controlRow.add(clearButton);
+        controlRow.add(button);
         
-        column = new Column();
-        column.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
-        column.setForeground(Color.GREEN);
+        SplitPaneLayoutData splitPaneLayoutData;
+        logPane = new ContentPane();
+        logPane.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
+        logPane.setForeground(Color.GREEN);
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(Color.BLACK);
-        splitPaneLayoutData.setInsets(new Insets(5));
-        column.setLayoutData(splitPaneLayoutData);
-        splitPane.add(column);
+        logPane.setLayoutData(splitPaneLayoutData);
+        splitPane.add(logPane);
+        
+        column = new Column();
+        column.setInsets(new Insets(5));
+        logPane.add(column);
     }
     
     public void writeMessage(String message) {
         column.add(new Label(message));
+        logPane.setVerticalScroll(new Extent(-1));
     }
 }
