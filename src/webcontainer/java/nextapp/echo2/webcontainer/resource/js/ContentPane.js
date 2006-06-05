@@ -78,7 +78,15 @@ EchoContentPane.MessageProcessor.process = function(messagePartElement) {
 EchoContentPane.MessageProcessor.processDispose = function(disposeMessageElement) {
     for (var item = disposeMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
-        EchoEventProcessor.removeHandler(elementId, "scroll");
+        var divElement = document.getElementById(elementId);
+        if (!divElement) {
+            continue;
+        }
+        var contentElement = EchoContentPane.findContentElement(divElement);
+        if (!contentElement) {
+            continue;
+        }
+        EchoEventProcessor.removeHandler(contentElement, "scroll");
     }
 };
 
@@ -97,9 +105,9 @@ EchoContentPane.MessageProcessor.processInit = function(initMessageElement) {
         var horizontalScroll = item.getAttribute("horizontal-scroll");
         var verticalScroll = item.getAttribute("vertical-scroll");
 
-        EchoEventProcessor.addHandler(divElement, "scroll", "EchoContentPane.processScroll");
-        
         if (contentElement) {
+            EchoEventProcessor.addHandler(contentElement, "scroll", "EchoContentPane.processScroll");
+            
             if (horizontalScroll) {
                 contentElement.scrollLeft = parseInt(horizontalScroll);
             }
@@ -133,12 +141,22 @@ EchoContentPane.MessageProcessor.processScroll = function(scrollMessageElement) 
     if (scrollMessageElement.nodeName == "scroll-horizontal") {
         contentElement.scrollLeft = position;
     } else if (scrollMessageElement.nodeName == "scroll-vertical") {
+        EchoDebugManager.consoleWrite("scrolling to: " + position);
         contentElement.scrollTop = position;
     }
 };
 
+/**
+ * Finds the content element of a ContentPane.
+ * The content element is the element containing a child
+ * that is NOT a FloatingPane.  (ContentPanes are limited to one
+ * non-FloatingPane child).
+ * 
+ * @param element the root ContentPane DIV element to search.
+ * @return the content DIV element, if found
+ */
 EchoContentPane.findContentElement = function(element) {
-    for (var child = element.firstChild; child; child.nextSibling) {
+    for (var child = element.firstChild; child; child = child.nextSibling) {
         if (child.id && child.id.indexOf("_content_") != -1) {
             return child;
         }
@@ -156,10 +174,9 @@ EchoContentPane.processScroll = function(echoEvent) {
     if (!EchoClientEngine.verifyInput(echoEvent.registeredTarget)) {
         return;
     }
-    var contentElement = EchoContentPane.findContentElement(echoEvent.registeredTarget);
-    if (!contentElement) {
-        return;
-    }
-    EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "horizontalScroll", contentElement.scrollLeft + "px");
-    EchoClientMessage.setPropertyValue(echoEvent.registeredTarget.id, "verticalScroll", contentElement.scrollTop + "px");
+    
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    
+    EchoClientMessage.setPropertyValue(componentId, "horizontalScroll", echoEvent.registeredTarget.scrollLeft + "px");
+    EchoClientMessage.setPropertyValue(componentId, "verticalScroll", echoEvent.registeredTarget.scrollTop + "px");
 };

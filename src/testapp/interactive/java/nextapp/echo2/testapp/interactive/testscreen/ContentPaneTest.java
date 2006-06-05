@@ -111,9 +111,10 @@ public class ContentPaneTest extends SplitPane {
         
         controlsColumn.addButton("Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (testContentPane.indexOf(contentLabel) == -1) {
-                    testContentPane.add(contentLabel);
+                if (testContentPane.indexOf(contentLabel) != -1) {
+                    testContentPane.remove(contentLabel);
                 }
+                testContentPane.add(contentLabel);
             }
         });
         controlsColumn.addButton("Add WindowPane", new ActionListener() {

@@ -73,6 +73,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 public class ContentPanePeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor {
 
+    //TODO: This needs to become a client-rendered component.
     //TODO: Performance can be improved by implementing MORE PartialUpdateManagers.
 
     private static final Extent EXTENT_0 = new Extent(0);
@@ -368,12 +369,55 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             partialUpdateManager.process(rc, update);
-            renderRemoveChildren(rc, update);
-            renderAddChildren(rc, update);
+            if (update.hasAddedChildren() || update.hasRemovedChildren()) {
+                renderContentChange(rc, update);
+            }
         }
         return fullReplace;
     }
+    
+    /**
+     * Processes a change to the content of a <code>ContentPane</code>.
+     * This method will invoke <code>renderRemoveChildren()</code> and
+     * <code>renderAddChildren()</cdoe>.  If the main content has changed,
+     * i.e., the non-<code>FloatingPane</code> child, it will unregister
+     * and re-register scrolling listeners by rendering dispose and then
+     * init directives. 
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     */
+    private void renderContentChange(RenderContext rc, ServerComponentUpdate update) {
+        boolean primaryContentChanged = false;
+        Component[] addedChildren = update.getAddedChildren();
+        for (int i = 0; i < addedChildren.length; ++i) {
+            if (!(addedChildren[i] instanceof FloatingPane)) {
+                primaryContentChanged = true;
+                break;
+            }
+        }
+        if (!primaryContentChanged) {
+            Component[] removedChildren = update.getRemovedChildren();
+            for (int i = 0; i < removedChildren.length; ++i) {
+                if (!(removedChildren[i] instanceof FloatingPane)) {
+                    primaryContentChanged = true;
+                    break;
+                }
+            }
+        }
+        
+        if (primaryContentChanged) {
+            renderDisposeDirective(rc, (ContentPane) update.getParent());
+        }
 
+        renderRemoveChildren(rc, update);
+        renderAddChildren(rc, update);
+
+        if (primaryContentChanged) {
+            renderInitDirective(rc, (ContentPane) update.getParent());
+        }
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(
      *      nextapp.echo2.webcontainer.ContainerInstance,
