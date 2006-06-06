@@ -488,17 +488,17 @@ public class GridProcessor {
         Cell[] yCells = getCellArray(y, true);
         for (int componentIndex = 0; componentIndex < cells.length; ++componentIndex) {
 
-            // Set x-span to fill remaining size in the even SPAN_ALL has been specified or if the cell would
+            // Set x-span to fill remaining size in the even SPAN_FILL has been specified or if the cell would
             // otherwise extend past the specified size.
-            if (cells[componentIndex].xSpan == GridLayoutData.SPAN_ALL || cells[componentIndex].xSpan > gridXSize - x) {
+            if (cells[componentIndex].xSpan == GridLayoutData.SPAN_FILL || cells[componentIndex].xSpan > gridXSize - x) {
                 cells[componentIndex].xSpan = gridXSize - x;
             }
 
-            // Set x-span of any cell INCORRECTLY set to negative value to 1 (note that SPAN_ALL has already been handled).
+            // Set x-span of any cell INCORRECTLY set to negative value to 1 (note that SPAN_FILL has already been handled).
             if (cells[componentIndex].xSpan < 1) {
                 cells[componentIndex].xSpan = 1;
             }
-            // Set y-span of any cell INCORRECTLY set to negative value (or more likely SPAN_ALL) to 1.
+            // Set y-span of any cell INCORRECTLY set to negative value (or more likely SPAN_FILL) to 1.
             if (cells[componentIndex].ySpan < 1) {
                 cells[componentIndex].ySpan = 1;
             }

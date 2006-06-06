@@ -37,14 +37,14 @@ public class GridLayoutData extends CellLayoutData {
     
     /**
      * A constant value for column and row spans indicating that a cell should
-     * span all remaining cells.  
+     * fill all remaining cells.  
      * <p>
      * <strong>WARNING</strong>: This value may ONLY be used for spans in the
      * direction of the layout of the <code>Grid</code>, i.e., it may only be 
      * used for column-spans if the orientation is horizontal, and it may only
      * be used for row-spans if the orientation is vertical.
      */
-    public static final int SPAN_ALL = -1;
+    public static final int SPAN_FILL = -1;
     
     private int columnSpan = 1;
     private int rowSpan = 1;

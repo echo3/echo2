@@ -282,22 +282,22 @@ public class GridTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Column Span: ALL", new ActionListener() {
+        controlsColumn.addButton("Column Span: FILL", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
-                    layoutData.setColumnSpan(GridLayoutData.SPAN_ALL);
+                    layoutData.setColumnSpan(GridLayoutData.SPAN_FILL);
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
                 }
             }
         });
 
-        controlsColumn.addButton("Row Span: ALL", new ActionListener() {
+        controlsColumn.addButton("Row Span: FILL", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
-                    layoutData.setRowSpan(GridLayoutData.SPAN_ALL);
+                    layoutData.setRowSpan(GridLayoutData.SPAN_FILL);
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
                 }
@@ -481,10 +481,10 @@ public class GridTest extends SplitPane {
         GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
         if (layoutData.getColumnSpan() != 1 || layoutData.getRowSpan() != 1) {
             out.append("[" + (
-                    layoutData.getColumnSpan() == GridLayoutData.SPAN_ALL 
-                    ? "ALL" : Integer.toString(layoutData.getColumnSpan())) + "x" + 
-                    (layoutData.getRowSpan() == GridLayoutData.SPAN_ALL 
-                    ? "ALL" : Integer.toString(layoutData.getRowSpan())) + "]"); 
+                    layoutData.getColumnSpan() == GridLayoutData.SPAN_FILL 
+                    ? "F" : Integer.toString(layoutData.getColumnSpan())) + "x" + 
+                    (layoutData.getRowSpan() == GridLayoutData.SPAN_FILL 
+                    ? "F" : Integer.toString(layoutData.getRowSpan())) + "]"); 
         }
         String text = button.getText();
         if (text.indexOf(":") == -1) {
