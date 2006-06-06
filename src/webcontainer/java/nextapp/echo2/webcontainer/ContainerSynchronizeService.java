@@ -528,7 +528,12 @@ public class ContainerSynchronizeService extends SynchronizeService {
      * @return true if the transaction id is valid
      */
     private boolean validateTransactionId(ContainerInstance containerInstance, Document clientMessageDocument) {
-        long clientTransactionId = Long.parseLong(clientMessageDocument.getDocumentElement().getAttribute("trans-id"));
-        return containerInstance.getCurrentTransactionId() == clientTransactionId;
+        try {
+            long clientTransactionId = Long.parseLong(clientMessageDocument.getDocumentElement().getAttribute("trans-id"));
+            return containerInstance.getCurrentTransactionId() == clientTransactionId;
+        } catch (NumberFormatException ex) {
+            //TODO. Determine why some clients are sending null for trans id.
+            return false;
+        }
     }
 }
