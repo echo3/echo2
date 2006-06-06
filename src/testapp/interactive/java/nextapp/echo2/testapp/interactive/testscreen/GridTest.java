@@ -226,7 +226,11 @@ public class GridTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
-                    layoutData.setColumnSpan(layoutData.getColumnSpan() + 1);
+                    if (layoutData.getColumnSpan() < 1) {
+                        layoutData.setColumnSpan(1);
+                    } else {
+                        layoutData.setColumnSpan(layoutData.getColumnSpan() + 1);
+                    }
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
                 }
@@ -239,6 +243,8 @@ public class GridTest extends SplitPane {
                     GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     if (layoutData.getColumnSpan() > 1) {
                         layoutData.setColumnSpan(layoutData.getColumnSpan() - 1);
+                    } else {
+                        layoutData.setColumnSpan(1);
                     }
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
@@ -250,7 +256,11 @@ public class GridTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
                     GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
-                    layoutData.setRowSpan(layoutData.getRowSpan() + 1);
+                    if (layoutData.getRowSpan() < 1) {
+                        layoutData.setRowSpan(1);
+                    } else {
+                        layoutData.setRowSpan(layoutData.getRowSpan() + 1);
+                    }
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
                 }
@@ -263,7 +273,31 @@ public class GridTest extends SplitPane {
                     GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
                     if (layoutData.getRowSpan() > 1) {
                         layoutData.setRowSpan(layoutData.getRowSpan() - 1);
+                    } else {
+                        layoutData.setRowSpan(1);
                     }
+                    selectedButton.setLayoutData(layoutData);
+                    retitle(selectedButton);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Column Span: ALL", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
+                    layoutData.setColumnSpan(GridLayoutData.SPAN_ALL);
+                    selectedButton.setLayoutData(layoutData);
+                    retitle(selectedButton);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Row Span: ALL", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selectedButton != null) {
+                    GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
+                    layoutData.setRowSpan(GridLayoutData.SPAN_ALL);
                     selectedButton.setLayoutData(layoutData);
                     retitle(selectedButton);
                 }
@@ -445,8 +479,12 @@ public class GridTest extends SplitPane {
     private void retitle(Button button) {
         StringBuffer out = new StringBuffer();
         GridLayoutData layoutData = (GridLayoutData) selectedButton.getLayoutData();
-        if (layoutData.getColumnSpan() > 1 || layoutData.getRowSpan() > 1) {
-            out.append("[" + layoutData.getColumnSpan() + "x" + layoutData.getRowSpan() + "]"); 
+        if (layoutData.getColumnSpan() != 1 || layoutData.getRowSpan() != 1) {
+            out.append("[" + (
+                    layoutData.getColumnSpan() == GridLayoutData.SPAN_ALL 
+                    ? "ALL" : Integer.toString(layoutData.getColumnSpan())) + "x" + 
+                    (layoutData.getRowSpan() == GridLayoutData.SPAN_ALL 
+                    ? "ALL" : Integer.toString(layoutData.getRowSpan())) + "]"); 
         }
         String text = button.getText();
         if (text.indexOf(":") == -1) {

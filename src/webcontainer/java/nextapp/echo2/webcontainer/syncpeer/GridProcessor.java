@@ -189,6 +189,13 @@ public class GridProcessor {
         }
     }
     
+    /**
+     * Creates a one-dimensional array of <code>Cell</code> instances 
+     * representing all visible components contained within the 
+     * <code>Grid</code>.
+     * 
+     * @return the array of <code>Cell</code>s
+     */
     private Cell[] createCells() {
         Component[] children = grid.getVisibleComponents();
         
@@ -480,12 +487,22 @@ public class GridProcessor {
         int x = 0, y = 0;
         Cell[] yCells = getCellArray(y, true);
         for (int componentIndex = 0; componentIndex < cells.length; ++componentIndex) {
-            
-            if (cells[componentIndex].xSpan > gridXSize - x) {
-                // Limit xSpan in case cell has a span greater than remaining
-                // space.
+
+            // Set x-span to fill remaining size in the even SPAN_ALL has been specified or if the cell would
+            // otherwise extend past the specified size.
+            if (cells[componentIndex].xSpan == GridLayoutData.SPAN_ALL || cells[componentIndex].xSpan > gridXSize - x) {
                 cells[componentIndex].xSpan = gridXSize - x;
             }
+
+            // Set x-span of any cell INCORRECTLY set to negative value to 1 (note that SPAN_ALL has already been handled).
+            if (cells[componentIndex].xSpan < 1) {
+                cells[componentIndex].xSpan = 1;
+            }
+            // Set y-span of any cell INCORRECTLY set to negative value (or more likely SPAN_ALL) to 1.
+            if (cells[componentIndex].ySpan < 1) {
+                cells[componentIndex].ySpan = 1;
+            }
+            
             if (cells[componentIndex].xSpan != 1 || cells[componentIndex].ySpan != 1) {
                 // Scan to ensure no y-spans are blocking this x-span.
                 // If a y-span is blocking, shorten the x-span to not
