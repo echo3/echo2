@@ -442,6 +442,7 @@ EchoWindowPane.prototype.create = function() {
         var maskIFrameElement = document.createElement("iframe");
         maskIFrameElement.style.width = "100%";
         maskIFrameElement.style.height = "100%";
+        maskIFrameElement.src = EchoClientEngine.baseServerUri + "?serviceId=Echo.WindowPane.IFrame";
         maskDivElement.appendChild(maskIFrameElement);
         
 	    EchoVirtualPosition.register(maskDivElement.id);

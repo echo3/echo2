@@ -29,6 +29,8 @@
 
 package nextapp.echo2.webcontainer.syncpeer;
 
+import java.io.IOException;
+
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Color;
@@ -58,6 +60,8 @@ import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -105,6 +109,35 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
             IMAGE_ID_BORDER_TOP_LEFT, IMAGE_ID_BORDER_TOP, IMAGE_ID_BORDER_TOP_RIGHT, IMAGE_ID_BORDER_LEFT,
             IMAGE_ID_BORDER_RIGHT, IMAGE_ID_BORDER_BOTTOM_LEFT, IMAGE_ID_BORDER_BOTTOM, IMAGE_ID_BORDER_BOTTOM_RIGHT };
     
+    private static final String BLANK_HTML_STRING = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" "
+            + "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+            + "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title></title><body></body></html>";
+    
+    private static final Service BLANK_HTML_SERVICE = new Service() {
+
+        /**
+         * @see nextapp.echo2.webrender.Service#getId()
+         */
+        public String getId() {
+            return "Echo.WindowPane.IFrame";
+        }
+    
+        /**
+         * @see nextapp.echo2.webrender.Service#getVersion()
+         */
+        public int getVersion() {
+            return 0;
+        }
+    
+        /**
+         * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
+         */
+        public void service(Connection conn) throws IOException {
+            conn.setContentType(ContentType.TEXT_HTML);
+            conn.getWriter().write(BLANK_HTML_STRING);
+        }
+    };
+    
     /**
      * Service to provide supporting JavaScript library.
      */
@@ -113,6 +146,7 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
 
     static {
         WebRenderServlet.getServiceRegistry().add(WINDOW_PANE_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(BLANK_HTML_SERVICE);
     }
 
     private static void renderPixelProperty(WindowPane windowPane, String propertyName, Element element, String attributeName) {
