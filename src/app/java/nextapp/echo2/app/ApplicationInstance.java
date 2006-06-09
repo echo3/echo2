@@ -444,8 +444,14 @@ implements Serializable {
     /**
      * Determines if there are any queued tasks in any of the task
      * queues associated with this <code>ApplicationInstance</code>.
-     * This method may be overridden to check to enqueue tasks if
-     * desired.
+     * <p>
+     * This method may be overridden by an application in order to check
+     * on the status of long-running operations and enqueue tasks 
+     * just-in-time.  In such cases tasks should be <strong>enqueued</strong>
+     * and the value of <code>super.hasQueuedTasks()</code> should be 
+     * returned.  This method is not invoked by a user-interface thread and
+     * thus the component hierarchy may not be modified in
+     * overriding implementations.
      * 
      * @return true if any tasks are queued
      */
