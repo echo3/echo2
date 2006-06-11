@@ -274,7 +274,11 @@ EchoClientEngine.transactionId = "";
  */
 EchoClientEngine.configure = function() {
     if (EchoClientProperties.get("browserInternetExplorer")) {
+        // Initialize virtual positioning system used to emulate CSS positioning in MSIE.
         EchoVirtualPosition.init();
+        
+        // Set body.style.overflow to hidden in order to hide root scrollbar in IE.
+        // This is a non-standard CSS property.
         document.documentElement.style.overflow = "hidden";
     }
 };
@@ -315,6 +319,7 @@ EchoClientEngine.init = function(baseServerUri, debugEnabled) {
     // Add disposal listener.
     EchoDomUtil.addEventListener(window, "unload", EchoClientEngine.dispose);
 
+    // Increment progress bar showing loading status.
     EchoClientEngine.incrementLoadStatus();
 };
 
@@ -434,6 +439,11 @@ EchoClientEngine.renderLoadStatus = function() {
         loadStatusDivElement.removeChild(loadStatusDivElement.firstChild);
         loadStatusDivElement.appendChild(document.createTextNode(text));
     }
+};
+
+EchoClientEngine.updateTransactionId = function(newValue) {
+    EchoClientEngine.transactionId = newValue;
+    EchoClientMessage.messageDocument.documentElement.setAttribute("trans-id", EchoClientEngine.transactionId);
 };
 
 /**
@@ -590,7 +600,10 @@ EchoClientMessage.removePropertyElement = function(componentId, propertyName) {
  * and is thus no longer relevant.
  */
 EchoClientMessage.reset = function() {
+    // Clear existing message document.
     EchoClientMessage.messageDocument = null;
+
+    // Create new message document.
     EchoClientMessage.messageDocument 
             = EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "client-message");
 };
@@ -2534,13 +2547,10 @@ EchoServerMessage.process = function() {
 
 /**
  * Prepares the ServerMessage for prcocessing.
- *
- * This step presently only fixes Safari2's defective DOM attribute 
- * values (if required).
  */
 EchoServerMessage.prepare = function() {
-    EchoClientEngine.transactionId = EchoServerMessage.messageDocument.documentElement.getAttribute("trans-id");
-    EchoClientMessage.messageDocument.documentElement.setAttribute("trans-id", EchoClientEngine.transactionId);
+    // Obtain transaction id from server message.
+    EchoClientEngine.updateTransactionId(EchoServerMessage.messageDocument.documentElement.getAttribute("trans-id"));
     
     // Test to determine if the document element contains a "XML Attribute Test" attribute.
     // The attribute should have a value of "x&y" if the browser is working properly.
@@ -2718,8 +2728,15 @@ EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
  * Initiates a client-server transaction my making a request to the server.
  * This operation is asynchronous; this method will return before the server
  * issues a response.
+ * 
+ * @return false if a connection is already in progress, true if connection was
+ *         successfully initiated
  */
 EchoServerTransaction.connect = function() {
+    if (EchoServerTransaction.active) {
+        return false;
+    }
+    
     EchoServerDelayMessage.activate();
     EchoAsyncMonitor.stop();
     var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
@@ -2731,6 +2748,8 @@ EchoServerTransaction.connect = function() {
     
     // Reset client message.
     EchoClientMessage.reset();
+    
+    return true;
 };
 
 /**

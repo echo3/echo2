@@ -410,7 +410,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
         
         try {
             if (!validateTransactionId(ci, clientMessageDocument)) {
-                //System.err.println("Out-of-order Transaction");
                 //TODO Do something about it...send instructions to refresh entire user interface, 
                 // and purge all existing stuff.
             }
@@ -532,8 +531,9 @@ public class ContainerSynchronizeService extends SynchronizeService {
             long clientTransactionId = Long.parseLong(clientMessageDocument.getDocumentElement().getAttribute("trans-id"));
             return containerInstance.getCurrentTransactionId() == clientTransactionId;
         } catch (NumberFormatException ex) {
-            //TODO. Determine why some clients are sending null for trans id.
-            return false;
+            // Client has not provided a transaction id at all, return true.
+            // This should not occur.
+            return true;
         }
     }
 }
