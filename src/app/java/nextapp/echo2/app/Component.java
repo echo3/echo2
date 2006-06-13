@@ -272,6 +272,10 @@ implements RenderIdSupport, Serializable {
      */
     public void add(Component c, int n) 
     throws IllegalChildException {
+        // Ensure child is not null.
+        if (c == null) {
+            throw new IllegalChildException(this, c);
+        }
         
         // Ensure child is acceptable to this component.
         if (!isValidChild(c)) {
