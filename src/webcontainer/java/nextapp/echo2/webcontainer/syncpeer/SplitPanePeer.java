@@ -219,6 +219,7 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
      */
     private ImageReference getPaneBackgroundImage(Component component) {
         LayoutData layoutData = (LayoutData) component.getRenderProperty(SplitPane.PROPERTY_LAYOUT_DATA);
+        //TODO. Investigate use of instanceof here.
         if (!(layoutData instanceof SplitPaneLayoutData)) {
             return null;
         }

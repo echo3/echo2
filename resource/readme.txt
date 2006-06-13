@@ -26,7 +26,7 @@ Please feel free to contact NextApp with any questions regarding Echo:
 
 NextApp, Inc.                  http://www.nextapp.com       
 2549-B Eastbluff Drive #201    echo@nextapp.com
-Newport Beach, CA 92260
+Newport Beach, CA 92660
 USA        
 
 TEL: +1.949.340.2097
