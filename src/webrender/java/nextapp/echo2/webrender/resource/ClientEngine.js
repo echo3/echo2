@@ -2996,26 +2996,36 @@ EchoVirtualPosition.resizeListener = function(e) {
     EchoVirtualPosition.redraw();
 };
 
+/**
+ * Sorts the array of virtually positioned element ids based on the order in 
+ * which they appear top-to-bottom in the hierarchy.  This is necessary in order
+ * that their positions will be adjusted starting at the highest level in the 
+ * hierarchy.  This method delegates the real work to a recursive 
+ * implementation.
+ */
 EchoVirtualPosition.sort = function() {
     var sortedList = new Array();
-    EchoVirtualPosition.sortImpl(document.documentElement, EchoVirtualPosition.elementIdList, sortedList); 
+    EchoVirtualPosition.sortImpl(document.documentElement, sortedList); 
     EchoVirtualPosition.elementIdList = sortedList;
     EchoVirtualPosition.elementIdListSorted = true;
 };
 
-EchoVirtualPosition.sortImpl = function(element, unsortedList, sortedList) {
+/**
+ * Recursive work method to support <code>sort()</code>.
+ * 
+ * @param element the current element of the hierarchy being analyzed.
+ * @param sortedList an array to which element ids will be appended in the
+ *        orde rthe appear in the hierarchy
+ */
+EchoVirtualPosition.sortImpl = function(element, sortedList) {
+    // If element has id and element is in set of virtually positioned elements
     if (element.id && EchoVirtualPosition.elementIdSet.get(element.id)) {
-        for (var i = 0; i < unsortedList.length; ++i) {
-            if (unsortedList[i] == element.id) {
-                sortedList.push(element.id);
-                break;
-            }
-        }
+        sortedList.push(element.id);
     }
     
     for (var child = element.firstChild; child; child = child.nextSibling) {
         if (child.nodeType == 1) {
-            EchoVirtualPosition.sortImpl(child, unsortedList, sortedList);
+            EchoVirtualPosition.sortImpl(child, sortedList);
         }
     }
 };
