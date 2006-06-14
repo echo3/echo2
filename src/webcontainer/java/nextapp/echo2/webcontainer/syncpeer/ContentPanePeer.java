@@ -42,6 +42,7 @@ import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.FloatingPane;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.button.AbstractButton;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -62,6 +63,7 @@ import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.servermessage.VirtualPosition;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
 /**
@@ -77,6 +79,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
     //TODO: Performance can be improved by implementing MORE PartialUpdateManagers.
 
     private static final Extent EXTENT_0 = new Extent(0);
+    private static final Insets DEFAULT_INSETS = new Insets(EXTENT_0);
     
     private static final String IMAGE_ID_BACKGROUND = "background";
 
@@ -172,8 +175,8 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
      * @param update the update
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
-        Component component = update.getParent();
-        String elementId = ContainerInstance.getElementId(component);
+        ContentPane contentPane = (ContentPane) update.getParent();
+        String elementId = ContainerInstance.getElementId(contentPane);
         Component[] components = update.getParent().getVisibleComponents();
         Component[] addedChildren = update.getAddedChildren();
         
@@ -183,7 +186,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
                 if (addedChildren[addedChildrenIndex] == components[componentIndex]) {
                     Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
                     DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-                    renderChild(rc, update, htmlFragment, component, components[componentIndex]);
+                    renderChild(rc, update, htmlFragment, contentPane, components[componentIndex]);
                     
                     if (componentIndex == components.length - 1) {
                         DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, elementId, htmlFragment);
@@ -205,16 +208,27 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
      * @param update the <code>ServerComponentUpdate</code> being performed
      * @param parentNode the outer &lt;div&gt; element of the 
      *        <code>ContentPane</code>
+     * @param contentPane the containing <code>ContentPane</code> 
      * @param child the child <code>Component</code> to be rendered
      */
     private void renderChild(RenderContext rc, ServerComponentUpdate update, Node parentNode, 
-            Component component, Component child) {
+            ContentPane contentPane, Component child) {
         Element containerDivElement = parentNode.getOwnerDocument().createElement("div");
         String containerId = getContainerId(child);
         containerDivElement.setAttribute("id", containerId);
         if (!(child instanceof FloatingPane)) {
-            containerDivElement.setAttribute("style", "position:absolute;width:100%;height:100%;overflow:auto;");
+            CssStyle style = new CssStyle();
+            style.setAttribute("position", "absolute");
+            style.setAttribute("overflow", "auto");
+            Insets insets = (Insets) contentPane.getRenderProperty(ContentPane.PROPERTY_INSETS, DEFAULT_INSETS);
+            style.setAttribute("top", ExtentRender.renderCssAttributeValue(insets.getTop()));
+            style.setAttribute("left", ExtentRender.renderCssAttributeValue(insets.getLeft()));
+            style.setAttribute("right", ExtentRender.renderCssAttributeValue(insets.getRight()));
+            style.setAttribute("bottom", ExtentRender.renderCssAttributeValue(insets.getBottom()));
+            containerDivElement.setAttribute("style", style.renderInline());
+            VirtualPosition.renderRegister(rc.getServerMessage(), containerId);
         }
+        
         parentNode.appendChild(containerDivElement);
         ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
         if (syncPeer instanceof DomUpdateSupport) {
@@ -283,7 +297,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
         
         Component[] children = contentPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
-            renderChild(rc, update, divElement, component, children[i]);
+            renderChild(rc, update, divElement, contentPane, children[i]);
         }
     }
 

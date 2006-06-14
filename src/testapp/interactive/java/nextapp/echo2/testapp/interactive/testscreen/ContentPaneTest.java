@@ -29,13 +29,17 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FloatingPane;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
 import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
@@ -111,18 +115,40 @@ public class ContentPaneTest extends SplitPane {
         
         controlsColumn.addButton("Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (testContentPane.indexOf(contentLabel) != -1) {
-                    testContentPane.remove(contentLabel);
-                }
+                removeAllContent(testContentPane);
                 testContentPane.add(contentLabel);
             }
         });
+        controlsColumn.addButton("Add SplitPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeAllContent(testContentPane);
+                SplitPane splitPane = new SplitPane();
+                splitPane.setResizable(true);
+                
+                Label label;
+                SplitPaneLayoutData layoutData;
+
+                layoutData = new SplitPaneLayoutData();
+                layoutData.setBackground(new Color(0xafafff));
+                label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
+                label.setLayoutData(layoutData);
+                splitPane.add(label);
+
+                layoutData = new SplitPaneLayoutData();
+                layoutData.setBackground(new Color(0xafffaf));
+                label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
+                label.setLayoutData(layoutData);
+                splitPane.add(label);
+
+                testContentPane.add(splitPane);
+            }
+        });
+        
         controlsColumn.addButton("Add WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testContentPane.add(new WindowPane());
             }
         });
-        
         controlsColumn.addButton("Set Horizontal Scroll = null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testContentPane.setHorizontalScroll(null);
@@ -174,5 +200,36 @@ public class ContentPaneTest extends SplitPane {
                 testContentPane.setVerticalScroll(new Extent(-1));
             }
         });
+
+        controlsColumn.addButton("Insets -> null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setInsets(null);
+            }
+        });
+        controlsColumn.addButton("Insets -> 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Insets -> 5px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Insets -> 10/20/30/40px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testContentPane.setInsets(new Insets(10, 20, 30, 40));
+            }
+        });
+    }
+
+    private void removeAllContent(ContentPane contentPane) {
+        int count = contentPane.getComponentCount();
+        for (int i = count - 1; i >= 0; --i) {
+            if (contentPane.getComponent(i) instanceof FloatingPane) {
+                continue;
+            }
+            contentPane.remove(i);
+        }
     }
 }

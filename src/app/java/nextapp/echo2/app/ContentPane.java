@@ -48,6 +48,7 @@ implements Pane, PaneContainer {
     
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_HORIZONTAL_SCROLL = "horizontalScroll";
+    public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_VERTICAL_SCROLL = "verticalScroll";
     
     /**
@@ -75,6 +76,18 @@ implements Pane, PaneContainer {
         return (Extent) getProperty(PROPERTY_HORIZONTAL_SCROLL);
     }
 
+    /**
+     * Returns the inset margin of the content. 
+     * Note that <code>FloatingPane</code>s, such as 
+     * <code>WindowPane</code>s, will NOT be constrained by
+     * this margin. 
+     * 
+     * @return newValue the inset margin
+     */
+    public Insets getInsets() {
+        return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
     /**
      * Returns the vertical scrollbar position.
      * 
@@ -141,6 +154,18 @@ implements Pane, PaneContainer {
      */
     public void setHorizontalScroll(Extent newValue) {
         setProperty(PROPERTY_HORIZONTAL_SCROLL, newValue);
+    }
+    
+    /**
+     * Sets the inset margin of the content. 
+     * Note that <code>FloatingPane</code>s, such as 
+     * <code>WindowPane</code>s, will NOT be constrained by
+     * this margin. 
+     * 
+     * @param newValue the new inset margin
+     */
+    public void setInsets(Insets newValue) {
+        setProperty(PROPERTY_INSETS, newValue);
     }
 
     /**

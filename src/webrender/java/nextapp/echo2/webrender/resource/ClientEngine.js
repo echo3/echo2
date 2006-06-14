@@ -2834,38 +2834,13 @@ EchoVirtualPosition = function() { };
 /** Array containing ids of elements registered with the virtual positioning system. */
 EchoVirtualPosition.elementIdList = new Array();
 
+EchoVirtualPosition.elementIdSet = new EchoCollectionsMap();
+
 /** Flag indicating whether virtual positioning is required/enabled. */
 EchoVirtualPosition.enabled = false;
 
-/** 
- * Determines if the specified value contains a pixel dimension, e.g., "20px"
- * Returns false if the value is null/whitespace/undefined.
- *
- * @param value the value to evaluate
- * @return true if the value is a pixel dimension, false if it is not
- */
-EchoVirtualPosition.verifyPixelValue = function(value) {
-    if (value == null || value == "" || value == undefined) {
-        return false;
-    }
-    var valueString = value.toString();
-    return valueString == "0" || valueString.indexOf("px") != -1;
-};
-
-/** 
- * Determines if the specified value contains a pixel dimension, e.g., "20px"
- * Returns true if the value is null/whitespace/undefined.
- *
- * @param value the value to evaluate
- * @return true if the value is null or a pixel dimension, false if it is not
- */
-EchoVirtualPosition.verifyPixelOrUndefinedValue = function(value) {
-    if (value == null || value == "" || value == undefined) {
-        return true;
-    }
-    var valueString = value.toString();
-    return valueString == "0" || valueString.indexOf("px") != -1;
-};
+/** Flag indicating whether virtual positioning list is sorted); */
+EchoVirtualPosition.elementIdListSorted = true;
 
 /** 
  * Adjusts the style.height and style.height attributes of an element to 
@@ -2945,18 +2920,6 @@ EchoVirtualPosition.init = function() {
 };
 
 /**
- * Parses the specified value as an integer, returning 0 in the event the
- * specified value cannot be expressed as a number.
- *
- * @param value the value to parse, e.g., "20px"
- * @return the value as a integer, e.g., '20'
- */
-EchoVirtualPosition.toInteger = function(value) {
-    value = parseInt(value);
-    return isNaN(value) ? 0 : value;
-};
-
-/**
  * Redraws elements registered with the virtual positioning system.
  *
  * @param element (optional) the element to redraw; if unspecified, 
@@ -2972,6 +2935,10 @@ EchoVirtualPosition.redraw = function(element) {
     if (element != undefined) {
         EchoVirtualPosition.adjust(element);
     } else {
+        if (!EchoVirtualPosition.elementIdListSorted) {
+            EchoVirtualPosition.sort();
+        }
+        
         for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
             element = document.getElementById(EchoVirtualPosition.elementIdList[i]);
             if (element) {
@@ -2980,6 +2947,7 @@ EchoVirtualPosition.redraw = function(element) {
                 // Element no longer exists.  Replace id in elementIdList with null,
                 // and set 'removedIds' flag to true such that elementIdList will
                 // be pruned for nulls once redrawing has been completed.
+                EchoVirtualPosition.elementIdSet.remove(EchoVirtualPosition.elementIdList[i]);
                 EchoVirtualPosition.elementIdList[i] = null;
                 removedIds = true;
             }
@@ -3013,7 +2981,9 @@ EchoVirtualPosition.register = function(elementId) {
     if (!EchoVirtualPosition.enabled) {
         return;
     }
+    EchoVirtualPosition.elementIdListSorted = false;
     EchoVirtualPosition.elementIdList.push(elementId);
+    EchoVirtualPosition.elementIdSet.put(elementId, 1);
 };
 
 /**
@@ -3024,6 +2994,111 @@ EchoVirtualPosition.register = function(elementId) {
 EchoVirtualPosition.resizeListener = function(e) {
     e = e ? e : window.event;
     EchoVirtualPosition.redraw();
+};
+
+EchoVirtualPosition.sort = function() {
+    var sortedList = new Array();
+    EchoVirtualPosition.sortImpl(document.documentElement, EchoVirtualPosition.elementIdList, sortedList); 
+    EchoVirtualPosition.elementIdList = sortedList;
+    EchoVirtualPosition.elementIdListSorted = true;
+};
+
+EchoVirtualPosition.sortImpl = function(element, unsortedList, sortedList) {
+    if (element.id && EchoVirtualPosition.elementIdSet.get(element.id)) {
+        for (var i = 0; i < unsortedList.length; ++i) {
+            if (unsortedList[i] == element.id) {
+                sortedList.push(element.id);
+                break;
+            }
+        }
+    }
+    
+    for (var child = element.firstChild; child; child = child.nextSibling) {
+        if (child.nodeType == 1) {
+            EchoVirtualPosition.sortImpl(child, unsortedList, sortedList);
+        }
+    }
+};
+
+/**
+ * Parses the specified value as an integer, returning 0 in the event the
+ * specified value cannot be expressed as a number.
+ *
+ * @param value the value to parse, e.g., "20px"
+ * @return the value as a integer, e.g., '20'
+ */
+EchoVirtualPosition.toInteger = function(value) {
+    value = parseInt(value);
+    return isNaN(value) ? 0 : value;
+};
+
+/** 
+ * Determines if the specified value contains a pixel dimension, e.g., "20px"
+ * Returns false if the value is null/whitespace/undefined.
+ *
+ * @param value the value to evaluate
+ * @return true if the value is a pixel dimension, false if it is not
+ */
+EchoVirtualPosition.verifyPixelValue = function(value) {
+    if (value == null || value == "" || value == undefined) {
+        return false;
+    }
+    var valueString = value.toString();
+    return valueString == "0" || valueString.indexOf("px") != -1;
+};
+
+/** 
+ * Determines if the specified value contains a pixel dimension, e.g., "20px"
+ * Returns true if the value is null/whitespace/undefined.
+ *
+ * @param value the value to evaluate
+ * @return true if the value is null or a pixel dimension, false if it is not
+ */
+EchoVirtualPosition.verifyPixelOrUndefinedValue = function(value) {
+    if (value == null || value == "" || value == undefined) {
+        return true;
+    }
+    var valueString = value.toString();
+    return valueString == "0" || valueString.indexOf("px") != -1;
+};
+
+/**
+ * Static object/namespace for EchoVirtualPosition MessageProcessor 
+ * implementation.  Provides capability to register elements with
+ * the Virtual Positioning System.
+ */
+EchoVirtualPosition.MessageProcessor = function() { };
+
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process
+ */
+EchoVirtualPosition.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType == 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "register":
+                EchoVirtualPosition.MessageProcessor.processRegister(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+/**
+ * Processes a <code>register</code> message register an elmeent with the
+ * <code>EchoVirtualPosition</code> system.
+ *
+ * @param registerElement the <code>register</code> element to process
+ */
+EchoVirtualPosition.MessageProcessor.processRegister = function(registerElement) {
+    var items = registerElement.getElementsByTagName("item");
+    for (var i = 0; i < items.length; ++i) {
+        var elementId = items[i].getAttribute("eid");
+        EchoVirtualPosition.register(elementId);
+    }
 };
 
 // _______________________

@@ -211,10 +211,6 @@ EchoSplitPane.prototype.create = function() {
     if (separatorDivElement && this.resizable) {
         EchoEventProcessor.addHandler(separatorDivElement, "mousedown", "EchoSplitPane.processSeparatorMouseDown");
     }
-    
-    EchoVirtualPosition.redraw(splitPaneDivElement);
-    EchoVirtualPosition.redraw(paneDivElements[0]);
-    EchoVirtualPosition.redraw(paneDivElements[1]);
 };
 
 EchoSplitPane.prototype.dispose = function() {
