@@ -81,6 +81,7 @@ implements Pane, PaneContainer {
      * Note that <code>FloatingPane</code>s, such as 
      * <code>WindowPane</code>s, will NOT be constrained by
      * this margin. 
+     * Values may only be specified in pixel-based units.
      * 
      * @return newValue the inset margin
      */
@@ -161,6 +162,7 @@ implements Pane, PaneContainer {
      * Note that <code>FloatingPane</code>s, such as 
      * <code>WindowPane</code>s, will NOT be constrained by
      * this margin. 
+     * Values may only be specified in pixel-based units.
      * 
      * @param newValue the new inset margin
      */
