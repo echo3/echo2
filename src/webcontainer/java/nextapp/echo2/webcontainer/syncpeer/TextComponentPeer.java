@@ -359,10 +359,10 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (horizontalScroll != null && horizontalScroll.getValue() != 0) {
-            itemElement.setAttribute("horizontal-scroll", ExtentRender.renderCssAttributePixelValue(horizontalScroll));
+            itemElement.setAttribute("horizontal-scroll", ExtentRender.renderCssAttributePixelValue(horizontalScroll, "0"));
         }
         if (verticalScroll != null && verticalScroll.getValue() != 0) {
-            itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributePixelValue(verticalScroll));
+            itemElement.setAttribute("vertical-scroll", ExtentRender.renderCssAttributePixelValue(verticalScroll, "0"));
         }
         if (textComponent instanceof TextArea) {
             Integer maximumLength = (Integer) textComponent.getProperty(TextComponent.PROPERTY_MAXIMUM_LENGTH);

@@ -78,10 +78,24 @@ public class ExtentRender {
      * @return the CSS attribute value
      */
     public static final String renderCssAttributePixelValue(Extent extent) {
+        return renderCssAttributePixelValue(extent, null);
+    }
+    
+    /**
+     * Attempts to render a given <code>Extent</code> to a pixel CSS attribute 
+     * value.  Returns the specified <code>invalidValue</code> if the specified
+     * <code>Extent</code> is not valid.
+     * 
+     * @param extent the property value
+     * @return the CSS attribute value to return if the provided value is not a valid
+     *         pixel value
+     * @return the CSS attribute value
+     */
+    public static final String renderCssAttributePixelValue(Extent extent, String invalidValue) {
         if (extent != null && extent.getUnits() == Extent.PX) {
             return extent.getValue() + "px";
         } else {
-            return null;
+            return invalidValue;
         }
     }
     

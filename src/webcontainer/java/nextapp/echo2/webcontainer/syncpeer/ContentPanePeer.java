@@ -221,10 +221,10 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
             style.setAttribute("position", "absolute");
             style.setAttribute("overflow", "auto");
             Insets insets = (Insets) contentPane.getRenderProperty(ContentPane.PROPERTY_INSETS, DEFAULT_INSETS);
-            style.setAttribute("top", ExtentRender.renderCssAttributeValue(insets.getTop()));
-            style.setAttribute("left", ExtentRender.renderCssAttributeValue(insets.getLeft()));
-            style.setAttribute("right", ExtentRender.renderCssAttributeValue(insets.getRight()));
-            style.setAttribute("bottom", ExtentRender.renderCssAttributeValue(insets.getBottom()));
+            style.setAttribute("top", ExtentRender.renderCssAttributePixelValue(insets.getTop(), "0"));
+            style.setAttribute("left", ExtentRender.renderCssAttributePixelValue(insets.getLeft(), "0"));
+            style.setAttribute("right", ExtentRender.renderCssAttributePixelValue(insets.getRight(), "0"));
+            style.setAttribute("bottom", ExtentRender.renderCssAttributePixelValue(insets.getBottom(), "0"));
             containerDivElement.setAttribute("style", style.renderInline());
             VirtualPosition.renderRegister(rc.getServerMessage(), containerId);
         }
