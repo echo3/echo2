@@ -112,6 +112,15 @@ implements SynchronizeService.ClientMessagePartProcessor {
         // Store browser information.
         if (browserOpera) {
             clientProperties.setProperty(ClientProperties.BROWSER_OPERA, Boolean.TRUE);
+            if (userAgent.indexOf("opera/9") != -1 || userAgent.indexOf("opera 9") != -1) {
+                majorVersion = 9;
+            } else if (userAgent.indexOf("opera/8") != -1 || userAgent.indexOf("opera 8") != -1) {
+                majorVersion = 8;
+            } else {
+                // Assume future version with Opera 9 compatibility.
+                // (Versions prior to 8 do not provide minimum requirements, i.e., XMLHTTPRequest.)
+                majorVersion = 9;
+            }
         } else if (browserKonqueror) {
             clientProperties.setProperty(ClientProperties.BROWSER_KONQUEROR, Boolean.TRUE);
         } else if (browserSafari) {
@@ -168,7 +177,9 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserOpera) {
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_CONTENT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_OPERA_NO_CSS_TEXT, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
+            if (majorVersion < 9) {
+                clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
+            }
         }
         if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);
