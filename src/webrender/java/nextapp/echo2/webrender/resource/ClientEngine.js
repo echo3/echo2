@@ -273,7 +273,7 @@ EchoClientEngine.transactionId = "";
  * Invoked when ClientProperties are stored.
  */
 EchoClientEngine.configure = function() {
-    if (EchoClientProperties.get("browserInternetExplorer")) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
         // Initialize virtual positioning system used to emulate CSS positioning in MSIE.
         EchoVirtualPosition.init();
         

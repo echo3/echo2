@@ -47,7 +47,7 @@ implements Serializable {
      * <p>
      * This quirk occurs with:
      * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
+     *  <li>Internet Explorer 6 (Windows) [<em>Corrected in IE7 Beta 2 Refresh</em>]</li>
      * </ul>
      */
     public static final String QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY = "quirkCssPositioningOneSideOnly";
@@ -71,6 +71,7 @@ implements Serializable {
      * <ul>
      *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
+     * <p>
      */
     public static final String QUIRK_CSS_BORDER_COLLAPSE_INSIDE = "quirkCssBorderCollapseInside";
     
@@ -80,7 +81,7 @@ implements Serializable {
      * <p>
      * This quirk occurs with:
      * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
+     *  <li>Internet Explorer 6 (Windows) [<em>Corrected in IE7 Beta 2 Refresh</em>]</li>
      * </ul>
      */
     public static final String QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED = "quirkCssBackgroundAttachmentUseFixed";
@@ -134,7 +135,7 @@ implements Serializable {
      * <p>
      * This quirk occurs with:
      * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
+     *  <li>Internet Explorer 6 (Windows) [<em>Corrected in IE7 Beta 2 Refresh</em>]</li>
      * </ul>
      */
     public static final String QUIRK_IE_SELECT_Z_INDEX = "quirkIESelectZIndex";
@@ -245,7 +246,7 @@ implements Serializable {
      * <p>
      * This proprietary feature is provided by:
      * <ul>
-     *  <li>Internet Explorer 6 (Windows)</li>
+     *  <li>Internet Explorer 6 (Windows) [<em>Not neccesary with IE7 Beta 2 Refresh</em>]</li>
      * </ul>
      */
     public static final String PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED = "proprietaryIEPngAlphaFilterRequired";
