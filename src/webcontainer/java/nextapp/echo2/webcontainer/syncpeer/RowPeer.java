@@ -40,7 +40,6 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
-import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Row;
@@ -281,7 +280,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
         Row row = (Row) component;
-        Border border = (Border) row.getRenderProperty(Grid.PROPERTY_BORDER);
+        Border border = (Border) row.getRenderProperty(Row.PROPERTY_BORDER);
         String elementId = ContainerInstance.getElementId(row);
         Document document = parentNode.getOwnerDocument();
         
