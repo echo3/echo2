@@ -70,8 +70,6 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
  */
 public class GridPeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
-    
-    private static final Extent PERCENT_95 = new Extent(95, Extent.PERCENT);
 
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
@@ -171,11 +169,14 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         FontRender.renderToStyle(tableCssStyle, component);
         BorderRender.renderToStyle(tableCssStyle, border);
         ExtentRender.renderToStyle(tableCssStyle, "height", (Extent) grid.getRenderProperty(Grid.PROPERTY_HEIGHT));
+        
         Extent width = (Extent) grid.getRenderProperty(Grid.PROPERTY_WIDTH);
+        boolean enable100PercentWidthWorkaround = false;
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
-            if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() > 95) {
-                width = PERCENT_95;
+            if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() == 100) {
+                width = null;
+                enable100PercentWidthWorkaround = true;
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", width);
@@ -197,14 +198,27 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 someColumnsHaveWidths = true;
             }
         }
-        if (someColumnsHaveWidths) {
+        if (someColumnsHaveWidths || enable100PercentWidthWorkaround) {
             Element colGroupElement = document.createElement("colgroup");
+            if (enable100PercentWidthWorkaround) {
+                int screenWidth = rc.getContainerInstance().getClientProperties().getInt(ClientProperties.SCREEN_WIDTH, 1024);
+                colGroupElement.setAttribute("width", screenWidth + "px");
+            }
             tableElement.appendChild(colGroupElement);
+
+            boolean allColumnsHaveWidths = true;
             for (int i = 0; i < columnCount; ++i) {
                 Element colElement = document.createElement("col");
-                Extent columnWidth = gridProcessor.getColumnWidth(i);
-                if (columnWidth != null) {
-                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                if (enable100PercentWidthWorkaround && allColumnsHaveWidths && i == columnCount - 1) {
+                    // Special case: Don't add widths for ALL columns in cases where IE 100-percent Table
+                    // workaround is in use.  (Do nothing)
+                } else {
+                    Extent columnWidth = gridProcessor.getColumnWidth(i);
+                    if (columnWidth == null) {
+                        allColumnsHaveWidths = false;
+                    } else {
+                        colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                    }
                 }
                 colGroupElement.appendChild(colElement);
             }

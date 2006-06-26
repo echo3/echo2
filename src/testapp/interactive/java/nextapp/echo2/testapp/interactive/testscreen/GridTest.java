@@ -108,6 +108,17 @@ public class GridTest extends SplitPane {
             }
         });
 
+        controlsColumn.addButton("Append 10 New Cells", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Button button = null;
+                for (int i = 0; i < 10; ++i) { 
+                    button = createGridCellButton(); 
+                    grid.add(button);
+                }
+                selectCellButton(button);
+            }
+        });
+
         controlsColumn.addButton("Delete Selected Cell", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedButton != null) {
