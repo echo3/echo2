@@ -72,6 +72,12 @@ public class GridPeer
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
 
     /**
+     * A string of periods used for the IE 100% Table Width workaround.
+     */
+    private static final String SIZING_DOTS = ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+            + ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
+    
+    /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
@@ -171,12 +177,12 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         ExtentRender.renderToStyle(tableCssStyle, "height", (Extent) grid.getRenderProperty(Grid.PROPERTY_HEIGHT));
         
         Extent width = (Extent) grid.getRenderProperty(Grid.PROPERTY_WIDTH);
-        boolean enable100PercentWidthWorkaround = false;
+        boolean render100PercentWidthWorkaround = false;
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
             if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() == 100) {
                 width = null;
-                enable100PercentWidthWorkaround = true;
+                render100PercentWidthWorkaround = true;
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", width);
@@ -198,27 +204,15 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 someColumnsHaveWidths = true;
             }
         }
-        if (someColumnsHaveWidths || enable100PercentWidthWorkaround) {
+        if (someColumnsHaveWidths) {
             Element colGroupElement = document.createElement("colgroup");
-            if (enable100PercentWidthWorkaround) {
-                int screenWidth = rc.getContainerInstance().getClientProperties().getInt(ClientProperties.SCREEN_WIDTH, 1024);
-                colGroupElement.setAttribute("width", screenWidth + "px");
-            }
             tableElement.appendChild(colGroupElement);
 
-            boolean allColumnsHaveWidths = true;
             for (int i = 0; i < columnCount; ++i) {
                 Element colElement = document.createElement("col");
-                if (enable100PercentWidthWorkaround && allColumnsHaveWidths && i == columnCount - 1) {
-                    // Special case: Don't add widths for ALL columns in cases where IE 100-percent Table
-                    // workaround is in use.  (Do nothing)
-                } else {
-                    Extent columnWidth = gridProcessor.getColumnWidth(i);
-                    if (columnWidth == null) {
-                        allColumnsHaveWidths = false;
-                    } else {
-                        colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
-                    }
+                Extent columnWidth = gridProcessor.getColumnWidth(i);
+                if (columnWidth != null) {
+                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
                 }
                 colGroupElement.appendChild(colElement);
             }
@@ -271,6 +265,14 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                         defaultInsetsAttributeValue);
                 CellLayoutDataRender.renderBackgroundImageToStyle(tdCssStyle, rc, this, grid, cell);
                 tdElement.setAttribute("style", tdCssStyle.renderInline());
+                
+                if (rowIndex == 0 && render100PercentWidthWorkaround) {
+                    // Render string of "sizing dots" in first cell.
+                    Element sizingDivElement = document.createElement("div");
+                    sizingDivElement.setAttribute("style", "font-size:50px;height:0px;overflow:hidden;");
+                    sizingDivElement.appendChild(document.createTextNode(SIZING_DOTS));
+                    tdElement.appendChild(sizingDivElement);
+                }
                 
                 renderAddChild(rc, update, tdElement, cell);
             }

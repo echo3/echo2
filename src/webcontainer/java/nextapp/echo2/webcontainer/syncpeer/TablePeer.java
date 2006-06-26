@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
@@ -84,6 +85,12 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
 
     //TODO: Add full support for partial rendering on row insertions/deletions.
 
+    /**
+     * A string of periods used for the IE 100% Table Width workaround.
+     */
+    private static final String SIZING_DOTS = ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+            + ". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
+    
     private static final String[] TABLE_INIT_KEYS = new String[]{"rollover-style", "selection-style"};
     
     private static final String PROPERTY_SELECTION = "selection";
@@ -280,12 +287,12 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         }
         
         Extent width = (Extent) table.getRenderProperty(Table.PROPERTY_WIDTH);
-        boolean enable100PercentWidthWorkaround = false;
+        boolean render100PercentWidthWorkaround = false;
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
             if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() == 100) {
                 width = null;
-                enable100PercentWidthWorkaround = true;
+                render100PercentWidthWorkaround = true;
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", width);
@@ -303,27 +310,15 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 someColumnsHaveWidths = true;
             }
         }
-        if (someColumnsHaveWidths || enable100PercentWidthWorkaround) {
+        if (someColumnsHaveWidths) {
             Element colGroupElement = document.createElement("colgroup");
-            if (enable100PercentWidthWorkaround) {
-                int screenWidth = rc.getContainerInstance().getClientProperties().getInt(ClientProperties.SCREEN_WIDTH, 1024);
-                colGroupElement.setAttribute("width", screenWidth + "px");
-            }
             tableElement.appendChild(colGroupElement);
             
-            boolean allColumnsHaveWidths = true;
             for (int i = 0; i < columnCount; ++i) {
                 Element colElement = document.createElement("col");
-                if (enable100PercentWidthWorkaround && allColumnsHaveWidths && i == columnCount - 1) {
-                    // Special case: Don't add widths for ALL columns in cases where IE 100-percent Table
-                    // workaround is in use.  (Do nothing)
-                } else {
-                    Extent columnWidth = columnModel.getColumn(i).getWidth();
-                    if (columnWidth == null) {
-                        allColumnsHaveWidths = false;
-                    } else {
-                        colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
-                    }
+                Extent columnWidth = columnModel.getColumn(i).getWidth();
+                if (columnWidth != null) {
+                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
                 }
                 colGroupElement.appendChild(colElement);
             }
@@ -333,13 +328,35 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         tbodyElement.setAttribute("id", elementId + "_tbody");
         tableElement.appendChild(tbodyElement);
 
+        Element firstTrElement = null;
+        
         if (table.isHeaderVisible()) {
-            renderRow(rc, update, tbodyElement, table, Table.HEADER_ROW, defaultInsetsAttributeValue);
+            firstTrElement = renderRow(rc, update, tbodyElement, table, Table.HEADER_ROW, defaultInsetsAttributeValue);
         }
         
         int rows = table.getModel().getRowCount();
         for (int rowIndex = 0; rowIndex < rows; ++rowIndex) {
-            renderRow(rc, update, tbodyElement, table, rowIndex, defaultInsetsAttributeValue);
+            if (firstTrElement == null && rowIndex == 0) {
+                firstTrElement = renderRow(rc, update, tbodyElement, table, rowIndex, defaultInsetsAttributeValue);
+            } else {
+                renderRow(rc, update, tbodyElement, table, rowIndex, defaultInsetsAttributeValue);
+            }
+        }
+        
+        if (render100PercentWidthWorkaround) {
+            // Render string of "sizing dots" in first row of cells.
+            NodeList childNodes = firstTrElement.getChildNodes();
+            int length = childNodes.getLength();
+            for (int i = 0; i < length; ++i) {
+                if (!"td".equals(childNodes.item(i).getNodeName())) {
+                    continue;
+                }
+                Element tdElement = (Element) childNodes.item(i);
+                Element sizingDivElement = document.createElement("div");
+                sizingDivElement.setAttribute("style", "font-size:50px;height:0px;overflow:hidden;");
+                sizingDivElement.appendChild(document.createTextNode(SIZING_DOTS));
+                tdElement.appendChild(sizingDivElement);
+            }
         }
     }
     
@@ -451,8 +468,9 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      * @param table the <code>Table</code> being rendered
      * @param rowIndex the row to render
      * @param defaultInsetsAttributeValue the default CSS padding attribute value
+     * @return the rendered TR element
      */
-    private void renderRow(RenderContext rc, ServerComponentUpdate update, Element tbodyElement, Table table, int rowIndex,
+    private Element renderRow(RenderContext rc, ServerComponentUpdate update, Element tbodyElement, Table table, int rowIndex,
             String defaultInsetsAttributeValue) {
         Document document = tbodyElement.getOwnerDocument();
         String elementId = ContainerInstance.getElementId(table);
@@ -479,8 +497,11 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             tdElement.setAttribute("style", tdCssStyle.renderInline());
             
             trElement.appendChild(tdElement);
+            
             renderAddChild(rc, update, tdElement, childComponent);
         }
+        
+        return trElement;
     }
     
     /**
