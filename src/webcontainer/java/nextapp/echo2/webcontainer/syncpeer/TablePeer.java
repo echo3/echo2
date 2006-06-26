@@ -90,8 +90,6 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
     
     private static final String IMAGE_ID_ROLLOVER_BACKGROUND = "rolloverBackground";
     private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
- 
-    private static final Extent PERCENT_95 = new Extent(95, Extent.PERCENT);
     
     /**
      * Service to provide supporting JavaScript library.
@@ -282,10 +280,12 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         }
         
         Extent width = (Extent) table.getRenderProperty(Table.PROPERTY_WIDTH);
+        boolean enable100PercentWidthWorkaround = false;
         if (rc.getContainerInstance().getClientProperties().getBoolean(
                 ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR)) {
-            if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() > 95) {
-                width = PERCENT_95;
+            if (width != null && width.getUnits() == Extent.PERCENT && width.getValue() == 100) {
+                width = null;
+                enable100PercentWidthWorkaround = true;
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", width);
@@ -303,14 +303,27 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
                 someColumnsHaveWidths = true;
             }
         }
-        if (someColumnsHaveWidths) {
+        if (someColumnsHaveWidths || enable100PercentWidthWorkaround) {
             Element colGroupElement = document.createElement("colgroup");
+            if (enable100PercentWidthWorkaround) {
+                int screenWidth = rc.getContainerInstance().getClientProperties().getInt(ClientProperties.SCREEN_WIDTH, 1024);
+                colGroupElement.setAttribute("width", screenWidth + "px");
+            }
             tableElement.appendChild(colGroupElement);
+            
+            boolean allColumnsHaveWidths = true;
             for (int i = 0; i < columnCount; ++i) {
                 Element colElement = document.createElement("col");
-                Extent columnWidth = columnModel.getColumn(i).getWidth();
-                if (columnWidth != null) {
-                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                if (enable100PercentWidthWorkaround && allColumnsHaveWidths && i == columnCount - 1) {
+                    // Special case: Don't add widths for ALL columns in cases where IE 100-percent Table
+                    // workaround is in use.  (Do nothing)
+                } else {
+                    Extent columnWidth = columnModel.getColumn(i).getWidth();
+                    if (columnWidth == null) {
+                        allColumnsHaveWidths = false;
+                    } else {
+                        colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                    }
                 }
                 colGroupElement.appendChild(colElement);
             }
