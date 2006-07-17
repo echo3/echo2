@@ -85,7 +85,7 @@ EchoSplitPane.prototype.create = function() {
         splitPaneDivElement.style.background = this.background;
     }
     if (this.foreground != null) {
-        splitPaneDivElement.style.foreground = this.foreground;
+        splitPaneDivElement.style.color = this.foreground;
     }
     if (this.font != null) {
         EchoCssUtil.applyStyle(splitPaneDivElement, this.font);
