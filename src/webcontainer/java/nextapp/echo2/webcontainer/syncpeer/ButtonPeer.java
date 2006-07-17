@@ -303,6 +303,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      *      nextapp.echo2.webcontainer.ContainerInstance, nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
+        //TODO. This is going straight through avoiding clientupdatemanager!
         if (ToggleButton.SELECTED_CHANGED_PROPERTY.equals(propertyElement.getAttribute(PROPERTY_NAME))) {
             ToggleButton toggleButton = (ToggleButton) component;
             toggleButton.setSelected("true".equals(propertyElement.getAttribute("value")));

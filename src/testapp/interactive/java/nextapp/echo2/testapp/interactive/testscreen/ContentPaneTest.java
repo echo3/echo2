@@ -29,6 +29,7 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
@@ -133,6 +134,49 @@ public class ContentPaneTest extends SplitPane {
                 label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
                 label.setLayoutData(layoutData);
                 splitPane.add(label);
+
+                layoutData = new SplitPaneLayoutData();
+                layoutData.setBackground(new Color(0xafffaf));
+                label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
+                label.setLayoutData(layoutData);
+                splitPane.add(label);
+
+                testContentPane.add(splitPane);
+            }
+        });
+        controlsColumn.addButton("Add SplitPane / ContentPane / Button", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeAllContent(testContentPane);
+                SplitPane splitPane = new SplitPane();
+                splitPane.setResizable(true);
+                
+                Label label;
+                SplitPaneLayoutData layoutData;
+
+                layoutData = new SplitPaneLayoutData();
+                layoutData.setBackground(new Color(0xafafff));
+                ContentPane subContentPane = new ContentPane();
+                subContentPane.setLayoutData(layoutData);
+                splitPane.add(subContentPane);
+                
+                SplitPane splitPane2 = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
+                subContentPane.add(splitPane2);
+                
+                ContentPane subContentPane2 = new ContentPane();
+                splitPane2.add(subContentPane2);
+                subContentPane2.add(new Label("Test!"));
+                
+                ContentPane subContentPane3 = new ContentPane();
+                splitPane2.add(subContentPane3); 
+                
+                
+                final Button button = new Button("Alpha");
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        button.setText("Alpha".equals(button.getText()) ? "Omega" : "Alpha"); 
+                    }
+                });
+                subContentPane3.add(button);
 
                 layoutData = new SplitPaneLayoutData();
                 layoutData.setBackground(new Color(0xafffaf));
