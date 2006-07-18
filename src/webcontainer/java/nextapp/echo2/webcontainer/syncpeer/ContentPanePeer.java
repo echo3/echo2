@@ -283,6 +283,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
         cssStyle.setAttribute("width", "100%");
         cssStyle.setAttribute("height", "100%");
         cssStyle.setAttribute("overflow", "hidden");
+        cssStyle.setAttribute("z-index", "0");
         ColorRender.renderToStyle(cssStyle, (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_FOREGROUND),
                 (Color) contentPane.getRenderProperty(ContentPane.PROPERTY_BACKGROUND));
         FontRender.renderToStyle(cssStyle, (Font) contentPane.getRenderProperty(ContentPane.PROPERTY_FONT));
