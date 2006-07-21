@@ -53,8 +53,6 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
 
-//TODO. Potentially move real work out of the service, notably processServerUpdates()
-
 /**
  * A service which synchronizes the state of the client with that of the
  * server.  Requests made to this service are in the form of "ClientMessage"
@@ -206,13 +204,46 @@ public class ContainerSynchronizeService extends SynchronizeService {
      *        components to be disposed.
      * @param disposedComponents the components to dispose
      */
-    private void disposeComponents(RenderContext rc, ServerComponentUpdate componentUpdate, Component[] disposedComponents) {
+    private void disposeComponents(RenderContext rc, ServerComponentUpdate componentUpdate, 
+            Component[] disposedComponents) {
         ContainerInstance ci = rc.getContainerInstance();
         for (int i = 0; i < disposedComponents.length; ++i) {
             ComponentSynchronizePeer disposedSyncPeer = SynchronizePeerFactory.getPeerForComponent(
                     disposedComponents[i].getClass());
             disposedSyncPeer.renderDispose(rc, componentUpdate, disposedComponents[i]);
             ci.removeRenderState(disposedComponents[i]);
+        }
+    }
+    
+    /**
+     * Invokes <code>renderDispose()</code> on 
+     * <code>ComponentSynchronizePeer</code>s in a hierarchy of Components that is
+     * be re-rendered on the client.  That is, this hierarchy of components exist on 
+     * the client, are being removed, and will be re-rendered due to a container 
+     * component NOT being capable of rendering a partial update.
+     * This method is invoked recursively.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @param parent the <code>Component</code> whose descendants should be disposed
+     */
+    private void disposeReplacedDescendants(RenderContext rc, ServerComponentUpdate update, Component parent) {
+        Component[] replacedComponents = parent.getVisibleComponents();
+        boolean isRoot = parent == update.getParent();
+        for (int i = 0; i < replacedComponents.length; ++i) {
+            // Verify that component was not added on this synchronization.
+            if (isRoot && update.hasAddedChild(replacedComponents[i])) {
+                // Component was added as a child on this synchronization:
+                // There is no reason to dispose of it as it does not yet exist on the client.
+                continue;
+            }
+            
+            // Recursively dispose child components.
+            disposeReplacedDescendants(rc, update, replacedComponents[i]);
+            
+            // Dispose component.
+            ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(replacedComponents[i].getClass());
+            syncPeer.renderDispose(rc, update, replacedComponents[i]);
         }
     }
     
@@ -348,6 +379,9 @@ public class ContainerSynchronizeService extends SynchronizeService {
                     }
                     boolean fullReplacement = syncPeer.renderUpdate(rc, componentUpdates[i], targetId);
                     if (fullReplacement) {
+                        // Invoke renderDispose() on hierarchy of components destroyed by
+                        // the complete replacement.
+                        disposeReplacedDescendants(rc, componentUpdates[i], parentComponent);
                         fullyReplacedHierarchies.add(parentComponent);
                     }
                 }
