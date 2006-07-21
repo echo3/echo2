@@ -3144,6 +3144,7 @@ EchoWindowUpdate.process = function(messagePartElement) {
  * @param setFocusElement the "set-focus" directive element
  */
 EchoWindowUpdate.processSetFocus = function(setFocusElement) {
+    EchoVirtualPosition.redraw();
     var elementId = setFocusElement.getAttribute("element-id");
     var element = document.getElementById(elementId);
     if (element && element.focus) {
