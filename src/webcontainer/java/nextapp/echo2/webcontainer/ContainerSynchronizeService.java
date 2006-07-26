@@ -49,6 +49,7 @@ import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.UserInstance;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.servermessage.WindowUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.service.SynchronizeService;
 import nextapp.echo2.webrender.util.DomUtil;
@@ -297,6 +298,16 @@ public class ContainerSynchronizeService extends SynchronizeService {
     }
     
     /**
+     * Handles an invalid transaction id scenario, reinitializing the entire 
+     * state of the client.
+     * 
+     * @param rc the relevant <code>RenderContex</code>
+     */
+    private void processInvalidTransaction(RenderContext rc) {
+        WindowUpdate.renderReload(rc.getServerMessage());
+    }
+    
+    /**
      * Executes queued <code>Command</code>s.
      * 
      * @param rc the relevant <code>RenderContext</code>
@@ -444,8 +455,8 @@ public class ContainerSynchronizeService extends SynchronizeService {
         
         try {
             if (!validateTransactionId(ci, clientMessageDocument)) {
-                //TODO Do something about it...send instructions to refresh entire user interface, 
-                // and purge all existing stuff.
+                processInvalidTransaction(rc);
+                return serverMessage;
             }
             
             // Mark instance as active.

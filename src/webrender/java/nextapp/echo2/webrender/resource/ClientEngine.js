@@ -3127,6 +3127,9 @@ EchoWindowUpdate.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "reload":
+                EchoWindowUpdate.processReload(messagePartElement.childNodes[i]);
+                break;
             case "set-focus":
                 EchoWindowUpdate.processSetFocus(messagePartElement.childNodes[i]);
                 break;
@@ -3136,6 +3139,15 @@ EchoWindowUpdate.process = function(messagePartElement) {
             }
         }
     }
+};
+
+/**
+ * Processes a server directive to reload the entire window.
+ *
+ * @param reloadElement the "reload" directive element
+ */
+EchoWindowUpdate.processReload = function(reloadElement) {
+    window.location.reload();
 };
 
 /**

@@ -43,6 +43,16 @@ public class WindowUpdate {
     private static final String MESSAGE_PART_NAME = "EchoWindowUpdate";
     
     /**
+     * Creates a <code>reload</code> operation to reload the contents of the window.
+     * 
+     * @param serverMessage the outgoing <code>ServerMessage</code>
+     */
+    public static void renderReload(ServerMessage serverMessage) {
+        serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
+                MESSAGE_PART_NAME, "reload");
+    }
+    
+    /**
      * Creates a <code>focus</code> operation to set the focused
      * component within the window.
      * 
