@@ -157,6 +157,13 @@ EchoListComponent.prototype.createSelect = function() {
     }
 
     if (this.values) {
+
+        // Sort selectedIndices such that we can iterate through them in order. 
+        if (this.selectedIndices) {
+            this.selectedIndices.sort(EchoListComponent.sortArrayNumeric);
+        }
+        var selectionIndex = 0;
+        
         for (var i = 0; i < this.values.length; ++i) {
             var optionElement = document.createElement("option");
             optionElement.setAttribute("id", this.elementId + "_item_" + i);
@@ -164,6 +171,17 @@ EchoListComponent.prototype.createSelect = function() {
             if (this.styles && this.styles[i]) {
                 optionElement.setAttribute("style", this.styles[i]);
             }
+            
+            // Set initial selection state.
+            // Note that this step is somewhat redundant, as loadSelection()
+            // will later be called, but ensuring selections are set here
+            // as well removes disconcerting flash in Firefox 
+            // (and possibly other browsers as well).
+            if (this.selectedIndices && this.selectedIndices[selectionIndex] == i) {
+                optionElement.setAttribute("selected", "selected");
+                ++selectionIndex;
+            }
+            
             selectElement.appendChild(optionElement);
         }
     }
@@ -571,6 +589,13 @@ EchoListComponent.processSelection = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var listComponent = EchoListComponent.getComponent(componentId);
     listComponent.processSelection(echoEvent);
+};
+
+/**
+ * Array.sort() algorithm to sort an array numerically.
+ */
+EchoListComponent.sortArrayNumeric = function(a, b) {
+    return a - b;
 };
 
 /**
