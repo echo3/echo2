@@ -45,8 +45,19 @@ EchoListComponent = function(elementId, containerElementId) {
     this.rolloverIndex = -1;
 };
 
+/**
+ * CSS style for selected items in DHTML-rendered list box component. 
+ */
 EchoListComponent.DHTML_SELECTION_STYLE = "background-color:#0a246a;color:#ffffff;";
 
+/**
+ * Creates the new list component in the DOM, adding elements beneath the element
+ * specified in the containerElementId property.
+ * 
+ * This method delegates to createSelect()/createDhtml() based on whether or not
+ * a DHTML-based listbox component is required in order to appease Internet Explorer's
+ * list component quirks.
+ */
 EchoListComponent.prototype.create = function() {
     if (this.renderAsListBox) {
         this.renderAsDhtml = EchoClientProperties.get("quirkIESelectListDomUpdate") ? true : false;
@@ -61,6 +72,9 @@ EchoListComponent.prototype.create = function() {
     this.loadSelection();
 };
 
+/**
+ * Creates a DHTML-based listbox copmonent and adds it to the DOM.
+ */
 EchoListComponent.prototype.createDhtml = function() {
     var containerElement = document.getElementById(this.containerElementId);
     
@@ -113,6 +127,9 @@ EchoListComponent.prototype.createDhtml = function() {
     EchoDomPropertyStore.setPropertyValue(selectElement, "component", this);
 };
 
+/**
+ * Creates a list component based on a SELECT element and adds it to the DOM.
+ */
 EchoListComponent.prototype.createSelect = function() {
     var containerElement = document.getElementById(this.containerElementId);
     
@@ -188,6 +205,10 @@ EchoListComponent.prototype.dispose = function() {
     EchoDomPropertyStore.dispose(selectElement);
 };
 
+/**
+ * Configures a DHTML-based list box component to display the currently
+ * selected items, if any are present.
+ */
 EchoListComponent.prototype.ensureSelectionVisibleDhtml = function() {
     var selectElement = this.getElement();
 
@@ -203,10 +224,25 @@ EchoListComponent.prototype.ensureSelectionVisibleDhtml = function() {
     }
 };
 
+/**
+ * Returns the root DOM element of the rendered component.
+ * 
+ * @return the root DOM element, or null if it has not 
+ *          been rendered / does not exist
+ */
 EchoListComponent.prototype.getElement = function() {
     return document.getElementById(this.elementId);
 };
 
+/**
+ * Returns the selection index of an item element in a list
+ * component.  The item element can be either an OPTION in the
+ * case of a normal SELECT-based list component or a DIV in the
+ * case of a DHTML-rendered list box.
+ * 
+ * @param node the DOM node
+ * @return the selection index of the node, if applicable, or -1 otherwise
+ */
 EchoListComponent.prototype.getNodeIndex = function(node) {
     var selectElement = this.getElement();
     
@@ -297,6 +333,12 @@ EchoListComponent.prototype.loadSelectionDhtml = function() {
     }
 };
 
+/**
+ * Processes a click event on a DHTML-based list box component.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponent.prototype.processClickDhtml = function(echoEvent) {
     var selectElement = this.getElement();
     
@@ -330,6 +372,12 @@ EchoListComponent.prototype.processClickDhtml = function(echoEvent) {
     this.updateClientMessage();
 };
 
+/**
+ * Processes an item mouse enter event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponent.prototype.processRolloverEnter = function(echoEvent) {
     var selectElement = this.getElement();
     
@@ -344,6 +392,12 @@ EchoListComponent.prototype.processRolloverEnter = function(echoEvent) {
     this.setRolloverIndex(index);
 };
 
+/**
+ * Processes an item mouse exit event.
+ *
+ * @param echoEvent the event, preprocessed by the 
+ *        <code>EchoEventProcessor</code>
+ */
 EchoListComponent.prototype.processRolloverExit = function(echoEvent) {
     var selectElement = this.getElement();
 
@@ -463,30 +517,67 @@ EchoListComponent.getComponent = function(element) {
     return EchoDomPropertyStore.getPropertyValue(element, "component");
 };
 
+/**
+ * Click event listener for DHTML-based list box components.
+ * Looks up appropriate EchoListComponent instance based on event
+ * target id and then delegates to corresponding method in
+ * EchoListComponent instance.
+ * 
+ * @param echoEvent the event (that has been fired via EchoEventProcessor)
+ */
 EchoListComponent.processClickDhtml = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var listComponent = EchoListComponent.getComponent(componentId);
     listComponent.processClickDhtml(echoEvent);
 };
 
+/**
+ * Click event listener for item mouse enter events.
+ * Looks up appropriate EchoListComponent instance based on event
+ * target id and then delegates to corresponding method in
+ * EchoListComponent instance.
+ * 
+ * @param echoEvent the event (that has been fired via EchoEventProcessor)
+ */
 EchoListComponent.processRolloverEnter = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var listComponent = EchoListComponent.getComponent(componentId);
     listComponent.processRolloverEnter(echoEvent);
 };
 
+/**
+ * Click event listener for item mouse exit events.
+ * Looks up appropriate EchoListComponent instance based on event
+ * target id and then delegates to corresponding method in
+ * EchoListComponent instance.
+ * 
+ * @param echoEvent the event (that has been fired via EchoEventProcessor)
+ */
 EchoListComponent.processRolloverExit = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var listComponent = EchoListComponent.getComponent(componentId);
     listComponent.processRolloverExit(echoEvent);
 };
 
+/**
+ * Click event listener for selection events (for SELECT-element-based components).
+ * Looks up appropriate EchoListComponent instance based on event
+ * target id and then delegates to corresponding method in
+ * EchoListComponent instance.
+ * 
+ * @param echoEvent the event (that has been fired via EchoEventProcessor)
+ */
 EchoListComponent.processSelection = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var listComponent = EchoListComponent.getComponent(componentId);
     listComponent.processSelection(echoEvent);
 };
 
+/**
+ * IE-specific event handler to avoid selection highlighting.
+ * 
+ * @param e the event
+ */
 EchoListComponent.processSelectStart = function(e) {
     EchoDomUtil.preventEventDefault(e);
 };
