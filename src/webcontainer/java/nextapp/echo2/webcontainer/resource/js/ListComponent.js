@@ -277,6 +277,12 @@ EchoListComponent.prototype.getNodeIndex = function(node) {
     return -1;
 };
 
+/**
+ * Temporarily adds an empty option a drop-down style SELECT element 
+ * that will be selected in cases where no option has been selected
+ * by the user.  The option will be removed once the user makes
+ * an initial selection. 
+ */
 EchoListComponent.prototype.addNullOption = function() {
     if (EchoClientProperties.get("quirkSelectRequiresNullOption")
             && !this.renderAsListBox && !this.nullOptionActive) {
@@ -292,6 +298,11 @@ EchoListComponent.prototype.addNullOption = function() {
     }
 };
 
+/**
+ * Removes the temporary empty option from a drop-down style SELECT
+ * element that is selected in the case where no option has been
+ * selected by the user.
+ */
 EchoListComponent.prototype.removeNullOption = function() {
     if (this.nullOptionActive) {
         // Remove null option.
@@ -301,6 +312,12 @@ EchoListComponent.prototype.removeNullOption = function() {
     }
 };
 
+/**
+ * Updates the selection state based on the values stored in
+ * this data object.
+ * Delegates this operation to loadSelectionDhtml() in the case
+ * of a DHTML listbox component.
+ */
 EchoListComponent.prototype.loadSelection = function() {
     if (this.renderAsDhtml) {
         this.loadSelectionDhtml();
@@ -329,6 +346,9 @@ EchoListComponent.prototype.loadSelection = function() {
     }
 };
 
+/**
+ * loadSelection() implementation for DHTML listbox components.
+ */
 EchoListComponent.prototype.loadSelectionDhtml = function() {
     var selectElement = this.getElement();
     
