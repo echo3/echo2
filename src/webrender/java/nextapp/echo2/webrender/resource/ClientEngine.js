@@ -238,6 +238,8 @@ EchoClientConfiguration.MessageProcessor.processStore = function(storeElement) {
 
 EchoClientConfiguration.propertyMap = new Array();
 
+EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"] 
+        = "A synchronization error has occurred.  Click \"Ok\" to re-synchronize.";
 EchoClientConfiguration.propertyMap["defaultServerErrorMessage"] 
         = "An application error has occurred.  Your session has been reset.";
 EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"] 
@@ -3142,11 +3144,16 @@ EchoWindowUpdate.process = function(messagePartElement) {
 };
 
 /**
- * Processes a server directive to reload the entire window.
- *
+ * Processes a server directive to reload the entire window
+ * (due to an out-of-sync application state).
+ * 
  * @param reloadElement the "reload" directive element
  */
 EchoWindowUpdate.processReload = function(reloadElement) {
+    var message = EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"]
+    if (message) {
+        alert(message);
+    }
     window.location.reload();
 };
 
