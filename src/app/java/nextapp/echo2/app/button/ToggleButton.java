@@ -196,6 +196,16 @@ public abstract class ToggleButton extends AbstractButton {
     }
 
     /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String name, Object value) {
+        super.processInput(name, value);
+        if (SELECTED_CHANGED_PROPERTY.equals(name)) {
+            setSelected(((Boolean) value).booleanValue());
+        }
+    }
+
+    /**
      * Removes a <code>ChangeListener</code> from being notified of state
      * changes, i.e., to the selected state of a <code>ToggleButton</code>.
      * 
