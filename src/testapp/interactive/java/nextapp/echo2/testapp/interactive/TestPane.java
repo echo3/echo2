@@ -141,6 +141,7 @@ public class TestPane extends ContentPane {
         controlsColumn.add(applicationControlsColumn);
 
         Button button = new Button("Exit");
+        button.setRenderId("Exit");
         button.setId("ExitTestApplication");
         button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
@@ -153,6 +154,7 @@ public class TestPane extends ContentPane {
     
     private void addTest(String name, String action) {
         Button button = new Button(name);
+        button.setRenderId("StartTest" + action);
         button.setId("StartTest:" + action);
         button.setActionCommand(action);
         button.setStyleName("Default");

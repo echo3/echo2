@@ -324,6 +324,21 @@ implements RenderIdSupport, Serializable {
         }
         propertyChangeSupport.addPropertyChangeListener(l);
     }
+
+    /**
+     * Internal method to set the render identifier of the<code>Component</code>.
+     * This method is invoked by the <code>ApplicationInstance</code>
+     * when the component is registered or unregistered, or by manual
+     * invocation of <code>setRenderId()</code>.  This method performs no
+     * error checking.
+     * 
+     * @param renderId the new identifier
+     * @see #getRenderId()
+     * @see #setRenderId()
+     */
+    void assignRenderId(String renderId) {
+        this.renderId = renderId;
+    }
     
     /**
      * Life-cycle method invoked when the <code>Component</code> is removed 
@@ -1410,16 +1425,42 @@ implements RenderIdSupport, Serializable {
         firePropertyChange(propertyName, oldValue, newValue);
     }
     
+    private static final boolean isLetter(char ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+    }
+    
+    private static final boolean isLetterOrDigit(char ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
+    }
+    
     /**
-     * Sets the render identifier of this <code>Component</code>.
-     * This method is invoked by the <code>ApplicationInstance</code>
-     * when the component is registered or unregistered.
+     * Sets a custom render identifier for this <code>Component</code>.
+     * The identifier may be changed without notification if another 
+     * component is already using it.
+     * Identifiers are limited to ASCII alphanumeric values.  
+     * The first character must be an upper- or lower-case ASCII letter.
+     * Underscores and other punctuation characters are not permitted.
+     * Use of "TitleCase" or "camelCase" is recommended.
      * 
      * @param renderId the new identifier
-     * @see #getRenderId()
      */
-    void setRenderId(String renderId) {
-        this.renderId = renderId;
+    public void setRenderId(String renderId) {
+        if (this.renderId != null && renderId != null && this.applicationInstance != null) {
+            throw new IllegalStateException("Cannot set renderId while component is registered.");
+        }
+        if (renderId != null) {
+            int length = renderId.length();
+            if (!isLetter(renderId.charAt(0))) {
+                throw new IllegalArgumentException("Invalid identifier:" + renderId);
+            }
+            for (int i = 1; i < length; ++i) {
+                if (!isLetterOrDigit(renderId.charAt(i))) {
+                    throw new IllegalArgumentException("Invalid identifier:" + renderId);
+                }
+            }
+            
+        }
+        assignRenderId(renderId);
     }
     
     /**

@@ -54,10 +54,12 @@ public class WelcomePane extends ContentPane {
     public WelcomePane() {
         super();
         setStyleName("WelcomePane");
+        setRenderId("WelcomePane");
         
         Label label;
 
         Column column = new Column();
+        column.setRenderId("MainColumn");
         column.setStyleName("WelcomePane.Column");
         add(column);
         
@@ -84,6 +86,7 @@ public class WelcomePane extends ContentPane {
         splitPane.add(controlRow);
         
         Button button = new Button("Continue", Styles.ICON_24_YES);
+        button.setRenderId("WelcomePaneEnter");
         button.setId("EnterTestApplication");
         button.setStyleName("ControlPane.Button");
         button.addActionListener(new ActionListener() {

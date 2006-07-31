@@ -593,9 +593,9 @@ implements Serializable {
         if (renderId == null || renderIdToComponentMap.containsKey(renderId)) {
             // Note that the render id is reassigned if it currently exists renderIdToComponentMap.  This could be the case
             // in the event a Component was being used in a pool.
-            component.setRenderId(generateId());
+            component.assignRenderId(generateId());
         }
-        renderIdToComponentMap.put(component.getRenderId(), component); 
+        renderIdToComponentMap.put(component.getRenderId(), component);
         if (component instanceof ModalSupport && ((ModalSupport) component).isModal()) {
             setModal(component, true);
         }
