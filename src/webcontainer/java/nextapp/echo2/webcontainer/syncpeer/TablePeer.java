@@ -343,7 +343,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             }
         }
         
-        if (render100PercentWidthWorkaround) {
+        if (render100PercentWidthWorkaround && firstTrElement != null) {
             // Render string of "sizing dots" in first row of cells.
             NodeList childNodes = firstTrElement.getChildNodes();
             int length = childNodes.getLength();
