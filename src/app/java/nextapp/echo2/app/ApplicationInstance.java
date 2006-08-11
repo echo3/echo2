@@ -666,6 +666,10 @@ implements Serializable {
      * @param newValue the component to be focused
      */
     public void setFocusedComponent(Component newValue) {
+        if (newValue instanceof DelegateFocusSupport) {
+            newValue = ((DelegateFocusSupport) newValue).getFocusComponent(); 
+        }
+        
         Component oldValue = getFocusedComponent();
         if (newValue == null) {
             focusedComponent = null;
