@@ -144,6 +144,7 @@
         <echo message="************************************************************"/>
         <echo message="*         Servlet API not found in build classpath         *"/>
         <echo message="************************************************************"/>
+        <echo message="Specified JAR = ${servlet.lib.jar}"/>
         <fail message="${servlet.lib.msg}"/>
     </target>
     
