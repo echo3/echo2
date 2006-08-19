@@ -1737,12 +1737,29 @@ EchoDomUtil.stopPropagation = function(e) {
  * This information includes the DOM element on which the
  * event was actually registered (the "registeredTarget" property) as
  * well as the target that fired the event (the "target" property).
+ * 
+ * Event handlers should return true if they wish for the event to continue
+ * propagating.  Returning false (or nothing at all) will result in the
+ * event not being fired to additional handlers.
+ * 
+ * Events may be registered with "capture" mode enabled.  Capturing event
+ * handlers will receive notification of an event on a child control before
+ * the child (whereas non-capturing handlers will receive notification
+ * after the child element does).  This behavior works as described here even
+ * on Internet Explorer browsers which lack support for the W3C Event Model and
+ * its similar capability of event capturing.
  *
  * Additionally, use of the EchoEventProcessor minimizes "DHTML memory
  * leaks" and provides a mechanism for inspecting registered event handlers
  * using the Debug Window.
  */
 function EchoEventProcessor() { }
+
+EchoEventProcessor.EventHandlerData = function(handlerName, capture) { 
+    this.handlerName = handlerName;
+    this.capture = capture;
+};
+
 
 /**
  * Static object/namespace for EchoEventProcessor MessageProcessor 
@@ -1804,8 +1821,11 @@ EchoEventProcessor.eventTypeToHandlersMap = new EchoCollectionsMap();
  *        DOM level 2 event names, e.g., "mouseover" or "click", without
  *        the "on" prefix)
  * @param handler the name of the handler, as a String
+ * @param capture flag indicating whether listener should be registered as a 
+ *        capturing event handler (NOTE: this flag operates as expected even 
+ *        on IE browsers)
  */
-EchoEventProcessor.addHandler = function(element, eventType, handler) {
+EchoEventProcessor.addHandler = function(element, eventType, handler, capture) {
     var elementId;
     if (typeof element == "string") {
         elementId = element;
@@ -1821,7 +1841,10 @@ EchoEventProcessor.addHandler = function(element, eventType, handler) {
         elementIdToHandlerMap = new EchoCollectionsMap();
         EchoEventProcessor.eventTypeToHandlersMap.put(eventType, elementIdToHandlerMap);
     }
-    elementIdToHandlerMap.put(elementId, handler);
+    
+    var handlerData = new EchoEventProcessor.EventHandlerData(handler, capture);
+    
+    elementIdToHandlerMap.put(elementId, handlerData);
 };
 
 /**
@@ -1849,8 +1872,22 @@ EchoEventProcessor.dispose = function() {
  *        DOM level 2 event names, e.g., "mouseover" or "click", without
  *        the "on" prefix)
  * @param elementId the elementId the id of the DOM element
+ * @return the event handler name
  */
 EchoEventProcessor.getHandler = function(eventType, elementId) {
+    var handlerData = EchoEventProcessor.getHandlerData(eventType, elementId);
+    return handlerData ? handlerData.handlerName : null;
+};
+
+/**
+ * Retrieves the event handler data object of a specific type for a specific element.
+ *
+ * @param eventType the type of the event (should be specified using 
+ *        DOM level 2 event names, e.g., "mouseover" or "click", without
+ *        the "on" prefix)
+ * @param elementId the elementId the id of the DOM element
+ */
+EchoEventProcessor.getHandlerData = function(eventType, elementId) {
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
     if (!elementIdToHandlerMap) {
         return null;
@@ -1904,30 +1941,91 @@ EchoEventProcessor.processEvent = function(e) {
         e.target = e.srcElement;
     }
     var targetElement = e.target;
-    var handlerName = null;
-    while (!handlerName && targetElement) {
-        if (targetElement.nodeType == 1) { // Element Node
-            handlerName = EchoEventProcessor.getHandler(eventType, targetElement.getAttribute("id"));
-        }
-        if (!handlerName) {
-            targetElement = targetElement.parentNode;
-        }
-    }
-    e.registeredTarget = targetElement;
+    var handlerDatas = new Array();
+    var targetElements = new Array();
     
-    if (!handlerName) {
+    var hasCapturingHandlers = false;
+    
+    while (targetElement) {
+        if (targetElement.nodeType == 1) { // Element Node
+            var handlerData = EchoEventProcessor.getHandlerData(eventType, targetElement.id);
+            if (handlerData) {
+                hasCapturingHandlers |= handlerData.capture;
+                handlerDatas.push(handlerData);
+                targetElements.push(targetElement);
+            }
+        }
+        targetElement = targetElement.parentNode;
+    }
+    
+    if (handlerDatas.length == 0) {
         return;
     }
+    
+    var propagate = true;
+    
+    if (hasCapturingHandlers) {
+        // Process capturing event handlers.
+        for (var i = handlerDatas.length - 1; i >=0; --i) {
+            if (!handlerDatas[i].capture) {
+                // Ignore non-capturing handlers.
+                continue;
+            }
 
-    var handler;
-    try {
-        handler = eval(handlerName);
-    } catch (ex) {
-        throw "Invalid handler: " + handlerName + " (" + ex + ")";
+            // Load handler.
+            var handler;
+            try {
+                handler = eval(handlerDatas[i].handlerName);
+            } catch (ex) {
+                throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
+            }
+    
+            // Set registered target on event.
+            e.registeredTarget = targetElements[i];
+            
+            // Invoke handler.
+            propagate = handler(e);
+            
+            // Stop propagation if required.
+            if (!propagate) {
+                break;
+            }
+        }
+    }
+
+    if (propagate) {
+        // Process non-capturing event handlers.
+        for (var i = 0; i < handlerDatas.length; ++i) {
+            if (handlerDatas[i].capture) {
+                // Ignore capturing handlers.
+                continue;
+            }
+            
+            // Load handler.
+            var handler;
+            try {
+                handler = eval(handlerDatas[i].handlerName);
+            } catch (ex) {
+                throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
+            }
+    
+            // Set registered target on event.
+            e.registeredTarget = targetElements[i];
+            
+            // Invoke handler.
+            propagate = handler(e);
+            
+            // Stop propagation if required.
+            if (!propagate) {
+                break;
+            }
+        }
     }
     
-    handler(e);
-    EchoDomUtil.stopPropagation(e);
+    if (!propagate) {
+        // Stop propagation of event.
+        EchoDomUtil.stopPropagation(e);
+    }
 };
 
 /**

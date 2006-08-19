@@ -453,6 +453,8 @@ EchoWindowPane.prototype.create = function() {
 
     EchoDomPropertyStore.setPropertyValue(windowPaneDivElement, "component", this);
     
+    EchoEventProcessor.addHandler(windowPaneDivElement, "click", "EchoWindowPane.processRaiseClick", true);
+    
     if (this.movable) {
         EchoEventProcessor.addHandler(titleBarDivElement, "mousedown", 
                 "EchoWindowPane.processTitleBarMouseDown");
@@ -477,6 +479,9 @@ EchoWindowPane.prototype.create = function() {
 
 EchoWindowPane.prototype.dispose = function() {
     this.removeListeners();
+
+    var windowPaneDivElement = document.getElementById(this.elementId);
+    EchoEventProcessor.removeHandler(windowPaneDivElement, "click", "EchoWindowPane.processRaiseClick");
 
     if (this.movable) {
         var titleBarDivElement = document.getElementById(this.elementId + "_titlebar");
@@ -608,6 +613,16 @@ EchoWindowPane.prototype.processClose = function(echoEvent) {
     }
     EchoClientMessage.setActionValue(this.elementId, "close");
     EchoServerTransaction.connect();
+};
+
+EchoWindowPane.prototype.processRaise = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
+        return;
+    }
+    
+    this.raise();
+    
+    return true;
 };
 
 EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
@@ -784,6 +799,12 @@ EchoWindowPane.processClose = function(echoEvent) {
  */
 EchoWindowPane.selectStart = function() {
     EchoDomUtil.preventEventDefault(window.event);
+};
+
+EchoWindowPane.processRaiseClick = function(echoEvent) { 
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var windowPane = EchoWindowPane.getComponent(componentId);
+    return windowPane.processRaise(echoEvent);
 };
 
 EchoWindowPane.processTitleBarMouseDown = function(echoEvent) {
