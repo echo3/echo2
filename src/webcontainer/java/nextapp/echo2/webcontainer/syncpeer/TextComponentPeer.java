@@ -64,6 +64,7 @@ import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
+import nextapp.echo2.webcontainer.propertyrender.LayoutDirectionRender;
 import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
@@ -215,6 +216,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, FocusSup
             }
         }
         
+        LayoutDirectionRender.renderToStyle(cssStyle, textComponent.getLayoutDirection(), textComponent.getLocale());
         BorderRender.renderToStyle(cssStyle, border);
         ColorRender.renderToStyle(cssStyle, foreground, background);
         FontRender.renderToStyle(cssStyle, font);
