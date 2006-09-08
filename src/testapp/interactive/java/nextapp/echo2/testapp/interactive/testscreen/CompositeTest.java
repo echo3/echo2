@@ -29,31 +29,23 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
-import nextapp.echo2.app.Border;
-import nextapp.echo2.app.Button;
-import nextapp.echo2.app.Container;
-import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.Composite;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
-import nextapp.echo2.testapp.interactive.CoolDelayMessage;
 import nextapp.echo2.testapp.interactive.StyleUtil;
-import nextapp.echo2.webcontainer.ContainerContext;
-import nextapp.echo2.webcontainer.DefaultServerDelayMessage;
 
 /**
  * Interactive test for the <code>Container</code> component.
  */
-public class ContainerTest extends SplitPane {
+public class CompositeTest extends SplitPane {
     
-    public ContainerTest() {
+    public CompositeTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
@@ -61,7 +53,7 @@ public class ContainerTest extends SplitPane {
         controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
         
-        final Container container = new Container();
+        final Composite container = new Composite() { };
         add(container);
 
         controlsColumn.addButton("Reset", new ActionListener() {
@@ -126,14 +118,14 @@ public class ContainerTest extends SplitPane {
         controlsColumn.addButton("Add Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (container.getParent() == null) {
-                    ContainerTest.this.add(container);
+                    CompositeTest.this.add(container);
                 }
             }
         });
         controlsColumn.addButton("Remove Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (container.getParent() != null) {
-                    ContainerTest.this.remove(container);
+                    CompositeTest.this.remove(container);
                 }
             }
         });

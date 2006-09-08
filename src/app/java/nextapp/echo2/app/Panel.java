@@ -30,24 +30,50 @@
 package nextapp.echo2.app;
 
 /**
- * Generic composite component base class.  
- * This class is intended to be used as base class for composite components.
- * This component will simply display its content without any modification to
- * its appearance or behavior.  This component may have at most one child
- * component.
+ * A single-child container.
  */
-public class Container extends Component {
+public class Panel extends Composite {
 
-    public Container() {
-        super();
+    public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_INSETS = "insets";
+
+    /**
+     * Returns the <code>Border</code> that encloses the entire <code>Column</code>.
+     * 
+     * @return the border
+     */
+    public Border getBorder() {
+        return (Border) getProperty(PROPERTY_BORDER);
     }
     
     /**
-     * Allow at most one child component.
+     * Returns the default inset between the border and cells of the
+     * <code>Column</code>. This value will be overridden for a child
+     * component if a setting is specified in its <code>ColumnLayoutData</code>.
      * 
-     * @see nextapp.echo2.app.Component#isValidChild(nextapp.echo2.app.Component)
+     * @return the inset
      */
-    public boolean isValidChild(Component child) {
-        return getComponentCount() == 0 || indexOf(child) != -1;
+    public Insets getInsets() {
+        return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
+     /**
+     * Sets the <code>Border</code> that encloses the entire <code>Column</code>.
+     * 
+     * @param newValue the new border
+     */
+    public void setBorder(Border newValue) {
+        setProperty(PROPERTY_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the inset between the border and cells of the <code>Column</code>.
+     * This value will be overridden for a child component if a setting is
+     * specified in its <code>ColumnLayoutData</code>.
+     * 
+     * @param newValue the new inset
+     */
+    public void setInsets(Insets newValue) {
+        setProperty(PROPERTY_INSETS, newValue);
     }
 }

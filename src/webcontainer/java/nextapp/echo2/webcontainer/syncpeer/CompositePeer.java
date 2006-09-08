@@ -34,26 +34,31 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.Container;
+import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.Panel;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
+import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 
 /**
- * Synchronization peer for <code>nextapp.echo2.app.Column</code> components.
+ * Synchronization peer for <code>nextapp.echo2.app.Composite</code>
+ * and <code>nextapp.echo2.app.Panel</code> components.
  * <p>
  * This class should not be extended or used by classes outside of the
  * Echo framework.
  */
-public class ContainerPeer 
+public class CompositePeer 
 implements ComponentSynchronizePeer, DomUpdateSupport{
 
     /**
@@ -90,10 +95,9 @@ implements ComponentSynchronizePeer, DomUpdateSupport{
      *      nextapp.echo2.app.Component)
      */
     public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
-        Container container = (Container) component;
         Document document = parentNode.getOwnerDocument();
         Element divElement = document.createElement("div");
-        divElement.setAttribute("id", ContainerInstance.getElementId(container));
+        divElement.setAttribute("id", ContainerInstance.getElementId(component));
         parentNode.appendChild(divElement);
         
         if (component.getVisibleComponentCount() == 0) {
@@ -104,6 +108,11 @@ implements ComponentSynchronizePeer, DomUpdateSupport{
         CssStyle cssStyle = new CssStyle();
         ColorRender.renderToStyle(cssStyle, component);
         FontRender.renderToStyle(cssStyle, component);
+        if (component instanceof Panel) {
+            BorderRender.renderToStyle(cssStyle, (Border) component.getRenderProperty(Panel.PROPERTY_BORDER));
+            InsetsRender.renderToStyle(cssStyle, "padding", (Insets) component.getRenderProperty(Panel.PROPERTY_INSETS));
+        }
+        
         if (cssStyle.hasAttributes()) {
             divElement.setAttribute("style", cssStyle.renderInline());
         }

@@ -110,7 +110,7 @@ public class TestPane extends ContentPane {
         addTest("Client Exception", "ClientExceptionTest");
         addTest("Column", "ColumnTest");
         addTest("Command", "CommandTest");
-        addTest("Container", "ContainerTest");
+        addTest("Composite", "CompositeTest");
         addTest("Container Context", "ContainerContextTest");
         addTest("ContentPane", "ContentPaneTest");
         addTest("Delay", "DelayTest");
@@ -122,6 +122,7 @@ public class TestPane extends ContentPane {
         addTest("ListBox", "ListBoxTest");
         addTest("ListBox (Large Quantity)", "ListRenderTableTest");
         addTest("Localization", "LocalizationTest");
+        addTest("Panel", "PanelTest");
         addTest("Push (Basic)", "PushTest");
         addTest("Push (Ghost Test)", "PushGhostTest");
         addTest("Random Click", "RandomClickTest");
