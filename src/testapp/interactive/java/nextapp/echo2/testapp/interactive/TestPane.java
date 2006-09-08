@@ -110,6 +110,7 @@ public class TestPane extends ContentPane {
         addTest("Client Exception", "ClientExceptionTest");
         addTest("Column", "ColumnTest");
         addTest("Command", "CommandTest");
+        addTest("Container", "ContainerTest");
         addTest("Container Context", "ContainerContextTest");
         addTest("ContentPane", "ContentPaneTest");
         addTest("Delay", "DelayTest");
