@@ -97,7 +97,7 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     private static final ImageReference DEFAULT_SELECTED_RADIOBUTTON_ICON 
             = new ResourceImageReference("/nextapp/echo2/webcontainer/resource/image/RadioButtonOn.gif");
     
-    private static final String[] BUTTON_INIT_KEYS = new String[]{"rollover-style", "pressed-style"};
+    private static final String[] BUTTON_INIT_KEYS = new String[]{"default-style", "rollover-style", "pressed-style"};
     
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_ICON = "icon";
@@ -342,78 +342,14 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             divElement.setAttribute("tabindex", "-1");
         }
         
-        CssStyle cssStyle = new CssStyle();
-        cssStyle.setAttribute("cursor", "pointer");
-        cssStyle.setAttribute("margin", "0px");
-        cssStyle.setAttribute("border-spacing", "0px");
-        LayoutDirectionRender.renderToStyle(cssStyle, button.getLayoutDirection(), button.getLocale());
-        ExtentRender.renderToStyle(cssStyle, "width", (Extent) button.getRenderProperty(AbstractButton.PROPERTY_WIDTH));
-        Extent height = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_HEIGHT);
-        if (height != null) {
-            ExtentRender.renderToStyle(cssStyle, "height", height);
-            cssStyle.setAttribute("overflow", "hidden");
-        }
-        if (Boolean.FALSE.equals(button.getRenderProperty(AbstractButton.PROPERTY_LINE_WRAP))) {
-            cssStyle.setAttribute("white-space", "nowrap");
-        }
-        
         boolean renderEnabled = button.isRenderEnabled();
-
-        Border border;
-        Color foreground, background;
-        Font font;
-        FillImage backgroundImage;
-        if (!renderEnabled) {
-            // Retrieve disabled style information.
-            background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BACKGROUND);
-            backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BACKGROUND_IMAGE);
-            border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BORDER);
-            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FONT);
-            foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FOREGROUND);
-
-            // Fallback to normal styles.
-            if (background == null) {
-                background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND);
-                if (backgroundImage == null) {
-                    // Special case:
-                    // Disabled background without disabled background image will render disabled background instead of
-                    // normal background image.
-                    backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
-                }
-            }
-            if (border == null) {
-                border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER);
-            }
-            if (font == null) {
-                font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
-            }
-            if (foreground == null) {
-                foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND);
-            }
-        } else {
-            border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER);
-            foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND);
-            background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND);
-            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
-            backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
-        }
-        
-        BorderRender.renderToStyle(cssStyle, border);
-        ColorRender.renderToStyle(cssStyle, foreground, background);
-        FontRender.renderToStyle(cssStyle, font);
-        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, 
-                FillImageRender.FLAG_DISABLE_FIXED_MODE);
-        InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
-        
-        AlignmentRender.renderToStyle(cssStyle,
-                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT), button);
         
         String toolTipText = (String) button.getRenderProperty(AbstractButton.PROPERTY_TOOL_TIP_TEXT);
         if (renderEnabled && toolTipText != null) {
             divElement.setAttribute("title", toolTipText);
         }
+        divElement.setAttribute("style", "visibility:hidden;");
         
-        divElement.setAttribute("style", cssStyle.renderInline());
         parentNode.appendChild(divElement);
         return divElement;
     }
@@ -610,6 +546,75 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
     }
     
     /**
+     * Render default CSS style.
+     */
+    private CssStyle renderDefaultStyle(RenderContext rc, AbstractButton button) {
+        CssStyle cssStyle = new CssStyle();
+        LayoutDirectionRender.renderToStyle(cssStyle, button.getLayoutDirection(), button.getLocale());
+        ExtentRender.renderToStyle(cssStyle, "width", (Extent) button.getRenderProperty(AbstractButton.PROPERTY_WIDTH));
+        Extent height = (Extent) button.getRenderProperty(AbstractButton.PROPERTY_HEIGHT);
+        if (height != null) {
+            ExtentRender.renderToStyle(cssStyle, "height", height);
+            cssStyle.setAttribute("overflow", "hidden");
+        }
+        if (Boolean.FALSE.equals(button.getRenderProperty(AbstractButton.PROPERTY_LINE_WRAP))) {
+            cssStyle.setAttribute("white-space", "nowrap");
+        }
+
+        boolean renderEnabled = button.isRenderEnabled();
+
+        Border border;
+        Color foreground, background;
+        Font font;
+        FillImage backgroundImage;
+        if (!renderEnabled) {
+            // Retrieve disabled style information.
+            background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BACKGROUND);
+            backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BACKGROUND_IMAGE);
+            border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BORDER);
+            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FONT);
+            foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FOREGROUND);
+
+            // Fallback to normal styles.
+            if (background == null) {
+                background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND);
+                if (backgroundImage == null) {
+                    // Special case:
+                    // Disabled background without disabled background image will render disabled background instead of
+                    // normal background image.
+                    backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
+                }
+            }
+            if (border == null) {
+                border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER);
+            }
+            if (font == null) {
+                font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
+            }
+            if (foreground == null) {
+                foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND);
+            }
+        } else {
+            border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER);
+            foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND);
+            background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND);
+            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
+            backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
+        }
+        
+        BorderRender.renderToStyle(cssStyle, border);
+        ColorRender.renderToStyle(cssStyle, foreground, background);
+        FontRender.renderToStyle(cssStyle, font);
+        FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, 
+                FillImageRender.FLAG_DISABLE_FIXED_MODE);
+        InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
+        
+        AlignmentRender.renderToStyle(cssStyle,
+                (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT), button);
+        return cssStyle;
+    }
+    
+    /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderDispose(nextapp.echo2.webcontainer.RenderContext, 
      *      nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
@@ -730,8 +735,11 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             }
         }
         
+        CssStyle defaultCssStyle = renderDefaultStyle(rc, button);
+        String defaultStyle = defaultCssStyle.renderInline();
+        
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_POSTUPDATE,
-                "EchoButton.MessageProcessor", "init",  BUTTON_INIT_KEYS, new String[]{rolloverStyle, pressedStyle});
+                "EchoButton.MessageProcessor", "init",  BUTTON_INIT_KEYS, new String[]{defaultStyle, rolloverStyle, pressedStyle});
         Element itemElement = serverMessage.getDocument().createElement("item");
         itemElement.setAttribute("eid", elementId);
         if (defaultIconUri != null) {

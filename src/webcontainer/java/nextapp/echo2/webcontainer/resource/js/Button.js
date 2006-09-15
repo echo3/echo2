@@ -513,11 +513,18 @@ EchoButton.MessageProcessor.processDispose = function(disposeMessageElement) {
  * @param initMessageElement the <code>init</code> element to process
  */
 EchoButton.MessageProcessor.processInit = function(initMessageElement) {
+    var defaultStyle = initMessageElement.getAttribute("default-style");
     var rolloverStyle = initMessageElement.getAttribute("rollover-style");
     var pressedStyle = initMessageElement.getAttribute("pressed-style");
     
     for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
         var elementId = item.getAttribute("eid");
+        var element = document.getElementById(elementId);
+        EchoDomUtil.setCssText(element, defaultStyle);
+        element.style.visibility = "visible";
+        element.style.cursor = "pointer";
+        element.style.margin = "0px";
+        element.style.borderSpacing = "0px";
         
         var button = new EchoButton(elementId);
         
