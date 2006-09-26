@@ -107,7 +107,7 @@ import nextapp.echo2.app.event.EventListenerList;
  */
 public abstract class Component 
 implements RenderIdSupport, Serializable {
-    
+
     /**
      * <code>ArrayList</code> capacity for child storage.
      */
@@ -166,6 +166,16 @@ implements RenderIdSupport, Serializable {
     public static final String STYLE_CHANGED_PROPERTY = "style";
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
     public static final String VISIBLE_CHANGED_PROPERTY = "visible";
+    
+    //TODO. Doc/move to util.
+    private static final boolean isLetter(char ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+    }
+    
+    //TODO. Doc/move to util.
+    private static final boolean isLetterOrDigit(char ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
+    }
     
     /** The <code>ApplicationInstance</code> to which the component is registered. */
     private ApplicationInstance applicationInstance;
@@ -1423,14 +1433,6 @@ implements RenderIdSupport, Serializable {
         Object oldValue = localStyle.getProperty(propertyName);
         localStyle.setProperty(propertyName, newValue);
         firePropertyChange(propertyName, oldValue, newValue);
-    }
-    
-    private static final boolean isLetter(char ch) {
-        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
-    }
-    
-    private static final boolean isLetterOrDigit(char ch) {
-        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
     }
     
     /**
