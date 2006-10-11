@@ -177,6 +177,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserOpera) {
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_CONTENT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_OPERA_NO_CSS_TEXT, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);            
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
             if (majorVersion < 9) {
                 clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
