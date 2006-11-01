@@ -187,6 +187,10 @@ implements Serializable, TableColumnModel {
      */
     public void removeColumn(TableColumn column) {
         int columnIndex = columns.indexOf(column);
+        if (columnIndex == -1) {
+            // Do nothing, column is not in model.
+            return;
+        }
         columns.remove(columnIndex);
         fireColumnAdded(new TableColumnModelEvent(this, columnIndex, -1));
     }
