@@ -39,6 +39,31 @@ public class Alignment
 implements Serializable {
     
     /**
+     * A predefined alignment instance specifying left horizontal alignment and default vertical alignment.
+     */
+    public static final Alignment ALIGN_LEFT = new Alignment(Alignment.LEFT, Alignment.DEFAULT);
+    
+    /**
+     * A predefined alignment instance specifying center horizontal alignment and default vertical alignment.
+     */
+    public static final Alignment ALIGN_CENTER = new Alignment(Alignment.CENTER, Alignment.DEFAULT);
+
+    /**
+     * A predefined alignment instance specifying right horizontal alignment and default vertical alignment.
+     */
+    public static final Alignment ALIGN_RIGHT = new Alignment(Alignment.RIGHT, Alignment.DEFAULT);
+    
+    /**
+     * A predefined alignment instance specifying default horizontal alignment and top vertical alignment.
+     */
+    public static final Alignment ALIGN_TOP = new Alignment(Alignment.DEFAULT, Alignment.TOP);
+    
+    /**
+     * A predefined alignment instance specifying default horizontal alignment and bottom vertical alignment.
+     */
+    public static final Alignment ALIGN_BOTTOM = new Alignment(Alignment.DEFAULT, Alignment.BOTTOM);
+    
+    /**
      * Specifies default alignment.
      */
     public static final int DEFAULT = 0;
