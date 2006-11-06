@@ -225,7 +225,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
     
     EchoDomUtil.preventEventDefault(echoEvent);
 
-    if (!this.multipleSelect) {
+    if (!this.multipleSelect || !(echoEvent.ctrlKey || echoEvent.metaKey || echoEvent.altKey)) {
         this.clearSelected();
     }
 
