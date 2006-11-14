@@ -192,7 +192,12 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserKonqueror) {
             clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);            
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
-        }        
+            clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_MANIPULATION, Boolean.TRUE);
+        }
+        
+        if (browserSafari) {
+            clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_MANIPULATION, Boolean.TRUE);
+        }
     }
     
     /**

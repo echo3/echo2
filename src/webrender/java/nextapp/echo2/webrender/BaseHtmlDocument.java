@@ -67,6 +67,11 @@ public class BaseHtmlDocument extends HtmlDocument {
         this.contentId = contentId;
         Document document = getDocument();
         
+        Element styleElement = document.createElement("style");
+        styleElement.setAttribute("type", "text/css");
+        styleElement.appendChild(document.createTextNode(" "));
+        getHeadElement().appendChild(styleElement);
+        
         Element formElement = document.createElement("form");
         formElement.setAttribute("style", "padding:0px;margin:0px;");
         formElement.setAttribute("action", "#");

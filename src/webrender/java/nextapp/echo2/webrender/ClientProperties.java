@@ -284,6 +284,18 @@ implements Serializable {
      */
     public static final String NOT_SUPPORTED_CSS_OPACITY = "notSupportedCssOpacity";
     
+    /**
+     * An unsupported feature flag indicating that manipulating CSS stylesheets is not
+     * supported by the browser (using add/insert rule).
+     * <p>
+     * This issue occurs with:
+     * <ul>
+     *  <li>Safari (verified)</li>
+     *  <li>KHTML (assumed)</li>
+     * </ul>
+     */
+    public static final String NOT_SUPPORTED_CSS_MANIPULATION = "notSupportedCssManipulation"; 
+    
     // General Browser Properties
     
     /**

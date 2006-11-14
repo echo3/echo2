@@ -218,6 +218,33 @@ public class DomUpdate {
     }
     
     /**
+     * Creates a <code>stylesheet-add-rule</code> directive to add a rule 
+     * to a stylesheet
+     * 
+     * @param serverMessage the relevant <code>ServerMessage</code>
+     * @param selectorText the selector of the rule to add
+     * @param style the CSS text for the style
+     */
+    public static void renderStyleSheetAddRule(ServerMessage serverMessage, String selectorText, String style) {
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, 
+                "stylesheet-add-rule");
+        element.setAttribute("selector", selectorText);
+        element.setAttribute("style", style);
+    }
+    
+    /**
+     * Creates a <code>stylesheet-remove-rule</code> directive to remove a rule 
+     * from a stylesheet
+     * 
+     * @param serverMessage the relevant <code>ServerMessage</code>
+     * @param selectorText the selector of the rule to remove
+     */
+    public static void renderStyleSheetRemoveRule(ServerMessage serverMessage, String selectorText) {
+        Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, 
+                "stylesheet-remove-rule");
+        element.setAttribute("selector", selectorText);
+    }
+    /**
      * Configures all child elements of a "content" element to use the XHTML
      * namespace. 
      * 

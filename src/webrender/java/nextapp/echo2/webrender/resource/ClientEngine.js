@@ -806,6 +806,24 @@ EchoCollectionsMap.prototype.remove = function(key) {
 function EchoCssUtil() { }
 
 /**
+ * Adds a rule to the document stylesheet.
+ * This method does not function in Safari/KHTML.
+ * 
+ * @param selectorText the selector
+ * @param style the style information
+ */
+EchoCssUtil.addRule = function(selectorText, style) {
+    var ss = document.styleSheets[0];
+    if (ss.insertRule) {
+        // W3C DOM Browsers.
+        ss.insertRule(selectorText + " {" + style + "}", ss.length);
+    } else if (ss.addRule) {
+        // IE6.
+        ss.addRule(selectorText, style);
+    }
+};
+
+/**
  * Updates CSS information about a specific element.
  * 
  * @param element the DOM element to update
@@ -852,6 +870,36 @@ EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
     
     // Apply new style.
     EchoCssUtil.applyStyle(element, cssStyleText);
+};
+
+/**
+ * Removes a rule from the document stylesheet.
+ * This method does not function in Safari/KHTML.
+ * 
+ * @param selectorText the selector
+ */
+EchoCssUtil.removeRule = function(selectorText) {
+    selectorText = selectorText.toLowerCase();
+    var ss = document.styleSheets[0];
+    
+    // Retrieve rules object for W3C DOM : IE6.
+    var rules = ss.cssRules ? ss.cssRules : ss.rules;
+    
+    for (var i = 0; i < rules.length; ++i) {
+        if (rules[i].type == 1 && rules[i].selectorText.toLowerCase() == selectorText) {
+            if (ss.deleteRule) {
+                // Delete rule: W3C DOM.
+                ss.deleteRule(i);
+                break;
+            } else if (ss.removeRule) {
+                // Delete rule: IE6.
+                ss.deleteRule(i);
+                break;
+            } else {
+                alert("rem fail");
+            }
+        }
+    }
 };
 
 /**
@@ -1147,6 +1195,12 @@ EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
             case "style-update":
                 this.processStyleUpdate(messagePartElement.childNodes[i]);
                 break;
+            case "stylesheet-add-rule":
+                this.processStyleSheetAddRule(messagePartElement.childNodes[i]);
+                break;
+            case "stylesheet-remove-rule":
+                this.processStyleSheetRemoveRule(messagePartElement.childNodes[i]);
+                break;
             }
         }
     }
@@ -1246,6 +1300,17 @@ EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement
         targetElement.removeChild(childNode);
         childNode = nextChildNode;
     }
+};
+
+EchoDomUpdate.MessageProcessor.processStyleSheetAddRule = function(addRuleElement) {
+    var selectorText = addRuleElement.getAttribute("selector");
+    var style = addRuleElement.getAttribute("style");
+    EchoCssUtil.addRule(selectorText, style);
+};
+
+EchoDomUpdate.MessageProcessor.processStyleSheetRemoveRule = function(removeRuleElement) {
+    var selectorText = removeRuleElement.getAttribute("selector");
+    EchoCssUtil.removeRule(selectorText);
 };
 
 /**

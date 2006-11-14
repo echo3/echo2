@@ -81,7 +81,7 @@ import nextapp.echo2.webrender.util.DomUtil;
  * Echo framework.
  */
 public class TablePeer 
-implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor  {
+implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor  {
 
     //TODO: Add full support for partial rendering on row insertions/deletions.
 
@@ -193,10 +193,20 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        Element domAddElement = DomUpdate.renderElementAdd(rc.getServerMessage());
+        Table table = (Table) component;
+        Border border = (Border) table.getRenderProperty(Table.PROPERTY_BORDER);
+        Insets tableInsets = (Insets) table.getRenderProperty(Table.PROPERTY_INSETS);
+        String defaultInsetsAttributeValue = tableInsets == null 
+                ? "0px" : InsetsRender.renderCssAttributeValue(tableInsets);
+        CssStyle styleCss = new CssStyle();
+        styleCss.setAttribute("padding", defaultInsetsAttributeValue);
+        BorderRender.renderToStyle(styleCss, border);
+        DomUpdate.renderStyleSheetAddRule(rc.getServerMessage(), "TD.c-" + component.getRenderId(), styleCss.renderInline());
+        
+        Element domAddTableElement = DomUpdate.renderElementAdd(rc.getServerMessage());
         DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
         renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddElement, targetId, htmlFragment);
+        DomUpdate.renderElementAddContent(rc.getServerMessage(), domAddTableElement, targetId, htmlFragment);
     }
     
     /**
@@ -238,6 +248,9 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
      * @param table the table
      */
     private void renderDisposeDirective(RenderContext rc, Table table) {
+ //       DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(table) + "_style");
+       DomUpdate.renderStyleSheetRemoveRule(rc.getServerMessage(), "TD.c-" + table.getRenderId());
+ 
         ServerMessage serverMessage = rc.getServerMessage();
         Element itemizedUpdateElement = serverMessage.getItemizedDirective(ServerMessage.GROUP_ID_PREREMOVE,
                 "EchoTable.MessageProcessor", "dispose",  new String[0], new String[0]);
@@ -274,6 +287,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         }
         
         Insets tableInsets = (Insets) table.getRenderProperty(Table.PROPERTY_INSETS);
+        
         String defaultInsetsAttributeValue = tableInsets == null ? "0px" : InsetsRender.renderCssAttributeValue(tableInsets);
         
         ColorRender.renderToStyle(tableCssStyle, component);
@@ -296,7 +310,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             }
         }
         ExtentRender.renderToStyle(tableCssStyle, "width", width);
-
+        
         tableElement.setAttribute("style", tableCssStyle.renderInline());
         
         parentNode.appendChild(tableElement);
@@ -327,7 +341,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         Element tbodyElement = document.createElement("tbody");
         tbodyElement.setAttribute("id", elementId + "_tbody");
         tableElement.appendChild(tbodyElement);
-
+        
         Element firstTrElement = null;
         
         if (table.isHeaderVisible()) {
@@ -483,6 +497,15 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
         }
         tbodyElement.appendChild(trElement);
         
+        String className = "c-" + table.getRenderId();
+        
+        boolean inlineStyleRequired = rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.NOT_SUPPORTED_CSS_MANIPULATION);
+        Border border = null;
+        if (inlineStyleRequired) {
+            border = (Border) table.getRenderProperty(Table.PROPERTY_BORDER);
+        }
+        
         int columns = table.getColumnModel().getColumnCount();
         for (int columnIndex = 0; columnIndex < columns; ++columnIndex) {
             Component childComponent = table.getCellComponent(columnIndex, rowIndex);
@@ -490,11 +513,21 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport, ImageRen
             tdElement.setAttribute("id", elementId + "_cell_" + childComponent.getRenderId());
             
             CssStyle tdCssStyle = new CssStyle();
-            BorderRender.renderToStyle(tdCssStyle, (Border) table.getRenderProperty(Table.PROPERTY_BORDER));
-            CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, childComponent, getLayoutData(childComponent), 
-                    defaultInsetsAttributeValue);
+            
+            if (inlineStyleRequired) {
+                BorderRender.renderToStyle(tdCssStyle, border);
+                CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, childComponent, getLayoutData(childComponent), 
+                        defaultInsetsAttributeValue);
+            } else {
+                tdElement.setAttribute("class", className);
+                CellLayoutDataRender.renderToElementAndStyle(tdElement, tdCssStyle, childComponent, getLayoutData(childComponent), 
+                        null);
+            }
+            
             CellLayoutDataRender.renderBackgroundImageToStyle(tdCssStyle, rc, this, table, childComponent);
-            tdElement.setAttribute("style", tdCssStyle.renderInline());
+            if (tdCssStyle.hasAttributes()) {
+                tdElement.setAttribute("style", tdCssStyle.renderInline());
+            }
             
             trElement.appendChild(tdElement);
             
