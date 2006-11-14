@@ -129,7 +129,7 @@
    <property name="titleBackgroundImage">
     <fill-image vertical="100%" repeat="horizontal">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/WindowPaneTitleBackground.png"/>
+      <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/Header.png"/>
      </image>
     </fill-image>
    </property>
@@ -139,56 +139,206 @@
      <border-part position="top-left">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderTopLeft.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderTopLeft.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="top">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderTop.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderTop.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="top-right">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderTopRight.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderTopRight.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="left">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderLeft.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderLeft.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="right">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderRight.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderRight.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="bottom-left">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderBottomLeft.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderBottomLeft.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="bottom">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderBottom.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderBottom.png"/>
        </image>
       </fill-image>
      </border-part>
      <border-part position="bottom-right">
       <fill-image>
        <image type="nextapp.echo2.app.ResourceImageReference">
-        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/BorderBottomRight.png"/>
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/simple/BorderBottomRight.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+    </fill-image-border>
+   </property>
+  </properties>
+ </style>
+ <style name="GlassBlue" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
+   <property type="java.lang.Boolean" name="nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder" value="true"/>
+   <property name="titleInsets" value="10px 5px"/>
+   <property name="titleBackgroundImage">
+    <fill-image vertical="100%" repeat="horizontal">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/Header.png"/>
+     </image>
+    </fill-image>
+   </property>
+   <property name="titleForeground" value="#ffffff"/>
+   <property name="border">
+    <fill-image-border border-insets="20px 34px 20px 20px" content-insets="12px 6px 15px 15px">
+     <border-part position="top-left">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderTopLeft.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="top">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderTop.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="top-right">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderTopRight.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="left">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderLeft.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="right">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderRight.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom-left">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderBottomLeft.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderBottom.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom-right">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/glassblue/BorderBottomRight.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+    </fill-image-border>
+   </property>
+  </properties>
+ </style>
+ <style name="TransGreen" type="nextapp.echo2.app.WindowPane">
+  <properties>
+   <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
+   <property type="java.lang.Boolean" name="nextapp.echo2.webcontainer.syncpeer.WindowPanePeer.ieAlphaRenderBorder" value="true"/>
+   <property name="titleInsets" value="10px 5px"/>
+   <property name="titleBackgroundImage">
+    <fill-image vertical="100%" repeat="horizontal">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/Header.png"/>
+     </image>
+    </fill-image>
+   </property>
+   <property name="titleForeground" value="#ffffff"/>
+   <property name="border">
+    <fill-image-border border-insets="20px 34px 20px 20px" content-insets="12px 6px 15px 15px">
+     <border-part position="top-left">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderTopLeft.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="top">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderTop.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="top-right">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderTopRight.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="left">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderLeft.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="right">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderRight.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom-left">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderBottomLeft.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderBottom.png"/>
+       </image>
+      </fill-image>
+     </border-part>
+     <border-part position="bottom-right">
+      <fill-image>
+       <image type="nextapp.echo2.app.ResourceImageReference">
+        <resource-image-reference resource="/nextapp/echo2/testapp/interactive/resource/image/window/transgreen/BorderBottomRight.png"/>
        </image>
       </fill-image>
      </border-part>

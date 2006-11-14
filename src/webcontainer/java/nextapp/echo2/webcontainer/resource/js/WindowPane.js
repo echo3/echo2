@@ -428,15 +428,16 @@ EchoWindowPane.prototype.create = function() {
     windowPaneDivElement.appendChild(contentDivElement);
 
     if (EchoClientProperties.get("quirkIESelectZIndex")) {
-        // Render Select Field Masking IFRAME.
+        // Render Select Field Masking Transparent IFRAME.
         var maskDivElement = document.createElement("div");
         maskDivElement.id = this.elementId + "_mask";
+        maskDivElement.style.filter = "alpha(opacity=0)";
         maskDivElement.style.zIndex = 1;
         maskDivElement.style.position = "absolute";
-	    maskDivElement.style.top = this.border.contentInsets.top + "px";
-	    maskDivElement.style.left = this.border.contentInsets.left + "px";
-	    maskDivElement.style.right = this.border.contentInsets.right + "px";
-	    maskDivElement.style.bottom = this.border.contentInsets.bottom + "px";
+        maskDivElement.style.top = 0;
+        maskDivElement.style.left = 0;
+        maskDivElement.style.right = 0;
+        maskDivElement.style.bottom = 0;
         maskDivElement.style.borderWidth = 0;
         
         var maskIFrameElement = document.createElement("iframe");

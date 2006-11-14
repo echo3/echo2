@@ -76,6 +76,20 @@ public class WindowPaneExamplesTest extends SplitPane {
                     targetContentPane.add(createSimpleWindow("Simple"));
                 }
             });
+            addButton("Add GlassBlue Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    WindowPane windowPane = createSimpleWindow("GlassBlue");
+                    windowPane.setStyleName("GlassBlue");
+                    targetContentPane.add(windowPane);
+                }
+            });
+            addButton("Add TransGreen Window", new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    WindowPane windowPane = createSimpleWindow("TransGreen");
+                    windowPane.setStyleName("TransGreen");
+                    targetContentPane.add(windowPane);
+                }
+            });
             addButton("Add Modal Window", new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     WindowPane windowPane = createModalWindow("Modal");
@@ -525,7 +539,6 @@ public class WindowPaneExamplesTest extends SplitPane {
         positionWindowPane(windowPane);
         windowPane.setTitle(name + " Window #" + windowNumber++);
         windowPane.setTitleInsets(new Insets(10, 5));
-        windowPane.setTitleBackground(new Color(0x2f2f4f));
         windowPane.setInsets(new Insets(10));
         windowPane.setWidth(new Extent(500));
         windowPane.setHeight(new Extent(280));

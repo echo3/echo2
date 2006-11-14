@@ -396,6 +396,9 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         renderPixelProperty(windowPane, WindowPane.PROPERTY_MAXIMUM_WIDTH, initElement, "maximum-width");
         renderPixelProperty(windowPane, WindowPane.PROPERTY_MAXIMUM_HEIGHT, initElement, "maximum-height");
         
+        int fillImageRenderFlags = ((Boolean) windowPane.getRenderProperty(PROPERTY_IE_ALPHA_RENDER_BORDER, 
+                Boolean.FALSE)).booleanValue() ? FillImageRender.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+    
         // Title-related
         if (windowPane.getRenderProperty(WindowPane.PROPERTY_ICON) != null) {
             initElement.setAttribute("icon", ImageTools.getUri(rc, this, windowPane, IMAGE_ID_ICON));
@@ -431,7 +434,7 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         if (titleBackgroundImage != null) {
             CssStyle titleBackgroundImageCssStyle = new CssStyle();
             FillImageRender.renderToStyle(titleBackgroundImageCssStyle, rc, this, windowPane, IMAGE_ID_TITLE_BACKGROUND, 
-                    titleBackgroundImage, 0);
+                    titleBackgroundImage, fillImageRenderFlags);
             initElement.setAttribute("title-background-image", titleBackgroundImageCssStyle.renderInline());
         }
         
@@ -464,8 +467,6 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
             }
             borderElement.setAttribute("border-insets", InsetsRender.renderCssAttributeValue(border.getBorderInsets()));
             borderElement.setAttribute("content-insets", InsetsRender.renderCssAttributeValue(border.getContentInsets()));
-            int fillImageRenderFlags = ((Boolean) windowPane.getRenderProperty(PROPERTY_IE_ALPHA_RENDER_BORDER, 
-                    Boolean.FALSE)).booleanValue() ? FillImageRender.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
             for (int i = 0; i < 8; ++i) {
                 FillImage fillImage = border.getFillImage(i);
                 if (fillImage != null) {
