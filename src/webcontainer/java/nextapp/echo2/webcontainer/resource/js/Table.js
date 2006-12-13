@@ -84,6 +84,7 @@ EchoTable.prototype.dispose = function() {
             }
             if (this.selectionEnabled) {
                 EchoEventProcessor.removeHandler(trElement, "click");
+                EchoEventProcessor.removeHandler(trElement, "mousedown");
             }
         }
     }
@@ -181,6 +182,7 @@ EchoTable.prototype.init = function() {
             }
             if (this.selectionEnabled) {
                 EchoEventProcessor.addHandler(trElement, "click", "EchoTable.processClick");
+                EchoEventProcessor.addHandler(trElement, "mousedown", "EchoTable.processMouseDown");
             }
         }
     }
@@ -225,7 +227,7 @@ EchoTable.prototype.processClick = function(echoEvent) {
     
     EchoDomUtil.preventEventDefault(echoEvent);
 
-    if (!this.multipleSelect || !(echoEvent.ctrlKey || echoEvent.metaKey || echoEvent.altKey)) {
+    if (!this.multipleSelect || !(echoEvent.shiftKey || echoEvent.ctrlKey || echoEvent.metaKey || echoEvent.altKey)) {
         this.clearSelected();
     }
 
@@ -428,6 +430,10 @@ EchoTable.processClick = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var table = EchoTable.getComponent(componentId);
     table.processClick(echoEvent);
+};
+
+EchoTable.processMouseDown = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
 };
 
 /**
