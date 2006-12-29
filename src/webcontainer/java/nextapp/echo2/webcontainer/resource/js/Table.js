@@ -49,6 +49,7 @@ EchoTable = function(elementId) {
     this.rowCount = 0;
     this.selectionState = null;
     this.headerVisible = false;
+    this.lastSelectedIndex = -1;
 };
 
 /**
@@ -231,7 +232,21 @@ EchoTable.prototype.processClick = function(echoEvent) {
         this.clearSelected();
     }
 
-    this.setSelected(rowIndex, !this.isSelected(rowIndex));
+    if (echoEvent.shiftKey && this.lastSelectedIndex != -1) {
+        if (this.lastSelectedIndex < rowIndex) {
+            startIndex = this.lastSelectedIndex;
+            endIndex = rowIndex;
+        } else {
+            startIndex = rowIndex;
+            endIndex = this.lastSelectedIndex;
+        }
+        for (var i = startIndex; i <= endIndex; ++i) {
+            this.setSelected(i, true);
+        }
+    } else {
+        this.lastSelectedIndex = rowIndex;
+        this.setSelected(rowIndex, !this.isSelected(rowIndex));
+    }
     
     // Update ClientMessage.
     this.updateClientMessage();
