@@ -163,6 +163,24 @@ public class TablePerformanceTest extends SplitPane {
             }
         });
         
+        controlsColumn.addButton("MultiplicationTableModel (8x1000)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setModel(new MultiplicationTableModel(8, 1000));
+            }
+        });
+        
+        controlsColumn.addButton("MultiplicationTableModel (8x2000)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setModel(new MultiplicationTableModel(8, 2000));
+            }
+        });
+        
+        controlsColumn.addButton("MultiplicationTableModel (8x5000)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testTable.setModel(new MultiplicationTableModel(8, 5000));
+            }
+        });
+        
         controlsColumn = new ButtonColumn();
         groupContainerColumn.add(controlsColumn);
 
