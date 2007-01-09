@@ -67,6 +67,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
     public static final String PROPERTY_TITLE = "title";
     public static final String PROPERTY_TITLE_BACKGROUND = "titleBackground";
     public static final String PROPERTY_TITLE_BACKGROUND_IMAGE = "titleBackgroundImage";
+    public static final String PROPERTY_TITLE_BAR_INSETS = "titleBarInsets";
     public static final String PROPERTY_TITLE_FONT = "titleFont";
     public static final String PROPERTY_TITLE_FOREGROUND = "titleForeground";
     public static final String PROPERTY_TITLE_HEIGHT = "titleHeight";
@@ -328,6 +329,17 @@ implements FloatingPane, ModalSupport, PaneContainer {
      */
     public FillImage getTitleBackgroundImage() {
         return (FillImage) getProperty(PROPERTY_TITLE_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Returns the horizontal inset of the entire title bar (relative to the content area).
+     * Setting this value will result in the title bar being narrower than the rest of the
+     * content region, which may be necessary to accommodate particular border styles.
+     * 
+     * @return the insets
+     */
+    public Insets getTitleBarInsets() {
+        return (Insets) getProperty(PROPERTY_TITLE_BAR_INSETS);
     }
     
     /**
@@ -671,15 +683,6 @@ implements FloatingPane, ModalSupport, PaneContainer {
     }
     
     /**
-     * Sets the font of the title region.
-     * 
-     * @param newValue the new font
-     */
-    public void setTitleFont(Font newValue) {
-        setProperty(PROPERTY_TITLE_FONT, newValue);
-    }
-    
-    /**
      * Sets the background color of the title region.
      * 
      * @param newValue the new color
@@ -695,6 +698,26 @@ implements FloatingPane, ModalSupport, PaneContainer {
      */
     public void setTitleBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_TITLE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the horizontal inset of the entire title bar (relative to the content area).
+     * Setting this value will result in the title bar being narrower than the rest of the
+     * content region, which may be necessary to accommodate particular border styles.
+     * 
+     * @param newValue the new insets
+     */
+    public void setTitleBarInsets(Insets newValue) {
+        setProperty(PROPERTY_TITLE_BAR_INSETS, newValue);
+    }
+    
+    /**
+     * Sets the font of the title region.
+     * 
+     * @param newValue the new font
+     */
+    public void setTitleFont(Font newValue) {
+        setProperty(PROPERTY_TITLE_FONT, newValue);
     }
     
     /**

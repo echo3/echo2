@@ -425,6 +425,10 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
                 initElement.setAttribute("title-font", fontCssStyle.renderInline());
             }
         }
+        Insets titleBarInsets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BAR_INSETS);
+        if (titleBarInsets != null) {
+            initElement.setAttribute("title-bar-insets", InsetsRender.renderCssAttributeValue(titleBarInsets));
+        }
         renderPixelProperty(windowPane, WindowPane.PROPERTY_TITLE_HEIGHT, initElement, "title-height");
         Color titleBackground = (Color) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE_BACKGROUND);
         if (titleBackground != null) {

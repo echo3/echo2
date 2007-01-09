@@ -68,6 +68,7 @@ EchoWindowPane = function(elementId, containerElementId) {
     this.title = null;
     this.titleBackground = null;
     this.titleBackgroundImage = null;
+    this.titleBarInsets = EchoWindowPane.DEFAULT_TITLE_BAR_INSETS;
     this.titleFont = null;
     this.titleForeground = EchoWindowPane.DEFAULT_TITLE_FOREGROUND;
     this.titleHeight = EchoWindowPane.DEFAULT_TITLE_HEIGHT;
@@ -94,6 +95,7 @@ EchoWindowPane.DEFAULT_TITLE_HEIGHT = 28;
 EchoWindowPane.DEFAULT_HEIGHT = 300;
 EchoWindowPane.DEFAULT_BORDER = new EchoCoreProperties.FillImageBorder("#00007f", new EchoCoreProperties.Insets(20), 
         new EchoCoreProperties.Insets(3));
+EchoWindowPane.DEFAULT_TITLE_BAR_INSETS = new EchoCoreProperties.Insets("0px");
 
 EchoWindowPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
@@ -333,8 +335,9 @@ EchoWindowPane.prototype.create = function() {
     }
     titleBarDivElement.style.color = this.titleForeground;
     titleBarDivElement.style.top = this.border.contentInsets.top + "px";
-    titleBarDivElement.style.left = this.border.contentInsets.left + "px";
-    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
+    titleBarDivElement.style.left = this.border.contentInsets.left + this.titleBarInsets.left + "px";
+    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.titleBarInsets.left
+            - this.border.contentInsets.right - this.titleBarInsets.right) + "px";
     titleBarDivElement.style.height = this.titleHeight + "px";
     titleBarDivElement.style.overflow = "hidden";
     if (this.movable) {
@@ -688,7 +691,8 @@ EchoWindowPane.prototype.redraw = function() {
     windowPaneDivElement.style.width = this.width + "px";
     windowPaneDivElement.style.height = this.height + "px";
 
-    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.border.contentInsets.right) + "px";
+    titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.titleBarInsets.left 
+            - this.border.contentInsets.right - this.titleBarInsets.right) + "px";
 
     borderTDivElement.style.width = borderSideWidth + "px";
     borderBDivElement.style.width = borderSideWidth + "px";
@@ -964,6 +968,9 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     }
     if (initElement.getAttribute("title-background-image")) {
         windowPane.titleBackgroundImage = initElement.getAttribute("title-background-image");
+    }
+    if (initElement.getAttribute("title-bar-insets")) {
+        windowPane.titleBarInsets = new EchoCoreProperties.Insets(initElement.getAttribute("title-bar-insets"));
     }
     if (initElement.getAttribute("title-font")) {
         windowPane.titleFont = initElement.getAttribute("title-font");
