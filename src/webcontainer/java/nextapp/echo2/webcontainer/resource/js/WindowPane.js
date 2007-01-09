@@ -102,7 +102,7 @@ EchoWindowPane.prototype.create = function() {
     var windowPaneDivElement = document.createElement("div");
     windowPaneDivElement.id = this.elementId;
     windowPaneDivElement.style.position = "absolute";
-    windowPaneDivElement.style.zIndex = "1";
+    windowPaneDivElement.style.zIndex = 1;
     
     this.loadContainerSize();
     
@@ -144,6 +144,7 @@ EchoWindowPane.prototype.create = function() {
         if (this.border.borderInsets.left > 0) {
             borderDivElements[0] = document.createElement("div");
             borderDivElements[0].id = this.elementId + "_border_tl";
+            borderDivElements[0].style.zIndex = 2;
             borderDivElements[0].style.position = "absolute";
             borderDivElements[0].style.left = "0px";
             borderDivElements[0].style.top = "0px";
@@ -165,6 +166,7 @@ EchoWindowPane.prototype.create = function() {
         // Render top side
         borderDivElements[1] = document.createElement("div");
         borderDivElements[1].id = this.elementId + "_border_t";
+        borderDivElements[1].style.zIndex = 2;
         borderDivElements[1].style.position = "absolute";
         borderDivElements[1].style.left = this.border.borderInsets.left + "px";
         borderDivElements[1].style.top = "0px";
@@ -186,6 +188,7 @@ EchoWindowPane.prototype.create = function() {
         if (this.border.borderInsets.right > 0) {
             borderDivElements[2] = document.createElement("div");
             borderDivElements[2].id = this.elementId + "_border_tr";
+            borderDivElements[2].style.zIndex = 2;
             borderDivElements[2].style.position = "absolute";
             borderDivElements[2].style.right = "0px";
             borderDivElements[2].style.top = "0px";
@@ -209,6 +212,7 @@ EchoWindowPane.prototype.create = function() {
     if (this.border.borderInsets.left > 0) {
         borderDivElements[3] = document.createElement("div");
         borderDivElements[3].id = this.elementId + "_border_l";
+        borderDivElements[3].style.zIndex = 2;
         borderDivElements[3].style.position = "absolute";
         borderDivElements[3].style.left = "0px";
         borderDivElements[3].style.top = this.border.borderInsets.top + "px";
@@ -231,6 +235,7 @@ EchoWindowPane.prototype.create = function() {
     if (this.border.borderInsets.right > 0) {
         borderDivElements[4] = document.createElement("div");
         borderDivElements[4].id = this.elementId + "_border_r";
+        borderDivElements[4].style.zIndex = 2;
         borderDivElements[4].style.position = "absolute";
         borderDivElements[4].style.right = "0px";
         borderDivElements[4].style.top = this.border.borderInsets.top + "px";
@@ -255,6 +260,7 @@ EchoWindowPane.prototype.create = function() {
         if (this.border.borderInsets.left > 0) {
             borderDivElements[5] = document.createElement("div");
             borderDivElements[5].id = this.elementId + "_border_bl";
+            borderDivElements[5].style.zIndex = 2;
             borderDivElements[5].style.position = "absolute";
             borderDivElements[5].style.left = "0px";
             borderDivElements[5].style.bottom = "0px";
@@ -276,6 +282,7 @@ EchoWindowPane.prototype.create = function() {
         // Render bottom side
         borderDivElements[6] = document.createElement("div");
         borderDivElements[6].id = this.elementId + "_border_b";
+        borderDivElements[6].style.zIndex = 2;
         borderDivElements[6].style.position = "absolute";
         borderDivElements[6].style.left = this.border.borderInsets.left + "px";
         borderDivElements[6].style.bottom = "0px";
@@ -297,6 +304,7 @@ EchoWindowPane.prototype.create = function() {
         if (this.border.borderInsets.right > 0) {
             borderDivElements[7] = document.createElement("div");
             borderDivElements[7].id = this.elementId + "_border_br";
+            borderDivElements[7].style.zIndex = 2;
             borderDivElements[7].style.position = "absolute";
             borderDivElements[7].style.right = "0px";
             borderDivElements[7].style.bottom = "0px";
@@ -320,7 +328,7 @@ EchoWindowPane.prototype.create = function() {
     var titleBarDivElement = document.createElement("div");
     titleBarDivElement.id = this.elementId + "_titlebar";
     titleBarDivElement.style.position = "absolute";
-    titleBarDivElement.style.zIndex = 3;
+    titleBarDivElement.style.zIndex = 4;
 
     if (this.titleBackground) {
         titleBarDivElement.style.backgroundColor = this.titleBackground;
@@ -407,7 +415,7 @@ EchoWindowPane.prototype.create = function() {
     var contentDivElement = document.createElement("div");
     contentDivElement.id = this.elementId + "_content";
     contentDivElement.style.position = "absolute";
-    contentDivElement.style.zIndex = 2;
+    contentDivElement.style.zIndex = 3;
     contentDivElement.style.backgroundColor = this.background;
     if (this.foreground) {
         contentDivElement.style.color = this.foreground;
