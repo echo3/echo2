@@ -96,4 +96,7 @@ public class SelectField extends AbstractListComponent {
             getSelectionModel().setSelectedIndex(index, true);
         }
     }
+    
+    public void setSelectedItem(Object value) {
+    }
 }

@@ -212,7 +212,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
                 Element colElement = document.createElement("col");
                 Extent columnWidth = gridProcessor.getColumnWidth(i);
                 if (columnWidth != null) {
-                    colElement.setAttribute("width", ExtentRender.renderCssAttributeValue(columnWidth));
+                    colElement.setAttribute("style", "width:" + ExtentRender.renderCssAttributeValue(columnWidth));
                 }
                 colGroupElement.appendChild(colElement);
             }
@@ -228,7 +228,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
             Element trElement = document.createElement("tr");
             trElement.setAttribute("id", elementId + "_tr_" + rowIndex);
             if (gridProcessor.getRowHeight(rowIndex) != null) {
-                trElement.setAttribute("height", ExtentRender.renderCssAttributeValue(gridProcessor.getRowHeight(rowIndex)));
+                trElement.setAttribute("style", "height:" + ExtentRender.renderCssAttributeValue(gridProcessor.getRowHeight(rowIndex)));
             }
             tbodyElement.appendChild(trElement);
             
