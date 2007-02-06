@@ -578,6 +578,16 @@ public class ListBoxTest extends SplitPane {
                 });
             }
         });
+        controlsColumn.addButton("Focus SelectField1", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().setFocusedComponent(selectField1);
+            }
+        });
+        controlsColumn.addButton("Focus SelectField2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().setFocusedComponent(selectField2);
+            }
+        });
         
         controlsColumn.add(new Label("ListBox-specific"));
         

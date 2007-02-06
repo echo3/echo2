@@ -97,6 +97,22 @@ public class SelectField extends AbstractListComponent {
         }
     }
     
-    public void setSelectedItem(Object value) {
+    /**
+     * Sets the selected item.
+     * 
+     * @param item the new selected item, or null, to select nothing
+     */
+    public void setSelectedItem(Object item) {
+        if (item != null) {
+            ListModel model = getModel();
+            int size = model.size();
+            for (int i = 0; i < size; i++) {
+                if (item.equals(model.get(i))) {
+                    setSelectedIndex(i);
+                    return;
+                }
+            }
+        }
+        setSelectedIndex(-1);
     }
 }

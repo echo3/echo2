@@ -51,6 +51,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
+import nextapp.echo2.webcontainer.FocusSupport;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
@@ -65,6 +66,7 @@ import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.servermessage.WindowUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 import nextapp.echo2.webrender.util.DomUtil;
 
@@ -82,7 +84,7 @@ import nextapp.echo2.webrender.util.DomUtil;
  * Echo framework.
  */
 public class ListComponentPeer 
-implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
+implements ActionProcessor, ComponentSynchronizePeer, FocusSupport, PropertyUpdateProcessor {
 
     /**
      * Service to provide supporting JavaScript library.
@@ -508,6 +510,13 @@ implements ActionProcessor, ComponentSynchronizePeer, PropertyUpdateProcessor {
         }
     }
     
+    /**
+     * @see nextapp.echo2.webcontainer.FocusSupport#renderSetFocus(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.Component)
+     */
+    public void renderSetFocus(RenderContext rc, Component component) {
+        WindowUpdate.renderSetFocus(rc.getServerMessage(), ContainerInstance.getElementId(component));
+    }
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
