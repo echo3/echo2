@@ -68,7 +68,6 @@ EchoTextComponent.prototype.doAction = function() {
     
     if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement(), false)) {
         // Don't process actions when client/server transaction in progress.
-        EchoDomUtil.preventEventDefault(echoEvent);
         return;
     }
     
