@@ -29,6 +29,7 @@
 
 package nextapp.echo2.app;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -85,7 +86,8 @@ implements Style {
     /**
      * A value object which stores the indexed values of a property. 
      */
-    public class IndexedPropertyValue {
+    public class IndexedPropertyValue 
+    implements Serializable {
 
         private SortedMap indicesToValues;
         
