@@ -159,7 +159,7 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
             }
         }
     }
-    
+
     private PartialUpdateParticipant placeHolder = new PartialUpdateParticipant() {
 
         public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
@@ -183,6 +183,7 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         partialUpdateManager.add(WindowPane.PROPERTY_POSITION_Y, placeHolder);
         partialUpdateManager.add(WindowPane.PROPERTY_WIDTH, placeHolder);
         partialUpdateManager.add(WindowPane.PROPERTY_HEIGHT, placeHolder);
+        partialUpdateManager.add(WindowPane.PROPERTY_TITLE, placeHolder);
     }
     
     /**
@@ -556,6 +557,10 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         PropertyUpdate height = update.getUpdatedProperty(WindowPane.PROPERTY_HEIGHT);
         if (height != null) {
             renderPixelProperty(windowPane, WindowPane.PROPERTY_HEIGHT, updateElement, "height");
+        }
+        
+        if (update.getUpdatedProperty(WindowPane.PROPERTY_TITLE) != null) {
+            updateElement.setAttribute("title", (String) windowPane.getRenderProperty(WindowPane.PROPERTY_TITLE, " "));
         }
     }
 }

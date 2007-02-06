@@ -220,9 +220,15 @@ public class WindowPaneTest extends SplitPane {
                 windowPane.setTitle("Window Title");
             }
         });
+        controlsColumn.addButton("Set Title Long", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setTitle("This is a fairly long window title that goes on for a little to long to see if " +
+                        "wrapping is handled properly and such.");
+            }
+        });
         controlsColumn.addButton("Clear Title", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                windowPane.setTitle("Window Title");
+                windowPane.setTitle(null);
             }
         });
         controlsColumn.addButton("Set Title Height", new ActionListener() {

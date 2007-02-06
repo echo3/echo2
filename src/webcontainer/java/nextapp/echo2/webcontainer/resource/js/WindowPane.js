@@ -365,28 +365,28 @@ EchoWindowPane.prototype.create = function() {
         titleIconDivElement.appendChild(iconImgElement);
     }
     
-    if (this.title) {
-        var titleTextDivElement = document.createElement("div");
-        titleTextDivElement.id = this.elementId + "_titletext";
-        titleTextDivElement.style.position = "absolute";
-        titleTextDivElement.style.left = "0px";
-        titleTextDivElement.style.textAlign = "left";
-        if (this.icon) {
-            titleTextDivElement.style.left = "32px";
-        }
-        titleTextDivElement.style.whiteSpace = "nowrap";
-        if (this.titleInsets != null) {
-            titleTextDivElement.style.padding = this.titleInsets;
-        }
-        if (this.titleForeground != null) {
-            titleTextDivElement.style.color = this.titleForeground;
-        }
-	    if (this.titleFont) {
-	        EchoCssUtil.applyStyle(titleTextDivElement, this.titleFont);
-	    }
-        titleTextDivElement.appendChild(document.createTextNode(this.title));
-        titleBarDivElement.appendChild(titleTextDivElement);
+    var titleTextDivElement = document.createElement("div");
+    titleTextDivElement.id = this.elementId + "_titletext";
+    titleTextDivElement.style.position = "absolute";
+    titleTextDivElement.style.left = "0px";
+    titleTextDivElement.style.textAlign = "left";
+    titleTextDivElement.style.whiteSpace = "nowrap";
+    if (this.icon) {
+        titleTextDivElement.style.left = "32px";
     }
+    if (this.titleInsets != null) {
+        titleTextDivElement.style.padding = this.titleInsets;
+    }
+    if (this.titleForeground != null) {
+        titleTextDivElement.style.color = this.titleForeground;
+    }
+    if (this.titleFont) {
+        EchoCssUtil.applyStyle(titleTextDivElement, this.titleFont);
+    }
+    if (this.title) {
+        titleTextDivElement.appendChild(document.createTextNode(this.title));
+    }
+    titleBarDivElement.appendChild(titleTextDivElement);
 
     var closeDivElement = null;
     if (this.closable) {
@@ -706,7 +706,7 @@ EchoWindowPane.prototype.redraw = function() {
     borderBDivElement.style.width = borderSideWidth + "px";
     borderLDivElement.style.height = borderSideHeight + "px";
     borderRDivElement.style.height = borderSideHeight + "px";
-    
+
     var contentElement = document.getElementById(this.elementId + "_content");
     
     EchoVirtualPosition.redraw(contentElement);
@@ -714,6 +714,14 @@ EchoWindowPane.prototype.redraw = function() {
         var maskDivElement = document.getElementById(this.elementId + "_mask");
         EchoVirtualPosition.redraw(maskDivElement);
     }
+};
+
+EchoWindowPane.prototype.redrawTitle = function() {
+    var titleTextDivElement = document.getElementById(this.elementId + "_titletext");
+    while (titleTextDivElement.firstChild) {
+        titleTextDivElement.removeChild(titleTextDivElement.firstChild);
+    }
+    titleTextDivElement.appendChild(document.createTextNode(this.title));
 };
 
 EchoWindowPane.prototype.removeListeners = function() {
@@ -859,6 +867,9 @@ EchoWindowPane.MessageProcessor.loadProperties = function(propertiesElement, win
     if (propertiesElement.getAttribute("height")) {
         windowPane.height = parseInt(propertiesElement.getAttribute("height"));
     }
+    if (propertiesElement.getAttribute("title")) {
+        windowPane.title = propertiesElement.getAttribute("title");
+    }
 };
 
 /**
@@ -907,6 +918,7 @@ EchoWindowPane.MessageProcessor.processUpdate = function(updateElement) {
     }
     EchoWindowPane.MessageProcessor.loadProperties(updateElement, windowPane);
     windowPane.redraw();
+    windowPane.redrawTitle();
 };
 
 /**
