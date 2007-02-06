@@ -816,7 +816,7 @@ EchoCssUtil.addRule = function(selectorText, style) {
     var ss = document.styleSheets[0];
     if (ss.insertRule) {
         // W3C DOM Browsers.
-        ss.insertRule(selectorText + " {" + style + "}", ss.length);
+        ss.insertRule(selectorText + " {" + style + "}", ss.cssRules.length);
     } else if (ss.addRule) {
         // IE6.
         ss.addRule(selectorText, style);
