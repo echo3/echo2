@@ -250,7 +250,6 @@ implements RenderIdSupport, Serializable {
     public Component() {
         super();
         flags = FLAG_ENABLED | FLAG_VISIBLE | FLAG_FOCUS_TRAVERSAL_PARTICIPANT;
-        listenerList = new EventListenerList();
         localStyle = new MutableStyle();
     }
     
