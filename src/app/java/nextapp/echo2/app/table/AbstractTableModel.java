@@ -78,7 +78,7 @@ implements Serializable, TableModel {
      * @param row the row index
      */
     public void fireTableCellUpdated(int column, int row) {
-        fireTableChanged(new TableModelEvent(this, row, row, column, TableModelEvent.UPDATE));
+        fireTableChanged(new TableModelEvent(this, column, row, row, TableModelEvent.UPDATE));
     }
     
     /**
