@@ -359,6 +359,9 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         if (!windowPane.isRenderEnabled()) {
             initElement.setAttribute("enabled", "false");
         }
+        if (windowPane.getZIndex() != 0) {
+            initElement.setAttribute("z-index", Integer.toString(windowPane.getZIndex()));
+        }
         
         // Content Appearance
         Insets insets = (Insets) windowPane.getRenderProperty(WindowPane.PROPERTY_INSETS);

@@ -74,6 +74,7 @@ EchoWindowPane = function(elementId, containerElementId) {
     this.titleHeight = EchoWindowPane.DEFAULT_TITLE_HEIGHT;
     this.titleInsets = EchoWindowPane.DEFAULT_TITLE_INSETS;
     this.width = EchoWindowPane.DEFAULT_WIDTH;
+    this.zIndex = 0;
 };
 
 EchoWindowPane.activeInstance = null;
@@ -102,7 +103,7 @@ EchoWindowPane.prototype.create = function() {
     var windowPaneDivElement = document.createElement("div");
     windowPaneDivElement.id = this.elementId;
     windowPaneDivElement.style.position = "absolute";
-    windowPaneDivElement.style.zIndex = 1;
+    windowPaneDivElement.style.zIndex = this.zIndex;
     
     this.loadContainerSize();
     
@@ -940,7 +941,9 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
     windowPane.closable = initElement.getAttribute("closable") == "true";
     windowPane.movable = initElement.getAttribute("movable") == "true";
     windowPane.resizable = initElement.getAttribute("resizable") == "true";
-    
+    if (initElement.getAttribute("z-index")) {
+        windowPane.zIndex = initElement.getAttribute("z-index");
+    }
     if (initElement.getAttribute("background")) {
         windowPane.background = initElement.getAttribute("background");
     }
@@ -1067,7 +1070,11 @@ EchoWindowPane.ZIndexManager.add = function(containerId, elementId) {
         }
     }
     elementIdArray.push(elementId);
-    EchoWindowPane.ZIndexManager.raise(containerId, elementId);
+    
+    var windowElement = document.getElementById(elementId);
+    if (windowElement.style.zIndex == 0) {
+        EchoWindowPane.ZIndexManager.raise(containerId, elementId);
+    }
 };
 
 /**
@@ -1088,12 +1095,10 @@ EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
     var raiseIndex = 0;
     
     for (var i = 0; i < elementIdArray.length; ++i) {
-        var testWindowElement = document.getElementById(elementIdArray[i]);
-        var zIndex = parseInt(testWindowElement.style.zIndex);
-        if (!isNaN(zIndex) && zIndex >= raiseIndex) {
-            if (elementIdArray[i] == elementId) {
-                raiseIndex = zIndex;
-            } else {
+        if (elementIdArray[i] != elementId) {
+            var testWindowElement = document.getElementById(elementIdArray[i]);
+            var zIndex = parseInt(testWindowElement.style.zIndex);
+            if (raiseIndex <= zIndex) {
                 raiseIndex = zIndex + 1;
             }
         }
