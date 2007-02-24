@@ -339,6 +339,18 @@ public class SplitPaneTest extends SplitPane {
                 }
             }
         });
+        controlsColumn.addButton("Add Button", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (testPane.getComponentCount() < 2) {
+                    Button testButton = new Button("Test Button");
+                    SplitPaneLayoutData layoutData = new SplitPaneLayoutData();
+                    layoutData.setInsets(new Insets(10));
+                    testButton.setLayoutData(layoutData);
+                    testButton.setStyleName("Default");
+                    testPane.add(testButton);
+                }
+            }
+        });
         
         controlsColumn = new ButtonColumn();
         controlsColumn.add(new Label("Configure SplitPane"));

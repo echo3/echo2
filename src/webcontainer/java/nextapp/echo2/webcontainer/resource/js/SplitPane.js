@@ -192,8 +192,16 @@ EchoSplitPane.prototype.create = function() {
         
     this.update(paneDivElements[0], paneDivElements[1], separatorDivElement);
 
-    splitPaneDivElement.appendChild(paneDivElements[0]);
-    splitPaneDivElement.appendChild(paneDivElements[1]);
+    // Append children, in left-to-right or top-to-bottom order to 
+    // provide sensible default focus order.
+    if (this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP ||
+            this.orientation == EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT) {
+        splitPaneDivElement.appendChild(paneDivElements[1]);
+        splitPaneDivElement.appendChild(paneDivElements[0]);
+    } else {
+        splitPaneDivElement.appendChild(paneDivElements[0]);
+        splitPaneDivElement.appendChild(paneDivElements[1]);
+    }
     if (separatorDivElement) {
         splitPaneDivElement.appendChild(separatorDivElement);
     }
