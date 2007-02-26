@@ -51,7 +51,7 @@ public abstract class ApplicationInstance
 implements Serializable {
     
     /** The name and version of the Echo API in use. */
-    public static final String ID_STRING = "NextApp Echo v2.1.0.beta5+";
+    public static final String ID_STRING = "NextApp Echo v2.1.0.rc1";
 
     public static final String FOCUSED_COMPONENT_CHANGED_PROPERTY = "focusedComponent";
     public static final String LOCALE_CHANGED_PROPERTY = "locale";
