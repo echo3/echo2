@@ -514,7 +514,9 @@ implements ActionProcessor, ComponentSynchronizePeer, FocusSupport, PropertyUpda
      * @see nextapp.echo2.webcontainer.FocusSupport#renderSetFocus(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.Component)
      */
     public void renderSetFocus(RenderContext rc, Component component) {
-        WindowUpdate.renderSetFocus(rc.getServerMessage(), ContainerInstance.getElementId(component));
+        if (component.isEnabled()) {
+            WindowUpdate.renderSetFocus(rc.getServerMessage(), ContainerInstance.getElementId(component));
+        }
     }
 
     /**
