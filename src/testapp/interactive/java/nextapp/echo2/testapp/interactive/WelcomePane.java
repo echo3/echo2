@@ -58,20 +58,6 @@ public class WelcomePane extends ContentPane {
         
         Label label;
 
-        Column column = new Column();
-        column.setRenderId("MainColumn");
-        column.setStyleName("WelcomePane.Column");
-        add(column);
-        
-        label = new Label(Styles.NEXTAPP_LOGO);
-        column.add(label);
-        
-        label = new Label(Styles.ECHO2_IMAGE);
-        column.add(label);
-        
-        label = new Label(Styles.INTERACTIVE_TEST_APPLICATION_IMAGE);
-        column.add(label);
-        
         WindowPane loginWindow = new WindowPane();
         loginWindow.setTitle("Welcome to the NextApp Echo2 Test Application");
         loginWindow.setStyleName("WelcomePane");
@@ -121,5 +107,19 @@ public class WelcomePane extends ContentPane {
 
         label = new Label("Please visit the Echo2 Home Page @ http://www.nextapp.com/products/echo2 for more information.");
         infoColumn.add(label);
+        
+        Column column = new Column();
+        column.setRenderId("MainColumn");
+        column.setStyleName("WelcomePane.Column");
+        add(column);
+        
+        label = new Label(Styles.NEXTAPP_LOGO);
+        column.add(label);
+        
+        label = new Label(Styles.ECHO2_IMAGE);
+        column.add(label);
+        
+        label = new Label(Styles.INTERACTIVE_TEST_APPLICATION_IMAGE);
+        column.add(label);
     }
 }

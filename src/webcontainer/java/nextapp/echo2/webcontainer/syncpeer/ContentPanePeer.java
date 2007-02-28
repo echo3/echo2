@@ -220,6 +220,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
             CssStyle style = new CssStyle();
             style.setAttribute("position", "absolute");
             style.setAttribute("overflow", "auto");
+            style.setAttribute("z-index", "0");
             Insets insets = (Insets) contentPane.getRenderProperty(ContentPane.PROPERTY_INSETS, DEFAULT_INSETS);
             style.setAttribute("top", ExtentRender.renderCssAttributePixelValue(insets.getTop(), "0"));
             style.setAttribute("left", ExtentRender.renderCssAttributePixelValue(insets.getLeft(), "0"));

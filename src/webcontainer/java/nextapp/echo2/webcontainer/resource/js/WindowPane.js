@@ -74,7 +74,7 @@ EchoWindowPane = function(elementId, containerElementId) {
     this.titleHeight = EchoWindowPane.DEFAULT_TITLE_HEIGHT;
     this.titleInsets = EchoWindowPane.DEFAULT_TITLE_INSETS;
     this.width = EchoWindowPane.DEFAULT_WIDTH;
-    this.zIndex = 0;
+    this.zIndex = 1;
 };
 
 EchoWindowPane.activeInstance = null;
@@ -1092,7 +1092,7 @@ EchoWindowPane.ZIndexManager.raise = function(containerId, elementId) {
         throw new Error("Invalid container id.");
     }
 
-    var raiseIndex = 0;
+    var raiseIndex = 1;
     
     for (var i = 0; i < elementIdArray.length; ++i) {
         if (elementIdArray[i] != elementId) {
