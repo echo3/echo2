@@ -624,6 +624,7 @@ EchoWindowPane.prototype.processClose = function(echoEvent) {
     if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
         return;
     }
+
     EchoClientMessage.setActionValue(this.elementId, "close");
     EchoServerTransaction.connect();
 };
@@ -809,7 +810,7 @@ EchoWindowPane.processBorderMouseUp = function(e) {
     }
 };
 
-EchoWindowPane.processClose = function(echoEvent) { 
+EchoWindowPane.processClose = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var windowPane = EchoWindowPane.getComponent(componentId);
     windowPane.processClose(echoEvent);
