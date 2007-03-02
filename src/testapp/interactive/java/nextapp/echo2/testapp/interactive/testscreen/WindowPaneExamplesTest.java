@@ -117,6 +117,7 @@ public class WindowPaneExamplesTest extends SplitPane {
                     
                     ContentPane c1 = new ContentPane();
                     final Button b1 = new Button("Click me:");
+                    b1.setStyleName("Default");
                     b1.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             b1.setText(b1.getText() + "!");
@@ -129,6 +130,7 @@ public class WindowPaneExamplesTest extends SplitPane {
                     WindowPane w2 = new WindowPane();
                     w2.setStyleName("Default");
                     final Button b2 = new Button("Click me:");
+                    b2.setStyleName("Default");
                     b2.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             b2.setText(b2.getText() + "!");
