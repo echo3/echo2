@@ -635,8 +635,6 @@ EchoWindowPane.prototype.processRaise = function(echoEvent) {
     }
     
     this.raise();
-    
-    return true;
 };
 
 EchoWindowPane.prototype.processTitleBarMouseDown = function(echoEvent) {
@@ -827,7 +825,8 @@ EchoWindowPane.selectStart = function() {
 EchoWindowPane.processRaiseClick = function(echoEvent) { 
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var windowPane = EchoWindowPane.getComponent(componentId);
-    return windowPane.processRaise(echoEvent);
+    windowPane.processRaise(echoEvent);
+    return true;
 };
 
 EchoWindowPane.processTitleBarMouseDown = function(echoEvent) {
