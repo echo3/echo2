@@ -62,7 +62,7 @@ implements Serializable {
      * A <code>ThreadLocal</code> reference to the 
      * <code>ApplicationInstance</code> relevant to the current thread.
      */ 
-    private static final ThreadLocal activeInstance = new InheritableThreadLocal();
+    private static final ThreadLocal activeInstance = new ThreadLocal();
     
     /**
      * Generates a system-level identifier (an identifier which is unique to all

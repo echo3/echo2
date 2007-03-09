@@ -74,7 +74,7 @@ EchoWindowPane = function(elementId, containerElementId) {
     this.titleHeight = EchoWindowPane.DEFAULT_TITLE_HEIGHT;
     this.titleInsets = EchoWindowPane.DEFAULT_TITLE_INSETS;
     this.width = EchoWindowPane.DEFAULT_WIDTH;
-    this.zIndex = 1;
+    this.zIndex = -1;
 };
 
 EchoWindowPane.activeInstance = null;
@@ -103,7 +103,9 @@ EchoWindowPane.prototype.create = function() {
     var windowPaneDivElement = document.createElement("div");
     windowPaneDivElement.id = this.elementId;
     windowPaneDivElement.style.position = "absolute";
-    windowPaneDivElement.style.zIndex = this.zIndex;
+    if (this.zIndex != -1) {
+        windowPaneDivElement.style.zIndex = this.zIndex;
+    }
     
     this.loadContainerSize();
     
@@ -488,6 +490,10 @@ EchoWindowPane.prototype.create = function() {
     }
 
     EchoWindowPane.ZIndexManager.add(this.containerComponentElementId, this.elementId);
+    
+    if (this.zIndex == -1) {
+        EchoWindowPane.ZIndexManager.raise(this.containerComponentElementId, this.elementId);
+    }
 };
 
 EchoWindowPane.prototype.dispose = function() {
@@ -1070,11 +1076,6 @@ EchoWindowPane.ZIndexManager.add = function(containerId, elementId) {
         }
     }
     elementIdArray.push(elementId);
-    
-    var windowElement = document.getElementById(elementId);
-    if (windowElement.style.zIndex == 0) {
-        EchoWindowPane.ZIndexManager.raise(containerId, elementId);
-    }
 };
 
 /**
