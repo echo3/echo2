@@ -34,6 +34,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionEvent;
+
 import nextapp.echo2.app.ApplicationInstance;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.TaskQueueHandle;
@@ -268,5 +271,29 @@ public class ContainerInstance extends UserInstance {
             taskQueueToCallbackIntervalMap = new WeakHashMap();
         }
         taskQueueToCallbackIntervalMap.put(taskQueue, new Integer(ms));
+    }
+
+    /**
+     * @see javax.servlet.http.HttpSessionActivationListener#sessionDidActivate(javax.servlet.http.HttpSessionEvent)
+     */
+    public void sessionDidActivate(HttpSessionEvent e) {
+        super.sessionDidActivate(e);
+        applicationInstance.activate();
+    }
+
+    /**
+     * @see javax.servlet.http.HttpSessionActivationListener#sessionWillPassivate(javax.servlet.http.HttpSessionEvent)
+     */
+    public void sessionWillPassivate(HttpSessionEvent e) {
+        applicationInstance.passivate();
+        super.sessionWillPassivate(e);
+    }
+
+    /**
+     * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
+     */
+    public void valueUnbound(HttpSessionBindingEvent e) {
+        applicationInstance.dispose();
+        super.valueUnbound(e);
     }
 }

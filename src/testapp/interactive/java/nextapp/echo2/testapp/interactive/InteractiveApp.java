@@ -118,6 +118,14 @@ public class InteractiveApp extends ApplicationInstance {
     }
     
     /**
+     * @see nextapp.echo2.app.ApplicationInstance#dispose()
+     */
+    public void dispose() {
+        super.dispose();
+        System.err.println(this + ": disposed!");
+    }
+    
+    /**
      * Displays a <code>TestPane</code> from which the user may select an
      * interactive test to run.
      */
