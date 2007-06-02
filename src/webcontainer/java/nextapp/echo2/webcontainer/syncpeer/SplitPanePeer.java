@@ -312,18 +312,15 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
      * @param update the update
      */
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
-        ContainerInstance ci = rc.getContainerInstance();
         SplitPane splitPane = (SplitPane) update.getParent();
-        
-        RenderStateImpl previousRenderState = (RenderStateImpl) ci.getRenderState(splitPane);
         RenderStateImpl currentRenderState = new RenderStateImpl(splitPane);
-        if (!equal(previousRenderState.pane0, currentRenderState.pane0)) {
-            if (currentRenderState.pane0 != null) {
+
+        Component[] addedChildren = update.getAddedChildren();
+        for (int i = 0; i < addedChildren.length; i++) {
+            String id = ContainerInstance.getElementId(addedChildren[i]);
+            if (equal(id, currentRenderState.pane0)) {
                 renderAddChildDirective(rc, update, splitPane, 0);
-            }
-        }
-        if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
-            if (currentRenderState.pane1 != null) {
+            } else if (equal(id, currentRenderState.pane1)) {
                 renderAddChildDirective(rc, update, splitPane, 1);
             }
         }
@@ -516,19 +513,18 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         ContainerInstance ci = rc.getContainerInstance();
         SplitPane splitPane = (SplitPane) update.getParent();
         RenderStateImpl previousRenderState = (RenderStateImpl) ci.getRenderState(splitPane);
-        
-        RenderStateImpl currentRenderState = new RenderStateImpl(splitPane);
 
-        if (!equal(previousRenderState.pane0, currentRenderState.pane0)) {
-            if (previousRenderState.pane0 != null) {
-                renderRemoveChildDirective(rc, (SplitPane) splitPane, 0);
+        Component[] removedChildren = update.getRemovedChildren();
+        for (int i = 0; i < removedChildren.length; i++) {
+            String id = ContainerInstance.getElementId(removedChildren[i]);
+            
+            if (equal(id, previousRenderState.pane0)) {
+                renderRemoveChildDirective(rc, splitPane, 0);
+            } else if (equal(id, previousRenderState.pane1)) {
+                renderRemoveChildDirective(rc, splitPane, 1);
             }
         }
-        if (!equal(previousRenderState.pane1, currentRenderState.pane1)) {
-            if (previousRenderState.pane1 != null) {
-                renderRemoveChildDirective(rc, (SplitPane) splitPane, 1);
-            }
-        }
+
     }
     
     private void renderRemoveChildDirective(RenderContext rc, SplitPane splitPane, int index) {
