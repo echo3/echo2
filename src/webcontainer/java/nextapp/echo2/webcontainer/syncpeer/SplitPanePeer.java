@@ -524,7 +524,6 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
                 renderRemoveChildDirective(rc, splitPane, 1);
             }
         }
-
     }
     
     private void renderRemoveChildDirective(RenderContext rc, SplitPane splitPane, int index) {
