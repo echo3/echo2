@@ -31,7 +31,6 @@ package nextapp.echo2.webcontainer;
 
 import nextapp.echo2.app.Component;
 
-//BUGBUG^ EXPERIMENTAL
 /**
  * An interface which may be supported by <code>ComponentSynchronizePeer</code>s
  * that benefit from lazily rendering their child components to the client.

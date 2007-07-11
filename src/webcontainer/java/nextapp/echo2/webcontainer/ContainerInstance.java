@@ -278,14 +278,18 @@ public class ContainerInstance extends UserInstance {
      */
     public void sessionDidActivate(HttpSessionEvent e) {
         super.sessionDidActivate(e);
-        applicationInstance.activate();
+        if (applicationInstance != null) {
+            applicationInstance.activate();
+        }
     }
 
     /**
      * @see javax.servlet.http.HttpSessionActivationListener#sessionWillPassivate(javax.servlet.http.HttpSessionEvent)
      */
     public void sessionWillPassivate(HttpSessionEvent e) {
-        applicationInstance.passivate();
+        if (applicationInstance != null) {
+            applicationInstance.passivate();
+        }
         super.sessionWillPassivate(e);
     }
 
@@ -293,7 +297,9 @@ public class ContainerInstance extends UserInstance {
      * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
      */
     public void valueUnbound(HttpSessionBindingEvent e) {
-        applicationInstance.dispose();
+        if (applicationInstance != null) {
+            applicationInstance.dispose();
+        }
         super.valueUnbound(e);
     }
 }
