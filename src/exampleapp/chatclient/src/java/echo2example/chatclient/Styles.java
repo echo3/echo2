@@ -40,8 +40,8 @@ import nextapp.echo2.app.componentxml.StyleSheetLoader;
  */
 public class Styles {
     
-    public static final String IMAGE_PATH = "/echo2example/chatclient/resource/image/";
-    public static final String STYLE_PATH = "/echo2example/chatclient/resource/style/";
+    public static final String IMAGE_PATH = "echo2example/chatclient/resource/image/";
+    public static final String STYLE_PATH = "echo2example/chatclient/resource/style/";
     
     /**
      * Default application style sheet.

@@ -40,8 +40,8 @@ import nextapp.echo2.app.componentxml.StyleSheetLoader;
  */
 public class Styles {
     
-    public static final String IMAGE_PATH = "/echo2example/email/resource/image/";
-    public static final String STYLE_PATH = "/echo2example/email/resource/style/";
+    public static final String IMAGE_PATH = "echo2example/email/resource/image/";
+    public static final String STYLE_PATH = "echo2example/email/resource/style/";
     
     /**
      * Default application style sheet.
