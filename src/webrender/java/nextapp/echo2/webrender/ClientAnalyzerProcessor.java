@@ -125,6 +125,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.BROWSER_KONQUEROR, Boolean.TRUE);
         } else if (browserSafari) {
             clientProperties.setProperty(ClientProperties.BROWSER_SAFARI, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);
         } else if (browserMozilla) {
             clientProperties.setProperty(ClientProperties.BROWSER_MOZILLA, Boolean.TRUE);
             if (browserFireFox) {
