@@ -48,7 +48,7 @@ public abstract class WebRenderServlet extends HttpServlet {
      * A <code>ThreadLocal</code> reference to the 
      * <code>Connection</code> relevant to the current thread.
      */ 
-    private static final ThreadLocal activeConnection = new InheritableThreadLocal();
+    private static final ThreadLocal activeConnection = new ThreadLocal();
     
     /**
      * A flag indicating whether caching should be disabled for all services.
