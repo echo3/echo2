@@ -173,6 +173,7 @@ EchoTextComponent.prototype.processKeyPress = function(e) {
         return;
     }
     if (e.keyCode == 13) {
+        EchoDomUtil.preventEventDefault(e);
         this.doAction();
     }
 };
