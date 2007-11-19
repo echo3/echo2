@@ -430,11 +430,6 @@ implements RenderIdSupport, Serializable {
      * @param newValue the present value of the property
      */
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        // Report to PropertyChangeListeners.
-        if (propertyChangeSupport != null) {
-            propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
-        }
-        
         // Report to ApplicationInstance.
         // The ApplicationInstance is notified directly in order to reduce
         // per-Component-instance memory requirements, i.e., it enables the 
@@ -442,6 +437,11 @@ implements RenderIdSupport, Serializable {
         // that have ProperyChangeListeners registered by a third party.
         if (applicationInstance != null) {
             applicationInstance.notifyComponentPropertyChange(this, propertyName, oldValue, newValue);
+        }
+
+        // Report to PropertyChangeListeners.
+        if (propertyChangeSupport != null) {
+            propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
         }
     }
     
