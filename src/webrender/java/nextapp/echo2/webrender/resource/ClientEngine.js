@@ -2839,6 +2839,11 @@ EchoServerMessage.processPhase2 = function() {
     EchoVirtualPosition.redraw();
 
     ++EchoServerMessage.transactionCount;
+    
+    var completionTime = new Date().getTime();
+    var interactionTime = completionTime - EchoServerTransaction.timer;
+    EchoServerTransaction.timer = null;
+    EchoDebugManager.consoleWrite("Interaction time: " + interactionTime + "ms");
 };
 
 /**
@@ -2875,6 +2880,11 @@ EchoServerMessage.waitForLibraries = function() {
  * server.
  */
 function EchoServerTransaction() { }
+
+/**
+ * Timer used for measuring performance.
+ */
+EchoServerTransaction.timer = null;
 
 /**
  * Flag specifying whether a server transaction is active.
@@ -2948,6 +2958,7 @@ EchoServerTransaction.postProcess = function() {
  * @param conn the EchoHttpConnection containing the response information.
  */
 EchoServerTransaction.responseHandler = function(conn) {
+    EchoServerTransaction.timer = new Date().getTime();
     EchoServerMessage.init(conn.getResponseXml(), EchoServerTransaction.postProcess);
     EchoServerMessage.process();
 };
