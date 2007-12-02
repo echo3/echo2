@@ -94,6 +94,8 @@ EchoTextComponent.prototype.init = function() {
         element.scrollLeft = this.horizontalScroll;
     }
     
+    this.multipleLines = element.nodeName.toLowerCase() != "input";
+    
     if (this.verticalScroll != 0) {
         if (EchoClientProperties.get("quirkIERepaint")) {
             // Avoid IE quirk where browser will fail to set scroll bar position.
@@ -173,7 +175,9 @@ EchoTextComponent.prototype.processKeyPress = function(e) {
         return;
     }
     if (e.keyCode == 13) {
-        EchoDomUtil.preventEventDefault(e);
+        if (!this.multipleLines) {
+            EchoDomUtil.preventEventDefault(e);
+        }
         this.doAction();
     }
 };
