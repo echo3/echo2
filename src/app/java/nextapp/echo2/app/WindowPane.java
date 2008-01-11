@@ -498,7 +498,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
      * @param newValue true if the window is closable
      */
     public void setClosable(boolean newValue) {
-        setProperty(PROPERTY_CLOSABLE, new Boolean(newValue));
+        setProperty(PROPERTY_CLOSABLE, Boolean.valueOf(newValue));
     }
     
     /**
@@ -628,7 +628,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
     public void setModal(boolean newValue) {
         boolean oldValue = modal;
         modal = newValue;
-        firePropertyChange(MODAL_CHANGED_PROPERTY, new Boolean(oldValue), new Boolean(newValue));
+        firePropertyChange(MODAL_CHANGED_PROPERTY, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
     }
     
     /**
@@ -637,7 +637,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
      * @param newValue true if the window may be moved by the user
      */
     public void setMovable(boolean newValue) {
-        setProperty(PROPERTY_MOVABLE, new Boolean(newValue));
+        setProperty(PROPERTY_MOVABLE, Boolean.valueOf(newValue));
     }
     
     /**
@@ -670,7 +670,7 @@ implements FloatingPane, ModalSupport, PaneContainer {
      * @param newValue true if the window may be resized by the user
      */
     public void setResizable(boolean newValue) {
-        setProperty(PROPERTY_RESIZABLE, new Boolean(newValue));
+        setProperty(PROPERTY_RESIZABLE, Boolean.valueOf(newValue));
     }
     
     /**

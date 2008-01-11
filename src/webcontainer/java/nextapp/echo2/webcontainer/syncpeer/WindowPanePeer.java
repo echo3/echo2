@@ -342,7 +342,7 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
 
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * render and intialize the state of a <code>WindowPane</code>.
+     * render and initialize the state of a <code>WindowPane</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param windowPane the <code>WindowPane</code>
