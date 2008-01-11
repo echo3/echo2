@@ -236,7 +236,7 @@ EchoClientConfiguration.MessageProcessor.processStore = function(storeElement) {
     }
 };
 
-EchoClientConfiguration.propertyMap = new Array();
+EchoClientConfiguration.propertyMap = { };
 
 EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"] 
         = "A synchronization error has occurred.  Click \"Ok\" to re-synchronize.";
@@ -774,7 +774,7 @@ EchoCollectionsMap.prototype.put = function(key, value) {
  */
 EchoCollectionsMap.prototype.garbageCollect = function() {
     this.removeCount = 0;
-    var newAssociations = new Array();
+    var newAssociations = { };
     var i = 0;
     for (var key in this.associations) {
         newAssociations[key] = this.associations[key];
@@ -832,7 +832,6 @@ EchoCssUtil.addRule = function(selectorText, style) {
  */
 EchoCssUtil.applyStyle = function(element, cssText) {
     var styleProperties = cssText.split(";");
-    var styleData = new Array();
     for (var i = 0; i < styleProperties.length; ++i) {
         var separatorIndex = styleProperties[i].indexOf(":");
         if (separatorIndex == -1) {
@@ -1150,7 +1149,7 @@ EchoDomPropertyStore.setPropertyValue = function(element, propertyName, property
         return;
     }
     if (!element.echoDomPropertyStore) {
-        element.echoDomPropertyStore = new Array();
+        element.echoDomPropertyStore = { };
     }
     element.echoDomPropertyStore[propertyName] = propertyValue;
 };
@@ -1401,7 +1400,7 @@ EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, u
  * elements into a DOM in Internet Explorer browsers.
  */
 EchoDomUtil.initAttributeToPropertyMap = function() {
-    var m = new Array();
+    var m = { };
     m["accesskey"] = "accessKey";
     m["cellpadding"] = "cellPadding";
     m["cellspacing"] = "cellSpacing";
@@ -1964,7 +1963,7 @@ EchoEventProcessor.getHandlerData = function(eventType, elementId) {
  * Returns the element ids of all event handlers of the specified type.
  */
 EchoEventProcessor.getHandlerElementIds = function(eventType) {
-    var elementIds = new Array();
+    var elementIds = [];
     var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
     if (elementIdToHandlerMap) {
         for (var elementId in elementIdToHandlerMap.associations) {
@@ -1981,7 +1980,7 @@ EchoEventProcessor.getHandlerElementIds = function(eventType) {
  *         event handlers
  */
 EchoEventProcessor.getHandlerEventTypes = function() {
-    var handlerTypes = new Array();
+    var handlerTypes = [];
     for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
         handlerTypes.push(eventType);
     }
@@ -2006,8 +2005,8 @@ EchoEventProcessor.processEvent = function(e) {
         e.target = e.srcElement;
     }
     var targetElement = e.target;
-    var handlerDatas = new Array();
-    var targetElements = new Array();
+    var handlerDatas = [];
+    var targetElements = [];
     
     var hasCapturingHandlers = false;
     
@@ -2343,12 +2342,12 @@ EchoScriptLibraryManager.STATE_INSTALLED = 3;
 /**
  * Associative array mapping library service ids to library source code.
  */
-EchoScriptLibraryManager.librarySourceMap = new Array();
+EchoScriptLibraryManager.librarySourceMap = { };
 
 /**
  * Associative array mapping library service ids to load-states.
  */
-EchoScriptLibraryManager.libraryLoadStateMap = new Array();
+EchoScriptLibraryManager.libraryLoadStateMap = { };
 
 /**
  * Queries the state of the specified libary.
@@ -2854,7 +2853,7 @@ EchoServerMessage.processPhase2 = function() {
  */
 EchoServerMessage.setTemporaryProperty = function(key, value) {
     if (!EchoServerMessage.temporaryProperties) {
-        EchoServerMessage.temporaryProperties = new Array();
+        EchoServerMessage.temporaryProperties = { };
     }
     EchoServerMessage.temporaryProperties[key] = value;
 };
@@ -3008,7 +3007,7 @@ EchoStringUtil.trim = function(s) {
 EchoVirtualPosition = { };
 
 /** Array containing ids of elements registered with the virtual positioning system. */
-EchoVirtualPosition.elementIdList = new Array();
+EchoVirtualPosition.elementIdList = [];
 
 EchoVirtualPosition.elementIdSet = new EchoCollectionsMap();
 
@@ -3131,7 +3130,7 @@ EchoVirtualPosition.redraw = function(element) {
         
         // Prune removed ids from list if necessary.
         if (removedIds) {
-            var updatedIdList = new Array();
+            var updatedIdList = [];
             for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
                 if (EchoVirtualPosition.elementIdList[i] != null) {
                     updatedIdList.push(EchoVirtualPosition.elementIdList[i]);
@@ -3180,7 +3179,7 @@ EchoVirtualPosition.resizeListener = function(e) {
  * implementation.
  */
 EchoVirtualPosition.sort = function() {
-    var sortedList = new Array();
+    var sortedList = [];
     EchoVirtualPosition.sortImpl(document.documentElement, sortedList); 
     EchoVirtualPosition.elementIdList = sortedList;
     EchoVirtualPosition.elementIdListSorted = true;
