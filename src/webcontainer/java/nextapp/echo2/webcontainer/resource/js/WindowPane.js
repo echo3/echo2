@@ -82,8 +82,8 @@ EchoWindowPane.activeInstance = null;
 /**
  * Id suffixes of border elements.
  */
-EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES = new Array("_border_tl", "_border_t", "_border_tr",
-        "_border_l", "_border_r", "_border_bl", "_border_b", "_border_br");
+EchoWindowPane.BORDER_ELEMENT_ID_SUFFIXES = ["_border_tl", "_border_t", "_border_tr",
+        "_border_l", "_border_r", "_border_bl", "_border_b", "_border_br"];
 
 EchoWindowPane.DEFAULT_CLOSE_ICON_INSETS = "4px";
 EchoWindowPane.DEFAULT_ICON_INSETS = "4px";
@@ -859,7 +859,7 @@ EchoWindowPane.processTitleBarMouseUp = function(e) {
  * Static object/namespace for WindowPane MessageProcessor 
  * implementation.
  */
-EchoWindowPane.MessageProcessor = function() { };
+EchoWindowPane.MessageProcessor = { };
 
 EchoWindowPane.MessageProcessor.loadProperties = function(propertiesElement, windowPane) {
     if (propertiesElement.getAttribute("position-x")) {
@@ -1065,7 +1065,7 @@ EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap = new EchoCollection
 EchoWindowPane.ZIndexManager.add = function(containerId, elementId) {
     var elementIdArray = EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.get(containerId);
     if (!elementIdArray) {
-        elementIdArray = new Array();
+        elementIdArray = [];
         EchoWindowPane.ZIndexManager.containerIdToElementIdArrayMap.put(containerId, elementIdArray);
     }
     var containsElement = false;
