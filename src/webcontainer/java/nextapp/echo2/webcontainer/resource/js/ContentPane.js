@@ -34,13 +34,13 @@
  * Static object/namespace for ContentPane support.
  * This object/namespace should not be used externally.
  */
-EchoContentPane = function() { };
+EchoContentPane = { };
 
 /**
  * Static object/namespace for ContentPane MessageProcessor 
  * implementation.
  */
-EchoContentPane.MessageProcessor = function() { };
+EchoContentPane.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

@@ -394,7 +394,7 @@ EchoButton.processRolloverExit = function(echoEvent) {
 /**
  * Static object/namespace for RadioButton group management.
  */
-EchoButton.Group = function() { };
+EchoButton.Group = { };
 
 /**
  * Associative arary mapping button group ids to
@@ -467,7 +467,7 @@ EchoButton.Group.remove = function(groupId, buttonId) {
  * Static object/namespace for Button MessageProcessor 
  * implementation.
  */
-EchoButton.MessageProcessor = function() { };
+EchoButton.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

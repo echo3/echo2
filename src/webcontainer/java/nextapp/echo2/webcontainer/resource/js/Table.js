@@ -165,7 +165,7 @@ EchoTable.prototype.getRowIndex = function(trElement) {
 EchoTable.prototype.init = function() {
     var element = this.getElement();
 
-    this.selectionState = new Array();
+    this.selectionState = [];
     this.rowCount = element.rows.length - (this.headerVisible ? 1 : 0); 
     
     if (this.rolloverEnabled || this.selectionEnabled) {
@@ -357,7 +357,7 @@ EchoTable.getComponent = function(element) {
  * Static object/namespace for Table MessageProcessor 
  * implementation.
  */
-EchoTable.MessageProcessor = function() { };
+EchoTable.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

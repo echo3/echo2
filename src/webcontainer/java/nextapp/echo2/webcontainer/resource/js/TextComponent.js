@@ -237,7 +237,7 @@ EchoTextComponent.getComponent = function(element) {
  * Static object/namespace for Text Component MessageProcessor 
  * implementation.
  */
-EchoTextComponent.MessageProcessor = function() { };
+EchoTextComponent.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

@@ -35,13 +35,13 @@
  * the client browser.
  * This object/namespace should not be used externally.
  */
-EchoBrowserCommand = function() { };
+EchoBrowserCommand = { };
 
 /**
  * Static object/namespace for browser command MessageProcessor 
  * implementation.
  */
-EchoBrowserCommand.MessageProcessor = function() { };
+EchoBrowserCommand.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

@@ -403,7 +403,7 @@ EchoListComponent.prototype.processClickDhtml = function(echoEvent) {
             this.selectedIndices.push(index);
         }
     } else {
-        this.selectedIndices = new Array();
+        this.selectedIndices = [];
         this.selectedIndices.push(index);
     }
     this.loadSelectionDhtml();
@@ -504,7 +504,7 @@ EchoListComponent.prototype.setRolloverIndex = function(rolloverIndex) {
 EchoListComponent.prototype.storeSelection = function() {
     var selectElement = this.getElement();
 
-    this.selectedIndices = new Array();
+    this.selectedIndices = [];
     for (var i = 0; i < selectElement.options.length; ++i) {
         if (selectElement.options[i].selected) {
             this.selectedIndices.push(i);
@@ -631,7 +631,7 @@ EchoListComponent.processSelectStart = function(e) {
  * Static object/namespace for SelectField/ListBox MessageProcessor 
  * implementation.
  */
-EchoListComponent.MessageProcessor = function() { };
+EchoListComponent.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -703,7 +703,7 @@ EchoListComponent.MessageProcessor.processInit = function(initElement) {
     }
 
     // Retrieve selection information.
-    listComponent.selectedIndices = new Array();
+    listComponent.selectedIndices = [];
     if (listComponent.multipleSelection) {
         var selectionElements = initElement.getElementsByTagName("selection");
         if (selectionElements.length == 1) {
@@ -733,7 +733,7 @@ EchoListComponent.MessageProcessor.processInit = function(initElement) {
 EchoListComponent.MessageProcessor.processLoadContent = function(loadContentElement) {
     var contentId = loadContentElement.getAttribute("content-id");
     
-    var valueArray = new Array();
+    var valueArray = [];
     for (var item = loadContentElement.firstChild; item; item = item.nextSibling) {
         var value = item.getAttribute("value");
         valueArray.push(value);
@@ -741,7 +741,7 @@ EchoListComponent.MessageProcessor.processLoadContent = function(loadContentElem
     EchoServerMessage.setTemporaryProperty("EchoListComponent.Values." + contentId, valueArray);
 
     if (loadContentElement.getAttribute("styled") == "true") {
-        var styleArray = new Array();
+        var styleArray = [];
         for (var item = loadContentElement.firstChild; item; item = item.nextSibling) {
             var value = item.getAttribute("style");
             styleArray.push(value);

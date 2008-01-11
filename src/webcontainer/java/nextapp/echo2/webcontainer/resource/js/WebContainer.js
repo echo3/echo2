@@ -39,7 +39,7 @@
  * Static object/namespace containing namespaces for client-side 
  * representations of key nextapp.echo2.app properties.
  */
-EchoCoreProperties = new function() { };
+EchoCoreProperties = { };
 
 /**
  * Object representing a nextapp.echo2.app.FillImgaeBorder property value.

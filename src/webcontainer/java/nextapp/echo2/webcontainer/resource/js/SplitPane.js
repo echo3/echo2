@@ -45,7 +45,7 @@ EchoSplitPane = function(elementId, containerElementId, orientation, position) {
     this.separatorImage = null;
     this.resizable = true;
     
-    this.paneData = new Array(new EchoSplitPane.PaneData(), new EchoSplitPane.PaneData());
+    this.paneData = [new EchoSplitPane.PaneData(), new EchoSplitPane.PaneData()];
 };
 
 EchoSplitPane.activeInstance = null;
@@ -91,7 +91,7 @@ EchoSplitPane.prototype.create = function() {
         EchoCssUtil.applyStyle(splitPaneDivElement, this.font);
     }
     
-    var paneDivElements = new Array();
+    var paneDivElements = [];
     for (var i = 0; i < 2; ++i) {
         paneDivElements[i] = document.createElement("div");
         paneDivElements[i].id = this.elementId + "_pane" + i;
@@ -412,7 +412,7 @@ EchoSplitPane.processSeparatorMouseUp = function(e) {
  * Static object/namespace for SplitPane MessageProcessor 
  * implementation.
  */
-EchoSplitPane.MessageProcessor = function() { };
+EchoSplitPane.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
