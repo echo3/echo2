@@ -128,7 +128,7 @@ public class ContainerContextTest extends Column {
         
             public void actionPerformed(ActionEvent e) {
                 int value = (int) (Math.random() * 3);
-                Cookie cookie = new Cookie("Test Cookie " + value, "Mmmmm Cookies " + value);
+                Cookie cookie = new Cookie("TestCookie" + value, "Mmmmm Cookies " + value);
                 BrowserSetCookieCommand command = new BrowserSetCookieCommand(cookie);
                 ApplicationInstance.getActive().enqueueCommand(command);
             }
