@@ -34,7 +34,7 @@
  * Static object/namespace for polling server to monitor for asynchronous
  * server-initiated updates to the client ("server push").
  */
-function EchoAsyncMonitor() { }
+EchoAsyncMonitor = { };
 
 /**
  * The time, in milleseconds, between polling requests.
@@ -114,7 +114,7 @@ EchoAsyncMonitor.responseHandler = function(conn) {
   * version information, capabilities, and quirks and store the information
   * in the outgoing ClientMessage.
   */
-function EchoClientAnalyzer() { }
+EchoClientAnalyzer = { };
 
 /**
  * Analyzes properties of client browser and stores them in the outgoing
@@ -199,12 +199,12 @@ EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, 
  * Static/object namespace which provides general-purpose Client Engine
  * configuration settings.
  */
-function EchoClientConfiguration() { }
+EchoClientConfiguration = { };
 
 /**
  * MessagePartProcessor implementation for EchoClientConfiguration.
  */
-EchoClientConfiguration.MessageProcessor = function() { };
+EchoClientConfiguration.MessageProcessor = { };
 
 /**
  * MessagePartProcessor process() method implementation.
@@ -251,7 +251,7 @@ EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"]
 /**
  * Static object/namespace providing core client engine functionality.
  */
-function EchoClientEngine() { }
+EchoClientEngine = { };
 
 /**
  * The base URI of the Echo application server.
@@ -494,7 +494,7 @@ EchoClientEngine.verifyInput = function(element, allowInputDuringTransaction) {
 /**
  * Static object/namespace representing the outgoing ClientMessage.
  */
-function EchoClientMessage() { }
+EchoClientMessage = { };
 
 /**
  * The current outgoing ClientMessage XML document.
@@ -666,17 +666,17 @@ EchoClientMessage.setInitialize = function() {
  * Static object/namespace providing information about the make/model/version,
  * capabilities, quirks, and limitations of the browser client.
  */
-function EchoClientProperties() { }
+EchoClientProperties = { };
 
 /**
  * Associative array mapping client property names to values.
  */
-EchoClientProperties.propertyMap = new Array();
+EchoClientProperties.propertyMap = { };
 
 /**
  * MessagePartProcessor implementation for EchoClientProperties.
  */
-EchoClientProperties.MessageProcessor = function() { };
+EchoClientProperties.MessageProcessor = { };
 
 /**
  * MessagePartProcessor process() method implementation.
@@ -739,7 +739,7 @@ EchoClientProperties.get = function(name) {
 EchoCollectionsMap = function() {
     this.removeCount = 0;
     this.garbageCollectionInterval = 250;
-    this.associations = new Array();
+    this.associations = { };
 };
 
 /**
@@ -803,7 +803,7 @@ EchoCollectionsMap.prototype.remove = function(key) {
  * Static object/namespace to provide cascading style-sheet (CSS) manipulation
  * utilities.
  */
-function EchoCssUtil() { }
+EchoCssUtil = { };
 
 /**
  * Adds a rule to the document stylesheet.
@@ -963,7 +963,7 @@ EchoCssUtil.Bounds.prototype.toString = function() {
 /**
  * Static object/namespace for managing the Debug Window.
  */
-function EchoDebugManager() { }
+EchoDebugManager = { };
 
 /**
  * Reference to the active debug window.
@@ -1019,14 +1019,14 @@ EchoDebugManager.updateServerMessage = function() {
  * Values are stored within associative arrays that are stored in a
  * 'echoDomPropertyStore' property of a DOM element.
  */
-function EchoDomPropertyStore() { }
+EchoDomPropertyStore = { };
 
 /**
  * Static object/namespace for EchoDomPropertyStore MessageProcessor 
  * implementation.  Provides capability to set EchoDomPropertyStore
  * properties from ServerMessage directives.
  */
-EchoDomPropertyStore.MessageProcessor = function() { };
+EchoDomPropertyStore.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -1162,13 +1162,13 @@ EchoDomPropertyStore.setPropertyValue = function(element, propertyName, property
  * Static object/namespace for performing server-directed updates to the
  * client DOM.
  */
-function EchoDomUpdate() { }
+EchoDomUpdate = { };
 
 /**
  * Static object/namespace for EchoDomUpdate MessageProcessor 
  * implementation.
  */
-EchoDomUpdate.MessageProcessor = function() { };
+EchoDomUpdate.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -1363,7 +1363,7 @@ EchoDomUpdate.TargetNotFoundException.prototype.toString = function() {
  * operations.  Most methods in this object/namespace are provided due
  * to nonstandard behavior in clients.
  */
-function EchoDomUtil() { }
+EchoDomUtil = { }
 
 /**
  * An associative array which maps between HTML attributes and HTMLElement 
@@ -1818,7 +1818,7 @@ EchoDomUtil.stopPropagation = function(e) {
  * leaks" and provides a mechanism for inspecting registered event handlers
  * using the Debug Window.
  */
-function EchoEventProcessor() { }
+EchoEventProcessor = { };
 
 EchoEventProcessor.EventHandlerData = function(handlerName, capture) { 
     this.handlerName = handlerName;
@@ -1830,7 +1830,7 @@ EchoEventProcessor.EventHandlerData = function(handlerName, capture) {
  * Static object/namespace for EchoEventProcessor MessageProcessor 
  * implementation.
  */
-EchoEventProcessor.MessageProcessor = function() { };
+EchoEventProcessor.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -2128,7 +2128,7 @@ EchoEventProcessor.removeHandler = function(element, eventType) {
 /**
  * Static object/namespace to manage component focus.
  */
-function EchoFocusManager() { }
+EchoFocusManager = { };
 
 /**
  * Sets the focused state of a component.
@@ -2287,7 +2287,7 @@ EchoHttpConnection.nullMethod = function() { };
 /**
  * Manages the modal state of the application.
  */
-function EchoModalManager() { }
+EchoModalManager = { };
 
 /**
  * Element id of current modal object, or null if no object is currently 
@@ -2320,7 +2320,7 @@ EchoModalManager.isElementInModalContext = function(element) {
 /**
  * Static object/namespace to manage dynamic loading of client libraries.
  */
-function EchoScriptLibraryManager() { }
+EchoScriptLibraryManager = { };
 
 /**
  * Library load-state constant indicating a library has been requested from 
@@ -2437,12 +2437,12 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
  *   during a longer-than-normal server transaction.</li>
  * </ul>
  */
-function EchoServerDelayMessage() { }
+EchoServerDelayMessage = { };
 
 /**
  * MessagePartProcessor implementation for EchoServerDelayMessage.
  */
-EchoServerDelayMessage.MessageProcessor = function() { };
+EchoServerDelayMessage.MessageProcessor = { };
 
 /**
  * MessagePartProcessor process() method implementation.
@@ -2555,7 +2555,7 @@ EchoServerDelayMessage.deactivate = function() {
 /**
  * Static object to process synchronization messages received from server.
  */
-function EchoServerMessage() { }
+EchoServerMessage = { };
 
 EchoServerMessage.STATUS_INITIALIZED = 0;
 EchoServerMessage.STATUS_PROCESSING = 1;
@@ -2879,7 +2879,7 @@ EchoServerMessage.waitForLibraries = function() {
  * Static object/namespace to manage HTTP synchronization connections to 
  * server.
  */
-function EchoServerTransaction() { }
+EchoServerTransaction = { };
 
 /**
  * Timer used for measuring performance.
@@ -2970,7 +2970,7 @@ EchoServerTransaction.responseHandler = function(conn) {
 * Static object/namespace for performing string-operations that are not
 * provided by the JavaScript specification.
 */
-function EchoStringUtil() {};
+EchoStringUtil = { };
 
 /**
  * Trims leading and trailing whitespace from a string.
@@ -3005,7 +3005,7 @@ EchoStringUtil.trim = function(s) {
  * The EchoVirtualPosition.redraw() method is invoked automatically whenever
  * a Client/Server synchronization is completed.
  */
-EchoVirtualPosition = function() { };
+EchoVirtualPosition = { };
 
 /** Array containing ids of elements registered with the virtual positioning system. */
 EchoVirtualPosition.elementIdList = new Array();
@@ -3253,7 +3253,7 @@ EchoVirtualPosition.verifyPixelOrUndefinedValue = function(value) {
  * implementation.  Provides capability to register elements with
  * the Virtual Positioning System.
  */
-EchoVirtualPosition.MessageProcessor = function() { };
+EchoVirtualPosition.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -3294,7 +3294,7 @@ EchoVirtualPosition.MessageProcessor.processRegister = function(registerElement)
  * MessageProcessor implementation to perform browser window-related updates,
  * such as setting the window title.
  */
-function EchoWindowUpdate() { }
+EchoWindowUpdate = { };
 
 /**
  * MessageProcessor process() implementation.

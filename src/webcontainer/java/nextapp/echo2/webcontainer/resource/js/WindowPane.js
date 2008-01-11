@@ -1049,7 +1049,7 @@ EchoWindowPane.MessageProcessor.processInit = function(initElement) {
  * Static object/namespace to manage z-index ordering of multiple WindowPanes
  * with the same parent component.
  */
-EchoWindowPane.ZIndexManager = function() { };
+EchoWindowPane.ZIndexManager = { };
 
 /**
  * Associative array mapping container ids to arrays of element ids.
