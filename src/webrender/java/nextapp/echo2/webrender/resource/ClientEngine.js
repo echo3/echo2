@@ -34,75 +34,76 @@
  * Static object/namespace for polling server to monitor for asynchronous
  * server-initiated updates to the client ("server push").
  */
-EchoAsyncMonitor = { };
-
-/**
- * The time, in milleseconds, between polling requests.
- */
-EchoAsyncMonitor.timeInterval = 500;
-
-/**
- * Server query for polling service.
- */
-EchoAsyncMonitor.pollServiceRequest = "?serviceId=Echo.AsyncMonitor";
-
-/**
- * Timeout identifier for the delayed invocation of the next poll request
- * (used to cancel the timeout if required).
- */
-EchoAsyncMonitor.timeoutId = null;
-
-/**
- * Initiates an HTTP request to the asynchronous monitor poll service to
- * determine if the server has the need to update the client.
- */
-EchoAsyncMonitor.connect = function() {
-    var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoAsyncMonitor.pollServiceRequest, "GET");
-    conn.responseHandler = EchoAsyncMonitor.responseHandler;
-    conn.invalidResponseHandler = EchoAsyncMonitor.invalidResponseHandler;
-    conn.connect();
-};
-
-/**
- * Processes an invalid response to the poll request.
- */
-EchoAsyncMonitor.invalidResponseHandler = function() {
-    alert("Invalid response from server to asynchronous polling connection.");
-};
-
-/**
- * Starts the countdown to the next poll request.
- */
-EchoAsyncMonitor.start = function() {
-    if (!EchoServerTransaction.active) {
-        EchoAsyncMonitor.timeoutId = window.setTimeout("EchoAsyncMonitor.connect();", 
-                EchoAsyncMonitor.timeInterval);
-    }
-};
-
-/**
- * Cancels the countdown to the next poll request, if necessary.
- */
-EchoAsyncMonitor.stop = function() {
-    if (EchoAsyncMonitor.timeoutId) {
-        window.clearTimeout(EchoAsyncMonitor.timeoutId);
-        EchoAsyncMonitor.timeoutId = null;
-    }
-};
-
-/**
- * Processes a response from the HTTP request made to the polling
- * service.
- *
- * @param conn the EchoHttpConnection containing the response information.
- */
-EchoAsyncMonitor.responseHandler = function(conn) {
-    if ("true" == conn.getResponseXml().documentElement.getAttribute("request-sync")) {
-        // Server is requesting synchronization: Initiate server transaction.
-        EchoServerTransaction.connect();
-    } else {
-        // Server does not require synchronization: restart countdown to next poll request.
-        EchoAsyncMonitor.start();
+EchoAsyncMonitor = {
+    
+    /**
+     * The time, in milleseconds, between polling requests.
+     */
+    timeInterval: 500,
+    
+    /**
+     * Server query for polling service.
+     */
+    pollServiceRequest: "?serviceId=Echo.AsyncMonitor",
+    
+    /**
+     * Timeout identifier for the delayed invocation of the next poll request
+     * (used to cancel the timeout if required).
+     */
+    timeoutId: null,
+    
+    /**
+     * Initiates an HTTP request to the asynchronous monitor poll service to
+     * determine if the server has the need to update the client.
+     */
+    connect: function() {
+        var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoAsyncMonitor.pollServiceRequest, "GET");
+        conn.responseHandler = EchoAsyncMonitor.responseHandler;
+        conn.invalidResponseHandler = EchoAsyncMonitor.invalidResponseHandler;
+        conn.connect();
+    },
+    
+    /**
+     * Processes an invalid response to the poll request.
+     */
+    invalidResponseHandler: function() {
+        alert("Invalid response from server to asynchronous polling connection.");
+    },
+    
+    /**
+     * Starts the countdown to the next poll request.
+     */
+    start: function() {
+        if (!EchoServerTransaction.active) {
+            EchoAsyncMonitor.timeoutId = window.setTimeout("EchoAsyncMonitor.connect();", 
+                    EchoAsyncMonitor.timeInterval);
+        }
+    },
+    
+    /**
+     * Cancels the countdown to the next poll request, if necessary.
+     */
+    stop: function() {
+        if (EchoAsyncMonitor.timeoutId) {
+            window.clearTimeout(EchoAsyncMonitor.timeoutId);
+            EchoAsyncMonitor.timeoutId = null;
+        }
+    },
+    
+    /**
+     * Processes a response from the HTTP request made to the polling
+     * service.
+     *
+     * @param conn the EchoHttpConnection containing the response information.
+     */
+    responseHandler: function(conn) {
+        if ("true" == conn.getResponseXml().documentElement.getAttribute("request-sync")) {
+            // Server is requesting synchronization: Initiate server transaction.
+            EchoServerTransaction.connect();
+        } else {
+            // Server does not require synchronization: restart countdown to next poll request.
+            EchoAsyncMonitor.start();
+        }
     }
 };
 
@@ -114,82 +115,83 @@ EchoAsyncMonitor.responseHandler = function(conn) {
   * version information, capabilities, and quirks and store the information
   * in the outgoing ClientMessage.
   */
-EchoClientAnalyzer = { };
-
-/**
- * Analyzes properties of client browser and stores them in the outgoing
- * ClientMessage.
- */
-EchoClientAnalyzer.analyze = function() {
-    var messagePartElement = EchoClientMessage.getMessagePart("EchoClientAnalyzer");
-    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppName", window.navigator.appName);
-    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppVersion", window.navigator.appVersion);
-    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppCodeName", window.navigator.appCodeName);
-    EchoClientAnalyzer.setBooleanProperty(messagePartElement, "navigatorCookieEnabled", window.navigator.cookieEnabled);
-    EchoClientAnalyzer.setBooleanProperty(messagePartElement, "navigatorJavaEnabled", window.navigator.javaEnabled());
-    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorLanguage", 
-            window.navigator.language ? window.navigator.language : window.navigator.userLanguage);
-    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorPlatform", window.navigator.platform);
-    EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorUserAgent", window.navigator.userAgent);
-    if (window.screen) {
-        // Capture Display Information
-        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenWidth", window.screen.width);
-        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenHeight", window.screen.height);
-        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenColorDepth", window.screen.colorDepth);
+EchoClientAnalyzer = {
+    
+    /**
+     * Analyzes properties of client browser and stores them in the outgoing
+     * ClientMessage.
+     */
+    analyze: function() {
+        var messagePartElement = EchoClientMessage.getMessagePart("EchoClientAnalyzer");
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppName", window.navigator.appName);
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppVersion", window.navigator.appVersion);
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorAppCodeName", window.navigator.appCodeName);
+        EchoClientAnalyzer.setBooleanProperty(messagePartElement, "navigatorCookieEnabled", window.navigator.cookieEnabled);
+        EchoClientAnalyzer.setBooleanProperty(messagePartElement, "navigatorJavaEnabled", window.navigator.javaEnabled());
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorLanguage", 
+                window.navigator.language ? window.navigator.language : window.navigator.userLanguage);
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorPlatform", window.navigator.platform);
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "navigatorUserAgent", window.navigator.userAgent);
+        if (window.screen) {
+            // Capture Display Information
+            EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenWidth", window.screen.width);
+            EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenHeight", window.screen.height);
+            EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenColorDepth", window.screen.colorDepth);
+        }
+        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset()));
+    },
+    
+    /**
+     * Stores a boolean client property in the ClientMessage.
+     *
+     * @param messagePartElement the <code>message-part</code> element
+     *        in which generated property XML elements should be stored
+     * @param propertyName the property name
+     * @param propertyValue the property value
+     */
+    setBooleanProperty: function(messagePartElement, propertyName, propertyValue) {
+        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        propertyElement.setAttribute("type", "boolean");
+        propertyElement.setAttribute("name", propertyName);
+        propertyElement.setAttribute("value", propertyValue ? "true" : "false");
+        messagePartElement.appendChild(propertyElement);
+    },
+    
+    /**
+     * Stores a integer client property in the ClientMessage.
+     *
+     * @param messagePartElement the <code>message-part</code> element
+     *        in which generated property XML elements should be stored
+     * @param propertyName the property name
+     * @param propertyValue the property value
+     */
+    setIntegerProperty: function(messagePartElement, propertyName, propertyValue) {
+        var intValue = parseInt(propertyValue);
+        if (isNaN(intValue)) {
+            return;
+        }
+        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        propertyElement.setAttribute("type", "integer");
+        propertyElement.setAttribute("name", propertyName);
+        propertyElement.setAttribute("value", intValue);
+        messagePartElement.appendChild(propertyElement);
+    },
+    
+    /**
+     * Stores a text client property in the ClientMessage.
+     *
+     * @param messagePartElement the <code>message-part</code> element
+     *        in which generated property XML elements should be stored
+     * @param propertyName the property name
+     * @param propertyValue the property value
+     */
+    setTextProperty: function(messagePartElement, propertyName, propertyValue) {
+        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        propertyElement.setAttribute("type", "text");
+        propertyElement.setAttribute("name", propertyName);
+        propertyElement.setAttribute("value", propertyValue);
+        messagePartElement.appendChild(propertyElement);
     }
-    EchoClientAnalyzer.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset()));
-};
-
-/**
- * Stores a boolean client property in the ClientMessage.
- *
- * @param messagePartElement the <code>message-part</code> element
- *        in which generated property XML elements should be stored
- * @param propertyName the property name
- * @param propertyValue the property value
- */
-EchoClientAnalyzer.setBooleanProperty = function(messagePartElement, propertyName, propertyValue) {
-    propertyElement = messagePartElement.ownerDocument.createElement("property");
-    propertyElement.setAttribute("type", "boolean");
-    propertyElement.setAttribute("name", propertyName);
-    propertyElement.setAttribute("value", propertyValue ? "true" : "false");
-    messagePartElement.appendChild(propertyElement);
-};
-
-/**
- * Stores a integer client property in the ClientMessage.
- *
- * @param messagePartElement the <code>message-part</code> element
- *        in which generated property XML elements should be stored
- * @param propertyName the property name
- * @param propertyValue the property value
- */
-EchoClientAnalyzer.setIntegerProperty = function(messagePartElement, propertyName, propertyValue) {
-    var intValue = parseInt(propertyValue);
-    if (isNaN(intValue)) {
-        return;
-    }
-    propertyElement = messagePartElement.ownerDocument.createElement("property");
-    propertyElement.setAttribute("type", "integer");
-    propertyElement.setAttribute("name", propertyName);
-    propertyElement.setAttribute("value", intValue);
-    messagePartElement.appendChild(propertyElement);
-};
-
-/**
- * Stores a text client property in the ClientMessage.
- *
- * @param messagePartElement the <code>message-part</code> element
- *        in which generated property XML elements should be stored
- * @param propertyName the property name
- * @param propertyValue the property value
- */
-EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, propertyValue) {
-    propertyElement = messagePartElement.ownerDocument.createElement("property");
-    propertyElement.setAttribute("type", "text");
-    propertyElement.setAttribute("name", propertyName);
-    propertyElement.setAttribute("value", propertyValue);
-    messagePartElement.appendChild(propertyElement);
 };
 
 // ______________________________
@@ -199,51 +201,50 @@ EchoClientAnalyzer.setTextProperty = function(messagePartElement, propertyName, 
  * Static/object namespace which provides general-purpose Client Engine
  * configuration settings.
  */
-EchoClientConfiguration = { };
+EchoClientConfiguration = {
 
-/**
- * MessagePartProcessor implementation for EchoClientConfiguration.
- */
-EchoClientConfiguration.MessageProcessor = { };
-
-/**
- * MessagePartProcessor process() method implementation.
- */
-EchoClientConfiguration.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "store":
-                EchoClientConfiguration.MessageProcessor.processStore(messagePartElement.childNodes[i]);
-                break;
+    /**
+     * MessagePartProcessor implementation for EchoClientConfiguration.
+     */
+    MessageProcessor: { 
+    
+        /**
+         * MessagePartProcessor process() method implementation.
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "store":
+                        EchoClientConfiguration.MessageProcessor.processStore(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
+            }
+        },
+        
+        /**
+         * Proceses a <code>store</code> message to store ClientConfiguration information
+         * received from the server.
+         *
+         * @param storeElement the <code>store</code> element to process
+         */
+        processStore: function(storeElement) {
+            var propertyElements = storeElement.getElementsByTagName("property");
+            for (var i = 0; i < propertyElements.length; ++i) {
+                var name = propertyElements[i].getAttribute("name");
+                var value = propertyElements[i].getAttribute("value");
+                EchoClientConfiguration.propertyMap[name] = value;
             }
         }
+    },
+
+    propertyMap: {
+        defaultOutOfSyncErrorMessage: "A synchronization error has occurred.  Click \"Ok\" to re-synchronize.",
+        defaultServerErrorMessage: "An application error has occurred.  Your session has been reset.",
+        defaultSessionExpirationMessage : "Your session has been reset due to inactivity."
     }
 };
-
-/**
- * Proceses a <code>store</code> message to store ClientConfiguration information
- * received from the server.
- *
- * @param storeElement the <code>store</code> element to process
- */
-EchoClientConfiguration.MessageProcessor.processStore = function(storeElement) {
-    var propertyElements = storeElement.getElementsByTagName("property");
-    for (var i = 0; i < propertyElements.length; ++i) {
-        var name = propertyElements[i].getAttribute("name");
-        var value = propertyElements[i].getAttribute("value");
-        EchoClientConfiguration.propertyMap[name] = value;
-    }
-};
-
-EchoClientConfiguration.propertyMap = { };
-
-EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"] 
-        = "A synchronization error has occurred.  Click \"Ok\" to re-synchronize.";
-EchoClientConfiguration.propertyMap["defaultServerErrorMessage"] 
-        = "An application error has occurred.  Your session has been reset.";
-EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"] 
-        = "Your session has been reset due to inactivity.";
 
 // _______________________
 // Object EchoClientEngine
@@ -251,241 +252,242 @@ EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"]
 /**
  * Static object/namespace providing core client engine functionality.
  */
-EchoClientEngine = { };
+EchoClientEngine = {
 
-/**
- * The base URI of the Echo application server.
- */
-EchoClientEngine.baseServerUri = null;
-
-/**
- * Flag indicating whether debugging options (e.g., Debug Pane) are enabled.
- */
-EchoClientEngine.debugEnabled = true;
-
-EchoClientEngine.loadStatus = 2;
-
-/**
- * Current transaction id, retrieved from ServerMessage.
- */
-EchoClientEngine.transactionId = "";
-
-/**
- * Configures browser-specific settings based on ClientProperties results.
- * Invoked when ClientProperties are stored.
- */
-EchoClientEngine.configure = function() {
-    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
-        // Initialize virtual positioning system used to emulate CSS positioning in MSIE.
-        EchoVirtualPosition.init();
+    /**
+     * The base URI of the Echo application server.
+     */
+    baseServerUri: null,
+    
+    /**
+     * Flag indicating whether debugging options (e.g., Debug Pane) are enabled.
+     */
+    debugEnabled: true,
+    
+    loadStatus: 2,
+    
+    /**
+     * Current transaction id, retrieved from ServerMessage.
+     */
+    transactionId: "",
+    
+    /**
+     * Configures browser-specific settings based on ClientProperties results.
+     * Invoked when ClientProperties are stored.
+     */
+    configure: function() {
+        if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+            // Initialize virtual positioning system used to emulate CSS positioning in MSIE.
+            EchoVirtualPosition.init();
+            
+            // Set body.style.overflow to hidden in order to hide root scrollbar in IE.
+            // This is a non-standard CSS property.
+            document.documentElement.style.overflow = "hidden";
+        }
+    },
+    
+    /**
+     * Disposes the Echo2 Client Engine, unregistering event listeners 
+     * and releasing resources.
+     */
+    dispose: function() {
+        EchoEventProcessor.dispose();
+        EchoDomPropertyStore.disposeAll();
+    },
+    
+    /**
+     * Initializes the Echo2 Client Engine.
+     *
+     * @param baseServerUri the base URI of the Echo application server
+     */
+    init: function(baseServerUri, debugEnabled) {
+        EchoClientEngine.baseServerUri = baseServerUri;
+        EchoClientEngine.debugEnabled = debugEnabled;
         
-        // Set body.style.overflow to hidden in order to hide root scrollbar in IE.
-        // This is a non-standard CSS property.
-        document.documentElement.style.overflow = "hidden";
-    }
-};
-
-/**
- * Disposes the Echo2 Client Engine, unregistering event listeners 
- * and releasing resources.
- */
-EchoClientEngine.dispose = function() {
-    EchoEventProcessor.dispose();
-    EchoDomPropertyStore.disposeAll();
-};
-
-/**
- * Initializes the Echo2 Client Engine.
- *
- * @param baseServerUri the base URI of the Echo application server
- */
-EchoClientEngine.init = function(baseServerUri, debugEnabled) {
-    EchoClientEngine.baseServerUri = baseServerUri;
-    EchoClientEngine.debugEnabled = debugEnabled;
+        // Launch debug window if requested in URI.
+        if (EchoClientEngine.debugEnabled && 
+                window.location.search && window.location.search.toLowerCase().indexOf("debug") != -1) {
+            EchoDebugManager.launch();
+        }
     
-    // Launch debug window if requested in URI.
-    if (EchoClientEngine.debugEnabled && 
-            window.location.search && window.location.search.toLowerCase().indexOf("debug") != -1) {
-        EchoDebugManager.launch();
-    }
-
-    // Confiugre initial client message.
-    EchoClientMessage.setInitialize();
+        // Confiugre initial client message.
+        EchoClientMessage.setInitialize();
+        
+        // Analyze client information.
+        EchoClientAnalyzer.analyze();
     
-    // Analyze client information.
-    EchoClientAnalyzer.analyze();
-
-    // Synchronize initial state from server.
-    EchoServerTransaction.connect();
-
-    // Add disposal listener.
-    EchoDomUtil.addEventListener(window, "unload", EchoClientEngine.dispose);
-
-    // Increment progress bar showing loading status.
-    EchoClientEngine.incrementLoadStatus();
-};
-
-/**
- * Handles a client-side error.
- */
-EchoClientEngine.processClientError = function(message, ex) {
-    var errorText;
-    if (ex instanceof Error) {
-        errorText = "Error Name: " + ex.name + "\n"
-                + "Error Message: " + ex.message;
-    } else {
-        errorText = "Error: " + ex;
-    }
-
-    alert("The following client application error has occurred:\n\n" 
-            + "---------------------------------\n" 
-            + message + "\n\n" 
-            + errorText + "\n"
-            + "---------------------------------\n\n"
-            + "Please contact your server administrator.\n\n");
-};
-
-/**
- * Handles the expiration of server-side session information.
- */
-EchoClientEngine.processSessionExpiration = function() {
-    var message = EchoClientConfiguration.propertyMap["sessionExpirationMessage"];
-    var uri = EchoClientConfiguration.propertyMap["sessionExpirationUri"];
-
-    if (message || uri) {
-	    if (message) {
-	        alert(message);
-	    }
-	    if (uri) {
-	        window.location.href = uri;
-	    } else {
-            window.location.reload();
-	    }
-    } else {
-        message = EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"];
-        alert(message);
-        window.location.reload();
-    }
-};
-
-/**
- * Handles a server-side error.
- */
-EchoClientEngine.processServerError = function() {
-    var message = EchoClientConfiguration.propertyMap["serverErrorMessage"];
-    var uri = EchoClientConfiguration.propertyMap["serverErrorUri"];
-
-    if (message || uri) {
-	    if (message) {
-	        alert(message);
-	    }
-	    if (uri) {
-	        window.location.href = uri;
-	    } else {
-	        if (EchoServerMessage.transactionCount > 0) {
-	            // Only reload if not on first transaction to avoid infinite crash loop.
+        // Synchronize initial state from server.
+        EchoServerTransaction.connect();
+    
+        // Add disposal listener.
+        EchoDomUtil.addEventListener(window, "unload", EchoClientEngine.dispose);
+    
+        // Increment progress bar showing loading status.
+        EchoClientEngine.incrementLoadStatus();
+    },
+    
+    /**
+     * Handles a client-side error.
+     */
+    processClientError: function(message, ex) {
+        var errorText;
+        if (ex instanceof Error) {
+            errorText = "Error Name: " + ex.name + "\n"
+                    + "Error Message: " + ex.message;
+        } else {
+            errorText = "Error: " + ex;
+        }
+    
+        alert("The following client application error has occurred:\n\n" 
+                + "---------------------------------\n" 
+                + message + "\n\n" 
+                + errorText + "\n"
+                + "---------------------------------\n\n"
+                + "Please contact your server administrator.\n\n");
+    },
+    
+    /**
+     * Handles the expiration of server-side session information.
+     */
+    processSessionExpiration: function() {
+        var message = EchoClientConfiguration.propertyMap["sessionExpirationMessage"];
+        var uri = EchoClientConfiguration.propertyMap["sessionExpirationUri"];
+    
+        if (message || uri) {
+    	    if (message) {
+    	        alert(message);
+    	    }
+    	    if (uri) {
+    	        window.location.href = uri;
+    	    } else {
                 window.location.reload();
-	        }
-	    }
-    } else {
-        message = EchoClientConfiguration.propertyMap["defaultServerErrorMessage"];
-        alert(message);
-        if (EchoServerMessage.transactionCount > 0) {
-            // Only reload if not on first transaction to avoid infinite crash loop.
+    	    }
+        } else {
+            message = EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"];
+            alert(message);
             window.location.reload();
         }
-    }
-};
-
-/**
- * Disable (remove) loading status progress bar.
- * Performs no operation if application is not starting up, i.e.,
- * if first synchronization has been completed.
- */
-EchoClientEngine.disableLoadStatus = function() {
-    if (EchoClientEngine.loadStatus != -1) {
-        EchoClientEngine.loadStatus = -1;
-        EchoClientEngine.renderLoadStatus();
-    }
-};
-
-/**
- * Increment loading status progress bar and re-render.
- * Performs no operation if application is not starting up, i.e.,
- * if first synchronization has been completed.
- */
-EchoClientEngine.incrementLoadStatus = function() {
-    if (EchoClientEngine.loadStatus != -1) {
-        ++EchoClientEngine.loadStatus;
-        EchoClientEngine.renderLoadStatus();
-    }
-};
-
-/**
- * Render current loading status.
- * Performs no operation if element with id "loadstatus" 
- * does not exist.
- */
-EchoClientEngine.renderLoadStatus = function() {
-    var loadStatusDivElement = document.getElementById("loadstatus");
-    if (!loadStatusDivElement) {
-        return;
-    }
-    if (EchoClientEngine.loadStatus == -1) {
-        loadStatusDivElement.parentNode.removeChild(loadStatusDivElement);
-    } else {
-        var text = "";
-        for (var i = 0; i < EchoClientEngine.loadStatus; ++i) {
-            text += "|";
+    },
+    
+    /**
+     * Handles a server-side error.
+     */
+    processServerError: function() {
+        var message = EchoClientConfiguration.propertyMap["serverErrorMessage"];
+        var uri = EchoClientConfiguration.propertyMap["serverErrorUri"];
+    
+        if (message || uri) {
+    	    if (message) {
+    	        alert(message);
+    	    }
+    	    if (uri) {
+    	        window.location.href = uri;
+    	    } else {
+    	        if (EchoServerMessage.transactionCount > 0) {
+    	            // Only reload if not on first transaction to avoid infinite crash loop.
+                    window.location.reload();
+    	        }
+    	    }
+        } else {
+            message = EchoClientConfiguration.propertyMap["defaultServerErrorMessage"];
+            alert(message);
+            if (EchoServerMessage.transactionCount > 0) {
+                // Only reload if not on first transaction to avoid infinite crash loop.
+                window.location.reload();
+            }
         }
-        loadStatusDivElement.removeChild(loadStatusDivElement.firstChild);
-        loadStatusDivElement.appendChild(document.createTextNode(text));
+    },
+    
+    /**
+     * Disable (remove) loading status progress bar.
+     * Performs no operation if application is not starting up, i.e.,
+     * if first synchronization has been completed.
+     */
+    disableLoadStatus: function() {
+        if (EchoClientEngine.loadStatus != -1) {
+            EchoClientEngine.loadStatus = -1;
+            EchoClientEngine.renderLoadStatus();
+        }
+    },
+    
+    /**
+     * Increment loading status progress bar and re-render.
+     * Performs no operation if application is not starting up, i.e.,
+     * if first synchronization has been completed.
+     */
+    incrementLoadStatus: function() {
+        if (EchoClientEngine.loadStatus != -1) {
+            ++EchoClientEngine.loadStatus;
+            EchoClientEngine.renderLoadStatus();
+        }
+    },
+    
+    /**
+     * Render current loading status.
+     * Performs no operation if element with id "loadstatus" 
+     * does not exist.
+     */
+    renderLoadStatus: function() {
+        var loadStatusDivElement = document.getElementById("loadstatus");
+        if (!loadStatusDivElement) {
+            return;
+        }
+        if (EchoClientEngine.loadStatus == -1) {
+            loadStatusDivElement.parentNode.removeChild(loadStatusDivElement);
+        } else {
+            var text = "";
+            for (var i = 0; i < EchoClientEngine.loadStatus; ++i) {
+                text += "|";
+            }
+            loadStatusDivElement.removeChild(loadStatusDivElement.firstChild);
+            loadStatusDivElement.appendChild(document.createTextNode(text));
+        }
+    },
+    
+    updateTransactionId: function(newValue) {
+        EchoClientEngine.transactionId = newValue;
+        EchoClientMessage.messageDocument.documentElement.setAttribute("trans-id", EchoClientEngine.transactionId);
+    },
+    
+    /**
+     * Verifies that the given element is eligible to receive input based on the 
+     * current condition of the user interface.
+     * This method should be invoked by UI listeners before procsesing any user input.
+     * This method will ensure that no server transaction is active and the element
+     * is within the current modal context.
+     * The method will additionally verify that the element does not have the 
+     * <code>EchoDomPropertyStore</code> property 
+     * <code>EchoClientEngine.inputDisabled</code> set to true.
+     *
+     * The 'allowInputDuringTransaction' flag (default value = false) may be used to
+     * allow input while client/server transactions are being processed.  This flag
+     * should be used with extreme caution, as you'll then need to handle scenarios
+     * such as when the user makes an input during a server transaction, and, during
+     * that server transaction, the server manipulates the state of the component to
+     * be incompatible with the new client state.  This flag is used for components
+     * such as text-entry fields where blocking user input during server 
+     * transactions has significant negative consequences for the user experience.
+     * For example, were it not for this capability, if a server-pushed 
+     * synchronization occurred while the user were typing text into a field, some
+     * of the his/her entered characters would be silently dropped.
+     *
+     * @param element the elment or id of the element
+     * @param allowInputDuringTransaction flag indicating that input should be 
+     *        allowed during client/server transactions (Use of this flag is
+     *        recommended against in MOST situations, see above)
+     */
+    verifyInput: function(element, allowInputDuringTransaction) {
+        if (!allowInputDuringTransaction && EchoServerTransaction.active) {
+            return false;
+        }
+        if (!EchoModalManager.isElementInModalContext(element)) {
+            return false;
+        }
+        if (EchoDomPropertyStore.getPropertyValue(element, "EchoClientEngine.inputDisabled")) {
+            return false;
+        }
+        return true;
     }
-};
-
-EchoClientEngine.updateTransactionId = function(newValue) {
-    EchoClientEngine.transactionId = newValue;
-    EchoClientMessage.messageDocument.documentElement.setAttribute("trans-id", EchoClientEngine.transactionId);
-};
-
-/**
- * Verifies that the given element is eligible to receive input based on the 
- * current condition of the user interface.
- * This method should be invoked by UI listeners before procsesing any user input.
- * This method will ensure that no server transaction is active and the element
- * is within the current modal context.
- * The method will additionally verify that the element does not have the 
- * <code>EchoDomPropertyStore</code> property 
- * <code>EchoClientEngine.inputDisabled</code> set to true.
- *
- * The 'allowInputDuringTransaction' flag (default value = false) may be used to
- * allow input while client/server transactions are being processed.  This flag
- * should be used with extreme caution, as you'll then need to handle scenarios
- * such as when the user makes an input during a server transaction, and, during
- * that server transaction, the server manipulates the state of the component to
- * be incompatible with the new client state.  This flag is used for components
- * such as text-entry fields where blocking user input during server 
- * transactions has significant negative consequences for the user experience.
- * For example, were it not for this capability, if a server-pushed 
- * synchronization occurred while the user were typing text into a field, some
- * of the his/her entered characters would be silently dropped.
- *
- * @param element the elment or id of the element
- * @param allowInputDuringTransaction flag indicating that input should be 
- *        allowed during client/server transactions (Use of this flag is
- *        recommended against in MOST situations, see above)
- */
-EchoClientEngine.verifyInput = function(element, allowInputDuringTransaction) {
-    if (!allowInputDuringTransaction && EchoServerTransaction.active) {
-        return false;
-    }
-    if (!EchoModalManager.isElementInModalContext(element)) {
-        return false;
-    }
-    if (EchoDomPropertyStore.getPropertyValue(element, "EchoClientEngine.inputDisabled")) {
-        return false;
-    }
-    return true;
 };
 
 // ________________________
@@ -494,169 +496,170 @@ EchoClientEngine.verifyInput = function(element, allowInputDuringTransaction) {
 /**
  * Static object/namespace representing the outgoing ClientMessage.
  */
-EchoClientMessage = { };
-
-/**
- * The current outgoing ClientMessage XML document.
- */
-EchoClientMessage.messageDocument = null;
-
-/**
- * Creates a property element in the EchoClientMessage.
- *
- * @param componentId the id of the component
- * @param propertyName the name of the property
- * @return the created 'property' element
- */
-EchoClientMessage.createPropertyElement = function(componentId, propertyName) {
-    var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
-    var propertyElements = messagePartElement.getElementsByTagName("property");
-    var propertyElement = null;
-
-    for (var i = 0; i < propertyElements.length; ++i) {
-        if (componentId == propertyElements[i].getAttribute("component-id") &&
-                propertyName == propertyElements[i].getAttribute("name")) {
-            propertyElement = propertyElements[i];
-            break;
-        } 
-    }
-    if (!propertyElement) {
-        propertyElement = messagePartElement.ownerDocument.createElement("property");
-        propertyElement.setAttribute("component-id", componentId);
-        propertyElement.setAttribute("name", propertyName);
-        messagePartElement.appendChild(propertyElement);
-    }
+EchoClientMessage = { 
+            
+    /**
+     * The current outgoing ClientMessage XML document.
+     */
+    messageDocument: null,
     
-    return propertyElement;
-};
-
-/**
- * Creates or retrieves the "message-part" DOM element from the 
- * EchoClientMessage with the specified processor attribute.
- *
- * @param processor a string representing the processor type of
- *        the message-part element to return
- * @return the "message-part" DOM element
- */
-EchoClientMessage.getMessagePart = function(processor) {
-    // Return existing <message-part> if available.
-    var messagePartElements = EchoClientMessage.messageDocument.getElementsByTagName("message-part");
-    for (var i = 0; i < messagePartElements.length; ++i) {
-        if (messagePartElements[i].getAttribute("processor") == processor) {
-            return messagePartElements[i];
+    /**
+     * Creates a property element in the EchoClientMessage.
+     *
+     * @param componentId the id of the component
+     * @param propertyName the name of the property
+     * @return the created 'property' element
+     */
+    createPropertyElement: function(componentId, propertyName) {
+        var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
+        var propertyElements = messagePartElement.getElementsByTagName("property");
+        var propertyElement = null;
+    
+        for (var i = 0; i < propertyElements.length; ++i) {
+            if (componentId == propertyElements[i].getAttribute("component-id") &&
+                    propertyName == propertyElements[i].getAttribute("name")) {
+                propertyElement = propertyElements[i];
+                break;
+            } 
         }
-    }
-    
-    // Create new <message-part> if none exists.
-    var messagePartElement = EchoClientMessage.messageDocument.createElement("message-part");
-    messagePartElement.setAttribute("processor", processor);
-    EchoClientMessage.messageDocument.documentElement.appendChild(messagePartElement);
-    return messagePartElement;
-};
-
-/**
- * Retrieves the value of a string property in the EchoClientMessage.
- *
- * @param componentId the id of the component.
- * @param propertyName the name of the property.
- * @return the value of the property
- */
-EchoClientMessage.getPropertyValue = function(componentId, propertyName) {
-    var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
-    var propertyElements = messagePartElement.getElementsByTagName("property");
-    for (var i = 0; i < propertyElements.length; ++i) {
-        if (componentId == propertyElements[i].getAttribute("component-id") &&
-                propertyName == propertyElements[i].getAttribute("name")) {
-            return propertyElements[i].getAttribute("value");
+        if (!propertyElement) {
+            propertyElement = messagePartElement.ownerDocument.createElement("property");
+            propertyElement.setAttribute("component-id", componentId);
+            propertyElement.setAttribute("name", propertyName);
+            messagePartElement.appendChild(propertyElement);
         }
-    }
-    return null;
-};
-
-/**
- * Removes a property element (if present) from the EchoClientMessage.
- *
- * @param componentId the id of the component
- * @param propertyName the name of the property
- */
-EchoClientMessage.removePropertyElement = function(componentId, propertyName) {
-    var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
-    var propertyElements = messagePartElement.getElementsByTagName("property");
-    var propertyElement = null;
-
-    for (var i = 0; i < propertyElements.length; ++i) {
-        if (componentId == propertyElements[i].getAttribute("component-id") &&
-                propertyName == propertyElements[i].getAttribute("name")) {
-            propertyElement = propertyElements[i];
-            break;
-        } 
-    }
-    if (propertyElement) {
-        messagePartElement.removeChild(propertyElement);
-    }
-};
-
-/**
- * Resets the state of the ClientMessage.
- * This method is invoked after a ClientMessage has been sent to the server
- * and is thus no longer relevant.
- */
-EchoClientMessage.reset = function() {
-    // Clear existing message document.
-    EchoClientMessage.messageDocument = null;
-
-    // Create new message document.
-    EchoClientMessage.messageDocument 
-            = EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "client-message");
-};
-
-/**
- * Sets the action of the EchoClientMessage.  This method should only be
- * called one time, and the EchoClientMessage should be submitted to the
- * server soon thereafter.
- *
- * @param componentId the id of the component which initiated the action
- * @param actionName the name of the action
- * @param actionValue the value of the action (optional)
- * @return the created 'action' element
- */
-EchoClientMessage.setActionValue = function(componentId, actionName, actionValue) {
-    var messagePartElement = EchoClientMessage.getMessagePart("EchoAction");
-    var actionElement = messagePartElement.ownerDocument.createElement("action");
-    actionElement.setAttribute("component-id", componentId);
-    actionElement.setAttribute("name", actionName);
-    if (actionValue !== undefined) {
-        // Only set value if argument is provided.
-        actionElement.setAttribute("value", actionValue);
-    }
-    messagePartElement.appendChild(actionElement);
-
-    EchoDebugManager.updateClientMessage();
+        
+        return propertyElement;
+    },
     
-    return actionElement;
-};
-
-/**
- * Stores the value of a string property in in the EchoClientMessage.
- *
- * @param componentId the id of the component
- * @param propertyName the name of the property
- * @param newValue the new value of the property
- */
-EchoClientMessage.setPropertyValue = function(componentId, propertyName, newValue) {
-    var propertyElement = EchoClientMessage.createPropertyElement(componentId, propertyName);
+    /**
+     * Creates or retrieves the "message-part" DOM element from the 
+     * EchoClientMessage with the specified processor attribute.
+     *
+     * @param processor a string representing the processor type of
+     *        the message-part element to return
+     * @return the "message-part" DOM element
+     */
+    getMessagePart: function(processor) {
+        // Return existing <message-part> if available.
+        var messagePartElements = EchoClientMessage.messageDocument.getElementsByTagName("message-part");
+        for (var i = 0; i < messagePartElements.length; ++i) {
+            if (messagePartElements[i].getAttribute("processor") == processor) {
+                return messagePartElements[i];
+            }
+        }
+        
+        // Create new <message-part> if none exists.
+        var messagePartElement = EchoClientMessage.messageDocument.createElement("message-part");
+        messagePartElement.setAttribute("processor", processor);
+        EchoClientMessage.messageDocument.documentElement.appendChild(messagePartElement);
+        return messagePartElement;
+    },
     
-    propertyElement.setAttribute("value", newValue);
-
-    EchoDebugManager.updateClientMessage();
-};
-
-/**
- * Sets the "type" attribute of the <code>client-message</code> element to 
- * indicate that this is the initial client message.
- */
-EchoClientMessage.setInitialize = function() {
-    EchoClientMessage.messageDocument.documentElement.setAttribute("type", "initialize");
+    /**
+     * Retrieves the value of a string property in the EchoClientMessage.
+     *
+     * @param componentId the id of the component.
+     * @param propertyName the name of the property.
+     * @return the value of the property
+     */
+    getPropertyValue: function(componentId, propertyName) {
+        var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
+        var propertyElements = messagePartElement.getElementsByTagName("property");
+        for (var i = 0; i < propertyElements.length; ++i) {
+            if (componentId == propertyElements[i].getAttribute("component-id") &&
+                    propertyName == propertyElements[i].getAttribute("name")) {
+                return propertyElements[i].getAttribute("value");
+            }
+        }
+        return null;
+    },
+    
+    /**
+     * Removes a property element (if present) from the EchoClientMessage.
+     *
+     * @param componentId the id of the component
+     * @param propertyName the name of the property
+     */
+    removePropertyElement: function(componentId, propertyName) {
+        var messagePartElement = EchoClientMessage.getMessagePart("EchoPropertyUpdate");
+        var propertyElements = messagePartElement.getElementsByTagName("property");
+        var propertyElement = null;
+    
+        for (var i = 0; i < propertyElements.length; ++i) {
+            if (componentId == propertyElements[i].getAttribute("component-id") &&
+                    propertyName == propertyElements[i].getAttribute("name")) {
+                propertyElement = propertyElements[i];
+                break;
+            } 
+        }
+        if (propertyElement) {
+            messagePartElement.removeChild(propertyElement);
+        }
+    },
+    
+    /**
+     * Resets the state of the ClientMessage.
+     * This method is invoked after a ClientMessage has been sent to the server
+     * and is thus no longer relevant.
+     */
+    reset: function() {
+        // Clear existing message document.
+        EchoClientMessage.messageDocument = null;
+    
+        // Create new message document.
+        EchoClientMessage.messageDocument 
+                = EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "client-message");
+    },
+    
+    /**
+     * Sets the action of the EchoClientMessage.  This method should only be
+     * called one time, and the EchoClientMessage should be submitted to the
+     * server soon thereafter.
+     *
+     * @param componentId the id of the component which initiated the action
+     * @param actionName the name of the action
+     * @param actionValue the value of the action (optional)
+     * @return the created 'action' element
+     */
+    setActionValue: function(componentId, actionName, actionValue) {
+        var messagePartElement = EchoClientMessage.getMessagePart("EchoAction");
+        var actionElement = messagePartElement.ownerDocument.createElement("action");
+        actionElement.setAttribute("component-id", componentId);
+        actionElement.setAttribute("name", actionName);
+        if (actionValue !== undefined) {
+            // Only set value if argument is provided.
+            actionElement.setAttribute("value", actionValue);
+        }
+        messagePartElement.appendChild(actionElement);
+    
+        EchoDebugManager.updateClientMessage();
+        
+        return actionElement;
+    },
+    
+    /**
+     * Stores the value of a string property in in the EchoClientMessage.
+     *
+     * @param componentId the id of the component
+     * @param propertyName the name of the property
+     * @param newValue the new value of the property
+     */
+    setPropertyValue: function(componentId, propertyName, newValue) {
+        var propertyElement = EchoClientMessage.createPropertyElement(componentId, propertyName);
+        
+        propertyElement.setAttribute("value", newValue);
+    
+        EchoDebugManager.updateClientMessage();
+    },
+    
+    /**
+     * Sets the "type" attribute of the <code>client-message</code> element to 
+     * indicate that this is the initial client message.
+     */
+    setInitialize: function() {
+        EchoClientMessage.messageDocument.documentElement.setAttribute("type", "initialize");
+    }
 };
 
 // ___________________________
@@ -666,63 +669,65 @@ EchoClientMessage.setInitialize = function() {
  * Static object/namespace providing information about the make/model/version,
  * capabilities, quirks, and limitations of the browser client.
  */
-EchoClientProperties = { };
+EchoClientProperties = {
 
-/**
- * Associative array mapping client property names to values.
- */
-EchoClientProperties.propertyMap = { };
-
-/**
- * MessagePartProcessor implementation for EchoClientProperties.
- */
-EchoClientProperties.MessageProcessor = { };
-
-/**
- * MessagePartProcessor process() method implementation.
- */
-EchoClientProperties.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "store":
-                EchoClientProperties.MessageProcessor.processStore(messagePartElement.childNodes[i]);
-                break;
+    /**
+     * Associative array mapping client property names to values.
+     */
+    propertyMap: { },
+    
+    /**
+     * MessagePartProcessor implementation for EchoClientProperties.
+     */
+    MessageProcessor: {
+    
+        /**
+         * MessagePartProcessor process() method implementation.
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "store":
+                        EchoClientProperties.MessageProcessor.processStore(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
             }
+        },
+        
+        /**
+         * Proceses a <code>store</code> message to store ClientProperties information
+         * received from the server.
+         *
+         * @param storeElement the <code>store</code> element to process
+         */
+        processStore: function(storeElement) {
+            var propertyElements = storeElement.getElementsByTagName("property");
+            for (var i = 0; i < propertyElements.length; ++i) {
+                var name = propertyElements[i].getAttribute("name");
+                var value = propertyElements[i].getAttribute("value");
+                if (value == "true") {
+                    value = true;
+                } else if (value == "false") {
+                    value = false;
+                }
+                EchoClientProperties.propertyMap[name] = value;
+            }
+            EchoClientEngine.configure();
         }
+    },
+    
+    /**
+     * Returns the specified value from the ClientProperties store.
+     *
+     * @param name the name of the property
+     * @param value the value of the property
+     */
+    get: function(name) {
+        return EchoClientProperties.propertyMap[name];
     }
-};
-
-/**
- * Proceses a <code>store</code> message to store ClientProperties information
- * received from the server.
- *
- * @param storeElement the <code>store</code> element to process
- */
-EchoClientProperties.MessageProcessor.processStore = function(storeElement) {
-    var propertyElements = storeElement.getElementsByTagName("property");
-    for (var i = 0; i < propertyElements.length; ++i) {
-        var name = propertyElements[i].getAttribute("name");
-        var value = propertyElements[i].getAttribute("value");
-        if (value == "true") {
-            value = true;
-        } else if (value == "false") {
-            value = false;
-        }
-        EchoClientProperties.propertyMap[name] = value;
-    }
-    EchoClientEngine.configure();
-};
-
-/**
- * Returns the specified value from the ClientProperties store.
- *
- * @param name the name of the property
- * @param value the value of the property
- */
-EchoClientProperties.get = function(name) {
-    return EchoClientProperties.propertyMap[name];
-};
+}
 
 // _________________________
 // Object EchoCollectionsMap
@@ -803,125 +808,126 @@ EchoCollectionsMap.prototype.remove = function(key) {
  * Static object/namespace to provide cascading style-sheet (CSS) manipulation
  * utilities.
  */
-EchoCssUtil = { };
-
-/**
- * Adds a rule to the document stylesheet.
- * This method does not function in Safari/KHTML.
- * 
- * @param selectorText the selector
- * @param style the style information
- */
-EchoCssUtil.addRule = function(selectorText, style) {
-    var ss = document.styleSheets[0];
-    if (ss.insertRule) {
-        // W3C DOM Browsers.
-        ss.insertRule(selectorText + " {" + style + "}", ss.cssRules.length);
-    } else if (ss.addRule) {
-        // IE6.
-        ss.addRule(selectorText, style);
-    }
-};
-
-/**
- * Updates CSS information about a specific element.
- * 
- * @param element the DOM element to update
- * @param cssText the CSS style text describing the updates to perform to
- *        the existing CSS information of the element
- */
-EchoCssUtil.applyStyle = function(element, cssText) {
-    var styleProperties = cssText.split(";");
-    for (var i = 0; i < styleProperties.length; ++i) {
-        var separatorIndex = styleProperties[i].indexOf(":");
-        if (separatorIndex == -1) {
-            continue;
+EchoCssUtil = { 
+    
+    /**
+     * Adds a rule to the document stylesheet.
+     * This method does not function in Safari/KHTML.
+     * 
+     * @param selectorText the selector
+     * @param style the style information
+     */
+    addRule: function(selectorText, style) {
+        var ss = document.styleSheets[0];
+        if (ss.insertRule) {
+            // W3C DOM Browsers.
+            ss.insertRule(selectorText + " {" + style + "}", ss.cssRules.length);
+        } else if (ss.addRule) {
+            // IE6.
+            ss.addRule(selectorText, style);
         }
-        var attributeName = styleProperties[i].substring(0, separatorIndex);
-        var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
-        var propertyValue = styleProperties[i].substring(separatorIndex + 1);
-        element.style[propertyName] = propertyValue;
-    }
-};
-
-/**
- * Temporarily adjusts the CSS style of an element.  The 'original' style will
- * be stored in a DomPropertyStore attribute of the element (if it has not been
- * already) before the new style is applied.  This method is useful for applying
- * selection/rollover states temporarily to elements.  Note that there may
- * only be one 'original style' set on a particular element.
- *
- * @param element the DOM element to update
- * @param cssStyleText the CSS style text to temporarily apply to the element 
- *        (via <code>applyStyle</code>)
- */
-EchoCssUtil.applyTemporaryStyle = function(element, cssStyleText) {
-    // Set original style if not already set.
-
-    if (!EchoDomPropertyStore.getPropertyValue(element, "EchoCssUtil.originalStyle")) {
-        if (EchoDomUtil.getCssText(element)) {
-            EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", EchoDomUtil.getCssText(element));
-        } else {
-            // Flag that no original CSS text existed.
-            EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", "-");
+    },
+    
+    /**
+     * Updates CSS information about a specific element.
+     * 
+     * @param element the DOM element to update
+     * @param cssText the CSS style text describing the updates to perform to
+     *        the existing CSS information of the element
+     */
+    applyStyle: function(element, cssText) {
+        var styleProperties = cssText.split(";");
+        for (var i = 0; i < styleProperties.length; ++i) {
+            var separatorIndex = styleProperties[i].indexOf(":");
+            if (separatorIndex == -1) {
+                continue;
+            }
+            var attributeName = styleProperties[i].substring(0, separatorIndex);
+            var propertyName = EchoDomUtil.cssAttributeNameToPropertyName(attributeName);
+            var propertyValue = styleProperties[i].substring(separatorIndex + 1);
+            element.style[propertyName] = propertyValue;
         }
-    }
+    },
     
-    // Apply new style.
-    EchoCssUtil.applyStyle(element, cssStyleText);
-};
-
-/**
- * Removes a rule from the document stylesheet.
- * This method does not function in Safari/KHTML.
- * 
- * @param selectorText the selector
- */
-EchoCssUtil.removeRule = function(selectorText) {
-    selectorText = selectorText.toLowerCase();
-    var ss = document.styleSheets[0];
+    /**
+     * Temporarily adjusts the CSS style of an element.  The 'original' style will
+     * be stored in a DomPropertyStore attribute of the element (if it has not been
+     * already) before the new style is applied.  This method is useful for applying
+     * selection/rollover states temporarily to elements.  Note that there may
+     * only be one 'original style' set on a particular element.
+     *
+     * @param element the DOM element to update
+     * @param cssStyleText the CSS style text to temporarily apply to the element 
+     *        (via <code>applyStyle</code>)
+     */
+    applyTemporaryStyle: function(element, cssStyleText) {
+        // Set original style if not already set.
     
-    // Retrieve rules object for W3C DOM : IE6.
-    var rules = ss.cssRules ? ss.cssRules : ss.rules;
-    
-    for (var i = 0; i < rules.length; ++i) {
-        if (rules[i].type == 1 && rules[i].selectorText.toLowerCase() == selectorText) {
-            if (ss.deleteRule) {
-                // Delete rule: W3C DOM.
-                ss.deleteRule(i);
-                break;
-            } else if (ss.removeRule) {
-                // Delete rule: IE6.
-                ss.deleteRule(i);
-                break;
+        if (!EchoDomPropertyStore.getPropertyValue(element, "EchoCssUtil.originalStyle")) {
+            if (EchoDomUtil.getCssText(element)) {
+                EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", EchoDomUtil.getCssText(element));
             } else {
-                alert("rem fail");
+                // Flag that no original CSS text existed.
+                EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", "-");
             }
         }
-    }
-};
-
-/**
- * Restores the original style to an element whose style was updated via
- * <code>applyTemporaryStyle</code>.  Removes the 'original' style from the 
- * DomPropertyStore attribute of the element.
- *
- * @param element the DOM element to restore to its original state
- */
-EchoCssUtil.restoreOriginalStyle = function(element) {
-    // Obtain original style.
-    var originalStyle = EchoDomPropertyStore.getPropertyValue(element, "EchoCssUtil.originalStyle");
+        
+        // Apply new style.
+        EchoCssUtil.applyStyle(element, cssStyleText);
+    },
     
-    // Do nothing if no original style exists.
-    if (!originalStyle) {
-        return;
-    }
-
-    // Reset original style on element.
-    EchoDomUtil.setCssText(element, originalStyle == "-" ? "" : originalStyle);
+    /**
+     * Removes a rule from the document stylesheet.
+     * This method does not function in Safari/KHTML.
+     * 
+     * @param selectorText the selector
+     */
+    removeRule: function(selectorText) {
+        selectorText = selectorText.toLowerCase();
+        var ss = document.styleSheets[0];
+        
+        // Retrieve rules object for W3C DOM : IE6.
+        var rules = ss.cssRules ? ss.cssRules : ss.rules;
+        
+        for (var i = 0; i < rules.length; ++i) {
+            if (rules[i].type == 1 && rules[i].selectorText.toLowerCase() == selectorText) {
+                if (ss.deleteRule) {
+                    // Delete rule: W3C DOM.
+                    ss.deleteRule(i);
+                    break;
+                } else if (ss.removeRule) {
+                    // Delete rule: IE6.
+                    ss.deleteRule(i);
+                    break;
+                } else {
+                    alert("rem fail");
+                }
+            }
+        }
+    },
     
-    // Clear original style from EchoDomPropertyStore.
-    EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", null);
+    /**
+     * Restores the original style to an element whose style was updated via
+     * <code>applyTemporaryStyle</code>.  Removes the 'original' style from the 
+     * DomPropertyStore attribute of the element.
+     *
+     * @param element the DOM element to restore to its original state
+     */
+    restoreOriginalStyle: function(element) {
+        // Obtain original style.
+        var originalStyle = EchoDomPropertyStore.getPropertyValue(element, "EchoCssUtil.originalStyle");
+        
+        // Do nothing if no original style exists.
+        if (!originalStyle) {
+            return;
+        }
+    
+        // Reset original style on element.
+        EchoDomUtil.setCssText(element, originalStyle == "-" ? "" : originalStyle);
+        
+        // Clear original style from EchoDomPropertyStore.
+        EchoDomPropertyStore.setPropertyValue(element, "EchoCssUtil.originalStyle", null);
+    }
 };
 
 /**
@@ -954,7 +960,7 @@ EchoCssUtil.Bounds = function(element) {
  */
 EchoCssUtil.Bounds.prototype.toString = function() {
     return "(" + this.left + ", " + this.top + ") [" + this.width + "x" + this.height + "]";
-};
+}
 
 // _______________________
 // Object EchoDebugManager
@@ -962,51 +968,52 @@ EchoCssUtil.Bounds.prototype.toString = function() {
 /**
  * Static object/namespace for managing the Debug Window.
  */
-EchoDebugManager = { };
+EchoDebugManager = {
 
-/**
- * Reference to the active debug window.
- */
-EchoDebugManager.debugWindow = null;
-
-/**
- * Writes a message to the console.
- *
- * @param message the message to write
- */
-EchoDebugManager.consoleWrite = function(message) {
-    if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
-        return;
+    /**
+     * Reference to the active debug window.
+     */
+    debugWindow: null,
+    
+    /**
+     * Writes a message to the console.
+     *
+     * @param message the message to write
+     */
+    consoleWrite: function(message) {
+        if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
+            return;
+        }
+        EchoDebugManager.debugWindow.EchoDebug.Console.write(message);
+    },
+    
+    /**
+     * Opens the debug window.
+     */
+    launch: function() {
+        EchoDebugManager.debugWindow = window.open(EchoClientEngine.baseServerUri + "?serviceId=Echo.Debug", "EchoDebug", 
+                "width=400,height=650,resizable=yes", true);
+    },
+    
+    /**
+     * Updates the current state of the ClientMessage in the synchronization tab.
+     */
+    updateClientMessage: function() {
+        if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
+            return;
+        }
+        EchoDebugManager.debugWindow.EchoDebug.Sync.displayClientMessage(EchoClientMessage.messageDocument);
+    },
+    
+    /**
+     * Updates the current state of the ServerMessage in the synchronization tab.
+     */
+    updateServerMessage: function() {
+        if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
+            return;
+        }
+        EchoDebugManager.debugWindow.EchoDebug.Sync.displayServerMessage(EchoServerMessage.messageDocument);
     }
-    EchoDebugManager.debugWindow.EchoDebug.Console.write(message);
-};
-
-/**
- * Opens the debug window.
- */
-EchoDebugManager.launch = function() {
-    EchoDebugManager.debugWindow = window.open(EchoClientEngine.baseServerUri + "?serviceId=Echo.Debug", "EchoDebug", 
-            "width=400,height=650,resizable=yes", true);
-};
-
-/**
- * Updates the current state of the ClientMessage in the synchronization tab.
- */
-EchoDebugManager.updateClientMessage = function() {
-    if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
-        return;
-    }
-    EchoDebugManager.debugWindow.EchoDebug.Sync.displayClientMessage(EchoClientMessage.messageDocument);
-};
-
-/**
- * Updates the current state of the ServerMessage in the synchronization tab.
- */
-EchoDebugManager.updateServerMessage = function() {
-    if (!EchoDebugManager.debugWindow || EchoDebugManager.debugWindow.closed) {
-        return;
-    }
-    EchoDebugManager.debugWindow.EchoDebug.Sync.displayServerMessage(EchoServerMessage.messageDocument);
 };
 
 // ___________________________
@@ -1018,140 +1025,142 @@ EchoDebugManager.updateServerMessage = function() {
  * Values are stored within associative arrays that are stored in a
  * 'echoDomPropertyStore' property of a DOM element.
  */
-EchoDomPropertyStore = { };
+EchoDomPropertyStore = {
 
-/**
- * Static object/namespace for EchoDomPropertyStore MessageProcessor 
- * implementation.  Provides capability to set EchoDomPropertyStore
- * properties from ServerMessage directives.
- */
-EchoDomPropertyStore.MessageProcessor = { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process
- */
-EchoDomPropertyStore.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "store-property":
-                EchoDomPropertyStore.MessageProcessor.processStoreProperty(messagePartElement.childNodes[i]);
-                break;
+    /**
+     * Static object/namespace for EchoDomPropertyStore MessageProcessor 
+     * implementation.  Provides capability to set EchoDomPropertyStore
+     * properties from ServerMessage directives.
+     */
+    MessageProcessor: {
+        
+        /**
+         * MessageProcessor process() implementation 
+         * (invoked by ServerMessage processor).
+         *
+         * @param messagePartElement the <code>message-part</code> element to process
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "store-property":
+                        EchoDomPropertyStore.MessageProcessor.processStoreProperty(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
+            }
+        },
+        
+        /**
+         * Processes a <code>store-property</code> message to set the state of an
+         * <code>EchoDomPropertyStore</code> property.
+         *
+         * @param storePropertyElement the <code>store-property</code> element to process
+         */
+        processStoreProperty: function(storePropertyElement) {
+            var propertyName = storePropertyElement.getAttribute("name");
+            var propertyValue = storePropertyElement.getAttribute("value");
+            var items = storePropertyElement.getElementsByTagName("item");
+            for (var i = 0; i < items.length; ++i) {
+                var elementId = items[i].getAttribute("eid");
+                EchoDomPropertyStore.setPropertyValue(elementId, propertyName, propertyValue);
             }
         }
-    }
-};
-
-/**
- * Processes a <code>store-property</code> message to set the state of an
- * <code>EchoDomPropertyStore</code> property.
- *
- * @param storePropertyElement the <code>store-property</code> element to process
- */
-EchoDomPropertyStore.MessageProcessor.processStoreProperty = function(storePropertyElement) {
-    var propertyName = storePropertyElement.getAttribute("name");
-    var propertyValue = storePropertyElement.getAttribute("value");
-    var items = storePropertyElement.getElementsByTagName("item");
-    for (var i = 0; i < items.length; ++i) {
-        var elementId = items[i].getAttribute("eid");
-        EchoDomPropertyStore.setPropertyValue(elementId, propertyName, propertyValue);
-    }
-};
-
-/**
- * Disposes of any <code>EchoDomPropertyStore</code> properties stored for a 
- * specific element.
- * 
- * @param element the element or element id on which all properties should 
- *        be removed
- */
-EchoDomPropertyStore.dispose = function(element) {
-    if (typeof element == "string") {
-        element = document.getElementById(element);
-    }
-    if (!element) {
-        throw new Error("Element not found.");
-    }
-    if (element.echoDomPropertyStore) {
-        for (var elementProperty in element.echoDomPropertyStore) {
-            delete element.echoDomPropertyStore[elementProperty];
-        }
-    }
-    element.echoDomPropertyStore = undefined;
-};
-
-/**
- * Destorys EchoDomPropertyStore instances for all elements in document.
- */
-EchoDomPropertyStore.disposeAll = function() {
-    EchoDomPropertyStore.disposeAllRecurse(document.documentElement);
-};
-
-/**
- * Recursive implementation of disposeAll().
- * Disposes of an element's property store (if applicable) and
- * recursively invokes on child elements.
- * 
- * @param element the elemnt to dispose
- */
-EchoDomPropertyStore.disposeAllRecurse = function(element) {
-    if (element.echoDomPropertyStore) {
-        for (var elementProperty in element.echoDomPropertyStore) {
-            delete element.echoDomPropertyStore[elementProperty];
-        }
-    }
-    element.echoDomPropertyStore = undefined;
+    },
     
-    for (var childElement = element.firstChild; childElement; childElement = childElement.nextSibling) {
-        if (childElement.nodeType == 1) {
-            EchoDomPropertyStore.disposeAllRecurse(childElement);
+    /**
+     * Disposes of any <code>EchoDomPropertyStore</code> properties stored for a 
+     * specific element.
+     * 
+     * @param element the element or element id on which all properties should 
+     *        be removed
+     */
+    dispose: function(element) {
+        if (typeof element == "string") {
+            element = document.getElementById(element);
         }
-    }
-};
-
-/**
- * Retrieves the value of a specific <code>EchoDomPropertyStore</code> property.
- *
- * @param element the element or element id on which to set the property
- * @param propertyName the name of the property
- * @return the property value, or null if it is not set
- */
-EchoDomPropertyStore.getPropertyValue = function(element, propertyName) {
-    if (typeof element == "string") {
-        element = document.getElementById(element);
-    }
+        if (!element) {
+            throw new Error("Element not found.");
+        }
+        if (element.echoDomPropertyStore) {
+            for (var elementProperty in element.echoDomPropertyStore) {
+                delete element.echoDomPropertyStore[elementProperty];
+            }
+        }
+        element.echoDomPropertyStore = undefined;
+    },
     
-    if (!element) {
-        return null;
+    /**
+     * Destorys EchoDomPropertyStore instances for all elements in document.
+     */
+    disposeAll: function() {
+        EchoDomPropertyStore.disposeAllRecurse(document.documentElement);
+    },
+    
+    /**
+     * Recursive implementation of disposeAll().
+     * Disposes of an element's property store (if applicable) and
+     * recursively invokes on child elements.
+     * 
+     * @param element the elemnt to dispose
+     */
+    disposeAllRecurse: function(element) {
+        if (element.echoDomPropertyStore) {
+            for (var elementProperty in element.echoDomPropertyStore) {
+                delete element.echoDomPropertyStore[elementProperty];
+            }
+        }
+        element.echoDomPropertyStore = undefined;
+        
+        for (var childElement = element.firstChild; childElement; childElement = childElement.nextSibling) {
+            if (childElement.nodeType == 1) {
+                EchoDomPropertyStore.disposeAllRecurse(childElement);
+            }
+        }
+    },
+    
+    /**
+     * Retrieves the value of a specific <code>EchoDomPropertyStore</code> property.
+     *
+     * @param element the element or element id on which to set the property
+     * @param propertyName the name of the property
+     * @return the property value, or null if it is not set
+     */
+    getPropertyValue: function(element, propertyName) {
+        if (typeof element == "string") {
+            element = document.getElementById(element);
+        }
+        
+        if (!element) {
+            return null;
+        }
+        if (element.echoDomPropertyStore) {
+            return element.echoDomPropertyStore[propertyName];
+        } else {
+            return null;
+        }
+    },
+    
+    /**
+     * Sets the value of a specific <code>EchoDomPropertyStore</code> property.
+     *
+     * @param element the element or element id on which to set the property
+     * @param propertyName the name of the property
+     * @param propertyValue the new value of the property
+     */
+    setPropertyValue: function(element, propertyName, propertyValue) {
+        if (typeof element == "string") {
+            element = document.getElementById(element);
+        }
+        if (!element) {
+            return;
+        }
+        if (!element.echoDomPropertyStore) {
+            element.echoDomPropertyStore = { };
+        }
+        element.echoDomPropertyStore[propertyName] = propertyValue;
     }
-    if (element.echoDomPropertyStore) {
-        return element.echoDomPropertyStore[propertyName];
-    } else {
-        return null;
-    }
-};
-
-/**
- * Sets the value of a specific <code>EchoDomPropertyStore</code> property.
- *
- * @param element the element or element id on which to set the property
- * @param propertyName the name of the property
- * @param propertyValue the new value of the property
- */
-EchoDomPropertyStore.setPropertyValue = function(element, propertyName, propertyValue) {
-    if (typeof element == "string") {
-        element = document.getElementById(element);
-    }
-    if (!element) {
-        return;
-    }
-    if (!element.echoDomPropertyStore) {
-        element.echoDomPropertyStore = { };
-    }
-    element.echoDomPropertyStore[propertyName] = propertyValue;
 };
 
 // ____________________
@@ -1161,172 +1170,174 @@ EchoDomPropertyStore.setPropertyValue = function(element, propertyName, property
  * Static object/namespace for performing server-directed updates to the
  * client DOM.
  */
-EchoDomUpdate = { };
+EchoDomUpdate = {
 
-/**
- * Static object/namespace for EchoDomUpdate MessageProcessor 
- * implementation.
- */
-EchoDomUpdate.MessageProcessor = { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process
- */
-EchoDomUpdate.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "dom-add":
-                this.processAdd(messagePartElement.childNodes[i]);
-                break;
-            case "dom-remove":
-                this.processRemove(messagePartElement.childNodes[i]);
-                break;
-            case "dom-remove-children":
-                this.processRemoveChildren(messagePartElement.childNodes[i]);
-                break;
-            case "attribute-update":
-                this.processAttributeUpdate(messagePartElement.childNodes[i]);
-                break;
-            case "style-update":
-                this.processStyleUpdate(messagePartElement.childNodes[i]);
-                break;
-            case "stylesheet-add-rule":
-                this.processStyleSheetAddRule(messagePartElement.childNodes[i]);
-                break;
-            case "stylesheet-remove-rule":
-                this.processStyleSheetRemoveRule(messagePartElement.childNodes[i]);
-                break;
+    /**
+     * Static object/namespace for EchoDomUpdate MessageProcessor 
+     * implementation.
+     */
+    MessageProcessor: {
+    
+        /**
+         * MessageProcessor process() implementation 
+         * (invoked by ServerMessage processor).
+         *
+         * @param messagePartElement the <code>message-part</code> element to process
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "dom-add":
+                        this.processAdd(messagePartElement.childNodes[i]);
+                        break;
+                    case "dom-remove":
+                        this.processRemove(messagePartElement.childNodes[i]);
+                        break;
+                    case "dom-remove-children":
+                        this.processRemoveChildren(messagePartElement.childNodes[i]);
+                        break;
+                    case "attribute-update":
+                        this.processAttributeUpdate(messagePartElement.childNodes[i]);
+                        break;
+                    case "style-update":
+                        this.processStyleUpdate(messagePartElement.childNodes[i]);
+                        break;
+                    case "stylesheet-add-rule":
+                        this.processStyleSheetAddRule(messagePartElement.childNodes[i]);
+                        break;
+                    case "stylesheet-remove-rule":
+                        this.processStyleSheetRemoveRule(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
             }
+        },
+        
+        /**
+         * Processes a <code>dom-add</code> directive to append or insert new nodes into
+         * the DOM.
+         *
+         * @param domAddElement the <code>dom-add</code> element to process
+         */
+        processAdd: function(domAddElement) {
+            var contentElements = domAddElement.getElementsByTagName("content");
+            for (var i = 0; i < contentElements.length; ++i) {
+                var parentId = contentElements[i].getAttribute("parent-id");
+        	    var siblingId = contentElements[i].getAttribute("sibling-id");
+        	    var parentElement = document.getElementById(parentId);
+        	    var siblingElement = null;
+        	    if (siblingId) {
+        	        siblingElement = document.getElementById(siblingId);
+        	        if (!siblingElement) {
+        	            throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
+        	        }
+        	    }
+        	    if (!parentElement) {
+        	         throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
+        	    }
+        
+        	    for (var j = 0; j < contentElements[i].childNodes.length; ++j) {
+        	        var importedNode = EchoDomUtil.importNode(parentElement.ownerDocument, contentElements[i].childNodes[j], true);
+        	        
+        	        var newElementId = importedNode.getAttribute("id");
+        	        if (!newElementId) {
+        	            throw "Cannot add element without id attribute.";
+        	        }
+        	        if (document.getElementById(newElementId)) {
+        	            throw "Element " + newElementId + " already exists in document; cannot add.";
+        	        }
+        	        
+        	        if (siblingElement) {
+        	            // If sibling specified, perform insert operation.
+        	            parentElement.insertBefore(importedNode, siblingElement);
+        	        } else {
+        	            // Perform append operation.
+        	            parentElement.appendChild(importedNode);
+        	        }
+        	    }
+            }
+        },
+        
+        /**
+         * Processes an <code>attribute-update</code> directive to update an attribute
+         * of a DOM element.
+         *
+         * @param attributeUpdateElement the <code>attribute-update</code> element to 
+         *        process
+         */
+        processAttributeUpdate: function(attributeUpdateElement) {
+            var targetId = attributeUpdateElement.getAttribute("target-id");
+            var targetElement = document.getElementById(targetId);
+            if (!targetElement) {
+                throw new EchoDomUpdate.TargetNotFoundException("AttributeUpdate", "target", targetId);
+            }
+            targetElement[attributeUpdateElement.getAttribute("name")] = attributeUpdateElement.getAttribute("value");
+        },
+        
+        /**
+         * Processes a <code>dom-remove</code> directive to delete nodes from the DOM.
+         *
+         * @param domRemoveElement the <code>dom-remove</code> element to process
+         */
+        processRemove: function(domRemoveElement) {
+            var targetId = domRemoveElement.getAttribute("target-id");
+            var targetElement = document.getElementById(targetId);
+            if (!targetElement) {
+                return;
+            }
+            targetElement.parentNode.removeChild(targetElement);
+        },
+        
+        /**
+         * Processes a <code>dom-remove-children</code> directive to delete all child 
+         * nodes from a specific DOM element.
+         *
+         * @param domRemoveChildrenElement the <code>dom-remove-children</code> element 
+         *        to process
+         */
+        processRemoveChildren: function(domRemoveElement) {
+            var targetId = domRemoveElement.getAttribute("target-id");
+            var targetElement = document.getElementById(targetId);
+            if (!targetElement) {
+                return;
+            }
+            var childNode = targetElement.firstChild;
+            while (childNode) {
+                var nextChildNode = childNode.nextSibling;
+                targetElement.removeChild(childNode);
+                childNode = nextChildNode;
+            }
+        },
+        
+        processStyleSheetAddRule: function(addRuleElement) {
+            var selectorText = addRuleElement.getAttribute("selector");
+            var style = addRuleElement.getAttribute("style");
+            EchoCssUtil.addRule(selectorText, style);
+        },
+        
+        processStyleSheetRemoveRule: function(removeRuleElement) {
+            var selectorText = removeRuleElement.getAttribute("selector");
+            EchoCssUtil.removeRule(selectorText);
+        },
+        
+        /**
+         * Processes a <code>style-update</code> directive to update an the CSS style
+         * of a DOM element.
+         *
+         * @param styleUpdateElement the <code>style-update</code> element to 
+         *        process
+         */
+        processStyleUpdate: function(styleUpdateElement) {
+            var targetId = styleUpdateElement.getAttribute("target-id");
+            var targetElement = document.getElementById(targetId);
+            if (!targetElement) {
+                throw new EchoDomUpdate.TargetNotFoundException("StyleUpdate", "target", targetId);
+            }
+            targetElement.style[styleUpdateElement.getAttribute("name")] = styleUpdateElement.getAttribute("value");
         }
     }
-};
-
-/**
- * Processes a <code>dom-add</code> directive to append or insert new nodes into
- * the DOM.
- *
- * @param domAddElement the <code>dom-add</code> element to process
- */
-EchoDomUpdate.MessageProcessor.processAdd = function(domAddElement) {
-    var contentElements = domAddElement.getElementsByTagName("content");
-    for (var i = 0; i < contentElements.length; ++i) {
-        var parentId = contentElements[i].getAttribute("parent-id");
-	    var siblingId = contentElements[i].getAttribute("sibling-id");
-	    var parentElement = document.getElementById(parentId);
-	    var siblingElement = null;
-	    if (siblingId) {
-	        siblingElement = document.getElementById(siblingId);
-	        if (!siblingElement) {
-	            throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
-	        }
-	    }
-	    if (!parentElement) {
-	         throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
-	    }
-
-	    for (var j = 0; j < contentElements[i].childNodes.length; ++j) {
-	        var importedNode = EchoDomUtil.importNode(parentElement.ownerDocument, contentElements[i].childNodes[j], true);
-	        
-	        var newElementId = importedNode.getAttribute("id");
-	        if (!newElementId) {
-	            throw "Cannot add element without id attribute.";
-	        }
-	        if (document.getElementById(newElementId)) {
-	            throw "Element " + newElementId + " already exists in document; cannot add.";
-	        }
-	        
-	        if (siblingElement) {
-	            // If sibling specified, perform insert operation.
-	            parentElement.insertBefore(importedNode, siblingElement);
-	        } else {
-	            // Perform append operation.
-	            parentElement.appendChild(importedNode);
-	        }
-	    }
-    }
-};
-
-/**
- * Processes an <code>attribute-update</code> directive to update an attribute
- * of a DOM element.
- *
- * @param attributeUpdateElement the <code>attribute-update</code> element to 
- *        process
- */
-EchoDomUpdate.MessageProcessor.processAttributeUpdate = function(attributeUpdateElement) {
-    var targetId = attributeUpdateElement.getAttribute("target-id");
-    var targetElement = document.getElementById(targetId);
-    if (!targetElement) {
-        throw new EchoDomUpdate.TargetNotFoundException("AttributeUpdate", "target", targetId);
-    }
-    targetElement[attributeUpdateElement.getAttribute("name")] = attributeUpdateElement.getAttribute("value");
-};
-
-/**
- * Processes a <code>dom-remove</code> directive to delete nodes from the DOM.
- *
- * @param domRemoveElement the <code>dom-remove</code> element to process
- */
-EchoDomUpdate.MessageProcessor.processRemove = function(domRemoveElement) {
-    var targetId = domRemoveElement.getAttribute("target-id");
-    var targetElement = document.getElementById(targetId);
-    if (!targetElement) {
-        return;
-    }
-    targetElement.parentNode.removeChild(targetElement);
-};
-
-/**
- * Processes a <code>dom-remove-children</code> directive to delete all child 
- * nodes from a specific DOM element.
- *
- * @param domRemoveChildrenElement the <code>dom-remove-children</code> element 
- *        to process
- */
-EchoDomUpdate.MessageProcessor.processRemoveChildren = function(domRemoveElement) {
-    var targetId = domRemoveElement.getAttribute("target-id");
-    var targetElement = document.getElementById(targetId);
-    if (!targetElement) {
-        return;
-    }
-    var childNode = targetElement.firstChild;
-    while (childNode) {
-        var nextChildNode = childNode.nextSibling;
-        targetElement.removeChild(childNode);
-        childNode = nextChildNode;
-    }
-};
-
-EchoDomUpdate.MessageProcessor.processStyleSheetAddRule = function(addRuleElement) {
-    var selectorText = addRuleElement.getAttribute("selector");
-    var style = addRuleElement.getAttribute("style");
-    EchoCssUtil.addRule(selectorText, style);
-};
-
-EchoDomUpdate.MessageProcessor.processStyleSheetRemoveRule = function(removeRuleElement) {
-    var selectorText = removeRuleElement.getAttribute("selector");
-    EchoCssUtil.removeRule(selectorText);
-};
-
-/**
- * Processes a <code>style-update</code> directive to update an the CSS style
- * of a DOM element.
- *
- * @param styleUpdateElement the <code>style-update</code> element to 
- *        process
- */
-EchoDomUpdate.MessageProcessor.processStyleUpdate = function(styleUpdateElement) {
-    var targetId = styleUpdateElement.getAttribute("target-id");
-    var targetElement = document.getElementById(targetId);
-    if (!targetElement) {
-        throw new EchoDomUpdate.TargetNotFoundException("StyleUpdate", "target", targetId);
-    }
-    targetElement.style[styleUpdateElement.getAttribute("name")] = styleUpdateElement.getAttribute("value");
-};
+}
 
 // ____________________________________________
 // Object EchoDomUpdate.TargetNotFoundException
@@ -1362,429 +1373,419 @@ EchoDomUpdate.TargetNotFoundException.prototype.toString = function() {
  * operations.  Most methods in this object/namespace are provided due
  * to nonstandard behavior in clients.
  */
-EchoDomUtil = { }
+EchoDomUtil = {
 
-/**
- * An associative array which maps between HTML attributes and HTMLElement 
- * property  names.  These values generally match, but multiword attribute
- * names tend to have "camelCase" property names, e.g., the 
- * "cellspacing" attribute corresponds to the "cellSpacing" property.
- * This map is required by the Internet Explorer-specific importNode() 
- * implementation
- */
-EchoDomUtil.attributeToPropertyMap = null;
+    /**
+     * An associative array which maps between HTML attributes and HTMLElement 
+     * property  names.  These values generally match, but multiword attribute
+     * names tend to have "camelCase" property names, e.g., the 
+     * "cellspacing" attribute corresponds to the "cellSpacing" property.
+     * This map is required by the Internet Explorer-specific importNode() 
+     * implementation
+     */
+    attributeToPropertyMap: {
+        accesskey: "accessKey",
+        cellpadding: "cellPadding",
+        cellspacing: "cellSpacing",
+        "class": "className",
+        codebase: "codeBase",
+        codetype: "codeType",
+        colspan: "colSpan",
+        datetime: "dateTime",
+        frameborder: "frameBorder",
+        longdesc: "longDesc",
+        marginheight: "marginHeight",
+        marginwidth: "marginWidth",
+        maxlength: "maxLength",
+        noresize: "noResize",
+        noshade: "noShade",
+        nowrap: "noWrap",
+        readonly: "readOnly",
+        rowspan: "rowSpan",
+        tabindex: "tabIndex",
+        usemap: "useMap",
+        valign: "vAlign",
+        valueType: "valueType"
+    }, 
 
-/**
- * Adds an event listener to an object, using the client's supported event 
- * model.
- *
- * @param eventSource the event source
- * @param eventType the type of event (the 'on' prefix should NOT be included
- *        in the event type, i.e., for mouse rollover events, "mouseover" would
- *        be specified instead of "onmouseover")
- * @param eventListener the event listener to be invoked when the event occurs
- * @param useCapture a flag indicating whether the event listener should capture
- *        events in the final phase of propagation (only supported by 
- *        DOM Level 2 event model)
- */
-EchoDomUtil.addEventListener = function(eventSource, eventType, eventListener, useCapture) {
-    if (eventSource.addEventListener) {
-        eventSource.addEventListener(eventType, eventListener, useCapture);
-    } else if (eventSource.attachEvent) {
-        eventSource.attachEvent("on" + eventType, eventListener);
-    }
-};
-
-/**
- * Initializes the attribute-to-property map required for importing HTML
- * elements into a DOM in Internet Explorer browsers.
- */
-EchoDomUtil.initAttributeToPropertyMap = function() {
-    var m = { };
-    m["accesskey"] = "accessKey";
-    m["cellpadding"] = "cellPadding";
-    m["cellspacing"] = "cellSpacing";
-    m["class"] = "className";
-    m["codebase"] = "codeBase";
-    m["codetype"] = "codeType";
-    m["colspan"] = "colSpan";
-    m["datetime"] = "dateTime";
-    m["frameborder"] = "frameBorder";
-    m["longdesc"] = "longDesc";
-    m["marginheight"] = "marginHeight";
-    m["marginwidth"] = "marginWidth";
-    m["maxlength"] = "maxLength";
-    m["noresize"] = "noResize";
-    m["noshade"] = "noShade";
-    m["nowrap"] = "noWrap";
-    m["readonly"] = "readOnly";
-    m["rowspan"] = "rowSpan";
-    m["tabindex"] = "tabIndex";
-    m["usemap"] = "useMap";
-    m["valign"] = "vAlign";
-    m["valueType"] = "valueType";
-    EchoDomUtil.attributeToPropertyMap = m;    
-};
-
-/**
- * Creates a new XML DOM.
- *
- * @param namespaceUri the unique URI of the namespace of the root element in 
- *        the created document (not supported for
- *        Internet Explorer 6 clients, null may be specified for all clients)
- * @param qualifiedName the name of the root element of the new document (this
- *        element will be created automatically)
- * @return the created DOM
- */
-EchoDomUtil.createDocument = function(namespaceUri, qualifiedName) {
-    if (document.implementation && document.implementation.createDocument) {
-        // DOM Level 2 Browsers
-        var dom = document.implementation.createDocument(namespaceUri, qualifiedName, null);
-        if (!dom.documentElement) {
-            dom.appendChild(dom.createElement(qualifiedName));
+    /**
+     * Adds an event listener to an object, using the client's supported event 
+     * model.
+     *
+     * @param eventSource the event source
+     * @param eventType the type of event (the 'on' prefix should NOT be included
+     *        in the event type, i.e., for mouse rollover events, "mouseover" would
+     *        be specified instead of "onmouseover")
+     * @param eventListener the event listener to be invoked when the event occurs
+     * @param useCapture a flag indicating whether the event listener should capture
+     *        events in the final phase of propagation (only supported by 
+     *        DOM Level 2 event model)
+     */
+    addEventListener: function(eventSource, eventType, eventListener, useCapture) {
+        if (eventSource.addEventListener) {
+            eventSource.addEventListener(eventType, eventListener, useCapture);
+        } else if (eventSource.attachEvent) {
+            eventSource.attachEvent("on" + eventType, eventListener);
         }
-        return dom;
-    } else if (window.ActiveXObject) {
-        // Internet Explorer
-        var createdDocument = new ActiveXObject("Microsoft.XMLDOM");
-        var documentElement = createdDocument.createElement(qualifiedName);
-        createdDocument.appendChild(documentElement);
-        return createdDocument;
-    } else {
-        throw "Unable to create new Document.";
-    }
-};
-
-/**
- * Converts a hyphen-separated CSS attribute name into a camelCase
- * property name.
- *
- * @param attribute the CSS attribute name, e.g., border-color
- * @return the style property name, e.g., borderColor
- */
-EchoDomUtil.cssAttributeNameToPropertyName = function(attribute) {
-    var segments = attribute.split("-");
-    var out = segments[0];
-    for (var i = 1; i < segments.length; ++i) {
-        out += segments[i].substring(0, 1).toUpperCase();
-        out += segments[i].substring(1);
-    }
-    return out;
-};
-
-/**
- * Recursively fixes broken element attributes in a Safari DOM.
- * Safari2 does not properly unescape attributes when retrieving
- * them from an XMLHttpRequest's response DOM.  For example, the attribute
- * abc="x&y" would return the value "X&#38;y" in Safari2.  This simply scans
- * the DOM for any attributes containing "&#38;" and replaces instances of it
- * with a simple ampersand ("&").  This method should be invoked once per DOM
- * if it has been determined that a version of Safari that suffers this bug is
- * in use.
- *
- * @param node the starting node whose attributes are to be fixed (child 
- *        elements will be fixed recursively)
- */
-EchoDomUtil.fixSafariAttrs = function(node) {
-    if (node.nodeType == 1) {
-        for (i = 0; i < node.attributes.length; ++i) {
-            var attribute = node.attributes[i];
-            node.setAttribute(attribute.name, attribute.value.replace("\x26\x2338\x3B", "&"));
-        }
-    }
+    },
     
-    for (var childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
-        EchoDomUtil.fixSafariAttrs(childNode);
-    }
-};
-
-/**
- * Returns the base component id of an extended id.
- * Example: for value "c_333_foo", "c_333" would be returned.
- *
- * @param elementId the extended id
- * @return the component id, or null if it cannot be determined
- */
-EchoDomUtil.getComponentId = function(elementId) {
-    if ("c_" != elementId.substring(0, 2)) {
-        // Not a component id.
-        return null;
-    }
-    var extensionStart = elementId.indexOf("_", 2);
-    if (extensionStart == -1) {
-        // id has now extension.
-        return elementId;
-    } else {
-        return elementId.substring(0, extensionStart);
-    }
-};
-
-/**
- * Cross-platform method to retrieve the CSS text of a DOM element.
- *
- * @param element the element
- * @return cssText the CSS text
- */
-EchoDomUtil.getCssText = function(element) {
-    if (EchoClientProperties.get("quirkOperaNoCssText")) {
-        return element.getAttribute("style");
-    } else {
-        return element.style.cssText;
-    }
-}
-
-/**
- * Returns the target of an event, using the client's supported event model.
- * On clients which support the W3C DOM Level 2 event specification,
- * the <code>target</code> property of the event is returned.
- * On clients which support only the Internet Explorer event model,
- * the <code>srcElement</code> property of the event is returned.
- *
- * @param e the event
- * @return the target
- */
-EchoDomUtil.getEventTarget = function(e) {
-    return e.target ? e.target : e.srcElement;
-};
-
-/**
- * Imports a node into a document.  This method is a 
- * cross-browser replacement for DOMImplementation.importNode, as Internet
- * Explorer 6 clients do not provide such a method.
- * This method will directly invoke targetDocument.importNode() in the event
- * that a client provides such a method.
- *
- * @param targetDocument the document into which the node/hierarchy is to be
- *        imported
- * @param sourceNode the node to import
- * @param importChildren a boolean flag indicating whether child nodes should
- *        be recursively imported
- */
-EchoDomUtil.importNode = function(targetDocument, sourceNode, importChildren) {
-    if (targetDocument.importNode) {
-        // DOM Level 2 Browsers
-        return targetDocument.importNode(sourceNode, importChildren);
-    } else {
-        // Internet Explorer Browsers
-        return EchoDomUtil.importNodeImpl(targetDocument, sourceNode, importChildren);
-    }
-};
-
-/**
-* Manual implementation of DOMImplementation.importNode() for clients that do
-* not provide their own (i.e., Internet Explorer 6).
-*
-* @param targetDocument the document into which the node/hierarchy is to be
-*        imported
-* @param sourceNode the node to import
-* @param importChildren a boolean flag indicating whether child nodes should
-*        be recursively imported
-*/
-EchoDomUtil.importNodeImpl = function(targetDocument, sourceNode, importChildren) {
-    var targetNode;  
-   
-    if (importChildren || !sourceNode.hasChildNodes()) {
-        // Attempt to use innerHTML to import node.
-        // This approach cannot be used if importing children is not desired and
-        // the element has children.
-        targetNode = EchoDomUtil.importNodeByInnerHtml(targetDocument, sourceNode, importChildren);
-        if (targetNode != null) {
-            // Return created node if successfully imported, otherwise continue.
-            return targetNode;
-        }
-    }
-   
-    // Import single node (but not its children).
-    targetNode = EchoDomUtil.importNodeByDom(targetDocument, sourceNode);
-    
-    if (importChildren && sourceNode.hasChildNodes()) {
-        // Recurse to import children.
-        for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
-            var targetChildNode = EchoDomUtil.importNodeImpl(targetDocument, sourceChildNode, true);
-            if (targetChildNode) {
-                targetNode.appendChild(targetChildNode);
+    /**
+     * Creates a new XML DOM.
+     *
+     * @param namespaceUri the unique URI of the namespace of the root element in 
+     *        the created document (not supported for
+     *        Internet Explorer 6 clients, null may be specified for all clients)
+     * @param qualifiedName the name of the root element of the new document (this
+     *        element will be created automatically)
+     * @return the created DOM
+     */
+    createDocument: function(namespaceUri, qualifiedName) {
+        if (document.implementation && document.implementation.createDocument) {
+            // DOM Level 2 Browsers
+            var dom = document.implementation.createDocument(namespaceUri, qualifiedName, null);
+            if (!dom.documentElement) {
+                dom.appendChild(dom.createElement(qualifiedName));
             }
-         }
-    }
-    return targetNode;
-};
-
-/**
-* Import a node by re-creating it using DOM methods.
-* This method will not import child elements.
-*
-* @param targetDocument the document into which the node/hierarchy is to be
-*        imported
-* @param sourceNode the node to import
-*/
-EchoDomUtil.importNodeByDom = function(targetDocument, sourceNode) {
-    var targetNode, i;
-
-    switch (sourceNode.nodeType) {
-    case 1:
-        targetNode = targetDocument.createElement(sourceNode.nodeName);
-        for (i = 0; i < sourceNode.attributes.length; ++i) {
-            var attribute = sourceNode.attributes[i];
-            if ("style" == attribute.name) {
-                targetNode.style.cssText = attribute.value;
-            } else {
-                if (EchoDomUtil.attributeToPropertyMap === null) {
-                    EchoDomUtil.initAttributeToPropertyMap();
-                }
-                var propertyName = EchoDomUtil.attributeToPropertyMap[attribute.name];
-                if (propertyName) {
-                    targetNode[propertyName] = attribute.value;
-                } else {
-                    targetNode[attribute.name] = attribute.value;
-                }
+            return dom;
+        } else if (window.ActiveXObject) {
+            // Internet Explorer
+            var createdDocument = new ActiveXObject("Microsoft.XMLDOM");
+            var documentElement = createdDocument.createElement(qualifiedName);
+            createdDocument.appendChild(documentElement);
+            return createdDocument;
+        } else {
+            throw "Unable to create new Document.";
+        }
+    },
+    
+    /**
+     * Converts a hyphen-separated CSS attribute name into a camelCase
+     * property name.
+     *
+     * @param attribute the CSS attribute name, e.g., border-color
+     * @return the style property name, e.g., borderColor
+     */
+    cssAttributeNameToPropertyName: function(attribute) {
+        var segments = attribute.split("-");
+        var out = segments[0];
+        for (var i = 1; i < segments.length; ++i) {
+            out += segments[i].substring(0, 1).toUpperCase();
+            out += segments[i].substring(1);
+        }
+        return out;
+    },
+    
+    /**
+     * Recursively fixes broken element attributes in a Safari DOM.
+     * Safari2 does not properly unescape attributes when retrieving
+     * them from an XMLHttpRequest's response DOM.  For example, the attribute
+     * abc="x&y" would return the value "X&#38;y" in Safari2.  This simply scans
+     * the DOM for any attributes containing "&#38;" and replaces instances of it
+     * with a simple ampersand ("&").  This method should be invoked once per DOM
+     * if it has been determined that a version of Safari that suffers this bug is
+     * in use.
+     *
+     * @param node the starting node whose attributes are to be fixed (child 
+     *        elements will be fixed recursively)
+     */
+    fixSafariAttrs: function(node) {
+        if (node.nodeType == 1) {
+            for (i = 0; i < node.attributes.length; ++i) {
+                var attribute = node.attributes[i];
+                node.setAttribute(attribute.name, attribute.value.replace("\x26\x2338\x3B", "&"));
             }
         }
-        break;
-    case 3:
-        targetNode = targetDocument.createTextNode(sourceNode.nodeValue);
-        break;
-    }
-
-    return targetNode;
-};
-
-/**
- * Try importing a node using innerHTML, on IE6 this is much faster than manually
- * traversing the DOM-tree.
- *
- * @param targetDocument the document into which the node/hierarchy is to be
- *        imported
- * @param sourceNode the node to import
- */
-EchoDomUtil.importNodeByInnerHtml = function(targetDocument, sourceNode) {
-    var targetNode;
-    if (sourceNode.nodeName.match(/tr|tbody|table|thead|tfoot|colgroup/)) {
-        // The innerHTML-property is read-only for the following objects:
-        // COL, COLGROUP, FRAMESET, HTML, STYLE, TABLE, TBODY, TFOOT, THEAD, TITLE, TR
-        // so we have to import nodes of such types using DOM-methods.
-        // see: http://msdn.microsoft.com/workshop/author/dhtml/reference/properties/innerhtml.asp
-        return null;
-    }
-
-    //Get the html of the sourcenode as a string.
-    var sourceHTML = "";
-    for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
-        //We are importing an xml-node.
-        var childHTML = sourceChildNode.xml;
-        if (childHTML == null) {
+        
+        for (var childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
+            EchoDomUtil.fixSafariAttrs(childNode);
+        }
+    },
+    
+    /**
+     * Returns the base component id of an extended id.
+     * Example: for value "c_333_foo", "c_333" would be returned.
+     *
+     * @param elementId the extended id
+     * @return the component id, or null if it cannot be determined
+     */
+    getComponentId: function(elementId) {
+        if ("c_" != elementId.substring(0, 2)) {
+            // Not a component id.
             return null;
         }
-        sourceHTML += childHTML;
-    }
-   
-    // Import the topnode
-    targetNode = EchoDomUtil.importNodeByDom(targetDocument, sourceNode);
-    
-    // IE fails to recognize <tag/> as a closed tag when using innerHTML, so replace it with <tag></tag>
-    // except for br, img, and hr elements.
-    var expr = new RegExp("<(?:(?!br|img|hr)([a-zA-Z]+))([^>]*)/>", "ig");
-    sourceHTML = sourceHTML.replace(expr, "<$1$2></$1>");
-
-    if (EchoStringUtil.trim(sourceHTML).length > 0) {
-        // Adding an empty string throws an 'Unknown error'.
-        targetNode.innerHTML = sourceHTML;
-    }
- 
-    return targetNode;
-};
-
-/**
- * Determines if <code>ancestorNode</code> is or is an ancestor of
- * <code>descendantNode</code>.
- *
- * @param ancestorNode the potential ancestor node
- * @param descendantNode the potential descendant node
- * @return true if <code>ancestorNode</code> is or is an ancestor of
- *         <code>descendantNode</code>
- */
-EchoDomUtil.isAncestorOf = function(ancestorNode, descendantNode) {
-    var testNode = descendantNode;
-    while (testNode !== null) {
-        if (testNode == ancestorNode) {
-            return true;
-        }
-        testNode = testNode.parentNode;
-    }
-    return false;
-};
-
-/**
- * Prevents the default action of an event from occurring, using the
- * client's supported event model.
- * On clients which support the W3C DOM Level 2 event specification,
- * the preventDefault() method of the event is invoked.
- * On clients which support only the Internet Explorer event model,
- * the 'returnValue' property of the event is set to false.
- *
- * @param e the event
- */
-EchoDomUtil.preventEventDefault = function(e) {
-    if (e.preventDefault) {
-        e.preventDefault();
-    } else {
-        e.returnValue = false;
-    }
-};
-
-/**
- * Removes an event listener from an object, using the client's supported 
- * event model.
- *
- * @param eventSource the event source
- * @param eventType the type of event (the 'on' prefix should NOT be included
- *        in the event type, i.e., for mouse rollover events, "mouseover" would
- *        be specified instead of "onmouseover")
- * @param eventListener the event listener to be invoked when the event occurs
- * @param useCapture a flag indicating whether the event listener should capture
- *        events in the final phase of propagation (only supported by 
- *        DOM Level 2 event model)
- */
-EchoDomUtil.removeEventListener = function(eventSource, eventType, eventListener, useCapture) {
-    if (eventSource.removeEventListener) {
-        eventSource.removeEventListener(eventType, eventListener, useCapture);
-    } else if (eventSource.detachEvent) {
-        eventSource.detachEvent("on" + eventType, eventListener);
-    }
-};
-
-/**
- * Cross-platform method to set the CSS text of a DOM element.
- *
- * @param element the element
- * @param cssText the new CSS text
- */
-EchoDomUtil.setCssText = function(element, cssText) {
-    if (EchoClientProperties.get("quirkOperaNoCssText")) {
-        if (cssText) {
-            element.setAttribute("style", cssText);
+        var extensionStart = elementId.indexOf("_", 2);
+        if (extensionStart == -1) {
+            // id has now extension.
+            return elementId;
         } else {
-            element.removeAttribute("style");
+            return elementId.substring(0, extensionStart);
         }
-    } else {
-	    element.style.cssText = cssText;
-    }
-};
-
-/**
- * Stops an event from propagating ("bubbling") to parent nodes in the DOM, 
- * using the client's supported event model.
- * On clients which support the W3C DOM Level 2 event specification,
- * the stopPropagation() method of the event is invoked.
- * On clients which support only the Internet Explorer event model,
- * the 'cancelBubble' property of the event is set to true.
- *
- * @param e the event
- */
-EchoDomUtil.stopPropagation = function(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
-    } else {
-        e.cancelBubble = true;
+    },
+    
+    /**
+     * Cross-platform method to retrieve the CSS text of a DOM element.
+     *
+     * @param element the element
+     * @return cssText the CSS text
+     */
+    getCssText: function(element) {
+        if (EchoClientProperties.get("quirkOperaNoCssText")) {
+            return element.getAttribute("style");
+        } else {
+            return element.style.cssText;
+        }
+    },
+    
+    /**
+     * Returns the target of an event, using the client's supported event model.
+     * On clients which support the W3C DOM Level 2 event specification,
+     * the <code>target</code> property of the event is returned.
+     * On clients which support only the Internet Explorer event model,
+     * the <code>srcElement</code> property of the event is returned.
+     *
+     * @param e the event
+     * @return the target
+     */
+    getEventTarget: function(e) {
+        return e.target ? e.target : e.srcElement;
+    },
+    
+    /**
+     * Imports a node into a document.  This method is a 
+     * cross-browser replacement for DOMImplementation.importNode, as Internet
+     * Explorer 6 clients do not provide such a method.
+     * This method will directly invoke targetDocument.importNode() in the event
+     * that a client provides such a method.
+     *
+     * @param targetDocument the document into which the node/hierarchy is to be
+     *        imported
+     * @param sourceNode the node to import
+     * @param importChildren a boolean flag indicating whether child nodes should
+     *        be recursively imported
+     */
+    importNode: function(targetDocument, sourceNode, importChildren) {
+        if (targetDocument.importNode) {
+            // DOM Level 2 Browsers
+            return targetDocument.importNode(sourceNode, importChildren);
+        } else {
+            // Internet Explorer Browsers
+            return EchoDomUtil.importNodeImpl(targetDocument, sourceNode, importChildren);
+        }
+    },
+    
+    /**
+    * Manual implementation of DOMImplementation.importNode() for clients that do
+    * not provide their own (i.e., Internet Explorer 6).
+    *
+    * @param targetDocument the document into which the node/hierarchy is to be
+    *        imported
+    * @param sourceNode the node to import
+    * @param importChildren a boolean flag indicating whether child nodes should
+    *        be recursively imported
+    */
+    importNodeImpl: function(targetDocument, sourceNode, importChildren) {
+        var targetNode;  
+       
+        if (importChildren || !sourceNode.hasChildNodes()) {
+            // Attempt to use innerHTML to import node.
+            // This approach cannot be used if importing children is not desired and
+            // the element has children.
+            targetNode = EchoDomUtil.importNodeByInnerHtml(targetDocument, sourceNode, importChildren);
+            if (targetNode != null) {
+                // Return created node if successfully imported, otherwise continue.
+                return targetNode;
+            }
+        }
+       
+        // Import single node (but not its children).
+        targetNode = EchoDomUtil.importNodeByDom(targetDocument, sourceNode);
+        
+        if (importChildren && sourceNode.hasChildNodes()) {
+            // Recurse to import children.
+            for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
+                var targetChildNode = EchoDomUtil.importNodeImpl(targetDocument, sourceChildNode, true);
+                if (targetChildNode) {
+                    targetNode.appendChild(targetChildNode);
+                }
+             }
+        }
+        return targetNode;
+    },
+   
+    /**
+    * Import a node by re-creating it using DOM methods.
+    * This method will not import child elements.
+    *
+    * @param targetDocument the document into which the node/hierarchy is to be
+    *        imported
+    * @param sourceNode the node to import
+    */
+    importNodeByDom: function(targetDocument, sourceNode) {
+        var targetNode, i;
+    
+        switch (sourceNode.nodeType) {
+        case 1:
+            targetNode = targetDocument.createElement(sourceNode.nodeName);
+            for (i = 0; i < sourceNode.attributes.length; ++i) {
+                var attribute = sourceNode.attributes[i];
+                if ("style" == attribute.name) {
+                    targetNode.style.cssText = attribute.value;
+                } else {
+                    var propertyName = EchoDomUtil.attributeToPropertyMap[attribute.name];
+                    if (propertyName) {
+                        targetNode[propertyName] = attribute.value;
+                    } else {
+                        targetNode[attribute.name] = attribute.value;
+                    }
+                }
+            }
+            break;
+        case 3:
+            targetNode = targetDocument.createTextNode(sourceNode.nodeValue);
+            break;
+        }
+    
+        return targetNode;
+    },
+    
+    /**
+     * Try importing a node using innerHTML, on IE6 this is much faster than manually
+     * traversing the DOM-tree.
+     *
+     * @param targetDocument the document into which the node/hierarchy is to be
+     *        imported
+     * @param sourceNode the node to import
+     */
+    importNodeByInnerHtml: function(targetDocument, sourceNode) {
+        var targetNode;
+        if (sourceNode.nodeName.match(/tr|tbody|table|thead|tfoot|colgroup/)) {
+            // The innerHTML-property is read-only for the following objects:
+            // COL, COLGROUP, FRAMESET, HTML, STYLE, TABLE, TBODY, TFOOT, THEAD, TITLE, TR
+            // so we have to import nodes of such types using DOM-methods.
+            // see: http://msdn.microsoft.com/workshop/author/dhtml/reference/properties/innerhtml.asp
+            return null;
+        }
+    
+        //Get the html of the sourcenode as a string.
+        var sourceHTML = "";
+        for (var sourceChildNode = sourceNode.firstChild; sourceChildNode; sourceChildNode = sourceChildNode.nextSibling) {
+            //We are importing an xml-node.
+            var childHTML = sourceChildNode.xml;
+            if (childHTML == null) {
+                return null;
+            }
+            sourceHTML += childHTML;
+        }
+       
+        // Import the topnode
+        targetNode = EchoDomUtil.importNodeByDom(targetDocument, sourceNode);
+        
+        // IE fails to recognize <tag/> as a closed tag when using innerHTML, so replace it with <tag></tag>
+        // except for br, img, and hr elements.
+        var expr = new RegExp("<(?:(?!br|img|hr)([a-zA-Z]+))([^>]*)/>", "ig");
+        sourceHTML = sourceHTML.replace(expr, "<$1$2></$1>");
+    
+        if (EchoStringUtil.trim(sourceHTML).length > 0) {
+            // Adding an empty string throws an 'Unknown error'.
+            targetNode.innerHTML = sourceHTML;
+        }
+     
+        return targetNode;
+    },
+    
+    /**
+     * Determines if <code>ancestorNode</code> is or is an ancestor of
+     * <code>descendantNode</code>.
+     *
+     * @param ancestorNode the potential ancestor node
+     * @param descendantNode the potential descendant node
+     * @return true if <code>ancestorNode</code> is or is an ancestor of
+     *         <code>descendantNode</code>
+     */
+    isAncestorOf: function(ancestorNode, descendantNode) {
+        var testNode = descendantNode;
+        while (testNode !== null) {
+            if (testNode == ancestorNode) {
+                return true;
+            }
+            testNode = testNode.parentNode;
+        }
+        return false;
+    },
+    
+    /**
+     * Prevents the default action of an event from occurring, using the
+     * client's supported event model.
+     * On clients which support the W3C DOM Level 2 event specification,
+     * the preventDefault() method of the event is invoked.
+     * On clients which support only the Internet Explorer event model,
+     * the 'returnValue' property of the event is set to false.
+     *
+     * @param e the event
+     */
+    preventEventDefault: function(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+    },
+    
+    /**
+     * Removes an event listener from an object, using the client's supported 
+     * event model.
+     *
+     * @param eventSource the event source
+     * @param eventType the type of event (the 'on' prefix should NOT be included
+     *        in the event type, i.e., for mouse rollover events, "mouseover" would
+     *        be specified instead of "onmouseover")
+     * @param eventListener the event listener to be invoked when the event occurs
+     * @param useCapture a flag indicating whether the event listener should capture
+     *        events in the final phase of propagation (only supported by 
+     *        DOM Level 2 event model)
+     */
+    removeEventListener: function(eventSource, eventType, eventListener, useCapture) {
+        if (eventSource.removeEventListener) {
+            eventSource.removeEventListener(eventType, eventListener, useCapture);
+        } else if (eventSource.detachEvent) {
+            eventSource.detachEvent("on" + eventType, eventListener);
+        }
+    },
+    
+    /**
+     * Cross-platform method to set the CSS text of a DOM element.
+     *
+     * @param element the element
+     * @param cssText the new CSS text
+     */
+    setCssText: function(element, cssText) {
+        if (EchoClientProperties.get("quirkOperaNoCssText")) {
+            if (cssText) {
+                element.setAttribute("style", cssText);
+            } else {
+                element.removeAttribute("style");
+            }
+        } else {
+    	    element.style.cssText = cssText;
+        }
+    },
+    
+    /**
+     * Stops an event from propagating ("bubbling") to parent nodes in the DOM, 
+     * using the client's supported event model.
+     * On clients which support the W3C DOM Level 2 event specification,
+     * the stopPropagation() method of the event is invoked.
+     * On clients which support only the Internet Explorer event model,
+     * the 'cancelBubble' property of the event is set to true.
+     *
+     * @param e the event
+     */
+    stopPropagation: function(e) {
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
     }
 };
 
@@ -1817,308 +1818,309 @@ EchoDomUtil.stopPropagation = function(e) {
  * leaks" and provides a mechanism for inspecting registered event handlers
  * using the Debug Window.
  */
-EchoEventProcessor = { };
+EchoEventProcessor = {
+
+    /**
+     * Static object/namespace for EchoEventProcessor MessageProcessor 
+     * implementation.
+     */
+    MessageProcessor: {
+    
+        /**
+         * MessageProcessor process() implementation 
+         * (invoked by ServerMessage processor).
+         *
+         * @param messagePartElement the <code>message-part</code> element to process
+         */
+        process: function(messagePartElement) {
+            var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
+            var adds = messagePartElement.getElementsByTagName("event-add");
+            var removes = messagePartElement.getElementsByTagName("event-remove");
+            for (i = 0; i < adds.length; ++i) {
+            
+                eventTypes = adds[i].getAttribute("type").split(",");
+                handlers = adds[i].getAttribute("handler").split(",");
+                if (handlers.length != eventTypes.length) {
+                    throw "Handler count and event type count do not match.";
+                }
+                
+                addItems = adds[i].getElementsByTagName("item");
+                for (j = 0; j < addItems.length; ++j) {
+                    elementId = addItems[j].getAttribute("eid");
+                    for (k = 0; k < eventTypes.length; ++k) {
+                        EchoEventProcessor.addHandler(elementId, eventTypes[k], handlers[k]);
+                    }
+                }
+            }
+            for (i = 0; i < removes.length; ++i) {
+                eventTypes = removes[i].getAttribute("type").split(",");
+                removeItems = removes[i].getElementsByTagName("item");
+                for (j = 0; j < removeItems.length; ++j) {
+                    elementId = removeItems[j].getAttribute("eid");
+                    for (k = 0; k < eventTypes.length; ++k) {
+                        EchoEventProcessor.removeHandler(elementId, eventTypes[k]);
+                    }
+                }
+            }
+        }
+    },
+    
+    /**
+     * An associative array mapping event types (e.g. "mouseover") to
+     * associate arrays that map DOM element ids to the String names
+     * of event handlers.
+     */
+    eventTypeToHandlersMap: new EchoCollectionsMap(),
+    
+    /**
+     * Registers an event handler.
+     *
+     * @param element the target element or the id of the target element on which
+     *        to register the event
+     * @param eventType the type of the event (should be specified using 
+     *        DOM level 2 event names, e.g., "mouseover" or "click", without
+     *        the "on" prefix)
+     * @param handler the name of the handler, as a String
+     * @param capture flag indicating whether listener should be registered as a 
+     *        capturing event handler (NOTE: this flag operates as expected even 
+     *        on IE browsers)
+     */
+    addHandler: function(element, eventType, handler, capture) {
+        var elementId;
+        if (typeof element == "string") {
+            elementId = element;
+            element = document.getElementById(element);
+        } else {
+            elementId = element.id;
+        }
+    
+        EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
+        
+        var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
+        if (!elementIdToHandlerMap) {
+            elementIdToHandlerMap = new EchoCollectionsMap();
+            EchoEventProcessor.eventTypeToHandlersMap.put(eventType, elementIdToHandlerMap);
+        }
+        
+        var handlerData = new EchoEventProcessor.EventHandlerData(handler, capture);
+        
+        elementIdToHandlerMap.put(elementId, handlerData);
+    },
+    
+    /**
+     * Disposes the EchoEventProcessor, releasing all resources.
+     * This method is invoked when the client engine is disposed.
+     */
+    dispose: function() {
+        for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
+            var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.associations[eventType];
+            for (var elementId in elementIdToHandlerMap.associations) {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
+                }
+                elementIdToHandlerMap.remove(elementId);
+            }
+            EchoEventProcessor.eventTypeToHandlersMap.remove(eventType);
+        }
+    },
+    
+    /**
+     * Retrieves the event handler of a specific type for a specific element.
+     *
+     * @param eventType the type of the event (should be specified using 
+     *        DOM level 2 event names, e.g., "mouseover" or "click", without
+     *        the "on" prefix)
+     * @param elementId the elementId the id of the DOM element
+     * @return the event handler name
+     */
+    getHandler: function(eventType, elementId) {
+        var handlerData = EchoEventProcessor.getHandlerData(eventType, elementId);
+        return handlerData ? handlerData.handlerName : null;
+    },
+    
+    /**
+     * Retrieves the event handler data object of a specific type for a specific element.
+     *
+     * @param eventType the type of the event (should be specified using 
+     *        DOM level 2 event names, e.g., "mouseover" or "click", without
+     *        the "on" prefix)
+     * @param elementId the elementId the id of the DOM element
+     */
+    getHandlerData: function(eventType, elementId) {
+        var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
+        if (!elementIdToHandlerMap) {
+            return null;
+        }
+        return elementIdToHandlerMap.get(elementId);
+    },
+    
+    /**
+     * Returns the element ids of all event handlers of the specified type.
+     */
+    getHandlerElementIds: function(eventType) {
+        var elementIds = [];
+        var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
+        if (elementIdToHandlerMap) {
+            for (var elementId in elementIdToHandlerMap.associations) {
+                elementIds.push(elementId);
+            }
+        }
+        return elementIds;
+    },
+    
+    /**
+     * Returns the types of all registered event handlers.
+     *
+     * @return an array of Strings containing the type names of all registered
+     *         event handlers
+     */
+    getHandlerEventTypes: function() {
+        var handlerTypes = [];
+        for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
+            handlerTypes.push(eventType);
+        }
+        return handlerTypes;
+    },
+    
+    /**
+     * Master event handler for all DOM events.
+     * This method is registered as the event handler for all
+     * EchoEventProcessor event registrations.  Events are processed,
+     * modified, and then dispatched to the appropriate
+     * Echo event handlers by this method.
+     *
+     * @param e the event fired by the DOM
+     */
+    processEvent: function(e) {
+        e = e ? e : window.event;
+        var eventType = e.type;
+        if (!e.target && e.srcElement) {
+            // The Internet Explorer event model stores the target element in the 'srcElement' property of an event.
+            // Modify the event such the target is retrievable using the W3C DOM Level 2 specified property 'target'.
+            e.target = e.srcElement;
+        }
+        var targetElement = e.target;
+        var handlerDatas = [];
+        var targetElements = [];
+        
+        var hasCapturingHandlers = false;
+        
+        while (targetElement) {
+            if (targetElement.nodeType == 1) { // Element Node
+                var handlerData = EchoEventProcessor.getHandlerData(eventType, targetElement.id);
+                if (handlerData) {
+                    hasCapturingHandlers |= handlerData.capture;
+                    handlerDatas.push(handlerData);
+                    targetElements.push(targetElement);
+                }
+            }
+            targetElement = targetElement.parentNode;
+        }
+        
+        if (handlerDatas.length == 0) {
+            return;
+        }
+        
+        var propagate = true;
+        
+        if (hasCapturingHandlers) {
+            // Process capturing event handlers.
+            for (var i = handlerDatas.length - 1; i >=0; --i) {
+                if (!handlerDatas[i].capture) {
+                    // Ignore non-capturing handlers.
+                    continue;
+                }
+    
+                // Load handler.
+                var handler;
+                try {
+                    handler = eval(handlerDatas[i].handlerName);
+                } catch (ex) {
+                    throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
+                }
+        
+                // Set registered target on event.
+                e.registeredTarget = targetElements[i];
+                
+                // Invoke handler.
+                propagate = handler(e);
+                
+                // Stop propagation if required.
+                if (!propagate) {
+                    break;
+                }
+            }
+        }
+    
+        if (propagate) {
+            // Process non-capturing event handlers.
+            for (var i = 0; i < handlerDatas.length; ++i) {
+                if (handlerDatas[i].capture) {
+                    // Ignore capturing handlers.
+                    continue;
+                }
+                
+                // Load handler.
+                var handler;
+                try {
+                    handler = eval(handlerDatas[i].handlerName);
+                } catch (ex) {
+                    throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
+                }
+        
+                // Set registered target on event.
+                e.registeredTarget = targetElements[i];
+                
+                // Invoke handler.
+                propagate = handler(e);
+                
+                // Stop propagation if required.
+                if (!propagate) {
+                    break;
+                }
+            }
+        }
+        
+        if (!propagate) {
+            // Stop propagation of event.
+            EchoDomUtil.stopPropagation(e);
+        }
+    },
+    
+    /**
+     * Unregisters an event handler.
+     *
+     * @param element the target element or the id of the target element on which
+     *        to register the event
+     * @param eventType the type of the event (should be specified using 
+     *        DOM level 2 event names, e.g., "mouseover" or "click", without
+     *        the "on" prefix)
+     */
+    removeHandler: function(element, eventType) {
+        var elementId;
+        if (typeof element == "string") {
+            elementId = element;
+            element = document.getElementById(element);
+        } else {
+            elementId = element.id;
+        }
+        
+        if (element) {
+            EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
+        }
+    
+        var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
+        if (!elementIdToHandlerMap) {
+            return;
+        }
+        elementIdToHandlerMap.remove(elementId);
+    }
+};
 
 EchoEventProcessor.EventHandlerData = function(handlerName, capture) { 
     this.handlerName = handlerName;
     this.capture = capture;
-};
-
-
-/**
- * Static object/namespace for EchoEventProcessor MessageProcessor 
- * implementation.
- */
-EchoEventProcessor.MessageProcessor = { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process
- */
-EchoEventProcessor.MessageProcessor.process = function(messagePartElement) {
-    var i, j, k, eventTypes, handlers, addItems, removeItems, elementId;
-    var adds = messagePartElement.getElementsByTagName("event-add");
-    var removes = messagePartElement.getElementsByTagName("event-remove");
-    for (i = 0; i < adds.length; ++i) {
-    
-        eventTypes = adds[i].getAttribute("type").split(",");
-        handlers = adds[i].getAttribute("handler").split(",");
-        if (handlers.length != eventTypes.length) {
-            throw "Handler count and event type count do not match.";
-        }
-        
-        addItems = adds[i].getElementsByTagName("item");
-        for (j = 0; j < addItems.length; ++j) {
-            elementId = addItems[j].getAttribute("eid");
-            for (k = 0; k < eventTypes.length; ++k) {
-                EchoEventProcessor.addHandler(elementId, eventTypes[k], handlers[k]);
-            }
-        }
-    }
-    for (i = 0; i < removes.length; ++i) {
-        eventTypes = removes[i].getAttribute("type").split(",");
-        removeItems = removes[i].getElementsByTagName("item");
-        for (j = 0; j < removeItems.length; ++j) {
-            elementId = removeItems[j].getAttribute("eid");
-            for (k = 0; k < eventTypes.length; ++k) {
-                EchoEventProcessor.removeHandler(elementId, eventTypes[k]);
-            }
-        }
-    }
-};
-
-/**
- * An associative array mapping event types (e.g. "mouseover") to
- * associate arrays that map DOM element ids to the String names
- * of event handlers.
- */
-EchoEventProcessor.eventTypeToHandlersMap = new EchoCollectionsMap();
-
-/**
- * Registers an event handler.
- *
- * @param element the target element or the id of the target element on which
- *        to register the event
- * @param eventType the type of the event (should be specified using 
- *        DOM level 2 event names, e.g., "mouseover" or "click", without
- *        the "on" prefix)
- * @param handler the name of the handler, as a String
- * @param capture flag indicating whether listener should be registered as a 
- *        capturing event handler (NOTE: this flag operates as expected even 
- *        on IE browsers)
- */
-EchoEventProcessor.addHandler = function(element, eventType, handler, capture) {
-    var elementId;
-    if (typeof element == "string") {
-        elementId = element;
-        element = document.getElementById(element);
-    } else {
-        elementId = element.id;
-    }
-
-    EchoDomUtil.addEventListener(element, eventType, EchoEventProcessor.processEvent, false);
-    
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
-    if (!elementIdToHandlerMap) {
-        elementIdToHandlerMap = new EchoCollectionsMap();
-        EchoEventProcessor.eventTypeToHandlersMap.put(eventType, elementIdToHandlerMap);
-    }
-    
-    var handlerData = new EchoEventProcessor.EventHandlerData(handler, capture);
-    
-    elementIdToHandlerMap.put(elementId, handlerData);
-};
-
-/**
- * Disposes the EchoEventProcessor, releasing all resources.
- * This method is invoked when the client engine is disposed.
- */
-EchoEventProcessor.dispose = function() {
-    for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
-        var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.associations[eventType];
-        for (var elementId in elementIdToHandlerMap.associations) {
-            var element = document.getElementById(elementId);
-            if (element) {
-                EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
-            }
-            elementIdToHandlerMap.remove(elementId);
-        }
-        EchoEventProcessor.eventTypeToHandlersMap.remove(eventType);
-    }
-};
-
-/**
- * Retrieves the event handler of a specific type for a specific element.
- *
- * @param eventType the type of the event (should be specified using 
- *        DOM level 2 event names, e.g., "mouseover" or "click", without
- *        the "on" prefix)
- * @param elementId the elementId the id of the DOM element
- * @return the event handler name
- */
-EchoEventProcessor.getHandler = function(eventType, elementId) {
-    var handlerData = EchoEventProcessor.getHandlerData(eventType, elementId);
-    return handlerData ? handlerData.handlerName : null;
-};
-
-/**
- * Retrieves the event handler data object of a specific type for a specific element.
- *
- * @param eventType the type of the event (should be specified using 
- *        DOM level 2 event names, e.g., "mouseover" or "click", without
- *        the "on" prefix)
- * @param elementId the elementId the id of the DOM element
- */
-EchoEventProcessor.getHandlerData = function(eventType, elementId) {
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
-    if (!elementIdToHandlerMap) {
-        return null;
-    }
-    return elementIdToHandlerMap.get(elementId);
-};
-
-/**
- * Returns the element ids of all event handlers of the specified type.
- */
-EchoEventProcessor.getHandlerElementIds = function(eventType) {
-    var elementIds = [];
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
-    if (elementIdToHandlerMap) {
-        for (var elementId in elementIdToHandlerMap.associations) {
-            elementIds.push(elementId);
-        }
-    }
-    return elementIds;
-};
-
-/**
- * Returns the types of all registered event handlers.
- *
- * @return an array of Strings containing the type names of all registered
- *         event handlers
- */
-EchoEventProcessor.getHandlerEventTypes = function() {
-    var handlerTypes = [];
-    for (var eventType in EchoEventProcessor.eventTypeToHandlersMap.associations) {
-        handlerTypes.push(eventType);
-    }
-    return handlerTypes;
-};
-
-/**
- * Master event handler for all DOM events.
- * This method is registered as the event handler for all
- * EchoEventProcessor event registrations.  Events are processed,
- * modified, and then dispatched to the appropriate
- * Echo event handlers by this method.
- *
- * @param e the event fired by the DOM
- */
-EchoEventProcessor.processEvent = function(e) {
-    e = e ? e : window.event;
-    var eventType = e.type;
-    if (!e.target && e.srcElement) {
-        // The Internet Explorer event model stores the target element in the 'srcElement' property of an event.
-        // Modify the event such the target is retrievable using the W3C DOM Level 2 specified property 'target'.
-        e.target = e.srcElement;
-    }
-    var targetElement = e.target;
-    var handlerDatas = [];
-    var targetElements = [];
-    
-    var hasCapturingHandlers = false;
-    
-    while (targetElement) {
-        if (targetElement.nodeType == 1) { // Element Node
-            var handlerData = EchoEventProcessor.getHandlerData(eventType, targetElement.id);
-            if (handlerData) {
-                hasCapturingHandlers |= handlerData.capture;
-                handlerDatas.push(handlerData);
-                targetElements.push(targetElement);
-            }
-        }
-        targetElement = targetElement.parentNode;
-    }
-    
-    if (handlerDatas.length == 0) {
-        return;
-    }
-    
-    var propagate = true;
-    
-    if (hasCapturingHandlers) {
-        // Process capturing event handlers.
-        for (var i = handlerDatas.length - 1; i >=0; --i) {
-            if (!handlerDatas[i].capture) {
-                // Ignore non-capturing handlers.
-                continue;
-            }
-
-            // Load handler.
-            var handler;
-            try {
-                handler = eval(handlerDatas[i].handlerName);
-            } catch (ex) {
-                throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
-            }
-    
-            // Set registered target on event.
-            e.registeredTarget = targetElements[i];
-            
-            // Invoke handler.
-            propagate = handler(e);
-            
-            // Stop propagation if required.
-            if (!propagate) {
-                break;
-            }
-        }
-    }
-
-    if (propagate) {
-        // Process non-capturing event handlers.
-        for (var i = 0; i < handlerDatas.length; ++i) {
-            if (handlerDatas[i].capture) {
-                // Ignore capturing handlers.
-                continue;
-            }
-            
-            // Load handler.
-            var handler;
-            try {
-                handler = eval(handlerDatas[i].handlerName);
-            } catch (ex) {
-                throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
-            }
-    
-            // Set registered target on event.
-            e.registeredTarget = targetElements[i];
-            
-            // Invoke handler.
-            propagate = handler(e);
-            
-            // Stop propagation if required.
-            if (!propagate) {
-                break;
-            }
-        }
-    }
-    
-    if (!propagate) {
-        // Stop propagation of event.
-        EchoDomUtil.stopPropagation(e);
-    }
-};
-
-/**
- * Unregisters an event handler.
- *
- * @param element the target element or the id of the target element on which
- *        to register the event
- * @param eventType the type of the event (should be specified using 
- *        DOM level 2 event names, e.g., "mouseover" or "click", without
- *        the "on" prefix)
- */
-EchoEventProcessor.removeHandler = function(element, eventType) {
-    var elementId;
-    if (typeof element == "string") {
-        elementId = element;
-        element = document.getElementById(element);
-    } else {
-        elementId = element.id;
-    }
-    
-    if (element) {
-        EchoDomUtil.removeEventListener(element, eventType, EchoEventProcessor.processEvent, false);
-    }
-
-    var elementIdToHandlerMap = EchoEventProcessor.eventTypeToHandlersMap.get(eventType);
-    if (!elementIdToHandlerMap) {
-        return;
-    }
-    elementIdToHandlerMap.remove(elementId);
 };
 
 // _______________________
@@ -2127,27 +2129,28 @@ EchoEventProcessor.removeHandler = function(element, eventType) {
 /**
  * Static object/namespace to manage component focus.
  */
-EchoFocusManager = { };
-
-/**
- * Sets the focused state of a component.
- *
- * @param componentId the identifier of the component
- * @param focusState a boolean property describing whether the component is 
- *        focused
- */
-EchoFocusManager.setFocusedState = function(componentId, focusState) {
-    if (focusState) {
-        EchoClientMessage.messageDocument.documentElement.setAttribute("focus", componentId);
-    } else {
-        var focusedComponentId = EchoClientMessage.messageDocument.documentElement.getAttribute("focus");
-        if (!focusedComponentId || componentId == focusedComponentId) {
-            // Set focus state to indeterminate if either no focused componentId is set 
-            // or if focused componentId matches specified componentId.
-            EchoClientMessage.messageDocument.documentElement.setAttribute("focus", "");
+EchoFocusManager = {
+    
+    /**
+     * Sets the focused state of a component.
+     *
+     * @param componentId the identifier of the component
+     * @param focusState a boolean property describing whether the component is 
+     *        focused
+     */
+    setFocusedState: function(componentId, focusState) {
+        if (focusState) {
+            EchoClientMessage.messageDocument.documentElement.setAttribute("focus", componentId);
+        } else {
+            var focusedComponentId = EchoClientMessage.messageDocument.documentElement.getAttribute("focus");
+            if (!focusedComponentId || componentId == focusedComponentId) {
+                // Set focus state to indeterminate if either no focused componentId is set 
+                // or if focused componentId matches specified componentId.
+                EchoClientMessage.messageDocument.documentElement.setAttribute("focus", "");
+            }
         }
+        EchoDebugManager.updateClientMessage();
     }
-    EchoDebugManager.updateClientMessage();
 };
 
 // _________________________
@@ -2286,30 +2289,31 @@ EchoHttpConnection.nullMethod = function() { };
 /**
  * Manages the modal state of the application.
  */
-EchoModalManager = { };
-
-/**
- * Element id of current modal object, or null if no object is currently 
- * modal.
- */
-EchoModalManager.modalElementId = null;
-
-/**
- * Determines if a particular element lies within the modal context.
- *
- * @param element the element or id of the element to analyze
- * @return true if the specified <code>element</code> is within the modal
- *         context
- */
-EchoModalManager.isElementInModalContext = function(element) {
-    if (typeof element == "string") {
-        element = document.getElementById(element);
-    }
-    if (EchoModalManager.modalElementId) {
-        var modalElement = document.getElementById(EchoModalManager.modalElementId);
-        return EchoDomUtil.isAncestorOf(modalElement, element);
-    } else {
-        return true;
+EchoModalManager = {
+    
+    /**
+     * Element id of current modal object, or null if no object is currently 
+     * modal.
+     */
+    modalElementId: null,
+    
+    /**
+     * Determines if a particular element lies within the modal context.
+     *
+     * @param element the element or id of the element to analyze
+     * @return true if the specified <code>element</code> is within the modal
+     *         context
+     */
+    isElementInModalContext: function(element) {
+        if (typeof element == "string") {
+            element = document.getElementById(element);
+        }
+        if (EchoModalManager.modalElementId) {
+            var modalElement = document.getElementById(EchoModalManager.modalElementId);
+            return EchoDomUtil.isAncestorOf(modalElement, element);
+        } else {
+            return true;
+        }
     }
 };
 
@@ -2319,105 +2323,106 @@ EchoModalManager.isElementInModalContext = function(element) {
 /**
  * Static object/namespace to manage dynamic loading of client libraries.
  */
-EchoScriptLibraryManager = { };
+EchoScriptLibraryManager = {
 
-/**
- * Library load-state constant indicating a library has been requested from 
- * the server.
- */
-EchoScriptLibraryManager.STATE_REQUESTED = 1;
-
-/**
- * Library load-state constant indicating a library has been successfully
- * retrieved from the server.
- */
-EchoScriptLibraryManager.STATE_LOADED = 2;
-
-/**
- * Library load-state constant indicating a library has been successfully
- * installed.
- */
-EchoScriptLibraryManager.STATE_INSTALLED = 3;
-
-/**
- * Associative array mapping library service ids to library source code.
- */
-EchoScriptLibraryManager.librarySourceMap = { };
-
-/**
- * Associative array mapping library service ids to load-states.
- */
-EchoScriptLibraryManager.libraryLoadStateMap = { };
-
-/**
- * Queries the state of the specified libary.
- *
- * @param serviceId the server service identifier of the library
- * @return the load-state of the library, either
- *         <code>STATE_REQUESTED</code> or <code>STATE_LOADED</code>
- */
-EchoScriptLibraryManager.getState = function(serviceId) {
-    return EchoScriptLibraryManager.libraryLoadStateMap[serviceId];
-};
-
-/**
- * Installs a previously loaded JavaScript library.
- *
- * @param serviceId the server service identifier of the library
- */
-EchoScriptLibraryManager.installLibrary = function(serviceId) {
-    if (EchoScriptLibraryManager.getState(serviceId) == EchoScriptLibraryManager.STATE_INSTALLED) {
-        // Library already installed.
-        return;
-    }
-
-    try {
-        // Obtain source.
-	    var source = EchoScriptLibraryManager.librarySourceMap[serviceId];
-
-	    // Execute library code.
-        eval(source);
-        
-        // Clear source.
-        EchoScriptLibraryManager.librarySourceMap[serviceId] = null;
-
-        // Mark state as installed.
-        EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_INSTALLED;
-    } catch (ex) {
-        EchoClientEngine.processClientError("Cannot load script module \"" + serviceId + "\"", ex);
-        throw ex;
-    }
-};
-
-/**
- * Loads a JavaScript library and stores it for execution.
- *
- * @param serviceId the server service identifier of the library
- */
-EchoScriptLibraryManager.loadLibrary = function(serviceId) {
-    if (EchoScriptLibraryManager.getState(serviceId)) {
-        // Library already present.
-        return;
-    }
-
-    var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + "?serviceId=" + serviceId, "GET");
-    conn.serviceId = serviceId;
-    conn.responseHandler = EchoScriptLibraryManager.responseHandler;
-    conn.connect();
+    /**
+     * Library load-state constant indicating a library has been requested from 
+     * the server.
+     */
+    STATE_REQUESTED: 1,
     
-    // Mark state as "requested" so that application will wait for library to load.
-    EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_REQUESTED;
-};
-
-/**
- * Processes a valid response from the server.
- *
- * @param conn the EchoHttpConnection containing the response information.
- */
-EchoScriptLibraryManager.responseHandler = function(conn) {
-    EchoScriptLibraryManager.librarySourceMap[conn.serviceId] = conn.getResponseText();
-    EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
-    EchoClientEngine.incrementLoadStatus();
+    /**
+     * Library load-state constant indicating a library has been successfully
+     * retrieved from the server.
+     */
+    STATE_LOADED: 2,
+    
+    /**
+     * Library load-state constant indicating a library has been successfully
+     * installed.
+     */
+    STATE_INSTALLED: 3,
+    
+    /**
+     * Associative array mapping library service ids to library source code.
+     */
+    librarySourceMap: { },
+    
+    /**
+     * Associative array mapping library service ids to load-states.
+     */
+    libraryLoadStateMap: { },
+    
+    /**
+     * Queries the state of the specified libary.
+     *
+     * @param serviceId the server service identifier of the library
+     * @return the load-state of the library, either
+     *         <code>STATE_REQUESTED</code> or <code>STATE_LOADED</code>
+     */
+    getState: function(serviceId) {
+        return EchoScriptLibraryManager.libraryLoadStateMap[serviceId];
+    },
+    
+    /**
+     * Installs a previously loaded JavaScript library.
+     *
+     * @param serviceId the server service identifier of the library
+     */
+    installLibrary: function(serviceId) {
+        if (EchoScriptLibraryManager.getState(serviceId) == EchoScriptLibraryManager.STATE_INSTALLED) {
+            // Library already installed.
+            return;
+        }
+    
+        try {
+            // Obtain source.
+    	    var source = EchoScriptLibraryManager.librarySourceMap[serviceId];
+    
+    	    // Execute library code.
+            eval(source);
+            
+            // Clear source.
+            EchoScriptLibraryManager.librarySourceMap[serviceId] = null;
+    
+            // Mark state as installed.
+            EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_INSTALLED;
+        } catch (ex) {
+            EchoClientEngine.processClientError("Cannot load script module \"" + serviceId + "\"", ex);
+            throw ex;
+        }
+    },
+    
+    /**
+     * Loads a JavaScript library and stores it for execution.
+     *
+     * @param serviceId the server service identifier of the library
+     */
+    loadLibrary: function(serviceId) {
+        if (EchoScriptLibraryManager.getState(serviceId)) {
+            // Library already present.
+            return;
+        }
+    
+        var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + "?serviceId=" + serviceId, "GET");
+        conn.serviceId = serviceId;
+        conn.responseHandler = EchoScriptLibraryManager.responseHandler;
+        conn.connect();
+        
+        // Mark state as "requested" so that application will wait for library to load.
+        EchoScriptLibraryManager.libraryLoadStateMap[serviceId] = EchoScriptLibraryManager.STATE_REQUESTED;
+    },
+    
+    /**
+     * Processes a valid response from the server.
+     *
+     * @param conn the EchoHttpConnection containing the response information.
+     */
+    responseHandler: function(conn) {
+        EchoScriptLibraryManager.librarySourceMap[conn.serviceId] = conn.getResponseText();
+        EchoScriptLibraryManager.libraryLoadStateMap[conn.serviceId] = EchoScriptLibraryManager.STATE_LOADED;
+        EchoClientEngine.incrementLoadStatus();
+    }
 };
 
 // _____________________________
@@ -2436,115 +2441,117 @@ EchoScriptLibraryManager.responseHandler = function(conn) {
  *   during a longer-than-normal server transaction.</li>
  * </ul>
  */
-EchoServerDelayMessage = { };
-
-/**
- * MessagePartProcessor implementation for EchoServerDelayMessage.
- */
-EchoServerDelayMessage.MessageProcessor = { };
-
-/**
- * MessagePartProcessor process() method implementation.
- */
-EchoServerDelayMessage.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "set-message":
-                EchoServerDelayMessage.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
-                break;
+EchoServerDelayMessage = {
+    
+    /**
+     * MessagePartProcessor implementation for EchoServerDelayMessage.
+     */
+    MessageProcessor: {
+        
+        /**
+         * MessagePartProcessor process() method implementation.
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "set-message":
+                        EchoServerDelayMessage.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
+            }
+        },
+        
+        /**
+         * ServerMessage parser to handle requests to set delay message text.
+         */
+        processSetDelayMessage: function(setDirectiveElement) {
+            var i;
+            var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+            if (serverDelayMessage) {
+                // Remove existing message.
+                serverDelayMessage.parentNode.removeChild(serverDelayMessage);
+            }
+            
+            var contentElement = setDirectiveElement.getElementsByTagName("content")[0];
+            
+            if (!contentElement) {
+                // Setting message to null.
+                return;
+            }
+        
+            // Add server message content.
+            var bodyElement = document.getElementsByTagName("body")[0];
+            for (i = 0; i < contentElement.childNodes.length; ++i) {
+                bodyElement.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
             }
         }
-    }
-};
-
-/**
- * ServerMessage parser to handle requests to set delay message text.
- */
-EchoServerDelayMessage.MessageProcessor.processSetDelayMessage = function(setDirectiveElement) {
-    var i;
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    if (serverDelayMessage) {
-        // Remove existing message.
-        serverDelayMessage.parentNode.removeChild(serverDelayMessage);
-    }
+    },
     
-    var contentElement = setDirectiveElement.getElementsByTagName("content")[0];
+    MESSAGE_ELEMENT_ID: "serverDelayMessage",
+    MESSAGE_ELEMENT_LONG_ID: "serverDelayMessageLong",
     
-    if (!contentElement) {
-        // Setting message to null.
-        return;
-    }
-
-    // Add server message content.
-    var bodyElement = document.getElementsByTagName("body")[0];
-    for (i = 0; i < contentElement.childNodes.length; ++i) {
-        bodyElement.appendChild(EchoDomUtil.importNode(document, contentElement.childNodes[i], true));
-    }
-};
-
-EchoServerDelayMessage.MESSAGE_ELEMENT_ID = "serverDelayMessage";
-EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID = "serverDelayMessageLong";
-
-/** 
- * Id of HTML element providing "long-running" delay message.  
- * This element is shown/hidden as necessary when long-running delays
- * occur or are completed.
- */
-EchoServerDelayMessage.delayMessageTimeoutId = null;
-
-/** Timeout (in ms) before "long-running" delay message is displayed. */ 
-EchoServerDelayMessage.timeout = 750;
-
-/**
- * Activates/shows the server delay message pane.
- */
-EchoServerDelayMessage.activate = function() {
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    if (!serverDelayMessage) {
-        return;
-    }
-    serverDelayMessage.style.visibility = "visible";
-    EchoServerDelayMessage.delayMessageTimeoutId = window.setTimeout("EchoServerDelayMessage.activateDelayMessage()", 
-            EchoServerDelayMessage.timeout);
-};
-
-/**
- * Activates the "long-running" delay message (requires server delay message
- * to have been previously activated).
- */
-EchoServerDelayMessage.activateDelayMessage = function() {
-    EchoServerDelayMessage.cancelDelayMessageTimeout();
-    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
-    if (!longMessage) {
-        return;
-    }
-    longMessage.style.visibility = "visible";
-};
-
-/**
- * Cancels timeout object that will raise delay message when server
- * transaction is determined to be "long running".
- */
-EchoServerDelayMessage.cancelDelayMessageTimeout = function() {
-    if (EchoServerDelayMessage.delayMessageTimeoutId) {
-        window.clearTimeout(EchoServerDelayMessage.delayMessageTimeoutId);
-        EchoServerDelayMessage.delayMessageTimeoutId = null;
-    }
-};
-
-/**
- * Deactives/hides the server delay message.
- */
-EchoServerDelayMessage.deactivate = function() {
-    EchoServerDelayMessage.cancelDelayMessageTimeout();
-    var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
-    var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
-    if (serverDelayMessage) {
-        serverDelayMessage.style.visibility = "hidden";
-    }
-    if (longMessage) {
-        longMessage.style.visibility = "hidden";
+    /** 
+     * Id of HTML element providing "long-running" delay message.  
+     * This element is shown/hidden as necessary when long-running delays
+     * occur or are completed.
+     */
+    delayMessageTimeoutId: null,
+    
+    /** Timeout (in ms) before "long-running" delay message is displayed. */ 
+    timeout: 750,
+    
+    /**
+     * Activates/shows the server delay message pane.
+     */
+    activate: function() {
+        var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+        if (!serverDelayMessage) {
+            return;
+        }
+        serverDelayMessage.style.visibility = "visible";
+        EchoServerDelayMessage.delayMessageTimeoutId = window.setTimeout("EchoServerDelayMessage.activateDelayMessage()", 
+                EchoServerDelayMessage.timeout);
+    },
+    
+    /**
+     * Activates the "long-running" delay message (requires server delay message
+     * to have been previously activated).
+     */
+    activateDelayMessage: function() {
+        EchoServerDelayMessage.cancelDelayMessageTimeout();
+        var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
+        if (!longMessage) {
+            return;
+        }
+        longMessage.style.visibility = "visible";
+    },
+    
+    /**
+     * Cancels timeout object that will raise delay message when server
+     * transaction is determined to be "long running".
+     */
+    cancelDelayMessageTimeout: function() {
+        if (EchoServerDelayMessage.delayMessageTimeoutId) {
+            window.clearTimeout(EchoServerDelayMessage.delayMessageTimeoutId);
+            EchoServerDelayMessage.delayMessageTimeoutId = null;
+        }
+    },
+    
+    /**
+     * Deactives/hides the server delay message.
+     */
+    deactivate: function() {
+        EchoServerDelayMessage.cancelDelayMessageTimeout();
+        var serverDelayMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_ID);
+        var longMessage = document.getElementById(EchoServerDelayMessage.MESSAGE_ELEMENT_LONG_ID);
+        if (serverDelayMessage) {
+            serverDelayMessage.style.visibility = "hidden";
+        }
+        if (longMessage) {
+            longMessage.style.visibility = "hidden";
+        }
     }
 };
 
@@ -2554,320 +2561,321 @@ EchoServerDelayMessage.deactivate = function() {
 /**
  * Static object to process synchronization messages received from server.
  */
-EchoServerMessage = { };
-
-EchoServerMessage.STATUS_INITIALIZED = 0;
-EchoServerMessage.STATUS_PROCESSING = 1;
-EchoServerMessage.STATUS_PROCESSING_COMPLETE = 2;
-EchoServerMessage.STATUS_PROCESSING_FAILED = 3;
-
-/**
- * Count of successfully processed server messages.
- */
-EchoServerMessage.transactionCount = 0;
-
-/**
- * DOM of the ServerMessage.
- */
-EchoServerMessage.messageDocument = null;
-
-/**
- * Identifier returned from setInterval() for asynchronously monitoring 
- * loading of JavaScript libraries.
- */
-EchoServerMessage.backgroundIntervalId = null;
-
-EchoServerMessage.enableFixSafariAttrs = false;
-
-/**
- * Callback to invoke when ServerMessage processing has completed.
- * Set via init() method.
- */
-EchoServerMessage.processingCompleteListener = null;
-
-/**
- * Map of temporarily stored properties in the server message.
- * These properties are reset after each transaction.
- */
-EchoServerMessage.temporaryProperties = null;
-
-/**
- * ServerMessage processing status, one of the following constants:
- * <ul>
- *  <li><code>EchoServerMessage.STATUS_INITIALIZED</code></li>
- *  <li><code>EchoServerMessage.STATUS_PROCESSING</code></li>
- *  <li><code>EchoServerMessage.STATUS_PROCESSING_COMPLETE</code></li>
- *  <li><code>EchoServerMessage.STATUS_PROCESSING_FAILED</code></li>
- * </ul>
- */
-EchoServerMessage.status = EchoServerMessage.STATUS_INITIALIZED;
-
-/**
- * Retrieves the value of a temporary property.
- * 
- * @param key the property key
- * @return the property value
- */
-EchoServerMessage.getTemporaryProperty = function(key) {
-    if (!EchoServerMessage.temporaryProperties) {
-        return undefined;
-    } else {
-        return EchoServerMessage.temporaryProperties[key];
-    }
-};
-
-/**
- * Initializes the state of the ServerMessage processor.
- *
- * @param messageDocument the ServerMessage XML document to be processed
- * @param processingCompleteListener a callback to be invoked when processing
- *        has been completed
- */
-EchoServerMessage.init = function(messageDocument, processingCompleteListener) {
-    EchoServerMessage.temporaryProperties = null;
-    EchoServerMessage.messageDocument = messageDocument;
-    EchoServerMessage.backgroundIntervalId = null;
-    EchoServerMessage.processingCompleteListener = processingCompleteListener;
-    EchoDebugManager.updateServerMessage();
-};
-
-/**
- * Determines if all required JavaScript libraries have been loaded.
- *
- * @return true if all libraries have been loaded.
- */
-EchoServerMessage.isLibraryLoadComplete = function() {
-    // 'complete' flag is used to set status to 'failed' in the event of an exception.
-    var complete = false;
-    try {
-        var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
-        var libraryElements = librariesElement.getElementsByTagName("library");
+EchoServerMessage = {
         
-        var returnValue = true;
+    STATUS_INITIALIZED: 0,
+    STATUS_PROCESSING: 1,
+    STATUS_PROCESSING_COMPLETE: 2,
+    STATUS_PROCESSING_FAILED: 3,
+    
+    /**
+     * Count of successfully processed server messages.
+     */
+    transactionCount: 0,
+    
+    /**
+     * DOM of the ServerMessage.
+     */
+    messageDocument: null,
+    
+    /**
+     * Identifier returned from setInterval() for asynchronously monitoring 
+     * loading of JavaScript libraries.
+     */
+    backgroundIntervalId: null,
+    
+    enableFixSafariAttrs: false,
+    
+    /**
+     * Callback to invoke when ServerMessage processing has completed.
+     * Set via init() method.
+     */
+    processingCompleteListener: null,
+    
+    /**
+     * Map of temporarily stored properties in the server message.
+     * These properties are reset after each transaction.
+     */
+    temporaryProperties: null,
+    
+    /**
+     * ServerMessage processing status, one of the following constants:
+     * <ul>
+     *  <li><code>EchoServerMessage.STATUS_INITIALIZED</code></li>
+     *  <li><code>EchoServerMessage.STATUS_PROCESSING</code></li>
+     *  <li><code>EchoServerMessage.STATUS_PROCESSING_COMPLETE</code></li>
+     *  <li><code>EchoServerMessage.STATUS_PROCESSING_FAILED</code></li>
+     * </ul>
+     */
+    status: 0, // EchoServerMessage.STATUS_INITIALIZED
+    
+    /**
+     * Retrieves the value of a temporary property.
+     * 
+     * @param key the property key
+     * @return the property value
+     */
+    getTemporaryProperty: function(key) {
+        if (!EchoServerMessage.temporaryProperties) {
+            return undefined;
+        } else {
+            return EchoServerMessage.temporaryProperties[key];
+        }
+    },
+    
+    /**
+     * Initializes the state of the ServerMessage processor.
+     *
+     * @param messageDocument the ServerMessage XML document to be processed
+     * @param processingCompleteListener a callback to be invoked when processing
+     *        has been completed
+     */
+    init: function(messageDocument, processingCompleteListener) {
+        EchoServerMessage.temporaryProperties = null;
+        EchoServerMessage.messageDocument = messageDocument;
+        EchoServerMessage.backgroundIntervalId = null;
+        EchoServerMessage.processingCompleteListener = processingCompleteListener;
+        EchoDebugManager.updateServerMessage();
+    },
+    
+    /**
+     * Determines if all required JavaScript libraries have been loaded.
+     *
+     * @return true if all libraries have been loaded.
+     */
+    isLibraryLoadComplete: function() {
+        // 'complete' flag is used to set status to 'failed' in the event of an exception.
+        var complete = false;
+        try {
+            var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
+            var libraryElements = librariesElement.getElementsByTagName("library");
+            
+            var returnValue = true;
+            for (var i = 0; i < libraryElements.length; ++i) {
+                var serviceId = libraryElements.item(i).getAttribute("service-id");
+                var libraryState = EchoScriptLibraryManager.getState(serviceId);
+                if (libraryState != EchoScriptLibraryManager.STATE_LOADED 
+                        && libraryState != EchoScriptLibraryManager.STATE_INSTALLED) {
+                    // A library that requires immediate loading is not yet available.
+                    returnValue = false;
+                    break;
+                }
+            }
+            complete = true;
+            return returnValue;
+        } finally {
+            if (!complete) {
+                EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING_FAILED;
+            }
+        }
+    },
+    
+    /**
+     * Parses 'libraries' element of ServerMessage and dynamically loads
+     * external JavaScript resources.
+     * The libraries are loaded asynchronously--invocation of this
+     * method will return before the actual libraries have been loaded.
+     */
+    loadLibraries: function() {
+        var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
+        var headElement = document.getElementsByTagName("head").item(0);
+        if (!librariesElement) {
+            return;
+        }
+        var libraryElements = librariesElement.getElementsByTagName("library");
         for (var i = 0; i < libraryElements.length; ++i) {
             var serviceId = libraryElements.item(i).getAttribute("service-id");
-            var libraryState = EchoScriptLibraryManager.getState(serviceId);
-            if (libraryState != EchoScriptLibraryManager.STATE_LOADED 
-                    && libraryState != EchoScriptLibraryManager.STATE_INSTALLED) {
-                // A library that requires immediate loading is not yet available.
-                returnValue = false;
-                break;
+            EchoScriptLibraryManager.loadLibrary(serviceId);
+        }
+    },
+    
+    /**
+     * Installs the dynamically retrieved JavaScript libraries.
+     */
+    installLibraries: function() {
+        var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
+        var headElement = document.getElementsByTagName("head").item(0);
+        if (!librariesElement) {
+            return;
+        }
+        var libraryElements = librariesElement.getElementsByTagName("library");
+        for (var i = 0; i < libraryElements.length; ++i) {
+            var serviceId = libraryElements.item(i).getAttribute("service-id");
+            EchoScriptLibraryManager.installLibrary(serviceId);
+            EchoClientEngine.incrementLoadStatus();
+        }
+    },
+    
+    /**
+     * Processes the ServerMessage.
+     * The processing is performed asynchronously--this method will return before
+     * the processing has been completed.
+     */
+    process: function() {
+        EchoServerMessage.prepare();
+        EchoServerMessage.processPhase1();
+    },
+    
+    /**
+     * Prepares the ServerMessage for prcocessing.
+     */
+    prepare: function() {
+        // Obtain transaction id from server message.
+        EchoClientEngine.updateTransactionId(EchoServerMessage.messageDocument.documentElement.getAttribute("trans-id"));
+        
+        // Test to determine if the document element contains a "XML Attribute Test" attribute.
+        // The attribute should have a value of "x&y" if the browser is working properly.
+        // The attribute will return the value of "x&#38;y" in the case of Safari2's broken DOM.
+        if (EchoServerMessage.messageDocument.documentElement.getAttribute("xml-attr-test") == "x&#38;y") {
+            // If attributes are broken, set flag.
+            EchoServerMessage.enableFixSafariAttrs = true;
+        }
+        
+        // If broken attribute flag has been set, run workaround code.
+        if (EchoServerMessage.enableFixSafariAttrs) {
+            EchoDomUtil.fixSafariAttrs(EchoServerMessage.messageDocument.documentElement);
+        }
+    },
+    
+    /**
+     * Configures the asynchronous server polling system by retrieving
+     * the "asyncinterval" attribute from the ServerMessage and starting
+     * the asynchronous monitor if required.
+     */
+    processAsyncConfig: function() {
+        var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("async-interval"));
+        if (!isNaN(timeInterval)) {
+            EchoAsyncMonitor.timeInterval = timeInterval;
+            EchoAsyncMonitor.start();
+        }
+    },
+    
+    /**
+     * Configures various application level properties, including:
+     * <ul>
+     *  <li>Modal context</li>
+     *  <li>Layout direction (LTR/RTL)</li>
+     * </ul>
+     */
+    processApplicationProperties: function() {
+        EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modal-id");
+        if (EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction")) {
+            document.documentElement.style.direction 
+                    = EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction");
+        }
+    },
+    
+    /**
+     * Processes all of the 'message-part' directives contained in the ServerMessage.
+     */
+    processMessageParts: function() {
+        // 'complete' flag is used to set status to 'failed' in the event of an exception.
+        var complete = false;
+        try {
+            var messagePartElements = EchoServerMessage.messageDocument.getElementsByTagName("message-part");
+            for (var i = 0; i < messagePartElements.length; ++i) {
+                var messagePartElement = messagePartElements[i];
+                var processorName = messagePartElement.getAttribute("processor");
+                var processor = eval(processorName);
+                if (!processor || !processor.process) {
+                    throw "Processor \"" + processorName + "\" not available.";
+                }
+                processor.process(messagePartElement);
             }
+            complete = true;
+        } finally {
+            EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
+                    : EchoServerMessage.STATUS_PROCESSING_FAILED;
         }
-        complete = true;
-        return returnValue;
-    } finally {
-        if (!complete) {
-            EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING_FAILED;
+    },
+    
+    /**
+     * Performs FIRST phase of synchronization response processing.
+     * During this phase required JavaScript libraries are loaded.
+     * Library loading is performed asynchronously, so a callback
+     * interval is established to wait for the libraries to load
+     * before the second phase of processing is invoked.
+     */
+    processPhase1: function() {
+        try {
+    	    EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
+    	    EchoServerMessage.loadLibraries();
+    	    if (EchoServerMessage.isLibraryLoadComplete()) {
+    	        EchoServerMessage.processPhase2();
+    	    } else {
+    	        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
+    	    }
+        } catch (ex) {
+            EchoServerMessage.temporaryProperties = null;
+            EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1)", ex);
+            throw ex;
         }
-    }
-};
-
-/**
- * Parses 'libraries' element of ServerMessage and dynamically loads
- * external JavaScript resources.
- * The libraries are loaded asynchronously--invocation of this
- * method will return before the actual libraries have been loaded.
- */
-EchoServerMessage.loadLibraries = function() {
-    var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
-    var headElement = document.getElementsByTagName("head").item(0);
-    if (!librariesElement) {
-        return;
-    }
-    var libraryElements = librariesElement.getElementsByTagName("library");
-    for (var i = 0; i < libraryElements.length; ++i) {
-        var serviceId = libraryElements.item(i).getAttribute("service-id");
-        EchoScriptLibraryManager.loadLibrary(serviceId);
-    }
-};
-
-/**
- * Installs the dynamically retrieved JavaScript libraries.
- */
-EchoServerMessage.installLibraries = function() {
-    var librariesElement = EchoServerMessage.messageDocument.getElementsByTagName("libraries").item(0);
-    var headElement = document.getElementsByTagName("head").item(0);
-    if (!librariesElement) {
-        return;
-    }
-    var libraryElements = librariesElement.getElementsByTagName("library");
-    for (var i = 0; i < libraryElements.length; ++i) {
-        var serviceId = libraryElements.item(i).getAttribute("service-id");
-        EchoScriptLibraryManager.installLibrary(serviceId);
-        EchoClientEngine.incrementLoadStatus();
-    }
-};
-
-/**
- * Processes the ServerMessage.
- * The processing is performed asynchronously--this method will return before
- * the processing has been completed.
- */
-EchoServerMessage.process = function() {
-    EchoServerMessage.prepare();
-    EchoServerMessage.processPhase1();
-};
-
-/**
- * Prepares the ServerMessage for prcocessing.
- */
-EchoServerMessage.prepare = function() {
-    // Obtain transaction id from server message.
-    EchoClientEngine.updateTransactionId(EchoServerMessage.messageDocument.documentElement.getAttribute("trans-id"));
+    },
     
-    // Test to determine if the document element contains a "XML Attribute Test" attribute.
-    // The attribute should have a value of "x&y" if the browser is working properly.
-    // The attribute will return the value of "x&#38;y" in the case of Safari2's broken DOM.
-    if (EchoServerMessage.messageDocument.documentElement.getAttribute("xml-attr-test") == "x&#38;y") {
-        // If attributes are broken, set flag.
-        EchoServerMessage.enableFixSafariAttrs = true;
-    }
-    
-    // If broken attribute flag has been set, run workaround code.
-    if (EchoServerMessage.enableFixSafariAttrs) {
-        EchoDomUtil.fixSafariAttrs(EchoServerMessage.messageDocument.documentElement);
-    }
-};
-
-/**
- * Configures the asynchronous server polling system by retrieving
- * the "asyncinterval" attribute from the ServerMessage and starting
- * the asynchronous monitor if required.
- */
-EchoServerMessage.processAsyncConfig = function() {
-    var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("async-interval"));
-    if (!isNaN(timeInterval)) {
-        EchoAsyncMonitor.timeInterval = timeInterval;
-        EchoAsyncMonitor.start();
-    }
-};
-
-/**
- * Configures various application level properties, including:
- * <ul>
- *  <li>Modal context</li>
- *  <li>Layout direction (LTR/RTL)</li>
- * </ul>
- */
-EchoServerMessage.processApplicationProperties = function() {
-    EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modal-id");
-    if (EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction")) {
-        document.documentElement.style.direction 
-                = EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction");
-    }
-};
-
-/**
- * Processes all of the 'message-part' directives contained in the ServerMessage.
- */
-EchoServerMessage.processMessageParts = function() {
-    // 'complete' flag is used to set status to 'failed' in the event of an exception.
-    var complete = false;
-    try {
-        var messagePartElements = EchoServerMessage.messageDocument.getElementsByTagName("message-part");
-        for (var i = 0; i < messagePartElements.length; ++i) {
-            var messagePartElement = messagePartElements[i];
-            var processorName = messagePartElement.getAttribute("processor");
-            var processor = eval(processorName);
-            if (!processor || !processor.process) {
-                throw "Processor \"" + processorName + "\" not available.";
-            }
-            processor.process(messagePartElement);
+    /**
+     * Performs SECOND phase of synchronization response processing.
+     * This phase may only be performed after all required JavaScript
+     * libraries have been loaded.   During this phase, directives provided
+     * in the ServerMessage are processed.  Additionally, the client modal 
+     * state and asynchoronous serevr polling configurations are established.
+     */
+    processPhase2: function() {
+        try {
+            // Install retrieved libraries.
+            EchoServerMessage.installLibraries();
+            
+            // Disable load status indicator (only relevant on initialization).
+            EchoClientEngine.disableLoadStatus();
+            
+            // Process message parts contained in server message.
+    		EchoServerMessage.processMessageParts();
+            
+    		EchoServerMessage.processApplicationProperties();
+            if (EchoServerMessage.processingCompleteListener) {
+    		    EchoServerMessage.processingCompleteListener();
+    		}
+    		EchoServerMessage.processAsyncConfig();
+        } catch (ex) {
+            EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2)", ex);
+            throw ex;
+        } finally {
+            EchoServerMessage.temporaryProperties = null;
         }
-        complete = true;
-    } finally {
-        EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
-                : EchoServerMessage.STATUS_PROCESSING_FAILED;
-    }
-};
-
-/**
- * Performs FIRST phase of synchronization response processing.
- * During this phase required JavaScript libraries are loaded.
- * Library loading is performed asynchronously, so a callback
- * interval is established to wait for the libraries to load
- * before the second phase of processing is invoked.
- */
-EchoServerMessage.processPhase1 = function() {
-    try {
-	    EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
-	    EchoServerMessage.loadLibraries();
-	    if (EchoServerMessage.isLibraryLoadComplete()) {
-	        EchoServerMessage.processPhase2();
-	    } else {
-	        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
-	    }
-    } catch (ex) {
-        EchoServerMessage.temporaryProperties = null;
-        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1)", ex);
-        throw ex;
-    }
-};
-
-/**
- * Performs SECOND phase of synchronization response processing.
- * This phase may only be performed after all required JavaScript
- * libraries have been loaded.   During this phase, directives provided
- * in the ServerMessage are processed.  Additionally, the client modal 
- * state and asynchoronous serevr polling configurations are established.
- */
-EchoServerMessage.processPhase2 = function() {
-    try {
-        // Install retrieved libraries.
-        EchoServerMessage.installLibraries();
         
-        // Disable load status indicator (only relevant on initialization).
-        EchoClientEngine.disableLoadStatus();
-        
-        // Process message parts contained in server message.
-		EchoServerMessage.processMessageParts();
-        
-		EchoServerMessage.processApplicationProperties();
-        if (EchoServerMessage.processingCompleteListener) {
-		    EchoServerMessage.processingCompleteListener();
-		}
-		EchoServerMessage.processAsyncConfig();
-    } catch (ex) {
-        EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2)", ex);
-        throw ex;
-    } finally {
-        EchoServerMessage.temporaryProperties = null;
-    }
+        EchoVirtualPosition.redraw();
     
-    EchoVirtualPosition.redraw();
-
-    ++EchoServerMessage.transactionCount;
+        ++EchoServerMessage.transactionCount;
+        
+        var completionTime = new Date().getTime();
+        var interactionTime = completionTime - EchoServerTransaction.timer;
+        EchoServerTransaction.timer = null;
+        EchoDebugManager.consoleWrite("Interaction time: " + interactionTime + "ms");
+    },
     
-    var completionTime = new Date().getTime();
-    var interactionTime = completionTime - EchoServerTransaction.timer;
-    EchoServerTransaction.timer = null;
-    EchoDebugManager.consoleWrite("Interaction time: " + interactionTime + "ms");
-};
-
-/**
-  Sets the value of a temporary property.
- * 
- * @param key the property key
- * @param value the property value
- */
-EchoServerMessage.setTemporaryProperty = function(key, value) {
-    if (!EchoServerMessage.temporaryProperties) {
-        EchoServerMessage.temporaryProperties = { };
-    }
-    EchoServerMessage.temporaryProperties[key] = value;
-};
-
-/**
- * Executed at intervals (via setInterval) to determine if all libraries
- * have been loaded.  In the event that all libraries have been loaded,
- * the interval operation is cleared and message part processing is started.
- */
-EchoServerMessage.waitForLibraries = function() {
-    if (EchoServerMessage.isLibraryLoadComplete()) {
-        window.clearInterval(EchoServerMessage.backgroundIntervalId);
-        EchoServerMessage.backgroundIntervalId = null;
-        EchoServerMessage.processPhase2();
+    /**
+      Sets the value of a temporary property.
+     * 
+     * @param key the property key
+     * @param value the property value
+     */
+    setTemporaryProperty: function(key, value) {
+        if (!EchoServerMessage.temporaryProperties) {
+            EchoServerMessage.temporaryProperties = { };
+        }
+        EchoServerMessage.temporaryProperties[key] = value;
+    },
+    
+    /**
+     * Executed at intervals (via setInterval) to determine if all libraries
+     * have been loaded.  In the event that all libraries have been loaded,
+     * the interval operation is cleared and message part processing is started.
+     */
+    waitForLibraries: function() {
+        if (EchoServerMessage.isLibraryLoadComplete()) {
+            window.clearInterval(EchoServerMessage.backgroundIntervalId);
+            EchoServerMessage.backgroundIntervalId = null;
+            EchoServerMessage.processPhase2();
+        }
     }
 };
 
@@ -2878,89 +2886,90 @@ EchoServerMessage.waitForLibraries = function() {
  * Static object/namespace to manage HTTP synchronization connections to 
  * server.
  */
-EchoServerTransaction = { };
-
-/**
- * Timer used for measuring performance.
- */
-EchoServerTransaction.timer = null;
-
-/**
- * Flag specifying whether a server transaction is active.
- * This flag should be queried by event handlers before
- * performing operations that are not compatible with
- * an open server transaction.
- */
-EchoServerTransaction.active = false;
-
-/**
- * Servlet query for synchronize service.
- */
-EchoServerTransaction.synchronizeServiceRequest = "?serviceId=Echo.Synchronize";
-
-/**
- * Initiates a client-server transaction my making a request to the server.
- * This operation is asynchronous; this method will return before the server
- * issues a response.
- * 
- * @return false if a connection is already in progress, true if connection was
- *         successfully initiated
- */
-EchoServerTransaction.connect = function() {
-    if (EchoServerTransaction.active) {
-        return false;
+EchoServerTransaction = {
+    
+    /**
+     * Timer used for measuring performance.
+     */
+    timer: null,
+    
+    /**
+     * Flag specifying whether a server transaction is active.
+     * This flag should be queried by event handlers before
+     * performing operations that are not compatible with
+     * an open server transaction.
+     */
+    active: false,
+    
+    /**
+     * Servlet query for synchronize service.
+     */
+    synchronizeServiceRequest: "?serviceId=Echo.Synchronize",
+    
+    /**
+     * Initiates a client-server transaction my making a request to the server.
+     * This operation is asynchronous; this method will return before the server
+     * issues a response.
+     * 
+     * @return false if a connection is already in progress, true if connection was
+     *         successfully initiated
+     */
+    connect: function() {
+        if (EchoServerTransaction.active) {
+            return false;
+        }
+        
+        EchoServerDelayMessage.activate();
+        EchoAsyncMonitor.stop();
+        var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
+                "POST", EchoClientMessage.messageDocument, "text/xml");
+        conn.responseHandler = EchoServerTransaction.responseHandler;
+        conn.invalidResponseHandler = EchoServerTransaction.invalidResponseHandler;
+        EchoServerTransaction.active = true;
+        conn.connect();
+        
+        // Reset client message.
+        EchoClientMessage.reset();
+        
+        return true;
+    },
+    
+    /**
+     * Processes an invalid HTTP response to the synchronize request.
+     *
+     * @param conn the EchoHttpConnection containing the response information. 
+     */
+    invalidResponseHandler: function(conn) {
+        EchoServerTransaction.postProcess();
+        if (conn.xmlHttpRequest.status == 500) {
+            EchoClientEngine.processServerError();
+        } else if (conn.xmlHttpRequest.status == 400) {
+            EchoClientEngine.processSessionExpiration();
+        } else {
+            alert("Invalid/unknown response from server: " + conn.getResponseText());
+        }
+    },
+    
+    /**
+     * Handles post processing cleanup tasks, i.e., disabling server message delay
+     * pane and setting active flag state to false.
+     */
+    postProcess: function() {
+        EchoServerDelayMessage.deactivate();
+        EchoServerTransaction.active = false;
+    },
+    
+    /**
+     * Processes a (valid) HTTP response to the synchronize request.
+     *
+     * @param conn the EchoHttpConnection containing the response information.
+     */
+    responseHandler: function(conn) {
+        EchoServerTransaction.timer = new Date().getTime();
+        EchoServerMessage.init(conn.getResponseXml(), EchoServerTransaction.postProcess);
+        EchoServerMessage.process();
     }
-    
-    EchoServerDelayMessage.activate();
-    EchoAsyncMonitor.stop();
-    var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
-            "POST", EchoClientMessage.messageDocument, "text/xml");
-    conn.responseHandler = EchoServerTransaction.responseHandler;
-    conn.invalidResponseHandler = EchoServerTransaction.invalidResponseHandler;
-    EchoServerTransaction.active = true;
-    conn.connect();
-    
-    // Reset client message.
-    EchoClientMessage.reset();
-    
-    return true;
-};
-
-/**
- * Processes an invalid HTTP response to the synchronize request.
- *
- * @param conn the EchoHttpConnection containing the response information. 
- */
-EchoServerTransaction.invalidResponseHandler = function(conn) {
-    EchoServerTransaction.postProcess();
-    if (conn.xmlHttpRequest.status == 500) {
-        EchoClientEngine.processServerError();
-    } else if (conn.xmlHttpRequest.status == 400) {
-        EchoClientEngine.processSessionExpiration();
-    } else {
-        alert("Invalid/unknown response from server: " + conn.getResponseText());
-    }
-};
-
-/**
- * Handles post processing cleanup tasks, i.e., disabling server message delay
- * pane and setting active flag state to false.
- */
-EchoServerTransaction.postProcess = function() {
-    EchoServerDelayMessage.deactivate();
-    EchoServerTransaction.active = false;
-};
-
-/**
- * Processes a (valid) HTTP response to the synchronize request.
- *
- * @param conn the EchoHttpConnection containing the response information.
- */
-EchoServerTransaction.responseHandler = function(conn) {
-    EchoServerTransaction.timer = new Date().getTime();
-    EchoServerMessage.init(conn.getResponseXml(), EchoServerTransaction.postProcess);
-    EchoServerMessage.process();
-};
+};    
 
 // ____________________
 // Object EchoStringUtil
@@ -2969,16 +2978,17 @@ EchoServerTransaction.responseHandler = function(conn) {
 * Static object/namespace for performing string-operations that are not
 * provided by the JavaScript specification.
 */
-EchoStringUtil = { };
+EchoStringUtil = {
 
-/**
- * Trims leading and trailing whitespace from a string.
- *
- * @param s the string to trim
-*/
-EchoStringUtil.trim = function(s) {
-   var result = s.replace(/^\s+/g, "");  // strip leading
-   return result.replace(/\s+$/g, "");   // strip trailing
+    /**
+     * Trims leading and trailing whitespace from a string.
+     *
+     * @param s the string to trim
+    */
+    trim: function(s) {
+       var result = s.replace(/^\s+/g, "");  // strip leading
+       return result.replace(/\s+$/g, "");   // strip trailing
+    }
 };
 
 // __________________________
@@ -3004,287 +3014,289 @@ EchoStringUtil.trim = function(s) {
  * The EchoVirtualPosition.redraw() method is invoked automatically whenever
  * a Client/Server synchronization is completed.
  */
-EchoVirtualPosition = { };
-
-/** Array containing ids of elements registered with the virtual positioning system. */
-EchoVirtualPosition.elementIdList = [];
-
-EchoVirtualPosition.elementIdSet = new EchoCollectionsMap();
-
-/** Flag indicating whether virtual positioning is required/enabled. */
-EchoVirtualPosition.enabled = false;
-
-/** Flag indicating whether virtual positioning list is sorted); */
-EchoVirtualPosition.elementIdListSorted = true;
-
-/** 
- * Adjusts the style.height and style.height attributes of an element to 
- * simulate its specified top, bottom, left, and right CSS position settings
- * The calculation makes allowances for padding, margin, and border width.
- *
- * @param element the element whose height setting is to be calculated
- *
- * This method is for internal use only by EchoVirtualPosition.
- */
-EchoVirtualPosition.adjust = function(element) {
-    // Adjust 'height' property if 'top' and 'bottom' properties are set, 
-    // and if all padding/margin/borders are 0 or set in pixel units .
-    if (EchoVirtualPosition.verifyPixelValue(element.style.top)
-            && EchoVirtualPosition.verifyPixelValue(element.style.bottom)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
-        var parentHeight = element.parentNode.offsetHeight;
-        var topPixels = parseInt(element.style.top);
-        var bottomPixels = parseInt(element.style.bottom);
-        var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) 
-                + EchoVirtualPosition.toInteger(element.style.paddingBottom);
-        var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
-                + EchoVirtualPosition.toInteger(element.style.marginBottom);
-        var borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) 
-                + EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
-        var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
-        if (calculatedHeight <= 0) {
-            element.style.height = 0;
-        } else {
-            if (element.style.height != calculatedHeight + "px") {
-	            element.style.height = calculatedHeight + "px";
-            }
-        }
-    }
+EchoVirtualPosition = {
     
-    // Adjust 'width' property if 'left' and 'right' properties are set, 
-    // and if all padding/margin/borders are 0 or set in pixel units .
-    if (EchoVirtualPosition.verifyPixelValue(element.style.left)
-            && EchoVirtualPosition.verifyPixelValue(element.style.right)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth)
-            && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
-        var parentWidth = element.parentNode.offsetWidth;
-        var leftPixels = parseInt(element.style.left);
-        var rightPixels = parseInt(element.style.right);
-        var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) 
-                + EchoVirtualPosition.toInteger(element.style.paddingRight);
-        var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
-                + EchoVirtualPosition.toInteger(element.style.marginRight);
-        var borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) 
-                + EchoVirtualPosition.toInteger(element.style.borderRightWidth);
-        var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
-        if (calculatedWidth <= 0) {
-            element.style.width = 0;
-        } else {
-            if (element.style.width != calculatedWidth + "px") {
-                element.style.width = calculatedWidth + "px";
-            }
-        }
-    }
-};
-
-/**
- * Enables and initializes the virtual positioning system.
- */
-EchoVirtualPosition.init = function() {
-    EchoVirtualPosition.enabled = true;
-    EchoDomUtil.addEventListener(window, "resize", EchoVirtualPosition.resizeListener, false);
-};
-
-/**
- * Redraws elements registered with the virtual positioning system.
- *
- * @param element (optional) the element to redraw; if unspecified, 
- *        all elements will be redrawn.
- */
-EchoVirtualPosition.redraw = function(element) {
-    if (!EchoVirtualPosition.enabled) {
-        return;
-    }
+    /** Array containing ids of elements registered with the virtual positioning system. */
+    elementIdList: [],
     
-    var removedIds = false;
+    elementIdSet: new EchoCollectionsMap(),
     
-    if (element != undefined) {
-        EchoVirtualPosition.adjust(element);
-    } else {
-        if (!EchoVirtualPosition.elementIdListSorted) {
-            EchoVirtualPosition.sort();
-        }
-        
-        for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
-            element = document.getElementById(EchoVirtualPosition.elementIdList[i]);
-            if (element) {
-                EchoVirtualPosition.adjust(element);
+    /** Flag indicating whether virtual positioning is required/enabled. */
+    enabled: false,
+    
+    /** Flag indicating whether virtual positioning list is sorted); */
+    elementIdListSorted: true,
+    
+    /** 
+     * Adjusts the style.height and style.height attributes of an element to 
+     * simulate its specified top, bottom, left, and right CSS position settings
+     * The calculation makes allowances for padding, margin, and border width.
+     *
+     * @param element the element whose height setting is to be calculated
+     *
+     * This method is for internal use only by EchoVirtualPosition.
+     */
+    adjust: function(element) {
+        // Adjust 'height' property if 'top' and 'bottom' properties are set, 
+        // and if all padding/margin/borders are 0 or set in pixel units .
+        if (EchoVirtualPosition.verifyPixelValue(element.style.top)
+                && EchoVirtualPosition.verifyPixelValue(element.style.bottom)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
+            var parentHeight = element.parentNode.offsetHeight;
+            var topPixels = parseInt(element.style.top);
+            var bottomPixels = parseInt(element.style.bottom);
+            var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) 
+                    + EchoVirtualPosition.toInteger(element.style.paddingBottom);
+            var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
+                    + EchoVirtualPosition.toInteger(element.style.marginBottom);
+            var borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) 
+                    + EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
+            var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
+            if (calculatedHeight <= 0) {
+                element.style.height = 0;
             } else {
-                // Element no longer exists.  Replace id in elementIdList with null,
-                // and set 'removedIds' flag to true such that elementIdList will
-                // be pruned for nulls once redrawing has been completed.
-                EchoVirtualPosition.elementIdSet.remove(EchoVirtualPosition.elementIdList[i]);
-                EchoVirtualPosition.elementIdList[i] = null;
-                removedIds = true;
-            }
-        }
-        
-        // Prune removed ids from list if necessary.
-        if (removedIds) {
-            var updatedIdList = [];
-            for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
-                if (EchoVirtualPosition.elementIdList[i] != null) {
-                    updatedIdList.push(EchoVirtualPosition.elementIdList[i]);
+                if (element.style.height != calculatedHeight + "px") {
+    	            element.style.height = calculatedHeight + "px";
                 }
             }
-            EchoVirtualPosition.elementIdList = updatedIdList;
         }
-    }
-};
-
-/**
- * Registers an element to be drawn using the virtual positioning system.
- * The element must meet the following criteria:
- * <ul>
- *  <li>Margins and paddings, if set, must be set in pixel units.
- *  <li>Top, bottom, left, and right coordinates, if set, must be set in pixel 
- *   units.</li>
- * </ul>
- *
- * @param elementId the elementId to register
- */
-EchoVirtualPosition.register = function(elementId) {
-    if (!EchoVirtualPosition.enabled) {
-        return;
-    }
-    EchoVirtualPosition.elementIdListSorted = false;
-    EchoVirtualPosition.elementIdList.push(elementId);
-    EchoVirtualPosition.elementIdSet.put(elementId, 1);
-};
-
-/**
- * Lisetener to receive "resize" events from containing browser window.
- * 
- * @param e the DOM2 resize event
- */
-EchoVirtualPosition.resizeListener = function(e) {
-    e = e ? e : window.event;
-    EchoVirtualPosition.redraw();
-};
-
-/**
- * Sorts the array of virtually positioned element ids based on the order in 
- * which they appear top-to-bottom in the hierarchy.  This is necessary in order
- * that their positions will be adjusted starting at the highest level in the 
- * hierarchy.  This method delegates the real work to a recursive 
- * implementation.
- */
-EchoVirtualPosition.sort = function() {
-    var sortedList = [];
-    EchoVirtualPosition.sortImpl(document.documentElement, sortedList); 
-    EchoVirtualPosition.elementIdList = sortedList;
-    EchoVirtualPosition.elementIdListSorted = true;
-};
-
-/**
- * Recursive work method to support <code>sort()</code>.
- * 
- * @param element the current element of the hierarchy being analyzed.
- * @param sortedList an array to which element ids will be appended in the
- *        orde rthe appear in the hierarchy
- */
-EchoVirtualPosition.sortImpl = function(element, sortedList) {
-    // If element has id and element is in set of virtually positioned elements
-    if (element.id && EchoVirtualPosition.elementIdSet.get(element.id)) {
-        sortedList.push(element.id);
-    }
+        
+        // Adjust 'width' property if 'left' and 'right' properties are set, 
+        // and if all padding/margin/borders are 0 or set in pixel units .
+        if (EchoVirtualPosition.verifyPixelValue(element.style.left)
+                && EchoVirtualPosition.verifyPixelValue(element.style.right)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth)
+                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
+            var parentWidth = element.parentNode.offsetWidth;
+            var leftPixels = parseInt(element.style.left);
+            var rightPixels = parseInt(element.style.right);
+            var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) 
+                    + EchoVirtualPosition.toInteger(element.style.paddingRight);
+            var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
+                    + EchoVirtualPosition.toInteger(element.style.marginRight);
+            var borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) 
+                    + EchoVirtualPosition.toInteger(element.style.borderRightWidth);
+            var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
+            if (calculatedWidth <= 0) {
+                element.style.width = 0;
+            } else {
+                if (element.style.width != calculatedWidth + "px") {
+                    element.style.width = calculatedWidth + "px";
+                }
+            }
+        }
+    },
     
-    for (var child = element.firstChild; child; child = child.nextSibling) {
-        if (child.nodeType == 1) {
-            EchoVirtualPosition.sortImpl(child, sortedList);
+    /**
+     * Enables and initializes the virtual positioning system.
+     */
+    init: function() {
+        EchoVirtualPosition.enabled = true;
+        EchoDomUtil.addEventListener(window, "resize", EchoVirtualPosition.resizeListener, false);
+    },
+    
+    /**
+     * Redraws elements registered with the virtual positioning system.
+     *
+     * @param element (optional) the element to redraw; if unspecified, 
+     *        all elements will be redrawn.
+     */
+    redraw: function(element) {
+        if (!EchoVirtualPosition.enabled) {
+            return;
         }
-    }
-};
+        
+        var removedIds = false;
+        
+        if (element != undefined) {
+            EchoVirtualPosition.adjust(element);
+        } else {
+            if (!EchoVirtualPosition.elementIdListSorted) {
+                EchoVirtualPosition.sort();
+            }
+            
+            for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+                element = document.getElementById(EchoVirtualPosition.elementIdList[i]);
+                if (element) {
+                    EchoVirtualPosition.adjust(element);
+                } else {
+                    // Element no longer exists.  Replace id in elementIdList with null,
+                    // and set 'removedIds' flag to true such that elementIdList will
+                    // be pruned for nulls once redrawing has been completed.
+                    EchoVirtualPosition.elementIdSet.remove(EchoVirtualPosition.elementIdList[i]);
+                    EchoVirtualPosition.elementIdList[i] = null;
+                    removedIds = true;
+                }
+            }
+            
+            // Prune removed ids from list if necessary.
+            if (removedIds) {
+                var updatedIdList = [];
+                for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+                    if (EchoVirtualPosition.elementIdList[i] != null) {
+                        updatedIdList.push(EchoVirtualPosition.elementIdList[i]);
+                    }
+                }
+                EchoVirtualPosition.elementIdList = updatedIdList;
+            }
+        }
+    },
+    
+    /**
+     * Registers an element to be drawn using the virtual positioning system.
+     * The element must meet the following criteria:
+     * <ul>
+     *  <li>Margins and paddings, if set, must be set in pixel units.
+     *  <li>Top, bottom, left, and right coordinates, if set, must be set in pixel 
+     *   units.</li>
+     * </ul>
+     *
+     * @param elementId the elementId to register
+     */
+    register: function(elementId) {
+        if (!EchoVirtualPosition.enabled) {
+            return;
+        }
+        EchoVirtualPosition.elementIdListSorted = false;
+        EchoVirtualPosition.elementIdList.push(elementId);
+        EchoVirtualPosition.elementIdSet.put(elementId, 1);
+    },
+    
+    /**
+     * Lisetener to receive "resize" events from containing browser window.
+     * 
+     * @param e the DOM2 resize event
+     */
+    resizeListener: function(e) {
+        e = e ? e : window.event;
+        EchoVirtualPosition.redraw();
+    },
+    
+    /**
+     * Sorts the array of virtually positioned element ids based on the order in 
+     * which they appear top-to-bottom in the hierarchy.  This is necessary in order
+     * that their positions will be adjusted starting at the highest level in the 
+     * hierarchy.  This method delegates the real work to a recursive 
+     * implementation.
+     */
+    sort: function() {
+        var sortedList = [];
+        EchoVirtualPosition.sortImpl(document.documentElement, sortedList); 
+        EchoVirtualPosition.elementIdList = sortedList;
+        EchoVirtualPosition.elementIdListSorted = true;
+    },
+    
+    /**
+     * Recursive work method to support <code>sort()</code>.
+     * 
+     * @param element the current element of the hierarchy being analyzed.
+     * @param sortedList an array to which element ids will be appended in the
+     *        orde rthe appear in the hierarchy
+     */
+    sortImpl: function(element, sortedList) {
+        // If element has id and element is in set of virtually positioned elements
+        if (element.id && EchoVirtualPosition.elementIdSet.get(element.id)) {
+            sortedList.push(element.id);
+        }
+        
+        for (var child = element.firstChild; child; child = child.nextSibling) {
+            if (child.nodeType == 1) {
+                EchoVirtualPosition.sortImpl(child, sortedList);
+            }
+        }
+    },
+    
+    /**
+     * Parses the specified value as an integer, returning 0 in the event the
+     * specified value cannot be expressed as a number.
+     *
+     * @param value the value to parse, e.g., "20px"
+     * @return the value as a integer, e.g., '20'
+     */
+    toInteger: function(value) {
+        value = parseInt(value);
+        return isNaN(value) ? 0 : value;
+    },
+    
+    /** 
+     * Determines if the specified value contains a pixel dimension, e.g., "20px"
+     * Returns false if the value is null/whitespace/undefined.
+     *
+     * @param value the value to evaluate
+     * @return true if the value is a pixel dimension, false if it is not
+     */
+    verifyPixelValue: function(value) {
+        if (value == null || value == "" || value == undefined) {
+            return false;
+        }
+        var valueString = value.toString();
+        return valueString == "0" || valueString.indexOf("px") != -1;
+    },
+    
+    /** 
+     * Determines if the specified value contains a pixel dimension, e.g., "20px"
+     * Returns true if the value is null/whitespace/undefined.
+     *
+     * @param value the value to evaluate
+     * @return true if the value is null or a pixel dimension, false if it is not
+     */
+    verifyPixelOrUndefinedValue: function(value) {
+        if (value == null || value == "" || value == undefined) {
+            return true;
+        }
+        var valueString = value.toString();
+        return valueString == "0" || valueString.indexOf("px") != -1;
+    },
+    
+    /**
+     * Static object/namespace for EchoVirtualPosition MessageProcessor 
+     * implementation.  Provides capability to register elements with
+     * the Virtual Positioning System.
+     */
+    MessageProcessor: {
 
-/**
- * Parses the specified value as an integer, returning 0 in the event the
- * specified value cannot be expressed as a number.
- *
- * @param value the value to parse, e.g., "20px"
- * @return the value as a integer, e.g., '20'
- */
-EchoVirtualPosition.toInteger = function(value) {
-    value = parseInt(value);
-    return isNaN(value) ? 0 : value;
-};
-
-/** 
- * Determines if the specified value contains a pixel dimension, e.g., "20px"
- * Returns false if the value is null/whitespace/undefined.
- *
- * @param value the value to evaluate
- * @return true if the value is a pixel dimension, false if it is not
- */
-EchoVirtualPosition.verifyPixelValue = function(value) {
-    if (value == null || value == "" || value == undefined) {
-        return false;
-    }
-    var valueString = value.toString();
-    return valueString == "0" || valueString.indexOf("px") != -1;
-};
-
-/** 
- * Determines if the specified value contains a pixel dimension, e.g., "20px"
- * Returns true if the value is null/whitespace/undefined.
- *
- * @param value the value to evaluate
- * @return true if the value is null or a pixel dimension, false if it is not
- */
-EchoVirtualPosition.verifyPixelOrUndefinedValue = function(value) {
-    if (value == null || value == "" || value == undefined) {
-        return true;
-    }
-    var valueString = value.toString();
-    return valueString == "0" || valueString.indexOf("px") != -1;
-};
-
-/**
- * Static object/namespace for EchoVirtualPosition MessageProcessor 
- * implementation.  Provides capability to register elements with
- * the Virtual Positioning System.
- */
-EchoVirtualPosition.MessageProcessor = { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process
- */
-EchoVirtualPosition.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "register":
-                EchoVirtualPosition.MessageProcessor.processRegister(messagePartElement.childNodes[i]);
-                break;
+        /**
+         * MessageProcessor process() implementation 
+         * (invoked by ServerMessage processor).
+         *
+         * @param messagePartElement the <code>message-part</code> element to process
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "register":
+                        EchoVirtualPosition.MessageProcessor.processRegister(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
+            }
+        },
+        
+        /**
+         * Processes a <code>register</code> message register an elmeent with the
+         * <code>EchoVirtualPosition</code> system.
+         *
+         * @param registerElement the <code>register</code> element to process
+         */
+        processRegister: function(registerElement) {
+            var items = registerElement.getElementsByTagName("item");
+            for (var i = 0; i < items.length; ++i) {
+                var elementId = items[i].getAttribute("eid");
+                EchoVirtualPosition.register(elementId);
             }
         }
     }
-};
-
-/**
- * Processes a <code>register</code> message register an elmeent with the
- * <code>EchoVirtualPosition</code> system.
- *
- * @param registerElement the <code>register</code> element to process
- */
-EchoVirtualPosition.MessageProcessor.processRegister = function(registerElement) {
-    var items = registerElement.getElementsByTagName("item");
-    for (var i = 0; i < items.length; ++i) {
-        var elementId = items[i].getAttribute("eid");
-        EchoVirtualPosition.register(elementId);
-    }
-};
+};    
 
 // _______________________
 // Object EchoWindowUpdate
@@ -3293,84 +3305,85 @@ EchoVirtualPosition.MessageProcessor.processRegister = function(registerElement)
  * MessageProcessor implementation to perform browser window-related updates,
  * such as setting the window title.
  */
-EchoWindowUpdate = { };
-
-/**
- * The DOM element to be focused (used by delayed focusing which is required on some browsers). 
- */
-EchoWindowUpdate.focusPendingElement = null;
-
-EchoWindowUpdate.delayFocus = function() {
-    if (EchoWindowUpdate.focusPendingElement && EchoWindowUpdate.focusPendingElement.focus) {
-        try {
-            EchoWindowUpdate.focusPendingElement.focus();
-        } catch (ex) { }
-        EchoWindowUpdate.focusPendingElement = null;
-    }
-};
-
-/**
- * MessageProcessor process() implementation.
- */
-EchoWindowUpdate.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "reload":
-                EchoWindowUpdate.processReload(messagePartElement.childNodes[i]);
-                break;
-            case "set-focus":
-                EchoWindowUpdate.processSetFocus(messagePartElement.childNodes[i]);
-                break;
-            case "set-title":
-                EchoWindowUpdate.processSetTitle(messagePartElement.childNodes[i]);
-                break;
+EchoWindowUpdate = {
+    
+    /**
+     * The DOM element to be focused (used by delayed focusing which is required on some browsers). 
+     */
+    focusPendingElement: null,
+    
+    delayFocus: function() {
+        if (EchoWindowUpdate.focusPendingElement && EchoWindowUpdate.focusPendingElement.focus) {
+            try {
+                EchoWindowUpdate.focusPendingElement.focus();
+            } catch (ex) { }
+            EchoWindowUpdate.focusPendingElement = null;
+        }
+    },
+    
+    /**
+     * MessageProcessor process() implementation.
+     */
+    process: function(messagePartElement) {
+        for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+            if (messagePartElement.childNodes[i].nodeType == 1) {
+                switch (messagePartElement.childNodes[i].tagName) {
+                case "reload":
+                    EchoWindowUpdate.processReload(messagePartElement.childNodes[i]);
+                    break;
+                case "set-focus":
+                    EchoWindowUpdate.processSetFocus(messagePartElement.childNodes[i]);
+                    break;
+                case "set-title":
+                    EchoWindowUpdate.processSetTitle(messagePartElement.childNodes[i]);
+                    break;
+                }
             }
         }
-    }
-};
-
-/**
- * Processes a server directive to reload the entire window
- * (due to an out-of-sync application state).
- * 
- * @param reloadElement the "reload" directive element
- */
-EchoWindowUpdate.processReload = function(reloadElement) {
-    var message = EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"]
-    if (message) {
-        alert(message);
-    }
-    window.location.reload();
-};
-
-/**
- * Processes a server directive to set the focused component.
- *
- * @param setFocusElement the "set-focus" directive element
- */
-EchoWindowUpdate.processSetFocus = function(setFocusElement) {
-    EchoVirtualPosition.redraw();
-    var elementId = setFocusElement.getAttribute("element-id");
-    var element = document.getElementById(elementId);
-    if (EchoClientProperties.get("quirkDelayedFocusRequired")) {
-        this.focusPendingElement = element;
-        window.setTimeout(EchoWindowUpdate.delayFocus, 0);
-    } else {   
-        if (element && element.focus) {
-            element.focus();
+    },
+    
+    /**
+     * Processes a server directive to reload the entire window
+     * (due to an out-of-sync application state).
+     * 
+     * @param reloadElement the "reload" directive element
+     */
+    processReload: function(reloadElement) {
+        var message = EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"]
+        if (message) {
+            alert(message);
         }
+        window.location.reload();
+    },
+    
+    /**
+     * Processes a server directive to set the focused component.
+     *
+     * @param setFocusElement the "set-focus" directive element
+     */
+    processSetFocus: function(setFocusElement) {
+        EchoVirtualPosition.redraw();
+        var elementId = setFocusElement.getAttribute("element-id");
+        var element = document.getElementById(elementId);
+        if (EchoClientProperties.get("quirkDelayedFocusRequired")) {
+            this.focusPendingElement = element;
+            window.setTimeout(EchoWindowUpdate.delayFocus, 0);
+        } else {   
+            if (element && element.focus) {
+                element.focus();
+            }
+        }
+    },
+    
+    /**
+     * Processes a server directive to set the window title.
+     *
+     * @param setTitleElement the "set-title" directive element
+     */
+    processSetTitle: function(setTitleElement) {
+        document.title = setTitleElement.getAttribute("title");
     }
-};
-
-/**
- * Processes a server directive to set the window title.
- *
- * @param setTitleElement the "set-title" directive element
- */
-EchoWindowUpdate.processSetTitle = function(setTitleElement) {
-    document.title = setTitleElement.getAttribute("title");
-};
+};    
 
 // _____________________
 // Static Initialization
