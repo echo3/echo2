@@ -39,7 +39,7 @@ import java.util.Map;
 public class ClientProperties
 implements Serializable {
     
-    // General CSS Quirks describing specific out-of-spec behaviors particular to certain browsers.
+    // General CSS/DOM Quirks describing specific out-of-spec behaviors particular to certain browsers.
     
     /**
      * A quirk flag indicating that CSS positioning values do not work correctly when either both 
@@ -81,10 +81,21 @@ implements Serializable {
      * <p>
      * This quirk occurs with:
      * <ul>
-     *  <li>Internet Explorer 6 (Windows) [<em>Corrected in IE7 Beta 2 Refresh</em>]</li>
+     *  <li>Internet Explorer 6 (Windows)</li>
      * </ul>
      */
     public static final String QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED = "quirkCssBackgroundAttachmentUseFixed";
+
+    /**
+     * A quirk flag indicating that focusing elements should be delayed until the next
+     * JavaScript execution context.
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Internet Explorer 6 (Windows)</li>
+     * </ul>
+     */
+    public static final String QUIRK_DELAYED_FOCUS_REQUIRED = "quirkDelayedFocusRequired";
     
     // Mozilla-specific Quirk Behaviors (behaviors that are more likely to be described as bugs)
     

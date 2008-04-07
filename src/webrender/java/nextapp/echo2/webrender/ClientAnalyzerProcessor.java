@@ -157,6 +157,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
             
             clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
+            clientProperties.setProperty(ClientProperties.QUIRK_DELAYED_FOCUS_REQUIRED, Boolean.TRUE);
 
             clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED, Boolean.TRUE);

@@ -3296,6 +3296,20 @@ EchoVirtualPosition.MessageProcessor.processRegister = function(registerElement)
 EchoWindowUpdate = { };
 
 /**
+ * The DOM element to be focused (used by delayed focusing which is required on some browsers). 
+ */
+EchoWindowUpdate.focusPendingElement = null;
+
+EchoWindowUpdate.delayFocus = function() {
+    if (EchoWindowUpdate.focusPendingElement && EchoWindowUpdate.focusPendingElement.focus) {
+        try {
+            EchoWindowUpdate.focusPendingElement.focus();
+        } catch (ex) { }
+        EchoWindowUpdate.focusPendingElement = null;
+    }
+};
+
+/**
  * MessageProcessor process() implementation.
  */
 EchoWindowUpdate.process = function(messagePartElement) {
@@ -3339,8 +3353,13 @@ EchoWindowUpdate.processSetFocus = function(setFocusElement) {
     EchoVirtualPosition.redraw();
     var elementId = setFocusElement.getAttribute("element-id");
     var element = document.getElementById(elementId);
-    if (element && element.focus) {
-        element.focus();
+    if (EchoClientProperties.get("quirkDelayedFocusRequired")) {
+        this.focusPendingElement = element;
+        window.setTimeout(EchoWindowUpdate.delayFocus, 0);
+    } else {   
+        if (element && element.focus) {
+            element.focus();
+        }
     }
 };
 

@@ -237,6 +237,27 @@ public class RowTest extends SplitPane {
             }
         });
         
+        controlsColumn.addButton("Clear All LayoutData", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int componentCount = testRow.getComponentCount();
+                for (int i = 0; i < componentCount; ++i) {
+                    testRow.getComponent(i).setLayoutData(null);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Set Layout Data of All Items to 100%/count Width", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int componentCount = testRow.getComponentCount();
+                for (int i = 0; i < componentCount; ++i) {
+                    RowLayoutData rowLayoutData = new RowLayoutData();
+                    rowLayoutData.setWidth(new Extent(100 / componentCount, Extent.PERCENT));
+                    rowLayoutData.setBackground(StyleUtil.randomBrightColor());
+                    testRow.getComponent(i).setLayoutData(rowLayoutData);
+                }
+            }
+        });
+        
         controlsColumn.addButton("Set Layout Data (of random item)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int componentCount = testRow.getComponentCount();
