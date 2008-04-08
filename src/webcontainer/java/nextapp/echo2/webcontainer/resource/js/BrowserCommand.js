@@ -35,57 +35,58 @@
  * the client browser.
  * This object/namespace should not be used externally.
  */
-EchoBrowserCommand = { };
+EchoBrowserCommand = { 
+    
+    /**
+     * Static object/namespace for browser command MessageProcessor 
+     * implementation.
+     */
+    MessageProcessor: {
 
-/**
- * Static object/namespace for browser command MessageProcessor 
- * implementation.
- */
-EchoBrowserCommand.MessageProcessor = { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process.
- */
-EchoBrowserCommand.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType == 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "redirect":
-                EchoBrowserCommand.MessageProcessor.processRedirect(messagePartElement.childNodes[i]);
-                break;
-            case "open-window":
-                EchoBrowserCommand.MessageProcessor.processOpenWindow(messagePartElement.childNodes[i]);
-                break;
+        /**
+         * MessageProcessor process() implementation 
+         * (invoked by ServerMessage processor).
+         *
+         * @param messagePartElement the <code>message-part</code> element to process.
+         */
+        process: function(messagePartElement) {
+            for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+                if (messagePartElement.childNodes[i].nodeType == 1) {
+                    switch (messagePartElement.childNodes[i].tagName) {
+                    case "redirect":
+                        EchoBrowserCommand.MessageProcessor.processRedirect(messagePartElement.childNodes[i]);
+                        break;
+                    case "open-window":
+                        EchoBrowserCommand.MessageProcessor.processOpenWindow(messagePartElement.childNodes[i]);
+                        break;
+                    }
+                }
             }
-        }
+        },
+        
+        /**
+         * Processes an <code>open-window</code> command message to display a URI in a
+         * specific or new browser window.
+         *
+         * @param openWindowElement the <code>open-window</code> element to process
+         */
+        processOpenWindow: function(openWindowElement) {
+            var uri = openWindowElement.getAttribute("uri");
+            var name = openWindowElement.getAttribute("name");
+            var features = openWindowElement.getAttribute("features");
+            var replace = openWindowElement.getAttribute("replace") == "true";
+            window.open(uri, name, features, replace);
+        },
+        
+        /**
+         * Processes an <code>redirect</code> to redirect the window containing the
+         * Echo application a new URI.
+         *
+         * @param redirectElement the <code>redirect</code> element to process
+         */
+        processRedirect: function(redirectElement) {
+            var uri = redirectElement.getAttribute("uri");
+            window.location.href = uri;
+        }   
     }
-};
-
-/**
- * Processes an <code>open-window</code> command message to display a URI in a
- * specific or new browser window.
- *
- * @param openWindowElement the <code>open-window</code> element to process
- */
-EchoBrowserCommand.MessageProcessor.processOpenWindow = function(openWindowElement) {
-    var uri = openWindowElement.getAttribute("uri");
-    var name = openWindowElement.getAttribute("name");
-    var features = openWindowElement.getAttribute("features");
-    var replace = openWindowElement.getAttribute("replace") == "true";
-    window.open(uri, name, features, replace);
-};
-
-
-/**
- * Processes an <code>redirect</code> to redirect the window containing the
- * Echo application a new URI.
- *
- * @param redirectElement the <code>redirect</code> element to process
- */
-EchoBrowserCommand.MessageProcessor.processRedirect = function(redirectElement) {
-    var uri = redirectElement.getAttribute("uri");
-    window.location.href = uri;
 };
