@@ -346,16 +346,6 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(SPLIT_PANE_SERVICE.getId());
         renderDisposeDirective(rc, (SplitPane) component);
-
-//BUGBUG. Temporarily removed, pending confirmation that fix is no longer relevant with new client-rendered SplitPane arch.
-//        // Performance Hack for Mozilla/Firefox Browsers:
-//        if (rc.getContainerInstance().getClientProperties()
-//                .getBoolean(ClientProperties.QUIRK_MOZILLA_PERFORMANCE_LARGE_DOM_REMOVE)) {
-//            String elementId = ContainerInstance.getElementId(component);
-//            if (!update.hasRemovedChild(component)) {
-//                DomUpdate.renderElementRemove(rc.getServerMessage(), elementId);
-//            }
-//        }
     }
 
     /**
@@ -378,6 +368,19 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         Extent separatorPosition = (Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION, 
                 DEFAULT_SEPARATOR_POSITION);
         return ExtentRender.toPixels(separatorPosition, 100);
+    }
+    
+    private boolean hasRelocatedChildren(RenderContext rc, ServerComponentUpdate update) {
+        ContainerInstance ci = rc.getContainerInstance();
+        SplitPane splitPane = (SplitPane) update.getParent();
+        RenderStateImpl previous = (RenderStateImpl) ci.getRenderState(splitPane);
+        if (previous == null) {
+            return false;
+        }
+        RenderStateImpl current = new RenderStateImpl(splitPane);
+        
+        return (previous.pane0 != null && previous.pane0.equals(current.pane1))
+                || (previous.pane1 != null && previous.pane1.equals(current.pane0));
     }
     
     /**
@@ -558,7 +561,10 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
             if (!partialUpdateManager.canProcess(rc, update)) {
                 fullReplace = true;
             }
+        } else if (hasRelocatedChildren(rc, update)) {
+            fullReplace = true;
         }
+            System.err.println("fullReplace=" + fullReplace);
         
         if (fullReplace) {
             // Perform full update.
