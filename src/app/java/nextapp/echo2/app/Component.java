@@ -323,7 +323,7 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Adds a property change listener to this component.
+     * Adds a property change listener to this <code>Component</code>.
      *
      * @param l the listener to add
      */
@@ -335,7 +335,7 @@ implements RenderIdSupport, Serializable {
     }
 
     /**
-     * Adds a property change listener to this component for a specific property.
+     * Adds a property change listener to this <code>Component</code> for a specific property.
      * 
      * @param propertyName the name of the property for which to listen
      * @param l the listener to add
@@ -1304,7 +1304,7 @@ implements RenderIdSupport, Serializable {
     }
     
     /**
-     * Removes a property change listener from this <code>Component</code> for a specifc property.
+     * Removes a property change listener from this <code>Component</code> for a specific property.
      *
      * @param propertyName the name of the property for which to listen
      * @param l the listener to be removed
