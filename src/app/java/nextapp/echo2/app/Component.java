@@ -335,6 +335,19 @@ implements RenderIdSupport, Serializable {
     }
 
     /**
+     * Adds a property change listener to this component for a specific property.
+     * 
+     * @param propertyName the name of the property for which to listen
+     * @param l the listener to add
+     */
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener l) {
+        if (propertyChangeSupport == null) {
+            propertyChangeSupport = new PropertyChangeSupport(this);
+        }
+        propertyChangeSupport.addPropertyChangeListener(propertyName, l);
+    }
+
+    /**
      * Internal method to set the render identifier of the<code>Component</code>.
      * This method is invoked by the <code>ApplicationInstance</code>
      * when the component is registered or unregistered, or by manual
@@ -1287,6 +1300,18 @@ implements RenderIdSupport, Serializable {
     public void removePropertyChangeListener(PropertyChangeListener l) {
         if (propertyChangeSupport != null) {
             propertyChangeSupport.removePropertyChangeListener(l);
+        }
+    }
+    
+    /**
+     * Removes a property change listener from this <code>Component</code> for a specifc property.
+     *
+     * @param propertyName the name of the property for which to listen
+     * @param l the listener to be removed
+     */
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener l) {
+        if (propertyChangeSupport != null) {
+            propertyChangeSupport.removePropertyChangeListener(propertyName, l);
         }
     }
     
