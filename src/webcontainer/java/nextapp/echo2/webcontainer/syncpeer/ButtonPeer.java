@@ -537,11 +537,23 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
         Alignment alignment = combineAlignment((Alignment) button.getRenderProperty(AbstractButton.PROPERTY_TEXT_ALIGNMENT),
                 (Alignment) button.getRenderProperty(AbstractButton.PROPERTY_ALIGNMENT));
         AlignmentRender.renderToStyle(textTdCssStyle, alignment, button);
+
+        boolean renderEnabled = button.isRenderEnabled();
+        Font font;
+        if (renderEnabled) {
+            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
+        } else {
+            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FONT);
+            if (font == null) {
+                font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
+            }
+        }
+        FontRender.renderToStyle(textTdCssStyle, font);
         
         if (textTdCssStyle.hasAttributes()) {
             textTdElement.setAttribute("style", textTdCssStyle.renderInline());
         }
-        
+                
         textTdElement.appendChild(textNode);
     }
     
@@ -549,6 +561,10 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
      * Render default CSS style.
      */
     private CssStyle renderDefaultStyle(RenderContext rc, AbstractButton button) {
+        int entityCount = (button.getRenderProperty(AbstractButton.PROPERTY_TEXT) == null ? 1 : 0)
+                + (button.getRenderProperty(AbstractButton.PROPERTY_ICON) == null ? 1 : 0)
+                + (button instanceof ToggleButton ? 1 : 0);         
+        
         CssStyle cssStyle = new CssStyle();
         LayoutDirectionRender.renderToStyle(cssStyle, button.getLayoutDirection(), button.getLocale());
         ExtentRender.renderToStyle(cssStyle, "width", (Extent) button.getRenderProperty(AbstractButton.PROPERTY_WIDTH));
@@ -565,14 +581,13 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
 
         Border border;
         Color foreground, background;
-        Font font;
+        Font font = null;
         FillImage backgroundImage;
         if (!renderEnabled) {
             // Retrieve disabled style information.
             background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BACKGROUND);
             backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BACKGROUND_IMAGE);
             border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_BORDER);
-            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FONT);
             foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FOREGROUND);
 
             // Fallback to normal styles.
@@ -588,25 +603,33 @@ implements ActionProcessor, DomUpdateSupport, ImageRenderSupport, PropertyUpdate
             if (border == null) {
                 border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER);
             }
-            if (font == null) {
-                font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
-            }
             if (foreground == null) {
                 foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND);
+            }
+
+            if (entityCount == 1) {
+                font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_DISABLED_FONT);
+                if (font == null) {
+                    font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
+                }
             }
         } else {
             border = (Border) button.getRenderProperty(AbstractButton.PROPERTY_BORDER);
             foreground = (Color) button.getRenderProperty(AbstractButton.PROPERTY_FOREGROUND);
             background = (Color) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND);
-            font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
             backgroundImage = (FillImage) button.getRenderProperty(AbstractButton.PROPERTY_BACKGROUND_IMAGE);
+            if (entityCount == 1) {
+                font = (Font) button.getRenderProperty(AbstractButton.PROPERTY_FONT);
+            }
         }
         
         BorderRender.renderToStyle(cssStyle, border);
         ColorRender.renderToStyle(cssStyle, foreground, background);
-        FontRender.renderToStyle(cssStyle, font);
         FillImageRender.renderToStyle(cssStyle, rc, this, button, IMAGE_ID_BACKGROUND, backgroundImage, 
                 FillImageRender.FLAG_DISABLE_FIXED_MODE);
+        if (entityCount == 1) {
+            FontRender.renderToStyle(cssStyle, font);
+        }
         InsetsRender.renderToStyle(cssStyle, "padding", (Insets) button.getRenderProperty(AbstractButton.PROPERTY_INSETS));
         
         AlignmentRender.renderToStyle(cssStyle,
