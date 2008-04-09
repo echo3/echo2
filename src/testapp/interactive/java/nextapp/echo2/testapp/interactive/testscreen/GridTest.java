@@ -38,6 +38,7 @@ import nextapp.echo2.app.Grid;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -134,6 +135,24 @@ public class GridTest extends SplitPane {
                         selectCellButton(null);
                     }
                 }
+            }
+        });
+        
+        controlsColumn.addButton("Delete All Cells", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                grid.removeAll();
+            }
+        });
+        
+        controlsColumn.addButton("Add Row-Button Cell", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Row row = new Row();
+                for (int i = 0; i < 3; ++i) {
+                    Button button = new Button("Test (" + i + ") Test");
+                    button.setStyleName("Default");
+                    row.add(button);
+                }
+                grid.add(row);
             }
         });
         
