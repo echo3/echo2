@@ -437,6 +437,15 @@ implements Serializable {
     }
     
     /**
+     * Returns the application-wide <code>StyleSheet</code>, if present.
+     * 
+     * @return the <code>StyleSheet</code>
+     */
+    public StyleSheet getStyleSheet() {
+        return styleSheet;
+    }
+    
+    /**
      * Retrieves the <code>UpdateManager</code> being used to manage the
      * client/server synchronization of this <code>ApplicationInstance</code>
      * 
