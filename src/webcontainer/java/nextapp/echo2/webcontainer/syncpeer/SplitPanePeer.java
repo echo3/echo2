@@ -564,7 +564,6 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         } else if (hasRelocatedChildren(rc, update)) {
             fullReplace = true;
         }
-            System.err.println("fullReplace=" + fullReplace);
         
         if (fullReplace) {
             // Perform full update.
