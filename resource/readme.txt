@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------
-Echo Web Application Framework, version 2.0 (Echo2)
-Copyright (C) 2002-2005 NextApp, Inc.
+Echo Web Application Framework, version 2.1 (Echo2)
+Copyright (C) 2002-2008 NextApp, Inc.
 
-http://www.nextapp.com/products/echo2
+http://echo.nextapp.com
 
 ----------------------------------------------------------------------
 Echo is licensed under the Mozilla Public License.
@@ -22,6 +22,11 @@ This archive/package contains the following directory structure:
 /Licensing          - Contains licensing information.
                       
 ----------------------------------------------------------------------
+Please report any bugs to the bugtracker at http://bugs.nextapp.com.
+For free community-based support, visit 
+http://echo.nextapp.com/site/forum
+
+----------------------------------------------------------------------
 Please feel free to contact NextApp with any questions regarding Echo:
 
 NextApp, Inc.                  http://www.nextapp.com       
@@ -30,3 +35,4 @@ Newport Beach, CA 92660
 USA        
 
 TEL: +1.949.340.2097
+
