@@ -483,7 +483,7 @@
         <mkdir dir="${dir.build.release.root}/BinaryLibraries"/>
         <mkdir dir="${dir.build.release.root}/BinaryApplications"/>
         <mkdir dir="${dir.build.release.root}/Licensing"/>
-        <copy todir="${dir.build.release.root}" file="${dir.resource}/readme.txt"/>
+        <copy todir="${dir.build.release.root}" file="${dir.resource}/ReadMe.txt"/>
         
         <!-- Source Code -->
         <copy todir="${dir.build.release.root}/SourceCode/src">

@@ -6,7 +6,7 @@ http://echo.nextapp.com
 
 ----------------------------------------------------------------------
 Echo is licensed under the Mozilla Public License.
-Please see the "licensing.txt" file in the /Licensing folder for more
+Please see the "Licensing.txt" file in the /Licensing folder for more
 information.
 
 ----------------------------------------------------------------------
