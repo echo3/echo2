@@ -46,7 +46,8 @@
     </patternset>
 
     <!-- Minimize -->
-    <target name="minimize" depends="clean" description="Removes all non-essential files, including Eclipse temporary/build output files">
+    <target name="minimize" depends="clean" 
+            description="Removes all non-essential files, including Eclipse temporary/build output files">
         <delete dir="${dir.temp}"/>
     </target>
     
@@ -293,7 +294,8 @@
     <target name="doc.webcontainer"
             description="Create public/protected JavaDoc Document for Echo Web Application Container">
         <mkdir dir="${dir.javadoc.webcontainer.public}"/>
-        <javadoc sourcepath="${dir.src.app};${dir.src.webrender};${dir.src.webcontainer}" packagenames="nextapp.echo2.webcontainer.*" 
+        <javadoc sourcepath="${dir.src.app};${dir.src.webrender};${dir.src.webcontainer}" 
+                packagenames="nextapp.echo2.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.public}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -309,7 +311,8 @@
     <target name="doc.webcontainer.private"
             description="Create private JavaDoc Document for Echo Web Application Container">
         <mkdir dir="${dir.javadoc.webcontainer.private}"/>
-        <javadoc sourcepath="${dir.src.app};${dir.src.webrender};${dir.src.webcontainer}" packagenames="nextapp.echo2.webcontainer.*" 
+        <javadoc sourcepath="${dir.src.app};${dir.src.webrender};${dir.src.webcontainer}" 
+                packagenames="nextapp.echo2.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.private}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -381,7 +384,8 @@
         <copy todir="${dir.build.testapp.thousandmonkeys}">
             <fileset dir="${dir.htdocs.testapp.thousandmonkeys}"/>
         </copy>
-        <javac srcdir="${dir.src.testapp.thousandmonkeys}" destdir="${dir.build.testapp.thousandmonkeys}/WEB-INF/classes" debug="${debug}" deprecation="yes">
+        <javac srcdir="${dir.src.testapp.thousandmonkeys}" destdir="${dir.build.testapp.thousandmonkeys}/WEB-INF/classes" 
+                debug="${debug}" deprecation="yes">
             <classpath>
                 <pathelement path="${servlet.lib.jar}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.echo.app}"/>
@@ -399,7 +403,8 @@
     <target name="dist.testapp.thousandmonkeys" depends="compile.testapp.thousandmonkeys" 
             description="Builds a web archive of the interactive test application">
         <mkdir dir="${dir.dist.testapp.thousandmonkeys}"/>
-        <jar jarfile="${dir.dist.testapp.thousandmonkeys}/${warfile.testapp.thousandmonkeys}" basedir="${dir.build.testapp.thousandmonkeys}"/>
+        <jar jarfile="${dir.dist.testapp.thousandmonkeys}/${warfile.testapp.thousandmonkeys}" 
+                basedir="${dir.build.testapp.thousandmonkeys}"/>
     </target>
     
     <target name="compile.testapp.webrender" depends="dist">
@@ -412,7 +417,8 @@
         <copy todir="${dir.build.testapp.webrender}">
             <fileset dir="${dir.htdocs.testapp.webrender}"/>
         </copy>
-        <javac srcdir="${dir.src.testapp.webrender}" destdir="${dir.build.testapp.webrender}/WEB-INF/classes" debug="${debug}" deprecation="yes">
+        <javac srcdir="${dir.src.testapp.webrender}" destdir="${dir.build.testapp.webrender}/WEB-INF/classes" debug="${debug}" 
+                deprecation="yes">
             <classpath>
                 <pathelement path="${servlet.lib.jar}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.echo.webrender}"/>
@@ -433,8 +439,10 @@
     <target name="dist.tutorialapp" description="Builds a web archive of the tutorial applications.">
         <ant dir="${dir.src.tutorialapp.numberguess}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
-            <property name="echo2.webcontainer.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
-            <property name="echo2.webrender.lib.jar" value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+            <property name="echo2.webcontainer.lib.jar"
+                    value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" 
+                    value="${dir.src.tutorialapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
         </ant>
     </target>
     
@@ -447,8 +455,10 @@
         <ant dir="${dir.src.exampleapp.chatserver}" target="war" inheritAll="false"/>
         <ant dir="${dir.src.exampleapp.chatclient}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
-            <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
-            <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+            <property name="echo2.webcontainer.lib.jar" 
+                    value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" 
+                    value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
         </ant>
     </target>
     
@@ -459,8 +469,10 @@
     <target name="dist.exampleapp.email">
         <ant dir="${dir.src.exampleapp.email}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
-            <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
-            <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+            <property name="echo2.webcontainer.lib.jar" 
+                    value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" 
+                    value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
         </ant>
     </target>
     
@@ -471,8 +483,10 @@
     <target name="dist.exampleapp.helloworld">
         <ant dir="${dir.src.exampleapp.helloworld}" target="war" inheritAll="false">
             <property name="echo2.app.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.app}"/>
-            <property name="echo2.webcontainer.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
-            <property name="echo2.webrender.lib.jar" value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
+            <property name="echo2.webcontainer.lib.jar" 
+                    value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webcontainer}"/>
+            <property name="echo2.webrender.lib.jar" 
+                    value="${dir.src.exampleapp.torootpath}${dir.dist.lib}/${jarfile.echo.webrender}"/>
         </ant>
     </target>
     

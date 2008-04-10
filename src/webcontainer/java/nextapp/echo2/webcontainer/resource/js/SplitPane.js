@@ -355,15 +355,15 @@ EchoSplitPane = Core.extend({
         var totalSize = vertical ? divElement.offsetHeight : divElement.offsetWidth;
         
         if (newValue < this.paneData[0].minimumSize) {
-    	    this.position = this.paneData[0].minimumSize;
+            this.position = this.paneData[0].minimumSize;
         } else if (this.paneData[0].maximumSize != -1 && newValue > this.paneData[0].maximumSize) {
-    	    this.position = this.paneData[0].maximumSize;
+            this.position = this.paneData[0].maximumSize;
         } else if (newValue > totalSize - this.paneData[1].minimumSize - this.separatorSize) {
-    	    this.position = totalSize - this.paneData[1].minimumSize - this.separatorSize
+            this.position = totalSize - this.paneData[1].minimumSize - this.separatorSize
         } else if (this.paneData[1].maximumSize != -1 && newValue < totalSize - this.paneData[1].maximumSize - this.separatorSize) {
-    	    this.position = totalSize - this.paneData[1].maximumSize - this.separatorSize;
+            this.position = totalSize - this.paneData[1].maximumSize - this.separatorSize;
         } else {
-    	    this.position = newValue;
+            this.position = newValue;
         }
     },
     
@@ -463,7 +463,7 @@ EchoSplitPane.MessageProcessor = {
         var layoutDataElements = addChildMessageElement.getElementsByTagName("layout-data");
         if (layoutDataElements.length > 0) {
             EchoSplitPane.MessageProcessor.processLayoutData(layoutDataElements[0], splitPane.paneData[index]);
-    	    splitPane.paneData[index].applyStyle(document.getElementById(elementId + "_pane" + index));
+            splitPane.paneData[index].applyStyle(document.getElementById(elementId + "_pane" + index));
         }
     },
     

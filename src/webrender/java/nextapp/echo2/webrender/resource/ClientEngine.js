@@ -744,14 +744,14 @@ EchoClientEngine = {
         var uri = EchoClientConfiguration.propertyMap["sessionExpirationUri"];
     
         if (message || uri) {
-    	    if (message) {
-    	        alert(message);
-    	    }
-    	    if (uri) {
-    	        window.location.href = uri;
-    	    } else {
+            if (message) {
+                alert(message);
+            }
+            if (uri) {
+                window.location.href = uri;
+            } else {
                 window.location.reload();
-    	    }
+            }
         } else {
             message = EchoClientConfiguration.propertyMap["defaultSessionExpirationMessage"];
             alert(message);
@@ -767,17 +767,17 @@ EchoClientEngine = {
         var uri = EchoClientConfiguration.propertyMap["serverErrorUri"];
     
         if (message || uri) {
-    	    if (message) {
-    	        alert(message);
-    	    }
-    	    if (uri) {
-    	        window.location.href = uri;
-    	    } else {
-    	        if (EchoServerMessage.transactionCount > 0) {
-    	            // Only reload if not on first transaction to avoid infinite crash loop.
+            if (message) {
+                alert(message);
+            }
+            if (uri) {
+                window.location.href = uri;
+            } else {
+                if (EchoServerMessage.transactionCount > 0) {
+                    // Only reload if not on first transaction to avoid infinite crash loop.
                     window.location.reload();
-    	        }
-    	    }
+                }
+            }
         } else {
             message = EchoClientConfiguration.propertyMap["defaultServerErrorMessage"];
             alert(message);
@@ -1620,38 +1620,38 @@ EchoDomUpdate = {
             var contentElements = domAddElement.getElementsByTagName("content");
             for (var i = 0; i < contentElements.length; ++i) {
                 var parentId = contentElements[i].getAttribute("parent-id");
-        	    var siblingId = contentElements[i].getAttribute("sibling-id");
-        	    var parentElement = document.getElementById(parentId);
-        	    var siblingElement = null;
-        	    if (siblingId) {
-        	        siblingElement = document.getElementById(siblingId);
-        	        if (!siblingElement) {
-        	            throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
-        	        }
-        	    }
-        	    if (!parentElement) {
-        	         throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
-        	    }
+                var siblingId = contentElements[i].getAttribute("sibling-id");
+                var parentElement = document.getElementById(parentId);
+                var siblingElement = null;
+                if (siblingId) {
+                    siblingElement = document.getElementById(siblingId);
+                    if (!siblingElement) {
+                        throw new EchoDomUpdate.TargetNotFoundException("Add", "sibling", siblingId);
+                    }
+                }
+                if (!parentElement) {
+                     throw new EchoDomUpdate.TargetNotFoundException("Add", "parent", parentId);
+                }
         
-        	    for (var j = 0; j < contentElements[i].childNodes.length; ++j) {
-        	        var importedNode = EchoDomUtil.importNode(parentElement.ownerDocument, contentElements[i].childNodes[j], true);
-        	        
-        	        var newElementId = importedNode.getAttribute("id");
-        	        if (!newElementId) {
-        	            throw "Cannot add element without id attribute.";
-        	        }
-        	        if (document.getElementById(newElementId)) {
-        	            throw "Element " + newElementId + " already exists in document; cannot add.";
-        	        }
-        	        
-        	        if (siblingElement) {
-        	            // If sibling specified, perform insert operation.
-        	            parentElement.insertBefore(importedNode, siblingElement);
-        	        } else {
-        	            // Perform append operation.
-        	            parentElement.appendChild(importedNode);
-        	        }
-        	    }
+                for (var j = 0; j < contentElements[i].childNodes.length; ++j) {
+                    var importedNode = EchoDomUtil.importNode(parentElement.ownerDocument, contentElements[i].childNodes[j], true);
+                    
+                    var newElementId = importedNode.getAttribute("id");
+                    if (!newElementId) {
+                        throw "Cannot add element without id attribute.";
+                    }
+                    if (document.getElementById(newElementId)) {
+                        throw "Element " + newElementId + " already exists in document; cannot add.";
+                    }
+                    
+                    if (siblingElement) {
+                        // If sibling specified, perform insert operation.
+                        parentElement.insertBefore(importedNode, siblingElement);
+                    } else {
+                        // Perform append operation.
+                        parentElement.appendChild(importedNode);
+                    }
+                }
             }
         },
         
@@ -2163,7 +2163,7 @@ EchoDomUtil = {
                 element.removeAttribute("style");
             }
         } else {
-    	    element.style.cssText = cssText;
+            element.style.cssText = cssText;
         }
     },
     
@@ -2779,9 +2779,9 @@ EchoScriptLibraryManager = {
     
         try {
             // Obtain source.
-    	    var source = EchoScriptLibraryManager.librarySourceMap[serviceId];
+            var source = EchoScriptLibraryManager.librarySourceMap[serviceId];
     
-    	    // Execute library code.
+            // Execute library code.
             eval(source);
             
             // Clear source.
@@ -3200,13 +3200,13 @@ EchoServerMessage = {
      */
     processPhase1: function() {
         try {
-    	    EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
-    	    EchoServerMessage.loadLibraries();
-    	    if (EchoServerMessage.isLibraryLoadComplete()) {
-    	        EchoServerMessage.processPhase2();
-    	    } else {
-    	        EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
-    	    }
+            EchoServerMessage.status = EchoServerMessage.STATUS_PROCESSING;
+            EchoServerMessage.loadLibraries();
+            if (EchoServerMessage.isLibraryLoadComplete()) {
+                EchoServerMessage.processPhase2();
+            } else {
+                EchoServerMessage.backgroundIntervalId = window.setInterval("EchoServerMessage.waitForLibraries();", 20);
+            }
         } catch (ex) {
             EchoServerMessage.temporaryProperties = null;
             EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 1)", ex);
@@ -3230,13 +3230,13 @@ EchoServerMessage = {
             EchoClientEngine.disableLoadStatus();
             
             // Process message parts contained in server message.
-    		EchoServerMessage.processMessageParts();
+            EchoServerMessage.processMessageParts();
             
-    		EchoServerMessage.processApplicationProperties();
+            EchoServerMessage.processApplicationProperties();
             if (EchoServerMessage.processingCompleteListener) {
-    		    EchoServerMessage.processingCompleteListener();
-    		}
-    		EchoServerMessage.processAsyncConfig();
+                EchoServerMessage.processingCompleteListener();
+            }
+            EchoServerMessage.processAsyncConfig();
         } catch (ex) {
             EchoClientEngine.processClientError("Cannot process ServerMessage (Phase 2)", ex);
             throw ex;
@@ -3463,7 +3463,7 @@ EchoVirtualPosition = {
                 element.style.height = 0;
             } else {
                 if (element.style.height != calculatedHeight + "px") {
-    	            element.style.height = calculatedHeight + "px";
+                    element.style.height = calculatedHeight + "px";
                 }
             }
         }
