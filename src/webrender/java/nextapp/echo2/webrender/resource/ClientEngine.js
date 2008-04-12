@@ -529,6 +529,7 @@ EchoClientAnalyzer = {
             EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenColorDepth", window.screen.colorDepth);
         }
         EchoClientAnalyzer.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset()));
+        EchoClientAnalyzer.setTextProperty(messagePartElement, "unescapedXhrTest", "&amp;");
     },
     
     /**
@@ -1873,6 +1874,16 @@ EchoDomUtil = {
     },
     
     /**
+     * Escapes the text if this browser has a quirk where it does not properly escape
+     * the out going XML.
+     */
+    escapeText: function(text) {
+        text = text.replace(/&/g, "&amp;");
+        text = text.replace(/</g, "&lt;");
+        return text;
+    },
+
+    /**
      * Recursively fixes broken element attributes in a Safari DOM.
      * Safari2 does not properly unescape attributes when retrieving
      * them from an XMLHttpRequest's response DOM.  For example, the attribute
@@ -1898,6 +1909,33 @@ EchoDomUtil = {
         }
     },
     
+    /**
+     * Recursively fixes broken element attributes in a Safari DOM.
+     * Safari does not properly escape attributes when sending them
+     * via XHR. Therefore, we must do this ourselves, manually.
+     *
+     * @param node the starting node whose attributes are to be fixed (child 
+     *        elements will be fixed recursively)
+     */
+    fixSafariEscaping: function(node) {
+        // Attribute Nodes
+        if (node.nodeType == 1) {
+            for (i = 0; i < node.attributes.length; ++i) {
+                var attribute = node.attributes[i];
+                node.setAttribute(attribute.name, EchoDomUtil.escapeText(attribute.nodeValue));
+            }
+        }
+        
+        // Text Nodes
+        if (node.nodeType == 3) {
+            node.nodeValue = EchoDomUtil.escapeText(node.nodeValue);
+        }
+        
+        for (var childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
+            EchoDomUtil.fixSafariEscaping(childNode);
+        }
+    },
+
     /**
      * Returns the base component id of an extended id.
      * Example: for value "c_333_foo", "c_333" would be returned.
@@ -3323,6 +3361,9 @@ EchoServerTransaction = {
         
         EchoServerDelayMessage.activate();
         EchoAsyncMonitor.stop();
+        if (EchoClientProperties.get("quirkSafariUnescapedXHR")) {
+            EchoDomUtil.fixSafariEscaping(EchoClientMessage.messageDocument);
+        }
         var conn = new EchoHttpConnection(EchoClientEngine.baseServerUri + EchoServerTransaction.synchronizeServiceRequest, 
                 "POST", EchoClientMessage.messageDocument, "text/xml");
         conn.responseHandler = EchoServerTransaction.responseHandler;

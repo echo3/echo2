@@ -136,6 +136,22 @@ implements Serializable {
      * </ul>
      */
     public static final String QUIRK_OPERA_NO_CSS_TEXT = "quirkOperaNoCssText";
+
+    /**
+     *  A quirk flag indicating that Safari does not properly escape XML when sending over
+     *  XmlHttpRequest. See https://bugs.webkit.org/show_bug.cgi?id=18421
+     * <p>
+     * This quirk occurs with:
+     * <ul>
+     *  <li>Safari (Windows/Mac)</li>
+     * </ul>
+     */
+    public static final String QUIRK_SAFARI_UNESCAPED_XHR = "quirkSafariUnescapedXHR";
+
+    /**
+     * The test value for determining if the browser escapes XHR requests properly
+     */
+    public static final String UNESCAPED_XHR_TEST = "unescapedXhrTest";
     
     // Internet Explorer-specific Quirk Behaviors (behaviors that are more likely to be described as bugs)
     

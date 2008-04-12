@@ -70,6 +70,7 @@ implements SynchronizeService.ClientMessagePartProcessor {
         set.add(ClientProperties.SCREEN_HEIGHT);
         set.add(ClientProperties.SCREEN_COLOR_DEPTH);
         set.add(ClientProperties.UTC_OFFSET);
+        set.add(ClientProperties.UNESCAPED_XHR_TEST);
         VALID_PROPERTIES = Collections.unmodifiableSet(set);
     }
     
@@ -199,6 +200,10 @@ implements SynchronizeService.ClientMessagePartProcessor {
         if (browserSafari) {
             clientProperties.setProperty(ClientProperties.QUIRK_SELECT_REQUIRES_NULL_OPTION, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_MANIPULATION, Boolean.TRUE);
+            String unescapeTest = clientProperties.getString(ClientProperties.UNESCAPED_XHR_TEST);
+            if (unescapeTest.equals("&")) {
+                clientProperties.setProperty(ClientProperties.QUIRK_SAFARI_UNESCAPED_XHR, Boolean.TRUE);
+            }
         }
     }
     
