@@ -1918,11 +1918,31 @@ EchoDomUtil = {
      *        elements will be fixed recursively)
      */
     fixSafariEscaping: function(node) {
-        // Attribute Nodes
+        // Element node attributes
         if (node.nodeType == 1) {
-            for (i = 0; i < node.attributes.length; ++i) {
-                var attribute = node.attributes[i];
-                node.setAttribute(attribute.name, EchoDomUtil.escapeText(attribute.nodeValue));
+            /*
+             * NOTE:
+             * The below code to iterate over the attributes of a node
+             * is the way it is due to a bug in Safari 2.0 (atleast
+             * WebKit 418.x through 419.x). Normally, we would be able
+             * to simply do:
+             * 
+             * for (i = 0; i < node.attributes.length; ++i) {
+             *       var attribute = node.attributes[i];
+             * 
+             * However, in the buggy versions of WebKit, merly calling
+             * node.attributes[i] for some reason causes all attribute
+             * values to be empty when serializing the DOM out during the
+             * XHR response. Therefore, we must work around this bug
+             * by iterating over all child nodes and finding the ones
+             * that are attribute nodes, instead.
+             */
+            for (var i = 0; i < node.childNodes.length; ++i) {
+                var cn = node.childNodes[i];
+                if (cn.nodeType == 2) {
+                    var attribute = cn;
+                    node.setAttribute(attribute.name, EchoDomUtil.escapeText(attribute.nodeValue));
+                }
             }
         }
         
