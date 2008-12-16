@@ -1840,9 +1840,14 @@ EchoDomUtil = {
     createDocument: function(namespaceUri, qualifiedName) {
         if (document.implementation && document.implementation.createDocument) {
             // DOM Level 2 Browsers
-            var dom = document.implementation.createDocument(namespaceUri, qualifiedName, null);
-            if (!dom.documentElement) {
-                dom.appendChild(dom.createElement(qualifiedName));
+            var dom;
+            if (EchoClientProperties.get("browserMozillaFirefox") && 
+                    EchoClientProperties.get("browserVersionMajor") == 3 && EchoClientProperties.get("browserVersionMinor") == 0) {
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=431701
+                dom = new DOMParser().parseFromString("<?xml version='1.0' encoding='UTF-8'?><" + qualifiedName + "/>",
+                        "application/xml");
+            } else {
+                dom = document.implementation.createDocument(namespaceUri, qualifiedName, null);
             }
             return dom;
         } else if (window.ActiveXObject) {

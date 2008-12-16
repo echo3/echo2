@@ -130,6 +130,10 @@ implements SynchronizeService.ClientMessagePartProcessor {
             clientProperties.setProperty(ClientProperties.BROWSER_MOZILLA, Boolean.TRUE);
             if (browserFireFox) {
                 clientProperties.setProperty(ClientProperties.BROWSER_MOZILLA_FIREFOX, Boolean.TRUE);
+                if (userAgent.indexOf("firefox/3.0") != -1) {
+                    majorVersion = 3;
+                    minorVersion = 0;
+                }
             }
         } else if (browserInternetExplorer) {
             clientProperties.setProperty(ClientProperties.BROWSER_INTERNET_EXPLORER, Boolean.TRUE);
