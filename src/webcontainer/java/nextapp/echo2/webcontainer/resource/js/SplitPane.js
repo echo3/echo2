@@ -35,6 +35,9 @@ EchoSplitPane = Core.extend({
     
     $static: {
 
+        /**
+         * The active EchoSplitPane instance, on which a drag operation is being performed.
+         */
         activeInstance: null,
         
         ORIENTATION_VERTICAL_TOP_BOTTOM: 0,
@@ -69,6 +72,9 @@ EchoSplitPane = Core.extend({
             EchoDomUtil.preventEventDefault(window.event);
         },
         
+        /**
+         * Processes a separator mouse down event.  Event is relayed to appropriate SplitPane instance.
+         */
         processSeparatorMouseDown: function(echoEvent) {
             var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
             if (!EchoClientEngine.verifyInput(componentId)) {
@@ -78,6 +84,9 @@ EchoSplitPane = Core.extend({
             splitPane.processSeparatorMouseDown(echoEvent);
         },
         
+        /**
+         * Processes a separator mouse mouse event.  Event is relayed to appropriate SplitPane instance.
+         */
         processSeparatorMouseMove: function(e) {
             e = e ? e : window.event;
             if (EchoSplitPane.activeInstance) {
@@ -85,6 +94,9 @@ EchoSplitPane = Core.extend({
             }
         },
         
+        /**
+         * Processes a separator mouse up event.  Event is relayed to appropriate SplitPane instance.
+         */
         processSeparatorMouseUp: function(e) {
             e = e ? e : window.event;
             if (EchoSplitPane.activeInstance) {
@@ -93,6 +105,14 @@ EchoSplitPane = Core.extend({
         }
     },
 
+    /**
+     * Creates a new EchoSplitPane instance.
+     * 
+     * @param elementId the element id
+     * @param containerElementId the container element id
+     * @param orientation the orientation
+     * @param position the initial separator position
+     */
     $construct: function(elementId, containerElementId, orientation, position) {
         this.elementId = elementId;
         this.containerElementId = containerElementId;
@@ -272,6 +292,9 @@ EchoSplitPane = Core.extend({
         }
     },
     
+    /**
+     * Disposes of resources used by this object.
+     */
     dispose: function() {
         if (this.separatorSize > 0 && this.resizable) {
             EchoEventProcessor.removeHandler(this.elementId + "_separator", "mousedown");
@@ -282,11 +305,21 @@ EchoSplitPane = Core.extend({
         this.paneData = undefined;
     },
     
+    /**
+     * Determines if the split pane's orientation is vertical.
+     * 
+     * @return true if the orientation is vertical, false if it is not.
+     */
     isOrientationVertical: function() {
         return this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM 
                 || this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
     },
     
+    /**
+     * Processes a mouse down event on the split pane separator.
+     * 
+     * @param echoEvent the event
+     */
     processSeparatorMouseDown: function(echoEvent) {
         EchoSplitPane.activeInstance = this;
         this.dragInitPosition = this.position;
@@ -306,6 +339,11 @@ EchoSplitPane = Core.extend({
         }
     },
     
+    /**
+     * Processes a mouse move event on the split pane separator.
+     * 
+     * @param echoEvent the event
+     */
     processSeparatorMouseMove: function(e) {
         switch (this.orientation) {
         case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
@@ -324,6 +362,11 @@ EchoSplitPane = Core.extend({
         this.update();
     },
     
+    /**
+     * Processes a mouse up event on the split pane separator.
+     * 
+     * @param echoEvent the event
+     */
     processSeparatorMouseUp: function(e) {
         EchoSplitPane.activeInstance = null;
         this.removeListeners();
@@ -331,6 +374,9 @@ EchoSplitPane = Core.extend({
         EchoVirtualPosition.redraw();
     },
     
+    /**
+     * Removes temporary listeners used during split pane drags.
+     */
     removeListeners: function() {
         EchoDomUtil.removeEventListener(document, "mousemove", EchoSplitPane.processSeparatorMouseMove, false);
         EchoDomUtil.removeEventListener(document, "mouseup", EchoSplitPane.processSeparatorMouseUp, false);
@@ -339,6 +385,11 @@ EchoSplitPane = Core.extend({
         }
     },
     
+    /**
+     * Resets the state of a subpane after a child has been removed.
+     * 
+     * @param index the index of the removed pane
+     */
     resetPane: function(index) {
         var paneData = new EchoSplitPane.PaneData();
         var paneDivElement = document.getElementById(this.elementId + "_pane" + index);
@@ -353,6 +404,9 @@ EchoSplitPane = Core.extend({
         paneData.applyStyle(paneDivElement);
     },
     
+    /**
+     * Sets the position of the separator, bounding it within configured minimums/maximums.
+     */
     setPosition: function(newValue) {
         var divElement = document.getElementById(this.elementId);
         var vertical = this.isOrientationVertical();
@@ -371,6 +425,14 @@ EchoSplitPane = Core.extend({
         }
     },
     
+    /**
+     * Updates the rendered state of the split pane.
+     * If no arguments are specified, pane DIV elements will be determined based on ids/document.getElementById()
+     * 
+     * @param firstPaneDivElement the first pane DIV element
+     * @param secondPaneDivElement the second pane DIV element
+     * @param separatorDivElement the separator DIV element
+     */
     update: function(firstPaneDivElement, secondPaneDivElement, separatorDivElement) {
         if (arguments.length == 0) {
             firstPaneDivElement = document.getElementById(this.elementId + "_pane0");
@@ -549,6 +611,12 @@ EchoSplitPane.MessageProcessor = {
         }
     },
     
+    /**
+     * Processes layout data information for child components.
+     * 
+     * @param layoutDataElement the <code>layout-data</code> element
+     * @param paneData the <code>EchoSplitPane.PaneData</code> object for the child pane 
+     */
     processLayoutData: function(layoutDataElement, paneData) {
         if (layoutDataElement.getAttribute("alignment")) {
             paneData.alignment = layoutDataElement.getAttribute("alignment");
@@ -600,8 +668,14 @@ EchoSplitPane.MessageProcessor = {
     }
 };
 
+/**
+ * Data providing information about a single child pane in a SplitPane.
+ */
 EchoSplitPane.PaneData = Core.extend({
 
+    /**
+     * Creates a new <code>PaneData</code>.
+     */
     $construct: function() {
         this.alignment = null;
         this.background = null;
@@ -612,6 +686,11 @@ EchoSplitPane.PaneData = Core.extend({
         this.overflow = null;
     },
 
+    /**
+     * Renders style information in this PaneData to the specified pane container element.
+     * 
+     * @param paneDivElement the element
+     */
     applyStyle: function(paneDivElement) {
         if (this.alignment) {
             EchoCssUtil.applyStyle(paneDivElement, this.alignment);
