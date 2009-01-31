@@ -120,26 +120,26 @@ EchoCoreProperties.Insets = Core.extend({
      * @param insetsString the string
      */
     loadValuesFromString: function(insetsString) {
-        insetsString = new String(insetsString);
+        insetsString = insetsString.toString();
         var elements = insetsString.split(" ");
         switch (elements.length) {
         case 1:
-            this.top = this.left = this.right = this.bottom = parseInt(elements[0]);
+            this.top = this.left = this.right = this.bottom = parseInt(elements[0], 10);
             break;
         case 2:
-            this.top = this.bottom = parseInt(elements[0]);
-            this.right = this.left = parseInt(elements[1]);
+            this.top = this.bottom = parseInt(elements[0], 10);
+            this.right = this.left = parseInt(elements[1], 10);
             break;
         case 3:
-            this.top = parseInt(elements[0]);
-            this.right = this.left = parseInt(elements[1]);
-            this.bottom = parseInt(elements[2]);
+            this.top = parseInt(elements[0], 10);
+            this.right = this.left = parseInt(elements[1], 10);
+            this.bottom = parseInt(elements[2], 10);
             break;
         case 4:
-            this.top = parseInt(elements[0]);
-            this.right = parseInt(elements[1]);
-            this.bottom = parseInt(elements[2]);
-            this.left = parseInt(elements[3]);
+            this.top = parseInt(elements[0], 10);
+            this.right = parseInt(elements[1], 10);
+            this.bottom = parseInt(elements[2], 10);
+            this.left = parseInt(elements[3], 10);
             break;
         default:
             throw "Illegal inset value: " + insetsString;
@@ -152,7 +152,7 @@ EchoCoreProperties.Insets = Core.extend({
     toString: function(insetsString) {
         if (this.top == this.bottom && this.right == this.left) {
             if (this.top == this.right) {
-                return this.top + "px"
+                return this.top + "px";
             } else {
                 return this.top + "px " + this.right + "px";
             }
