@@ -273,7 +273,7 @@ implements Serializable {
      * <p>
      * This proprietary feature is provided by:
      * <ul>
-     *  <li>Internet Explorer 6 (Windows) [<em>Not neccesary with IE7 Beta 2 Refresh</em>]</li>
+     *  <li>Internet Explorer 6 (Windows) [<em>Not necessary with IE7 Beta 2 Refresh</em>]</li>
      * </ul>
      */
     public static final String PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED = "proprietaryIEPngAlphaFilterRequired";
