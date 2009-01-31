@@ -170,17 +170,17 @@ EchoTextComponent = Core.extend({
             element.value = this.text;
         }
     
-        if (this.horizontalScroll != 0) {
+        if (this.horizontalScroll !== 0) {
             element.scrollLeft = this.horizontalScroll;
         }
         
         this.multipleLines = element.nodeName.toLowerCase() != "input";
         
-        if (this.verticalScroll != 0) {
+        if (this.verticalScroll !== 0) {
             if (EchoClientProperties.get("quirkIERepaint")) {
                 // Avoid IE quirk where browser will fail to set scroll bar position.
                 var originalWidth = element.style.width;
-                var temporaryWidth = parseInt(element.clientWidth) - 1;
+                var temporaryWidth = parseInt(element.clientWidth, 10) - 1;
                 element.style.width = temporaryWidth + "px";
                 element.style.width = originalWidth;
             }
@@ -383,10 +383,10 @@ EchoTextComponent.MessageProcessor = {
             textComponent.text =  item.getAttribute("text") ? item.getAttribute("text") : null;
             textComponent.serverNotify = item.getAttribute("server-notify") == "true";
             textComponent.maximumLength = item.getAttribute("maximum-length") ? item.getAttribute("maximum-length") : -1;
-            textComponent.horizontalScroll = item.getAttribute("horizontal-scroll") 
-                    ? parseInt(item.getAttribute("horizontal-scroll")) : 0;
-            textComponent.verticalScroll = item.getAttribute("vertical-scroll") 
-                    ? parseInt(item.getAttribute("vertical-scroll")) : 0;
+            textComponent.horizontalScroll = item.getAttribute("horizontal-scroll") ? 
+                    parseInt(item.getAttribute("horizontal-scroll"), 10) : 0;
+            textComponent.verticalScroll = item.getAttribute("vertical-scroll") ? 
+                    parseInt(item.getAttribute("vertical-scroll"), 10) : 0;
                     
             textComponent.init();
         }
