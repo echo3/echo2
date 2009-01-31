@@ -45,7 +45,7 @@ implements Pane, PaneContainer {
     /**
      * An <code>orientation</code> constant indicating that the 
      * <code>SplitPane</code> should be laid out horizontally with the
-     * first (fixed-sze) pane in the leading position.
+     * first (fixed-size) pane in the leading position.
      * The leading position is on the left side for left-to-right languages
      * and on the right side for right-to-left languages.
      */
@@ -54,7 +54,7 @@ implements Pane, PaneContainer {
     /**
      * An <code>orientation</code> constant indicating that the 
      * <code>SplitPane</code> should be laid out horizontally with the
-     * first (fixed-sze) pane in the trailing position.
+     * first (fixed-size) pane in the trailing position.
      * The trailing position is on the right side for left-to-right languages
      * and on the left side for right-to-left languages.
      */
@@ -63,28 +63,28 @@ implements Pane, PaneContainer {
     /**
      * An <code>orientation</code> constant indicating that the 
      * <code>SplitPane</code> should be laid out horizontally with the
-     * first (fixed-sze) pane in the left position.
+     * first (fixed-size) pane in the left position.
      */
     public static final int ORIENTATION_HORIZONTAL_LEFT_RIGHT = 3;
 
     /**
      * An <code>orientation</code> constant indicating that the 
      * <code>SplitPane</code> should be laid out horizontally with the
-     * first (fixed-sze) pane in the right position.
+     * first (fixed-size) pane in the right position.
      */
     public static final int ORIENTATION_HORIZONTAL_RIGHT_LEFT = 4;
 
     /**
      * An <code>orientation</code> constant indicating that the 
      * <code>SplitPane</code> should be laid out vertically with the
-     * first (fixed-sze) pane in the top position.
+     * first (fixed-size) pane in the top position.
      */
     public static final int ORIENTATION_VERTICAL_TOP_BOTTOM = 5;
 
     /**
      * An <code>orientation</code> constant indicating that the 
      * <code>SplitPane</code> should be laid out vertically with the
-     * first (fixed-sze) pane in the bottom position.
+     * first (fixed-size) pane in the bottom position.
      */
     public static final int ORIENTATION_VERTICAL_BOTTOM_TOP = 6;
     

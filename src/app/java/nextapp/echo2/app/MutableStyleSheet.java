@@ -32,8 +32,6 @@ package nextapp.echo2.app;
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO: Potential add removeStyle(), iterator() methods.
-
 /**
  * A mutable implementation of a <code>StyleSheet</code>. 
  */

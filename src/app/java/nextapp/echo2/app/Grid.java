@@ -76,7 +76,7 @@ public class Grid extends Component {
     }
     
     /**
-     * Creates a new hoirzontally-oriented <code>Grid</code> with the 
+     * Creates a new horizontally-oriented <code>Grid</code> with the 
      * specified size.
      * 
      * @param size the number of columns
