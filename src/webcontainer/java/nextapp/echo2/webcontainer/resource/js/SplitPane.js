@@ -147,10 +147,10 @@ EchoSplitPane = Core.extend({
         splitPaneDivElement.id = this.elementId;
         splitPaneDivElement.style.position = "absolute";
         splitPaneDivElement.style.overflow = "hidden";
-        splitPaneDivElement.style.top = "0px"
-        splitPaneDivElement.style.bottom = "0px"
-        splitPaneDivElement.style.left = "0px"
-        splitPaneDivElement.style.right = "0px"
+        splitPaneDivElement.style.top = "0px";
+        splitPaneDivElement.style.bottom = "0px";
+        splitPaneDivElement.style.left = "0px";
+        splitPaneDivElement.style.right = "0px";
         EchoVirtualPosition.register(splitPaneDivElement.id);
         if (this.background != null) {
             splitPaneDivElement.style.background = this.background;
@@ -311,8 +311,8 @@ EchoSplitPane = Core.extend({
      * @return true if the orientation is vertical, false if it is not.
      */
     isOrientationVertical: function() {
-        return this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM 
-                || this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
+        return this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM || 
+                this.orientation == EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP;
     },
     
     /**
@@ -396,7 +396,7 @@ EchoSplitPane = Core.extend({
         while (paneDivElement.childNodes.length > 0) {
             paneDivElement.removeChild(paneDivElement.lastChild);
         }
-        if (index == 0) {
+        if (index === 0) {
             this.paneData[0] = paneData;
         } else {
             this.paneData[1] = paneData;
@@ -417,7 +417,7 @@ EchoSplitPane = Core.extend({
         } else if (this.paneData[0].maximumSize != -1 && newValue > this.paneData[0].maximumSize) {
             this.position = this.paneData[0].maximumSize;
         } else if (newValue > totalSize - this.paneData[1].minimumSize - this.separatorSize) {
-            this.position = totalSize - this.paneData[1].minimumSize - this.separatorSize
+            this.position = totalSize - this.paneData[1].minimumSize - this.separatorSize;
         } else if (this.paneData[1].maximumSize != -1 && newValue < totalSize - this.paneData[1].maximumSize - this.separatorSize) {
             this.position = totalSize - this.paneData[1].maximumSize - this.separatorSize;
         } else {
@@ -434,7 +434,9 @@ EchoSplitPane = Core.extend({
      * @param separatorDivElement the separator DIV element
      */
     update: function(firstPaneDivElement, secondPaneDivElement, separatorDivElement) {
-        if (arguments.length == 0) {
+        var firstHeight, firstWidth;
+        
+        if (arguments.length === 0) {
             firstPaneDivElement = document.getElementById(this.elementId + "_pane0");
             secondPaneDivElement = document.getElementById(this.elementId + "_pane1");
             separatorDivElement = document.getElementById(this.elementId + "_separator");
@@ -442,7 +444,7 @@ EchoSplitPane = Core.extend({
     
         switch (this.orientation) {
         case EchoSplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM:
-            var firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
+            firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
             firstPaneDivElement.style.height = (firstHeight > 0 ? firstHeight : 0) + "px";
             secondPaneDivElement.style.top = (this.position + this.separatorSize) + "px";
             if (separatorDivElement) {
@@ -450,7 +452,7 @@ EchoSplitPane = Core.extend({
             }
             break;
         case EchoSplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP:
-            var firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
+            firstHeight = this.position - EchoSplitPane.getPaddingHeight(this.paneData[0]);
             firstPaneDivElement.style.height = (firstHeight > 0 ? firstHeight : 0) + "px";
             secondPaneDivElement.style.bottom = (this.position + this.separatorSize) + "px";
             if (separatorDivElement) {
@@ -458,7 +460,7 @@ EchoSplitPane = Core.extend({
             }
             break;
         case EchoSplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT:
-            var firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
+            firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
             firstPaneDivElement.style.width = (firstWidth > 0 ? firstWidth : 0) + "px";
             secondPaneDivElement.style.left = (this.position + this.separatorSize) + "px";
             if (separatorDivElement) {
@@ -466,7 +468,7 @@ EchoSplitPane = Core.extend({
             }
             break;
         case EchoSplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT:
-            var firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
+            firstWidth = this.position - EchoSplitPane.getPaddingWidth(this.paneData[0]);
             firstPaneDivElement.style.width = (firstWidth > 0 ? firstWidth : 0) + "px";
             secondPaneDivElement.style.right = (this.position + this.separatorSize) + "px";
             if (separatorDivElement) {
@@ -475,7 +477,6 @@ EchoSplitPane = Core.extend({
             break;
         default:
             throw new Error("Illegal orientation: " + this.orientation);
-            break;
         }
     }
 });
@@ -524,7 +525,7 @@ EchoSplitPane.MessageProcessor = {
     processAddChild: function(addChildMessageElement) {
         var elementId = addChildMessageElement.getAttribute("eid");
         var splitPane = EchoSplitPane.getComponent(elementId);
-        var index = parseInt(addChildMessageElement.getAttribute("index"));
+        var index = parseInt(addChildMessageElement.getAttribute("index"), 10);
         
         var layoutDataElements = addChildMessageElement.getElementsByTagName("layout-data");
         if (layoutDataElements.length > 0) {
@@ -572,7 +573,7 @@ EchoSplitPane.MessageProcessor = {
         default:
             throw new Error("Illegal orientation.");
         }
-        var position = parseInt(initMessageElement.getAttribute("position"));
+        var position = parseInt(initMessageElement.getAttribute("position"), 10);
         
         var splitPane = new EchoSplitPane(elementId, containerElementId, orientation, position);
         
@@ -586,7 +587,7 @@ EchoSplitPane.MessageProcessor = {
             splitPane.font = initMessageElement.getAttribute("font");
         }
         if (initMessageElement.getAttribute("separator-size")) {
-            splitPane.separatorSize = parseInt(initMessageElement.getAttribute("separator-size"));
+            splitPane.separatorSize = parseInt(initMessageElement.getAttribute("separator-size"), 10);
         }
         if (initMessageElement.getAttribute("separator-color")) {
             splitPane.separatorColor = initMessageElement.getAttribute("separator-color");
@@ -600,7 +601,7 @@ EchoSplitPane.MessageProcessor = {
         
         var layoutDataElements = initMessageElement.getElementsByTagName("layout-data");
         for (var i = 0; i < layoutDataElements.length; ++i) {
-            var paneData = layoutDataElements[i].getAttribute("index") == 0 ? splitPane.paneData[0] : splitPane.paneData[1];
+            var paneData = layoutDataElements[i].getAttribute("index") === 0 ? splitPane.paneData[0] : splitPane.paneData[1];
             EchoSplitPane.MessageProcessor.processLayoutData(layoutDataElements[i], paneData);
         }
         
@@ -634,10 +635,10 @@ EchoSplitPane.MessageProcessor = {
             paneData.overflow = layoutDataElement.getAttribute("overflow");
         }
         if (layoutDataElement.getAttribute("min-size")) {
-            paneData.minimumSize = parseInt(layoutDataElement.getAttribute("min-size"));
+            paneData.minimumSize = parseInt(layoutDataElement.getAttribute("min-size"), 10);
         }
         if (layoutDataElement.getAttribute("max-size")) {
-            paneData.maximumSize = parseInt(layoutDataElement.getAttribute("max-size"));
+            paneData.maximumSize = parseInt(layoutDataElement.getAttribute("max-size"), 10);
         }
     },
     
@@ -649,7 +650,7 @@ EchoSplitPane.MessageProcessor = {
     processRemoveChild: function(removeChildMessageElement) {
         var elementId = removeChildMessageElement.getAttribute("eid");
         var splitPane = EchoSplitPane.getComponent(elementId);
-        var index = parseInt(removeChildMessageElement.getAttribute("index"));
+        var index = parseInt(removeChildMessageElement.getAttribute("index"), 10);
         splitPane.resetPane(index);
     },
     
@@ -663,7 +664,7 @@ EchoSplitPane.MessageProcessor = {
     processSetSeparatorPosition: function(setSeparatorPositionMessageElement) {
         var elementId = setSeparatorPositionMessageElement.getAttribute("eid");
         var splitPane = EchoSplitPane.getComponent(elementId);
-        splitPane.position = parseInt(setSeparatorPositionMessageElement.getAttribute("position"));
+        splitPane.position = parseInt(setSeparatorPositionMessageElement.getAttribute("position"), 10);
         splitPane.update();
     }
 };
