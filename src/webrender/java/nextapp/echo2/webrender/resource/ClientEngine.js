@@ -535,7 +535,7 @@ EchoClientAnalyzer = {
      * @param propertyValue the property value
      */
     setBooleanProperty: function(messagePartElement, propertyName, propertyValue) {
-        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        var propertyElement = messagePartElement.ownerDocument.createElement("property");
         propertyElement.setAttribute("type", "boolean");
         propertyElement.setAttribute("name", propertyName);
         propertyElement.setAttribute("value", propertyValue ? "true" : "false");
@@ -555,7 +555,7 @@ EchoClientAnalyzer = {
         if (isNaN(intValue)) {
             return;
         }
-        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        var propertyElement = messagePartElement.ownerDocument.createElement("property");
         propertyElement.setAttribute("type", "integer");
         propertyElement.setAttribute("name", propertyName);
         propertyElement.setAttribute("value", intValue);
@@ -571,7 +571,7 @@ EchoClientAnalyzer = {
      * @param propertyValue the property value
      */
     setTextProperty: function(messagePartElement, propertyName, propertyValue) {
-        propertyElement = messagePartElement.ownerDocument.createElement("property");
+        var propertyElement = messagePartElement.ownerDocument.createElement("property");
         propertyElement.setAttribute("type", "text");
         propertyElement.setAttribute("name", propertyName);
         propertyElement.setAttribute("value", propertyValue);
