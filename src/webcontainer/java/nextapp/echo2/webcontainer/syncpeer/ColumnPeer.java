@@ -340,7 +340,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      * @param parentNode the containing node to which the child
      *        should be appended
      * @param column the <code>Column</code> being updated
-     * @param child the child preceeding the spacing column
+     * @param child the child preceding the spacing column
      */
     private void renderSpacingCell(Node parentNode, Column column, Component child) {
         Extent cellSpacing = (Extent) column.getRenderProperty(Column.PROPERTY_CELL_SPACING);
@@ -365,7 +365,6 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         // Determine if fully replacing the component is required.
         boolean fullReplace = false;
         if (update.hasUpdatedLayoutDataChildren()) {
-            // TODO: Perform fractional update on LayoutData change instead of full replace.
             fullReplace = true;
         } else if (update.hasUpdatedProperties()) {
             if (!partialUpdateManager.canProcess(rc, update)) {

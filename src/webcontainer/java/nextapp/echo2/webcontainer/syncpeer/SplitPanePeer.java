@@ -74,8 +74,6 @@ import org.w3c.dom.Element;
 public class SplitPanePeer 
 implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer {
     
-    //TODO: Performance can be improved by implementing PartialUpdateManagers.
-    
     private static final String IMAGE_ID_HORIZONTAL_SEPARATOR = "horizontalSeparator";
     private static final String IMAGE_ID_PANE_0_BACKGROUND = "pane0Background";
     private static final String IMAGE_ID_PANE_1_BACKGROUND = "pane1Background";
@@ -137,7 +135,8 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
     private PartialUpdateParticipant separatorPositionUpdate = new PartialUpdateParticipant() {
     
         /**
-         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
          */
         public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
             SplitPane splitPane = (SplitPane) update.getParent();
@@ -145,7 +144,8 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         }
     
         /**
-         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate)
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
          */
         public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
             return true;
@@ -219,7 +219,6 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
      */
     private ImageReference getPaneBackgroundImage(Component component) {
         LayoutData layoutData = (LayoutData) component.getRenderProperty(SplitPane.PROPERTY_LAYOUT_DATA);
-        //TODO. Investigate use of instanceof here.
         if (!(layoutData instanceof SplitPaneLayoutData)) {
             return null;
         }
@@ -230,6 +229,13 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         return backgroundImage.getImage();
     }
 
+    /**
+     * Determines the rendered orientation of the SplitPane, converting leading/trailing orientations to left/right
+     * orientations based on layout direction.
+     * 
+     * @param splitPane the <code>SplitPane</code>
+     * @return the rendered orientation
+     */
     private int getRenderOrientation(SplitPane splitPane) {
         Integer orientationValue = (Integer) splitPane.getRenderProperty(SplitPane.PROPERTY_ORIENTATION);
         int orientation = orientationValue == null ? SplitPane.ORIENTATION_HORIZONTAL_LEADING_TRAILING 
@@ -290,6 +296,14 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         updateRenderState(rc, splitPane);
     }
     
+    /**
+     * Renders a directive to add a child component.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @param splitPane the <code>SplitPane</code>
+     * @param index the index of the child to add
+     */
     private void renderAddChildDirective(RenderContext rc, ServerComponentUpdate update, SplitPane splitPane, int index) {
         String elementId = ContainerInstance.getElementId(splitPane);
         ServerMessage serverMessage = rc.getServerMessage();
@@ -364,12 +378,27 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         initElement.setAttribute("eid", elementId);
     }
 
+    /**
+     * Determines the separator position of the <code>SplitPane</code>.
+     * 
+     * @param splitPane the <code>SplitPane</code>
+     * @return the separator position
+     */
     private int getSeparatorPosition(SplitPane splitPane) {
         Extent separatorPosition = (Extent) splitPane.getRenderProperty(SplitPane.PROPERTY_SEPARATOR_POSITION, 
                 DEFAULT_SEPARATOR_POSITION);
         return ExtentRender.toPixels(separatorPosition, 100);
     }
     
+    /**
+     * Determines if the specified update has caused either child of the SplitPane to
+     * be relocated (i.e., a child which existed before continues to exist, but at a
+     * different index).
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     * @return true if any children have been relocated
+     */
     private boolean hasRelocatedChildren(RenderContext rc, ServerComponentUpdate update) {
         ContainerInstance ci = rc.getContainerInstance();
         SplitPane splitPane = (SplitPane) update.getParent();
@@ -467,6 +496,14 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         partElement.appendChild(initElement);
     }
     
+    /**
+     * Renders layout data information for a child component.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param containerElement the container element
+     * @param component the child component
+     * @param index the child index
+     */
     private void renderLayoutData(RenderContext rc, Element containerElement, Component component, int index) {
         SplitPaneLayoutData layoutData = (SplitPaneLayoutData) component.getRenderProperty(SplitPane.PROPERTY_LAYOUT_DATA);
         if (layoutData == null) {
@@ -512,6 +549,12 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         containerElement.appendChild(layoutDataElement);
     }
     
+    /**
+     * Renders directives to remove children.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     */
     private void renderRemoveChildren(RenderContext rc, ServerComponentUpdate update) {
         ContainerInstance ci = rc.getContainerInstance();
         SplitPane splitPane = (SplitPane) update.getParent();
@@ -529,6 +572,13 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         }
     }
     
+    /**
+     * Renders a directive to remove a child component.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>SplitPane</code>
+     * @param index the index of the child to remove
+     */
     private void renderRemoveChildDirective(RenderContext rc, SplitPane splitPane, int index) {
         String elementId = ContainerInstance.getElementId(splitPane);
         ServerMessage serverMessage = rc.getServerMessage();
@@ -539,6 +589,12 @@ implements ImageRenderSupport, PropertyUpdateProcessor, ComponentSynchronizePeer
         partElement.appendChild(removeChildElement);
     }
 
+    /**
+     * Renders a directive to set the separator position.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param splitPane the <code>SplitPane</code>
+     */
     private void renderSetSeparatorPositionDirective(RenderContext rc, SplitPane splitPane) {
         String elementId = ContainerInstance.getElementId(splitPane);
         ServerMessage serverMessage = rc.getServerMessage();
