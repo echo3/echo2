@@ -522,7 +522,7 @@ EchoClientAnalyzer = {
             EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenHeight", window.screen.height);
             EchoClientAnalyzer.setIntegerProperty(messagePartElement, "screenColorDepth", window.screen.colorDepth);
         }
-        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset()));
+        EchoClientAnalyzer.setIntegerProperty(messagePartElement, "utcOffset", 0 - parseInt((new Date()).getTimezoneOffset(), 10));
         EchoClientAnalyzer.setTextProperty(messagePartElement, "unescapedXhrTest", "&amp;");
     },
     
@@ -551,7 +551,7 @@ EchoClientAnalyzer = {
      * @param propertyValue the property value
      */
     setIntegerProperty: function(messagePartElement, propertyName, propertyValue) {
-        var intValue = parseInt(propertyValue);
+        var intValue = parseInt(propertyValue, 10);
         if (isNaN(intValue)) {
             return;
         }
@@ -599,10 +599,8 @@ EchoClientConfiguration = {
         process: function(messagePartElement) {
             for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
                 if (messagePartElement.childNodes[i].nodeType == 1) {
-                    switch (messagePartElement.childNodes[i].tagName) {
-                    case "store":
+                    if (messagePartElement.childNodes[i].tagName == "store") {
                         EchoClientConfiguration.MessageProcessor.processStore(messagePartElement.childNodes[i]);
-                        break;
                     }
                 }
             }
@@ -723,18 +721,17 @@ EchoClientEngine = {
     processClientError: function(message, ex) {
         var errorText;
         if (ex instanceof Error) {
-            errorText = "Error Name: " + ex.name + "\n"
-                    + "Error Message: " + ex.message;
+            errorText = "Error Name: " + ex.name + "\n" + "Error Message: " + ex.message;
         } else {
             errorText = "Error: " + ex;
         }
     
-        alert("The following client application error has occurred:\n\n" 
-                + "---------------------------------\n" 
-                + message + "\n\n" 
-                + errorText + "\n"
-                + "---------------------------------\n\n"
-                + "Please contact your server administrator.\n\n");
+        alert("The following client application error has occurred:\n\n" +
+                "---------------------------------\n" +
+                message + "\n\n" +
+                errorText + "\n" +
+                "---------------------------------\n\n" +
+                "Please contact your server administrator.\n\n");
     },
     
     /**
@@ -1004,8 +1001,8 @@ EchoClientMessage = {
         EchoClientMessage.messageDocument = null;
     
         // Create new message document.
-        EchoClientMessage.messageDocument 
-                = EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "client-message");
+        EchoClientMessage.messageDocument =
+                EchoDomUtil.createDocument("http://www.nextapp.com/products/echo2/climsg", "client-message");
     },
     
     /**
@@ -1083,10 +1080,8 @@ EchoClientProperties = {
         process: function(messagePartElement) {
             for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
                 if (messagePartElement.childNodes[i].nodeType == 1) {
-                    switch (messagePartElement.childNodes[i].tagName) {
-                    case "store":
+                    if (messagePartElement.childNodes[i].tagName == "store") {
                         EchoClientProperties.MessageProcessor.processStore(messagePartElement.childNodes[i]);
-                        break;
                     }
                 }
             }
@@ -1123,7 +1118,7 @@ EchoClientProperties = {
     get: function(name) {
         return EchoClientProperties.propertyMap[name];
     }
-}
+};
 
 // _________________________
 // Object EchoCollectionsMap
@@ -1453,10 +1448,8 @@ EchoDomPropertyStore = {
         process: function(messagePartElement) {
             for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
                 if (messagePartElement.childNodes[i].nodeType == 1) {
-                    switch (messagePartElement.childNodes[i].tagName) {
-                    case "store-property":
+                    if (messagePartElement.childNodes[i].tagName == "store-property") {
                         EchoDomPropertyStore.MessageProcessor.processStoreProperty(messagePartElement.childNodes[i]);
-                        break;
                     }
                 }
             }
@@ -1783,11 +1776,11 @@ EchoDomUpdate = {
          * @return the String representation
          */
         toString: function() {
-            return "Failed to perform \"" + this.updateType + "\": " + this.targetType 
-                    + " element \"" + this.targetId + "\" not found.";
+            return "Failed to perform \"" + this.updateType + "\": " + this.targetType +
+                    " element \"" + this.targetId + "\" not found.";
         }
     })
-}
+};
 
 // __________________
 // Object EchoDomUtil
@@ -1868,7 +1861,7 @@ EchoDomUtil = {
             // DOM Level 2 Browsers
             var dom;
             if (EchoClientProperties.get("browserMozillaFirefox") && 
-                    EchoClientProperties.get("browserVersionMajor") == 3 && EchoClientProperties.get("browserVersionMinor") == 0) {
+                    EchoClientProperties.get("browserVersionMajor") == 3 && EchoClientProperties.get("browserVersionMinor") === 0) {
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=431701
                 dom = new DOMParser().parseFromString("<?xml version='1.0' encoding='UTF-8'?><" + qualifiedName + "/>",
                         "application/xml");
@@ -2479,6 +2472,8 @@ EchoEventProcessor = {
      * @param e the event fired by the DOM
      */
     processEvent: function(e) {
+        var i, handler;
+        
         e = e ? e : window.event;
         var eventType = e.type;
         if (!e.target && e.srcElement) {
@@ -2504,7 +2499,7 @@ EchoEventProcessor = {
             targetElement = targetElement.parentNode;
         }
         
-        if (handlerDatas.length == 0) {
+        if (handlerDatas.length === 0) {
             return;
         }
         
@@ -2512,14 +2507,13 @@ EchoEventProcessor = {
         
         if (hasCapturingHandlers) {
             // Process capturing event handlers.
-            for (var i = handlerDatas.length - 1; i >=0; --i) {
+            for (i = handlerDatas.length - 1; i >=0; --i) {
                 if (!handlerDatas[i].capture) {
                     // Ignore non-capturing handlers.
                     continue;
                 }
     
                 // Load handler.
-                var handler;
                 try {
                     handler = eval(handlerDatas[i].handlerName);
                 } catch (ex) {
@@ -2541,14 +2535,13 @@ EchoEventProcessor = {
     
         if (propagate) {
             // Process non-capturing event handlers.
-            for (var i = 0; i < handlerDatas.length; ++i) {
+            for (i = 0; i < handlerDatas.length; ++i) {
                 if (handlerDatas[i].capture) {
                     // Ignore capturing handlers.
                     continue;
                 }
                 
                 // Load handler.
-                var handler;
                 try {
                     handler = eval(handlerDatas[i].handlerName);
                 } catch (ex) {
@@ -2951,10 +2944,8 @@ EchoServerDelayMessage = {
         process: function(messagePartElement) {
             for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
                 if (messagePartElement.childNodes[i].nodeType == 1) {
-                    switch (messagePartElement.childNodes[i].tagName) {
-                    case "set-message":
+                    if (messagePartElement.childNodes[i].tagName == "set-message") {
                         EchoServerDelayMessage.MessageProcessor.processSetDelayMessage(messagePartElement.childNodes[i]);
-                        break;
                     }
                 }
             }
@@ -3154,8 +3145,8 @@ EchoServerMessage = {
             for (var i = 0; i < libraryElements.length; ++i) {
                 var serviceId = libraryElements.item(i).getAttribute("service-id");
                 var libraryState = EchoScriptLibraryManager.getState(serviceId);
-                if (libraryState != EchoScriptLibraryManager.STATE_LOADED 
-                        && libraryState != EchoScriptLibraryManager.STATE_INSTALLED) {
+                if (libraryState != EchoScriptLibraryManager.STATE_LOADED &&
+                        libraryState != EchoScriptLibraryManager.STATE_INSTALLED) {
                     // A library that requires immediate loading is not yet available.
                     returnValue = false;
                     break;
@@ -3243,7 +3234,7 @@ EchoServerMessage = {
      * the asynchronous monitor if required.
      */
     processAsyncConfig: function() {
-        var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("async-interval"));
+        var timeInterval = parseInt(EchoServerMessage.messageDocument.documentElement.getAttribute("async-interval"), 10);
         if (!isNaN(timeInterval)) {
             EchoAsyncMonitor.timeInterval = timeInterval;
             EchoAsyncMonitor.start();
@@ -3260,8 +3251,8 @@ EchoServerMessage = {
     processApplicationProperties: function() {
         EchoModalManager.modalElementId = EchoServerMessage.messageDocument.documentElement.getAttribute("modal-id");
         if (EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction")) {
-            document.documentElement.style.direction 
-                    = EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction");
+            document.documentElement.style.direction =
+                    EchoServerMessage.messageDocument.documentElement.getAttribute("root-layout-direction");
         }
     },
     
@@ -3284,8 +3275,8 @@ EchoServerMessage = {
             }
             complete = true;
         } finally {
-            EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE 
-                    : EchoServerMessage.STATUS_PROCESSING_FAILED;
+            EchoServerMessage.status = complete ? EchoServerMessage.STATUS_PROCESSING_COMPLETE :
+                    EchoServerMessage.STATUS_PROCESSING_FAILED;
         }
     },
     
@@ -3541,26 +3532,29 @@ EchoVirtualPosition = {
      * This method is for internal use only by EchoVirtualPosition.
      */
     adjust: function(element) {
+        var parentWidth, parentHeight, leftPixels, rightPixels, topPixels, bottomPixels,
+            paddingPixels, marginPixels, borderPixels, calculatedHeight, calculatedWidth;
+    
         // Adjust 'height' property if 'top' and 'bottom' properties are set, 
         // and if all padding/margin/borders are 0 or set in pixel units .
-        if (EchoVirtualPosition.verifyPixelValue(element.style.top)
-                && EchoVirtualPosition.verifyPixelValue(element.style.bottom)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
-            var parentHeight = element.parentNode.offsetHeight;
-            var topPixels = parseInt(element.style.top);
-            var bottomPixels = parseInt(element.style.bottom);
-            var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) 
-                    + EchoVirtualPosition.toInteger(element.style.paddingBottom);
-            var marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) 
-                    + EchoVirtualPosition.toInteger(element.style.marginBottom);
-            var borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) 
-                    + EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
-            var calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
+        if (EchoVirtualPosition.verifyPixelValue(element.style.top) &&
+                EchoVirtualPosition.verifyPixelValue(element.style.bottom) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingTop) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingBottom) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginTop) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginBottom) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderTopWidth) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderBottomWidth)) {
+            parentHeight = element.parentNode.offsetHeight;
+            topPixels = parseInt(element.style.top, 10);
+            bottomPixels = parseInt(element.style.bottom, 10);
+            paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingTop) + 
+                    EchoVirtualPosition.toInteger(element.style.paddingBottom);
+            marginPixels = EchoVirtualPosition.toInteger(element.style.marginTop) +
+                    EchoVirtualPosition.toInteger(element.style.marginBottom);
+            borderPixels = EchoVirtualPosition.toInteger(element.style.borderTopWidth) +
+                    EchoVirtualPosition.toInteger(element.style.borderBottomWidth);
+            calculatedHeight = parentHeight - topPixels - bottomPixels - paddingPixels - marginPixels - borderPixels;
             if (calculatedHeight <= 0) {
                 element.style.height = 0;
             } else {
@@ -3572,24 +3566,24 @@ EchoVirtualPosition = {
         
         // Adjust 'width' property if 'left' and 'right' properties are set, 
         // and if all padding/margin/borders are 0 or set in pixel units .
-        if (EchoVirtualPosition.verifyPixelValue(element.style.left)
-                && EchoVirtualPosition.verifyPixelValue(element.style.right)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth)
-                && EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
-            var parentWidth = element.parentNode.offsetWidth;
-            var leftPixels = parseInt(element.style.left);
-            var rightPixels = parseInt(element.style.right);
-            var paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) 
-                    + EchoVirtualPosition.toInteger(element.style.paddingRight);
-            var marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) 
-                    + EchoVirtualPosition.toInteger(element.style.marginRight);
-            var borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) 
-                    + EchoVirtualPosition.toInteger(element.style.borderRightWidth);
-            var calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
+        if (EchoVirtualPosition.verifyPixelValue(element.style.left) &&
+                EchoVirtualPosition.verifyPixelValue(element.style.right) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingLeft) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.paddingRight) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginLeft) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.marginRight) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderLeftWidth) &&
+                EchoVirtualPosition.verifyPixelOrUndefinedValue(element.style.borderRightWidth)) {
+            parentWidth = element.parentNode.offsetWidth;
+            leftPixels = parseInt(element.style.left, 10);
+            rightPixels = parseInt(element.style.right, 10);
+            paddingPixels = EchoVirtualPosition.toInteger(element.style.paddingLeft) + 
+                    EchoVirtualPosition.toInteger(element.style.paddingRight);
+            marginPixels = EchoVirtualPosition.toInteger(element.style.marginLeft) +
+                    EchoVirtualPosition.toInteger(element.style.marginRight);
+            borderPixels = EchoVirtualPosition.toInteger(element.style.borderLeftWidth) +
+                    EchoVirtualPosition.toInteger(element.style.borderRightWidth);
+            calculatedWidth = parentWidth - leftPixels - rightPixels - paddingPixels - marginPixels - borderPixels;
             if (calculatedWidth <= 0) {
                 element.style.width = 0;
             } else {
@@ -3619,7 +3613,7 @@ EchoVirtualPosition = {
             return;
         }
         
-        var removedIds = false;
+        var i, removedIds = false;
         
         if (element != undefined) {
             EchoVirtualPosition.adjust(element);
@@ -3628,7 +3622,7 @@ EchoVirtualPosition = {
                 EchoVirtualPosition.sort();
             }
             
-            for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+            for (i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
                 element = document.getElementById(EchoVirtualPosition.elementIdList[i]);
                 if (element) {
                     EchoVirtualPosition.adjust(element);
@@ -3645,7 +3639,7 @@ EchoVirtualPosition = {
             // Prune removed ids from list if necessary.
             if (removedIds) {
                 var updatedIdList = [];
-                for (var i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
+                for (i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
                     if (EchoVirtualPosition.elementIdList[i] != null) {
                         updatedIdList.push(EchoVirtualPosition.elementIdList[i]);
                     }
@@ -3727,7 +3721,7 @@ EchoVirtualPosition = {
      * @return the value as a integer, e.g., '20'
      */
     toInteger: function(value) {
-        value = parseInt(value);
+        value = parseInt(value, 10);
         return isNaN(value) ? 0 : value;
     },
     
@@ -3777,10 +3771,8 @@ EchoVirtualPosition = {
         process: function(messagePartElement) {
             for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
                 if (messagePartElement.childNodes[i].nodeType == 1) {
-                    switch (messagePartElement.childNodes[i].tagName) {
-                    case "register":
+                    if (messagePartElement.childNodes[i].tagName == "register") {
                         EchoVirtualPosition.MessageProcessor.processRegister(messagePartElement.childNodes[i]);
-                        break;
                     }
                 }
             }
@@ -3853,7 +3845,7 @@ EchoWindowUpdate = {
      * @param reloadElement the "reload" directive element
      */
     processReload: function(reloadElement) {
-        var message = EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"]
+        var message = EchoClientConfiguration.propertyMap["defaultOutOfSyncErrorMessage"];
         if (message) {
             alert(message);
         }
