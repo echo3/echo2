@@ -4990,8 +4990,46 @@ readDir = /* string[] */ function ( /* string */ path, /* opt RegExp */ filterRx
             quit(1);
         }
         print("jslint: Processing: " + files[fi]);
+        var predef = [
+            "ActiveXObject",
+            "Core", 
+            "Document",
+            "DOMParser", 
+            "EchoAsyncMonitor",
+            "EchoBrowserCommand",
+            "EchoButton",
+            "EchoClientAnalyzer",
+            "EchoClientConfiguration",
+            "EchoClientEngine",
+            "EchoClientMessage", 
+            "EchoClientProperties",
+            "EchoCollectionsMap",
+            "EchoContentPane",
+            "EchoCoreProperties",
+            "EchoCssUtil",
+            "EchoDebugManager",
+            "EchoDomPropertyStore", 
+            "EchoDomUpdate",
+            "EchoDomUtil",
+            "EchoEventProcessor",
+            "EchoFocusManager",
+            "EchoHttpConnection",
+            "EchoListComponent",
+            "EchoModalManager",
+            "EchoScriptLibraryManager",
+            "EchoServerDelayMessage",
+            "EchoServerMessage",
+            "EchoServerTransaction",
+            "EchoSplitPane",
+            "EchoStringUtil",
+            "EchoTable",
+            "EchoTextComponent",
+            "EchoVirtualPosition",
+            "EchoWindowPane",
+            "EchoWindowUpdate"
+        ];
         var result = JSLINT(input, {sub: true, ec_eqnull: true, evil: true, forin: true, browser: true, passfail: false,
-                predef: ["Core", "Echo", "ActiveXObject", "DOMParser", "Document"]});
+                predef: predef});
         if (JSLINT.getImplied().length > 0) {
             print("Unexpected globals: " + JSLINT.getImplied());
         }
