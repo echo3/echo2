@@ -567,5 +567,22 @@
         <gzip src="${dir.release}/${tarfile.release}" zipfile="${dir.release}/${tgzfile.release}"/>
         <delete file="${dir.release}/${tarfile.release}"/>
     </target>
+
+    <target name="jslint.webcontainer">
+        <java fork="true" jar="${dir.resource.jslint}/rhino.jar">
+            <arg value="${dir.resource.jslint}/jslint.js"/>
+            <arg value="${dir.src.webcontainer}/nextapp/echo2/webcontainer/resource/js/"/>
+        </java>
+    </target>
     
+    <target name="jslint.webrender">
+        <java fork="true" jar="${dir.resource.jslint}/rhino.jar">
+            <arg value="${dir.resource.jslint}/jslint.js"/>
+            <arg value="${dir.src.webrender}/nextapp/echo2/webrender/resource/"/>
+        </java>
+    </target>
+    
+    <target name="jslint" depends="jslint.webrender,jslint.webcontainer">
+    </target>
+
 </project>
