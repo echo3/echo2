@@ -226,6 +226,9 @@ EchoButton = Core.extend({
         this.setSelected(newState);
     },
     
+    /**
+     * Returns the button element. 
+     */
     getElement: function() {
         return document.getElementById(this.elementId);
     },
@@ -412,6 +415,7 @@ EchoButton.Group = {
      * Adds a button to a button group.
      *
      * @param groupId the id of the button group
+     * @param buttonId the id of the button
      */
     add: function(groupId, buttonId) {
         var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);
@@ -422,6 +426,11 @@ EchoButton.Group = {
         buttonArray.push(buttonId);
     },
     
+    /**
+     * Deselects the current selected button in a button group.
+     * 
+     * @param groupId the id of the button group
+     */
     deselect: function(groupId) {
         var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);
         if (!buttonArray) {
@@ -436,6 +445,12 @@ EchoButton.Group = {
         }
     },
     
+    /**
+     * Removes a button from a button group.
+     * 
+     * @param groupId the id of the button group
+     * @param buttonId the id of the button
+     */
     remove: function(groupId, buttonId) {
         // Obtain appropriate button group.
         var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);

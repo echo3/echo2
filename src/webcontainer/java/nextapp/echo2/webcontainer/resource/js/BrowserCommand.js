@@ -47,7 +47,7 @@ EchoBrowserCommand = {
          * MessageProcessor process() implementation 
          * (invoked by ServerMessage processor).
          *
-         * @param messagePartElement the <code>message-part</code> element to process.
+         * @param messagePartElement the <code>message-part</code> element to process
          */
         process: function(messagePartElement) {
             for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
