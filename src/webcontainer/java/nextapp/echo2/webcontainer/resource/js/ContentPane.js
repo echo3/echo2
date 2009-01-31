@@ -109,10 +109,10 @@ EchoContentPane = {
                     EchoEventProcessor.addHandler(contentElement, "scroll", "EchoContentPane.processScroll");
                     
                     if (horizontalScroll) {
-                        contentElement.scrollLeft = parseInt(horizontalScroll);
+                        contentElement.scrollLeft = parseInt(horizontalScroll, 10);
                     }
                     if (verticalScroll) {
-                        contentElement.scrollTop = parseInt(verticalScroll);
+                        contentElement.scrollTop = parseInt(verticalScroll, 10);
                     }
                 }
             }
@@ -126,7 +126,7 @@ EchoContentPane = {
          */
         processScroll: function(scrollMessageElement) {
             var elementId = scrollMessageElement.getAttribute("eid");
-            var position = parseInt(scrollMessageElement.getAttribute("position"));
+            var position = parseInt(scrollMessageElement.getAttribute("position"), 10);
         
             var divElement = document.getElementById(elementId);
             var contentElement = EchoContentPane.findContentElement(divElement);
