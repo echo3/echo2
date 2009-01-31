@@ -40,10 +40,11 @@ public class DefaultTableCellRenderer
 implements TableCellRenderer {
 
     /**
-     * Returns a <code>Label</code> containing the toString() value of the 
-     * model value.  Returns null in the event the model value is null.
+     * Returns a <code>Label</code> containing the toString() value of the model value. Returns null in the event the model value is
+     * null.
      * 
-     * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table, java.lang.Object, int, int)
+     * @see nextapp.echo2.app.table.TableCellRenderer#getTableCellRendererComponent(nextapp.echo2.app.Table, java.lang.Object, int,
+     *      int)
      */
     public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
         if (value == null) {
