@@ -162,10 +162,18 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
 
     private PartialUpdateParticipant placeHolder = new PartialUpdateParticipant() {
 
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
+         */
         public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
             return true;
         }
 
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
+         */
         public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
             // Do nothing.
         }
@@ -534,6 +542,12 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         return fullReplace;
     }
     
+    /**
+     * Renders a partial update directive.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the update
+     */
     private void renderUpdateDirective(RenderContext rc, ServerComponentUpdate update) {
         WindowPane windowPane = (WindowPane) update.getParent();
 

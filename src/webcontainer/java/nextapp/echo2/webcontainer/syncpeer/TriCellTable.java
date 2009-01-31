@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
 
 /**
  * Renders an HTML table that has two or three &quot;container&quot; cells and
- * independently settable margins between them.  These tables are useful for
+ * independently configurable margins between them.  These tables are useful for
  * rendering buttons that have two or three elements (images, text labels, and 
  * state indicators).  This class supports all possible permutations for
  * placement of each of the two or three contained components.

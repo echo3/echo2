@@ -248,7 +248,6 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport, Proper
      * @param table the table
      */
     private void renderDisposeDirective(RenderContext rc, Table table) {
- //       DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(table) + "_style");
        DomUpdate.renderStyleSheetRemoveRule(rc.getServerMessage(), "TD.c-" + table.getRenderId());
  
         ServerMessage serverMessage = rc.getServerMessage();
