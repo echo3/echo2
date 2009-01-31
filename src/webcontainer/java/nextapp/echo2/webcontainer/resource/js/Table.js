@@ -43,7 +43,7 @@ EchoTable = Core.extend({
          * of the Table.
          *
          * @param element the root element or element id of the Table
-         * @return the relevant Tableinstance
+         * @return the relevant table instance
          */
         getComponent: function(element) {
             return EchoDomPropertyStore.getPropertyValue(element, "component");
@@ -63,6 +63,14 @@ EchoTable = Core.extend({
             table.processClick(echoEvent);
         },
         
+        /**
+         * Process a mouse down event.
+         * Finds the appropriate <code>EchoTable</code> instance and
+         * delegates processing to it.
+         *
+         * @param echoEvent the event, preprocessed by the 
+         *        <code>EchoEventProcessor</code>
+         */
         processMouseDown: function(echoEvent) {
             EchoDomUtil.preventEventDefault(echoEvent);
         },
@@ -175,6 +183,9 @@ EchoTable = Core.extend({
         }
     },
     
+    /**
+     * Returns the table DOM element.
+     */
     getElement: function() {
         return document.getElementById(this.elementId);
     },
