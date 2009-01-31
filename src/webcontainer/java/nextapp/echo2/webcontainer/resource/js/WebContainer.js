@@ -114,6 +114,11 @@ EchoCoreProperties.Insets = Core.extend({
         }
     },
     
+    /**
+     * Loads insets values from a space-delimited string.
+     * 
+     * @param insetsString the string
+     */
     loadValuesFromString: function(insetsString) {
         insetsString = new String(insetsString);
         var elements = insetsString.split(" ");
@@ -141,6 +146,9 @@ EchoCoreProperties.Insets = Core.extend({
         }
     },
     
+    /**
+     * @see Object#toString
+     */
     toString: function(insetsString) {
         if (this.top == this.bottom && this.right == this.left) {
             if (this.top == this.right) {
