@@ -2610,6 +2610,12 @@ EchoEventProcessor = {
     }
 };
 
+/**
+ * Data object describing an event handler.
+ * 
+ * @param handlerName the name of the event handler
+ * @param capture flag indicating whether the handler is a capturing listener
+ */
 EchoEventProcessor.EventHandlerData = function(handlerName, capture) { 
     this.handlerName = handlerName;
     this.capture = capture;
@@ -3081,6 +3087,9 @@ EchoServerMessage = {
      */
     backgroundIntervalId: null,
     
+    /**
+     * Flag indicating whether attribute values must be fixed to accommodate bugs in Safari browser.
+     */
     enableFixSafariAttrs: false,
     
     /**
@@ -3519,6 +3528,7 @@ EchoVirtualPosition = {
     /** Array containing ids of elements registered with the virtual positioning system. */
     elementIdList: [],
     
+    /** Set of element ids being redrawn using virtual positioning. */
     elementIdSet: new EchoCollectionsMap(),
     
     /** Flag indicating whether virtual positioning is required/enabled. */
