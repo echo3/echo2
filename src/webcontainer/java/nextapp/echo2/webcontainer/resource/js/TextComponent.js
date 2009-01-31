@@ -105,7 +105,7 @@ EchoTextComponent = Core.extend({
     },
 
     /**
-     * Creates a new text component data object.
+     * Creates a new text component support object.
      * 
      * @param elementId the id of the supported text component element
      */
@@ -113,6 +113,9 @@ EchoTextComponent = Core.extend({
         this.elementId = elementId;
     },
     
+    /**
+     * Disposes of resources used by the support object.
+     */
     dispose: function() {
         var element = this.getElement();
         EchoEventProcessor.removeHandler(element, "blur");
@@ -147,10 +150,16 @@ EchoTextComponent = Core.extend({
         EchoServerTransaction.connect();
     },
     
+    /**
+     * Returns the text component's DOM element.
+     */
     getElement: function() {
         return document.getElementById(this.elementId);
     },
     
+    /**
+     * Initializes the text component support object.
+     */
     init: function() {
         var element = this.getElement();
         
