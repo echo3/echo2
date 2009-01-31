@@ -30,6 +30,10 @@
 //_________________________
 // Object EchoListComponent
 
+/**
+ * Rendering/synchronization services for AbstractListComponent-based components.
+ * This object/namespace should not be used externally.
+ */
 EchoListComponent = Core.extend({
 
     $static: {

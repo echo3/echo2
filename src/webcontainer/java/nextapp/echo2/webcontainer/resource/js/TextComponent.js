@@ -31,7 +31,7 @@
 // Object EchoTextComponent
 
 /**
- * Static object/namespace for Text Component support.
+ * Object/namespace for Text Component support.
  * This object/namespace should not be used externally.
  */
 EchoTextComponent = Core.extend({

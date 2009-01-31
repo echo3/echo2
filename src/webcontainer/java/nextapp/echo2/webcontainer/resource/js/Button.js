@@ -30,6 +30,10 @@
 //__________________
 // Object EchoButton
 
+/**
+ * Rendering/synchronization services for AbstractButton-based components.
+ * This object/namespace should not be used externally.
+ */
 EchoButton = Core.extend({
     
     $static: {

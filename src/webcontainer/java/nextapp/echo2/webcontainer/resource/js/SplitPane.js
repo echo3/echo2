@@ -27,6 +27,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+/**
+ * Rendering/synchronization services for SplitPane components.
+ * This object/namespace should not be used externally.
+ */
 EchoSplitPane = Core.extend({
     
     $static: {

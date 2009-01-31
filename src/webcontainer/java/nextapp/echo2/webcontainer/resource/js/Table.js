@@ -31,7 +31,7 @@
 // Object EchoTable
 
 /**
- * Static object/namespace for Table support.
+ * Object/namespace for Table support.
  * This object/namespace should not be used externally.
  */
 EchoTable = Core.extend({

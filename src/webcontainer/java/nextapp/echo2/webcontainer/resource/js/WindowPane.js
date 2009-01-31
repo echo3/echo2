@@ -27,6 +27,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+/**
+ * Object/namespace for WindowPane support.
+ * This object/namespace should not be used externally.
+ */
 EchoWindowPane = Core.extend({
 
     $static: {
