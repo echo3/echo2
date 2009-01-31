@@ -35,6 +35,9 @@ EchoWindowPane = Core.extend({
 
     $static: {
     
+        /**
+         * The WindowPane currently being updated.
+         */
         activeInstance: null,
         
         /**
@@ -72,12 +75,18 @@ EchoWindowPane = Core.extend({
          */
         nullEventHandler: function(echoEvent) { },
         
+        /**
+         * Processes a border mouse down event from DOM, delegates to WindowPane instance.
+         */
         processBorderMouseDown: function(echoEvent) {
             var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
             var windowPane = EchoWindowPane.getComponent(componentId);
             windowPane.processBorderMouseDown(echoEvent);
         },
         
+        /**
+         * Processes a border mouse move event from DOM, delegates to WindowPane instance.
+         */
         processBorderMouseMove: function(e) {
             e = e ? e : window.event;
             if (EchoWindowPane.activeInstance) {
@@ -85,6 +94,9 @@ EchoWindowPane = Core.extend({
             }
         },
         
+        /**
+         * Processes a border mouse up event from DOM, delegates to WindowPane instance.
+         */
         processBorderMouseUp: function(e) {
             e = e ? e : window.event;
             if (EchoWindowPane.activeInstance) {
@@ -92,6 +104,9 @@ EchoWindowPane = Core.extend({
             }
         },
         
+        /**
+         * Processes a close event from DOM, delegates to WindowPane instance.
+         */
         processClose: function(echoEvent) {
             var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
             var windowPane = EchoWindowPane.getComponent(componentId);
@@ -106,6 +121,9 @@ EchoWindowPane = Core.extend({
             EchoDomUtil.preventEventDefault(window.event);
         },
         
+        /**
+         * Processes a raise click event from DOM, delegates to WindowPane instance.
+         */
         processRaiseClick: function(echoEvent) { 
             var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
             var windowPane = EchoWindowPane.getComponent(componentId);
@@ -113,12 +131,18 @@ EchoWindowPane = Core.extend({
             return true;
         },
         
+        /**
+         * Processes a title bar mouse down event from DOM, delegates to WindowPane instance.
+         */
         processTitleBarMouseDown: function(echoEvent) {
             var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
             var windowPane = EchoWindowPane.getComponent(componentId);
             windowPane.processTitleBarMouseDown(echoEvent);
         },
         
+        /**
+         * Processes a title bar mouse move event from DOM, delegates to WindowPane instance.
+         */
         processTitleBarMouseMove: function(e) {
             e = e ? e : window.event;
             if (EchoWindowPane.activeInstance) {
@@ -126,6 +150,9 @@ EchoWindowPane = Core.extend({
             }
         },
         
+        /**
+         * Processes a close event from DOM, delegates to WindowPane instance.
+         */
         processTitleBarMouseUp: function(e) {
             e = e ? e : window.event;
             if (EchoWindowPane.activeInstance) {
@@ -134,6 +161,12 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Creates an <code>WindowPane</code> instance.
+     * 
+     * @param elementId the element id
+     * @param containerElementId the container element id
+     */
     $construct: function(elementId, containerElementId) {
         this.elementId = elementId;
         this.containerElementId = containerElementId;
@@ -184,6 +217,9 @@ EchoWindowPane = Core.extend({
         this.zIndex = -1;
     },
     
+    /**
+     * Renders the WindowPane, adding it to its container element.
+     */
     create: function() {
         var containerElement = document.getElementById(this.containerElementId);
         var windowPaneDivElement = document.createElement("div");
@@ -582,6 +618,9 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Disposes of resources used by the WindowPane prior to it being removed from the DOM.
+     */
     dispose: function() {
         this.removeListeners();
     
@@ -627,6 +666,11 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Process a border mouse down event.
+     * 
+     * @param echoEvent the event
+     */
     processBorderMouseDown: function(echoEvent) {
         if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
             return;
@@ -664,6 +708,11 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Process a border mouse move event.
+     * 
+     * @param e the event
+     */
     processBorderMouseMove: function(e) {
         var width = this.width;
         var height = this.height;
@@ -698,6 +747,11 @@ EchoWindowPane = Core.extend({
         this.redraw();
     },
     
+    /**
+     * Process a border mouse up event.
+     * 
+     * @param e the event
+     */
     processBorderMouseUp: function(e) {
         this.removeListeners();
         
@@ -712,6 +766,11 @@ EchoWindowPane = Core.extend({
         EchoVirtualPosition.redraw();
     },
     
+    /**
+     * Process a close event.
+     * 
+     * @param echoEvent the event
+     */
     processClose: function(echoEvent) {
         if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
             return;
@@ -721,6 +780,11 @@ EchoWindowPane = Core.extend({
         EchoServerTransaction.connect();
     },
     
+    /**
+     * Process a raise event.
+     * 
+     * @param echoEvent the event
+     */
     processRaise: function(echoEvent) {
         if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
             return;
@@ -729,6 +793,11 @@ EchoWindowPane = Core.extend({
         this.raise();
     },
     
+    /**
+     * Process a title bar mouse down event.
+     * 
+     * @param echoEvent the event
+     */
     processTitleBarMouseDown: function(echoEvent) {
         if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId)) {
             return;
@@ -751,12 +820,22 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Process a title bar mouse move event.
+     * 
+     * @param e the event
+     */
     processTitleBarMouseMove: function(e) {
         this.setPosition(this.dragInitPositionX + e.clientX - this.dragOriginX,
                 this.dragInitPositionY + e.clientY - this.dragOriginY);
         this.redraw();
     },
     
+    /**
+     * Process a title bar mouse up event.
+     * 
+     * @param e the event
+     */
     processTitleBarMouseUp: function(e) {
         this.removeListeners();
         
@@ -768,11 +847,17 @@ EchoWindowPane = Core.extend({
         EchoVirtualPosition.redraw();
     },
     
+    /**
+     * Raises the window pane to the topmost z-index.
+     */
     raise: function() {
         var zIndex = EchoWindowPane.ZIndexManager.raise(this.containerComponentElementId, this.elementId);
         EchoClientMessage.setPropertyValue(this.elementId, "zIndex",  zIndex);
     },
     
+    /**
+     * Redraws the WindowPane, adjusting its position and size to reflect current state.
+     */
     redraw: function() {
         var windowPaneDivElement = document.getElementById(this.elementId);
     
@@ -808,6 +893,9 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Redraws the title text of the window pane to reflect current state.
+     */
     redrawTitle: function() {
         var titleTextDivElement = document.getElementById(this.elementId + "_titletext");
         while (titleTextDivElement.firstChild) {
@@ -816,6 +904,9 @@ EchoWindowPane = Core.extend({
         titleTextDivElement.appendChild(document.createTextNode(this.title));
     },
     
+    /**
+     * Removes all temporarily registered listeners (e.g., mousemove/mouseup).
+     */
     removeListeners: function() {
         EchoDomUtil.removeEventListener(document, "mousemove", EchoWindowPane.processTitleBarMouseMove, false);
         EchoDomUtil.removeEventListener(document, "mouseup", EchoWindowPane.processTitleBarMouseUp, false);
@@ -826,6 +917,12 @@ EchoWindowPane = Core.extend({
         }
     },
     
+    /**
+     * Sets the position of the WindowPane.
+     * 
+     * @param positionX the new horizontal position
+     * @param positionY the new vertical position
+     */
     setPosition: function(positionX, positionY) {
         this.loadContainerSize();
         
@@ -849,6 +946,12 @@ EchoWindowPane = Core.extend({
         this.positionY = positionY;
     },
     
+    /**
+     * Sets the size of the WindowPane.
+     * 
+     * @param width the new width
+     * @param height the new height
+     */
     setSize: function(width, height) {
         if (this.minimumWidth != null && width < this.minimumWidth) {
             width = this.minimumWidth;
