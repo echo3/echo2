@@ -130,6 +130,13 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, Prope
         return getContainerId(child.getParent(), child);
     }
     
+    /**
+     * Returns the container element DOM id for the specified parent/child. 
+     * 
+     * @param parent the parent component (ContentPane)
+     * @param child the child component
+     * @return the container element DOM id
+     */
     private String getContainerId(Component parent, Component child) {
         if (child instanceof FloatingPane) {
             return ContainerInstance.getElementId(parent) + "_float_" + ContainerInstance.getElementId(child);

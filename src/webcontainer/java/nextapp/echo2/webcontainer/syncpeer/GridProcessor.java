@@ -481,6 +481,13 @@ public class GridProcessor {
         }
     }
     
+    /**
+     * Iterates over cells to create the cell matrix, adjusting column and row spans as of cells to ensure
+     * that no overlap occurs between column and row spans.
+     * Additionally determines actual y-size of grid.   
+     * 
+     * @param cells the grid cells
+     */
     private void renderCellMatrix(Cell[] cells) {
         gridXSize = ((Integer) grid.getRenderProperty(Grid.PROPERTY_SIZE, DEFAULT_SIZE)).intValue();
         
