@@ -261,7 +261,7 @@ EchoWindowPane = Core.extend({
         var borderSideWidth = this.width - this.border.borderInsets.left - this.border.borderInsets.right;
         var borderSideHeight = this.height - this.border.borderInsets.top - this.border.borderInsets.bottom;
         
-        var borderDivElements = new Array(8);
+        var borderDivElements = [];
         
         // Render top row
         if (this.border.borderInsets.top > 0) {
@@ -469,8 +469,8 @@ EchoWindowPane = Core.extend({
         titleBarDivElement.style.color = this.titleForeground;
         titleBarDivElement.style.top = this.border.contentInsets.top + "px";
         titleBarDivElement.style.left = this.border.contentInsets.left + this.titleBarInsets.left + "px";
-        titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.titleBarInsets.left
-                - this.border.contentInsets.right - this.titleBarInsets.right) + "px";
+        titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.titleBarInsets.left -
+                this.border.contentInsets.right - this.titleBarInsets.right) + "px";
         titleBarDivElement.style.height = this.titleHeight + "px";
         titleBarDivElement.style.overflow = "hidden";
         if (this.movable) {
@@ -598,7 +598,7 @@ EchoWindowPane = Core.extend({
         }
     
         if (this.resizable) {
-            for (var i = 0; i < borderDivElements.length; ++i) {
+            for (var i = 0; i < 8; ++i) {
                 if (borderDivElements[i]) {
                     EchoEventProcessor.addHandler(borderDivElements[i], "mousedown", "EchoWindowPane.processBorderMouseDown");
                 }
@@ -657,11 +657,11 @@ EchoWindowPane = Core.extend({
     loadContainerSize: function() {
         var containerElement = document.getElementById(this.containerElementId);
         this.containerWidth = containerElement.offsetWidth;
-        if (this.containerWidth == 0) {
+        if (this.containerWidth === 0) {
             this.containerWidth = containerElement.parentNode.offsetWidth;
         }
         this.containerHeight = containerElement.offsetHeight;
-        if (this.containerHeight == 0) {
+        if (this.containerHeight === 0) {
             this.containerHeight = containerElement.parentNode.offsetHeight;
         }
     },
@@ -876,8 +876,8 @@ EchoWindowPane = Core.extend({
         windowPaneDivElement.style.width = this.width + "px";
         windowPaneDivElement.style.height = this.height + "px";
     
-        titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.titleBarInsets.left 
-                - this.border.contentInsets.right - this.titleBarInsets.right) + "px";
+        titleBarDivElement.style.width = (this.width - this.border.contentInsets.left - this.titleBarInsets.left - 
+                this.border.contentInsets.right - this.titleBarInsets.right) + "px";
     
         borderTDivElement.style.width = borderSideWidth + "px";
         borderBDivElement.style.width = borderSideWidth + "px";
@@ -976,16 +976,16 @@ EchoWindowPane.MessageProcessor = {
 
     loadProperties: function(propertiesElement, windowPane) {
         if (propertiesElement.getAttribute("position-x")) {
-            windowPane.positionX = parseInt(propertiesElement.getAttribute("position-x"));
+            windowPane.positionX = parseInt(propertiesElement.getAttribute("position-x"), 10);
         }
         if (propertiesElement.getAttribute("position-y")) {
-            windowPane.positionY = parseInt(propertiesElement.getAttribute("position-y"));
+            windowPane.positionY = parseInt(propertiesElement.getAttribute("position-y"), 10);
         }
         if (propertiesElement.getAttribute("width")) {
-            windowPane.width = parseInt(propertiesElement.getAttribute("width"));
+            windowPane.width = parseInt(propertiesElement.getAttribute("width"), 10);
         }
         if (propertiesElement.getAttribute("height")) {
-            windowPane.height = parseInt(propertiesElement.getAttribute("height"));
+            windowPane.height = parseInt(propertiesElement.getAttribute("height"), 10);
         }
         if (propertiesElement.getAttribute("title")) {
             windowPane.title = propertiesElement.getAttribute("title");
@@ -1091,16 +1091,16 @@ EchoWindowPane.MessageProcessor = {
             windowPane.insets = initElement.getAttribute("insets");
         }
         if (initElement.getAttribute("maximum-height")) {
-            windowPane.maximumHeight = parseInt(initElement.getAttribute("maximum-height"));
+            windowPane.maximumHeight = parseInt(initElement.getAttribute("maximum-height"), 10);
         }
         if (initElement.getAttribute("maximum-width")) {
-            windowPane.maximumWidth = parseInt(initElement.getAttribute("maximum-width"));
+            windowPane.maximumWidth = parseInt(initElement.getAttribute("maximum-width"), 10);
         }
         if (initElement.getAttribute("minimum-height")) {             
-            windowPane.minimumHeight = parseInt(initElement.getAttribute("minimum-height"));
+            windowPane.minimumHeight = parseInt(initElement.getAttribute("minimum-height"), 10);
         }
         if (initElement.getAttribute("minimum-width")) {
-            windowPane.minimumWidth = parseInt(initElement.getAttribute("minimum-width"));
+            windowPane.minimumWidth = parseInt(initElement.getAttribute("minimum-width"), 10);
         }
         if (initElement.getAttribute("title")) {
             windowPane.title = initElement.getAttribute("title");
@@ -1121,20 +1121,20 @@ EchoWindowPane.MessageProcessor = {
             windowPane.titleForeground = initElement.getAttribute("title-foreground");
         }
         if (initElement.getAttribute("title-height")) {
-            windowPane.titleHeight = parseInt(initElement.getAttribute("title-height"));
+            windowPane.titleHeight = parseInt(initElement.getAttribute("title-height"), 10);
         }
         if (initElement.getAttribute("title-insets")) {
             windowPane.titleInsets = initElement.getAttribute("title-insets");
         }
         
         var borderElements = initElement.getElementsByTagName("border");
-        if (borderElements.length != 0) {
+        if (borderElements.length !== 0) {
             var borderElement = borderElements[0];
             var color = borderElement.getAttribute("color");
             var borderInsets = new EchoCoreProperties.Insets(borderElement.getAttribute("border-insets"));
             var contentInsets = new EchoCoreProperties.Insets(borderElement.getAttribute("content-insets"));
             var imageElements = borderElement.childNodes;
-            var images = new Array(8);
+            var images = [];
             var index;
             for (var i = 0; i < imageElements.length; ++i) {
                 if (imageElements[i].nodeName != "image") {
@@ -1212,7 +1212,7 @@ EchoWindowPane.ZIndexManager = {
         for (var i = 0; i < elementIdArray.length; ++i) {
             if (elementIdArray[i] != elementId) {
                 var testWindowElement = document.getElementById(elementIdArray[i]);
-                var zIndex = parseInt(testWindowElement.style.zIndex);
+                var zIndex = parseInt(testWindowElement.style.zIndex, 10);
                 if (raiseIndex <= zIndex) {
                     raiseIndex = zIndex + 1;
                 }

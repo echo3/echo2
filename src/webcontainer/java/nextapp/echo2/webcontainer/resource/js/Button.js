@@ -69,7 +69,7 @@ EchoButton = Core.extend({
         ieRepaint: function(buttonElement) {
             if (EchoClientProperties.get("quirkIERepaint")) {
                 var originalWidth = buttonElement.style.width;
-                var temporaryWidth = parseInt(buttonElement.clientWidth) + 1;
+                var temporaryWidth = parseInt(buttonElement.clientWidth, 10) + 1;
                 buttonElement.style.width = temporaryWidth + "px";
                 buttonElement.style.width = originalWidth;
             }
@@ -424,7 +424,7 @@ EchoButton.Group = {
     add: function(groupId, buttonId) {
         var buttonArray = EchoButton.Group.idToButtonArrayMap.get(groupId);
         if (!buttonArray) {
-            buttonArray = new Array();
+            buttonArray = [];
             EchoButton.Group.idToButtonArrayMap.put(groupId, buttonArray);
         }
         buttonArray.push(buttonId);

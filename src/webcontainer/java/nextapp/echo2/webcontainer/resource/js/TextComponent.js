@@ -356,7 +356,6 @@ EchoTextComponent.MessageProcessor = {
      * @param setTextMessageElement the <code>set-text</code> element to process
      */
     processSetText: function(setTextMessageElement) {
-    
         for (var item = setTextMessageElement.firstChild; item; item = item.nextSibling) {
             var elementId = item.getAttribute("eid");
             var text = item.getAttribute("text");

@@ -80,7 +80,7 @@ EchoCoreProperties.FillImageBorder = Core.extend({
             }
             this.fillImages = fillImages;
         } else {
-            this.fillImages = new Array(8);
+            this.fillImages = [];
         }
     }
 });
