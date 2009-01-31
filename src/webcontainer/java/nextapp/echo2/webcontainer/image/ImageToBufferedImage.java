@@ -36,8 +36,18 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
+/**
+ * Utility class for converting <code>Image</code>s to <code>BufferedImage</code>s.
+ */
 class ImageToBufferedImage {
 
+    /**
+     * Converts an <code>Image</code> to a <code>BufferedImage</code>.
+     * If the image is already a <code>BufferedImage</code>, the original is returned.
+     * 
+     * @param image the image to convert
+     * @return the image as a <code>BufferedImage</code>
+     */
     static BufferedImage toBufferedImage(Image image) {
         if (image instanceof BufferedImage) {
             // Return image unchanged if it is already a BufferedImage.
@@ -56,6 +66,12 @@ class ImageToBufferedImage {
         return bufferedImage;
     }
     
+    /**
+     * Determines if an image has an alpha channel.
+     * 
+     * @param image the <code>Image</code>
+     * @return true if the image has an alpha channel
+     */
     static boolean hasAlpha(Image image) {
         PixelGrabber pg = new PixelGrabber(image, 0, 0, 1, 1, false);
         try {

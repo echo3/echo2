@@ -98,6 +98,12 @@ implements Service {
         renderImage(conn, imageReference);
     }
     
+    /**
+     * Handles an invalid request for an image.
+     * 
+     * @param conn the <code>Connection</code>
+     * @param message the error message
+     */
     public void serviceBadRequest(Connection conn, String message) {
         conn.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
         conn.setContentType(ContentType.TEXT_PLAIN);
