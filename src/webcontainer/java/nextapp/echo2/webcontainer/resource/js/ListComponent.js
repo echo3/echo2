@@ -360,8 +360,8 @@ EchoListComponent = Core.extend({
         while (node != selectElement) {
             if (node.nodeType == 1) {
                 var id = node.getAttribute("id");
-                if (id && id.indexOf(itemPrefix) == 0) {
-                    return parseInt(id.substring(itemPrefix.length));
+                if (id && id.indexOf(itemPrefix) === 0) {
+                    return parseInt(id.substring(itemPrefix.length), 10);
                 }
             }
             node = node.parentNode;
@@ -376,8 +376,8 @@ EchoListComponent = Core.extend({
      * an initial selection. 
      */
     addNullOption: function() {
-        if (EchoClientProperties.get("quirkSelectRequiresNullOption")
-                && !this.renderAsListBox && !this.nullOptionActive) {
+        if (EchoClientProperties.get("quirkSelectRequiresNullOption") &&
+                !this.renderAsListBox && !this.nullOptionActive) {
             // Add null option.
             var selectElement = this.getElement();
             var nullOptionElement = document.createElement("option");
@@ -420,7 +420,7 @@ EchoListComponent = Core.extend({
                 selectElement.options[0].selected = false;
             }
             
-            if (!this.selectedIndices || this.selectedIndices.length == 0) {
+            if (!this.selectedIndices || this.selectedIndices.length === 0) {
                 this.addNullOption();
             } else {
                 this.removeNullOption();
@@ -442,9 +442,9 @@ EchoListComponent = Core.extend({
      * loadSelection() implementation for DHTML listbox components.
      */
     loadSelectionDhtml: function() {
-        var selectElement = this.getElement();
+        var i, selectElement = this.getElement();
         
-        for (var i = 0; i < selectElement.childNodes.length; ++i) {
+        for (i = 0; i < selectElement.childNodes.length; ++i) {
             if (this.styles && this.styles[i]) {
                 EchoDomUtil.setCssText(selectElement.childNodes[i], this.styles[i]);
             } else {
@@ -455,7 +455,7 @@ EchoListComponent = Core.extend({
             return;
         }
         
-        for (var i = 0; i < this.selectedIndices.length; ++i) {
+        for (i = 0; i < this.selectedIndices.length; ++i) {
             if (this.selectedIndices[i] < selectElement.childNodes.length) {
                 EchoCssUtil.applyStyle(selectElement.childNodes[this.selectedIndices[i]], 
                         EchoListComponent.DHTML_SELECTION_STYLE);
@@ -592,8 +592,8 @@ EchoListComponent = Core.extend({
         }
         this.rolloverIndex = rolloverIndex;
         if (this.rolloverIndex != -1) {
-            var newElement = this.renderAsDhtml 
-                    ? selectElement.childNodes[this.rolloverIndex] : selectElement.options[this.rolloverIndex];
+            var newElement = this.renderAsDhtml ? 
+                    selectElement.childNodes[this.rolloverIndex] : selectElement.options[this.rolloverIndex];
             EchoCssUtil.applyStyle(newElement, this.rolloverStyle);
         }
     },
@@ -728,11 +728,11 @@ EchoListComponent.MessageProcessor = {
             if (selectionElements.length == 1) {
                 var itemElements = selectionElements[0].getElementsByTagName("item");
                 for (var i = 0; i < itemElements.length; ++i) {
-                    listComponent.selectedIndices.push(parseInt(itemElements[i].getAttribute("index")));
+                    listComponent.selectedIndices.push(parseInt(itemElements[i].getAttribute("index"), 10));
                 }
             }
         } else {
-            var selectedIndex = parseInt(initElement.getAttribute("selection-index"));
+            var selectedIndex = parseInt(initElement.getAttribute("selection-index"), 10);
             if (!isNaN(selectedIndex)) {
                 listComponent.selectedIndices.push(selectedIndex);
             }
@@ -750,19 +750,22 @@ EchoListComponent.MessageProcessor = {
      * @param loadContentElement the <code>loadContent</code> element to process
      */
     processLoadContent: function(loadContentElement) {
-        var contentId = loadContentElement.getAttribute("content-id");
+        var item, 
+            value,
+            contentId = loadContentElement.getAttribute("content-id"), 
+            valueArray = [],
+            styleArray;
         
-        var valueArray = [];
-        for (var item = loadContentElement.firstChild; item; item = item.nextSibling) {
-            var value = item.getAttribute("value");
+        for (item = loadContentElement.firstChild; item; item = item.nextSibling) {
+            value = item.getAttribute("value");
             valueArray.push(value);
         }
         EchoServerMessage.setTemporaryProperty("EchoListComponent.Values." + contentId, valueArray);
     
         if (loadContentElement.getAttribute("styled") == "true") {
-            var styleArray = [];
-            for (var item = loadContentElement.firstChild; item; item = item.nextSibling) {
-                var value = item.getAttribute("style");
+            styleArray = [];
+            for (item = loadContentElement.firstChild; item; item = item.nextSibling) {
+                value = item.getAttribute("style");
                 styleArray.push(value);
             }
             EchoServerMessage.setTemporaryProperty("EchoListComponent.Styles." + contentId, styleArray);
