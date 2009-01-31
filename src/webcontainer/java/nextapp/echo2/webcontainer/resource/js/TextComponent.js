@@ -81,7 +81,7 @@ EchoTextComponent = Core.extend({
          * ENTER key.
          * Delegates to data object method.
          *
-         * @param e the DOM Level 2 event, if avaialable
+         * @param e the DOM Level 2 event, if available
          */
         processKeyPress: function(e) {
             e = e ? e : window.event;
