@@ -1922,9 +1922,9 @@ EchoDomUtil = {
      */
     fixSafariAttrs: function(node) {
         if (node.nodeType == 1) {
-            for (i = 0; i < node.attributes.length; ++i) {
+            for (var i = 0; i < node.attributes.length; ++i) {
                 var attribute = node.attributes[i];
-                node.setAttribute(attribute.name, attribute.value.replace("\x26\x2338\x3B", "&"));
+                node.setAttribute(attribute.name, attribute.value.replace("&#38;", "&"));
             }
         }
         
@@ -2516,8 +2516,8 @@ EchoEventProcessor = {
                 // Load handler.
                 try {
                     handler = eval(handlerDatas[i].handlerName);
-                } catch (ex) {
-                    throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
+                } catch (ex1) {
+                    throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex1 + ")";
                 }
         
                 // Set registered target on event.
@@ -2544,8 +2544,8 @@ EchoEventProcessor = {
                 // Load handler.
                 try {
                     handler = eval(handlerDatas[i].handlerName);
-                } catch (ex) {
-                    throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex + ")";
+                } catch (ex2) {
+                    throw "Invalid handler: " + handlerDatas[i].handlerName + " (" + ex2 + ")";
                 }
         
                 // Set registered target on event.
@@ -3615,7 +3615,7 @@ EchoVirtualPosition = {
         
         var i, removedIds = false;
         
-        if (element != undefined) {
+        if (element) {
             EchoVirtualPosition.adjust(element);
         } else {
             if (!EchoVirtualPosition.elementIdListSorted) {
@@ -3640,7 +3640,7 @@ EchoVirtualPosition = {
             if (removedIds) {
                 var updatedIdList = [];
                 for (i = 0; i < EchoVirtualPosition.elementIdList.length; ++i) {
-                    if (EchoVirtualPosition.elementIdList[i] != null) {
+                    if (EchoVirtualPosition.elementIdList[i]) {
                         updatedIdList.push(EchoVirtualPosition.elementIdList[i]);
                     }
                 }
@@ -3733,7 +3733,7 @@ EchoVirtualPosition = {
      * @return true if the value is a pixel dimension, false if it is not
      */
     verifyPixelValue: function(value) {
-        if (value == null || value == "" || value == undefined) {
+        if (value === null || value === "" || value === undefined) {
             return false;
         }
         var valueString = value.toString();
@@ -3748,7 +3748,7 @@ EchoVirtualPosition = {
      * @return true if the value is null or a pixel dimension, false if it is not
      */
     verifyPixelOrUndefinedValue: function(value) {
-        if (value == null || value == "" || value == undefined) {
+        if (value === null || value === "" || value === undefined) {
             return true;
         }
         var valueString = value.toString();
