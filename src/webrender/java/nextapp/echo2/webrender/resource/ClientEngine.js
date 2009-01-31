@@ -630,6 +630,9 @@ EchoClientConfiguration = {
         }
     },
 
+    /**
+     * Client property map.
+     */
     propertyMap: {
         defaultOutOfSyncErrorMessage: "A synchronization error has occurred.  Click \"Ok\" to re-synchronize.",
         defaultServerErrorMessage: "An application error has occurred.  Your session has been reset.",
@@ -655,6 +658,9 @@ EchoClientEngine = {
      */
     debugEnabled: true,
     
+    /**
+     * Initialization loading status (progress bar length).
+     */
     loadStatus: 2,
     
     /**
@@ -835,6 +841,11 @@ EchoClientEngine = {
         }
     },
     
+    /**
+     * Update current transaction id, storing new value in client engine and outgoing client message.
+     * 
+     * @param newValue the new transaction id
+     */
     updateTransactionId: function(newValue) {
         EchoClientEngine.transactionId = newValue;
         EchoClientMessage.messageDocument.documentElement.setAttribute("trans-id", EchoClientEngine.transactionId);
@@ -1134,6 +1145,9 @@ EchoClientProperties = {
  */
 EchoCollectionsMap = Core.extend({
 
+    /**
+     * Creates a new map.
+     */
     $construct: function() {
         this.removeCount = 0;
         this.garbageCollectionInterval = 250;
@@ -1213,6 +1227,11 @@ EchoCssUtil = {
      */
     Bounds: Core.extend({
         
+        /**
+         * Creates a new <code>Bounds</code> instance.
+         * 
+         * @param element the element to measure
+         */
         $construct: function(element) {
             this.left = 0;
             this.top = 0;
@@ -1707,12 +1726,22 @@ EchoDomUpdate = {
             }
         },
         
+        /**
+         * Processes a <code>stylesheet-add-rule</code> directive to add a new CSS style sheet rule.
+         * 
+         * @param addRuleElement the <code>stylesheet-add-rule</code> element to process
+         */
         processStyleSheetAddRule: function(addRuleElement) {
             var selectorText = addRuleElement.getAttribute("selector");
             var style = addRuleElement.getAttribute("style");
             EchoCssUtil.addRule(selectorText, style);
         },
         
+        /**
+         * Processes a <code>stylesheet-add-remove</code> directive to remove a new CSS style sheet rule.
+         * 
+         * @param removeRuleElement the <code>stylesheet-remove-rule</code> element to process
+         */
         processStyleSheetRemoveRule: function(removeRuleElement) {
             var selectorText = removeRuleElement.getAttribute("selector");
             EchoCssUtil.removeRule(selectorText);
@@ -1738,13 +1767,16 @@ EchoDomUpdate = {
     /**
      * An exception describing a failure of an EchoDomUpdate operation due to a 
      * target node not existing.
-     * 
-     * @param the type of update, e.g., DomRemove or StyleUpdate
-     * @param targetType the type of target that caused the failure
-     * @param targetId the id of the target
      */
     TargetNotFoundException: Core.extend({
-        
+
+        /**
+         * Creates a new <code>TargetNotFoundException</code>.
+         * 
+         * @param updateType the type of update, e.g., DomRemove or StyleUpdate
+         * @param targetType the type of target that caused the failure
+         * @param targetId the id of the target
+         */
         $construct: function(updateType, targetType, targetId) {
             this.targetId = targetId;
             this.targetType = targetType;
