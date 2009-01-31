@@ -227,7 +227,7 @@ EchoTable = Core.extend({
         if (rowIndex == "header") {
             return -1;
         } else {
-            return parseInt(rowIndex);
+            return parseInt(rowIndex, 10);
         }
     },
     
@@ -307,6 +307,7 @@ EchoTable = Core.extend({
         }
     
         if (echoEvent.shiftKey && this.lastSelectedIndex != -1) {
+            var startIndex, endIndex;
             if (this.lastSelectedIndex < rowIndex) {
                 startIndex = this.lastSelectedIndex;
                 endIndex = rowIndex;
@@ -490,7 +491,7 @@ EchoTable.MessageProcessor = {
             
             var rowElements = item.getElementsByTagName("row");
             for (var rowIndex = 0; rowIndex < rowElements.length; ++rowIndex) {
-                var tableRowIndex = parseInt(rowElements[rowIndex].getAttribute("index"));
+                var tableRowIndex = parseInt(rowElements[rowIndex].getAttribute("index"), 10);
                 table.setSelected(tableRowIndex, true);
             }
         }
