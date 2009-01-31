@@ -161,7 +161,7 @@ EchoListComponent = Core.extend({
     },
    
     /**
-     * Creates a DHTML-based listbox copmonent and adds it to the DOM.
+     * Creates a DHTML-based listbox component and adds it to the DOM.
      */
     createDhtml: function() {
         var containerElement = document.getElementById(this.containerElementId);
@@ -556,6 +556,11 @@ EchoListComponent = Core.extend({
         this.updateClientMessage();
     },
     
+    /**
+     * Sets the index of the list component which is displaying a mouse rollover effect.
+     * 
+     * @param rolloverIndex the new rolloverIndex, -1 indicating no rollover effect
+     */
     setRolloverIndex: function(rolloverIndex) {
         var selectElement = this.getElement();
         
@@ -589,6 +594,9 @@ EchoListComponent = Core.extend({
         }
     },
     
+    /**
+     * Stores the current selection in the <code>selectedIndices</code> property.
+     */
     storeSelection: function() {
         var selectElement = this.getElement();
     
