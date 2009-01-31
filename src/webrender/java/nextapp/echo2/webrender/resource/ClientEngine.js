@@ -34,26 +34,19 @@
 Core = {
 
     /**
-     * Creates a duplicate copy of a function.
-     * Per the ECMA-262 v3 specification, Function.toString() is required to return an (implementation specific)
-     * string representation of the function.
-     * Creating a copy of a constructor is more efficient than invoking Function.apply() in certain browsers
-     * (a significant performance improvement was observed in Internet Explorer 6).
+     * Creates a duplicate copy of a function by wrapping the original in a closure.
      *
      * @param f the function
-     * @return an identical copy
-     * @private
+     * @return an effectively identical copy
      */
     _copyFunction: function(f) {
-        var fCopy;
-        eval("fCopy = " + f.toString() + ";");
-        return fCopy;
+        return function() {
+            f.apply(this, arguments);
+        };
     },
     
     /**
      * Creates an empty function.
-     *
-     * @private
      */
     _createFunction: function() {
         return function() { };
@@ -104,8 +97,10 @@ Core = {
         var baseClass = arguments.length == 1 ? null : arguments[0];
         var definition = arguments.length == 1 ? arguments[0] : arguments[1];
         
+        var x, name;
+        
         // Perform argument error checking.
-        if (baseClass) {
+        if (arguments.length == 2) {
             if (typeof(baseClass) != "function") {
                 throw new Error("Base class is not a function, cannot derive.");
             }
@@ -160,14 +155,14 @@ Core = {
             constructorClass.$abstract = {};
             if (baseClass && baseClass.$abstract) {
                 // Copy abstract properties from base class.
-                for (var x in baseClass.$abstract) {
+                for (x in baseClass.$abstract) {
                     constructorClass.$abstract[x] = baseClass.$abstract[x];
                 }
             }
 
             if (definition.$abstract instanceof Object) {
                 // Add abstract properties from definition.
-                for (var x in definition.$abstract) {
+                for (x in definition.$abstract) {
                     constructorClass.$abstract[x] = true;
                     constructorClass.$virtual[x] = true;
                 }
@@ -179,7 +174,7 @@ Core = {
         
         // Copy virtual property flags from base class to shared prototype.
         if (baseClass) {
-            for (var name in baseClass.$virtual) {
+            for (name in baseClass.$virtual) {
                 constructorClass.$virtual[name] = baseClass.$virtual[name];
             }
         }
@@ -187,7 +182,7 @@ Core = {
         // Add virtual instance properties from definition to shared prototype.
         if (definition.$virtual) {
             Core._inherit(constructorClass.prototype, definition.$virtual, constructorClass.$virtual);
-            for (var name in definition.$virtual) {
+            for (name in definition.$virtual) {
                 constructorClass.$virtual[name] = true;
             }
 
@@ -308,11 +303,10 @@ Core = {
      * @param destination the destination object
      * @param soruce the source object
      * @param virtualProperties (optional) collection of virtual properties from base class.
-     * @private  
      */
     _inherit: function(destination, source, virtualProperties) {
         for (var name in source) {
-            if (virtualProperties && destination[name] && !this._isVirtual(virtualProperties, name)) {
+            if (virtualProperties && destination[name] !== undefined && !this._isVirtual(virtualProperties, name)) {
                 // Property exists in destination as is not marked as virtual.
                 throw new Error("Cannot override non-virtual property \"" + name + "\".");
             } else {
@@ -326,7 +320,7 @@ Core = {
      * Any arguments passed to the returned function will be passed to the method.
      * The return value of the method will be returned by the function.
      *
-     * CAUTION: When adding and removing methods as listeners, note that two seperately
+     * CAUTION: When adding and removing methods as listeners, note that two separately
      * constructed methods will not be treated as equal, even if their instance and method
      * properties are the same.  Failing to heed this warning can result in a memory leak,
      * as listeners would never be removed.
@@ -410,7 +404,7 @@ Core = {
          }
          
          for (var x in baseClass.$abstract) {
-             if (!constructorClass.prototype[x]) {
+             if (constructorClass.prototype[x] == null) {
                  throw new Error("Concrete class does not provide implementation of abstract method \"" + x + "\".");
              }
          }
