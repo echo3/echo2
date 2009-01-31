@@ -435,7 +435,7 @@ implements ActionProcessor, ComponentSynchronizePeer, FocusSupport, PropertyUpda
     
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * render and intialize the state of a list component.
+     * render and initialize the state of a list component.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param listComponent the component

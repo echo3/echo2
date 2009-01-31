@@ -360,7 +360,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
      * @param parentNode the containing node to which the child
      *        should be appended
      * @param row the <code>Row</code> being updated
-     * @param child the child preceeding the spacing row
+     * @param child the child preceding the spacing row
      */
     private void renderSpacingCell(Node parentNode, Row row, Component child) {
         Extent cellSpacing = (Extent) row.getRenderProperty(Row.PROPERTY_CELL_SPACING);
