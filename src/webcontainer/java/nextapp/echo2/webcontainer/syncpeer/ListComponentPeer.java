@@ -141,8 +141,7 @@ implements ActionProcessor, ComponentSynchronizePeer, FocusSupport, PropertyUpda
         /**
          * Creates a new <code>RenderedModelData</code> instance.
          * 
-         * @param model the <code>ListModel</code>
-         * @param renderer the <code>ListCellRenderer</code>
+         * @param listComponent the list component
          */
         private RenderedModelData(AbstractListComponent listComponent) {
             ListModel model = listComponent.getModel();
