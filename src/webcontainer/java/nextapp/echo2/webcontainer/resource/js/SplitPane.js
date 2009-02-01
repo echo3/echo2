@@ -601,7 +601,8 @@ EchoSplitPane.MessageProcessor = {
         
         var layoutDataElements = initMessageElement.getElementsByTagName("layout-data");
         for (var i = 0; i < layoutDataElements.length; ++i) {
-            var paneData = layoutDataElements[i].getAttribute("index") === 0 ? splitPane.paneData[0] : splitPane.paneData[1];
+            var paneData = parseInt(layoutDataElements[i].getAttribute("index"), 10) === 0 ? 
+                    splitPane.paneData[0] : splitPane.paneData[1];
             EchoSplitPane.MessageProcessor.processLayoutData(layoutDataElements[i], paneData);
         }
         
