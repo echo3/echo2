@@ -426,7 +426,6 @@ public class ContainerSynchronizeService extends SynchronizeService {
             ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(window.getClass());
             ((WindowPeer) syncPeer).renderRefresh(rc, componentUpdate, window);
             
-            //TODO. clean-up how these operations are invoked on init/update.
             setAsynchronousMonitorInterval(rc);
             setFocus(rc, true);
             setModalContextRootId(rc);
