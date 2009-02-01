@@ -63,6 +63,19 @@ EchoTextComponent = Core.extend({
         },
         
         /**
+         * Processes a text change event:
+         * Records the current state of the text field to the ClientMessage.
+         * Delegates to data object method.
+         *
+         * @param echoEvent the event, preprocessed by the 
+         *        <code>EchoEventProcessor</code>
+         */
+        processChange: function(echoEvent) {
+            var textComponent = EchoTextComponent.getComponent(echoEvent.registeredTarget);
+            textComponent.processChange(echoEvent);
+        },
+        
+        /**
          * Processes a focus event:
          * Notes focus state in ClientMessage.
          * Delegates to data object method.
@@ -118,6 +131,8 @@ EchoTextComponent = Core.extend({
      */
     dispose: function() {
         var element = this.getElement();
+        EchoEventProcessor.removeHandler(element, "click");
+        EchoEventProcessor.removeHandler(element, "change");
         EchoEventProcessor.removeHandler(element, "blur");
         EchoEventProcessor.removeHandler(element, "focus");
         EchoEventProcessor.removeHandler(element, "keyup");
@@ -202,6 +217,8 @@ EchoTextComponent = Core.extend({
             }
         }
         
+        EchoEventProcessor.addHandler(element, "change", "EchoTextComponent.processChange");
+        EchoEventProcessor.addHandler(element, "click", "EchoTextComponent.processChange");
         EchoEventProcessor.addHandler(element, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(element, "focus", "EchoTextComponent.processFocus");
         EchoEventProcessor.addHandler(element, "keyup", "EchoTextComponent.processKeyUp");
@@ -225,6 +242,20 @@ EchoTextComponent = Core.extend({
         
         this.updateClientMessage();
         EchoFocusManager.setFocusedState(this.elementId, false);
+    },
+    
+    /**
+     * Processes a text change event.
+     * Records the current state of the text field to the ClientMessage.
+     *
+     * @param echoEvent the event, preprocessed by the 
+     *        <code>EchoEventProcessor</code>
+     */
+    processChange: function(echoEvent) {
+        if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
+            return;
+        }
+        this.updateClientMessage();
     },
     
     /**
