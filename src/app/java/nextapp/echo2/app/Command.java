@@ -1,6 +1,6 @@
 /* 
  * This file is part of the File Transfer Library for Echo2.
- * Copyright (C) 2002-2005 NextApp, Inc.
+ * Copyright (C) 2002-2009 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
