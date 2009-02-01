@@ -131,8 +131,7 @@ EchoTextComponent = Core.extend({
      */
     dispose: function() {
         var element = this.getElement();
-        EchoEventProcessor.removeHandler(element, "click");
-        EchoEventProcessor.removeHandler(element, "change");
+        EchoEventProcessor.removeHandler(element, "mouseout");
         EchoEventProcessor.removeHandler(element, "blur");
         EchoEventProcessor.removeHandler(element, "focus");
         EchoEventProcessor.removeHandler(element, "keyup");
@@ -217,8 +216,7 @@ EchoTextComponent = Core.extend({
             }
         }
         
-        EchoEventProcessor.addHandler(element, "change", "EchoTextComponent.processChange");
-        EchoEventProcessor.addHandler(element, "click", "EchoTextComponent.processChange");
+        EchoEventProcessor.addHandler(element, "mouseout", "EchoTextComponent.processChange");
         EchoEventProcessor.addHandler(element, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(element, "focus", "EchoTextComponent.processFocus");
         EchoEventProcessor.addHandler(element, "keyup", "EchoTextComponent.processKeyUp");
