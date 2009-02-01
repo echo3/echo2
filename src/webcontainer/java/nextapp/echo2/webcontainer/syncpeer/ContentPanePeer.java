@@ -75,9 +75,6 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 public class ContentPanePeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport, PropertyUpdateProcessor {
 
-    //TODO: This needs to become a client-rendered component.
-    //TODO: Performance can be improved by implementing MORE PartialUpdateManagers.
-
     private static final Extent EXTENT_0 = new Extent(0);
     private static final Insets DEFAULT_INSETS = new Insets(EXTENT_0);
     

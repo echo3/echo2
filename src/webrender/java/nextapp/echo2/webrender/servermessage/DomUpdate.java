@@ -58,7 +58,6 @@ public class DomUpdate {
      */
     public static void renderAttributeUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
             String attributeValue) {
-        //BUGBUG. support nulls for deletion.
         Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 MESSAGE_PART_NAME, "attribute-update");
         element.setAttribute("target-id", targetId);
@@ -210,7 +209,6 @@ public class DomUpdate {
      */
     public static void renderStyleUpdate(ServerMessage serverMessage, String targetId, String attributeName, 
             String attributeValue) {
-        //BUGBUG. support nulls for deletion.
         Element element = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, MESSAGE_PART_NAME, "style-update");
         element.setAttribute("target-id", targetId);
         element.setAttribute("name", attributeName);

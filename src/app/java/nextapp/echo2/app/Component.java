@@ -168,12 +168,12 @@ implements RenderIdSupport, Serializable {
     public static final String VISIBLE_CHANGED_PROPERTY = "visible";
     
     //TODO. Doc/move to util.
-    private static final boolean isLetter(char ch) {
+    private static final boolean isRenderIdStart(char ch) {
         return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
     }
     
     //TODO. Doc/move to util.
-    private static final boolean isLetterOrDigit(char ch) {
+    private static final boolean isRenderIdPart(char ch) {
         return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
     }
     
@@ -1476,11 +1476,11 @@ implements RenderIdSupport, Serializable {
         }
         if (renderId != null) {
             int length = renderId.length();
-            if (!isLetter(renderId.charAt(0))) {
+            if (!isRenderIdStart(renderId.charAt(0))) {
                 throw new IllegalArgumentException("Invalid identifier:" + renderId);
             }
             for (int i = 1; i < length; ++i) {
-                if (!isLetterOrDigit(renderId.charAt(i))) {
+                if (!isRenderIdPart(renderId.charAt(i))) {
                     throw new IllegalArgumentException("Invalid identifier:" + renderId);
                 }
             }

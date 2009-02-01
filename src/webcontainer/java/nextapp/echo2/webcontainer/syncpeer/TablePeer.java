@@ -83,8 +83,6 @@ import nextapp.echo2.webrender.util.DomUtil;
 public class TablePeer 
 implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor  {
 
-    //TODO: Add full support for partial rendering on row insertions/deletions.
-
     /**
      * A string of periods used for the IE 100% Table Width workaround.
      */
