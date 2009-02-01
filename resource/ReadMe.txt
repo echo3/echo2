@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
 Echo Web Application Framework, version 2.1 (Echo2)
-Copyright (C) 2002-2008 NextApp, Inc.
+Copyright (C) 2002-2009 NextApp, Inc.
 
 http://echo.nextapp.com
 
