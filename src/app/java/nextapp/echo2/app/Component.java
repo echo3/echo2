@@ -167,14 +167,24 @@ implements RenderIdSupport, Serializable {
     public static final String STYLE_NAME_CHANGED_PROPERTY = "styleName";
     public static final String VISIBLE_CHANGED_PROPERTY = "visible";
     
-    //TODO. Doc/move to util.
-    private static final boolean isRenderIdStart(char ch) {
-        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
-    }
-    
-    //TODO. Doc/move to util.
+    /**
+     * Determines if a character is valid as the non-first character of a renderId.
+     * 
+     * @param ch the character
+     * @return true if it is valid
+     */
     private static final boolean isRenderIdPart(char ch) {
         return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
+    }
+    
+    /**
+     * Determines if a character is valid as the first character of a renderId.
+     * 
+     * @param ch the character
+     * @return true if it is valid
+     */
+    private static final boolean isRenderIdStart(char ch) {
+        return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
     }
     
     /** The <code>ApplicationInstance</code> to which the component is registered. */
