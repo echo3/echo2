@@ -501,10 +501,6 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         partElement.appendChild(initElement);
     }
     
-    private void renderSetContent(RenderContext rc, ServerComponentUpdate update) {
-        //TODO. implement
-    }
-    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
@@ -523,7 +519,6 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
         }
 
         if (update.hasAddedChildren() || update.hasRemovedChildren() || update.hasUpdatedLayoutDataChildren()) {
-            //TODO. temporary, renderSetContent needs impl
             fullReplace = true;
         }
         
@@ -534,9 +529,6 @@ public class WindowPanePeer implements ActionProcessor, ImageRenderSupport,
             renderAdd(rc, update, targetId, update.getParent());
         } else {
             partialUpdateManager.process(rc, update);
-            if (update.hasAddedChildren() || update.hasRemovedChildren()) {
-                renderSetContent(rc, update);
-            }
         }
         
         return fullReplace;
