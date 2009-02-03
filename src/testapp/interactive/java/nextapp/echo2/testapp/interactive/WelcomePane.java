@@ -105,7 +105,7 @@ public class WelcomePane extends ContentPane {
                 + "You may exit Debug Mode at any time by simply closing the Debug window.");
         infoColumn.add(label);
 
-        label = new Label("Please visit the Echo2 Home Page @ http://www.nextapp.com/products/echo2 for more information.");
+        label = new Label("Please visit the Echo2 Home Page @ http://echo.nextapp.com for more information.");
         infoColumn.add(label);
         
         Column column = new Column();

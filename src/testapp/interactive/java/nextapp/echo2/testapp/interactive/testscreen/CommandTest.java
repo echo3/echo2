@@ -56,7 +56,7 @@ public class CommandTest extends Column {
         button.setStyleName("Default");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                getApplicationInstance().enqueueCommand(new BrowserRedirectCommand("http://www.nextapp.com/products/echo2"));
+                getApplicationInstance().enqueueCommand(new BrowserRedirectCommand("http://echo.nextapp.com"));
             }
         });
         add(button);
@@ -75,7 +75,7 @@ public class CommandTest extends Column {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().enqueueCommand(
-                        new BrowserOpenWindowCommand("http://www.nextapp.com/products/echo2", null, null));
+                        new BrowserOpenWindowCommand("http://echo.nextapp.com", null, null));
             }
         });
         add(button);
@@ -85,7 +85,7 @@ public class CommandTest extends Column {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getApplicationInstance().enqueueCommand(
-                        new BrowserOpenWindowCommand("http://www.nextapp.com/products/echo2", 
+                        new BrowserOpenWindowCommand("http://echo.nextapp.com", 
                         "auxwindow", "width=640,height=240"));
             }
         });
