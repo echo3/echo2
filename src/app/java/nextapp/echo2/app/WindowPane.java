@@ -623,6 +623,9 @@ implements FloatingPane, ModalSupport, PaneContainer {
     }
     
     /**
+     * Warning: when setting multiple windows modal, ensure that the window z-indices are also set such that the current 
+     * modal window will appear on top.
+     * 
      * @see nextapp.echo2.app.ModalSupport#setModal(boolean)
      */
     public void setModal(boolean newValue) {

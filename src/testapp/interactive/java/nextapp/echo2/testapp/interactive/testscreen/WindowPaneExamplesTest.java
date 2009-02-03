@@ -102,6 +102,7 @@ public class WindowPaneExamplesTest extends SplitPane {
                     for (int i = 0; i < 3; ++i) {
                         WindowPane windowPane = createModalWindow("3Modal");
                         windowPane.setModal(true);
+                        windowPane.setZIndex(i + 1);
                         targetContentPane.add(windowPane);
                     }
                 }
