@@ -45,6 +45,8 @@ import nextapp.echo2.app.StyleSheet;
 import nextapp.echo2.app.util.DomUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -101,6 +103,13 @@ public class StyleSheetLoader {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver(new EntityResolver() {
+            
+                public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+                    throw new SAXException("External entities not supported.");
+                }
+            });
             document = builder.parse(in);
         } catch (IOException ex) {
             throw new ComponentXmlException("Failed to parse InputStream.", ex);
