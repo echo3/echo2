@@ -33,7 +33,6 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.FloatingPane;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
