@@ -34,8 +34,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+
+import nextapp.echo2.webrender.util.DomUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,15 +77,12 @@ implements Serializable {
         Document document;
         InputStream in = null;
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = DomUtil.getDocumentBuilder();
             in = ServerDelayMessage.class.getResourceAsStream(resourceName); 
             if (in == null) {
                 throw new IOException("Resource not found: " + resourceName + ".");
             }
             document = builder.parse(in);
-        } catch (ParserConfigurationException ex) {
-            throw new IOException("Failed to parse InputStream.");
         } catch (SAXException ex) {
             throw new IOException("Failed to parse InputStream.");
         } finally {
