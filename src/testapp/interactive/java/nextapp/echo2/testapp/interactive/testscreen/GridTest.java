@@ -40,10 +40,13 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.ColumnLayoutData;
 import nextapp.echo2.app.layout.GridLayoutData;
 import nextapp.echo2.testapp.interactive.ButtonColumn;
+import nextapp.echo2.testapp.interactive.InteractiveApp;
 import nextapp.echo2.testapp.interactive.StyleUtil;
 import nextapp.echo2.testapp.interactive.Styles;
 
@@ -514,6 +517,57 @@ public class GridTest extends SplitPane {
                 }
             }
         });
+        
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Additional Tests"));
+        groupContainerColumn.add(controlsColumn);
+
+        controlsColumn.addButton("Grid/Column/Grid FillImage Test", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane();
+                windowPane.setTitle("Grid/Column/Grid FillImage Test");
+                windowPane.setInsets(new Insets(10));
+                windowPane.setStyleName("Default");
+                windowPane.setDefaultCloseOperation(WindowPane.DISPOSE_ON_CLOSE);
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
+                
+                GridLayoutData gld;
+                ColumnLayoutData cld;
+                
+                Grid grid0 = new Grid();
+                grid0.setInsets(new Insets(5));
+                
+                grid0.add(new Label("Grid 0 Label"));
+                grid0.add(new Label("Grid 0 Label"));
+                grid0.add(new Label("Grid 0 Label"));
+                
+                Column column = new Column();
+                column.setInsets(new Insets(5));
+                grid0.add(column);
+                
+                column.add(new Label("Column Label"));
+                column.add(new Label("Column Label"));
+                column.add(new Label("Column Label"));
+                
+                gld = new GridLayoutData();
+                gld.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE_50_PX_REPEAT);
+                column.setLayoutData(gld);
+                grid0.add(column);
+                
+                Grid grid1 = new Grid();
+                grid1.setInsets(new Insets(5));
+                cld = new ColumnLayoutData();
+                cld.setBackgroundImage(Styles.BG_SHADOW_LIGHT_BLUE_5_PX_REPEAT);
+                grid1.setLayoutData(cld);
+                column.add(grid1);
+
+                grid1.add(new Label("Grid 1 Label"));
+                grid1.add(new Label("Grid 1 Label"));
+                grid1.add(new Label("Grid 1 Label"));
+
+                windowPane.add(grid0);
+            }
+        });        
     }
 
     public Button createGridCellButton() {
