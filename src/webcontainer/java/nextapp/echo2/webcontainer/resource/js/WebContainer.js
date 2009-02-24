@@ -74,14 +74,7 @@ EchoCoreProperties.FillImageBorder = Core.extend({
         this.borderInsets = borderInsets;
         this.contentInsets = contentInsets;
         this.color = color;
-        if (fillImages) {
-            if (fillImages.length != 8) {
-                throw new Error("Image array must contain eight images.");
-            }
-            this.fillImages = fillImages;
-        } else {
-            this.fillImages = [];
-        }
+        this.fillImages = fillImages ? fillImages : [];
     }
 });
 

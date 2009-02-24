@@ -29,9 +29,11 @@
 
 package nextapp.echo2.testapp.interactive.testscreen;
 
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
@@ -124,6 +126,27 @@ public class WindowPaneTest extends SplitPane {
         controlsColumn.addButton("Clear Style Name", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 windowPane.setStyleName(null);
+            }
+        });
+        
+        controlsColumn.addButton("Set Border 1", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBorder(new FillImageBorder(Color.GREEN, new Insets(20), new Insets(5)));
+            }
+        });
+
+        controlsColumn.addButton("Set Border 2 (L/R only)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FillImageBorder fib = new FillImageBorder(Color.GREEN, new Insets(20), new Insets(5));
+                fib.setFillImage(FillImageBorder.LEFT, Styles.BG_SHADOW_DARK_BLUE);
+                fib.setFillImage(FillImageBorder.RIGHT, Styles.BG_SHADOW_LIGHT_BLUE);
+                windowPane.setBorder(fib);
+            }
+        });
+
+        controlsColumn.addButton("Clear Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                windowPane.setBorder(null);
             }
         });
 
