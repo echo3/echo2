@@ -101,7 +101,6 @@ public class StyleSheetLoader {
         Document document;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new EntityResolver() {
