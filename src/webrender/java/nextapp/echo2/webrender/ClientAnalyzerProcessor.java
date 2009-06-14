@@ -141,6 +141,8 @@ implements SynchronizeService.ClientMessagePartProcessor {
                 majorVersion = 6;
             } else if (userAgent.indexOf("msie 7.") != -1) {
                 majorVersion = 7;
+            } else if (userAgent.indexOf("msie 8.") != -1) {
+                majorVersion = 8;
             }
         }
         
@@ -154,30 +156,30 @@ implements SynchronizeService.ClientMessagePartProcessor {
         
         // Set quirk flags.
         if (browserInternetExplorer) {
+            // IE6-7-8+ Issues 
             clientProperties.setProperty(ClientProperties.QUIRK_IE_REPAINT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_TEXTAREA_CONTENT, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TEXTAREA_NEWLINE_OBLITERATION, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_LIST_DOM_UPDATE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_INSIDE, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_CSS_BORDER_COLLAPSE_FOR_0_PADDING, Boolean.TRUE);
-            
-            clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_DELAYED_FOCUS_REQUIRED, Boolean.TRUE);
-
-            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED, Boolean.TRUE);
-            clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED, Boolean.TRUE);
-
-            // The following flaws are verified as present in IE7.0Beta2:
             clientProperties.setProperty(ClientProperties.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR, Boolean.TRUE);
             clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_PERCENT_WIDTH, Boolean.TRUE);
-            
-            if (majorVersion < 7) {
-                // The following flaws are verified as fixed in IE7.0Beta2:
-                clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
-                clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
-                clientProperties.setProperty(ClientProperties.QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED,  Boolean.TRUE);
-                clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
+            if (majorVersion < 8) {
+                // IE6-7 Issues 
+                clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED, Boolean.TRUE);
+                clientProperties.setProperty(ClientProperties.NOT_SUPPORTED_CSS_OPACITY, Boolean.TRUE);
+                clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED, Boolean.TRUE);
+                
+                if (majorVersion < 7) {
+                    // IE6 Issues
+                    clientProperties.setProperty(ClientProperties.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED, Boolean.TRUE);
+                    clientProperties.setProperty(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY, Boolean.TRUE);
+                    clientProperties.setProperty(ClientProperties.QUIRK_CSS_BACKGROUND_ATTACHMENT_USE_FIXED,  Boolean.TRUE);
+                    clientProperties.setProperty(ClientProperties.QUIRK_IE_SELECT_Z_INDEX, Boolean.TRUE);
+                }
             }
         }
         if (browserOpera) {
