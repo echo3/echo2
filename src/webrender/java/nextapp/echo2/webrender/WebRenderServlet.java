@@ -269,6 +269,8 @@ public abstract class WebRenderServlet extends HttpServlet {
                 response.setHeader("Cache-Control", "no-store");
                 response.setHeader("Expires", "0");
             }
+            // Put IE in compatibility mode
+            response.setHeader("X-UA-Compatible", "IE=8");
             
             service.service(conn);
             
