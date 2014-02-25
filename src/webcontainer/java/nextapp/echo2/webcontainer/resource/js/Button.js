@@ -207,7 +207,7 @@ EchoButton = Core.extend({
         }
         
         if (document.selection && document.selection.empty) {
-            document.selection.empty();
+            try { document.selection.empty(); } catch(e) { /* workaround for IE8 bug */ }
         }
         
         EchoClientMessage.setActionValue(this.elementId, "click");
