@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of the Echo Web Application Framework (hereinafter "Echo").
  * Copyright (C) 2002-2009 NextApp, Inc.
  *
@@ -37,7 +37,7 @@
 EchoTextComponent = Core.extend({
 
     $static: {
-    
+
         /**
          * Returns the TextComponent data object instance based on the root element id
          * of the TextComponent.
@@ -54,40 +54,40 @@ EchoTextComponent = Core.extend({
          * Records the current state of the text field to the ClientMessage.
          * Delegates to data object method.
          *
-         * @param echoEvent the event, preprocessed by the 
+         * @param echoEvent the event, preprocessed by the
          *        <code>EchoEventProcessor</code>
          */
         processBlur: function(echoEvent) {
             var textComponent = EchoTextComponent.getComponent(echoEvent.registeredTarget);
             textComponent.processBlur(echoEvent);
         },
-        
+
         /**
          * Processes a text change event:
          * Records the current state of the text field to the ClientMessage.
          * Delegates to data object method.
          *
-         * @param echoEvent the event, preprocessed by the 
+         * @param echoEvent the event, preprocessed by the
          *        <code>EchoEventProcessor</code>
          */
         processChange: function(echoEvent) {
             var textComponent = EchoTextComponent.getComponent(echoEvent.registeredTarget);
             textComponent.processChange(echoEvent);
         },
-        
+
         /**
          * Processes a focus event:
          * Notes focus state in ClientMessage.
          * Delegates to data object method.
          *
-         * @param echoEvent the event, preprocessed by the 
+         * @param echoEvent the event, preprocessed by the
          *        <code>EchoEventProcessor</code>
          */
         processFocus: function(echoEvent) {
             var textComponent = EchoTextComponent.getComponent(echoEvent.registeredTarget);
             textComponent.processFocus(echoEvent);
         },
-        
+
         /**
          * Processes a key press event:
          * Initiates an action in the event that the key pressed was the
@@ -102,13 +102,13 @@ EchoTextComponent = Core.extend({
             var textComponent = EchoTextComponent.getComponent(target);
             textComponent.processKeyPress(e);
         },
-        
+
         /**
          * Processes a key up event:
          * Records the current state of the text field to the ClientMessage.
          * Delegates to data object method.
          *
-         * @param echoEvent the event, preprocessed by the 
+         * @param echoEvent the event, preprocessed by the
          *        <code>EchoEventProcessor</code>
          */
         processKeyUp: function(echoEvent) {
@@ -119,13 +119,14 @@ EchoTextComponent = Core.extend({
 
     /**
      * Creates a new text component support object.
-     * 
+     *
      * @param elementId the id of the supported text component element
      */
     $construct: function(elementId) {
         this.elementId = elementId;
+        this.hash = 0;
     },
-    
+
     /**
      * Disposes of resources used by the support object.
      */
@@ -135,14 +136,14 @@ EchoTextComponent = Core.extend({
         EchoEventProcessor.removeHandler(element, "blur");
         EchoEventProcessor.removeHandler(element, "focus");
         EchoEventProcessor.removeHandler(element, "keyup");
-        EchoDomUtil.removeEventListener(element, "keypress", EchoTextComponent.processKeyPress, false);    
-    
+        EchoDomUtil.removeEventListener(element, "keypress", EchoTextComponent.processKeyPress, false);
+
         // Remove any updates to text component that occurred during client/server transaction.
         EchoClientMessage.removePropertyElement(element.id, "text");
-        
+
         EchoDomPropertyStore.dispose(element);
     },
-    
+
     /**
      * Processes a user "action request" on the text component i.e., the pressing
      * of the ENTER key when the the component is focused.
@@ -153,43 +154,45 @@ EchoTextComponent = Core.extend({
         if (!this.serverNotify) {
             return;
         }
-        
+
         if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement(), false)) {
             // Don't process actions when client/server transaction in progress.
             return;
         }
-        
+
         this.updateClientMessage();
         EchoClientMessage.setActionValue(this.elementId, "action");
         EchoServerTransaction.connect();
     },
-    
+
     /**
      * Returns the text component's DOM element.
      */
     getElement: function() {
         return document.getElementById(this.elementId);
     },
-    
+
     /**
      * Initializes the text component support object.
      */
     init: function() {
         var element = this.getElement();
-        
+
         if (!this.enabled) {
             element.readOnly = true;
         }
         if (this.text) {
-            element.value = this.text;
+            this.setText(this.text);
+        } else {
+            this.hash = this.hashCode(element.value);
         }
-    
+
         if (this.horizontalScroll !== 0) {
             element.scrollLeft = this.horizontalScroll;
         }
-        
+
         this.multipleLines = element.nodeName.toLowerCase() != "input";
-        
+
         if (this.verticalScroll !== 0) {
             if (EchoClientProperties.get("quirkIERepaint")) {
                 // Avoid IE quirk where browser will fail to set scroll bar position.
@@ -200,7 +203,7 @@ EchoTextComponent = Core.extend({
             }
             element.scrollTop = this.verticalScroll;
         }
-        
+
         if (EchoClientProperties.get("quirkMozillaTextInputRepaint")) {
             // Avoid Mozilla quirk where text will be rendered outside of text field
             // (this appears to be a Mozilla bug).
@@ -215,33 +218,39 @@ EchoTextComponent = Core.extend({
                 element.value = "";
             }
         }
-        
+
         EchoEventProcessor.addHandler(element, "mouseout", "EchoTextComponent.processChange");
         EchoEventProcessor.addHandler(element, "blur", "EchoTextComponent.processBlur");
         EchoEventProcessor.addHandler(element, "focus", "EchoTextComponent.processFocus");
         EchoEventProcessor.addHandler(element, "keyup", "EchoTextComponent.processKeyUp");
-        
+
         EchoDomUtil.addEventListener(element, "keypress", EchoTextComponent.processKeyPress, false);
-        
+
         EchoDomPropertyStore.setPropertyValue(element, "component", this);
     },
-    
+
+    setText: function(text) {
+        var element = this.getElement();
+        this.hash = this.hashCode(text);
+        element.value = text;
+    },
+
     /**
      * Processes a focus blur event:
      * Records the current state of the text field to the ClientMessage.
      *
-     * @param echoEvent the event, preprocessed by the 
+     * @param echoEvent the event, preprocessed by the
      *        <code>EchoEventProcessor</code>
      */
     processBlur: function(echoEvent) {
         if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
             return;
         }
-        
+
         this.updateClientMessage();
         EchoFocusManager.setFocusedState(this.elementId, false);
     },
-    
+
     /**
      * Processes a text change event.
      * Records the current state of the text field to the ClientMessage.
@@ -255,22 +264,22 @@ EchoTextComponent = Core.extend({
         }
         this.updateClientMessage();
     },
-    
+
     /**
      * Processes a focus event:
      * Notes focus state in ClientMessage.
      *
-     * @param echoEvent the event, preprocessed by the 
+     * @param echoEvent the event, preprocessed by the
      *        <code>EchoEventProcessor</code>
      */
     processFocus: function(echoEvent) {
         if (!this.enabled || !EchoClientEngine.verifyInput(this.getElement())) {
             return;
         }
-        
+
         EchoFocusManager.setFocusedState(this.elementId, true);
     },
-    
+
     /**
      * Processes a key press event:
      * Initiates an action in the event that the key pressed was the
@@ -290,12 +299,12 @@ EchoTextComponent = Core.extend({
             this.doAction();
         }
     },
-    
+
     /**
      * Processes a key up event:
      * Records the current state of the text field to the ClientMessage.
      *
-     * @param echoEvent the event, preprocessed by the 
+     * @param echoEvent the event, preprocessed by the
      *        <code>EchoEventProcessor</code>
      */
     processKeyUp: function(echoEvent) {
@@ -304,42 +313,58 @@ EchoTextComponent = Core.extend({
             EchoDomUtil.preventEventDefault(echoEvent);
             return;
         }
-        
+
         if (this.maximumLength >= 0) {
             if (element.value && element.value.length > this.maximumLength) {
                 element.value = element.value.substring(0, this.maximumLength);
             }
         }
-        
+
         this.updateClientMessage();
     },
-    
+
     /**
      * Updates the component state in the outgoing <code>ClientMessage</code>.
      */
     updateClientMessage: function() {
         var element = this.getElement();
-        var textPropertyElement = EchoClientMessage.createPropertyElement(this.elementId, "text");
-        
-        if (textPropertyElement.firstChild) {
-            textPropertyElement.firstChild.nodeValue = element.value;
-        } else {
-            textPropertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(element.value));
+        var newHash = this.hashCode(element.value);
+        if (this.hash != newHash) {
+            var textPropertyElement = EchoClientMessage.createPropertyElement(this.elementId, "text");
+
+            if (textPropertyElement.firstChild) {
+                textPropertyElement.firstChild.nodeValue = element.value;
+            } else {
+                textPropertyElement.appendChild(EchoClientMessage.messageDocument.createTextNode(element.value));
+            }
+            this.hash = newHash;
         }
-        
+
         EchoClientMessage.setPropertyValue(this.elementId, "horizontalScroll", element.scrollLeft);
         EchoClientMessage.setPropertyValue(this.elementId, "verticalScroll", element.scrollTop);
+    },
+
+    hashCode: function(text) {
+        var hash = 0;
+        if (text) {
+            for (i = 0; i < text.length; i++) {
+                var ch = text.charCodeAt(i);
+                hash = 31 * hash + ch;
+                hash = hash & hash; // convert to 32 bit integer
+            }
+        }
+        return hash;
     }
 });
 
 /**
- * Static object/namespace for Text Component MessageProcessor 
+ * Static object/namespace for Text Component MessageProcessor
  * implementation.
  */
 EchoTextComponent.MessageProcessor = {
 
     /**
-     * MessageProcessor process() implementation 
+     * MessageProcessor process() implementation
      * (invoked by ServerMessage processor).
      *
      * @param messagePartElement the <code>message-part</code> element to process.
@@ -361,7 +386,7 @@ EchoTextComponent.MessageProcessor = {
             }
         }
     },
-    
+
     /**
      * Processes a <code>dispose</code> message to finalize the state of a
      * Text Component that is being removed.
@@ -377,7 +402,7 @@ EchoTextComponent.MessageProcessor = {
             }
         }
     },
-    
+
     /**
      * Processes a <code>set-text</code> message to update the text displayed in a
      * Text Component.
@@ -388,16 +413,16 @@ EchoTextComponent.MessageProcessor = {
         for (var item = setTextMessageElement.firstChild; item; item = item.nextSibling) {
             var elementId = item.getAttribute("eid");
             var text = item.getAttribute("text");
-            var textComponent = document.getElementById(elementId);
-            textComponent.value = text;
-            
+            var textComponent = EchoTextComponent.getComponent(elementId);
+            textComponent.setText(text);
+
             // Remove any updates to text component that occurred during client/server transaction.
             EchoClientMessage.removePropertyElement(textComponent.id, "text");
         }
     },
-    
+
     /**
-     * Processes an <code>init</code> message to initialize the state of a 
+     * Processes an <code>init</code> message to initialize the state of a
      * Text Component that is being added.
      *
      * @param initMessageElement the <code>init</code> element to process
@@ -405,17 +430,17 @@ EchoTextComponent.MessageProcessor = {
     processInit: function(initMessageElement) {
         for (var item = initMessageElement.firstChild; item; item = item.nextSibling) {
             var elementId = item.getAttribute("eid");
-            
+
             var textComponent = new EchoTextComponent(elementId);
             textComponent.enabled = item.getAttribute("enabled") != "false";
             textComponent.text =  item.getAttribute("text") ? item.getAttribute("text") : null;
             textComponent.serverNotify = item.getAttribute("server-notify") == "true";
             textComponent.maximumLength = item.getAttribute("maximum-length") ? item.getAttribute("maximum-length") : -1;
-            textComponent.horizontalScroll = item.getAttribute("horizontal-scroll") ? 
+            textComponent.horizontalScroll = item.getAttribute("horizontal-scroll") ?
                     parseInt(item.getAttribute("horizontal-scroll"), 10) : 0;
-            textComponent.verticalScroll = item.getAttribute("vertical-scroll") ? 
+            textComponent.verticalScroll = item.getAttribute("vertical-scroll") ?
                     parseInt(item.getAttribute("vertical-scroll"), 10) : 0;
-                    
+
             textComponent.init();
         }
     }
